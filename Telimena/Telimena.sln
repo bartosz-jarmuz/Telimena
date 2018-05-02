@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Tests", "Telimena.Tests\Telimena.Tests.csproj", "{13DF9DD2-D891-413B-A8AE-CEE3FA1B06EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Client", "Telimena.Client\Telimena.Client.csproj", "{8BC1DD73-2520-4361-9845-282E87442339}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Updater", "Telimena.Updater\Telimena.Updater.csproj", "{6DEE078F-92BD-4F45-A876-BC4446217D83}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApi", "Telimena.WebApi\Telimena.WebApi.csproj", "{EB646426-47C4-464A-ABB0-415CA73B432F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{13DF9DD2-D891-413B-A8AE-CEE3FA1B06EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13DF9DD2-D891-413B-A8AE-CEE3FA1B06EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13DF9DD2-D891-413B-A8AE-CEE3FA1B06EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13DF9DD2-D891-413B-A8AE-CEE3FA1B06EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BC1DD73-2520-4361-9845-282E87442339}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BC1DD73-2520-4361-9845-282E87442339}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BC1DD73-2520-4361-9845-282E87442339}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BC1DD73-2520-4361-9845-282E87442339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DEE078F-92BD-4F45-A876-BC4446217D83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DEE078F-92BD-4F45-A876-BC4446217D83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DEE078F-92BD-4F45-A876-BC4446217D83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DEE078F-92BD-4F45-A876-BC4446217D83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB646426-47C4-464A-ABB0-415CA73B432F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB646426-47C4-464A-ABB0-415CA73B432F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB646426-47C4-464A-ABB0-415CA73B432F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB646426-47C4-464A-ABB0-415CA73B432F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4AE5AB23-7640-4456-8051-8AC946EFBA9B}
+	EndGlobalSection
+EndGlobal
