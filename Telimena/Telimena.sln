@@ -9,7 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Client", "Telimena
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Updater", "Telimena.Updater\Telimena.Updater.csproj", "{6DEE078F-92BD-4F45-A876-BC4446217D83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApi", "Telimena.WebApi\Telimena.WebApi.csproj", "{EB646426-47C4-464A-ABB0-415CA73B432F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp", "Telimena.WebApi\Telimena.WebApp.csproj", "{EB646426-47C4-464A-ABB0-415CA73B432F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp.Core", "Telimena.WebApp.Core\Telimena.WebApp.Core.csproj", "{FFD85253-874C-41CB-9242-9267BFA3647B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp.Infrastructure", "Telimena.WebApp.Infrastructure\Telimena.WebApp.Infrastructure.csproj", "{01707963-655B-4BDE-B32F-848DE2391383}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{EB646426-47C4-464A-ABB0-415CA73B432F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB646426-47C4-464A-ABB0-415CA73B432F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB646426-47C4-464A-ABB0-415CA73B432F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD85253-874C-41CB-9242-9267BFA3647B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD85253-874C-41CB-9242-9267BFA3647B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD85253-874C-41CB-9242-9267BFA3647B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD85253-874C-41CB-9242-9267BFA3647B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01707963-655B-4BDE-B32F-848DE2391383}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01707963-655B-4BDE-B32F-848DE2391383}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01707963-655B-4BDE-B32F-848DE2391383}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01707963-655B-4BDE-B32F-848DE2391383}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
