@@ -96,7 +96,7 @@
       <Project>{6dee078f-92bd-4f45-a876-bc4446217d83}</Project>
       <Name>Telimena.Updater</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Telimena.WebApi\Telimena.WebApp.csproj">
+    <ProjectReference Include="..\Telimena.WebApp\Telimena.WebApp.csproj">
       <Project>{eb646426-47c4-464a-abb0-415ca73b432f}</Project>
       <Name>Telimena.WebApp</Name>
     </ProjectReference>

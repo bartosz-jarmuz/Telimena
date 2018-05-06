@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Client", "Telimena
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Updater", "Telimena.Updater\Telimena.Updater.csproj", "{6DEE078F-92BD-4F45-A876-BC4446217D83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp", "Telimena.WebApi\Telimena.WebApp.csproj", "{EB646426-47C4-464A-ABB0-415CA73B432F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp", "Telimena.WebApp\Telimena.WebApp.csproj", "{EB646426-47C4-464A-ABB0-415CA73B432F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp.Core", "Telimena.WebApp.Core\Telimena.WebApp.Core.csproj", "{FFD85253-874C-41CB-9242-9267BFA3647B}"
 EndProject
