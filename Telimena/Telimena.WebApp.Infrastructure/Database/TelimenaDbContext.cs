@@ -5,9 +5,11 @@ using System.Web;
 namespace Telimena.WebApi
 {
     using System.Data.Entity;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using WebApp.Core.Models;
+    using WebApp.Infrastructure.Identity;
 
-    public class TelimenaContext : DbContext
+    public class TelimenaContext : IdentityDbContext<TelimenaUser>
     {
         public TelimenaContext() : base("name=TestDBContext")
         {

@@ -6,18 +6,29 @@ using System.Web.Mvc;
 
 namespace Telimena.WebApi.Controllers
 {
+    using System.Threading.Tasks;
+    using WebApp.Core.Interfaces;
+    using WebApp.Core.Models;
+
+    [Authorize]
     public class HomeController : Controller
     {
+        private readonly ITelimenaRepository repository;
+
+        public HomeController(ITelimenaRepository repository)
+        {
+            this.repository = repository;
+        }
+
         public ActionResult Index()
         {
             return View();
         }
 
-        public ActionResult About()
+        public async Task<ActionResult> DeveloperSummary(string developerName)
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
+            IEnumerable<Program> programs = await this.repository.GetDeveloperPrograms(developerName);
+            return null;
         }
 
         public ActionResult Contact()

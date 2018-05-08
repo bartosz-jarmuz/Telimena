@@ -1,5 +1,7 @@
 ﻿namespace Telimena.WebApp.Core.Interfaces
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Infrastructure.DTO;
     using Models;
@@ -20,5 +22,6 @@
         Task<ProgramUsage> IncrementProgramUsage(ProgramUsage usage);
         Task<UserInfo> GetUserInfoOrAddIfNotExists(UserInfoDto userInfoDto);
         Task<Program> GetProgramOrAddIfNotExists(ProgramInfoDto programDto);
+        Task<IEnumerable<Program>> GetDeveloperPrograms(string developerName);
     }
 }
