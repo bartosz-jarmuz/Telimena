@@ -24,7 +24,19 @@
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/font-awesome.css",
+                      "~/Content/Ionicons/css/ionicons.min.css",
+                      "~/admin-lte/css/AdminLTE.css",
+                      "~/admin-lte/css/skins/_all-skins.min.css",
+                      "~/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css"
+                ));
+
+            bundles.Add(new ScriptBundle("~/admin-lte/js").Include(
+                "~/admin-lte/js/adminlte.js",
+                "~/admin-lte/js/control-menu.js",
+                "~/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"
+                ));
         }
     }
 }

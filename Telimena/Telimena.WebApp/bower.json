@@ -1,0 +1,6 @@
+{
+  "name": "myproject",
+  "dependencies": {
+    "gentelella": "1.4.0"
+  }
+}
