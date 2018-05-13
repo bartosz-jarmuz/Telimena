@@ -9,8 +9,9 @@ namespace Telimena.WebApi.Controllers
     using System.Threading.Tasks;
     using WebApp.Core.Interfaces;
     using WebApp.Core.Models;
+    using WebApp.Infrastructure.Security;
 
-    [Authorize]
+    [TelimenaAuthorize]
     public class HomeController : Controller
     {
         private readonly ITelimenaRepository repository;

@@ -6,13 +6,14 @@
     using System.Web.Mvc;
     using Core.Interfaces;
     using Infrastructure.Identity;
+    using Infrastructure.Security;
     using log4net;
     using Microsoft.AspNet.Identity;
     using Microsoft.Owin.Security;
     using Models.Account;
     #endregion
 
-    [Authorize]
+    [TelimenaAuthorize]
     public class AccountController : Controller
     {
         public AccountController(IAuthenticationManager authManager, ITelimenaUserManager userManager, ILog logger)

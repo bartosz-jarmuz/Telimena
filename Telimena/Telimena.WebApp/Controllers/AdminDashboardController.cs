@@ -7,8 +7,9 @@ using System.Web.Mvc;
 namespace Telimena.WebApp.Controllers
 {
     using Core.Interfaces;
+    using Infrastructure.Security;
 
-    [Authorize(Roles = TelimenaRoles.Admin)]
+    [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class AdminDashboardController : Controller
     {
         // GET: AdminDashboard

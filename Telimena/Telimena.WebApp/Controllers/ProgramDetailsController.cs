@@ -3,8 +3,9 @@
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using WebApp.Core.Interfaces;
+    using WebApp.Infrastructure.Security;
 
-    [Authorize]
+    [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
 
     public class ProgramDetailsController : Controller
     {

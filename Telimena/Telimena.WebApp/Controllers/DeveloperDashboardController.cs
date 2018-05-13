@@ -9,14 +9,15 @@ namespace Telimena.WebApp.Controllers
     using Core.Interfaces;
     using Core.Models;
     using System.Threading.Tasks;
+    using Infrastructure.Security;
 
-    [Authorize(Roles = TelimenaRoles.Developer)]
+    [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class DeveloperDashboardController : Controller
     {
         // GET: DeveloperDashboard
         public ActionResult Index()
         {
-            return View();
+            return this.View();
         }
 
         public Task<ActionResult> DeveloperSummary(string developerName)
@@ -24,4 +25,6 @@ namespace Telimena.WebApp.Controllers
             return null;
         }
     }
+
+
 }

@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "AccessDenied";
+}
+
+<div class="error-page">
+    <h2 class="headline text-red">Access denied</h2>
+
+    <div class="error-content">
+        <h3><i class="fa fa-warning text-red"></i> Oops! You cannot access this page.</h3>
+        
+        <p>
+            This page requires the following permissions: @ViewBag.Roles
+        </p>
+
+        <p>
+            You may <a href="@Url.Action("Index", "Home")">return to dashboard</a> or try <a href="@Url.Action("Login", "Account")">logging in as different user</a>
+        </p>
+
+        
+    </div>
+</div>
+<!-- /.error-page -->
