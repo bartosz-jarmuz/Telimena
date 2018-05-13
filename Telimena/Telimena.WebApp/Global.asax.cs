@@ -9,11 +9,17 @@ using System.Web.Routing;
 
 namespace Telimena.WebApi
 {
+    using log4net;
+    using Microsoft.AspNet.Identity.Owin;
+    using Microsoft.Owin.Security;
     using Ninject;
     using Ninject.Modules;
+    using Ninject.Web.Common;
     using Ninject.Web.Common.WebHost;
     using WebApp;
+    using WebApp.Contracts;
     using WebApp.Core.Interfaces;
+    using WebApp.Infrastructure.Identity;
     using WebApp.Infrastructure.Repository;
 
     public class MvcApplication : NinjectHttpApplication
@@ -40,6 +46,10 @@ namespace Telimena.WebApi
         public override void Load()
         {
             this.Bind<ITelimenaRepository>().To<TelimenaRepository>();
+            this.Bind<ILog>().ToMethod(context =>
+                LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
+            this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();
+            this.Bind<ITelimenaUserManager>().ToMethod(c => HttpContext.Current.GetOwinContext().GetUserManager<TelimenaUserManager>()).InRequestScope();
         }
     }
 

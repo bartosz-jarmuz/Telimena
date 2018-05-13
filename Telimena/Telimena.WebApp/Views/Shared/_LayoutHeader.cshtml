@@ -1,7 +1,7 @@
 ﻿<header class="main-header">
 
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="@Url.Action("Index", "Home")" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <div class="logo-mini" style="line-height: 20px; font-size:14px; margin-top:5px"><b>T</b>E<b>L</b>I<br /><b>M</b><b>E</b>N<b>A</b></div>
         <!-- logo for regular state and mobile devices -->
@@ -120,20 +120,27 @@
                     <!-- Menu Toggle Button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                        <span class="hidden-xs">User Name</span>
+                        <span class="hidden-xs"> @User.Identity.Name</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- The user image in the menu -->
                         <li class="user-header">
                             <p>
-                                Alexander Pierce - Web Developer
-                                <small>Member since Nov. 2012</small>
+                                @User.Identity.Name
+                                <small></small>
                             </p>
                         </li>
                         <!-- Menu Footer-->
                         <li class="user-footer">
+                            <div class="pull-left">
+                                @Html.ActionLink("Change Password", "ChangePassword", "Account")
+                            </div>
                             <div class="pull-right">
-                                <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+        {
+                        @Html.AntiForgeryToken()
+}
+                                <a href="javascript:document.getElementById('logoutForm').submit()" id="logoffLink"><i class="fa fa-sign-out fa-fw"></i> Log out</a>
                             </div>
                         </li>
                     </ul>

@@ -1,0 +1,14 @@
+﻿@using Telimena.WebApp.Core.Interfaces
+@model Tuple<Telimena.WebApp.Infrastructure.Identity.TelimenaUser, string>
+
+@{
+    bool hasRole = Model.Item1.RoleNames.Contains(Model.Item2);
+    string buttonText = hasRole ? "Remove" : "Add";
+}
+<input type="checkbox" disabled @(hasRole ? "checked" : "")/>@Model.Item2
+                    
+@Ajax.ActionLink(buttonText, "ToggleRoleActivation", new { userId = Model.Item1.Id, activateRole = !hasRole, roleName = Model.Item2 }, new AjaxOptions()
+{
+    HttpMethod = "POST",
+    OnSuccess = "pageReload"
+})

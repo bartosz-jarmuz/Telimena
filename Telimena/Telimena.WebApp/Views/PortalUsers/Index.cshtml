@@ -1,0 +1,70 @@
+﻿@using Microsoft.AspNet.Identity
+@using Telimena.WebApp.Core.Interfaces
+@using Telimena.WebApp.Infrastructure.Identity
+@model Telimena.WebApp.Models.PortalUsers.PortalUsersViewModel
+@{
+    ViewBag.Title = "Portal users";
+}
+
+@section styles{
+    @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
+}
+
+<table width="100%" id="usersTable" class="table-condensed table table-striped table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Display Name</th>
+            <th>Email (Login)</th>
+            <th>Created Date</th>
+            <th>Last Login Date</th>
+            <th>Is Activated</th>
+            <th>Roles</th>
+            <th>Must change password</th>
+            <th>Id</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.DisplayName</td>
+                <td>@user.Email</td>
+                <td>@user.CreatedDate</td>
+                <td>@user.LastLoginDate</td>
+                <td>
+                    @user.IsActivated -
+                    @{
+                        var buttonText = user.IsActivated ? "Deactivate" : "Activate";
+                    }
+                    @Ajax.ActionLink(buttonText, "ToggleUserActivation", new { userId = user.Id, isActive = user.IsActivated }, new AjaxOptions()
+                    {
+                        HttpMethod = "POST",
+                        OnSuccess = "pageReload"
+                    })
+                </td>
+                <td>
+                    @Html.Partial("_RoleActivator", new Tuple<TelimenaUser, string>(user, TelimenaRoles.Admin)) <br/>
+                    @Html.Partial("_RoleActivator", new Tuple<TelimenaUser, string>(user, TelimenaRoles.Developer)) <br />
+                    @Html.Partial("_RoleActivator", new Tuple<TelimenaUser, string>(user, TelimenaRoles.Viewer))<br />
+                </td>
+                <td>@user.MustChangePassword</td>
+                <td>@user.Id</td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+@section scripts
+{
+    @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#usersTable').DataTable();
+        });
+        function pageReload() {
+            location.reload();
+        }
+    </script>
+
+}

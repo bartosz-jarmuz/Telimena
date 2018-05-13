@@ -6,31 +6,16 @@ using System.Threading.Tasks;
 
 namespace Telimena.WebApp.Infrastructure.Identity
 {
-    using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
-    using Microsoft.AspNet.Identity.Owin;
-    using Microsoft.Owin;
-    using WebApi;
 
     public class TelimenaUser : IdentityUser
     {
+        public DateTime CreatedDate { get; set; }
+        public DateTime? LastLoginDate { get; set; }
+        public string DisplayName { get; set; }
         public bool IsActivated { get; set; }
-    }
+        public bool MustChangePassword { get; set; }
 
-    public class TelimenaUserManager : UserManager<TelimenaUser>
-    {
-        public TelimenaUserManager(IUserStore<TelimenaUser> store)
-            : base(store)
-        {
-        }
-
-        public static TelimenaUserManager Create(
-            IdentityFactoryOptions<TelimenaUserManager> options, IOwinContext context)
-        {
-            var manager = new TelimenaUserManager(
-                new UserStore<TelimenaUser>(context.Get<TelimenaContext>()));
-
-            return manager;
-        }
+        public IList<string> RoleNames { get; set; } = new List<string>();
     }
 }

@@ -1,14 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FFD85253-874C-41CB-9242-9267BFA3647B}</ProjectGuid>
+    <ProjectGuid>9dd497f1-14e4-4a0f-a7c1-521170697c22</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Telimena.WebApp.Core</RootNamespace>
-    <AssemblyName>Telimena.WebApp.Core</AssemblyName>
+    <RootNamespace>Telimena.WebApp.Contracts</RootNamespace>
+    <AssemblyName>Telimena.WebApp.Contracts</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,30 +30,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System"/>
+    
+    <Reference Include="System.Core"/>
+    <Reference Include="System.Xml.Linq"/>
+    <Reference Include="System.Data.DataSetExtensions"/>
+    
+    
+    <Reference Include="Microsoft.CSharp"/>
+    
+    <Reference Include="System.Data"/>
+    
+    <Reference Include="System.Net.Http"/>
+    
+    <Reference Include="System.Xml"/>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTO\ProgramInfoDto.cs" />
-    <Compile Include="DTO\UserInfoDto.cs" />
-    <Compile Include="Interfaces\ITelimenaRepository.cs" />
-    <Compile Include="Interfaces\Roles.cs" />
-    <Compile Include="Models\AssemblyVersion.cs" />
-    <Compile Include="Models\Developer.cs" />
-    <Compile Include="Models\Function.cs" />
-    <Compile Include="Models\FunctionUsage.cs" />
-    <Compile Include="Models\Program.cs" />
-    <Compile Include="Models\ProgramAssembly.cs" />
-    <Compile Include="Models\ProgramUsage.cs" />
-    <Compile Include="Models\UsageData.cs" />
-    <Compile Include="Models\UserInfo.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-</Project>
+ </Project>

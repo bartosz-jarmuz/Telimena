@@ -1,20 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-
-namespace Telimena.WebApp.Controllers
+﻿namespace Telimena.WebApp.Controllers
 {
+    #region Using
+    using System;
     using System.Threading.Tasks;
+    using System.Web.Mvc;
+    using Core.Interfaces;
     using Infrastructure.Identity;
+    using log4net;
     using Microsoft.AspNet.Identity;
-    using Microsoft.AspNet.Identity.Owin;
     using Microsoft.Owin.Security;
     using Models.Account;
+    #endregion
 
+    [Authorize]
     public class AccountController : Controller
     {
+        public AccountController(IAuthenticationManager authManager, ITelimenaUserManager userManager, ILog logger)
+        {
+            this.logger = logger;
+            this.userManager = userManager;
+            this.authManager = authManager;
+        }
+
+        private readonly IAuthenticationManager authManager;
+        private readonly ILog logger;
+        private readonly ITelimenaUserManager userManager;
+
+        [HttpGet]
+        public ActionResult ChangePassword()
+        {
+            return this.View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                if (model.NewPasswordRepeated != model.NewPassword)
+                {
+                    this.ModelState.AddModelError("", "Provided new password does not match the repeated password");
+                }
+                else if (model.OldPassword == model.NewPassword)
+                {
+                    this.ModelState.AddModelError("", "New password must be different from the old one");
+                }
+                else
+                {
+                    TelimenaUser user = await this.userManager.FindAsync(this.User.Identity.Name, model.OldPassword);
+                    if (user != null)
+                    {
+                        var result = await this.userManager.ChangePasswordAsync(this.User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+                        if (result.Succeeded)
+                        {
+                            user.MustChangePassword = false;
+                            await this.userManager.UpdateAsync(user);
+                            model.IsSuccess = true;
+                            this.logger.Info($"[{this.User.Identity.Name}] password changed");
+                            return this.View(model);
+                        }
+                        else
+                        {
+                            foreach (var error in result.Errors)
+                            {
+                                this.ModelState.AddModelError("", error);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        this.ModelState.AddModelError("", "Incorrect current password provided");
+                    }
+                }
+            }
+
+            return this.View(model);
+        }
+
+        [AllowAnonymous]
+        public ActionResult ForgotPassword()
+        {
+            return null;
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public ActionResult Login()
@@ -25,27 +94,34 @@ namespace Telimena.WebApp.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (this.ModelState.IsValid)
             {
-                var userManager = this.HttpContext.GetOwinContext().GetUserManager<TelimenaUserManager>();
-                var authManager = this.HttpContext.GetOwinContext().Authentication;
+                this.logger.Info($"[{model.Email}] login attempt");
 
-                TelimenaUser user = userManager.Find(model.Email, model.Password);
+                TelimenaUser user = await this.userManager.FindAsync(model.Email, model.Password);
                 if (user != null)
                 {
                     if (user.IsActivated)
                     {
-
-                        var ident = userManager.CreateIdentity(user,
+                        this.logger.Info($"[{model.Email}] logged in.");
+                        user.LastLoginDate = DateTime.UtcNow;
+                        await this.userManager.UpdateAsync(user);
+                        var ident = await this.userManager.CreateIdentityAsync(user,
                             DefaultAuthenticationTypes.ApplicationCookie);
-                        authManager.SignIn(
+                        this.authManager.SignIn(
                             new AuthenticationProperties {IsPersistent = false}, ident);
+                        if (user.MustChangePassword)
+                        {
+                            return this.RedirectToAction("ChangePassword");
+                        }
+
                         return this.Redirect(returnUrl ?? this.Url.Action("Index", "Home"));
                     }
                     else
                     {
+                        this.logger.Info($"[{model.Email}] logged in but not activated");
                         return this.View("WaitForActivationInfo");
                     }
                 }
@@ -53,6 +129,18 @@ namespace Telimena.WebApp.Controllers
 
             this.ModelState.AddModelError("", "Invalid username or password");
             return this.View(model);
+        }
+
+        /// <summary>
+        ///     Logs the off.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
+        public ActionResult LogOff()
+        {
+            string username = this.User.Identity.Name;
+            this.authManager.SignOut();
+            this.logger.Info($"[{username}] logged out");
+            return this.RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -67,15 +155,26 @@ namespace Telimena.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
-                var user = new TelimenaUser { UserName = model.Email, Email = model.Email };
-                var userManager = this.HttpContext.GetOwinContext().GetUserManager<TelimenaUserManager>();
+                var user = new TelimenaUser {UserName = model.Email,
+                    Email = model.Email,
+                    DisplayName = model.Name,
+                    CreatedDate = DateTime.UtcNow
+                };
 
-                var result = await userManager.CreateAsync(user, model.Password);
+                var result = await this.userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    return View("WaitForActivationInfo");
+                    this.logger.Info($"[{model.Email}] user registered");
+
+                    var addedUser =  await this.userManager.FindByIdAsync(user.Id);
+                    var roleresult = await this.userManager.AddToRoleAsync(addedUser.Id, TelimenaRoles.Viewer);
+                    if (!roleresult.Succeeded)
+                    {
+                        this.logger.Error($"Failed to add user [{user.UserName}] to {TelimenaRoles.Viewer} role. {string.Join(", ", roleresult.Errors)}");
+                    }
+                    return this.View("WaitForActivationInfo");
                 }
                 else
                 {
@@ -91,14 +190,7 @@ namespace Telimena.WebApp.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return this.View(model);
         }
-
-        [AllowAnonymous]
-        public ActionResult ForgotPassword()
-        {
-            return null;
-        }
-
     }
 }
