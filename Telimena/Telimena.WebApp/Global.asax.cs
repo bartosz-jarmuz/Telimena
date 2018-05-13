@@ -17,7 +17,6 @@ namespace Telimena.WebApi
     using Ninject.Web.Common;
     using Ninject.Web.Common.WebHost;
     using WebApp;
-    using WebApp.Contracts;
     using WebApp.Core.Interfaces;
     using WebApp.Infrastructure.Identity;
     using WebApp.Infrastructure.Repository;

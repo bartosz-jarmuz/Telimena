@@ -22,20 +22,16 @@ namespace Telimena.WebApi.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            if (this.User.IsInRole(TelimenaRoles.Admin))
+            {
+                return this.RedirectToAction("Index", "AdminDashboard");
+            }
+            else
+            {
+                return this.RedirectToAction("Index", "DeveloperDashboard");
+            }
         }
 
-        public async Task<ActionResult> DeveloperSummary(string developerName)
-        {
-            IEnumerable<Program> programs = await this.repository.GetDeveloperPrograms(developerName);
-            return null;
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
+       
     }
 }
