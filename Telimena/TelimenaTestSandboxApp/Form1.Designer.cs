@@ -31,16 +31,18 @@
             this.apiUrlTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.functionNameTextBox = new System.Windows.Forms.TextBox();
             this.F = new System.Windows.Forms.Label();
             this.SendUpdateAppUsageButton = new System.Windows.Forms.Button();
             this.resultTextBox = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.functionNameTextBox = new System.Windows.Forms.TextBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.appNameTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // apiUrlTextBox
@@ -73,53 +75,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Update app usage";
             // 
-            // F
-            // 
-            this.F.AutoSize = true;
-            this.F.Location = new System.Drawing.Point(16, 22);
-            this.F.Name = "F";
-            this.F.Size = new System.Drawing.Size(77, 13);
-            this.F.TabIndex = 1;
-            this.F.Text = "Function name";
-            this.F.Click += new System.EventHandler(this.F_Click);
-            // 
-            // SendUpdateAppUsageButton
-            // 
-            this.SendUpdateAppUsageButton.Location = new System.Drawing.Point(237, 48);
-            this.SendUpdateAppUsageButton.Name = "SendUpdateAppUsageButton";
-            this.SendUpdateAppUsageButton.Size = new System.Drawing.Size(75, 23);
-            this.SendUpdateAppUsageButton.TabIndex = 0;
-            this.SendUpdateAppUsageButton.Text = "Send";
-            this.SendUpdateAppUsageButton.UseVisualStyleBackColor = true;
-            this.SendUpdateAppUsageButton.Click += new System.EventHandler(this.SendUpdateAppUsageButton_Click);
-            // 
-            // requestResulttextBox
-            // 
-            this.resultTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.resultTextBox.Enabled = false;
-            this.resultTextBox.Location = new System.Drawing.Point(3, 16);
-            this.resultTextBox.Multiline = true;
-            this.resultTextBox.Name = "resultTextBox";
-            this.resultTextBox.Size = new System.Drawing.Size(715, 171);
-            this.resultTextBox.TabIndex = 0;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.resultTextBox);
-            this.groupBox2.Location = new System.Drawing.Point(20, 248);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(721, 190);
-            this.groupBox2.TabIndex = 3;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Result";
-            // 
-            // functionNameTextBox
-            // 
-            this.functionNameTextBox.Location = new System.Drawing.Point(100, 22);
-            this.functionNameTextBox.Name = "functionNameTextBox";
-            this.functionNameTextBox.Size = new System.Drawing.Size(212, 20);
-            this.functionNameTextBox.TabIndex = 2;
-            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.textBox1);
@@ -140,11 +95,75 @@
             this.textBox1.Size = new System.Drawing.Size(294, 91);
             this.textBox1.TabIndex = 1;
             // 
+            // functionNameTextBox
+            // 
+            this.functionNameTextBox.Location = new System.Drawing.Point(100, 22);
+            this.functionNameTextBox.Name = "functionNameTextBox";
+            this.functionNameTextBox.Size = new System.Drawing.Size(212, 20);
+            this.functionNameTextBox.TabIndex = 2;
+            // 
+            // F
+            // 
+            this.F.AutoSize = true;
+            this.F.Location = new System.Drawing.Point(17, 25);
+            this.F.Name = "F";
+            this.F.Size = new System.Drawing.Size(77, 13);
+            this.F.TabIndex = 1;
+            this.F.Text = "Function name";
+            // 
+            // SendUpdateAppUsageButton
+            // 
+            this.SendUpdateAppUsageButton.Location = new System.Drawing.Point(237, 48);
+            this.SendUpdateAppUsageButton.Name = "SendUpdateAppUsageButton";
+            this.SendUpdateAppUsageButton.Size = new System.Drawing.Size(75, 23);
+            this.SendUpdateAppUsageButton.TabIndex = 0;
+            this.SendUpdateAppUsageButton.Text = "Send";
+            this.SendUpdateAppUsageButton.UseVisualStyleBackColor = true;
+            this.SendUpdateAppUsageButton.Click += new System.EventHandler(this.SendUpdateAppUsageButton_Click);
+            // 
+            // resultTextBox
+            // 
+            this.resultTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.resultTextBox.Enabled = false;
+            this.resultTextBox.Location = new System.Drawing.Point(3, 16);
+            this.resultTextBox.Multiline = true;
+            this.resultTextBox.Name = "resultTextBox";
+            this.resultTextBox.Size = new System.Drawing.Size(715, 171);
+            this.resultTextBox.TabIndex = 0;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.resultTextBox);
+            this.groupBox2.Location = new System.Drawing.Point(20, 248);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(721, 190);
+            this.groupBox2.TabIndex = 3;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Result";
+            // 
+            // appNameTextBox
+            // 
+            this.appNameTextBox.Location = new System.Drawing.Point(331, 9);
+            this.appNameTextBox.Name = "appNameTextBox";
+            this.appNameTextBox.Size = new System.Drawing.Size(212, 20);
+            this.appNameTextBox.TabIndex = 5;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(270, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(55, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "App name";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(753, 441);
+            this.Controls.Add(this.appNameTextBox);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
@@ -153,10 +172,10 @@
             this.Text = "Telimena sandbox";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -174,6 +193,8 @@
         private System.Windows.Forms.TextBox functionNameTextBox;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox appNameTextBox;
+        private System.Windows.Forms.Label label2;
     }
 }
 

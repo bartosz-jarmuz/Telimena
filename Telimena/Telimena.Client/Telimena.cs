@@ -9,6 +9,7 @@ namespace Telimena.Client
     using System.Diagnostics;
     using System.Net.Http;
     using System.Reflection;
+    using System.Runtime.CompilerServices;
     using System.Web.Script.Serialization;
 
     /// <summary>
@@ -17,13 +18,18 @@ namespace Telimena.Client
     /// </summary>
     public class Telimena : ITelimena
     {
-        public Telimena(string telemetryApiBaseUrl)
+        /// <summary>
+        /// Creates a new instance of Telimena Client
+        /// </summary>
+        /// <param name="telemetryApiBaseUrl">Leave default, unless you want to call different telemetry server</param>
+        /// <param name="mainAssembly">Leave null, unless you want to use different assembly as the main one for program name, version etc</param>
+        public Telimena(string telemetryApiBaseUrl = "http://localhost:7757/",
+                        Assembly mainAssembly = null)
         {
-            var assembly = Assembly.GetEntryAssembly()??Assembly.GetExecutingAssembly();
+            var assembly = mainAssembly??Assembly.GetEntryAssembly()??Assembly.GetExecutingAssembly();
             this.ProgramInfo = new ProgramInfo()
             {
                 MainAssembly = new AssemblyInfo(assembly),
-               
                 Name = assembly.GetName().Name,
                 Version = assembly.GetName().Version.ToString()
             };
@@ -40,12 +46,6 @@ namespace Telimena.Client
                 BaseAddress = new Uri(telemetryApiBaseUrl)
             };
         }
-
-        public Telimena() : this("http://localhost:7757/")
-        {
-            
-        }
-
 
 
         protected UserInfo UserInfo { get; }
@@ -75,7 +75,6 @@ namespace Telimena.Client
                 return "";
             }
         }
-
 
         private async Task<string> SendPostRequest(string requestUri, object objectToPost)
         {
@@ -111,7 +110,12 @@ namespace Telimena.Client
             return serializer.Deserialize<T>(stringContent);
         }
 
-        public async Task<StatisticsUpdateResponse> ReportUsage(string functionName)
+        /// <summary>
+        /// Report the usage of the application.
+        /// </summary>
+        /// <param name="functionName"></param>
+        /// <returns></returns>
+        public async Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null)
         {
             try
             {

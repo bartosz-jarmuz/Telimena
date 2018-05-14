@@ -20,10 +20,6 @@ namespace TelimenaTestSandboxApp
             InitializeComponent();
         }
 
-        private void F_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
         {
@@ -39,5 +35,7 @@ namespace TelimenaTestSandboxApp
                 MessageBox.Show(result.Exception.ToString());
             }
         }
+
+     
     }
 }
