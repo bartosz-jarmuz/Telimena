@@ -11,6 +11,11 @@
 
     public partial class TelimenaRepository : ITelimenaRepository
     {
+        internal TelimenaRepository()
+        {
+            this.DbContext = new TelimenaContext();
+        }
+
         public TelimenaRepository(TelimenaContext dbContext)
         {
             this.DbContext = dbContext;
@@ -42,7 +47,7 @@
             await this.DbContext.SaveChangesAsync();
         }
 
-        public async Task AddUserInfo(UserInfo objectToAdd)
+        public async Task AddUserInfo(ClientAppUser objectToAdd)
         {
             this.DbContext.UserInfos.Add(objectToAdd);
             await this.DbContext.SaveChangesAsync();

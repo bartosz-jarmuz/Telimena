@@ -1,6 +1,6 @@
 ﻿namespace Telimena.WebApp.Core.Models
 {
-    public class UserInfo
+    public class ClientAppUser
     {
         public int Id { get; set; }
         public string UserName { get; set; }

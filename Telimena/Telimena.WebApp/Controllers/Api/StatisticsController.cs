@@ -9,8 +9,6 @@
     using Client;
     using WebApp.Core.Interfaces;
     using WebApp.Core.Models;
-    using WebApp.Infrastructure.DTO;
-    using UserInfo = WebApp.Core.Models.UserInfo;
     #endregion
 
     public class StatisticsController : ApiController
@@ -22,16 +20,16 @@
 
         private readonly ITelimenaRepository repository;
 
+        [HttpPost]
         public async Task<StatisticsUpdateResponse> UpdateProgramStatistics(StatisticsUpdateRequest updateRequest)
         {
             if (this.IsRequestValid(updateRequest))
             {
                 try
                 {
-
-                    Program program = await this.repository.GetProgramOrAddIfNotExists(Mapper.Map<ProgramInfoDto>(updateRequest.ProgramInfo));
-                    UserInfo user = await this.repository.GetUserInfoOrAddIfNotExists(Mapper.Map<UserInfoDto>(updateRequest.UserInfo));
-                    var usageData = await this.UpdateUsageData(updateRequest, program, user);
+                    Program program = await this.repository.GetProgramOrAddIfNotExists(updateRequest.ProgramInfo);
+                    ClientAppUser clientAppUser = await this.repository.GetUserInfoOrAddIfNotExists(updateRequest.UserInfo);
+                    var usageData = await this.UpdateUsageData(updateRequest, program, clientAppUser);
                     return new StatisticsUpdateResponse()
                     {
                         Count = usageData.Count
@@ -39,20 +37,12 @@
                 }
                 catch (Exception ex)
                 {
-                    return new StatisticsUpdateResponse()
-                    {
-                        IsMessageSuccessful = false,
-                        Exception = ex
-                    };
+                    return new StatisticsUpdateResponse(ex);
                 }
             }
             else
             {
-                return new StatisticsUpdateResponse()
-                {
-                    IsMessageSuccessful = false,
-                    Exception = new BadRequestException("Request is not valid")
-                };
+                return new StatisticsUpdateResponse(new BadRequestException("Request is not valid"));
             }
         }
 
@@ -61,16 +51,16 @@
             return updateRequest != null;
         }
 
-        private async Task<UsageData> UpdateUsageData(StatisticsUpdateRequest updateRequest, Program program, UserInfo user)
+        private async Task<UsageData> UpdateUsageData(StatisticsUpdateRequest updateRequest, Program program, ClientAppUser clientAppUser)
         {
             if (!string.IsNullOrEmpty(updateRequest.FunctionName))
             {
-                var usageData = await this.repository.GetFunctionUsageOrAddIfNotExists(updateRequest.FunctionName, program, user);
+                var usageData = await this.repository.GetFunctionUsageOrAddIfNotExists(updateRequest.FunctionName, program, clientAppUser);
                 return await this.repository.IncrementFunctionUsage(usageData);
             }
             else
             {
-                var usageData = await this.repository.GetProgramUsageDataOrAddIfNotExists(program, user);
+                var usageData = await this.repository.GetProgramUsageDataOrAddIfNotExists(program, clientAppUser);
                 return await this.repository.IncrementProgramUsage(usageData);
             }
         }

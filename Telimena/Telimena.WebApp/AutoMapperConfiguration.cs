@@ -7,7 +7,6 @@ namespace Telimena.WebApp
 {
     using AutoMapper;
     using Client;
-    using Infrastructure.DTO;
     using Infrastructure.Repository;
     using WebApi.Controllers;
 
@@ -32,8 +31,6 @@ namespace Telimena.WebApp
     {
         public AutoMapperWebProfile()
         {
-            this.CreateMap<ProgramInfo, ProgramInfoDto>();
-            this.CreateMap<UserInfo, UserInfoDto >();
         }
     }
 }

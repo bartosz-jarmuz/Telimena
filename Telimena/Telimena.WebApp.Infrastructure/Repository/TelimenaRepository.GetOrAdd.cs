@@ -5,9 +5,9 @@
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Client;
     using Core.Interfaces;
     using Core.Models;
-    using DTO;
     using WebApi;
     #endregion
 
@@ -31,15 +31,15 @@
             return func;
         }
 
-        public async Task<FunctionUsage> GetFunctionUsageOrAddIfNotExists(string functionName, Program program, UserInfo user)
+        public async Task<FunctionUsage> GetFunctionUsageOrAddIfNotExists(string functionName, Program program, ClientAppUser clientAppUser)
         {
             var function = await this.GetFunctionOrAddIfNotExists(functionName, program);
-            var usageData = this.DbContext.FunctionUsages.FirstOrDefault(x => x.Function.Name == function.Name && x.UserInfo.UserName == user.UserName);
+            var usageData = this.DbContext.FunctionUsages.FirstOrDefault(x => x.Function.Name == function.Name && x.ClientAppUser.UserName == clientAppUser.UserName);
             if (usageData == null)
             {
                 usageData = new FunctionUsage()
                 {
-                    UserInfo = user,
+                    ClientAppUser = clientAppUser,
                     Function = function,
                     FunctionId = function.Id
                 };
@@ -64,7 +64,7 @@
             return program;
         }
 
-        public async Task<Program> GetProgramOrAddIfNotExists(ProgramInfoDto programDto)
+        public async Task<Program> GetProgramOrAddIfNotExists(ProgramInfo programDto)
         {
             var program = this.DbContext.Programs.FirstOrDefault(x => x.Name == programDto.Name);
             if (program == null)
@@ -76,12 +76,12 @@
             return program;
         }
 
-        public async Task<UserInfo> GetUserInfoOrAddIfNotExists(UserInfoDto userDto)
+        public async Task<ClientAppUser> GetUserInfoOrAddIfNotExists(UserInfo userDto)
         {
             var user = this.DbContext.UserInfos.FirstOrDefault(x => x.UserName == userDto.UserName);
             if (user == null)
             {
-                user = Mapper.Map<UserInfo>(userDto);
+                user = Mapper.Map<ClientAppUser>(userDto);
                 await this.AddUserInfo(user);
             }
 
@@ -89,15 +89,15 @@
         }
 
 
-        public async Task<ProgramUsage> GetProgramUsageDataOrAddIfNotExists(Program program, UserInfo user)
+        public async Task<ProgramUsage> GetProgramUsageDataOrAddIfNotExists(Program program, ClientAppUser clientAppUser)
         {
-            var usageData = this.DbContext.ProgramUsages.FirstOrDefault(x => x.Program.Name == program.Name && x.UserInfo.UserName == user.UserName);
+            var usageData = this.DbContext.ProgramUsages.FirstOrDefault(x => x.Program.Name == program.Name && x.ClientAppUser.UserName == clientAppUser.UserName);
             if (usageData == null)
             {
                 usageData = new ProgramUsage()
                 {
                     Program = program,
-                    UserInfo = user,
+                    ClientAppUser = clientAppUser,
                 };
                 await this.AddProgramUsage(usageData);
             }
@@ -105,12 +105,12 @@
             return usageData;
         }
 
-        public async Task<UserInfo> GetUserInfoOrAddIfNotExists(string userName)
+        public async Task<ClientAppUser> GetUserInfoOrAddIfNotExists(string userName)
         {
             var user = this.DbContext.UserInfos.FirstOrDefault(x => x.UserName == userName);
             if (user == null)
             {
-                user = new UserInfo()
+                user = new ClientAppUser()
                 {
                     UserName = userName
                 };

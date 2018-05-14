@@ -22,6 +22,6 @@ namespace Telimena.WebApi
         public DbSet<Function> Functions { get; set; }
         public DbSet<ProgramUsage> ProgramUsages { get; set; }
         public DbSet<FunctionUsage> FunctionUsages { get; set; }
-        public DbSet<UserInfo> UserInfos { get; set; }
+        public DbSet<ClientAppUser> UserInfos { get; set; }
     }
 }

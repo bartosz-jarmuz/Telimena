@@ -1,11 +1,11 @@
 ﻿namespace Telimena.Client
 {
-    using System.Reflection;
+    using System.Diagnostics;
 
     public class ProgramInfo
     {
-        public Assembly MainAssembly { get; internal set; }
-        public string Name { get; internal set; }
-        public string Version { get; internal set; }
+        public AssemblyInfo MainAssembly { get;  set; }
+        public string Name { get;  set; }
+        public string Version { get;  set; }
     }
 }

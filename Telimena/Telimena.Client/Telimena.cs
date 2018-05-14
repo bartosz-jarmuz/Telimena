@@ -9,23 +9,21 @@ namespace Telimena.Client
     using System.Diagnostics;
     using System.Net.Http;
     using System.Reflection;
+    using System.Web.Script.Serialization;
 
-    public interface ITelimena
-    {
-        Task ReportUsage(string functionName);
-        UpdateResponse CheckForUpdates();
-        RegistrationResponse RegisterClient();
-        Task Initialize();
-    }
-
+    /// <summary>
+    /// Telemetry and Lifecycle Management Engine App
+    /// <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
+    /// </summary>
     public class Telimena : ITelimena
     {
-        public Telimena()
+        public Telimena(string telemetryApiBaseUrl)
         {
-            var assembly = Assembly.GetEntryAssembly();
+            var assembly = Assembly.GetEntryAssembly()??Assembly.GetExecutingAssembly();
             this.ProgramInfo = new ProgramInfo()
             {
-                MainAssembly = assembly,
+                MainAssembly = new AssemblyInfo(assembly),
+               
                 Name = assembly.GetName().Name,
                 Version = assembly.GetName().Version.ToString()
             };
@@ -39,9 +37,16 @@ namespace Telimena.Client
 
             this.HttpClient = new HttpClient()
             {
-                BaseAddress = new Uri(this.DefaultApiAddress)
+                BaseAddress = new Uri(telemetryApiBaseUrl)
             };
         }
+
+        public Telimena() : this("http://localhost:7757/")
+        {
+            
+        }
+
+
 
         protected UserInfo UserInfo { get; }
         protected ProgramInfo ProgramInfo { get; }
@@ -49,8 +54,6 @@ namespace Telimena.Client
         public bool SuppressAllErrors { get; set; } = true;
   
         protected string TelimenaVersion { get;  }
-
-        private readonly string DefaultApiAddress = "";
 
         private HttpClient HttpClient { get; } 
 
@@ -74,9 +77,62 @@ namespace Telimena.Client
         }
 
 
-        public Task ReportUsage(string functionName)
+        private async Task<string> SendPostRequest(string requestUri, object objectToPost)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                string jsonObject = this.Serialize(objectToPost);
+                StringContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await this.HttpClient.PostAsync(requestUri, content);
+                string responseContent = await response.Content.ReadAsStringAsync();
+                return responseContent;
+            }
+            catch (Exception)
+            {
+                if (!this.SuppressAllErrors)
+                {
+                    throw;
+                }
+
+                return "";
+            }
+        }
+
+        private string Serialize(object objectToPost)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string jsonObject = serializer.Serialize(objectToPost);
+            return jsonObject;
+        }
+
+        private T Deserialize<T>(string stringContent)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            return serializer.Deserialize<T>(stringContent);
+        }
+
+        public async Task<StatisticsUpdateResponse> ReportUsage(string functionName)
+        {
+            try
+            {
+                var request = new StatisticsUpdateRequest()
+                {
+                    FunctionName = functionName,
+                    ProgramInfo = this.ProgramInfo,
+                    TelimenaVersion = this.TelimenaVersion,
+                    UserInfo = this.UserInfo
+                };
+                var responseContent = await this.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request);
+                 return this.Deserialize<StatisticsUpdateResponse>(responseContent);
+            }
+            catch (Exception ex)
+            {
+                if (!this.SuppressAllErrors)
+                {
+                    throw;
+                }
+                return new StatisticsUpdateResponse(ex);
+            }
         }
 
         public UpdateResponse CheckForUpdates()

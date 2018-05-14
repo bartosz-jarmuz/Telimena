@@ -21,7 +21,7 @@ namespace Telimena.Tests
             var request = new StatisticsUpdateRequest();
             request.ProgramInfo = new ProgramInfo()
             {
-                MainAssembly = Assembly.GetExecutingAssembly(),
+                MainAssembly = new AssemblyInfo(Assembly.GetExecutingAssembly()),
                 Name = "TestProgram" + Guid.NewGuid(),
                 Version = "1.0.0.0"
             };

@@ -16,6 +16,7 @@ namespace Telimena.WebApi
     using Ninject.Modules;
     using Ninject.Web.Common;
     using Ninject.Web.Common.WebHost;
+    using Ninject.Web.WebApi;
     using WebApp;
     using WebApp.Core.Interfaces;
     using WebApp.Infrastructure.Identity;
@@ -30,12 +31,15 @@ namespace Telimena.WebApi
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            AutoMapperConfiguration.Configure();
         }
 
         protected override IKernel CreateKernel()
         {
             var kernel = new StandardKernel();
             kernel.Load(new ServiceModule());
+            GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
+            return kernel;
             return kernel;
         }
     }

@@ -31,10 +31,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
@@ -54,8 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\PortalSummaryData.cs" />
-    <Compile Include="DTO\ProgramInfoDto.cs" />
-    <Compile Include="DTO\UserInfoDto.cs" />
     <Compile Include="Interfaces\ITelimenaRepository.cs" />
     <Compile Include="Interfaces\Roles.cs" />
     <Compile Include="Models\AssemblyVersion.cs" />
@@ -67,12 +65,18 @@
     <Compile Include="Models\ProgramUsage.cs" />
     <Compile Include="Models\TelimenaUser.cs" />
     <Compile Include="Models\UsageData.cs" />
-    <Compile Include="Models\UserInfo.cs" />
+    <Compile Include="Models\ClientAppUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
+      <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
+      <Name>Telimena.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

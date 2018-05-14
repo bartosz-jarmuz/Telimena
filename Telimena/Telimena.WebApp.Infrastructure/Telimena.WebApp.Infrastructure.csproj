@@ -120,6 +120,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
+      <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
+      <Name>Telimena.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Telimena.WebApp.Core\Telimena.WebApp.Core.csproj">
       <Project>{ffd85253-874c-41cb-9242-9267bfa3647b}</Project>
       <Name>Telimena.WebApp.Core</Name>

@@ -27,7 +27,6 @@
             this.userManager = userManager;
         }
 
-        private readonly IAuthenticationManager authManager;
         private readonly ILog logger;
         private readonly ITelimenaUserManager userManager;
         private ITelimenaRepository repository;

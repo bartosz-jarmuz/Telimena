@@ -6,16 +6,16 @@ using System.Web;
 namespace Telimena.WebApp
 {
     using AutoMapper;
+    using Client;
     using Core.Models;
-    using Infrastructure.DTO;
 
 
     public class AutoMapperDomainProfile : Profile
     {
         public AutoMapperDomainProfile()
         {
-            this.CreateMap<UserInfoDto, UserInfo>().ForMember(x=>x.Id, o=>o.Ignore());
-            this.CreateMap<ProgramInfoDto, Program>().
+            this.CreateMap<UserInfo, ClientAppUser>().ForMember(x=>x.Id, o=>o.Ignore());
+            this.CreateMap<ProgramInfo, Program>().
                 ForMember(x=>x.Assemblies, o=>o.Ignore()).
                 ForMember(x=>x.Developer, o=>o.Ignore()).
                 ForMember(x=>x.DeveloperId, o=>o.Ignore()).
