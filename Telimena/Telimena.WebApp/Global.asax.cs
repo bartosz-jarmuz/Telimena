@@ -49,6 +49,7 @@ namespace Telimena.WebApi
                 LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
             this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();
             this.Bind<ITelimenaUserManager>().ToMethod(c => HttpContext.Current.GetOwinContext().GetUserManager<TelimenaUserManager>()).InRequestScope();
+            this.Bind<TelimenaContext>().ToSelf().InRequestScope();
         }
     }
 

@@ -3,6 +3,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using DTO;
     using Infrastructure.DTO;
     using Models;
 
@@ -23,5 +24,6 @@
         Task<UserInfo> GetUserInfoOrAddIfNotExists(UserInfoDto userInfoDto);
         Task<Program> GetProgramOrAddIfNotExists(ProgramInfoDto programDto);
         Task<IEnumerable<Program>> GetDeveloperPrograms(string developerName);
+        Task<PortalSummaryData> GetPortalSummary();
     }
 }

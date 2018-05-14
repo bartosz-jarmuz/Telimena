@@ -105,7 +105,7 @@
   <ItemGroup>
     <Compile Include="AutoMapperDomainProfile.cs" />
     <Compile Include="Database\TelimenaDbContext.cs" />
-    <Compile Include="Identity\TelimenaUser.cs" />
+    <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
     <Compile Include="Repository\TelimenaRepository.Get.cs" />
     <Compile Include="Repository\TelimenaRepository.Update.cs" />

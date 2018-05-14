@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNet.Identity
 @using Telimena.WebApp.Core.Interfaces
+@using Telimena.WebApp.Core.Models
 @using Telimena.WebApp.Infrastructure.Identity
 @model Telimena.WebApp.Models.PortalUsers.PortalUsersViewModel
 @{
@@ -13,6 +14,7 @@
 <table width="100%" id="usersTable" class="table-condensed table table-striped table-bordered table-hover">
     <thead>
         <tr>
+            <th>Number</th>
             <th>Display Name</th>
             <th>Email (Login)</th>
             <th>Created Date</th>
@@ -27,6 +29,7 @@
         @foreach (var user in Model.Users)
         {
             <tr>
+                <td>@user.UserNumber</td>
                 <td>@user.DisplayName</td>
                 <td>@user.Email</td>
                 <td>@user.CreatedDate</td>

@@ -1,5 +1,17 @@
 ﻿<ul class="sidebar-menu" data-widget="tree">
     <li class="header">ADMIN</li>
+    <li class="treeview menu-open">
+        <a href="#">
+            <i class="fa fa-link"></i> <span>Dashboards</span>
+            <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+            </span>
+        </a>
+        <ul class="treeview-menu" style="display: block;">
+            <li><a href="@Url.Action("Portal", "AdminDashboard")"><i class="fa fa-dashboard"></i> <span>Portal Dashboard</span></a></li>
+            <li><a href="@Url.Action("Apps", "AdminDashboard")"><i class="fa fa-line-chart"></i> <span>Apps Dashboard</span></a></li>
+        </ul>
+    </li>
     <li><a href="@Url.Action("Index", "PortalUsers")"><i class="fa fa-users"></i> <span>Portal Users</span></a></li>
     <li><a href="#"><i class="fa fa-file-code-o"></i> <span>Logs</span></a></li>
 </ul>

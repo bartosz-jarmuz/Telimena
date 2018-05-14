@@ -5,6 +5,7 @@ using System.Web;
 
 namespace Telimena.WebApp.Models.PortalUsers
 {
+    using Core.Models;
     using Infrastructure.Identity;
 
     public class PortalUsersViewModel

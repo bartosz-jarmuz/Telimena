@@ -1,8 +1,59 @@
-﻿<h3>Please contact the administator. Your account has to be activated before you can use the portal.</h3>
-<p>
-    @Html.ActionLink("Login page", "Login")
-</p>
-@* Enable this once you have account confirmation enabled for password reset functionality *@
-<p>
-    @Html.ActionLink("Forgot your password?", "ForgotPassword")
-</p>
+﻿@model Telimena.WebApp.Models.Account.LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+    Layout = null;
+}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Telimena</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <div>
+            <div class="login-logo">
+                <b>T</b>E<b>L</b>I<b>M</b><b>E</b>N<b>A</b>
+            </div>
+            <p class="center-block text-center"><b>T</b>elemetry and <b>L</b>ifecycle <b>M</b>anagement <b>E</b>ngine <b>A</b>pp</p>
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <p class="login-box-msg">Contact the system administrator</p>
+            <p class="login-box-msg">Your account needs to be activated, before you can use the system.</p>
+
+            @Html.ActionLink("Forgot your password?", "ForgotPassword")
+            <br>
+            @Html.ActionLink("Go to log in page", "Login", null, new { @class = "text-center" })
+
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+
+
+
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/admin-lte/js")
+    <script>
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' /* optional */
+        });
+    });
+    </script>
+</body>
+</html>

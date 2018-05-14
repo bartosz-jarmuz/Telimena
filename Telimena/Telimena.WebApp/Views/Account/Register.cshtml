@@ -1,52 +1,89 @@
 ﻿@model Telimena.WebApp.Models.Account.RegisterViewModel
 @{
     ViewBag.Title = "Register";
+    Layout = null;
 }
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Telimena</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
 
-<h2>Register</h2>
-<div class="row">
-    <div class="col-md-8">
-        <section id="loginForm">
-            @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+
+<body class="hold-transition register-page">
+   
+    <div class="register-box">
+        <div>
+            <div class="login-logo">
+                <b>T</b>E<b>L</b>I<b>M</b><b>E</b>N<b>A</b>
+            </div>
+            <p class="center-block text-center"><b>T</b>elemetry and <b>L</b>ifecycle <b>M</b>anagement <b>E</b>ngine <b>A</b>pp</p>
+        </div>
+
+        <div class="register-box-body">
+            <p class="login-box-msg">Register a new membership</p>
+
+            @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form"}))
             {
                 @Html.AntiForgeryToken()
-                <h4>Create a developer-user account.</h4>
-                <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                <div class="form-group has-feedback">
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Display Name" })
                         @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
-                    </div>
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
                 </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                    </div>
+                <div class="form-group has-feedback">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email (used as login)" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                 </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                    </div>
+                <div class="form-group has-feedback">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                 </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Register" class="btn btn-default" />
-                    </div>
+                <div class="form-group has-feedback">
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm password" })
+                    @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                 </div>
-                <p>
-                    @Html.ActionLink("Login page", "Login")
-                </p>
-                @* Enable this once you have account confirmation enabled for password reset functionality *@
-                <p>
-                    @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                </p>
+                <div class="row">
+                    <!-- /.col -->
+                    <div class="col-xs-4">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
             }
-        </section>
+
+            <a href="@Url.Action("Login")" class="text-center">I already have an account</a>
+        </div>
+        <!-- /.form-box -->
     </div>
-</div>
+
+
+
+
+
+@Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/admin-lte/js")
+    <script>
+    $(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' /* optional */
+        });
+    });
+    </script>
+</body>
+</html>

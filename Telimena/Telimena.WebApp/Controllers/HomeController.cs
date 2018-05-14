@@ -14,18 +14,16 @@ namespace Telimena.WebApi.Controllers
     [TelimenaAuthorize]
     public class HomeController : Controller
     {
-        private readonly ITelimenaRepository repository;
 
-        public HomeController(ITelimenaRepository repository)
+        public HomeController()
         {
-            this.repository = repository;
         }
 
         public ActionResult Index()
         {
             if (this.User.IsInRole(TelimenaRoles.Admin))
             {
-                return this.RedirectToAction("Index", "AdminDashboard");
+                return this.RedirectToAction("Portal", "AdminDashboard");
             }
             else
             {

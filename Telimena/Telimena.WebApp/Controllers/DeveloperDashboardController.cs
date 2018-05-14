@@ -20,7 +20,7 @@ namespace Telimena.WebApp.Controllers
             return this.View();
         }
 
-        public Task<ActionResult> DeveloperSummary(string developerName)
+        public Task<ActionResult> DeveloperSummary()
         {
             return null;
         }

@@ -5,6 +5,8 @@
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using Core.Interfaces;
+    using Core.Models;
+    using DotNetLittleHelpers;
     using Infrastructure.Identity;
     using Infrastructure.Security;
     using log4net;
@@ -82,7 +84,7 @@
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
-            return null;
+            return Content("<label class=\"warning\">Contact the administrator</label>");
         }
 
         [HttpGet]
@@ -158,6 +160,11 @@
         {
             if (this.ModelState.IsValid)
             {
+                if (!this.ValidateEmailAndPassword(model))
+                {
+                    return this.View(model);
+                }
+
                 var user = new TelimenaUser {UserName = model.Email,
                     Email = model.Email,
                     DisplayName = model.Name,
@@ -192,6 +199,25 @@
 
             // If we got this far, something failed, redisplay form
             return this.View(model);
+        }
+
+        private bool ValidateEmailAndPassword(RegisterViewModel model)
+        {
+            bool valid = true;
+            if (!model.Email.IsValidEmail())
+            {
+                this.ModelState.AddModelError("", "The provided email seems invalid");
+                valid = false;
+            }
+
+            if (model.ConfirmPassword != model.Password)
+            {
+                this.ModelState.AddModelError("", "Provided new password does not match the repeated password");
+                valid = false;
+
+            }
+
+            return valid;
         }
     }
 }

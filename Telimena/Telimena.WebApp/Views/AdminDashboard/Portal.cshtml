@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewBag.Title = "Admin Dashboard";
+}
+
+<section class="content-header">
+    <h1>
+        Admin Dashboard
+        <small>Telimena Portal summary</small>
+    </h1>
+</section>
+<section class="content portal-summary" data-url="@Url.Action("GetPortalSummary")">
+    <div class="box box-default col-md-12">
+        <div class="box-header">
+            <h3 class="box-title">Loading</h3>
+        </div>
+        <div class="box-body">
+            Summary incomming...
+        </div>
+        <div class="overlay">
+            <i class="fa fa-refresh fa-spin"></i>
+        </div>
+    </div>
+</section>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var url = $(".portal-summary").data("url");
+            $(".portal-summary").load(url);
+        });
+    </script>
+
+}

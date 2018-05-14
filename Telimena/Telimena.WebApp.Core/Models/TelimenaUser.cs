@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Telimena.WebApp.Infrastructure.Identity
+﻿namespace Telimena.WebApp.Core.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
     using Microsoft.AspNet.Identity.EntityFramework;
 
     public class TelimenaUser : IdentityUser
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int UserNumber { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
         public string DisplayName { get; set; }

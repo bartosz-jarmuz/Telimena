@@ -8,6 +8,7 @@
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using Core.Interfaces;
+    using Core.Models;
     using Infrastructure.Identity;
     using log4net;
     using Microsoft.AspNet.Identity;

@@ -49,6 +49,9 @@
     <Reference Include="AutoMapper, Version=6.2.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.6.2.2\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetLittleHelpers, Version=1.0.17.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetLittleHelpers.1.0.17\lib\net461\DotNetLittleHelpers.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -222,7 +225,9 @@
     <Compile Include="Models\Account\LoginViewModel.cs" />
     <Compile Include="Models\Account\ChangePasswordViewModel.cs" />
     <Compile Include="Models\Account\RegisterViewModel.cs" />
+    <Compile Include="Models\AdminDashboard\AdminDashboardViewModel.cs" />
     <Compile Include="Models\PortalUsers\PortalUsersViewModel.cs" />
+    <Compile Include="Models\Shared\SmallBoxViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1877,9 +1882,14 @@
     <Content Include="Views\Shared\_AdminLeftSideBar.cshtml" />
     <Content Include="Views\PortalUsers\Index.cshtml" />
     <Content Include="Views\PortalUsers\_RoleActivator.cshtml" />
-    <Content Include="Views\AdminDashboard\Index.cshtml" />
+    <Content Include="Views\AdminDashboard\Portal.cshtml" />
     <Content Include="Views\DeveloperDashboard\Index.cshtml" />
     <Content Include="Views\Error\AccessDenied.cshtml" />
+    <Content Include="Views\Shared\_DeveloperLeftSideBar.cshtml" />
+    <Content Include="Views\AdminDashboard\_PortalSummaryBoxes.cshtml" />
+    <Content Include="Views\AdminDashboard\_AllProgramsSummaryBoxes.cshtml" />
+    <Content Include="Views\AdminDashboard\_SmallBox.cshtml" />
+    <Content Include="Views\AdminDashboard\Apps.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

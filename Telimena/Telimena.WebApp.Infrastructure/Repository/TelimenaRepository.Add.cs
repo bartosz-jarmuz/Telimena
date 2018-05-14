@@ -11,13 +11,18 @@
 
     public partial class TelimenaRepository : ITelimenaRepository
     {
-        protected readonly TelimenaContext DbContext = new TelimenaContext();
+        public TelimenaRepository(TelimenaContext dbContext)
+        {
+            this.DbContext = dbContext;
+        }
 
         public async Task AddFunction(Function objectToAdd)
         {
             this.DbContext.Functions.Add(objectToAdd);
             await this.DbContext.SaveChangesAsync();
         }
+
+        public TelimenaContext DbContext { get; }
 
         public async Task AddFunctionUsage(FunctionUsage objectToAdd)
         {

@@ -1,0 +1,14 @@
+﻿@using Telimena.WebApp.Models.Shared
+@model Telimena.WebApp.Core.DTO.PortalSummaryData
+<!-- Small boxes (Stat box) -->
+<div class="row">
+    <!-- ./col -->
+    @Html.Partial("_SmallBox", new SmallBoxViewModel() { BackgroundColorClass = "bg-yellow", MoreInfoUrl = @Url.Action("Index", "PortalUsers"), IconClass = "ion ion-ios-people", Label = "Total Portal Users", Value = @Model.TotalUsersCount.ToString() })
+
+    @Html.Partial("_SmallBox", new SmallBoxViewModel() { BackgroundColorClass = "bg-aqua", MoreInfoUrl = @Url.Action("Index", "PortalUsers"), IconClass = "ion ion-clock", Label = "Users active in last 24hrs", Value = Model.UsersActiveInLast24Hrs.ToString() })
+
+    @Html.Partial("_SmallBox", new SmallBoxViewModel() { BackgroundColorClass = "bg-green", MoreInfoUrl = @Url.Action("Index", "PortalUsers"), IconClass = "ion ion-android-person-add", Label = "Newest user", Value = Model.NewestUser?.DisplayName, SecondaryLabel = Model.NewestUser?.Email })
+    
+    @Html.Partial("_SmallBox", new SmallBoxViewModel() { BackgroundColorClass = "bg-red", MoreInfoUrl = @Url.Action("Index", "PortalUsers"), IconClass = "ion ion-person", Label = "Last active user", Value = Model.LastActiveUser?.DisplayName, SecondaryLabel = Model.LastActiveUser?.Email })
+
+</div>
