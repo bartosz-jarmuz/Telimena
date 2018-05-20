@@ -7,6 +7,7 @@ namespace Telimena.WebApp
 {
     using AutoMapper;
     using Client;
+    using Infrastructure;
     using Infrastructure.Repository;
     using WebApi.Controllers;
 

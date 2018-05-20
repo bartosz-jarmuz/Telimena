@@ -1,6 +1,11 @@
-﻿
+﻿@using DotNetLittleHelpers
+@using Telimena.WebApp.Core.Models
+
 @{
     ViewBag.Title = "Admin Dashboard";
+}
+@section styles{
+    @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
 }
 
 <section class="content-header">
@@ -9,6 +14,61 @@
         <small>All programs summary</small>
     </h1>
 </section>
-<section class="content">
-    @Html.Partial("_AllProgramsSummaryBoxes")
+<section class="content apps-summary" data-url="@Url.Action("GetAllProgramsSummaryCounts")">
+    <div class="box box-default col-md-12">
+        <div class="box-header">
+            <h3 class="box-title">Loading</h3>
+        </div>
+        <div class="box-body">
+            Summary incomming...
+        </div>
+        <div class="overlay">
+            <i class="fa fa-refresh fa-spin"></i>
+        </div>
+    </div>
 </section>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">All programs report</h3>
+            </div>
+            <div class="box-body">
+                <table id="allProgramsReport" class="table table-bordered table-hover" data-url="@Url.Action("GetAllPrograms")">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Registered date</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $(".apps-summary").load($(".apps-summary").data("url"));
+
+            $('#allProgramsReport').DataTable({
+                serverSide: true,
+                "ajax": "@Url.Action("GetAllPrograms")",
+                "columns": [
+                    { "data": "@nameof(Program.Id).ToLowerFirstChar()" },
+                    { "data": "@nameof(Program.Name).ToLowerFirstChar()" },
+                    { "data": "@nameof(Program.Description).ToLowerFirstChar()"  },
+                    { "data": "@nameof(Program.RegisteredDate).ToLowerFirstChar()"  },
+                ]
+            });
+        });
+</script>
+
+}

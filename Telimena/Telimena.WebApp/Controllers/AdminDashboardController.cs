@@ -6,8 +6,13 @@ using System.Web.Mvc;
 
 namespace Telimena.WebApp.Controllers
 {
+    using System.Data.Entity;
     using System.Threading.Tasks;
     using Core.Interfaces;
+    using Core.Models;
+    using DataTables.AspNet.Core;
+    using DataTables.AspNet.Mvc5;
+    using Infrastructure.Repository;
     using Infrastructure.Security;
     using log4net;
 
@@ -15,18 +20,33 @@ namespace Telimena.WebApp.Controllers
     public class AdminDashboardController : Controller
     {
         private readonly ILog logger;
-        private readonly ITelimenaRepository repository;
+        private readonly IAdminDashboardUnitOfWork unitOfWork;
 
-        public AdminDashboardController(ILog logger, ITelimenaRepository repository)
+        public AdminDashboardController(ILog logger, IAdminDashboardUnitOfWork unitOfWork)
         {
             this.logger = logger;
-            this.repository = repository;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task<ActionResult> GetPortalSummary()
         {
-            var summary = await this.repository.GetPortalSummary();
+            var summary = await this.unitOfWork.GetPortalSummary();
             return this.PartialView("_PortalSummaryBoxes", summary);
+        }
+
+        public async Task<ActionResult> GetAllProgramsSummaryCounts()
+        {
+            var summary = await this.unitOfWork.GetAllProgramsSummaryCounts();
+            return this.PartialView("_AllProgramsSummaryBoxes", summary);
+        }
+
+        public async Task<ActionResult> GetAllPrograms(IDataTablesRequest request)
+        {
+            IEnumerable<Program> summary = await this.unitOfWork.GetPrograms().OrderBy(x=>x.Id).Skip(request.Start).Take(request.Length).ToListAsync();
+
+            var response = DataTablesResponse.Create(request, summary.Count(), summary.Count(), summary);
+
+            return new DataTablesJsonResult(response);
         }
 
         public ActionResult Portal()

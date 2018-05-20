@@ -1,13 +1,12 @@
-﻿namespace Telimena.WebApi
+﻿namespace Telimena.WebApp.Infrastructure.Database
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Core.Interfaces;
+    using Core.Models;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
-    using WebApp.Core.Interfaces;
-    using WebApp.Core.Models;
-    using WebApp.Infrastructure.Identity;
 
     public class TelimenaDbInitializer : System.Data.Entity.DropCreateDatabaseIfModelChanges<TelimenaContext>
     {

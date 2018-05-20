@@ -19,8 +19,11 @@ namespace Telimena.WebApi
     using Ninject.Web.WebApi;
     using WebApp;
     using WebApp.Core.Interfaces;
+    using WebApp.Infrastructure.Database;
     using WebApp.Infrastructure.Identity;
     using WebApp.Infrastructure.Repository;
+    using WebApp.Infrastructure.UnitOfWork;
+    using WebApp.Infrastructure.UnitOfWork.Implementation;
 
     public class MvcApplication : NinjectHttpApplication
     {
@@ -32,6 +35,7 @@ namespace Telimena.WebApi
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AutoMapperConfiguration.Configure();
+            DataTables.AspNet.Mvc5.Configuration.RegisterDataTables();
         }
 
         protected override IKernel CreateKernel()
@@ -40,7 +44,6 @@ namespace Telimena.WebApi
             kernel.Load(new ServiceModule());
             GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
             return kernel;
-            return kernel;
         }
     }
 
@@ -48,7 +51,8 @@ namespace Telimena.WebApi
     {
         public override void Load()
         {
-            this.Bind<ITelimenaRepository>().To<TelimenaRepository>();
+            this.Bind<IStatisticsUnitOfWork>().To<StatisticsUnitOfWork>();
+            this.Bind<IAdminDashboardUnitOfWork>().To<AdminDashboardUnitOfWork>();
             this.Bind<ILog>().ToMethod(context =>
                 LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
             this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Web;
-
-namespace Telimena.WebApi
+﻿namespace Telimena.WebApp.Infrastructure.Database
 {
+    using System;
     using System.Data.Entity;
+    using Core.Models;
     using Microsoft.AspNet.Identity.EntityFramework;
-    using WebApp.Core.Models;
-    using WebApp.Infrastructure.Identity;
 
     public class TelimenaContext : IdentityDbContext<TelimenaUser>
     {
@@ -22,6 +18,6 @@ namespace Telimena.WebApi
         public DbSet<Function> Functions { get; set; }
         public DbSet<ProgramUsage> ProgramUsages { get; set; }
         public DbSet<FunctionUsage> FunctionUsages { get; set; }
-        public DbSet<ClientAppUser> UserInfos { get; set; }
+        public DbSet<ClientAppUser> AppUsers { get; set; }
     }
 }

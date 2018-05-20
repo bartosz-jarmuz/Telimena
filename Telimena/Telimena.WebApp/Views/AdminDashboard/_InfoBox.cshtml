@@ -1,0 +1,19 @@
+﻿@model Telimena.WebApp.Models.Shared.BoxViewModel
+<div class="col-lg-3 col-xs-6">
+
+<div class="info-box @Model.BackgroundColorClass">
+    <span class="info-box-icon"><i class="fa @Model.IconClass"></i></span>
+
+    <div class="info-box-content">
+        <span class="info-box-text">@Model.Label</span>
+        <span class="info-box-number">@Model.Value</span>
+
+        <div class="progress">
+            <div class="progress-bar" ></div>
+        </div>
+        <span class="progress-description">
+           @Model.SecondaryLabel
+        </span>
+    </div>
+</div>
+</div>

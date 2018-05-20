@@ -1,5 +1,6 @@
 ﻿namespace Telimena.WebApp.Core.Models
 {
+    using System;
     using System.Collections.Generic;
 
     public class Program
@@ -10,5 +11,6 @@
         public virtual Developer Developer { get; set; }
         public int? DeveloperId { get; set; }
         public virtual ICollection<ProgramAssembly> Assemblies { get; set; }
+        public DateTime RegisteredDate { get; set; }
     }
 }

@@ -2,23 +2,44 @@
 {
     #region Using
     using System;
+    using System.Collections.Generic;
     using System.IdentityModel;
+    using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Http;
     using AutoMapper;
     using Client;
     using WebApp.Core.Interfaces;
     using WebApp.Core.Models;
+    using WebApp.Infrastructure.UnitOfWork;
     #endregion
 
     public class StatisticsController : ApiController
     {
-        public StatisticsController(ITelimenaRepository repository)
+        public StatisticsController(IStatisticsUnitOfWork unitOfWork)
         {
-            this.repository = repository;
+            this.unitOfWork = unitOfWork;
         }
 
-        private readonly ITelimenaRepository repository;
+        private readonly IStatisticsUnitOfWork unitOfWork;
+
+        public async Task<Function> GetFunctionOrAddIfNotExists(string functionName, Program program)
+        {
+            Function func = (await this.unitOfWork.FunctionRepository.FindAsync(x => x.Name == functionName && x.Program.Name == program.Name)).FirstOrDefault();
+            if (func == null)
+            {
+                func = new Function()
+                {
+                    Name = functionName,
+                    Program = program,
+                    ProgramId = program.Id
+                };
+                this.unitOfWork.FunctionRepository.Add(func);
+            }
+
+            await this.unitOfWork.CompleteAsync();
+            return func;
+        }
 
         [HttpPost]
         public async Task<StatisticsUpdateResponse> UpdateProgramStatistics(StatisticsUpdateRequest updateRequest)
@@ -27,8 +48,8 @@
             {
                 try
                 {
-                    Program program = await this.repository.GetProgramOrAddIfNotExists(updateRequest.ProgramInfo);
-                    ClientAppUser clientAppUser = await this.repository.GetUserInfoOrAddIfNotExists(updateRequest.UserInfo);
+                    Program program = await this.unitOfWork.GetProgramOrAddIfNotExists(updateRequest.ProgramInfo);
+                    ClientAppUser clientAppUser = await this.unitOfWork.GetUserInfoOrAddIfNotExists(updateRequest.UserInfo);
                     var usageData = await this.UpdateUsageData(updateRequest, program, clientAppUser);
                     return new StatisticsUpdateResponse()
                     {
@@ -55,13 +76,13 @@
         {
             if (!string.IsNullOrEmpty(updateRequest.FunctionName))
             {
-                var usageData = await this.repository.GetFunctionUsageOrAddIfNotExists(updateRequest.FunctionName, program, clientAppUser);
-                return await this.repository.IncrementFunctionUsage(usageData);
+                var usageData = await this.unitOfWork.GetFunctionUsageOrAddIfNotExists(updateRequest.FunctionName, program, clientAppUser);
+                return await this.unitOfWork.IncrementFunctionUsage(usageData);
             }
             else
             {
-                var usageData = await this.repository.GetProgramUsageDataOrAddIfNotExists(program, clientAppUser);
-                return await this.repository.IncrementProgramUsage(usageData);
+                var usageData = await this.unitOfWork.GetProgramUsageDataOrAddIfNotExists(program, clientAppUser);
+                return await this.unitOfWork.IncrementProgramUsage(usageData);
             }
         }
     }

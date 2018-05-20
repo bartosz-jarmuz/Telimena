@@ -1,5 +1,6 @@
 ﻿namespace Telimena.WebApp
 {
+    using Infrastructure.Database;
     using Infrastructure.Identity;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;

@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Telimena.WebApp.Models.Shared
 {
-    public class SmallBoxViewModel
+    public class BoxViewModel
     {
         public string MoreInfoUrl { get; set; }
         public string BackgroundColorClass { get; set; }

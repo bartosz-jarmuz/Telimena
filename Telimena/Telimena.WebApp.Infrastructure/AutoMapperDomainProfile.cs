@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Telimena.WebApp
+﻿namespace Telimena.WebApp.Infrastructure
 {
     using AutoMapper;
     using Client;
     using Core.Models;
-
 
     public class AutoMapperDomainProfile : Profile
     {

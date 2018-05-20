@@ -8,12 +8,12 @@
     using Client;
     using Core.Interfaces;
     using Core.Models;
-    using WebApi;
+    using Database;
     #endregion
 
-    public partial class TelimenaRepository : ITelimenaRepository
+    public partial class CleverNoGoRepo
     {
-       
+        private TelimenaContext DbContext;
         public async Task<Function> GetFunctionOrAddIfNotExists(string functionName, Program program)
         {
             var func = this.DbContext.Functions.FirstOrDefault(x => x.Name == functionName && x.Program.Name == program.Name);
@@ -78,7 +78,7 @@
 
         public async Task<ClientAppUser> GetUserInfoOrAddIfNotExists(UserInfo userDto)
         {
-            var user = this.DbContext.UserInfos.FirstOrDefault(x => x.UserName == userDto.UserName);
+            var user = this.DbContext.AppUsers.FirstOrDefault(x => x.UserName == userDto.UserName);
             if (user == null)
             {
                 user = Mapper.Map<ClientAppUser>(userDto);
@@ -107,7 +107,7 @@
 
         public async Task<ClientAppUser> GetUserInfoOrAddIfNotExists(string userName)
         {
-            var user = this.DbContext.UserInfos.FirstOrDefault(x => x.UserName == userName);
+            var user = this.DbContext.AppUsers.FirstOrDefault(x => x.UserName == userName);
             if (user == null)
             {
                 user = new ClientAppUser()

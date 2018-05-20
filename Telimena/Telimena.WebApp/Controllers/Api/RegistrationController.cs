@@ -7,6 +7,7 @@ using System.Web.Mvc;
 namespace Telimena.WebApi.Controllers
 {
     using System.Web.Http;
+    using WebApp.Infrastructure.Database;
 
     public class RegistrationController : ApiController
     {
