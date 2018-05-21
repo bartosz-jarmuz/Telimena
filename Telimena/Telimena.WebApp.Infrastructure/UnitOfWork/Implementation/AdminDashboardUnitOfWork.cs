@@ -11,6 +11,7 @@
     using Core.Interfaces;
     using Core.Models;
     using Database;
+    using Implementation;
     #endregion
 
     public class AdminDashboardUnitOfWork : IAdminDashboardUnitOfWork
@@ -20,7 +21,10 @@
         public AdminDashboardUnitOfWork(TelimenaContext telimenaContext)
         {
             this.telimenaContext = telimenaContext;
+            this.Programs = new ProgramRepository(this.telimenaContext);
         }
+
+        public IProgramRepository Programs { get; }
 
         public async Task<PortalSummaryData> GetPortalSummary()
         {

@@ -9,12 +9,10 @@
 
     public class ProgramDetailsController : Controller
     {
-        public ProgramDetailsController(ITelimenaRepository repository)
+        public ProgramDetailsController()
         {
-            this.repository = repository;
         }
 
-        private readonly ITelimenaRepository repository;
 
         [HttpGet]
         public async Task<ActionResult> Index()

@@ -16,6 +16,12 @@
             this.DbContext = dbContext;
         }
 
+        public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return this.DbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+
+        }
+
         public virtual void Add(TEntity entity)
         {
             this.DbContext.Set<TEntity>().Add(entity);
@@ -24,6 +30,11 @@
         public virtual void CountAsync()
         {
             this.DbContext.Set<TEntity>().CountAsync();
+        }
+
+        public Task<List<TEntity>> GetAllAsync()
+        {
+            return this.DbContext.Set<TEntity>().ToListAsync();
         }
 
         public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)

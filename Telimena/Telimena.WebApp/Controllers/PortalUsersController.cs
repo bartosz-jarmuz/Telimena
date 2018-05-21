@@ -20,16 +20,14 @@
     [Authorize(Roles = TelimenaRoles.Admin)]
     public class PortalUsersController : Controller
     {
-        public PortalUsersController(ITelimenaRepository repository, ILog logger, ITelimenaUserManager userManager)
+        public PortalUsersController(ILog logger, ITelimenaUserManager userManager)
         {
-            this.repository = repository;
             this.logger = logger;
             this.userManager = userManager;
         }
 
         private readonly ILog logger;
         private readonly ITelimenaUserManager userManager;
-        private ITelimenaRepository repository;
 
         [HttpGet]
         public async Task<ActionResult> Index()

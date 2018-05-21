@@ -12,9 +12,9 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
     {
         IClientAppUserRepository ClientAppUserRepository { get; }
 
-        IProgramRepository ProgramRepository { get;  }
+        IProgramRepository Programs { get;  }
 
-        IFunctionRepository FunctionRepository { get; }
+        IFunctionRepository Functions { get; }
 
         Task CompleteAsync();
     }

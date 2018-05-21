@@ -11,6 +11,7 @@ namespace Telimena.Tests
     using NUnit.Framework;
     using WebApi.Controllers;
     using WebApp.Infrastructure.Repository;
+    using WebApp.Infrastructure.UnitOfWork.Implementation;
 
     [TestFixture]
     public class StatisticsControllerTests
@@ -31,13 +32,13 @@ namespace Telimena.Tests
                 UserName = "TestUser"
             };
 
-             var repo = new TelimenaRepository();
+             var work = new StatisticsUnitOfWork();
 
-            var sut = new StatisticsController(repo);
+            var sut = new StatisticsController(work);
            var response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
             Assert.AreEqual(1, response.Count);
             Assert.IsTrue(response.IsMessageSuccessful);
-            sut = new StatisticsController(repo);
+            sut = new StatisticsController(work);
             response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
              Assert.AreEqual(2, response.Count);
              Assert.IsTrue(response.IsMessageSuccessful);

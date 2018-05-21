@@ -16,16 +16,16 @@
 
     public class StatisticsController : ApiController
     {
-        public StatisticsController(IStatisticsUnitOfWork unitOfWork)
+        public StatisticsController(IStatisticsUnitOfWork work)
         {
-            this.unitOfWork = unitOfWork;
+            this.work = work;
         }
 
-        private readonly IStatisticsUnitOfWork unitOfWork;
+        private readonly IStatisticsUnitOfWork work;
 
         public async Task<Function> GetFunctionOrAddIfNotExists(string functionName, Program program)
         {
-            Function func = (await this.unitOfWork.FunctionRepository.FindAsync(x => x.Name == functionName && x.Program.Name == program.Name)).FirstOrDefault();
+            Function func = (await this.work.Functions.FindAsync(x => x.Name == functionName && x.Program.Name == program.Name)).FirstOrDefault();
             if (func == null)
             {
                 func = new Function()
@@ -34,10 +34,10 @@
                     Program = program,
                     ProgramId = program.Id
                 };
-                this.unitOfWork.FunctionRepository.Add(func);
+                this.work.Functions.Add(func);
             }
 
-            await this.unitOfWork.CompleteAsync();
+            await this.work.CompleteAsync();
             return func;
         }
 
@@ -48,8 +48,8 @@
             {
                 try
                 {
-                    Program program = await this.unitOfWork.GetProgramOrAddIfNotExists(updateRequest.ProgramInfo);
-                    ClientAppUser clientAppUser = await this.unitOfWork.GetUserInfoOrAddIfNotExists(updateRequest.UserInfo);
+                    Program program = this.work.Programs.GetProgramOrAddIfNotExists(updateRequest.ProgramInfo);
+                    ClientAppUser clientAppUser = this.work.ClientAppUserRepository.GetUserInfoOrAddIfNotExists(updateRequest.UserInfo);
                     var usageData = await this.UpdateUsageData(updateRequest, program, clientAppUser);
                     return new StatisticsUpdateResponse()
                     {
@@ -74,16 +74,18 @@
 
         private async Task<UsageData> UpdateUsageData(StatisticsUpdateRequest updateRequest, Program program, ClientAppUser clientAppUser)
         {
+            UsageData usageData;
             if (!string.IsNullOrEmpty(updateRequest.FunctionName))
             {
-                var usageData = await this.unitOfWork.GetFunctionUsageOrAddIfNotExists(updateRequest.FunctionName, program, clientAppUser);
-                return await this.unitOfWork.IncrementFunctionUsage(usageData);
+                usageData = this.work.Functions.GetFunctionUsageOrAddIfNotExists(updateRequest.FunctionName, program, clientAppUser);
             }
             else
             {
-                var usageData = await this.unitOfWork.GetProgramUsageDataOrAddIfNotExists(program, clientAppUser);
-                return await this.unitOfWork.IncrementProgramUsage(usageData);
+                usageData = this.work.Programs.GetProgramUsageDataOrAddIfNotExists(program, clientAppUser);
             }
+            usageData.IncrementUsage();
+            await this.work.CompleteAsync();
+            return usageData;
         }
     }
 }

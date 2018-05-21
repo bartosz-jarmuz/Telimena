@@ -60,7 +60,11 @@
 
             $('#allProgramsReport').DataTable({
                 serverSide: true,
-                "ajax": "@Url.Action("GetAllPrograms")",
+
+                "ajax": {
+                    url: "@Url.Action("GetAllPrograms")",
+                    method: "post"
+                },
                 "columns": [
                     { "data": "@nameof(Program.Id).ToLowerFirstChar()" },
                     { "data": "@nameof(Program.Name).ToLowerFirstChar()" },

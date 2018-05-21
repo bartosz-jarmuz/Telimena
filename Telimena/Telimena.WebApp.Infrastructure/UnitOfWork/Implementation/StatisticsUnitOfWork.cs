@@ -9,17 +9,21 @@
     {
         private readonly TelimenaContext context;
 
+        internal StatisticsUnitOfWork() : this(new TelimenaContext())
+        {
+        }
+
         public StatisticsUnitOfWork(TelimenaContext context)
         {
             this.context = context;
             this.ClientAppUserRepository = new ClientAppUserRepository(context);
-            this.FunctionRepository= new FunctionRepository(context);
-            this.ProgramRepository= new ProgramRepository(context);
+            this.Functions= new FunctionRepository(context);
+            this.Programs= new ProgramRepository(context);
         }
 
         public IClientAppUserRepository ClientAppUserRepository { get; }
-        public IProgramRepository ProgramRepository { get; }
-        public IFunctionRepository FunctionRepository { get; }
+        public IProgramRepository Programs { get; }
+        public IFunctionRepository Functions { get; }
         public async Task CompleteAsync()
         {
             await this.context.SaveChangesAsync();

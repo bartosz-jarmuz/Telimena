@@ -5,6 +5,7 @@
 
     public interface IAdminDashboardUnitOfWork
     {
+        IProgramRepository Programs { get; }
         Task<PortalSummaryData> GetPortalSummary();
         Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts();
     }

@@ -40,9 +40,10 @@ namespace Telimena.WebApp.Controllers
             return this.PartialView("_AllProgramsSummaryBoxes", summary);
         }
 
+        [HttpPost]
         public async Task<ActionResult> GetAllPrograms(IDataTablesRequest request)
         {
-            IEnumerable<Program> summary = await this.unitOfWork.GetPrograms().OrderBy(x=>x.Id).Skip(request.Start).Take(request.Length).ToListAsync();
+            IEnumerable<Program> summary = await this.unitOfWork.Programs.GetAllAsync();
 
             var response = DataTablesResponse.Create(request, summary.Count(), summary.Count(), summary);
 
