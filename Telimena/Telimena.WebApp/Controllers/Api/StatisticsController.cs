@@ -2,15 +2,13 @@
 {
     #region Using
     using System;
-    using System.Collections.Generic;
     using System.IdentityModel;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Http;
-    using AutoMapper;
     using Client;
-    using WebApp.Core.Interfaces;
     using WebApp.Core.Models;
+    using WebApp.Infrastructure;
     using WebApp.Infrastructure.UnitOfWork;
     #endregion
 
@@ -23,69 +21,92 @@
 
         private readonly IStatisticsUnitOfWork work;
 
-        public async Task<Function> GetFunctionOrAddIfNotExists(string functionName, Program program)
-        {
-            Function func = (await this.work.Functions.FindAsync(x => x.Name == functionName && x.Program.Name == program.Name)).FirstOrDefault();
-            if (func == null)
-            {
-                func = new Function()
-                {
-                    Name = functionName,
-                    Program = program,
-                    ProgramId = program.Id
-                };
-                this.work.Functions.Add(func);
-            }
-
-            await this.work.CompleteAsync();
-            return func;
-        }
-
         [HttpPost]
-        public async Task<StatisticsUpdateResponse> UpdateProgramStatistics(StatisticsUpdateRequest updateRequest)
+        public async Task<RegistrationResponse> RegisterClient(RegistrationRequest updateRequest)
         {
-            if (this.IsRequestValid(updateRequest))
+            if (ApiRequestsValidator.IsRequestValid(updateRequest))
             {
                 try
                 {
                     Program program = this.work.Programs.GetProgramOrAddIfNotExists(updateRequest.ProgramInfo);
                     ClientAppUser clientAppUser = this.work.ClientAppUserRepository.GetUserInfoOrAddIfNotExists(updateRequest.UserInfo);
-                    var usageData = await this.UpdateUsageData(updateRequest, program, clientAppUser);
-                    return new StatisticsUpdateResponse()
+                    UsageData usageData = await this.UpdateUsageData(program, clientAppUser);
+                    return new RegistrationResponse()
                     {
-                        Count = usageData.Count
+                        Count = usageData.Count,
+                        ProgramId = program.Id,
+                        UserId = clientAppUser.Id,
                     };
                 }
                 catch (Exception ex)
                 {
-                    return new StatisticsUpdateResponse(ex);
+                    return new RegistrationResponse()
+                    {
+                        Error = ex
+                    };
                 }
             }
             else
             {
-                return new StatisticsUpdateResponse(new BadRequestException("Request is not valid"));
+                return new RegistrationResponse()
+                {
+                    Error = new BadRequestException("Request is not valid")
+                };
             }
         }
 
-        private bool IsRequestValid(StatisticsUpdateRequest updateRequest)
+        [HttpPost]
+        public async Task<StatisticsUpdateResponse> UpdateProgramStatistics(StatisticsUpdateRequest updateRequest)
         {
-            return updateRequest != null;
-        }
-
-        private async Task<UsageData> UpdateUsageData(StatisticsUpdateRequest updateRequest, Program program, ClientAppUser clientAppUser)
-        {
-            UsageData usageData;
-            if (!string.IsNullOrEmpty(updateRequest.FunctionName))
+            if (ApiRequestsValidator.IsRequestValid(updateRequest))
             {
-                usageData = this.work.Functions.GetFunctionUsageOrAddIfNotExists(updateRequest.FunctionName, program, clientAppUser);
+                try
+                {
+                    Program program = this.work.Programs.Get(updateRequest.ProgramId);
+                    ClientAppUser clientAppUser = this.work.ClientAppUserRepository.Get(updateRequest.UserId);
+                    UsageData usageData = await this.UpdateUsageData(program, clientAppUser, updateRequest.FunctionName);
+                    return new StatisticsUpdateResponse()
+                    {
+                        Count = usageData.Count,
+                        ProgramId = program.Id,
+                        UserId = clientAppUser.Id,
+                        FunctionName = updateRequest.FunctionName
+                    };
+                }
+                catch (Exception ex)
+                {
+                    return new StatisticsUpdateResponse()
+                    {
+                        Error = ex
+                    };
+                }
             }
             else
             {
-                usageData = this.work.Programs.GetProgramUsageDataOrAddIfNotExists(program, clientAppUser);
+                return new StatisticsUpdateResponse()
+                {
+                    Error = new BadRequestException("Request is not valid")
+                };
             }
+        }
+
+        private async Task<UsageData> UpdateUsageData(Program program, ClientAppUser clientAppUser, string functionName = null)
+        {
+            UsageData usageData;
+            if (!string.IsNullOrEmpty(functionName))
+            {
+                usageData = this.work.Functions.GetFunctionUsageOrAddIfNotExists(functionName, program, clientAppUser);
+            }
+            else
+            {
+                usageData = this.work.Programs.GetProgramUsageOrAddIfNotExists(program, clientAppUser);
+            }
+
             usageData.IncrementUsage();
             await this.work.CompleteAsync();
             return usageData;
         }
     }
+
+    
 }

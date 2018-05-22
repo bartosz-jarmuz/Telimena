@@ -1,6 +1,7 @@
 ﻿namespace Telimena.WebApp
 {
     using System.Web.Http;
+    using Newtonsoft.Json;
 
     public static class WebApiConfig
     {
@@ -9,10 +10,10 @@
             // Web API configuration and services
             // Web API routes
             config.MapHttpAttributeRoutes();
-
+            config.Formatters.JsonFormatter.SerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
+                routeTemplate: "api/{controller}/{action}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
         }

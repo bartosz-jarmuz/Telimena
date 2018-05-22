@@ -224,7 +224,6 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\PortalUsersController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\Api\RegistrationController.cs" />
     <Compile Include="Controllers\Api\StatisticsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProgramDetailsController.cs" />

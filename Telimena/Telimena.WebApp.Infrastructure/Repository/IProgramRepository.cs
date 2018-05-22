@@ -10,6 +10,6 @@
         IEnumerable<Program> GetProgramsByDeveloperName(string developerName);
         Program GetProgramOrAddIfNotExists(string programName);
         Program GetProgramOrAddIfNotExists(ProgramInfo programDto);
-        ProgramUsage GetProgramUsageDataOrAddIfNotExists(Program program, ClientAppUser clientAppUser);
+        ProgramUsage GetProgramUsageOrAddIfNotExists(Program program, ClientAppUser clientAppUser);
     }
 }

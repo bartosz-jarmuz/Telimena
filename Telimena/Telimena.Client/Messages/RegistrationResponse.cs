@@ -2,10 +2,11 @@
 {
     using System;
 
-    public class StatisticsUpdateRequest 
+    public class RegistrationResponse : TelimenaResponseBase
     {
+
         public int UserId { get; set; }
         public int ProgramId { get; set; }
-        public string FunctionName { get; set; }
+        public int Count { get; set; }
     }
 }

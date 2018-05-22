@@ -62,7 +62,7 @@
             return program;
         }
 
-        public ProgramUsage GetProgramUsageDataOrAddIfNotExists(Program program, ClientAppUser clientAppUser)
+        public ProgramUsage GetProgramUsageOrAddIfNotExists(Program program, ClientAppUser clientAppUser)
         {
             var usageData = this.TelimenaContext.ProgramUsages.FirstOrDefault(x => x.Program.Name == program.Name && x.ClientAppUser.UserName == clientAppUser.UserName);
             if (usageData == null)

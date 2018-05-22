@@ -4,7 +4,7 @@
 
     public abstract class TelimenaResponseBase
     {
-        public bool IsMessageSuccessful { get;  set; } = true;
-        public Exception Exception { get; set; }
+        public Exception Error { get; set; }
     }
+
 }

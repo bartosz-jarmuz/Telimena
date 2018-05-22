@@ -103,6 +103,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiRequestsValidator.cs" />
     <Compile Include="AutoMapperDomainProfile.cs" />
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Identity\Extensions.cs" />

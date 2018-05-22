@@ -1,21 +1,18 @@
 ﻿namespace Telimena.Client
 {
+    #region Using
+    using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    #endregion
 
     /// <summary>
-    /// Telemetry and Lifecycle Management Engine App
-    /// <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
+    ///     Telemetry and Lifecycle Management Engine App
+    ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
     /// </summary>
     public interface ITelimena
     {
-        Task<StatisticsUpdateResponse> ReportUsage(string functionName);
-        UpdateResponse CheckForUpdates();
-        RegistrationResponse RegisterClient();
-        Task Initialize();
-    }
-
-    internal static class ApiRoutes
-    {
-        public const string UpdateProgramStatistics = "api/Statistics/UpdateProgramStatistics";
+        Task<UpdateResponse> CheckForUpdates();
+        Task<RegistrationResponse> Initialize();
+        Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null);
     }
 }
