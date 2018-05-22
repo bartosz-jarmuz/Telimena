@@ -45,6 +45,7 @@
             {
                 BaseAddress = new Uri(telemetryApiBaseUrl)
             };
+            this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
         }
     }
 }

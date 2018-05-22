@@ -2,10 +2,8 @@
 {
     #region Using
     using System;
-    using System.Net.Http;
     using System.Reflection;
     using System.Runtime.CompilerServices;
-    using System.Text;
     using System.Threading.Tasks;
     #endregion
 
@@ -43,7 +41,7 @@
                     UserId = this.UserId,
                     FunctionName = functionName
                 };
-                string responseContent = await this.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request);
+                string responseContent = await Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request);
                 return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
             }
             catch (Exception ex)
@@ -74,7 +72,7 @@
                     TelimenaVersion = this.TelimenaVersion,
                     UserInfo = this.UserInfo
                 };
-                string responseContent = await this.SendPostRequest(ApiRoutes.RegisterClient, request);
+                string responseContent = await Messenger.SendPostRequest(ApiRoutes.RegisterClient, request);
                 RegistrationResponse response = this.Serializer.Deserialize<RegistrationResponse>(responseContent);
                 this.UserId = response.UserId;
                 this.ProgramId = response.ProgramId;
@@ -103,25 +101,5 @@
             }
         }
 
-        private async Task<string> SendPostRequest(string requestUri, object objectToPost)
-        {
-            try
-            {
-                string jsonObject = this.Serializer.Serialize(objectToPost);
-                StringContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await this.HttpClient.PostAsync(requestUri, content);
-                string responseContent = await response.Content.ReadAsStringAsync();
-                return responseContent;
-            }
-            catch (Exception)
-            {
-                if (!this.SuppressAllErrors)
-                {
-                    throw;
-                }
-
-                return "";
-            }
-        }
     }
 }

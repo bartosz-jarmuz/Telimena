@@ -43,7 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRoutes.cs" />
-    <Compile Include="ITelimena.cs" />
+    <Compile Include="Messenger\IMessenger.cs" />
+    <Compile Include="TelimenaClient\ITelimena.cs" />
+    <Compile Include="Messenger\Messenger.cs" />
     <Compile Include="Serializer\ITelimenaSerializer.cs" />
     <Compile Include="Messages\RegistrationRequest.cs" />
     <Compile Include="Messages\RegistrationResponse.cs" />
@@ -51,9 +53,9 @@
     <Compile Include="Messages\StatisticsUpdateResponse.cs" />
     <Compile Include="Model\AssemblyInfo.cs" />
     <Compile Include="Serializer\NullPropertiesConverter.cs" />
-    <Compile Include="Telimena.Constructor.cs" />
-    <Compile Include="Telimena.Properties.cs" />
-    <Compile Include="Telimena.cs" />
+    <Compile Include="TelimenaClient\Telimena.Constructor.cs" />
+    <Compile Include="TelimenaClient\Telimena.Properties.cs" />
+    <Compile Include="TelimenaClient\Telimena.cs" />
     <Compile Include="Model\ProgramInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Messages\TelimenaMessageBase.cs" />

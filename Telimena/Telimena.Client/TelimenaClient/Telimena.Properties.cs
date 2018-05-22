@@ -15,16 +15,9 @@
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        /// <summary>
-        ///     Creates a new instance of Telimena Client
-        /// </summary>
-        /// <param name="telemetryApiBaseUrl">Leave default, unless you want to call different telemetry server</param>
-        /// <param name="mainAssembly">
-        ///     Leave null, unless you want to use different assembly as the main one for program name,
-        ///     version etc
-        /// </param>
         private bool IsInitialized { get; set; }
         internal ITelimenaSerializer Serializer { get; set; } = new TelimenaSerializer();
+        internal IMessenger Messenger { get; set; }
         protected UserInfo UserInfo { get; }
         protected ProgramInfo ProgramInfo { get; }
         protected int ProgramId { get; set; }
