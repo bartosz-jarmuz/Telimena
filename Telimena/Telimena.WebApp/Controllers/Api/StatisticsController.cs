@@ -29,8 +29,9 @@
                 try
                 {
                     Program program = this.work.Programs.GetProgramOrAddIfNotExists(updateRequest.ProgramInfo);
-                    ClientAppUser clientAppUser = this.work.ClientAppUserRepository.GetUserInfoOrAddIfNotExists(updateRequest.UserInfo);
+                    ClientAppUser clientAppUser = this.work.ClientAppUsers.GetUserInfoOrAddIfNotExists(updateRequest.UserInfo);
                     UsageData usageData = await this.UpdateUsageData(program, clientAppUser);
+                    await this.work.CompleteAsync();
                     return new RegistrationResponse()
                     {
                         Count = usageData.Count,
@@ -63,8 +64,9 @@
                 try
                 {
                     Program program = this.work.Programs.Get(updateRequest.ProgramId);
-                    ClientAppUser clientAppUser = this.work.ClientAppUserRepository.Get(updateRequest.UserId);
-                    UsageData usageData = await this.UpdateUsageData(program, clientAppUser, updateRequest.FunctionName);
+                    ClientAppUser clientAppUser = this.work.ClientAppUsers.Get(updateRequest.UserId);
+                    UsageData usageData = this.UpdateUsageData(program, clientAppUser, updateRequest.FunctionName);
+                    await this.work.CompleteAsync();
                     return new StatisticsUpdateResponse()
                     {
                         Count = usageData.Count,
@@ -90,7 +92,7 @@
             }
         }
 
-        private async Task<UsageData> UpdateUsageData(Program program, ClientAppUser clientAppUser, string functionName = null)
+        private UsageData UpdateUsageData(Program program, ClientAppUser clientAppUser, string functionName = null)
         {
             UsageData usageData;
             if (!string.IsNullOrEmpty(functionName))
@@ -103,7 +105,6 @@
             }
 
             usageData.IncrementUsage();
-            await this.work.CompleteAsync();
             return usageData;
         }
     }
