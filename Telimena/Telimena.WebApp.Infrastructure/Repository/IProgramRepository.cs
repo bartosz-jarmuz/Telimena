@@ -6,10 +6,8 @@
 
     public interface IProgramRepository : IRepository<Program>
     {
-        void AddProgramUsage(ProgramUsage objectToAdd);
+        void AddUsage(ProgramUsage objectToAdd);
         IEnumerable<Program> GetProgramsByDeveloperName(string developerName);
-        Program GetProgramOrAddIfNotExists(string programName);
-        Program GetProgramOrAddIfNotExists(ProgramInfo programDto);
-        ProgramUsage GetProgramUsageOrAddIfNotExists(Program program, ClientAppUser clientAppUser);
+        UsageData GetUsage(Program program, ClientAppUser clientAppUser);
     }
 }

@@ -25,7 +25,7 @@
             this.TelimenaContext.Programs.Add(objectToAdd);
         }
 
-        public void AddProgramUsage(ProgramUsage objectToAdd)
+        public void AddUsage(ProgramUsage objectToAdd)
         {
             this.TelimenaContext.ProgramUsages.Add(objectToAdd);
         }
@@ -35,47 +35,11 @@
             return this.TelimenaContext.Programs.Include(x => x.Developer).Where(x => x.Developer != null && x.Developer.Name == developerName);
         }
 
-        public Program GetProgramOrAddIfNotExists(string programName)
+        public UsageData GetUsage(Program program, ClientAppUser clientAppUser)
         {
-            var program = this.TelimenaContext.Programs.FirstOrDefault(x => x.Name == programName);
-            if (program == null)
-            {
-                program = new Program()
-                {
-                    Name = programName
-                };
-                this.Add(program);
-            }
-
-            return program;
+            return this.TelimenaContext.ProgramUsages.FirstOrDefault(x => x.Program.Name == program.Name && x.ClientAppUser.UserName == clientAppUser.UserName);
         }
 
-        public Program GetProgramOrAddIfNotExists(ProgramInfo programDto)
-        {
-            var program = this.TelimenaContext.Programs.FirstOrDefault(x => x.Name == programDto.Name);
-            if (program == null)
-            {
-                program = Mapper.Map<Program>(programDto);
-                this.Add(program);
-            }
-
-            return program;
-        }
-
-        public ProgramUsage GetProgramUsageOrAddIfNotExists(Program program, ClientAppUser clientAppUser)
-        {
-            var usageData = this.TelimenaContext.ProgramUsages.FirstOrDefault(x => x.Program.Name == program.Name && x.ClientAppUser.UserName == clientAppUser.UserName);
-            if (usageData == null)
-            {
-                usageData = new ProgramUsage()
-                {
-                    Program = program,
-                    ClientAppUser = clientAppUser,
-                };
-                this.AddProgramUsage(usageData);
-            }
-
-            return usageData;
-        }
+       
     }
 }

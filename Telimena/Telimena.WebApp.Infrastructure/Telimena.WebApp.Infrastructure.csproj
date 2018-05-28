@@ -108,17 +108,14 @@
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
-    <Compile Include="Repository\Implementation\ClientAppUserRepository.cs" />
     <Compile Include="Repository\Implementation\FunctionRepository.cs" />
     <Compile Include="Repository\IFunctionRepository.cs" />
     <Compile Include="Repository\IProgramRepository.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\Implementation\Repository.cs" />
-    <Compile Include="Repository\IClientAppUserRepository.cs" />
     <Compile Include="Repository\Implementation\ProgramRepository.cs" />
     <Compile Include="UnitOfWork\IAdminDashboardUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\AdminDashboardUnitOfWork.cs" />
-    <Compile Include="Repository\TelimenaRepository.GetOrAdd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Database\TelimenaDbInitializer.cs" />
     <Compile Include="Security\TelimenaAuthorizeAttribute.cs" />

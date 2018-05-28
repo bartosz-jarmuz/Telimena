@@ -1,6 +1,7 @@
 ﻿namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 {
     using System.Threading.Tasks;
+    using Core.Models;
     using Database;
     using Repository;
     using Repository.Implementation;
@@ -16,12 +17,12 @@
         public StatisticsUnitOfWork(TelimenaContext context)
         {
             this.context = context;
-            this.ClientAppUsers = new ClientAppUserRepository(context);
+            this.ClientAppUsers = new Repository<ClientAppUser>(context);
             this.Functions= new FunctionRepository(context);
             this.Programs= new ProgramRepository(context);
         }
 
-        public IClientAppUserRepository ClientAppUsers { get; }
+        public IRepository<ClientAppUser> ClientAppUsers { get; }
         public IProgramRepository Programs { get; }
         public IFunctionRepository Functions { get; }
         public async Task CompleteAsync()

@@ -27,9 +27,9 @@
             this.DbContext.Set<TEntity>().Add(entity);
         }
 
-        public virtual void CountAsync()
+        public virtual Task<int> CountAsync()
         {
-            this.DbContext.Set<TEntity>().CountAsync();
+            return this.DbContext.Set<TEntity>().CountAsync();
         }
 
         public Task<List<TEntity>> GetAllAsync()

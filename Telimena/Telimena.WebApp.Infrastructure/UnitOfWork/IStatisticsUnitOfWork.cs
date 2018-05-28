@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Telimena.WebApp.Infrastructure.UnitOfWork
 {
+    using Core.Models;
     using Repository;
 
     public interface IStatisticsUnitOfWork
     {
-        IClientAppUserRepository ClientAppUsers { get; }
+        IRepository<ClientAppUser> ClientAppUsers { get; }
 
         IProgramRepository Programs { get;  }
 

@@ -16,6 +16,6 @@
         void Add(TEntity entity);
 
         void Remove(TEntity entity);
-        void CountAsync();
+        Task<int> CountAsync();
     }
 }
