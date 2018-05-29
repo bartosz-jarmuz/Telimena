@@ -19,7 +19,6 @@
         public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return this.DbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
-
         }
 
         public virtual void Add(TEntity entity)
@@ -32,9 +31,30 @@
             return this.DbContext.Set<TEntity>().CountAsync();
         }
 
-        public Task<List<TEntity>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null,
+                                            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                            string includeProperties = "")
         {
-            return this.DbContext.Set<TEntity>().ToListAsync();
+            IQueryable<TEntity> query = this.DbContext.Set<TEntity>();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+            if (orderBy != null)
+            {
+                return await orderBy(query).ToListAsync();
+            }
+            else
+            {
+                return await query.ToListAsync();
+            }
+
         }
 
         public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
@@ -42,7 +62,7 @@
             return this.DbContext.Set<TEntity>().Where(predicate).ToListAsync();  
         }
 
-        public virtual TEntity Get(int id)
+        public virtual TEntity GetById(int id)
         {
             return this.DbContext.Set<TEntity>().Find(id);
 

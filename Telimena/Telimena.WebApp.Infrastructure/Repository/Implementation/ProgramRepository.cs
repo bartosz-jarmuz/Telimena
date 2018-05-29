@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.Data.Entity;
     using System.Linq;
+    using System.Threading.Tasks;
     using AutoMapper;
     using Client;
     using Core.Models;
@@ -30,16 +31,19 @@
             this.TelimenaContext.ProgramUsages.Add(objectToAdd);
         }
 
-        public IEnumerable<Program> GetProgramsByDeveloperName(string developerName)
+        public async Task<IEnumerable<Program>> GetProgramsByDeveloperName(string developerName)
         {
-            return this.TelimenaContext.Programs.Include(x => x.Developer).Where(x => x.Developer != null && x.Developer.Name == developerName);
+            return await this.TelimenaContext.Programs.Include(x => x.Developer).Where(x => x.Developer != null && x.Developer.Name == developerName).ToListAsync();
         }
 
         public UsageData GetUsage(Program program, ClientAppUser clientAppUser)
         {
-            return this.TelimenaContext.ProgramUsages.FirstOrDefault(x => x.Program.Name == program.Name && x.ClientAppUser.UserName == clientAppUser.UserName);
+            return this.TelimenaContext.ProgramUsages.FirstOrDefault(x => x.Program.Id == program.Id && x.ClientAppUser.Id == clientAppUser.Id);
         }
 
-       
+        public Task<List<ProgramUsage>> GetAllUsages(Program program)
+        {
+            return this.TelimenaContext.ProgramUsages.Where(x => x.Program.Id == program.Id).ToListAsync();
+        }
     }
 }

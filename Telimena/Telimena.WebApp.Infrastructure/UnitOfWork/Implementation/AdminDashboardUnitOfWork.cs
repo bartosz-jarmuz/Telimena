@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Data.Entity;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Core.DTO;
     using Core.Interfaces;
@@ -22,13 +23,41 @@
         {
             this.telimenaContext = telimenaContext;
             this.Programs = new ProgramRepository(this.telimenaContext);
+            this.Functions = new FunctionRepository(this.telimenaContext);
         }
 
         public IProgramRepository Programs { get; }
+        public IFunctionRepository Functions { get; }
+
+
+        public async Task<IEnumerable<ProgramSummary>> GetProgramsSummary()
+        {
+            List<ProgramSummary> returnData = new List<ProgramSummary>();
+            IEnumerable<Program> programs = await this.Programs.GetAsync();
+            
+            foreach (Program program in programs)
+            {
+                List<ProgramUsage> usages = await this.Programs.GetAllUsages(program);
+                List<Function> functions = await this.Functions.FindAsync(x => x.ProgramId == program.Id);
+
+                ProgramSummary summary = new ProgramSummary()
+                {
+                    ProgramName = program.Name,
+                    ProgramId = program.Id,
+                    RegisteredDate = program.RegisteredDate,
+                    LastUsage = usages.Max(x => x.LastUsageDateTime),
+                    UsersCount = usages.Count,
+                    TodayUsageCount = usages.Where(x=> (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(x=>x.Count),
+                    TotalUsageCount = usages.Sum(x=>x.Count),
+                    FunctionsCount = functions.Count,
+                };
+                returnData.Add(summary);
+            }
+            return returnData;
+        }
 
         public async Task<PortalSummaryData> GetPortalSummary()
         {
-
             var summary = new PortalSummaryData
             {
                 TotalUsersCount = await this.telimenaContext.Users.CountAsync(),
@@ -36,7 +65,6 @@
                 LastActiveUser = await this.telimenaContext.Users.OrderByDescending(x => x.LastLoginDate).FirstAsync(),
                 UsersActiveInLast24Hrs = await this.telimenaContext.Users.CountAsync(x => x.LastLoginDate != null && DbFunctions.DiffDays(DateTime.UtcNow, x.LastLoginDate.Value) < 1)
             };
-
             return summary;
         }
 

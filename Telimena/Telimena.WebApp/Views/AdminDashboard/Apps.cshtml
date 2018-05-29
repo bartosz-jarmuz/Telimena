@@ -1,4 +1,5 @@
 ﻿@using DotNetLittleHelpers
+@using Telimena.WebApp.Core.DTO
 @using Telimena.WebApp.Core.Models
 
 @{
@@ -38,10 +39,15 @@
                 <table id="allProgramsReport" class="table table-bordered table-hover" data-url="@Url.Action("GetAllPrograms")">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Registered date</th>
+                            <th>@nameof(ProgramSummary.ProgramId)</th>
+                            <th>@nameof(ProgramSummary.ProgramName)</th>
+                            <th>@nameof(ProgramSummary.FunctionsCount)</th>
+                            <th>@nameof(ProgramSummary.UsersCount)</th>
+                            <th>@nameof(ProgramSummary.TodayUsageCount)</th>
+                            <th>@nameof(ProgramSummary.TotalUsageCount)</th>
+                            <th>@nameof(ProgramSummary.LastUsage)</th>
+                            <th>@nameof(ProgramSummary.RegisteredDate)</th>
+                            <th>@nameof(ProgramSummary.LatestVersion)</th>
                         </tr>
                     </thead>
                 </table>
@@ -59,17 +65,35 @@
             $(".apps-summary").load($(".apps-summary").data("url"));
 
             $('#allProgramsReport').DataTable({
-                serverSide: true,
 
                 "ajax": {
                     url: "@Url.Action("GetAllPrograms")",
-                    method: "post"
+                    method: "post",
+                    dataSrc:""
                 },
                 "columns": [
-                    { "data": "@nameof(Program.Id).ToLowerFirstChar()" },
-                    { "data": "@nameof(Program.Name).ToLowerFirstChar()" },
-                    { "data": "@nameof(Program.Description).ToLowerFirstChar()"  },
-                    { "data": "@nameof(Program.RegisteredDate).ToLowerFirstChar()"  },
+                    { "data": "@nameof(ProgramSummary.ProgramId)" },
+                    { "data": "@nameof(ProgramSummary.ProgramName)" },
+                    { "data": "@nameof(ProgramSummary.FunctionsCount)"  },
+                    { "data": "@nameof(ProgramSummary.UsersCount)"  },
+                    { "data": "@nameof(ProgramSummary.TodayUsageCount)"  },
+                    { "data": "@nameof(ProgramSummary.TotalUsageCount)"  },
+                    {
+                        "data": "@nameof(ProgramSummary.LastUsage)",
+                        render: function (data, type, row, meta) {
+                            var datetime = new Date(data);
+                            return datetime.toLocaleString();
+                        }
+                    },
+                    {
+                        "data": "@nameof(ProgramSummary.RegisteredDate)",
+                        render: function(data, type, row, meta) {
+                            var datetime = new Date(data);
+                            return datetime.toLocaleString();
+                        }
+                        
+                    },
+                    { "data": "@nameof(ProgramSummary.LatestVersion)" },
                 ]
             });
         });

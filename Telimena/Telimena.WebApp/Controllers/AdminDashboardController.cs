@@ -7,7 +7,9 @@ using System.Web.Mvc;
 namespace Telimena.WebApp.Controllers
 {
     using System.Data.Entity;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using Core.DTO;
     using Core.Interfaces;
     using Core.Models;
     using DataTables.AspNet.Core;
@@ -15,6 +17,8 @@ namespace Telimena.WebApp.Controllers
     using Infrastructure.Repository;
     using Infrastructure.Security;
     using log4net;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class AdminDashboardController : Controller
@@ -41,13 +45,10 @@ namespace Telimena.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> GetAllPrograms(IDataTablesRequest request)
+        public async Task<ActionResult> GetAllPrograms()
         {
-            IEnumerable<Program> summary = await this.unitOfWork.Programs.GetAllAsync();
-
-            var response = DataTablesResponse.Create(request, summary.Count(), summary.Count(), summary);
-
-            return new DataTablesJsonResult(response);
+            List<ProgramSummary> summary = (await this.unitOfWork.GetProgramsSummary()).ToList();
+            return this.Content(JsonConvert.SerializeObject(summary));
         }
 
         public ActionResult Portal()

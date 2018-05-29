@@ -2,13 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
     public interface IRepository<TEntity> where TEntity : class, new()
     {
-        TEntity Get(int id);
-        Task<List<TEntity>> GetAllAsync();
+        TEntity GetById(int id);
+        Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null,
+                                     Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                     string includeProperties = "");
 
         Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
@@ -16,6 +19,5 @@
         void Add(TEntity entity);
 
         void Remove(TEntity entity);
-        Task<int> CountAsync();
     }
 }

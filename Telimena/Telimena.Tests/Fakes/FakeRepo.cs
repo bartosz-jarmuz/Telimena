@@ -15,11 +15,6 @@
             this.Data.Add(entity);
         }
 
-        public Task<int> CountAsync()
-        {
-            return Task.FromResult(this.Data.Count);
-        }
-
         public Task<List<T>> FindAsync(Expression<Func<T, bool>> predicate)
         {
             return Task.FromResult(this.Data.AsQueryable().Where(predicate).ToList());
@@ -31,15 +26,17 @@
             return Task.FromResult(this.Data.AsQueryable().FirstOrDefault(predicate));
         }
 
-        public T Get(int id)
+        public T GetById(int id)
         {
             var idProperty = typeof(T).GetProperty("Id");
             return this.Data.FirstOrDefault(x => (int)idProperty.GetValue(x) == (int)id);
         }
 
-        public Task<List<T>> GetAllAsync()
+        public Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> filter = null,
+                                      Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+                                      string includeProperties = "")
         {
-            return Task.FromResult(this.Data.ToList()); 
+            return Task.FromResult(this.Data.ToList().AsEnumerable()); 
         }
 
         public void Remove(T entity)

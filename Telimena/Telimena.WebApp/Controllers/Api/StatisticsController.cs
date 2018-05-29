@@ -69,7 +69,7 @@
 
             try
             {
-                Program program = this.work.Programs.Get(updateRequest.ProgramId);
+                Program program = this.work.Programs.GetById(updateRequest.ProgramId);
                 if (program == null)
                 {
                     return new StatisticsUpdateResponse()
@@ -78,7 +78,7 @@
                     };
                 }
 
-                ClientAppUser clientAppUser = this.work.ClientAppUsers.Get(updateRequest.UserId);
+                ClientAppUser clientAppUser = this.work.ClientAppUsers.GetById(updateRequest.UserId);
                 if (clientAppUser == null)
                 {
                     return new StatisticsUpdateResponse()

@@ -53,7 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\AllProgramsSummaryData.cs" />
     <Compile Include="DTO\PortalSummaryData.cs" />
+    <Compile Include="DTO\ProgramSummary.cs" />
     <Compile Include="Interfaces\ITelimenaRepository.cs" />
     <Compile Include="Interfaces\Roles.cs" />
     <Compile Include="Models\AssemblyVersion.cs" />
