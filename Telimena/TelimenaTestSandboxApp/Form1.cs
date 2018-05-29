@@ -38,7 +38,7 @@ namespace TelimenaTestSandboxApp
             }
             if (result.Error == null)
             {
-                this.resultTextBox.Text += new JavaScriptSerializer().Serialize(result);
+                this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
             }
             else
             {
@@ -49,7 +49,28 @@ namespace TelimenaTestSandboxApp
         private async void InitializeButton_Click(object sender, EventArgs e)
         {
             var response = await this.teli.Initialize();
-            this.resultTextBox.Text += new JavaScriptSerializer().Serialize(response);
+            this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + new JavaScriptSerializer().Serialize(response) + Environment.NewLine;
+        }
+
+        private void setAppButton_Click(object sender, EventArgs e)
+        {
+            this.teli = new Telimena(this.apiUrlTextBox.Text);
+            if (!string.IsNullOrEmpty(this.appNameTextBox.Text))
+            {
+                this.teli.ProgramInfo = new ProgramInfo()
+                {
+                    Name = this.appNameTextBox.Text,
+                    Version = "1.0"
+                };
+            }
+
+            if (!string.IsNullOrEmpty(this.userNameTextBox.Text)) 
+            {
+                this.teli.UserInfo = new UserInfo()
+                {
+                    UserName = this.userNameTextBox.Text
+                };
+            }
         }
     }
 }

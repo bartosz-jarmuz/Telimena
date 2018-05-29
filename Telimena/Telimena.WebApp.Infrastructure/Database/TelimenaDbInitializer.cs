@@ -14,21 +14,6 @@
         {
             TelimenaDbInitializer.SeedUsers(context);
 
-            List<Developer> developers = new List<Developer>
-            {
-                new Developer {Name = "JimBeam"},
-            };
-
-            developers.ForEach(s => context.Developers.Add(s));
-            context.SaveChanges();
-
-            List<Program> programs = new List<Program>
-            {
-                new Program{Name="JimmyBeamyApp", DeveloperId = 1},
-                new Program{Name="New JimmyBeamyApp", DeveloperId = 1},
-            };
-
-            programs.ForEach(s => context.Programs.Add(s));
             context.SaveChanges();
         }
 
@@ -54,7 +39,7 @@
                     MustChangePassword = true
                 };
 
-                userManager.Create(user, "OneTimePassword");
+                userManager.Create(user, "sa");
                 userManager.AddToRole(user.Id, TelimenaRoles.Admin);
             }
         }

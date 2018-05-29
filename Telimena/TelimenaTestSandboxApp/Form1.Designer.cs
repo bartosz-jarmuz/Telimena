@@ -31,6 +31,7 @@
             this.apiUrlTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.functionNameTextBox = new System.Windows.Forms.TextBox();
@@ -40,7 +41,9 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.appNameTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.userNameTextBox = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.setAppButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -50,7 +53,7 @@
             // 
             this.apiUrlTextBox.Location = new System.Drawing.Point(93, 9);
             this.apiUrlTextBox.Name = "apiUrlTextBox";
-            this.apiUrlTextBox.Size = new System.Drawing.Size(166, 20);
+            this.apiUrlTextBox.Size = new System.Drawing.Size(120, 20);
             this.apiUrlTextBox.TabIndex = 0;
             this.apiUrlTextBox.Text = "http://localhost:7757/";
             // 
@@ -76,6 +79,16 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Update app usage";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(14, 46);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(114, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Call \'Initialize\'";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.InitializeButton_Click);
             // 
             // groupBox3
             // 
@@ -145,35 +158,54 @@
             // 
             // appNameTextBox
             // 
-            this.appNameTextBox.Location = new System.Drawing.Point(331, 9);
+            this.appNameTextBox.Location = new System.Drawing.Point(286, 9);
             this.appNameTextBox.Name = "appNameTextBox";
-            this.appNameTextBox.Size = new System.Drawing.Size(212, 20);
+            this.appNameTextBox.Size = new System.Drawing.Size(166, 20);
             this.appNameTextBox.TabIndex = 5;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(270, 12);
+            this.label2.Location = new System.Drawing.Point(225, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(55, 13);
             this.label2.TabIndex = 4;
             this.label2.Text = "App name";
             // 
-            // button1
+            // userNameTextBox
             // 
-            this.button1.Location = new System.Drawing.Point(14, 46);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(114, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Call \'Initialize\'";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.InitializeButton_Click);
+            this.userNameTextBox.Location = new System.Drawing.Point(520, 9);
+            this.userNameTextBox.Name = "userNameTextBox";
+            this.userNameTextBox.Size = new System.Drawing.Size(110, 20);
+            this.userNameTextBox.TabIndex = 7;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(459, 12);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(58, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "User name";
+            // 
+            // setAppButton
+            // 
+            this.setAppButton.Location = new System.Drawing.Point(645, 7);
+            this.setAppButton.Name = "setAppButton";
+            this.setAppButton.Size = new System.Drawing.Size(75, 23);
+            this.setAppButton.TabIndex = 5;
+            this.setAppButton.Text = "Set App ";
+            this.setAppButton.UseVisualStyleBackColor = true;
+            this.setAppButton.Click += new System.EventHandler(this.setAppButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(753, 441);
+            this.Controls.Add(this.setAppButton);
+            this.Controls.Add(this.userNameTextBox);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.appNameTextBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox2);
@@ -208,6 +240,9 @@
         private System.Windows.Forms.TextBox appNameTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox userNameTextBox;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button setAppButton;
     }
 }
 

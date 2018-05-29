@@ -18,8 +18,8 @@
         private bool IsInitialized { get; set; }
         internal ITelimenaSerializer Serializer { get; set; } = new TelimenaSerializer();
         internal IMessenger Messenger { get; set; }
-        protected UserInfo UserInfo { get; }
-        protected ProgramInfo ProgramInfo { get; }
+        internal UserInfo UserInfo { get; set; }
+        internal ProgramInfo ProgramInfo { get; set; }
         protected int ProgramId { get; set; }
         protected int UserId { get; set; }
         public bool SuppressAllErrors { get; set; } = true;
