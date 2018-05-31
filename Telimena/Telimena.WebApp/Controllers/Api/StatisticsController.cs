@@ -24,9 +24,9 @@
         private readonly StatisticsHelperService helper;
 
         [HttpPost]
-        public async Task<RegistrationResponse> RegisterClient(RegistrationRequest updateRequest)
+        public async Task<RegistrationResponse> RegisterClient(RegistrationRequest request)
         {
-            if (!ApiRequestsValidator.IsRequestValid(updateRequest))
+            if (!ApiRequestsValidator.IsRequestValid(request))
             {
                 return new RegistrationResponse()
                 {
@@ -36,8 +36,8 @@
 
             try
             {
-                Program program = await this.helper.GetProgramOrAddIfNotExists(updateRequest.ProgramInfo);
-                ClientAppUser clientAppUser = await this.helper.GetUserInfoOrAddIfNotExists(updateRequest.UserInfo);
+                Program program = await this.helper.GetProgramOrAddIfNotExists(request.ProgramInfo);
+                ClientAppUser clientAppUser = await this.helper.GetUserInfoOrAddIfNotExists(request.UserInfo);
                 UsageData usageData = await this.GetUpdatedUsageData(program, clientAppUser);
                 await this.work.CompleteAsync();
                 return new RegistrationResponse()

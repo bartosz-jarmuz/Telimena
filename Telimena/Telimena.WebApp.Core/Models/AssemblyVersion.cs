@@ -10,6 +10,6 @@
         public DateTime BetaReleaseDate { get; set; }
         public DateTime ProductionReleaseDate { get; set; }
         public int AssemblyId { get; set; }
-        public ProgramAssembly Assembly { get; set; }
+        public AssemblyData Assembly { get; set; }
     }
 }

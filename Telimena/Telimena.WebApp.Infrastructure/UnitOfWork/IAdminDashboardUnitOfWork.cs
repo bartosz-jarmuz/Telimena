@@ -13,5 +13,6 @@
         Task<PortalSummaryData> GetPortalSummary();
         Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts();
         Task<IEnumerable<ProgramSummary>> GetProgramsSummary();
+        Task CompleteAsync();
     }
 }

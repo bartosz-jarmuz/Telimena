@@ -29,7 +29,7 @@
             Assembly assembly = mainAssembly ?? Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             this.ProgramInfo = new ProgramInfo()
             {
-                MainAssembly = new AssemblyInfo(assembly),
+                PrimaryAssembly = new AssemblyInfo(assembly),
                 Name = assembly.GetName().Name,
                 Version = assembly.GetName().Version.ToString()
             };

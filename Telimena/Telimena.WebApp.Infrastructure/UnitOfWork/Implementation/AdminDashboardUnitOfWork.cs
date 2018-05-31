@@ -17,13 +17,13 @@
 
     public class AdminDashboardUnitOfWork : IAdminDashboardUnitOfWork
     {
-        private readonly TelimenaContext telimenaContext;
+        private readonly TelimenaContext context;
 
-        public AdminDashboardUnitOfWork(TelimenaContext telimenaContext)
+        public AdminDashboardUnitOfWork(TelimenaContext context)
         {
-            this.telimenaContext = telimenaContext;
-            this.Programs = new ProgramRepository(this.telimenaContext);
-            this.Functions = new FunctionRepository(this.telimenaContext);
+            this.context = context;
+            this.Programs = new ProgramRepository(this.context);
+            this.Functions = new FunctionRepository(this.context);
         }
 
         public IProgramRepository Programs { get; }
@@ -60,10 +60,10 @@
         {
             var summary = new PortalSummaryData
             {
-                TotalUsersCount = await this.telimenaContext.Users.CountAsync(),
-                NewestUser = await this.telimenaContext.Users.OrderByDescending(x => x.UserNumber).FirstAsync(),
-                LastActiveUser = await this.telimenaContext.Users.OrderByDescending(x => x.LastLoginDate).FirstAsync(),
-                UsersActiveInLast24Hrs = await this.telimenaContext.Users.CountAsync(x => x.LastLoginDate != null && DbFunctions.DiffDays(DateTime.UtcNow, x.LastLoginDate.Value) < 1)
+                TotalUsersCount = await this.context.Users.CountAsync(),
+                NewestUser = await this.context.Users.OrderByDescending(x => x.UserNumber).FirstAsync(),
+                LastActiveUser = await this.context.Users.OrderByDescending(x => x.LastLoginDate).FirstAsync(),
+                UsersActiveInLast24Hrs = await this.context.Users.CountAsync(x => x.LastLoginDate != null && DbFunctions.DiffDays(DateTime.UtcNow, x.LastLoginDate.Value) < 1)
             };
             return summary;
         }
@@ -72,22 +72,25 @@
         {
             var summary = new AllProgramsSummaryData
             {
-                TotalProgramsCount = await this.telimenaContext.Programs.CountAsync(),
-                TotalAppUsersCount = await this.telimenaContext.AppUsers.CountAsync(),
-                AppUsersRegisteredLast7DaysCount = await this.telimenaContext.AppUsers.CountAsync(x => DbFunctions.DiffDays(x.RegisteredDate, DateTime.UtcNow) <= 7),
-                TotalFunctionsCount = await this.telimenaContext.Functions.CountAsync()
+                TotalProgramsCount = await this.context.Programs.CountAsync(),
+                TotalAppUsersCount = await this.context.AppUsers.CountAsync(),
+                AppUsersRegisteredLast7DaysCount = await this.context.AppUsers.CountAsync(x => DbFunctions.DiffDays(x.RegisteredDate, DateTime.UtcNow) <= 7),
+                TotalFunctionsCount = await this.context.Functions.CountAsync()
             };
 
-            int? value = await this.telimenaContext.ProgramUsages.SumAsync(x => (int?)x.Count)??0;
+            int? value = await this.context.ProgramUsages.SumAsync(x => (int?)x.Count)??0;
             summary.TotalProgramUsageCount = value ?? 0;
-            value = await this.telimenaContext.FunctionUsages.SumAsync(x => (int?)x.Count) ?? 0;
+            value = await this.context.FunctionUsages.SumAsync(x => (int?)x.Count) ?? 0;
             summary.TotalFunctionsUsageCount = value ?? 0;
 
-            summary.NewestProgram = await this.telimenaContext.Programs.OrderByDescending(x => x.Id).Include(x=>x.Developer).FirstOrDefaultAsync();
+            summary.NewestProgram = await this.context.Programs.OrderByDescending(x => x.Id)/*.Include(x=>x.Developer)*/.FirstOrDefaultAsync();
 
             return summary;
         }
 
-        
+        public async Task CompleteAsync()
+        {
+            await this.context.SaveChangesAsync();
+        }
     }
 }

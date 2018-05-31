@@ -8,8 +8,10 @@
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
 
-    public class TelimenaDbInitializer : System.Data.Entity.DropCreateDatabaseIfModelChanges<TelimenaContext>
+    public class TelimenaDbInitializer : System.Data.Entity.DropCreateDatabaseAlways<TelimenaContext>
     {
+
+
         protected override void Seed(TelimenaContext context)
         {
             TelimenaDbInitializer.SeedUsers(context);
@@ -39,7 +41,7 @@
                     MustChangePassword = true
                 };
 
-                userManager.Create(user, "sa");
+                userManager.Create(user, "123456");
                 userManager.AddToRole(user.Id, TelimenaRoles.Admin);
             }
         }

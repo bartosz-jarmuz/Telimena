@@ -41,7 +41,7 @@
                     UserId = this.UserId,
                     FunctionName = functionName
                 };
-                string responseContent = await Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request);
+                string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request);
                 return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
             }
             catch (Exception ex)
@@ -72,7 +72,7 @@
                     TelimenaVersion = this.TelimenaVersion,
                     UserInfo = this.UserInfo
                 };
-                string responseContent = await Messenger.SendPostRequest(ApiRoutes.RegisterClient, request);
+                string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.RegisterClient, request);
                 RegistrationResponse response = this.Serializer.Deserialize<RegistrationResponse>(responseContent);
                 this.UserId = response.UserId;
                 this.ProgramId = response.ProgramId;

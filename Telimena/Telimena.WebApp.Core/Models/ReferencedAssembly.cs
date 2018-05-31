@@ -1,11 +1,9 @@
 ﻿namespace Telimena.WebApp.Core.Models
 {
-    public class ProgramAssembly
+    public class ReferencedAssembly : AssemblyData
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public virtual Program Program { get; set; }
         public int ProgramId { get; set; }
-        public Program Program { get; set; }
-
     }
 }

@@ -52,6 +52,7 @@
             if (program == null)
             {
                 program = Mapper.Map<Program>(updateRequestProgramInfo);
+               // program.MainAssembly = Mapper.Map<ProgramAssembly>(updateRequestProgramInfo.MainAssembly)
                 this.work.Programs.Add(program);
             }
             return program;
