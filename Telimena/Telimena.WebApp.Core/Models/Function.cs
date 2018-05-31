@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Function
     {
@@ -11,5 +12,10 @@
         public int ProgramId { get; set; }
         public DateTime RegisteredDate { get; set; }
         public virtual ICollection<FunctionUsage> Usages { get; set; } = new List<FunctionUsage>();
+
+        public FunctionUsage GetFunctionUsage(int clientAppUserId)
+        {
+            return this.Usages.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUserId);
+        }
     }
 }

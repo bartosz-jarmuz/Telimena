@@ -7,9 +7,9 @@
 
     public interface IProgramRepository : IRepository<Program>
     {
-        void AddUsage(ProgramUsage objectToAdd);
+        //void AddUsage(ProgramUsage objectToAdd);
         Task<IEnumerable<Program>> GetProgramsByDeveloperName(string developerName);
-        UsageData GetUsage(Program program, ClientAppUser clientAppUser);
-        Task<List<ProgramUsage>> GetAllUsages(Program program);
+        //UsageData GetUsage(Program program, ClientAppUser clientAppUser);
+        //Task<List<ProgramUsage>> GetAllUsages(Program program);
     }
 }

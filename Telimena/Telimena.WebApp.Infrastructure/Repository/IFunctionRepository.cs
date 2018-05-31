@@ -4,8 +4,8 @@
 
     public interface IFunctionRepository : IRepository<Function>
     {
-        void AddUsage(FunctionUsage objectToAdd);
-        Function GetFunction(string functionName, Program program);
-        FunctionUsage GetUsage(Function function, ClientAppUser clientAppUser);
+        //void AddUsage(FunctionUsage objectToAdd);
+        //Function GetFunction(string functionName, Program program);
+        //FunctionUsage GetUsage(Function function, ClientAppUser clientAppUser);
     }
 }

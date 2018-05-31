@@ -8,7 +8,7 @@
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
 
-    public class TelimenaDbInitializer : System.Data.Entity.DropCreateDatabaseAlways<TelimenaContext>
+    public class TelimenaDbInitializer : System.Data.Entity.DropCreateDatabaseIfModelChanges<TelimenaContext>
     {
 
 

@@ -37,7 +37,6 @@
             
             foreach (Program program in programs)
             {
-                List<ProgramUsage> usages = await this.Programs.GetAllUsages(program);
                 List<Function> functions = await this.Functions.FindAsync(x => x.ProgramId == program.Id);
 
                 ProgramSummary summary = new ProgramSummary()
@@ -45,10 +44,10 @@
                     ProgramName = program.Name,
                     ProgramId = program.Id,
                     RegisteredDate = program.RegisteredDate,
-                    LastUsage = usages.Max(x => x.LastUsageDateTime),
-                    UsersCount = usages.Count,
-                    TodayUsageCount = usages.Where(x=> (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(x=>x.Count),
-                    TotalUsageCount = usages.Sum(x=>x.Count),
+                    LastUsage = program.Usages.Max(x => x.LastUsageDateTime),
+                    UsersCount = program.Usages.Count,
+                    TodayUsageCount = program.Usages.Where(x=> (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(x=>x.Count),
+                    TotalUsageCount = program.Usages.Sum(x=>x.Count),
                     FunctionsCount = functions.Count,
                 };
                 returnData.Add(summary);

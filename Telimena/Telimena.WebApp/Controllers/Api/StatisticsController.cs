@@ -125,9 +125,8 @@
 
         private async Task<UsageData> GetFunctionUsageData(Program program, ClientAppUser clientAppUser, string functionName)
         {
-            UsageData usageData;
             var func = await this.helper.GetFunctionOrAddIfNotExists(functionName, program);
-            usageData = this.work.Functions.GetUsage(func, clientAppUser);
+            UsageData usageData = func.GetFunctionUsage(clientAppUser.Id);
             if (usageData == null)
             {
                 usageData = new FunctionUsage()
@@ -135,7 +134,7 @@
                     Function = func,
                     ClientAppUser = clientAppUser
                 };
-                this.work.Functions.AddUsage((FunctionUsage) usageData);
+                func.Usages.Add((FunctionUsage) usageData);
             }
 
             return usageData;
@@ -143,8 +142,7 @@
 
         private UsageData GetProgramUsageData(Program program, ClientAppUser clientAppUser)
         {
-            UsageData usageData;
-            usageData = this.work.Programs.GetUsage(program, clientAppUser);
+            UsageData usageData = program.Usages.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUser.Id);
             if (usageData == null)
             {
                 usageData = new ProgramUsage()
@@ -152,7 +150,7 @@
                     Program = program,
                     ClientAppUser = clientAppUser
                 };
-                this.work.Programs.AddUsage((ProgramUsage) usageData);
+                program.Usages.Add((ProgramUsage)usageData);
             }
 
             return usageData;

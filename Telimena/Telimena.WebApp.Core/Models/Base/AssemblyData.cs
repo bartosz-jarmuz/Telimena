@@ -3,21 +3,6 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class PrimaryAssembly : AssemblyData
-    {
-        [ForeignKey("Program")]
-        public int Id { get; set; }
-        [Required]
-        public virtual Program Program { get; set; }
-    }
-
-    public class ReferencedAssembly : AssemblyData
-    {
-        public int Id { get; set; }
-        public virtual Program Program { get; set; }
-        public int ProgramId { get; set; }
-    }
-
     public abstract class AssemblyData
     {
         public string Name { get; set; }
