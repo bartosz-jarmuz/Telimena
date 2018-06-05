@@ -16,7 +16,7 @@
         public int TotalUsageCount { get; set; }
         public int TodayUsageCount { get; set; }
 
-        public DateTime LastUsage { get; set; }
+        public DateTime? LastUsage { get; set; }
 
         public DateTime RegisteredDate { get; set; }
 

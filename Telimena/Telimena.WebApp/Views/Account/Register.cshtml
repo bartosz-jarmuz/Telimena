@@ -30,13 +30,13 @@
         <div class="register-box-body">
             <p class="login-box-msg">Register a new membership</p>
 
-            @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form"}))
+            @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
             {
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group has-feedback">
-                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Display Name" })
-                        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Display Name" })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
@@ -53,6 +53,11 @@
                     @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm password" })
                     @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    @Html.DropDownListFor(m => m.Role, Model.RoleList, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                    <span class="glyphicon form-control-feedback"></span>
                 </div>
                 <div class="row">
                     <!-- /.col -->

@@ -14,7 +14,6 @@ namespace Telimena.WebApp.Controllers
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class DeveloperDashboardController : Controller
     {
-        // GET: DeveloperDashboard
         public ActionResult Index()
         {
             return this.View();
@@ -24,7 +23,7 @@ namespace Telimena.WebApp.Controllers
         {
             return null;
         }
+
+
     }
-
-
 }

@@ -111,8 +111,30 @@
         public override async Task<TelimenaUser> FindByIdAsync(string userId)
         {
             var user = await base.FindByIdAsync(userId);
-            var roleStore = this.Store as IUserRoleStore<TelimenaUser, string>;
-            user.RoleNames = await roleStore.GetRolesAsync(user);
+            await this.LoadRoles(user);
+            return user;
+        }
+
+        private async Task LoadRoles(TelimenaUser user)
+        {
+            if (user != null)
+            {
+                var roleStore = this.Store as IUserRoleStore<TelimenaUser, string>;
+                user.RoleNames = await roleStore.GetRolesAsync(user);
+            }
+        }
+
+        public override async Task<TelimenaUser> FindByNameAsync(string userName)
+        {
+            var user = await base.FindByNameAsync(userName);
+            await this.LoadRoles(user);
+            return user;
+        }
+
+        public override async Task<TelimenaUser> FindByEmailAsync(string email)
+        {
+            var user = await base.FindByEmailAsync(email);
+            await this.LoadRoles(user);
             return user;
         }
         #endregion

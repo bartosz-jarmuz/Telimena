@@ -3,10 +3,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Core.Interfaces;
     using Core.Models;
+    using Identity;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
+    using UnitOfWork.Implementation;
 
     public class TelimenaDbInitializer : System.Data.Entity.DropCreateDatabaseIfModelChanges<TelimenaContext>
     {
@@ -15,9 +18,10 @@
         protected override void Seed(TelimenaContext context)
         {
             TelimenaDbInitializer.SeedUsers(context);
-
             context.SaveChanges();
         }
+
+  
 
         private static void SeedUsers(TelimenaContext context)
         {
@@ -38,7 +42,9 @@
                     CreatedDate = DateTime.UtcNow,
                     DisplayName = "Super User",
                     IsActivated = true,
-                    MustChangePassword = true
+#if RELEASE
+                   MustChangePassword = true
+#endif
                 };
 
                 userManager.Create(user, "123456");

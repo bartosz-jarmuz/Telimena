@@ -1,6 +1,9 @@
 ﻿namespace Telimena.WebApp.Models.Account
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.Web.Mvc;
+    using Core.Interfaces;
 
     public class RegisterViewModel
     {
@@ -16,5 +19,14 @@
         public string Password { get; set; }
         [Required]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        public string Role { get; set; }
+
+        public IEnumerable<SelectListItem> RoleList => new List<SelectListItem>
+        {
+            new SelectListItem { Text = TelimenaRoles.Developer, Value = TelimenaRoles.Developer},
+            new SelectListItem { Text = TelimenaRoles.Viewer, Value = TelimenaRoles.Viewer},
+        };
     }
 }

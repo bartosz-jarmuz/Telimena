@@ -53,6 +53,7 @@ namespace Telimena.WebApi
         {
             this.Bind<IStatisticsUnitOfWork>().To<StatisticsUnitOfWork>();
             this.Bind<IAdminDashboardUnitOfWork>().To<AdminDashboardUnitOfWork>();
+            this.Bind<IAccountUnitOfWork>().To<AccountUnitOfWork>();
             this.Bind<ILog>().ToMethod(context =>
                 LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
             this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();

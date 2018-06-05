@@ -55,8 +55,8 @@
     <Reference Include="DataTables.AspNet.Mvc5, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DataTables.AspNet.Mvc5.2.0.2\lib\net45\DataTables.AspNet.Mvc5.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetLittleHelpers, Version=1.0.19.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetLittleHelpers.1.0.19\lib\net461\DotNetLittleHelpers.dll</HintPath>
+    <Reference Include="DotNetLittleHelpers, Version=1.0.35.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetLittleHelpers.1.0.35\lib\net461\DotNetLittleHelpers.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
@@ -221,7 +221,8 @@
     <Compile Include="AutoMapperConfiguration.cs" />
     <Compile Include="Controllers\AdminDashboardController.cs" />
     <Compile Include="Controllers\Api\StatisticsHelperService.cs" />
-    <Compile Include="Controllers\DeveloperDashboardController.cs" />
+    <Compile Include="Controllers\Developer\ClaimAppController.cs" />
+    <Compile Include="Controllers\Developer\DeveloperDashboardController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\PortalUsersController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -235,6 +236,7 @@
     <Compile Include="Models\Account\ChangePasswordViewModel.cs" />
     <Compile Include="Models\Account\RegisterViewModel.cs" />
     <Compile Include="Models\AdminDashboard\AdminDashboardViewModel.cs" />
+    <Compile Include="Models\Developer\ClaimAppViewModel.cs" />
     <Compile Include="Models\PortalUsers\PortalUsersViewModel.cs" />
     <Compile Include="Models\Shared\BoxViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1900,6 +1902,7 @@
     <Content Include="Views\AdminDashboard\_SmallBox.cshtml" />
     <Content Include="Views\AdminDashboard\Apps.cshtml" />
     <Content Include="Views\AdminDashboard\_InfoBox.cshtml" />
+    <Content Include="Views\ClaimApp\Claim.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

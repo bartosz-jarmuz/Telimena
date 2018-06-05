@@ -12,6 +12,7 @@
     using Core.Interfaces;
     using Core.Models;
     using Database;
+    using DotNetLittleHelpers;
     using Implementation;
     #endregion
 
@@ -44,7 +45,7 @@
                     ProgramName = program.Name,
                     ProgramId = program.Id,
                     RegisteredDate = program.RegisteredDate,
-                    LastUsage = program.Usages.Max(x => x.LastUsageDateTime),
+                    LastUsage = program.Usages.MaxOrNull(x => x.LastUsageDateTime),
                     UsersCount = program.Usages.Count,
                     TodayUsageCount = program.Usages.Where(x=> (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(x=>x.Count),
                     TotalUsageCount = program.Usages.Sum(x=>x.Count),
