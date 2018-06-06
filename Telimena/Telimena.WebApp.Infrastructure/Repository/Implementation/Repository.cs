@@ -16,9 +16,28 @@
             this.DbContext = dbContext;
         }
 
-        public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate = null)
         {
-            return this.DbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+            if (predicate == null)
+            {
+                return this.DbContext.Set<TEntity>().FirstOrDefaultAsync();
+            }
+            else
+            {
+                return this.DbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+            }
+        }
+
+        public Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate=null)
+        {
+            if (predicate == null)
+            {
+                return this.DbContext.Set<TEntity>().SingleOrDefaultAsync();
+            }
+            else
+            {
+                return this.DbContext.Set<TEntity>().SingleOrDefaultAsync(predicate);
+            }
         }
 
         public virtual void Add(TEntity entity)
@@ -75,3 +94,4 @@
         }
     }
 }
+

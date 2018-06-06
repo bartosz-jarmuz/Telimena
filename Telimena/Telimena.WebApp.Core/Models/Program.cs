@@ -20,5 +20,10 @@
         public string Description { get; set; }
 
         public Developer Developer { get; set; }
+
+        public ProgramUsage GetProgramUsage(int clientAppUserId)
+        {
+            return this.Usages.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUserId);
+        }
     }
 }

@@ -14,10 +14,11 @@
                                      string includeProperties = "");
 
         Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
-        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate = null);
 
         void Add(TEntity entity);
 
         void Remove(TEntity entity);
+        Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate = null);
     }
 }
