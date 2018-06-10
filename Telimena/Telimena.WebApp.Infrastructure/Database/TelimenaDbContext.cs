@@ -8,7 +8,12 @@
 
     public class TelimenaContext : IdentityDbContext<TelimenaUser>
     {
-        public TelimenaContext() : base("name=TestDBContext")
+
+        public TelimenaContext(string nameOrConnectionString) : base(nameOrConnectionString)
+        {
+        }
+
+        public TelimenaContext() : base("name=DevelopmentDBContext")
         {
             Database.SetInitializer(new TelimenaDbInitializer());
         }
@@ -22,8 +27,8 @@
 
         public DbSet<Program> Programs { get; set; }
         public DbSet<Function> Functions { get; set; }
-        public DbSet<ProgramUsage> ProgramUsages { get; set; }
-        public DbSet<FunctionUsage> FunctionUsages { get; set; }
+        public DbSet<ProgramUsageSummary> ProgramUsages { get; set; }
+        public DbSet<FunctionUsageSummary> FunctionUsages { get; set; }
         public DbSet<ClientAppUser> AppUsers { get; set; }
         public DbSet<Developer> Developers { get; set; }
         public DbSet<PrimaryAssembly> PrimaryAssemblies { get; set; }
@@ -38,6 +43,12 @@
                 .HasOptional(c => c.PrimaryAssembly)
                 .WithRequired(x => x.Program)
                 .WillCascadeOnDelete(true);
+
+            //modelBuilder.Entity<UsageSummary>()
+            //    .HasMany(x=>x.UsageDetails)
+            //    .WithRequired(detail => detail.UsageSummary)
+            //    .WillCascadeOnDelete(false);
+
         }
 
     }

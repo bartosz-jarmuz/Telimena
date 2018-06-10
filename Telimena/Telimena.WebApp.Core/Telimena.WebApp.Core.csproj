@@ -59,16 +59,17 @@
     <Compile Include="Interfaces\ITelimenaRepository.cs" />
     <Compile Include="Interfaces\Roles.cs" />
     <Compile Include="Models\AssemblyVersion.cs" />
+    <Compile Include="Models\Base\UsageDetail.cs" />
     <Compile Include="Models\Developer.cs" />
     <Compile Include="Models\Function.cs" />
-    <Compile Include="Models\FunctionUsage.cs" />
+    <Compile Include="Models\FunctionUsageSummary.cs" />
     <Compile Include="Models\PrimaryAssembly.cs" />
     <Compile Include="Models\Program.cs" />
     <Compile Include="Models\Base\AssemblyData.cs" />
-    <Compile Include="Models\ProgramUsage.cs" />
+    <Compile Include="Models\ProgramUsageSummary.cs" />
     <Compile Include="Models\ReferencedAssembly.cs" />
     <Compile Include="Models\TelimenaUser.cs" />
-    <Compile Include="Models\Base\UsageData.cs" />
+    <Compile Include="Models\Base\UsageSummary.cs" />
     <Compile Include="Models\ClientAppUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

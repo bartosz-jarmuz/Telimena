@@ -80,7 +80,7 @@
 
             int? value = await this.context.ProgramUsages.SumAsync(x => (int?)x.Count)??0;
             summary.TotalProgramUsageCount = value ?? 0;
-            value = await this.context.FunctionUsages.SumAsync(x => (int?)x.Count) ?? 0;
+            //value = await this.context.FunctionUsages.SumAsync(x => (int?)x.Count) ?? 0;
             summary.TotalFunctionsUsageCount = value ?? 0;
 
             summary.NewestProgram = await this.context.Programs.OrderByDescending(x => x.Id)/*.Include(x=>x.Developer)*/.FirstOrDefaultAsync();

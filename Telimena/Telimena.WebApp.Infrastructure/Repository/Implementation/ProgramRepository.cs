@@ -26,7 +26,7 @@
             this.TelimenaContext.Programs.Add(objectToAdd);
         }
 
-        public void AddUsage(ProgramUsage objectToAdd)
+        public void AddUsage(ProgramUsageSummary objectToAdd)
         {
             this.TelimenaContext.ProgramUsages.Add(objectToAdd);
         }
@@ -36,12 +36,12 @@
             return await this.TelimenaContext.Programs.Include(x => x.Developer).Where(x => x.Developer != null && x.Developer.Name == developerName).ToListAsync();
         }
 
-        public UsageData GetUsage(Program program, ClientAppUser clientAppUser)
+        public UsageSummary GetUsage(Program program, ClientAppUser clientAppUser)
         {
             return this.TelimenaContext.ProgramUsages.FirstOrDefault(x => x.Program.Id == program.Id && x.ClientAppUser.Id == clientAppUser.Id);
         }
 
-        public Task<List<ProgramUsage>> GetAllUsages(Program program)
+        public Task<List<ProgramUsageSummary>> GetAllUsages(Program program)
         {
             return this.TelimenaContext.ProgramUsages.Where(x => x.Program.Id == program.Id).ToListAsync();
         }

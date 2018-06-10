@@ -38,11 +38,11 @@
             {
                 Program program = await this.helper.GetProgramOrAddIfNotExists(request.ProgramInfo);
                 ClientAppUser clientAppUser = await this.helper.GetUserInfoOrAddIfNotExists(request.UserInfo);
-                UsageData usageData = await this.GetUpdatedUsageData(program, clientAppUser);
+                UsageSummary usageSummary = await this.GetUpdatedUsageData(program, clientAppUser);
                 await this.work.CompleteAsync();
                 return new RegistrationResponse()
                 {
-                    Count = usageData.Count,
+                    Count = usageSummary.Count,
                     ProgramId = program.Id,
                     UserId = clientAppUser.Id,
                 };
@@ -87,12 +87,12 @@
                     };
                 }
 
-                UsageData usageData = await this.GetUpdatedUsageData(program, clientAppUser, updateRequest.FunctionName);
+                UsageSummary usageSummary = await this.GetUpdatedUsageData(program, clientAppUser, updateRequest.FunctionName);
 
                 await this.work.CompleteAsync();
                 return new StatisticsUpdateResponse()
                 {
-                    Count = usageData.Count,
+                    Count = usageSummary.Count,
                     ProgramId = program.Id,
                     UserId = clientAppUser.Id,
                     FunctionName = updateRequest.FunctionName
@@ -107,53 +107,53 @@
             }
         }
 
-        private async Task<UsageData> GetUpdatedUsageData(Program program, ClientAppUser clientAppUser, string functionName = null)
+        private async Task<UsageSummary> GetUpdatedUsageData(Program program, ClientAppUser clientAppUser, string functionName = null)
         {
-            UsageData usageData;
+            UsageSummary usageSummary;
             if (!string.IsNullOrEmpty(functionName))
             {
-                usageData = await this.GetFunctionUsageData(program, clientAppUser, functionName);
+                usageSummary = await this.GetFunctionUsageData(program, clientAppUser, functionName);
             }
             else
             {
-                usageData = this.GetProgramUsageData(program, clientAppUser);
+                usageSummary = this.GetProgramUsageData(program, clientAppUser);
             }
 
-            usageData.IncrementUsage();
-            return usageData;
+            usageSummary.IncrementUsage();
+            return usageSummary;
         }
 
-        private async Task<UsageData> GetFunctionUsageData(Program program, ClientAppUser clientAppUser, string functionName)
+        private async Task<UsageSummary> GetFunctionUsageData(Program program, ClientAppUser clientAppUser, string functionName)
         {
             var func = await this.helper.GetFunctionOrAddIfNotExists(functionName, program);
-            UsageData usageData = func.GetFunctionUsage(clientAppUser.Id);
-            if (usageData == null)
+            UsageSummary usageSummary = func.GetFunctionUsage(clientAppUser.Id);
+            if (usageSummary == null)
             {
-                usageData = new FunctionUsage()
+                usageSummary = new FunctionUsageSummary()
                 {
                     Function = func,
                     ClientAppUser = clientAppUser
                 };
-                func.Usages.Add((FunctionUsage) usageData);
+                func.Usages.Add((FunctionUsageSummary) usageSummary);
             }
 
-            return usageData;
+            return usageSummary;
         }
 
-        private UsageData GetProgramUsageData(Program program, ClientAppUser clientAppUser)
+        private UsageSummary GetProgramUsageData(Program program, ClientAppUser clientAppUser)
         {
-            UsageData usageData = program.Usages.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUser.Id);
-            if (usageData == null)
+            UsageSummary usageSummary = program.Usages.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUser.Id);
+            if (usageSummary == null)
             {
-                usageData = new ProgramUsage()
+                usageSummary = new ProgramUsageSummary()
                 {
                     Program = program,
                     ClientAppUser = clientAppUser
                 };
-                program.Usages.Add((ProgramUsage)usageData);
+                program.Usages.Add((ProgramUsageSummary)usageSummary);
             }
 
-            return usageData;
+            return usageSummary;
         }
 
     }

@@ -1,59 +1,50 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Telimena.WebApp.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Telimena.WebApp.Controllers.Tests
+﻿namespace Telimena.Tests
 {
+    using System;
     using System.Data.Common;
     using System.Data.Entity;
+    using System.Linq;
     using System.Web.Mvc;
-    using Core.Interfaces;
-    using Core.Models;
-    using Infrastructure.Database;
-    using Infrastructure.Identity;
-    using Infrastructure.Repository.Implementation;
-    using Infrastructure.UnitOfWork.Implementation;
     using log4net;
     using Microsoft.AspNet.Identity.EntityFramework;
-    using Models.Account;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using NUnit.Framework;
+    using WebApp.Controllers;
+    using WebApp.Core.Interfaces;
+    using WebApp.Core.Models;
+    using WebApp.Infrastructure.Database;
+    using WebApp.Infrastructure.Identity;
+    using WebApp.Infrastructure.UnitOfWork.Implementation;
+    using WebApp.Models.Account;
+    using Assert = NUnit.Framework.Assert;
 
     [TestClass()]
-    public class AccountControllerTests
+    public class AccountControllerTests : IntegrationsTestsBase
     {
-        private DbConnection connection;
-        private TelimenaContext context;
 
         public AccountControllerTests()
         {
-            this.connection = Effort.DbConnectionFactory.CreateTransient();
-            this.context = new TelimenaContext(this.connection);
-
         }
 
         [Test]
         public void TestRemoveUser()
         {
             var manager = new TelimenaUserManager(
-                new UserStore<TelimenaUser>(this.context));
-            var unit = new AccountUnitOfWork(null, manager, this.context);
+                new UserStore<TelimenaUser>(this.Context));
+            var unit = new AccountUnitOfWork(null, manager, this.Context);
 
             AccountControllerTests.GetTwoUsers(unit);
             var jack = unit.UserManager.FindByNameAsync("Jack@Daniels.com").GetAwaiter().GetResult();
 
-            var jackDev = this.context.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == jack.Id).GetAwaiter().GetResult();
+            var jackDev = this.Context.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == jack.Id).GetAwaiter().GetResult();
             int jackDevId = jackDev.Id;
 
             unit.UserManager.DeleteAsync(jack).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
             Assert.IsNull(unit.UserManager.FindByNameAsync("Jack@Daniels.com").GetAwaiter().GetResult());
 
-            jackDev = this.context.Developers.FirstOrDefaultAsync(x => x.Id == jackDevId).GetAwaiter().GetResult();
+            jackDev = this.Context.Developers.FirstOrDefaultAsync(x => x.Id == jackDevId).GetAwaiter().GetResult();
 
             Assert.IsNull(jackDev.MainUser);
             Assert.AreEqual("Jack@Daniels.com", jackDev.MainEmail);
@@ -64,18 +55,18 @@ namespace Telimena.WebApp.Controllers.Tests
         public void TestAddSecondUserToDeveloper()
         {
             var manager = new TelimenaUserManager(
-                new UserStore<TelimenaUser>(this.context));
-            var unit = new AccountUnitOfWork(null, manager, this.context);
+                new UserStore<TelimenaUser>(this.Context));
+            var unit = new AccountUnitOfWork(null, manager, this.Context);
 
             AccountControllerTests.GetTwoUsers(unit);
 
             var jim = unit.UserManager.FindByNameAsync("Jim@Beam.com").GetAwaiter().GetResult();
             var jack = unit.UserManager.FindByNameAsync("Jack@Daniels.com").GetAwaiter().GetResult();
 
-            var jackDev = this.context.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == jack.Id).GetAwaiter().GetResult();
+            var jackDev = this.Context.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == jack.Id).GetAwaiter().GetResult();
             jackDev.AssociatedUsers.Add(jim);
             unit.CompleteAsync().GetAwaiter().GetResult();
-            jackDev = this.context.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == jack.Id).GetAwaiter().GetResult();
+            jackDev = this.Context.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == jack.Id).GetAwaiter().GetResult();
 
             Assert.AreEqual(jim.Id, jackDev.AssociatedUsers.Single().Id);
             jackDev.AssociatedUsers.Remove(jim);
@@ -88,6 +79,7 @@ namespace Telimena.WebApp.Controllers.Tests
         {
             unit.RegisterUserAsync(new TelimenaUser()
             {
+                CreatedDate = DateTime.UtcNow,
                 UserName = "Jim@Beam.com",
                 Email = "Jim@Beam.com",
                 DisplayName = "Jim Beam"
@@ -97,6 +89,7 @@ namespace Telimena.WebApp.Controllers.Tests
 
             unit.RegisterUserAsync(new TelimenaUser()
             {
+                CreatedDate = DateTime.UtcNow,
                 UserName = "Jack@Daniels.com",
                 Email = "Jack@Daniels.com",
                 DisplayName = "Jack Daniels"
@@ -109,8 +102,8 @@ namespace Telimena.WebApp.Controllers.Tests
         public void RegisterTest()
         {
             var manager = new TelimenaUserManager(
-                new UserStore<TelimenaUser>(this.context));
-            var unit = new AccountUnitOfWork(null, manager, this.context);
+                new UserStore<TelimenaUser>(this.Context));
+            var unit = new AccountUnitOfWork(null, manager, this.Context);
             var sut = new AccountController(unit, new Mock<ILog>().Object);
 
             var model = new RegisterViewModel()
@@ -133,7 +126,7 @@ namespace Telimena.WebApp.Controllers.Tests
             Assert.IsTrue(user.RoleNames.Contains(TelimenaRoles.Developer));
             Assert.IsTrue(user.RoleNames.Contains(TelimenaRoles.Viewer));
 
-            Developer developer = this.context.Developers.SingleOrDefault(x => x.MainUser.Id == user.Id);
+            Developer developer = this.Context.Developers.SingleOrDefault(x => x.MainUser.Id == user.Id);
             Assert.AreEqual(user.DisplayName, developer.MainUser.DisplayName);
             Assert.AreEqual(user.Email, developer.MainEmail);
         }

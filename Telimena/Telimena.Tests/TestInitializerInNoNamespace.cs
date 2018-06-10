@@ -1,15 +1,18 @@
-﻿    using NUnit.Framework;
+﻿    using System.Data.Entity;
+    using NUnit.Framework;
     using Telimena.WebApp;
+    using Telimena.WebApp.Infrastructure.Database;
 
-    [SetUpFixture]
-    public class TestInitializerInNoNamespace
+[SetUpFixture]
+public class TestInitializerInNoNamespace
+{
+    [OneTimeSetUp]
+    public void Setup()
     {
-        [OneTimeSetUp]
-        public void Setup()
-        {
-            AutoMapperConfiguration.Configure();
-        }
-
-        [OneTimeTearDown]
-        public void Teardown() { /* ... */ }
+        AutoMapperConfiguration.Configure();
     }
+
+    [OneTimeTearDown]
+    public void Teardown() { /* ... */ }
+}
+

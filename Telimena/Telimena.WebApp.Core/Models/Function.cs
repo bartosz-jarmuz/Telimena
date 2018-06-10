@@ -11,9 +11,9 @@
         public virtual  Program Program { get; set; }
         public int ProgramId { get; set; }
         public DateTime RegisteredDate { get; set; }
-        public virtual ICollection<FunctionUsage> Usages { get; set; } = new List<FunctionUsage>();
+        public virtual ICollection<FunctionUsageSummary> Usages { get; set; } = new List<FunctionUsageSummary>();
 
-        public FunctionUsage GetFunctionUsage(int clientAppUserId)
+        public FunctionUsageSummary GetFunctionUsage(int clientAppUserId)
         {
             return this.Usages.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUserId);
         }

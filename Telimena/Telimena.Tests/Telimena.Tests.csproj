@@ -124,6 +124,8 @@
     <Compile Include="ClientTests.cs" />
     <Compile Include="Controllers\AccountControllerTests.cs" />
     <Compile Include="Controllers\AdminDashboardControllerTests.cs" />
+    <Compile Include="Controllers\IntegrationsTestsBase.cs" />
+    <Compile Include="Controllers\IntegrationTestsSetUpFixture.cs" />
     <Compile Include="MappingsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\StatisticsControllerTests.cs" />

@@ -28,7 +28,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             this.TelimenaContext.Functions.Add(objectToAdd);
         }
 
-        public void AddUsage(FunctionUsage objectToAdd)
+        public void AddUsage(FunctionUsageSummary objectToAdd)
         {
             this.TelimenaContext.FunctionUsages.Add(objectToAdd);
         }
@@ -38,7 +38,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return this.TelimenaContext.Functions.FirstOrDefault(x => x.ProgramId == program.Id && x.Name == functionName);
         }
 
-        public FunctionUsage GetUsage(Function function, ClientAppUser clientAppUser)
+        public FunctionUsageSummary GetUsage(Function function, ClientAppUser clientAppUser)
         {
             return this.TelimenaContext.FunctionUsages.FirstOrDefault(x => x.Function.Id == function.Id && x.ClientAppUserId == clientAppUser.Id);
         }
