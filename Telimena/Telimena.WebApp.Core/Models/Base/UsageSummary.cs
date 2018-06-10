@@ -9,14 +9,15 @@
         public DateTime LastUsageDateTime { get; set; } = DateTime.UtcNow;
         public virtual ClientAppUser ClientAppUser { get; set; }
         public int? ClientAppUserId { get; set; }
-        public int Count { get; set; }
+        public int SummaryCount { get; set; }
 
-       // public virtual ICollection<UsageDetail> UsageDetails { get; set; } = new List<UsageDetail>();
+        public abstract void UpdateUsageDetails(DateTime lastUsageDateTime);
 
         public virtual void IncrementUsage()
         {
-            this.Count++;
+            this.SummaryCount++;
             this.LastUsageDateTime = DateTime.UtcNow;
+            this.UpdateUsageDetails(this.LastUsageDateTime);
         }
     }
 }

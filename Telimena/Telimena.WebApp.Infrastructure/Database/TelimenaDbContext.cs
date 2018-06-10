@@ -28,7 +28,10 @@
         public DbSet<Program> Programs { get; set; }
         public DbSet<Function> Functions { get; set; }
         public DbSet<ProgramUsageSummary> ProgramUsages { get; set; }
+        public DbSet<ProgramUsageDetail> ProgramUsageDetails { get; set; }
+
         public DbSet<FunctionUsageSummary> FunctionUsages { get; set; }
+        public DbSet<FunctionUsageDetail> FunctionUsageDetails { get; set; }
         public DbSet<ClientAppUser> AppUsers { get; set; }
         public DbSet<Developer> Developers { get; set; }
         public DbSet<PrimaryAssembly> PrimaryAssemblies { get; set; }
@@ -44,10 +47,6 @@
                 .WithRequired(x => x.Program)
                 .WillCascadeOnDelete(true);
 
-            //modelBuilder.Entity<UsageSummary>()
-            //    .HasMany(x=>x.UsageDetails)
-            //    .WithRequired(detail => detail.UsageSummary)
-            //    .WillCascadeOnDelete(false);
 
         }
 

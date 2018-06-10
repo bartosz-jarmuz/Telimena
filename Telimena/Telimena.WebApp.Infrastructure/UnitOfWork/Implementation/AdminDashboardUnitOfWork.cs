@@ -45,10 +45,10 @@
                     ProgramName = program.Name,
                     ProgramId = program.Id,
                     RegisteredDate = program.RegisteredDate,
-                    LastUsage = program.Usages.MaxOrNull(x => x.LastUsageDateTime),
-                    UsersCount = program.Usages.Count,
-                    TodayUsageCount = program.Usages.Where(x=> (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(x=>x.Count),
-                    TotalUsageCount = program.Usages.Sum(x=>x.Count),
+                    LastUsage = program.UsageSummaries.MaxOrNull(x => x.LastUsageDateTime),
+                    UsersCount = program.UsageSummaries.Count,
+                    TodayUsageCount = program.UsageSummaries.Where(x=> (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(x=>x.SummaryCount),
+                    TotalUsageCount = program.UsageSummaries.Sum(x=>x.SummaryCount),
                     FunctionsCount = functions.Count,
                 };
                 returnData.Add(summary);
@@ -78,7 +78,7 @@
                 TotalFunctionsCount = await this.context.Functions.CountAsync()
             };
 
-            int? value = await this.context.ProgramUsages.SumAsync(x => (int?)x.Count)??0;
+            int? value = await this.context.ProgramUsages.SumAsync(x => (int?)x.SummaryCount)??0;
             summary.TotalProgramUsageCount = value ?? 0;
             //value = await this.context.FunctionUsages.SumAsync(x => (int?)x.Count) ?? 0;
             summary.TotalFunctionsUsageCount = value ?? 0;

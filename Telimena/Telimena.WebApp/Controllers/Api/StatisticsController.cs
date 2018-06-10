@@ -42,7 +42,7 @@
                 await this.work.CompleteAsync();
                 return new RegistrationResponse()
                 {
-                    Count = usageSummary.Count,
+                    Count = usageSummary.SummaryCount,
                     ProgramId = program.Id,
                     UserId = clientAppUser.Id,
                 };
@@ -92,7 +92,7 @@
                 await this.work.CompleteAsync();
                 return new StatisticsUpdateResponse()
                 {
-                    Count = usageSummary.Count,
+                    Count = usageSummary.SummaryCount,
                     ProgramId = program.Id,
                     UserId = clientAppUser.Id,
                     FunctionName = updateRequest.FunctionName
@@ -126,7 +126,7 @@
         private async Task<UsageSummary> GetFunctionUsageData(Program program, ClientAppUser clientAppUser, string functionName)
         {
             var func = await this.helper.GetFunctionOrAddIfNotExists(functionName, program);
-            UsageSummary usageSummary = func.GetFunctionUsage(clientAppUser.Id);
+            UsageSummary usageSummary = func.GetFunctionUsageSummary(clientAppUser.Id);
             if (usageSummary == null)
             {
                 usageSummary = new FunctionUsageSummary()
@@ -134,7 +134,7 @@
                     Function = func,
                     ClientAppUser = clientAppUser
                 };
-                func.Usages.Add((FunctionUsageSummary) usageSummary);
+                func.UsageSummaries.Add((FunctionUsageSummary) usageSummary);
             }
 
             return usageSummary;
@@ -142,7 +142,7 @@
 
         private UsageSummary GetProgramUsageData(Program program, ClientAppUser clientAppUser)
         {
-            UsageSummary usageSummary = program.Usages.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUser.Id);
+            UsageSummary usageSummary = program.UsageSummaries.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUser.Id);
             if (usageSummary == null)
             {
                 usageSummary = new ProgramUsageSummary()
@@ -150,7 +150,7 @@
                     Program = program,
                     ClientAppUser = clientAppUser
                 };
-                program.Usages.Add((ProgramUsageSummary)usageSummary);
+                program.UsageSummaries.Add((ProgramUsageSummary)usageSummary);
             }
 
             return usageSummary;
