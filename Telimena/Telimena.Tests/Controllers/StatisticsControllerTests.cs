@@ -12,18 +12,24 @@ namespace Telimena.Tests
     using System.Linq;
     using System.Reflection;
     using Client;
+    using DbIntegrationTestHelpers;
     using NUnit.Framework;
     using WebApi.Controllers;
     using WebApp.Core.Models;
+    using WebApp.Infrastructure.Database;
     using WebApp.Infrastructure.UnitOfWork.Implementation;
     #endregion
 
+
     [TestFixture]
-    public class StatisticsControllerTests : IntegrationsTestsBase
+    public class StatisticsControllerTests : IntegrationTestsBase<TelimenaContext>
     {
         public StatisticsControllerTests()
         {
         }
+
+        protected override Action SeedAction => () => TelimenaDbInitializer.SeedUsers(this.Context);
+
 
         [Test]
         public void TestAddRemoveReferencedAssemblies()

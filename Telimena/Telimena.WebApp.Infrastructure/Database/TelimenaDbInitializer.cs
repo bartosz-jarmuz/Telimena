@@ -12,30 +12,6 @@
     using Microsoft.AspNet.Identity.EntityFramework;
     using UnitOfWork.Implementation;
 
-    internal sealed class DropCreateDatabaseAlwaysAndSeed : DropCreateDatabaseAlways<TelimenaContext>
-    {
-        public override void InitializeDatabase(TelimenaContext context)
-        {
-            // This tells the database to close all connections and rolback open transactions.
-            // The intent to avoid any open database connections errors during database drop.
-            if (context.Database.Exists())
-            {
-                context.Database.ExecuteSqlCommand(
-                    TransactionalBehavior.DoNotEnsureTransaction,
-                    $"ALTER DATABASE [{context.Database.Connection.Database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE");
-            }
-
-            base.InitializeDatabase(context);
-        }
-
-        protected override void Seed(TelimenaContext context)
-        {
-            TelimenaDbInitializer.SeedUsers(context);
-            context.SaveChanges();
-
-        }
-    }
-
 
     public class TelimenaDbInitializer : System.Data.Entity.DropCreateDatabaseIfModelChanges<TelimenaContext>
     {

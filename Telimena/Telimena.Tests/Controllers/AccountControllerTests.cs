@@ -5,6 +5,7 @@
     using System.Data.Entity;
     using System.Linq;
     using System.Web.Mvc;
+    using DbIntegrationTestHelpers;
     using log4net;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,12 +21,18 @@
     using Assert = NUnit.Framework.Assert;
 
     [TestClass()]
-    public class AccountControllerTests : IntegrationsTestsBase
+    public class AccountControllerTests : StaticContextIntegrationTestsBase<TelimenaContext>
     {
 
         public AccountControllerTests()
         {
         }
+        protected override Action SeedAction => () =>
+        {
+            TelimenaDbInitializer.SeedUsers(this.Context);
+         //   this.Context.Users.Add(new TelimenaUser() {UserName = "aa", Email = "aa@b.com", CreatedDate = DateTime.UtcNow});
+            this.Context.SaveChanges();
+        };
 
         [Test]
         public void TestRemoveUser()
@@ -121,7 +128,7 @@
             var user = unit.UserManager.FindByNameAsync(model.Email).GetAwaiter().GetResult();
 
             Assert.AreEqual("Jim Beam", user.DisplayName);
-            Assert.IsTrue(user.CreatedDate.Date == DateTime.Today);
+            Assert.IsTrue(user.CreatedDate.Date == DateTime.UtcNow.Date);
             Assert.IsFalse(user.IsActivated);
             Assert.IsTrue(user.RoleNames.Contains(TelimenaRoles.Developer));
             Assert.IsTrue(user.RoleNames.Contains(TelimenaRoles.Viewer));
