@@ -13,9 +13,11 @@
                 ForMember(x=>x.RegisteredDate, o=>o.Ignore());
             this.CreateMap<AssemblyInfo, PrimaryAssembly>().
                 ForMember(x => x.Id, o => o.Ignore())
+                .ForMember(x => x.Versions, o => o.Ignore())
                 .ForMember(x => x.Program, o => o.Ignore());
             this.CreateMap<AssemblyInfo, ReferencedAssembly>().
                 ForMember(x => x.Id, o => o.Ignore())
+                .ForMember(x => x.Versions, o => o.Ignore())
                 .ForMember(x => x.ProgramId, o => o.Ignore())
                 .ForMember(x => x.Program, o => o.Ignore());
             this.CreateMap<ProgramInfo, Program>().

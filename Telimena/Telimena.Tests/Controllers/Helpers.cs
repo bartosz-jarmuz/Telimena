@@ -25,12 +25,13 @@
 
         }
 
-        public static void AssertRegistrationResponse(RegistrationResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
+        public static void AssertRegistrationResponse(RegistrationResponse response, Program prg, int expectedVersionId, ClientAppUser usr, int expectedCount,  string funcName = null )
         {
             Assert.IsNull(response.Error);
             Assert.AreEqual(expectedCount, response.Count);
             Assert.AreEqual(prg.Id, response.ProgramId);
             Assert.AreEqual(usr.Id, response.UserId);
+            Assert.AreEqual(expectedVersionId, response.VersionId);
         }
 
         public static void AssertUpdateResponse(StatisticsUpdateResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
@@ -47,7 +48,7 @@
             return $"{methodIdentifier}_{name}";
         }
 
-        public static ProgramInfo GetProgramInfo(string name, string company = "xyz", string copyright = "Reserved")
+        public static ProgramInfo GetProgramInfo(string name, string company = "xyz", string copyright = "Reserved", string version = "1.2.3.4")
         {
             return new ProgramInfo()
             {
@@ -56,7 +57,8 @@
                 {
                     Company = company,
                     Copyright = copyright,
-                    Name = name + ".dll"
+                    Name = name + ".dll",
+                    Version = version
                 }
             };
         }

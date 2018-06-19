@@ -7,8 +7,7 @@
     {
         public int Id { get; set; }
         public DateTime DateTime { get; set; } = DateTime.UtcNow;
-
-        public string Version { get; set; }
+        
         public int UsageSummaryId { get; set; }
     }
 }

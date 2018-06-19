@@ -31,7 +31,6 @@
             {
                 PrimaryAssembly = new AssemblyInfo(assembly),
                 Name = assembly.GetName().Name,
-                Version = assembly.GetName().Version.ToString()
             };
             this.UserInfo = new UserInfo()
             {

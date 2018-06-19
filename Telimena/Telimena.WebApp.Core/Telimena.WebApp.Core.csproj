@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetLittleHelpers, Version=1.0.57.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetLittleHelpers.1.0.57\lib\net461\DotNetLittleHelpers.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -66,6 +69,7 @@
     <Compile Include="Models\PrimaryAssembly.cs" />
     <Compile Include="Models\Program.cs" />
     <Compile Include="Models\Base\AssemblyData.cs" />
+    <Compile Include="Models\ProgramUsageDetail.cs" />
     <Compile Include="Models\ProgramUsageSummary.cs" />
     <Compile Include="Models\ReferencedAssembly.cs" />
     <Compile Include="Models\TelimenaUser.cs" />

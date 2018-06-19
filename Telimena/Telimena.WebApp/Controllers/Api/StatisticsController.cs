@@ -45,6 +45,7 @@
                     Count = usageSummary.SummaryCount,
                     ProgramId = program.Id,
                     UserId = clientAppUser.Id,
+                    VersionId = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version).Id
                 };
             }
             catch (Exception ex)

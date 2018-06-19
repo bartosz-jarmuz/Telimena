@@ -6,6 +6,5 @@
     {
         public AssemblyInfo PrimaryAssembly { get;  set; }
         public string Name { get;  set; }
-        public string Version { get;  set; }
     }
 }

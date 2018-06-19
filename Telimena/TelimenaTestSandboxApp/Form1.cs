@@ -60,7 +60,6 @@ namespace TelimenaTestSandboxApp
                 this.teli.ProgramInfo = new ProgramInfo()
                 {
                     Name = this.appNameTextBox.Text,
-                    Version = "1.0",
                     PrimaryAssembly = new AssemblyInfo()
                     {
                         Company = "Comp A Ny",

@@ -190,6 +190,62 @@ namespace Telimena.Tests
         }
 
         [Test]
+        public void TestRegistration_SameAppEachTime()
+        {
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
+            StatisticsController sut = new StatisticsController(unit);
+            UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
+
+            RegistrationRequest request = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = userInfo
+            };
+
+            RegistrationResponse response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
+            Helpers.AssertRegistrationResponse(response, prg, 1,usr, 1);
+            Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
+
+            //second time
+            response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
+            Helpers.AssertRegistrationResponse(response, prg,1, usr, 2);
+            Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
+
+            //third time - different version
+            request = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: "2.0.0.0"),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = userInfo
+            };
+            response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
+            Helpers.AssertRegistrationResponse(response, prg,2, usr, 3);
+            Assert.AreEqual(2, response.VersionId);
+            Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
+
+            //fourth time - use first version again
+            request = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = userInfo
+            };
+            response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
+            Helpers.AssertRegistrationResponse(response, prg,1, usr, 4);
+            Assert.AreEqual(1, response.VersionId);
+            Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
+
+
+
+            Assert.AreEqual(1, prg.PrimaryAssembly.GetLatestVersion().Id);
+        }
+
+        [Test]
         public void TestRegistration_SameUserTwoApps_HappyPath()
         {
             StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
@@ -206,7 +262,7 @@ namespace Telimena.Tests
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
 
             Assert.IsTrue(prg.Id > 0 && usr.Id > 0);
-            Helpers.AssertRegistrationResponse(response, prg, usr,1);
+            Helpers.AssertRegistrationResponse(response, prg, 1,usr,1);
 
             Assert.AreEqual(1, prg.UsageSummaries.Count());
             Assert.AreEqual(request.ProgramInfo.PrimaryAssembly.Name, prg.PrimaryAssembly.Name);
@@ -230,7 +286,7 @@ namespace Telimena.Tests
             response = sut.RegisterClient(request).GetAwaiter().GetResult();
             Program prg2 = unit.Programs.SingleOrDefaultAsync(x => x.Name == prgName2).GetAwaiter().GetResult();
 
-            Helpers.AssertRegistrationResponse(response, prg2, usr, 1);
+            Helpers.AssertRegistrationResponse(response, prg2,2, usr, 1);
 
             Assert.IsTrue(prg2.Id > prg.Id);
             Assert.AreEqual(usr.Id, prg2.UsageSummaries.Single().ClientAppUserId);
