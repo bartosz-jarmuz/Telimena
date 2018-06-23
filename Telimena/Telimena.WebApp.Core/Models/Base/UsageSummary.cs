@@ -11,13 +11,15 @@
         public int? ClientAppUserId { get; set; }
         public int SummaryCount { get; set; }
 
-        public abstract void UpdateUsageDetails(DateTime lastUsageDateTime);
+        public abstract void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version);
 
-        public virtual void IncrementUsage()
+        public virtual void IncrementUsage(AssemblyVersion version)
         {
             this.SummaryCount++;
             this.LastUsageDateTime = DateTime.UtcNow;
-            this.UpdateUsageDetails(this.LastUsageDateTime);
+            this.UpdateUsageDetails(this.LastUsageDateTime, version);
         }
+
+       
     }
 }

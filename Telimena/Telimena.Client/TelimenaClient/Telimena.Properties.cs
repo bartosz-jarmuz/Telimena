@@ -21,6 +21,7 @@
         internal UserInfo UserInfo { get; set; }
         internal ProgramInfo ProgramInfo { get; set; }
         protected int ProgramId { get; set; }
+        public string PrimaryAssemblyVersion { get; private set; }
         protected int UserId { get; set; }
         public bool SuppressAllErrors { get; set; } = true;
         protected string TelimenaVersion { get; }

@@ -39,7 +39,8 @@
                 {
                     ProgramId = this.ProgramId,
                     UserId = this.UserId,
-                    FunctionName = functionName
+                    FunctionName = functionName,
+                    Version = this.PrimaryAssemblyVersion
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request);
                 return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);

@@ -10,15 +10,17 @@
         public virtual ICollection<FunctionUsageDetail> UsageDetails { get; set; } = new List<FunctionUsageDetail>();
 
         #region Overrides of UsageSummary
-        public override void UpdateUsageDetails(DateTime lastUsageDateTime)
+        public override void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version)
         {
             var usage = new FunctionUsageDetail()
             {
                 DateTime = lastUsageDateTime,
-                UsageSummary = this
+                UsageSummary = this,
+                AssemblyVersion = version
             };
             this.UsageDetails.Add(usage);
-    }
+        }
+
         #endregion
     }
     public class FunctionUsageDetail : UsageDetail

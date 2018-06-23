@@ -38,14 +38,16 @@
             {
                 Program program = await this.helper.GetProgramOrAddIfNotExists(request.ProgramInfo);
                 ClientAppUser clientAppUser = await this.helper.GetUserInfoOrAddIfNotExists(request.UserInfo);
-                UsageSummary usageSummary = await this.GetUpdatedUsageData(program, clientAppUser);
+                UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser);
+                var version = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version);
+                usageSummary.IncrementUsage(version);
                 await this.work.CompleteAsync();
+
                 return new RegistrationResponse()
                 {
                     Count = usageSummary.SummaryCount,
-                    ProgramId = program.Id,
+                    ProgramId = program.ProgramId,
                     UserId = clientAppUser.Id,
-                    VersionId = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version).Id
                 };
             }
             catch (Exception ex)
@@ -88,13 +90,17 @@
                     };
                 }
 
-                UsageSummary usageSummary = await this.GetUpdatedUsageData(program, clientAppUser, updateRequest.FunctionName);
+                UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser, updateRequest.FunctionName);
+                this.helper.EnsureVersionIsRegistered(program, updateRequest.Version);
+                var versionInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version);
+
+                usageSummary.IncrementUsage(versionInfo);
 
                 await this.work.CompleteAsync();
                 return new StatisticsUpdateResponse()
                 {
                     Count = usageSummary.SummaryCount,
-                    ProgramId = program.Id,
+                    ProgramId = program.ProgramId,
                     UserId = clientAppUser.Id,
                     FunctionName = updateRequest.FunctionName
                 };
@@ -108,7 +114,7 @@
             }
         }
 
-        private async Task<UsageSummary> GetUpdatedUsageData(Program program, ClientAppUser clientAppUser, string functionName = null)
+        private async Task<UsageSummary> GetUsageData(Program program, ClientAppUser clientAppUser, string functionName = null)
         {
             UsageSummary usageSummary;
             if (!string.IsNullOrEmpty(functionName))
@@ -120,7 +126,6 @@
                 usageSummary = this.GetProgramUsageData(program, clientAppUser);
             }
 
-            usageSummary.IncrementUsage();
             return usageSummary;
         }
 

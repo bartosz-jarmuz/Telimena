@@ -5,13 +5,14 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
+    using DotNetLittleHelpers;
 
     public class Program
     {
-        public int Id { get; set; }
-        [Required]
-        public virtual PrimaryAssembly PrimaryAssembly { get; set; }
-        public virtual ICollection<ReferencedAssembly> Assemblies { get; set; } = new List<ReferencedAssembly>();
+        public int ProgramId { get; set; }
+        public ICollection<ProgramAssembly> ProgramAssemblies { get; set; } = new List<ProgramAssembly>();
+        public virtual ProgramAssembly PrimaryAssembly { get; set; }
+
         public virtual ICollection<Function> Functions { get; set; } = new List<Function>();
         public virtual ICollection<ProgramUsageSummary> UsageSummaries { get; set; } = new List<ProgramUsageSummary>();
         public DateTime RegisteredDate { get; set; }
@@ -29,6 +30,12 @@
         {
             var usage = this.GetProgramUsageSummary(clientAppUserId);
             return usage.UsageDetails;
+        }
+
+        public ProgramUsageDetail GetLatestUsageDetail()
+        {
+            ProgramUsageSummary summary = this.UsageSummaries.MaxFirstBy(x => x.LastUsageDateTime);
+            return summary.UsageDetails.MaxFirstBy(x => x.Id);
         }
 
     }

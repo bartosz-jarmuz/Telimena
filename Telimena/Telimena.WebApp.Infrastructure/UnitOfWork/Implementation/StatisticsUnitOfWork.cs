@@ -18,10 +18,12 @@
         {
             this.context = context;
             this.ClientAppUsers = new Repository<ClientAppUser>(context);
+            this.Versions = new Repository<AssemblyVersion>(context);
             this.Functions= new FunctionRepository(context);
             this.Programs= new ProgramRepository(context);
         }
 
+        public IRepository<AssemblyVersion> Versions { get; }
         public IRepository<ClientAppUser> ClientAppUsers { get; }
         public IProgramRepository Programs { get; }
         public IFunctionRepository Functions { get; }

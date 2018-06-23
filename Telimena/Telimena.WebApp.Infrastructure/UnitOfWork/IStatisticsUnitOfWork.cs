@@ -12,6 +12,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
     public interface IStatisticsUnitOfWork
     {
         IRepository<ClientAppUser> ClientAppUsers { get; }
+        IRepository<AssemblyVersion> Versions { get; }
 
         IProgramRepository Programs { get;  }
 

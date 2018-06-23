@@ -10,15 +10,18 @@
 
         public virtual ICollection<ProgramUsageDetail> UsageDetails { get; set; } = new List<ProgramUsageDetail>();
 
-        public override void UpdateUsageDetails(DateTime lastUsageDateTime)
+        public override void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version)
         {
             var usage = new ProgramUsageDetail()
             {
                 DateTime = lastUsageDateTime,
-                UsageSummary = this
+                UsageSummary = this,
+                AssemblyVersion = version
             };
             this.UsageDetails.Add(usage);
         }
+
+       
     }
 
 

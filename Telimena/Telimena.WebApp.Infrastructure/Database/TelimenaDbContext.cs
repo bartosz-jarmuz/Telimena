@@ -34,19 +34,21 @@
         public DbSet<FunctionUsageDetail> FunctionUsageDetails { get; set; }
         public DbSet<ClientAppUser> AppUsers { get; set; }
         public DbSet<Developer> Developers { get; set; }
-        public DbSet<PrimaryAssembly> PrimaryAssemblies { get; set; }
-        public DbSet<ReferencedAssembly> ReferencedAssemblies { get; set; }
+        public DbSet<ProgramAssembly> ProgramAssemblies { get; set; }
+        public DbSet<AssemblyVersion> Versions { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<ProgramAssembly>()
+                .HasRequired(a => a.Program)
+                .WithMany(c => c.ProgramAssemblies)
+                .HasForeignKey(a => a.ProgramId);
 
             modelBuilder.Entity<Program>()
-                .HasOptional(c => c.PrimaryAssembly)
-                .WithRequired(x => x.Program)
-                .WillCascadeOnDelete(true);
-
+                .HasOptional(a => a.PrimaryAssembly)
+                .WithOptionalPrincipal(u => u.PrimaryOf);
 
         }
 

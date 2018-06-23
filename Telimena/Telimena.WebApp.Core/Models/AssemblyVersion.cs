@@ -11,6 +11,8 @@
         public bool? IsBeta { get; set; }
         public DateTime? BetaReleaseDate { get; set; }
         public DateTime? ProductionReleaseDate { get; set; }
-       
+        public virtual ProgramAssembly ProgramAssembly { get; set; }
+        public int ProgramAssemblyId { get; set; }
+
     }
 }

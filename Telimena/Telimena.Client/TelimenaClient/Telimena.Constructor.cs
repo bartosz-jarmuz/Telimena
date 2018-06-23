@@ -39,7 +39,7 @@
             };
 
             this.TelimenaVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-
+            this.PrimaryAssemblyVersion = this.ProgramInfo.PrimaryAssembly.Version;
             this.HttpClient = new HttpClient()
             {
                 BaseAddress = new Uri(telemetryApiBaseUrl)

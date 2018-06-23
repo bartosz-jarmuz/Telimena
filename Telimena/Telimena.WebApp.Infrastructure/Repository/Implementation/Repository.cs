@@ -39,6 +39,17 @@
                 return this.DbContext.Set<TEntity>().SingleOrDefaultAsync(predicate);
             }
         }
+        public TEntity Single(Expression<Func<TEntity, bool>> predicate = null)
+        {
+            if (predicate == null)
+            {
+                return this.DbContext.Set<TEntity>().Single();
+            }
+            else
+            {
+                return this.DbContext.Set<TEntity>().Single(predicate);
+            }
+        }
 
         public virtual void Add(TEntity entity)
         {

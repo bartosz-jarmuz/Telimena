@@ -35,7 +35,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public Function GetFunction(string functionName, Program program)
         {
-            return this.TelimenaContext.Functions.FirstOrDefault(x => x.ProgramId == program.Id && x.Name == functionName);
+            return this.TelimenaContext.Functions.FirstOrDefault(x => x.ProgramId == program.ProgramId && x.Name == functionName);
         }
 
         public FunctionUsageSummary GetUsage(Function function, ClientAppUser clientAppUser)

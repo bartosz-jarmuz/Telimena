@@ -6,8 +6,16 @@
     using System.Linq;
     using DotNetLittleHelpers;
 
-    public abstract class AssemblyData
+    public class ProgramAssembly 
     {
+        public int ProgramAssemblyId { get; set; }
+
+        public int ProgramId { get; set; }
+        public virtual Program Program { get; set; }
+
+        public virtual Program PrimaryOf { get; set; }
+
+
         public string Name { get; set; }
         public string Product { get; set; }
         public string Trademark { get; set; }
@@ -24,10 +32,7 @@
 
         public AssemblyVersion GetVersion(string version)
         {
-            return this.Versions?.FirstOrDefault(x => x.Version == version);
+            return this.Versions.FirstOrDefault(x => x.Version == version);
         }
-
-
-
     }
 }

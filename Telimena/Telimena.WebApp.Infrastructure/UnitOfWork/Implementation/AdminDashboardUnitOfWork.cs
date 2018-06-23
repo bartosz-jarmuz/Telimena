@@ -38,12 +38,12 @@
             
             foreach (Program program in programs)
             {
-                List<Function> functions = await this.Functions.FindAsync(x => x.ProgramId == program.Id);
+                List<Function> functions = await this.Functions.FindAsync(x => x.ProgramId == program.ProgramId);
 
                 ProgramSummary summary = new ProgramSummary()
                 {
                     ProgramName = program.Name,
-                    ProgramId = program.Id,
+                    ProgramId = program.ProgramId,
                     RegisteredDate = program.RegisteredDate,
                     LastUsage = program.UsageSummaries.MaxOrNull(x => x.LastUsageDateTime),
                     UsersCount = program.UsageSummaries.Count,
@@ -83,7 +83,7 @@
             //value = await this.context.FunctionUsages.SumAsync(x => (int?)x.Count) ?? 0;
             summary.TotalFunctionsUsageCount = value ?? 0;
 
-            summary.NewestProgram = await this.context.Programs.OrderByDescending(x => x.Id)/*.Include(x=>x.Developer)*/.FirstOrDefaultAsync();
+            summary.NewestProgram = await this.context.Programs.OrderByDescending(x => x.ProgramId)/*.Include(x=>x.Developer)*/.FirstOrDefaultAsync();
 
             return summary;
         }

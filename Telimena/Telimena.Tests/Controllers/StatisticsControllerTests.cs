@@ -22,7 +22,7 @@ namespace Telimena.Tests
 
 
     [TestFixture]
-    public class StatisticsControllerTests : IntegrationTestsBase<TelimenaContext>
+    public class StatisticsControllerTests : StaticContextIntegrationTestsBase<TelimenaContext>
     {
         public StatisticsControllerTests()
         {
@@ -45,27 +45,94 @@ namespace Telimena.Tests
             RegistrationResponse result = sut.RegisterClient(request).GetAwaiter().GetResult();
             Program prg = unit.Programs.SingleOrDefaultAsync(x => x.Name == "TestProg").GetAwaiter().GetResult();
 
-            prg.Assemblies.Add(new ReferencedAssembly()
+            prg.ProgramAssemblies.Add(new ProgramAssembly()
             {
                 Name = "Helper1"
             });
-            prg.Assemblies.Add(new ReferencedAssembly()
+            prg.ProgramAssemblies.Add(new ProgramAssembly()
             {
                 Name = "Helper2"
             });
-            this.Context.SaveChanges();
+                this.Context.SaveChanges();
 
             prg = unit.Programs.FirstOrDefaultAsync(x => x.Name == "TestProg").GetAwaiter().GetResult();
-            Assert.AreEqual(2, prg.Assemblies.Count);
+            Assert.AreEqual(3, prg.ProgramAssemblies.Count);
 
             this.Context.Programs.Remove(prg);
 
             this.Context.SaveChanges();
 
-            Assert.AreEqual(0, this.Context.PrimaryAssemblies.Count());
-            Assert.AreEqual(0, this.Context.ReferencedAssemblies.Count());
+            //Assert.AreEqual(0, this.Context.PrimaryAssemblies.Count());
+            Assert.AreEqual(0, this.Context.ProgramAssemblies.Count());
             Assert.AreEqual(0, this.Context.Programs.Count());
         }
+
+        [Test]
+        public void TestUsageDetailsAndVersions()
+        {
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
+            StatisticsController sut = new StatisticsController(unit);
+            Helpers.SeedInitialPrograms(sut,
+                2, Helpers.GetName("TestApp"), Helpers.GetName("Billy Jean"));
+            Helpers.SeedInitialPrograms(sut,
+                2, Helpers.GetName("TestApp"), Helpers.GetName("Jack Black"));
+
+            Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
+            Helpers.GetProgramAndUser(this.Context, "TestApp", "Jack Black", out prg, out ClientAppUser usr2);
+
+            var detail = prg.GetLatestUsageDetail();
+            Assert.AreEqual(usr2.Id, detail.UsageSummary.ClientAppUserId);
+            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.Version);
+
+            StatisticsUpdateRequest request = new StatisticsUpdateRequest
+            {
+                ProgramId = prg.ProgramId,
+                UserId = usr.Id,
+                Version = "1.2.3.4"
+            };
+
+            var response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);
+
+            Assert.AreEqual(3, prg.UsageSummaries.Sum(x => x.UsageDetails.Count));
+            Assert.AreEqual(2, prg.GetProgramUsageDetails(usr.Id).Count);
+            Assert.AreEqual(1, prg.GetProgramUsageDetails(usr2.Id).Count);
+            Assert.IsTrue(prg.GetProgramUsageDetails(usr.Id).All(x=>x.AssemblyVersion.Version == "1.2.3.4"));
+            Assert.IsTrue(prg.GetProgramUsageDetails(usr2.Id).All(x=>x.AssemblyVersion.Version == "1.2.3.4"));
+
+            Assert.AreEqual(1, this.Context.Versions.Count(x=>x.ProgramAssembly.ProgramId == prg.ProgramId));
+
+            detail = prg.GetLatestUsageDetail();
+            Assert.AreEqual(usr.Id, detail.UsageSummary.ClientAppUserId);
+            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.Version);
+           
+            request = new StatisticsUpdateRequest
+            {
+                ProgramId = prg.ProgramId,
+                UserId = usr.Id,
+                Version = "2.0.0.0"
+            };
+            response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);
+
+            Assert.AreEqual(4, prg.UsageSummaries.Sum(x => x.UsageDetails.Count));
+            Assert.AreEqual(3, prg.GetProgramUsageDetails(usr.Id).Count);
+            Assert.AreEqual(1, prg.GetProgramUsageDetails(usr2.Id).Count);
+            Assert.AreEqual(2, prg.GetProgramUsageDetails(usr.Id).Count(x => x.AssemblyVersion.Version == "1.2.3.4"));
+            Assert.AreEqual(1, prg.GetProgramUsageDetails(usr.Id).Count(x => x.AssemblyVersion.Version == "2.0.0.0"));
+            Assert.IsTrue(prg.GetProgramUsageDetails(usr2.Id).All(x => x.AssemblyVersion.Version == "1.2.3.4"));
+
+            Assert.AreEqual(2, this.Context.Versions.Count(x => x.ProgramAssembly.ProgramId == prg.ProgramId));
+
+
+            detail = prg.GetLatestUsageDetail();
+            Assert.AreEqual(usr.Id, detail.UsageSummary.ClientAppUserId);
+            Assert.AreEqual("2.0.0.0", detail.AssemblyVersion.Version);
+
+
+
+        }
+
 
         [Test]
         public void TestFunctionUsages()
@@ -80,9 +147,10 @@ namespace Telimena.Tests
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean",  out Program prg, out ClientAppUser usr);
             StatisticsUpdateRequest request = new StatisticsUpdateRequest
             {
-                ProgramId = prg.Id,
+                ProgramId = prg.ProgramId,
                 FunctionName = "Func1",
-                UserId = usr.Id
+                UserId = usr.Id,
+                Version = "1.2.3.4"
             };
 
             var response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
@@ -95,7 +163,7 @@ namespace Telimena.Tests
             Assert.AreEqual("Func1", func1.Name);
             Assert.AreEqual(1, func1.Id);
             Assert.AreEqual(1, func1.UsageSummaries.Count);
-            Assert.AreEqual(prg.Id, func1.ProgramId);
+            Assert.AreEqual(prg.ProgramId, func1.ProgramId);
 
             var usage = func1.GetFunctionUsageSummary(response.UserId);
             Assert.AreEqual(usr.Id, func1.GetFunctionUsageDetails(response.UserId).Single().UsageSummary.ClientAppUserId);
@@ -103,15 +171,16 @@ namespace Telimena.Tests
             var otherUser = Helpers.GetUser(this.Context, "Jack Black");
             request = new StatisticsUpdateRequest
             {
-                ProgramId = prg.Id,
+                ProgramId = prg.ProgramId,
                 FunctionName = "Func1",
-                UserId = otherUser.Id
+                UserId = otherUser.Id,
+                Version = "1.2.3.4"
             };
 
             //run again with different user
             response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
             Assert.AreEqual(1, response.Count);
-            prg = unit.Programs.GetById(prg.Id);
+            prg = unit.Programs.GetById(prg.ProgramId);
             Assert.AreEqual(1, prg.Functions.Count);
             func1 = prg.Functions.Single();
             Assert.AreEqual("Func1", func1.Name);
@@ -121,9 +190,11 @@ namespace Telimena.Tests
 
             request = new StatisticsUpdateRequest
             {
-                ProgramId = prg.Id,
+                ProgramId = prg.ProgramId,
                 FunctionName = "Func1",
-                UserId = usr.Id
+                UserId = usr.Id,
+                Version = "1.2.3.4"
+
             };
             //run again with first user
             response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
@@ -167,7 +238,7 @@ namespace Telimena.Tests
             unit.Programs.Add(new Program()
             {
                 Name = "SomeApp",
-                PrimaryAssembly = new PrimaryAssembly()
+                PrimaryAssembly = new ProgramAssembly()
                 {
                     Name = "SomeApp.dll",
                     Company = "SomeCompm"
@@ -176,11 +247,11 @@ namespace Telimena.Tests
 
             unit.CompleteAsync().GetAwaiter().GetResult();
             Program prg = unit.Programs.GetAsync(x => x.Name == "SomeApp").GetAwaiter().GetResult().FirstOrDefault();
-            Assert.IsTrue(prg.Id > 0);
+            Assert.IsTrue(prg.ProgramId > 0);
 
             StatisticsUpdateRequest request = new StatisticsUpdateRequest
             {
-                ProgramId = prg.Id,
+                ProgramId = prg.ProgramId,
                 UserId = 15646
             };
 
@@ -190,68 +261,12 @@ namespace Telimena.Tests
         }
 
         [Test]
-        public void TestRegistration_SameAppEachTime()
-        {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
-            StatisticsController sut = new StatisticsController(unit);
-            UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
-
-            RegistrationRequest request = new RegistrationRequest()
-            {
-                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
-                TelimenaVersion = "1.0.0.0",
-                UserInfo = userInfo
-            };
-
-            RegistrationResponse response = sut.RegisterClient(request).GetAwaiter().GetResult();
-            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
-            Helpers.AssertRegistrationResponse(response, prg, 1,usr, 1);
-            Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
-
-            //second time
-            response = sut.RegisterClient(request).GetAwaiter().GetResult();
-            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
-            Helpers.AssertRegistrationResponse(response, prg,1, usr, 2);
-            Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
-
-            //third time - different version
-            request = new RegistrationRequest()
-            {
-                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: "2.0.0.0"),
-                TelimenaVersion = "1.0.0.0",
-                UserInfo = userInfo
-            };
-            response = sut.RegisterClient(request).GetAwaiter().GetResult();
-            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
-            Helpers.AssertRegistrationResponse(response, prg,2, usr, 3);
-            Assert.AreEqual(2, response.VersionId);
-            Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
-
-            //fourth time - use first version again
-            request = new RegistrationRequest()
-            {
-                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
-                TelimenaVersion = "1.0.0.0",
-                UserInfo = userInfo
-            };
-            response = sut.RegisterClient(request).GetAwaiter().GetResult();
-            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
-            Helpers.AssertRegistrationResponse(response, prg,1, usr, 4);
-            Assert.AreEqual(1, response.VersionId);
-            Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
-
-
-
-            Assert.AreEqual(1, prg.PrimaryAssembly.GetLatestVersion().Id);
-        }
-
-        [Test]
         public void TestRegistration_SameUserTwoApps_HappyPath()
         {
             StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
             StatisticsController sut = new StatisticsController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
-            
+
             RegistrationRequest request = new RegistrationRequest()
             {
                 ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
@@ -261,13 +276,13 @@ namespace Telimena.Tests
             RegistrationResponse response = sut.RegisterClient(request).GetAwaiter().GetResult();
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
 
-            Assert.IsTrue(prg.Id > 0 && usr.Id > 0);
-            Helpers.AssertRegistrationResponse(response, prg, 1,usr,1);
+            Assert.IsTrue(prg.ProgramId > 0 && usr.Id > 0);
+            Helpers.AssertRegistrationResponse(response, prg, usr, 1);
 
             Assert.AreEqual(1, prg.UsageSummaries.Count());
             Assert.AreEqual(request.ProgramInfo.PrimaryAssembly.Name, prg.PrimaryAssembly.Name);
             Assert.AreEqual("xyz", prg.PrimaryAssembly.Company);
-            Assert.AreEqual(prg.Id, this.Context.PrimaryAssemblies.FirstOrDefault(x => x.Name == request.ProgramInfo.PrimaryAssembly.Name).Program.Id);
+            Assert.AreEqual(prg.ProgramId, this.Context.ProgramAssemblies.FirstOrDefault(x => x.Name == request.ProgramInfo.PrimaryAssembly.Name).Program.ProgramId);
 
             Assert.AreEqual(userInfo.UserName, usr.UserName);
             Assert.AreEqual(request.UserInfo.MachineName, usr.MachineName);
@@ -286,9 +301,9 @@ namespace Telimena.Tests
             response = sut.RegisterClient(request).GetAwaiter().GetResult();
             Program prg2 = unit.Programs.SingleOrDefaultAsync(x => x.Name == prgName2).GetAwaiter().GetResult();
 
-            Helpers.AssertRegistrationResponse(response, prg2,2, usr, 1);
+            Helpers.AssertRegistrationResponse(response, prg2, usr, 1);
 
-            Assert.IsTrue(prg2.Id > prg.Id);
+            Assert.IsTrue(prg2.ProgramId > prg.ProgramId);
             Assert.AreEqual(usr.Id, prg2.UsageSummaries.Single().ClientAppUserId);
         }
 
@@ -300,21 +315,27 @@ namespace Telimena.Tests
             Helpers.SeedInitialPrograms(sut, 4, Helpers.GetName("TestApp"), Helpers.GetName("Johny Walker"));
             Helpers.SeedInitialPrograms(sut, 4, Helpers.GetName("TestApp"), Helpers.GetName("Jim Beam"));
             Helpers.SeedInitialPrograms(sut, 4, Helpers.GetName("TestApp"), Helpers.GetName("Eric Cartman"));
+            Helpers.AddHelperAssemblies(this.Context, 2, Helpers.GetName("TestApp"));
 
             Helpers.GetProgramAndUser(this.Context, "TestApp3", "Jim Beam", out Program prg, out ClientAppUser usr);
             StatisticsUpdateRequest request = new StatisticsUpdateRequest
             {
-                ProgramId = prg.Id,
-                UserId = usr.Id
+                ProgramId = prg.ProgramId,
+                UserId = usr.Id,
+                Version = "1.2.3.4"
             };
 
             StatisticsUpdateResponse response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
-            Assert.IsTrue(prg.Id > 0 && usr.Id > 0);
+            Assert.IsTrue(prg.ProgramId > 0 && usr.Id > 0);
 
             Helpers.AssertUpdateResponse(response, prg, usr, 2, null);
 
             Assert.AreEqual(3, prg.UsageSummaries.Count);
-            Assert.AreEqual(2, prg.UsageSummaries.Single(x => x.ClientAppUser.UserName == "TestUpdateAction_Jim Beam").SummaryCount);
+            var summary = prg.UsageSummaries.SingleOrDefault(x => x.ClientAppUser.UserName == "TestUpdateAction_Jim Beam");
+            Assert.AreEqual(2, summary.SummaryCount);
+
+            Assert.AreEqual(summary.UsageDetails.Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.Version).Id);
+
 
             //run again
             response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
@@ -326,7 +347,92 @@ namespace Telimena.Tests
             Assert.AreEqual(3, prg.UsageSummaries.Single(x => x.ClientAppUser.UserName == "TestUpdateAction_Jim Beam").SummaryCount);
 
             Assert.AreEqual(3, prg.GetProgramUsageDetails(response.UserId).Count);
-            Assert.AreEqual(5, this.Context.ProgramUsageDetails.Count(x=>x.UsageSummary.ProgramId == prg.Id));
+            Assert.AreEqual(5, this.Context.ProgramUsageDetails.Count(x => x.UsageSummary.ProgramId == prg.ProgramId));
+            Assert.AreEqual(summary.UsageDetails.Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.Version).Id);
+
+
         }
+
+        [Test]
+        public void TestReferencedAssemblies_Add()
+        {
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
+            StatisticsController sut = new StatisticsController(unit);
+            Helpers.SeedInitialPrograms(sut, 4, Helpers.GetName("TestApp"), Helpers.GetName("Johny Walker"));
+            Helpers.AddHelperAssemblies(this.Context, 2, Helpers.GetName("TestApp"));
+            Helpers.GetProgramAndUser(this.Context, "TestApp", "Johny Walker", out Program prg, out ClientAppUser usr);
+
+            Assert.AreEqual(3, prg.ProgramAssemblies.Count);
+            Assert.AreEqual(Helpers.GetName("TestApp") + ".dll", prg.PrimaryAssembly.Name);
+            Assert.IsNotNull(prg.ProgramAssemblies.Single(x=>x.Name == Helpers.GetName("TestApp") + ".dll"));
+            Assert.IsNotNull( prg.ProgramAssemblies.Single(x=>x.Name == "HelperAss0_" + Helpers.GetName("TestApp") + ".dll"));
+            Assert.IsNotNull(prg.ProgramAssemblies.Single(x=>x.Name == "HelperAss1_" + Helpers.GetName("TestApp") + ".dll"));
+        }
+
+
+        [Test]
+        public void TestRegistration_SameAppEachTime()
+        {
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
+            StatisticsController sut = new StatisticsController(unit);
+            UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
+
+            RegistrationRequest request = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = userInfo
+            };
+
+            RegistrationResponse response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
+            Helpers.AssertRegistrationResponse(response, prg, usr, 1);
+            Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
+            Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.GetLatestVersion().Version);
+            Assert.AreEqual(unit.Versions.Single(x=>x.ProgramAssemblyId == prg.PrimaryAssembly.ProgramAssemblyId).Id, prg.PrimaryAssembly.GetLatestVersion().Id);
+            var firstVersionId = prg.PrimaryAssembly.GetLatestVersion().Id;
+
+            //second time
+            response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
+            Helpers.AssertRegistrationResponse(response, prg, usr, 2);
+            Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
+            Assert.AreEqual("1.2.3.4",  prg.PrimaryAssembly.GetLatestVersion().Version);
+            Assert.AreEqual(unit.Versions.Single(x => x.ProgramAssemblyId == prg.PrimaryAssembly.ProgramAssemblyId).Id, prg.PrimaryAssembly.GetLatestVersion().Id);
+
+
+            //third time - different version
+            request = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: "2.0.0.0"),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = userInfo
+            };
+            response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
+            Helpers.AssertRegistrationResponse(response, prg, usr, 3);
+            Assert.AreEqual("2.0.0.0", prg.PrimaryAssembly.GetLatestVersion().Version);
+            Assert.AreEqual(unit.Versions.Single(x => x.ProgramAssemblyId == prg.PrimaryAssembly.ProgramAssemblyId && x.Version == "2.0.0.0").Id, prg.PrimaryAssembly.GetLatestVersion().Id);
+
+            var latestId = prg.PrimaryAssembly.GetLatestVersion().Id;
+            Assert.AreNotEqual(latestId, firstVersionId);
+            Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
+
+            //fourth time - use first version again
+            request = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = userInfo
+            };
+            response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
+            Helpers.AssertRegistrationResponse(response, prg, usr, 4);
+            Assert.AreEqual(latestId, prg.PrimaryAssembly.GetLatestVersion().Id);
+            Assert.AreEqual(firstVersionId, prg.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version).Id);
+
+            Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
+        }
+
     }
 }

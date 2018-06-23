@@ -40,7 +40,7 @@
                 {
                     Name = functionName,
                     Program = program,
-                    ProgramId = program.Id
+                    ProgramId = program.ProgramId
                 };
                 this.work.Functions.Add(func);
             }
@@ -56,7 +56,7 @@
                 program = Mapper.Map<Program>(updateRequestProgramInfo);
                 this.work.Programs.Add(program);
             }
-            this.EnsureVersionIsRegistered(program, updateRequestProgramInfo);
+            this.EnsureVersionIsRegistered(program, updateRequestProgramInfo.PrimaryAssembly.Version);
             return program;
         }
 
@@ -64,17 +64,17 @@
         /// Verifies that the version of the program is added to the list of versions
         /// </summary>
         /// <param name="program"></param>
-        /// <param name="updateRequestProgramInfo"></param>
+        /// <param name="version"></param>
         /// <returns></returns>
-        public void EnsureVersionIsRegistered(Program program, ProgramInfo updateRequestProgramInfo)
+        public void EnsureVersionIsRegistered(Program program, string version)
         {
             if (program.PrimaryAssembly.Versions.AnyAndNotNull())
             {
-                if (!program.PrimaryAssembly.Versions.Any(x => x.Version == updateRequestProgramInfo.PrimaryAssembly.Version))
+                if (program.PrimaryAssembly.Versions.All(x => x.Version != version))
                 {
                     program.PrimaryAssembly.Versions.Add(new AssemblyVersion()
                     {
-                        Version = updateRequestProgramInfo.PrimaryAssembly.Version
+                        Version = version
                     });
                 }
             }
@@ -82,7 +82,7 @@
             {
                 program.PrimaryAssembly.Versions.Add(new AssemblyVersion()
                 {
-                    Version = updateRequestProgramInfo.PrimaryAssembly.Version
+                    Version = version
                 });
 
             }

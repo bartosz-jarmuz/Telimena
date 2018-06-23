@@ -7,6 +7,7 @@
     using WebApi.Controllers;
     using WebApp.Core.Models;
     using WebApp.Infrastructure.Database;
+    using WebApp.Infrastructure.UnitOfWork;
 
     public static class Helpers
     {
@@ -25,13 +26,12 @@
 
         }
 
-        public static void AssertRegistrationResponse(RegistrationResponse response, Program prg, int expectedVersionId, ClientAppUser usr, int expectedCount,  string funcName = null )
+        public static void AssertRegistrationResponse(RegistrationResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
         {
             Assert.IsNull(response.Error);
             Assert.AreEqual(expectedCount, response.Count);
-            Assert.AreEqual(prg.Id, response.ProgramId);
+            Assert.AreEqual(prg.ProgramId, response.ProgramId);
             Assert.AreEqual(usr.Id, response.UserId);
-            Assert.AreEqual(expectedVersionId, response.VersionId);
         }
 
         public static void AssertUpdateResponse(StatisticsUpdateResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
@@ -39,7 +39,7 @@
             Assert.IsNull(response.Error);
             Assert.AreEqual(expectedCount, response.Count);
             Assert.AreEqual(funcName, response.FunctionName);
-            Assert.AreEqual(prg.Id, response.ProgramId);
+            Assert.AreEqual(prg.ProgramId, response.ProgramId);
             Assert.AreEqual(usr.Id, response.UserId);
         }
 
@@ -71,6 +71,19 @@
                 Helpers.SeedProgram(controller, prgName + counter, userName);
             }
         }
+        public static void AddHelperAssemblies(TelimenaContext context, int assCount, string prgName)
+        {
+            for (int i = 0; i < assCount; i++)
+            {
+                var assName = $"HelperAss{i}_{prgName}.dll";
+                var prg = context.Programs.First(x => x.Name == prgName);
+                prg.ProgramAssemblies.Add(new ProgramAssembly()
+                {
+                    Name = assName
+                });
+            }
+        }
+
 
         public static UserInfo GetUserInfo(string name, string machineName = "SomeMachine")
         {
