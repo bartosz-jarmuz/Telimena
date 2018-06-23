@@ -457,6 +457,46 @@ namespace Telimena.Tests
 
 
         [Test]
+        public void TestRegistration_SameAppTwoUsers_DifferentVersions()
+        {
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
+            StatisticsController sut = new StatisticsController(unit);
+            UserInfo oldGuyUserInfo = Helpers.GetUserInfo(Helpers.GetName("OldGuy"));
+            UserInfo newGuyUserInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
+
+            RegistrationRequest oldGuyRequest = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = oldGuyUserInfo
+            };
+            RegistrationRequest newGuyRequest = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: "6.0"),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = newGuyUserInfo
+            };
+
+            RegistrationResponse response = sut.RegisterClient(oldGuyRequest).GetAwaiter().GetResult();
+            sut.RegisterClient(newGuyRequest).GetAwaiter().GetResult();
+            sut.RegisterClient(oldGuyRequest).GetAwaiter().GetResult();
+            sut.RegisterClient(newGuyRequest).GetAwaiter().GetResult();
+            sut.RegisterClient(oldGuyRequest).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
+
+            Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
+            Assert.AreEqual(1, prg.ProgramAssemblies.Count);
+            Assert.IsTrue(prg.PrimaryAssembly.Versions.Any(x=>x.Version == "1.2.3.4"));
+            Assert.IsTrue(prg.PrimaryAssembly.Versions.Any(x=>x.Version == "6.0"));
+            Assert.AreEqual(5, prg.UsageSummaries.Sum(x=>x.SummaryCount));
+            Assert.AreEqual(2, prg.UsageSummaries.Count);
+            Assert.AreEqual(5, prg.UsageSummaries.Sum(x=>x.UsageDetails.Count));
+
+
+
+        }
+
+        [Test]
         public void TestRegistration_SameAppEachTime()
         {
             StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
