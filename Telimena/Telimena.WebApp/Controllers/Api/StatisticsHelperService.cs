@@ -48,31 +48,47 @@
             return func;
         }
 
-        public async Task<Program> GetProgramOrAddIfNotExists(ProgramInfo updateRequestProgramInfo)
+        public async Task<Program> GetProgramOrAddIfNotExists(ProgramInfo requestProgramInfo)
         {
-            Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Name == updateRequestProgramInfo.Name);
+            Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Name == requestProgramInfo.Name);
             if (program == null)
             {
-                program = Mapper.Map<Program>(updateRequestProgramInfo);
+                program = Mapper.Map<Program>(requestProgramInfo);
                 this.work.Programs.Add(program);
             }
-            this.EnsureVersionIsRegistered(program, updateRequestProgramInfo.PrimaryAssembly.Version);
+            this.EnsureVersionIsRegistered(program.PrimaryAssembly, requestProgramInfo.PrimaryAssembly.Version);
+
+            if (requestProgramInfo.HelperAssemblies.AnyAndNotNull())
+            {
+                foreach (AssemblyInfo helperAssembly in requestProgramInfo.HelperAssemblies)
+                {
+                    ProgramAssembly existingAssembly = program.ProgramAssemblies.FirstOrDefault(x => x.Name == helperAssembly.Name);
+                    if (existingAssembly == null)
+                    {
+                        existingAssembly = Mapper.Map<ProgramAssembly>(helperAssembly);
+                        program.ProgramAssemblies.Add(existingAssembly);
+                    }
+
+                    this.EnsureVersionIsRegistered(existingAssembly, helperAssembly.Version);
+                }
+            }
+
             return program;
         }
 
         /// <summary>
         /// Verifies that the version of the program is added to the list of versions
         /// </summary>
-        /// <param name="program"></param>
+        /// <param name="programAssembly"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        public void EnsureVersionIsRegistered(Program program, string version)
+        public void EnsureVersionIsRegistered(ProgramAssembly programAssembly, string version)
         {
-            if (program.PrimaryAssembly.Versions.AnyAndNotNull())
+            if (programAssembly.Versions.AnyAndNotNull())
             {
-                if (program.PrimaryAssembly.Versions.All(x => x.Version != version))
+                if (programAssembly.Versions.All(x => x.Version != version))
                 {
-                    program.PrimaryAssembly.Versions.Add(new AssemblyVersion()
+                    programAssembly.Versions.Add(new AssemblyVersion()
                     {
                         Version = version
                     });
@@ -80,7 +96,7 @@
             }
             else
             {
-                program.PrimaryAssembly.Versions.Add(new AssemblyVersion()
+                programAssembly.Versions.Add(new AssemblyVersion()
                 {
                     Version = version
                 });

@@ -38,5 +38,6 @@
             return summary.UsageDetails.MaxFirstBy(x => x.Id);
         }
 
+      
     }
 }

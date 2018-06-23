@@ -2,6 +2,7 @@
 {
     #region Using
     using System;
+    using System.Collections.Generic;
     using System.Net.Http;
     using System.Reflection;
     using System.Runtime.CompilerServices;
@@ -25,8 +26,8 @@
         protected int UserId { get; set; }
         public bool SuppressAllErrors { get; set; } = true;
         protected string TelimenaVersion { get; }
-        private HttpClient HttpClient { get; }
+        internal ITelimenaHttpClient HttpClient { get; set; }
 
-       
+        private List<Assembly> HelperAssemblies { get; set; } = new List<Assembly>();
     }
 }

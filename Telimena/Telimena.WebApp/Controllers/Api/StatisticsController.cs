@@ -91,7 +91,7 @@
                 }
 
                 UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser, updateRequest.FunctionName);
-                this.helper.EnsureVersionIsRegistered(program, updateRequest.Version);
+                this.helper.EnsureVersionIsRegistered(program.PrimaryAssembly, updateRequest.Version);
                 var versionInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version);
 
                 usageSummary.IncrementUsage(versionInfo);

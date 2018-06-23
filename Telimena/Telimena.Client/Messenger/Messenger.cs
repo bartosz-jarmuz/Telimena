@@ -8,10 +8,10 @@
     internal class Messenger : IMessenger
     {
         public ITelimenaSerializer Serializer { get; }
-        public HttpClient HttpClient { get; }
+        public ITelimenaHttpClient HttpClient { get; }
         public bool SuppressAllErrors { get; }
 
-        public Messenger(ITelimenaSerializer serializer, HttpClient httpClient, bool suppressAllErrors)
+        public Messenger(ITelimenaSerializer serializer, ITelimenaHttpClient httpClient, bool suppressAllErrors)
         {
             this.Serializer = serializer;
             this.HttpClient = httpClient;

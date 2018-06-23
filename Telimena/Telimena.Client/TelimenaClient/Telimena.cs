@@ -2,6 +2,8 @@
 {
     #region Using
     using System;
+    using System.Collections.Generic;
+    using System.IO;
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
@@ -60,9 +62,48 @@
         }
 
         /// <summary>
-        ///     Sends the initial app usage info
+        /// Loads the referenced helper assemblies, e.g. for the purpose of updating
         /// </summary>
-        /// <returns></returns>
+        /// <param name="assemblies"></param>
+        public void LoadHelperAssemblies(params Assembly[] assemblies)
+        {
+            foreach (Assembly assembly in assemblies)
+            {
+                this.HelperAssemblies.Add(assembly);
+            }
+            this.LoadAssemblyInfos(this.HelperAssemblies);
+
+        }
+
+        /// <summary>
+        /// Loads the referenced helper assemblies, e.g. for the purpose of updating
+        /// </summary>
+        /// <param name="assemblyNames"></param>
+        public void LoadHelperAssembliesByName(params string[] assemblyNames)
+        {
+            var path = AppDomain.CurrentDomain.BaseDirectory;
+            foreach (string  assemblyName in assemblyNames)
+            {
+                Assembly assembly = Assembly.LoadFrom(Path.Combine(path, assemblyName));
+                this.HelperAssemblies.Add(assembly);
+            }
+
+            this.LoadAssemblyInfos(this.HelperAssemblies);
+        }
+
+        private void LoadAssemblyInfos(IEnumerable<Assembly> assemblies)
+        {
+            this.ProgramInfo.HelperAssemblies = new List<AssemblyInfo>();
+            foreach (Assembly assembly in assemblies)
+            {
+                this.ProgramInfo.HelperAssemblies.Add(new AssemblyInfo(assembly));
+            }
+        }
+        
+        /// <summary>
+         ///     Sends the initial app usage info
+         /// </summary>
+         /// <returns></returns>
         protected async Task<RegistrationResponse> RegisterClient()
         {
             try

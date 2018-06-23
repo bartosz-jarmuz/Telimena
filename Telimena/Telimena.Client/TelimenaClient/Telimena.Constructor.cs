@@ -23,8 +23,7 @@
         ///     Leave null, unless you want to use different assembly as the main one for program name,
         ///     version etc
         /// </param>
-        public Telimena(string telemetryApiBaseUrl = "http://localhost:7757/",
-                        Assembly mainAssembly = null)
+        public Telimena(Assembly mainAssembly = null, string telemetryApiBaseUrl = "http://localhost:7757/")
         {
             Assembly assembly = mainAssembly ?? Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             this.ProgramInfo = new ProgramInfo()
@@ -40,10 +39,10 @@
 
             this.TelimenaVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             this.PrimaryAssemblyVersion = this.ProgramInfo.PrimaryAssembly.Version;
-            this.HttpClient = new HttpClient()
+            this.HttpClient = new TelimenaHttpClient(new HttpClient()
             {
                 BaseAddress = new Uri(telemetryApiBaseUrl)
-            };
+            });
             this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
         }
     }

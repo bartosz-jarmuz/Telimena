@@ -43,7 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRoutes.cs" />
+    <Compile Include="Messenger\ITelimenaHttpClient.cs" />
     <Compile Include="Messenger\IMessenger.cs" />
+    <Compile Include="Messenger\TelimenaHttpClient.cs" />
     <Compile Include="TelimenaClient\ITelimena.cs" />
     <Compile Include="Messenger\Messenger.cs" />
     <Compile Include="Serializer\ITelimenaSerializer.cs" />

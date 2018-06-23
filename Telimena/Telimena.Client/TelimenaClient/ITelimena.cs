@@ -1,6 +1,7 @@
 ﻿namespace Telimena.Client
 {
     #region Using
+    using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
     #endregion
@@ -14,5 +15,17 @@
         Task<UpdateResponse> CheckForUpdates();
         Task<RegistrationResponse> Initialize();
         Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null);
+
+        /// <summary>
+        /// Loads the referenced helper assemblies, e.g. for the purpose of updating
+        /// </summary>
+        /// <param name="assemblies"></param>
+        void LoadHelperAssemblies(params Assembly[] assemblies);
+
+        /// <summary>
+        /// Loads the referenced helper assemblies, e.g. for the purpose of updating
+        /// </summary>
+        /// <param name="assemblyNames"></param>
+        void LoadHelperAssembliesByName(params string[] assemblyNames);
     }
 }
