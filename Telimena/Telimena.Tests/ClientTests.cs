@@ -62,7 +62,13 @@ namespace Telimena.Tests
             Assert.IsTrue(telimena.ProgramInfo.HelperAssemblies.All(x => x.Version != null && x.Name != null));
         }
 
-        private void MockHttpClient(Telimena telimena)
+        private void SetupMockHttpClient(Telimena telimena)
+        {
+            var client = this.GetMockClient();
+            telimena.Messenger = new Messenger(telimena.Serializer, client.Object, telimena.SuppressAllErrors);
+        }
+
+        private Mock<ITelimenaHttpClient> GetMockClient()
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
             client.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>())).Callback((string uri, HttpContent content) =>
@@ -71,29 +77,106 @@ namespace Telimena.Tests
                     new AssertionException(uri),
                     new AssertionException(content.ReadAsStringAsync().GetAwaiter().GetResult()));
             });
-            telimena.Messenger = new Messenger(telimena.Serializer, client.Object, telimena.SuppressAllErrors);
+            return client;
         }
 
-        [Test]
-        public void Test_RequestCreation()
+        private Mock<ITelimenaHttpClient> GetMockClientForStaticClient_FirstRequestPass()
         {
-            Telimena telimena = new Telimena();
-            telimena.SuppressAllErrors = false;
-            telimena.LoadHelperAssembliesByName("Telimena.Tests.dll", "Moq.dll");
-            this.MockHttpClient(telimena);
+            Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
+            client.Setup(x => x.PostAsync("api/Statistics/RegisterClient", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
+            {
+                var response = new HttpResponseMessage();
+                var registrationResponse = new RegistrationResponse()
+                {
+                    Count = 0,
+                    ProgramId = 1,
+                    UserId = 2
+                };
+                response.Content = new StringContent(JsonConvert.SerializeObject(registrationResponse));
+                return Task.FromResult(response);
+            });
+            client.Setup(x => x.PostAsync("api/Statistics/UpdateProgramStatistics", It.IsAny<HttpContent>())).Callback((string uri, HttpContent requestContent) =>
+            {
+                throw new AggregateException(
+                    new AssertionException(uri),
+                    new AssertionException(requestContent.ReadAsStringAsync().GetAwaiter().GetResult()));
+            });
+            return client;
+        }
+
+
+        [Test]
+        public void Test_StaticClient_RegisterRequest()
+        {
+            Mock<ITelimenaHttpClient> client = this.GetMockClient();
             try
             {
-                RegistrationResponse result = telimena.Initialize().GetAwaiter().GetResult();
+                var result = Telimena.SendUsageReport(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
+                Assert.Fail("Error expected");
             }
             catch (AggregateException ex)
             {
                 Assert.AreEqual(2, ex.InnerExceptions.Count);
                 Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
                 var jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);
+                Assert.AreEqual(true, jObj.SkipUsageIncrementation);
+            }
+
+            client = this.GetMockClientForStaticClient_FirstRequestPass();
+            try
+            {
+                var result = Telimena.SendUsageReport(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
+                Assert.Fail("Error expected");
+            }
+            catch (AggregateException ex)
+            {
+                Assert.AreEqual(2, ex.InnerExceptions.Count);
+                Assert.AreEqual("api/Statistics/UpdateProgramStatistics", ex.InnerExceptions[0].Message);
+                var jObj = JsonConvert.DeserializeObject<StatisticsUpdateRequest>(ex.InnerExceptions[1].Message);
+                Assert.AreEqual(1, jObj.ProgramId);
+                Assert.AreEqual(2, jObj.UserId);
+                Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.FunctionName);
+                Assert.AreEqual("1.0.0.0", jObj.Version);
+            }
+        }
+
+        [Test]
+        public void Test_InitializeRequestCreation()
+        {
+            Telimena telimena = new Telimena();
+            telimena.SuppressAllErrors = false;
+            telimena.LoadHelperAssembliesByName("Telimena.Tests.dll", "Moq.dll");
+            this.SetupMockHttpClient(telimena);
+            this.Test_RegistrationFunction(telimena, ()=>telimena.Initialize().GetAwaiter().GetResult(), false);
+        }
+
+        [Test]
+        public void Test_RegisterRequestCreation()
+        {
+            Telimena telimena = new Telimena();
+            telimena.SuppressAllErrors = false;
+            telimena.LoadHelperAssembliesByName("Telimena.Tests.dll", "Moq.dll");
+            this.SetupMockHttpClient(telimena);
+            this.Test_RegistrationFunction(telimena, () => telimena.RegisterClient().GetAwaiter().GetResult(), false);
+            this.Test_RegistrationFunction(telimena, () => telimena.RegisterClient(true).GetAwaiter().GetResult(), true);
+        }
+
+        public void Test_RegistrationFunction(Telimena telimena, Func<RegistrationResponse> function, bool skipFlagExpectedValue)
+        {
+            try
+            {
+                RegistrationResponse result = function();
+                Assert.Fail("Exception expected");
+            }
+            catch (AggregateException ex)
+            {
+                Assert.AreEqual(2, ex.InnerExceptions.Count);
+                Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
+                var jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);
+                Assert.AreEqual(skipFlagExpectedValue, jObj.SkipUsageIncrementation);
                 telimena.ProgramInfo.ThrowIfPublicPropertiesNotEqual(jObj.ProgramInfo, recursiveValidation: true);
                 return;
             }
-            Assert.Fail("Exception expected");
         }
 
     }

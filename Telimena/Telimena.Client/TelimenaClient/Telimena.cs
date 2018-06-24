@@ -42,7 +42,7 @@
                     ProgramId = this.ProgramId,
                     UserId = this.UserId,
                     FunctionName = functionName,
-                    Version = this.PrimaryAssemblyVersion
+                    Version = this.ProgramInfo.PrimaryAssembly.Version
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request);
                 return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
@@ -104,7 +104,7 @@
          ///     Sends the initial app usage info
          /// </summary>
          /// <returns></returns>
-        protected async Task<RegistrationResponse> RegisterClient()
+        protected internal async Task<RegistrationResponse> RegisterClient(bool skipUsageIncrementation = false)
         {
             try
             {
@@ -112,7 +112,8 @@
                 {
                     ProgramInfo = this.ProgramInfo,
                     TelimenaVersion = this.TelimenaVersion,
-                    UserInfo = this.UserInfo
+                    UserInfo = this.UserInfo,
+                    SkipUsageIncrementation = skipUsageIncrementation
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.RegisterClient, request);
                 RegistrationResponse response = this.Serializer.Deserialize<RegistrationResponse>(responseContent);

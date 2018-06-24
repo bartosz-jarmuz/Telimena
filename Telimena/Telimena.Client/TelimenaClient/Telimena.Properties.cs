@@ -16,13 +16,14 @@
     /// </summary>
     public partial class Telimena : ITelimena
     {
+        private const string DefaultApiUri = "http://localhost:7757/";
+
         private bool IsInitialized { get; set; }
         internal ITelimenaSerializer Serializer { get; set; } = new TelimenaSerializer();
         internal IMessenger Messenger { get; set; }
-        internal UserInfo UserInfo { get; set; }
-        internal ProgramInfo ProgramInfo { get; set; }
+        public UserInfo UserInfo { get; internal set; }
+        public ProgramInfo ProgramInfo { get; internal set; }
         protected int ProgramId { get; set; }
-        public string PrimaryAssemblyVersion { get; private set; }
         protected int UserId { get; set; }
         public bool SuppressAllErrors { get; set; } = true;
         protected string TelimenaVersion { get; }

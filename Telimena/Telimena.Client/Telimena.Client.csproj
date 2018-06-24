@@ -55,6 +55,7 @@
     <Compile Include="Messages\StatisticsUpdateResponse.cs" />
     <Compile Include="Model\AssemblyInfo.cs" />
     <Compile Include="Serializer\NullPropertiesConverter.cs" />
+    <Compile Include="TelimenaClient\Telimena.Static.cs" />
     <Compile Include="TelimenaClient\Telimena.Constructor.cs" />
     <Compile Include="TelimenaClient\Telimena.Properties.cs" />
     <Compile Include="TelimenaClient\Telimena.cs" />
