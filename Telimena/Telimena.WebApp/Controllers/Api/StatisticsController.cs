@@ -39,8 +39,12 @@
                 Program program = await this.helper.GetProgramOrAddIfNotExists(request.ProgramInfo);
                 ClientAppUser clientAppUser = await this.helper.GetUserInfoOrAddIfNotExists(request.UserInfo);
                 UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser);
-                var version = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version);
-                usageSummary.IncrementUsage(version);
+                if (!request.SkipUsageIncrementation)
+                {
+                    var version = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version);
+                    usageSummary.IncrementUsage(version);
+                }
+
                 await this.work.CompleteAsync();
 
                 return new RegistrationResponse()

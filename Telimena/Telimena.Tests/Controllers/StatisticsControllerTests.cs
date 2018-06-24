@@ -491,9 +491,29 @@ namespace Telimena.Tests
             Assert.AreEqual(5, prg.UsageSummaries.Sum(x=>x.SummaryCount));
             Assert.AreEqual(2, prg.UsageSummaries.Count);
             Assert.AreEqual(5, prg.UsageSummaries.Sum(x=>x.UsageDetails.Count));
+        }
 
 
+        [Test]
+        public void TestRegistration_SkipUsageIncremet()
+        {
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
+            StatisticsController sut = new StatisticsController(unit);
+            UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
+            RegistrationRequest request = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = userInfo,
+                SkipUsageIncrementation = true
+            };
+            RegistrationResponse response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
+            Helpers.AssertRegistrationResponse(response, prg, usr, 0);
+            Assert.AreEqual(1, prg.UsageSummaries.Count);
+            Assert.AreEqual(0, prg.UsageSummaries.Sum(x=>x.UsageDetails.Count));
+      
         }
 
         [Test]
