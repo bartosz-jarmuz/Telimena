@@ -12,6 +12,7 @@
         public int UsersCount { get; set; }
 
         public int FunctionsCount { get; set; }
+        public int TotalFunctionsUsageCount { get; set; }
 
         public int TotalUsageCount { get; set; }
         public int TodayUsageCount { get; set; }

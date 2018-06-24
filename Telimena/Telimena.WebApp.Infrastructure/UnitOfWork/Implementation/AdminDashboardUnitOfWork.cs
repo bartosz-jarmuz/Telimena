@@ -50,6 +50,8 @@
                     TodayUsageCount = program.UsageSummaries.Where(x=> (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(x=>x.SummaryCount),
                     TotalUsageCount = program.UsageSummaries.Sum(x=>x.SummaryCount),
                     FunctionsCount = functions.Count,
+                    TotalFunctionsUsageCount = functions.Sum(f=>f.UsageSummaries.Sum(s=>s.SummaryCount))
+
                 };
                 returnData.Add(summary);
             }

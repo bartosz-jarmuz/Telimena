@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public abstract class UsageSummary
     {
@@ -9,13 +10,14 @@
         public DateTime LastUsageDateTime { get; set; } = DateTime.UtcNow;
         public virtual ClientAppUser ClientAppUser { get; set; }
         public int? ClientAppUserId { get; set; }
-        public int SummaryCount { get; set; }
+        public int SCount { get; set; }
+        public abstract int SummaryCount { get; set; }
 
         public abstract void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version);
 
         public virtual void IncrementUsage(AssemblyVersion version)
         {
-            this.SummaryCount++;
+            this.SCount++;
             this.LastUsageDateTime = DateTime.UtcNow;
             this.UpdateUsageDetails(this.LastUsageDateTime, version);
         }

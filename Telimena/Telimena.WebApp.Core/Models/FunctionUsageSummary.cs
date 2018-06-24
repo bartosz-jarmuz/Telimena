@@ -19,13 +19,19 @@
                 AssemblyVersion = version
             };
             this.UsageDetails.Add(usage);
+            this.SummaryCount = this.UsageDetails.Count;
         }
 
+        private int _summaryCount;
+        public override int SummaryCount
+        {
+            get
+            {
+                this._summaryCount = this.UsageDetails?.Count ?? 0;
+                return this._summaryCount;
+            }
+            set => this._summaryCount = value;
+        }
         #endregion
     }
-    public class FunctionUsageDetail : UsageDetail
-    {
-        public virtual FunctionUsageSummary UsageSummary { get; set; }
-    }
-
 }

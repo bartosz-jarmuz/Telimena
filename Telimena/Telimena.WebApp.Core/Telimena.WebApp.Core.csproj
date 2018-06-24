@@ -65,6 +65,7 @@
     <Compile Include="Models\Base\UsageDetail.cs" />
     <Compile Include="Models\Developer.cs" />
     <Compile Include="Models\Function.cs" />
+    <Compile Include="Models\FunctionUsageDetail.cs" />
     <Compile Include="Models\FunctionUsageSummary.cs" />
     <Compile Include="Models\Program.cs" />
     <Compile Include="Models\ProgramUsageDetail.cs" />
