@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace TelimenaTestSandboxApp
 {
+    using System.Diagnostics;
     using System.Web.Script.Serialization;
     using Telimena.Client;
 
@@ -27,18 +28,21 @@ namespace TelimenaTestSandboxApp
         private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
         {
             StatisticsUpdateResponse result;
+            var sw = Stopwatch.StartNew();
 
             if (!string.IsNullOrEmpty(this.functionNameTextBox.Text))
             {
                 result = await this.teli.ReportUsage(string.IsNullOrEmpty(this.functionNameTextBox.Text)? null : this.functionNameTextBox.Text);
+                sw.Stop();
             }
             else
             {
                 result = await this.teli.ReportUsage();
+                sw.Stop();
             }
             if (result.Error == null)
             {
-                this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
+                this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " + new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
             }
             else
             {
@@ -75,6 +79,31 @@ namespace TelimenaTestSandboxApp
                 {
                     UserName = this.userNameTextBox.Text
                 };
+            }
+        }
+
+        private async void static_sendUsageReportButton_Click(object sender, EventArgs e)
+        {
+            StatisticsUpdateResponse result;
+            var sw = Stopwatch.StartNew();
+
+            if (!string.IsNullOrEmpty(this.static_functionNameTextBox.Text))
+            {
+                result = await Telimena.SendUsageReport(string.IsNullOrEmpty(this.static_functionNameTextBox.Text) ? null : this.static_functionNameTextBox.Text);
+                sw.Stop();
+            }
+            else
+            {
+                result = await Telimena.SendUsageReport();
+                sw.Stop();
+            }
+            if (result.Error == null)
+            {
+                this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms " +  new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
+            }
+            else
+            {
+                MessageBox.Show(result.Error.ToString());
             }
         }
     }
