@@ -19,7 +19,8 @@
 
 
        /// <summary>
-       /// Sends the usage report. The static method first calls a 'register' endpoint, without incrementing the usage, then sends the usage report
+       /// Sends the usage report. The static method first calls a 'register' endpoint, without incrementing the usage, then sends the usage report <para/>
+       /// Static method is approximately two times slower than instance based
        /// </summary>
        /// <param name="telemetryApiBaseUrl">Base url of the telemetry api</param>
        /// <param name="mainAssembly"></param>
@@ -32,22 +33,33 @@
             {
                 BaseAddress = new Uri(telemetryApiBaseUrl)
             });
-            return Telimena.SendUsageReport(httpClient, mainAssembly, suppressAllErrors, functionName);
+            return Telimena.SendUsageReport(httpClient, null, mainAssembly, suppressAllErrors, functionName);
+        }
+
+        public static Task<StatisticsUpdateResponse> SendUsageReport(ProgramInfo programInfo, string telemetryApiBaseUrl = Telimena.DefaultApiUri, Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
+        {
+            TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient()
+            {
+                BaseAddress = new Uri(telemetryApiBaseUrl)
+            });
+            return Telimena.SendUsageReport(httpClient, programInfo, mainAssembly, suppressAllErrors, functionName);
         }
 
         /// <summary>
-        /// Sends the usage report. The static method first calls a 'register' endpoint, without incrementing the usage, then sends the usage report
+        /// Sends the usage report. The static method first calls a 'register' endpoint, without incrementing the usage, then sends the usage report <para/>
+        /// Static method is approximately two times slower than instance based
         /// </summary>
         /// <param name="httpClient"></param>
+        /// <param name="programInfo"></param>
         /// <param name="mainAssembly"></param>
         /// <param name="suppressAllErrors"></param>
         /// <param name="functionName"></param>
         /// <returns></returns>
-        internal static async Task<StatisticsUpdateResponse> SendUsageReport(ITelimenaHttpClient httpClient, Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
+        internal static async Task<StatisticsUpdateResponse> SendUsageReport(ITelimenaHttpClient httpClient, ProgramInfo programInfo= null, Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
         {
             try
             {
-                Tuple<ProgramInfo, UserInfo, string> data = Telimena.LoadProgramData(mainAssembly);
+                Tuple<ProgramInfo, UserInfo, string> data = Telimena.LoadProgramData(mainAssembly, programInfo);
 
                
                 TelimenaSerializer serializer = new TelimenaSerializer();
@@ -86,14 +98,19 @@
             }
         }
 
-        private static Tuple<ProgramInfo, UserInfo, string> LoadProgramData(Assembly mainAssembly = null)
+        private static Tuple<ProgramInfo, UserInfo, string> LoadProgramData(Assembly mainAssembly = null, ProgramInfo programInfo = null)
         {
             Assembly assembly = mainAssembly ?? Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
-            ProgramInfo programInfo = new ProgramInfo()
+            ProgramInfo info = programInfo;
+            if (info == null)
             {
-                PrimaryAssembly = new AssemblyInfo(assembly),
-                Name = assembly.GetName().Name,
-            };
+                info = new ProgramInfo()
+                {
+                    PrimaryAssembly = new AssemblyInfo(assembly),
+                    Name = assembly.GetName().Name,
+                };
+            }
+        
             UserInfo userInfo = new UserInfo()
             {
                 UserName = Environment.UserName,
@@ -101,7 +118,7 @@
             };
 
             string telimenaVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            return new Tuple<ProgramInfo, UserInfo, string>(programInfo, userInfo, telimenaVersion);
+            return new Tuple<ProgramInfo, UserInfo, string>(info, userInfo, telimenaVersion);
         }
     }
 }

@@ -37,6 +37,19 @@
             this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
         }
 
-       
+        public Telimena(ProgramInfo programInfo, string telemetryApiBaseUrl = DefaultApiUri)
+        {
+            Tuple<ProgramInfo, UserInfo, string> data = Telimena.LoadProgramData(programInfo: programInfo);
+            this.ProgramInfo = data.Item1;
+            this.UserInfo = data.Item2;
+            this.TelimenaVersion = data.Item3;
+
+            this.HttpClient = new TelimenaHttpClient(new HttpClient()
+            {
+                BaseAddress = new Uri(telemetryApiBaseUrl)
+            });
+            this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
+        }
+
     }
 }
