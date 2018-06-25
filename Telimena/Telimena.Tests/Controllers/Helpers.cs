@@ -8,6 +8,7 @@
     using WebApp.Core.Models;
     using WebApp.Infrastructure.Database;
     using WebApp.Infrastructure.UnitOfWork;
+    using WebApp.Infrastructure.UnitOfWork.Implementation;
 
     public static class Helpers
     {
@@ -63,6 +64,13 @@
             };
         }
 
+        public static void SeedInitialPrograms(TelimenaContext context, int progCount, string getName, string userName)
+        {
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(context);
+            StatisticsController controller = new StatisticsController(unit);
+            SeedInitialPrograms(controller, progCount, getName, userName);
+        }
+
         public static void SeedInitialPrograms(StatisticsController controller, int progCount, string prgName, string userName)
         {
             for (int i = 0; i < progCount; i++)
@@ -104,5 +112,7 @@
             };
             controller.RegisterClient(register).GetAwaiter().GetResult();
         }
+
+       
     }
 }

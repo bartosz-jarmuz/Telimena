@@ -12,9 +12,7 @@
 
         public int ProgramId { get; set; }
         public virtual Program Program { get; set; }
-
         public virtual Program PrimaryOf { get; set; }
-
 
         public string Name { get; set; }
         public string Product { get; set; }
@@ -25,10 +23,10 @@
         public string Company { get; set; }
         public string FullName { get; set; }
         public virtual ICollection<AssemblyVersion> Versions { get; set; } = new List<AssemblyVersion>();
-        public AssemblyVersion GetLatestVersion()
-        {
-            return this.Versions?.OrderBy(x => x.Version, new VersionStringComparer()).FirstOrDefault();
-        }
+
+        public virtual AssemblyVersion LatestVersion { get; set; }
+
+        
 
         public AssemblyVersion GetVersion(string version)
         {

@@ -96,10 +96,12 @@
             }
             else
             {
-                programAssembly.Versions.Add(new AssemblyVersion()
+                var assVersion = new AssemblyVersion()
                 {
                     Version = version
-                });
+                };
+                programAssembly.Versions.Add(assVersion);
+                programAssembly.LatestVersion = assVersion;
 
             }
         }

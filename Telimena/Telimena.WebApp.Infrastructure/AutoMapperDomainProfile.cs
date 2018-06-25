@@ -17,7 +17,9 @@
                 .ForMember(x => x.ProgramId, o => o.Ignore())
                 .ForMember(x => x.ProgramAssemblyId, o => o.Ignore())
                 .ForMember(x => x.Versions, o => o.Ignore())
+                .ForMember(x => x.LatestVersion, o => o.Ignore())
                 .ForMember(x => x.Program, o => o.Ignore());
+
             this.CreateMap<ProgramInfo, Program>().
                 ForMember(x => x.ProgramAssemblies, o => o.Ignore()).
                 ForMember(x => x.Developer, o => o.Ignore()).

@@ -13,6 +13,6 @@
         public DateTime? ProductionReleaseDate { get; set; }
         public virtual ProgramAssembly ProgramAssembly { get; set; }
         public int ProgramAssemblyId { get; set; }
-
+        public virtual ProgramAssembly LatestVersionOf { get; set; }
     }
 }

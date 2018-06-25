@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Telimena.WebApp.Infrastructure
 {
     using Client;
+    using Core.Messages;
 
     public static class ApiRequestsValidator
     {
@@ -16,6 +17,11 @@ namespace Telimena.WebApp.Infrastructure
         }
 
         public static bool IsRequestValid(StatisticsUpdateRequest request)
+        {
+            return request != null;
+        }
+
+        public static bool IsRequestValid(SetLatestVersionRequest request)
         {
             return request != null;
         }

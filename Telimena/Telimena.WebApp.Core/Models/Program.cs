@@ -12,7 +12,6 @@
         public int ProgramId { get; set; }
         public ICollection<ProgramAssembly> ProgramAssemblies { get; set; } = new List<ProgramAssembly>();
         public virtual ProgramAssembly PrimaryAssembly { get; set; }
-
         public virtual ICollection<Function> Functions { get; set; } = new List<Function>();
         public virtual ICollection<ProgramUsageSummary> UsageSummaries { get; set; } = new List<ProgramUsageSummary>();
         public DateTime RegisteredDate { get; set; }
@@ -32,6 +31,10 @@
             return usage.UsageDetails;
         }
 
+        public AssemblyVersion GetLatestVersion()
+        {
+            return this.PrimaryAssembly?.LatestVersion;
+        }
         public ProgramUsageDetail GetLatestUsageDetail()
         {
             ProgramUsageSummary summary = this.UsageSummaries.MaxFirstBy(x => x.LastUsageDateTime);

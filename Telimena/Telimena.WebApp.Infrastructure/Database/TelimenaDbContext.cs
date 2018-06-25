@@ -50,6 +50,15 @@
                 .HasOptional(a => a.PrimaryAssembly)
                 .WithOptionalPrincipal(u => u.PrimaryOf);
 
+            modelBuilder.Entity<AssemblyVersion>()
+                .HasRequired(a => a.ProgramAssembly)
+                .WithMany(c => c.Versions)
+                .HasForeignKey(a => a.ProgramAssemblyId);
+
+            modelBuilder.Entity<ProgramAssembly>()
+                .HasOptional(a => a.LatestVersion)
+                .WithOptionalPrincipal(u => u.LatestVersionOf);
+
         }
 
     }

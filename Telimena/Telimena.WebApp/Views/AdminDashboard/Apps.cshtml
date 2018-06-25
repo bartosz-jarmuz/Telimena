@@ -41,6 +41,7 @@
                         <tr>
                             <th>@nameof(ProgramSummary.ProgramId)</th>
                             <th>@nameof(ProgramSummary.ProgramName)</th>
+                            <th>@nameof(ProgramSummary.LatestVersion)</th>
                             <th>@nameof(ProgramSummary.FunctionsCount)</th>
                             <th>@nameof(ProgramSummary.TotalFunctionsUsageCount)</th>
                             <th>@nameof(ProgramSummary.UsersCount)</th>
@@ -48,7 +49,6 @@
                             <th>@nameof(ProgramSummary.TotalUsageCount)</th>
                             <th>@nameof(ProgramSummary.LastUsage)</th>
                             <th>@nameof(ProgramSummary.RegisteredDate)</th>
-                            <th>@nameof(ProgramSummary.LatestVersion)</th>
                         </tr>
                     </thead>
                 </table>
@@ -75,6 +75,7 @@
                 "columns": [
                     { "data": "@nameof(ProgramSummary.ProgramId)" },
                     { "data": "@nameof(ProgramSummary.ProgramName)" },
+                    { "data": "@nameof(ProgramSummary.LatestVersion)" },
                     { "data": "@nameof(ProgramSummary.FunctionsCount)"  },
                     { "data": "@nameof(ProgramSummary.TotalFunctionsUsageCount)"  },
                     { "data": "@nameof(ProgramSummary.UsersCount)"  },
@@ -93,9 +94,7 @@
                             var datetime = new Date(data);
                             return datetime.toLocaleString();
                         }
-                        
                     },
-                    { "data": "@nameof(ProgramSummary.LatestVersion)" },
                 ]
             });
         });

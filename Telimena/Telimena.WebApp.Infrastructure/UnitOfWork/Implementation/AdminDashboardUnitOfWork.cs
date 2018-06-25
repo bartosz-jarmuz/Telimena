@@ -43,6 +43,7 @@
                 ProgramSummary summary = new ProgramSummary()
                 {
                     ProgramName = program.Name,
+                    LatestVersion = program.PrimaryAssembly.LatestVersion.Version,
                     ProgramId = program.ProgramId,
                     RegisteredDate = program.RegisteredDate,
                     LastUsage = program.UsageSummaries.MaxOrNull(x => x.LastUsageDateTime),

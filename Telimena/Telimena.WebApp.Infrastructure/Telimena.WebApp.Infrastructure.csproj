@@ -124,6 +124,8 @@
     <Compile Include="Database\TelimenaDbInitializer.cs" />
     <Compile Include="Security\TelimenaAuthorizeAttribute.cs" />
     <Compile Include="UnitOfWork\IAccountUnitOfWork.cs" />
+    <Compile Include="UnitOfWork\Implementation\ProgramsUnitOfWork.cs" />
+    <Compile Include="UnitOfWork\IProgramsUnitOfWork.cs" />
     <Compile Include="UnitOfWork\IStatisticsUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\StatisticsUnitOfWork.cs" />
   </ItemGroup>

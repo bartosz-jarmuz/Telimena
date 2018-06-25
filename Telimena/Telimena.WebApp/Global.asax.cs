@@ -13,6 +13,7 @@ namespace Telimena.WebApi
     using Microsoft.AspNet.Identity.Owin;
     using Microsoft.Owin.Security;
     using Ninject;
+    using Ninject.Extensions.Conventions;
     using Ninject.Modules;
     using Ninject.Web.Common;
     using Ninject.Web.Common.WebHost;
@@ -42,6 +43,12 @@ namespace Telimena.WebApi
         {
             var kernel = new StandardKernel();
             kernel.Load(new ServiceModule());
+            kernel.Bind(x => x.FromAssembliesMatching("Telimena.*.dll")
+                .SelectAllClasses()
+                .Excluding(typeof(TelimenaUserManager))
+                .BindDefaultInterface()
+            );
+
             GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
             return kernel;
         }
@@ -51,9 +58,6 @@ namespace Telimena.WebApi
     {
         public override void Load()
         {
-            this.Bind<IStatisticsUnitOfWork>().To<StatisticsUnitOfWork>();
-            this.Bind<IAdminDashboardUnitOfWork>().To<AdminDashboardUnitOfWork>();
-            this.Bind<IAccountUnitOfWork>().To<AccountUnitOfWork>();
             this.Bind<ILog>().ToMethod(context =>
                 LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
             this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();

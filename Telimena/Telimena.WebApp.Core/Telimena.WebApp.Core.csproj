@@ -61,6 +61,7 @@
     <Compile Include="DTO\ProgramSummary.cs" />
     <Compile Include="Interfaces\ITelimenaRepository.cs" />
     <Compile Include="Interfaces\Roles.cs" />
+    <Compile Include="Messages\SetLatestVersionRequest.cs" />
     <Compile Include="Models\AssemblyVersion.cs" />
     <Compile Include="Models\Base\UsageDetail.cs" />
     <Compile Include="Models\Developer.cs" />
