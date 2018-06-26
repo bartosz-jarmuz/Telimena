@@ -7,12 +7,15 @@
     using System.Threading.Tasks;
     using System.Web.Http;
     using Client;
+    using WebApp.Core.Interfaces;
     using WebApp.Core.Messages;
     using WebApp.Core.Models;
     using WebApp.Infrastructure;
+    using WebApp.Infrastructure.Security;
     using WebApp.Infrastructure.UnitOfWork;
     #endregion
 
+    [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramsController : ApiController
     {
         public ProgramsController(IProgramsUnitOfWork work)
@@ -55,8 +58,21 @@
 
             return this.Ok();
         }
+        
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IHttpActionResult> GetLatestVersion(int programId)
+        {
+            var prg = await this.work.Programs.FirstOrDefaultAsync(x => x.ProgramId == programId);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program [{programId}] not found");
+            }
 
-      
+            return this.Ok(prg.PrimaryAssembly.LatestVersion.Version);
+        }
+
+
 
     }
 }

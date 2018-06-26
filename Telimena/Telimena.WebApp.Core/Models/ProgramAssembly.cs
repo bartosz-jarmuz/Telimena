@@ -26,8 +26,6 @@
 
         public virtual AssemblyVersion LatestVersion { get; set; }
 
-        
-
         public AssemblyVersion GetVersion(string version)
         {
             return this.Versions.FirstOrDefault(x => x.Version == version);

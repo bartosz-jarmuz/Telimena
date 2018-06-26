@@ -30,7 +30,7 @@ namespace Telimena.Tests
         protected override Action SeedAction => () => TelimenaDbInitializer.SeedUsers(this.Context);
 
         [Test]
-        public void TestSetLatestVersion_AllOk()
+        public void TestGetSetLatestVersion_AllOk()
         {
             ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
             ProgramsController sut = new ProgramsController(unit);
@@ -47,6 +47,10 @@ namespace Telimena.Tests
             Assert.AreEqual("2.2.0.0", prg.PrimaryAssembly.LatestVersion.Version);
             Assert.IsInstanceOf<OkResult>(result);
 
+            result = sut.GetLatestVersion(request.ProgramId).GetAwaiter().GetResult();
+            Assert.AreEqual("2.2.0.0", (result as OkNegotiatedContentResult<string>).Content);
+
+
             request = new SetLatestVersionRequest()
             {
                 ProgramId = prg.ProgramId,
@@ -56,6 +60,8 @@ namespace Telimena.Tests
             Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.LatestVersion.Version);
             Assert.IsInstanceOf<OkResult>(result);
 
+            result = sut.GetLatestVersion(request.ProgramId).GetAwaiter().GetResult();
+            Assert.AreEqual("1.2.3.4", (result as OkNegotiatedContentResult<string>).Content);
         }
 
         [Test]
