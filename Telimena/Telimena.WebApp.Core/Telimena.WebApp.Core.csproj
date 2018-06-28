@@ -67,7 +67,7 @@
     <Compile Include="Messages\SetLatestVersionRequest.cs" />
     <Compile Include="Models\AssemblyVersion.cs" />
     <Compile Include="Models\Base\UsageDetail.cs" />
-    <Compile Include="Models\Developer.cs" />
+    <Compile Include="Models\DeveloperAccount.cs" />
     <Compile Include="Models\Function.cs" />
     <Compile Include="Models\FunctionUsageDetail.cs" />
     <Compile Include="Models\FunctionUsageSummary.cs" />

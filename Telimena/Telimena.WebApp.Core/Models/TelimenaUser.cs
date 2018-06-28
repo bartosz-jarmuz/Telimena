@@ -17,5 +17,10 @@
         public bool MustChangePassword { get; set; }
 
         public IList<string> RoleNames { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Returns developer accounts associated with this user (e.g. dev accounts which main user is set to this user)
+        /// </summary>
+        public virtual ICollection<DeveloperAccount> AssociatedDeveloperAccounts { get; set; } = new List<DeveloperAccount>();
     }
 }

@@ -6,11 +6,12 @@
     using Identity;
     using Microsoft.AspNet.Identity;
     using Microsoft.Owin.Security;
+    using Repository;
     using Repository.Implementation;
 
     public interface IAccountUnitOfWork
     {
-        Repository<Developer> DeveloperRepository { get; }
+        IRepository<DeveloperAccount> DeveloperRepository { get; }
         IAuthenticationManager AuthManager { get; }
         ITelimenaUserManager UserManager { get; }
         Task CompleteAsync();

@@ -12,7 +12,7 @@
     using Database;
     #endregion
 
-    public partial class ProgramRepository : Repository<Program>, IProgramRepository
+    internal class ProgramRepository : Repository<Program>, IProgramRepository
     {
         public ProgramRepository(DbContext dbContext) : base(dbContext)
         {
@@ -33,7 +33,7 @@
 
         public async Task<IEnumerable<Program>> GetProgramsByDeveloperName(string developerName)
         {
-            return await this.TelimenaContext.Programs.Include(x => x.Developer).Where(x => x.Developer != null && x.Developer.Name == developerName).ToListAsync();
+            return await this.TelimenaContext.Programs.Include(x => x.DeveloperAccount).Where(x => x.DeveloperAccount != null && x.DeveloperAccount.Name == developerName).ToListAsync();
         }
 
         public UsageSummary GetUsage(Program program, ClientAppUser clientAppUser)

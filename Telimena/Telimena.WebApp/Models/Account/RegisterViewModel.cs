@@ -23,7 +23,7 @@
         [Required]
         public string Role { get; set; }
 
-        public IEnumerable<SelectListItem> RoleList => new List<SelectListItem>
+        public IEnumerable<SelectListItem> RoleList { get; set; } = new List<SelectListItem>
         {
             new SelectListItem { Text = TelimenaRoles.Developer, Value = TelimenaRoles.Developer},
             new SelectListItem { Text = TelimenaRoles.Viewer, Value = TelimenaRoles.Viewer},

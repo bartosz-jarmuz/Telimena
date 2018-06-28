@@ -151,7 +151,7 @@
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return this.View();
+            return this.View(new RegisterViewModel());
         }
 
         [HttpPost]
@@ -174,6 +174,7 @@
 
                 Tuple<IdentityResult, IdentityResult> results = await this.unitOfWork.RegisterUserAsync(user, model.Password, TelimenaRoles.Viewer, model.Role);
                 await this.unitOfWork.CompleteAsync();
+
                 if (results.Item1.Succeeded)
                 {
                     if ((results.Item2 != null && results.Item2.Succeeded) || results.Item2 == null)
@@ -208,8 +209,6 @@
             // If we got this far, something failed, redisplay form
             return this.View(model);
         }
-
-    
 
         private bool ValidateRegistrationModel(RegisterViewModel model)
         {

@@ -20,9 +20,11 @@
             this.Versions = new Repository<AssemblyVersion>(context);
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
+            this.Users = new Repository<TelimenaUser>(context);
         }
 
         public IRepository<AssemblyVersion> Versions { get; }
+        public IRepository<TelimenaUser> Users { get; }
         public IProgramRepository Programs { get; }
         public IFunctionRepository Functions { get; }
         public async Task CompleteAsync()

@@ -14,7 +14,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
     using Database;
     #endregion
 
-    public class FunctionRepository : Repository<Function>, IFunctionRepository
+    internal class FunctionRepository : Repository<Function>, IFunctionRepository
     {
         public FunctionRepository(DbContext dbContext) : base(dbContext)
         {

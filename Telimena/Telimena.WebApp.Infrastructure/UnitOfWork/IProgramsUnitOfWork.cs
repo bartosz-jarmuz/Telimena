@@ -7,6 +7,7 @@
     public interface IProgramsUnitOfWork
     {
         IRepository<AssemblyVersion> Versions { get; }
+        IRepository<TelimenaUser> Users { get; }
 
         IProgramRepository Programs { get; }
 

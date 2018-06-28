@@ -9,6 +9,6 @@
     
     @Html.Partial("_InfoBox", new BoxViewModel() { BackgroundColorClass = "bg-green", IconClass = "fa-magic", Label = "All registered functions", Value = Model.TotalFunctionsCount.ToString(), SecondaryLabel = "Usage count: " + Model.TotalFunctionsUsageCount })
 
-    @Html.Partial("_InfoBox", new BoxViewModel() { BackgroundColorClass = "bg-red", IconClass = "fa-star-o", Label = "Newest program", Value = Model.NewestProgram?.Name, SecondaryLabel = "Author: " + Model.NewestProgram?.Developer?.Name})
+    @Html.Partial("_InfoBox", new BoxViewModel() { BackgroundColorClass = "bg-red", IconClass = "fa-star-o", Label = "Newest program", Value = Model.NewestProgram?.Name, SecondaryLabel = "Author: " + Model.NewestProgram?.DeveloperAccount?.Name})
 
 </div>

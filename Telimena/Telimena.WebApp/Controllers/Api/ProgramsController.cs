@@ -2,6 +2,8 @@
 {
     #region Using
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.IdentityModel;
     using System.Linq;
     using System.Threading.Tasks;
@@ -58,7 +60,27 @@
 
             return this.Ok();
         }
-        
+
+        [HttpGet]
+        public async Task<IHttpActionResult> RegisterProgram(string programName)
+        {
+            var prg = await this.work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program [{programName}] not found");
+            }
+
+            if (prg.DeveloperAccount != null)
+            {
+                return this.BadRequest($"Program [{programName}] is already registered");
+            }
+
+            
+            
+            await this.work.CompleteAsync();
+            return this.Ok();
+        }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IHttpActionResult> GetLatestVersion(int programId)
@@ -72,7 +94,11 @@
             return this.Ok(prg.PrimaryAssembly.LatestVersion.Version);
         }
 
-
+        [HttpGet]
+        public async Task<IEnumerable<Program>> GetPrograms(int developerId)
+        {
+            return await this.work.Programs.GetAsync(x => x.DeveloperAccount.Id == developerId);
+        }
 
     }
 }

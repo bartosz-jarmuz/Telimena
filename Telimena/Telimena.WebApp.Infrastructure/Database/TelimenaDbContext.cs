@@ -33,7 +33,7 @@
         public DbSet<FunctionUsageSummary> FunctionUsages { get; set; }
         public DbSet<FunctionUsageDetail> FunctionUsageDetails { get; set; }
         public DbSet<ClientAppUser> AppUsers { get; set; }
-        public DbSet<Developer> Developers { get; set; }
+        public DbSet<DeveloperAccount> Developers { get; set; }
         public DbSet<ProgramAssembly> ProgramAssemblies { get; set; }
         public DbSet<AssemblyVersion> Versions { get; set; }
 
@@ -59,6 +59,14 @@
                 .HasOptional(a => a.LatestVersion)
                 .WithOptionalPrincipal(u => u.LatestVersionOf);
 
+            modelBuilder.Entity<TelimenaUser>()
+                .HasMany<DeveloperAccount>(s => s.AssociatedDeveloperAccounts)
+                .WithMany(c => c.AssociatedUsers).Map(cs =>
+                {
+                    cs.MapLeftKey("TelimenaUser_Id");
+                    cs.MapRightKey("DeveloperAccount_Id");
+                    cs.ToTable("TelimenaUserDeveloperAccountAssociations");
+                });
         }
 
     }

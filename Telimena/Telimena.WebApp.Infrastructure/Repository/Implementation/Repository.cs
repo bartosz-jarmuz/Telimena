@@ -7,7 +7,7 @@
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, new()
+    internal class Repository<TEntity> : IRepository<TEntity> where TEntity : class, new()
     {
         protected DbContext DbContext;
 
@@ -39,6 +39,31 @@
                 return this.DbContext.Set<TEntity>().SingleOrDefaultAsync(predicate);
             }
         }
+
+        public  TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate = null)
+        {
+            if (predicate == null)
+            {
+                return this.DbContext.Set<TEntity>().SingleOrDefault();
+            }
+            else
+            {
+                return this.DbContext.Set<TEntity>().SingleOrDefault(predicate);
+            }
+        }
+
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate = null)
+        {
+            if (predicate == null)
+            {
+                return this.DbContext.Set<TEntity>().FirstOrDefault();
+            }
+            else
+            {
+                return this.DbContext.Set<TEntity>().FirstOrDefault(predicate);
+            }
+        }
+
         public TEntity Single(Expression<Func<TEntity, bool>> predicate = null)
         {
             if (predicate == null)

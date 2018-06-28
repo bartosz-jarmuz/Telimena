@@ -12,6 +12,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
     using Identity;
     using Microsoft.AspNet.Identity;
     using Microsoft.Owin.Security;
+    using Repository;
     using Repository.Implementation;
 
     public class AccountUnitOfWork : IAccountUnitOfWork
@@ -20,14 +21,14 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         {
             this.AuthManager = authManager;
             this.UserManager = userManager;
-            this.context = context;
-            this.DeveloperRepository = new Repository<Developer>(context);
+            this._context = context;
+            this.DeveloperRepository = new Repository<DeveloperAccount>(context);
         }
 
         public IAuthenticationManager AuthManager { get; }
         public ITelimenaUserManager UserManager { get; }
-        private readonly TelimenaContext context;
-        public Repository<Developer> DeveloperRepository { get; }
+        private readonly TelimenaContext _context;
+        public IRepository<DeveloperAccount> DeveloperRepository { get; }
 
         public async Task<Tuple<IdentityResult, IdentityResult>> RegisterUserAsync(TelimenaUser user, string password, params string[] roles)
         {
@@ -49,7 +50,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         private async Task<IdentityResult> HandleRoleRegistrationAsync(string[] roles, TelimenaUser user)
         {
             IdentityResult roleresult = IdentityResult.Success;
-            if (roles.Contains(TelimenaRoles.Developer))
+            if (roles.Contains(TelimenaRoles.Viewer))
             {
                 roleresult = await this.UserManager.AddToRoleAsync(user.Id, TelimenaRoles.Viewer);
                 if (!roleresult.Succeeded)
@@ -64,13 +65,14 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
                 roleresult = await this.UserManager.AddToRoleAsync(user.Id, TelimenaRoles.Developer);
                 if (roleresult.Succeeded)
                 {
-                    var developer = new Core.Models.Developer()
+                    var developer = new Core.Models.DeveloperAccount()
                     {
-                        MainUser = user,
-                        Name = user.DisplayName,
-                        MainEmail = user.Email
+                        MainUserId = user.Id,
+                        MainEmail = user.Email,
+                        Name = user.DisplayName
                     };
                     this.DeveloperRepository.Add(developer);
+                    user.AssociatedDeveloperAccounts.Add(developer);
                 }
             }
             return roleresult;
@@ -78,7 +80,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 
         public Task CompleteAsync()
         {
-            return this.context.SaveChangesAsync();
+            return this._context.SaveChangesAsync();
         }
     }
 }

@@ -22,7 +22,7 @@
 
             this.CreateMap<ProgramInfo, Program>().
                 ForMember(x => x.ProgramAssemblies, o => o.Ignore()).
-                ForMember(x => x.Developer, o => o.Ignore()).
+                ForMember(x => x.DeveloperAccount, o => o.Ignore()).
                 ForMember(x=>x.RegisteredDate, o=>o.Ignore()).
                 ForMember(x=>x.Functions, o=>o.Ignore()).
                 ForMember(x=>x.UsageSummaries, o=>o.Ignore()).

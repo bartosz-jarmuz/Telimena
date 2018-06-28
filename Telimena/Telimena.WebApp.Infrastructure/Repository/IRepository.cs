@@ -21,5 +21,7 @@
         void Remove(TEntity entity);
         Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate = null);
         TEntity Single(Expression<Func<TEntity, bool>> predicate = null);
+        TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate = null);
+        TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate = null);
     }
 }
