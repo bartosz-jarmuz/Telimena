@@ -15,6 +15,7 @@
         IAuthenticationManager AuthManager { get; }
         ITelimenaUserManager UserManager { get; }
         Task CompleteAsync();
+        int Complete();
         Task<Tuple<IdentityResult, IdentityResult>> RegisterUserAsync(TelimenaUser user, string password, params string[] roles);
     }
 }

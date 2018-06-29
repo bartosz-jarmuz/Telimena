@@ -1,12 +1,16 @@
 ﻿namespace Telimena.Tests
 {
+    using System;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using Client;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using NUnit.Framework;
     using WebApi.Controllers;
+    using WebApp.Core.Interfaces;
     using WebApp.Core.Models;
     using WebApp.Infrastructure.Database;
+    using WebApp.Infrastructure.Identity;
     using WebApp.Infrastructure.UnitOfWork;
     using WebApp.Infrastructure.UnitOfWork.Implementation;
 
@@ -64,11 +68,11 @@
             };
         }
 
-        public static void SeedInitialPrograms(TelimenaContext context, int progCount, string getName, string userName)
+        public static void SeedInitialPrograms(TelimenaContext context, int progCount, string getName, string userName, [CallerMemberName] string caller = "")
         {
             StatisticsUnitOfWork unit = new StatisticsUnitOfWork(context);
             StatisticsController controller = new StatisticsController(unit);
-            SeedInitialPrograms(controller, progCount, getName, userName);
+            SeedInitialPrograms(controller, progCount, GetName(getName, caller), Helpers.GetName(userName, caller));
         }
 
         public static void SeedInitialPrograms(StatisticsController controller, int progCount, string prgName, string userName)
@@ -113,6 +117,20 @@
             controller.RegisterClient(register).GetAwaiter().GetResult();
         }
 
-       
+        public static TelimenaUser CreateTelimenaUser(TelimenaContext context, string email, string displayName = null, [CallerMemberName] string caller = "")
+        {
+            var manager = new TelimenaUserManager(
+                new UserStore<TelimenaUser>(context));
+
+            var unit = new AccountUnitOfWork(null, manager, context);
+
+
+            var user = new TelimenaUser(caller +"_"+ email, caller + "_" + displayName ??email.ToUpper());
+            unit.RegisterUserAsync(user, "P@ssword", TelimenaRoles.Developer).GetAwaiter().GetResult();
+
+            unit.Complete();
+            return user;
+        }
+
     }
 }

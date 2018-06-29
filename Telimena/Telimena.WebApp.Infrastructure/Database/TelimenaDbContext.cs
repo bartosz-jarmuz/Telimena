@@ -67,6 +67,15 @@
                     cs.MapRightKey("DeveloperAccount_Id");
                     cs.ToTable("TelimenaUserDeveloperAccountAssociations");
                 });
+
+            modelBuilder.Entity<DeveloperAccount>()
+                .HasMany<TelimenaUser>(s => s.AssociatedUsers)
+                .WithMany(c => c.AssociatedDeveloperAccounts).Map(cs =>
+                {
+                    cs.MapRightKey("TelimenaUser_Id");
+                    cs.MapLeftKey("DeveloperAccount_Id");
+                    cs.ToTable("TelimenaUserDeveloperAccountAssociations");
+                });
         }
 
     }

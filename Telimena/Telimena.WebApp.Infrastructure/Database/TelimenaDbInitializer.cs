@@ -32,13 +32,10 @@
 
             if (!context.Users.Any(u => u.UserName == "superuser"))
             {
-               UserStore<TelimenaUser> userStore = new UserStore<TelimenaUser>(context);
-               UserManager<TelimenaUser> userManager = new UserManager<TelimenaUser>(userStore);
-               TelimenaUser  user = new TelimenaUser
+                UserStore<TelimenaUser> userStore = new UserStore<TelimenaUser>(context);
+                UserManager<TelimenaUser> userManager = new UserManager<TelimenaUser>(userStore);
+                TelimenaUser user = new TelimenaUser("superuser", "Super User")
                 {
-                    UserName = "superuser",
-                    CreatedDate = DateTime.UtcNow,
-                    DisplayName = "Super User",
                     IsActivated = true,
 #if RELEASE
                    MustChangePassword = true

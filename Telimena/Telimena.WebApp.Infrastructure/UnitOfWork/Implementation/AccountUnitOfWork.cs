@@ -29,6 +29,10 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         public ITelimenaUserManager UserManager { get; }
         private readonly TelimenaContext _context;
         public IRepository<DeveloperAccount> DeveloperRepository { get; }
+        public int Complete()
+        {
+            return this._context.SaveChanges();
+        }
 
         public async Task<Tuple<IdentityResult, IdentityResult>> RegisterUserAsync(TelimenaUser user, string password, params string[] roles)
         {
@@ -65,14 +69,12 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
                 roleresult = await this.UserManager.AddToRoleAsync(user.Id, TelimenaRoles.Developer);
                 if (roleresult.Succeeded)
                 {
-                    var developer = new Core.Models.DeveloperAccount()
-                    {
-                        MainUserId = user.Id,
-                        MainEmail = user.Email,
-                        Name = user.DisplayName
-                    };
+                    var developer = new Core.Models.DeveloperAccount(user);
                     this.DeveloperRepository.Add(developer);
-                    user.AssociatedDeveloperAccounts.Add(developer);
+                    this._context.Users.Attach(user);
+
+                    
+
                 }
             }
             return roleresult;

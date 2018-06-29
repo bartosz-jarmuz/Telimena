@@ -166,11 +166,7 @@
                     return this.View(model);
                 }
 
-                TelimenaUser user = new TelimenaUser {UserName = model.Email,
-                    Email = model.Email,
-                    DisplayName = model.Name,
-                    CreatedDate = DateTime.UtcNow,
-                };
+                TelimenaUser user = new TelimenaUser(model.Email, model.Name);
 
                 Tuple<IdentityResult, IdentityResult> results = await this.unitOfWork.RegisterUserAsync(user, model.Password, TelimenaRoles.Viewer, model.Role);
                 await this.unitOfWork.CompleteAsync();

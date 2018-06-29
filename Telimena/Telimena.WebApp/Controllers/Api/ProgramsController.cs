@@ -22,10 +22,10 @@
     {
         public ProgramsController(IProgramsUnitOfWork work)
         {
-            this.work = work;
+            this._work = work;
         }
 
-        private readonly IProgramsUnitOfWork work;
+        private readonly IProgramsUnitOfWork _work;
 
         [HttpPost]
         public async Task<IHttpActionResult> SetLatestVersion(SetLatestVersionRequest request)
@@ -35,7 +35,7 @@
                 return this.BadRequest($"SetLatestVersionRequest is invalid");
             }
 
-            var prg = await this.work.Programs.FirstOrDefaultAsync(x => x.ProgramId == request.ProgramId);
+            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == request.ProgramId);
             if (prg == null)
             {
                 return this.BadRequest($"Program [{request.ProgramId}] not found");
@@ -46,7 +46,7 @@
                 return this.BadRequest($"Version [{request.Version}] is not in valid format. Expected e.g. 1.0.0.0");
             }
 
-            var assVersion = prg.PrimaryAssembly.GetVersion(request.Version);
+            AssemblyVersion assVersion = prg.PrimaryAssembly.GetVersion(request.Version);
             if (assVersion == null)
             {
                 assVersion = new AssemblyVersion()
@@ -64,10 +64,10 @@
         [HttpGet]
         public async Task<IHttpActionResult> RegisterProgram(string programName)
         {
-            var prg = await this.work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
+            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
             if (prg == null)
             {
-                return this.BadRequest($"Program [{programName}] not found");
+                return this.BadRequest($"Program [{programName}] not found. Ensure it was used at least one time");
             }
 
             if (prg.DeveloperAccount != null)
@@ -75,9 +75,12 @@
                 return this.BadRequest($"Program [{programName}] is already registered");
             }
 
-            
-            
-            await this.work.CompleteAsync();
+            TelimenaUser user = await this._work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
+            DeveloperAccount dev = user.GetDeveloperAccountsLedByUser().FirstOrDefault();
+
+            dev?.AddProgram(prg);
+
+            await this._work.CompleteAsync();
             return this.Ok();
         }
 
@@ -85,7 +88,7 @@
         [HttpGet]
         public async Task<IHttpActionResult> GetLatestVersion(int programId)
         {
-            var prg = await this.work.Programs.FirstOrDefaultAsync(x => x.ProgramId == programId);
+            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == programId);
             if (prg == null)
             {
                 return this.BadRequest($"Program [{programId}] not found");
@@ -97,7 +100,7 @@
         [HttpGet]
         public async Task<IEnumerable<Program>> GetPrograms(int developerId)
         {
-            return await this.work.Programs.GetAsync(x => x.DeveloperAccount.Id == developerId);
+            return await this._work.Programs.GetAsync(x => x.DeveloperAccount.Id == developerId);
         }
 
     }

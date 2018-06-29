@@ -46,17 +46,7 @@ namespace Telimena.WebApp.Controllers.Developer
                 return this.View(model);
             }
 
-            if (app.DeveloperAccount != null)
-            {
-
-            }
-            else
-            {
-                DeveloperAccount dev = new DeveloperAccount();
-                {
-                    
-                }
-            }
+           
             return this.View(model);
 
         }

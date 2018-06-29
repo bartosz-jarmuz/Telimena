@@ -7,7 +7,7 @@
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    internal class Repository<TEntity> : IRepository<TEntity> where TEntity : class, new()
+    internal class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         protected DbContext DbContext;
 

@@ -6,7 +6,7 @@
     using System.Linq.Expressions;
     using System.Threading.Tasks;
 
-    public interface IRepository<TEntity> where TEntity : class, new()
+    public interface IRepository<TEntity> where TEntity : class
     {
         TEntity GetById(int id);
         Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null,

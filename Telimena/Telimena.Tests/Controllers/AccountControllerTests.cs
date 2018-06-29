@@ -40,17 +40,18 @@
         {
             var manager = new TelimenaUserManager(
                 new UserStore<TelimenaUser>(this.Context));
+            
             var unit = new AccountUnitOfWork(null, manager, this.Context);
 
             AccountControllerTests.GetTwoUsers(unit);
             var jack = unit.UserManager.FindByNameAsync(Helpers.GetName("Jack@Daniels.com")).GetAwaiter().GetResult();
             var jim = unit.UserManager.FindByNameAsync(Helpers.GetName("Jim@Beam.com")).GetAwaiter().GetResult();
 
-            var jackDev = unit.DeveloperRepository.FirstOrDefaultAsync(x => x.MainUser.Id == jack.Id).GetAwaiter().GetResult();
-            jackDev.AssociatedUsers.Add(jim);
+            var jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+            jackDev.AssociateUser(jim);
 
             unit.DeveloperRepository.Remove(jackDev);
-            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.Complete();
             Assert.IsNotNull(this.Context.Users.Single(x=>x.Id == jack.Id));
             Assert.IsNotNull(this.Context.Users.Single(x=>x.Id == jim.Id));
             Assert.IsNull(unit.DeveloperRepository.SingleOrDefault(x=>x.Id == jackDev.Id));
@@ -72,13 +73,88 @@
             Assert.AreEqual(jackDevId, jack.AssociatedDeveloperAccounts.Single().Id);
 
             unit.UserManager.DeleteAsync(jack).GetAwaiter().GetResult();
-            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.Complete();
             Assert.IsNull(unit.UserManager.FindByNameAsync(jack.UserName).GetAwaiter().GetResult());
 
             jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.Id == jackDevId);
 
             Assert.IsNull(jackDev.MainUser);
             Assert.AreEqual(Helpers.GetName("Jack@Daniels.com"), jackDev.MainEmail);
+        }
+        [Test]
+        public void TestRemoveUserFromDeveloper()
+        {
+            var manager = new TelimenaUserManager(
+                new UserStore<TelimenaUser>(this.Context));
+            var unit = new AccountUnitOfWork(null, manager, this.Context);
+
+            AccountControllerTests.GetTwoUsers(unit);
+
+            var jim = unit.UserManager.FindByNameAsync(Helpers.GetName("Jim@Beam.com")).GetAwaiter().GetResult();
+            var jack = unit.UserManager.FindByNameAsync(Helpers.GetName("Jack@Daniels.com")).GetAwaiter().GetResult();
+
+            var jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+
+
+
+        }
+
+
+        [Test]
+        public void TestSetUserAsMainForSecondDeveloper()
+        {
+            var manager = new TelimenaUserManager(
+                new UserStore<TelimenaUser>(this.Context));
+            var unit = new AccountUnitOfWork(null, manager, this.Context);
+
+            AccountControllerTests.GetTwoUsers(unit);
+
+            var jim = unit.UserManager.FindByNameAsync(Helpers.GetName("Jim@Beam.com")).GetAwaiter().GetResult();
+            var jack = unit.UserManager.FindByNameAsync(Helpers.GetName("Jack@Daniels.com")).GetAwaiter().GetResult();
+
+            var jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+            var jimDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jim.Id);
+            Assert.AreEqual(jackDev.Id, jack.GetDeveloperAccountsLedByUser().Single().Id);
+            Assert.AreEqual(jimDev.Id, jim.GetDeveloperAccountsLedByUser().Single().Id);
+
+            jimDev.SetMainUser(jack);
+            unit.Complete();
+
+            Assert.IsNotNull(jimDev.AssociatedUsers.Single(x => x.Id == jim.Id));
+            Assert.IsNotNull(jimDev.AssociatedUsers.Single(x => x.Id == jack.Id));
+
+            Assert.AreEqual(1, jim.AssociatedDeveloperAccounts.Count());
+            Assert.AreEqual(jack, jimDev.MainUser);
+
+            Assert.AreEqual(0, jim.GetDeveloperAccountsLedByUser().Count());
+            Assert.AreEqual(2, jack.GetDeveloperAccountsLedByUser().Count());
+
+            Assert.IsNotNull(jack.GetDeveloperAccountsLedByUser().Single(x=>x.Id == jackDev.Id));
+            Assert.IsNotNull(jack.GetDeveloperAccountsLedByUser().Single(x=>x.Id == jimDev.Id));
+   
+        }
+
+        [Test]
+        public void TestAddSecondUserToDeveloperTwice()
+        {
+            var manager = new TelimenaUserManager(
+                new UserStore<TelimenaUser>(this.Context));
+            var unit = new AccountUnitOfWork(null, manager, this.Context);
+
+            AccountControllerTests.GetTwoUsers(unit);
+
+            var jim = unit.UserManager.FindByNameAsync(Helpers.GetName("Jim@Beam.com")).GetAwaiter().GetResult();
+            var jack = unit.UserManager.FindByNameAsync(Helpers.GetName("Jack@Daniels.com")).GetAwaiter().GetResult();
+
+
+            var jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+
+            jackDev.AssociateUser(jim);
+            unit.Complete();
+            jackDev.AssociateUser(jim);
+            unit.Complete();
+
+            Assert.AreEqual(2, jackDev.AssociatedUsers.Count);
         }
 
 
@@ -96,15 +172,15 @@
 
             Assert.AreEqual(jim.Email, jim.AssociatedDeveloperAccounts.Single().MainEmail);
 
-            var jackDev = unit.DeveloperRepository.FirstOrDefaultAsync(x => x.MainUser.Id == jack.Id).GetAwaiter().GetResult();
+            var jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
             Assert.AreEqual(jackDev.Id, jack.AssociatedDeveloperAccounts.Single().Id);
-            var jimDev = unit.DeveloperRepository.FirstOrDefaultAsync(x => x.MainUser.Id == jim.Id).GetAwaiter().GetResult();
+            var jimDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jim.Id);
             Assert.AreEqual(jackDev.Id, jack.AssociatedDeveloperAccounts.Single().Id);
 
-            jackDev.AssociatedUsers.Add(jim);
+            jackDev.AssociateUser(jim);
 
-            unit.CompleteAsync().GetAwaiter().GetResult();
-            jackDev = unit.DeveloperRepository.FirstOrDefaultAsync(x => x.MainUser.Id == jack.Id).GetAwaiter().GetResult();
+            unit.Complete();
+            jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
 
             Assert.AreEqual(2, jackDev.AssociatedUsers.Count());
             Assert.IsNotNull(jackDev.AssociatedUsers.Single(x=>x.Id == jim.Id));
@@ -114,8 +190,8 @@
             Assert.IsNotNull(jim.AssociatedDeveloperAccounts.Single(x => x.Id == jackDev.Id));
             Assert.IsNotNull(jim.AssociatedDeveloperAccounts.Single(x => x.Id == jimDev.Id));
 
-            jackDev.AssociatedUsers.Remove(jim);
-            unit.CompleteAsync().GetAwaiter().GetResult();
+            jackDev.RemoveAssociatedUser(jim);
+            unit.Complete();
 
             Assert.AreEqual(jack.Id, jackDev.AssociatedUsers.Single().Id);
             Assert.AreEqual(jimDev.Id, jim.AssociatedDeveloperAccounts.Single().Id);
@@ -125,25 +201,13 @@
 
         private static void GetTwoUsers(AccountUnitOfWork unit, [CallerMemberName] string caller = null)
         {
-            unit.RegisterUserAsync(new TelimenaUser()
-            {
-                CreatedDate = DateTime.UtcNow,
-                UserName = caller+"_Jim@Beam.com",
-                Email = caller + "_Jim@Beam.com",
-                DisplayName = caller + "_Jim Beam"
-            }, "P@ssword", TelimenaRoles.Developer).GetAwaiter().GetResult();
+            unit.RegisterUserAsync(new TelimenaUser(caller + "_Jim@Beam.com", caller + "_Jim Beam"), "P@ssword", TelimenaRoles.Developer).GetAwaiter().GetResult();
 
-            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.Complete();
 
-            unit.RegisterUserAsync(new TelimenaUser()
-            {
-                CreatedDate = DateTime.UtcNow,
-                UserName = caller + "_Jack@Daniels.com",
-                Email = caller + "_Jack@Daniels.com",
-                DisplayName = caller + "_Jack Daniels"
-            }, "P@ssword", TelimenaRoles.Developer).GetAwaiter().GetResult();
+            unit.RegisterUserAsync(new TelimenaUser(caller + "_Jack@Daniels.com", caller + "_Jack Daniels"), "P@ssword", TelimenaRoles.Developer).GetAwaiter().GetResult();
 
-            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.Complete();
         }
 
         [Test]
@@ -177,6 +241,8 @@
             DeveloperAccount developerAccount = unit.DeveloperRepository.SingleOrDefault(x => x.MainUser.Id == user.Id);
             Assert.AreEqual(user.DisplayName, developerAccount.MainUser.DisplayName);
             Assert.AreEqual(user.Email, developerAccount.MainEmail);
+
+            Assert.AreEqual(developerAccount, user.GetDeveloperAccountsLedByUser().Single());
         }
 
 
