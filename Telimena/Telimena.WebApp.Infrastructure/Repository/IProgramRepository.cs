@@ -9,7 +9,9 @@
     {
         //void AddUsage(ProgramUsage objectToAdd);
         Task<IEnumerable<Program>> GetProgramsByDeveloperName(string developerName);
+        Task<IEnumerable<Program>> GetProgramsForUserAsync(TelimenaUser user);
         //UsageData GetUsage(Program program, ClientAppUser clientAppUser);
         //Task<List<ProgramUsage>> GetAllUsages(Program program);
+        IEnumerable<Program> GetProgramsForUser(TelimenaUser user);
     }
 }

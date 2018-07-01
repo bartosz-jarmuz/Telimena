@@ -23,5 +23,9 @@
         TEntity Single(Expression<Func<TEntity, bool>> predicate = null);
         TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate = null);
         TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate = null);
+
+        IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null,
+                                                 Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                                 string includeProperties = "");
     }
 }

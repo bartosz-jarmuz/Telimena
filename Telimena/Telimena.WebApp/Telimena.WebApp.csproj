@@ -251,7 +251,9 @@
     <Compile Include="Models\AdminDashboard\AdminDashboardViewModel.cs" />
     <Compile Include="Models\Developer\RegisterProgramViewModel.cs" />
     <Compile Include="Models\PortalUsers\PortalUsersViewModel.cs" />
+    <Compile Include="Models\ProgramDetails\ProgramDetailsViewModel.cs" />
     <Compile Include="Models\Shared\BoxViewModel.cs" />
+    <Compile Include="Models\Shared\ProgramsListViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1916,6 +1918,7 @@
     <Content Include="Views\AdminDashboard\Apps.cshtml" />
     <Content Include="Views\AdminDashboard\_InfoBox.cshtml" />
     <Content Include="Views\RegisterProgram\Register.cshtml" />
+    <Content Include="Views\Shared\_ProgramsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

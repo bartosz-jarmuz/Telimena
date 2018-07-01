@@ -90,17 +90,8 @@
                                             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
                                             string includeProperties = "")
         {
-            IQueryable<TEntity> query = this.DbContext.Set<TEntity>();
+            IQueryable<TEntity> query = this.PrepareQuery(filter, includeProperties);
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
             if (orderBy != null)
             {
                 return await orderBy(query).ToListAsync();
@@ -110,6 +101,39 @@
                 return await query.ToListAsync();
             }
 
+        }
+
+        public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null,
+                                                         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                                         string includeProperties = "")
+        {
+            IQueryable<TEntity> query = this.PrepareQuery(filter, includeProperties);
+            if (orderBy != null)
+            {
+                return  orderBy(query).ToList();
+            }
+            else
+            {
+                return  query.ToList();
+            }
+        }
+
+        private IQueryable<TEntity> PrepareQuery(Expression<Func<TEntity, bool>> filter, string includeProperties)
+        {
+            IQueryable<TEntity> query = this.DbContext.Set<TEntity>();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] {','}, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            return query;
         }
 
         public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)

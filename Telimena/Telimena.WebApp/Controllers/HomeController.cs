@@ -10,13 +10,17 @@ namespace Telimena.WebApi.Controllers
     using WebApp.Core.Interfaces;
     using WebApp.Core.Models;
     using WebApp.Infrastructure.Security;
+    using WebApp.Infrastructure.UnitOfWork;
+    using WebApp.Models.Shared;
 
     [TelimenaAuthorize]
     public class HomeController : Controller
     {
+        private readonly IProgramsUnitOfWork _work;
 
-        public HomeController()
+        public HomeController(IProgramsUnitOfWork work)
         {
+            this._work = work;
         }
 
         public ActionResult Index()
@@ -31,6 +35,32 @@ namespace Telimena.WebApi.Controllers
             }
         }
 
-       
+        [ChildActionOnly]
+        public PartialViewResult ProgramsList()
+        {
+            IEnumerable<Program> programs;
+            if (this.User.IsInRole(TelimenaRoles.Admin))
+            {
+                programs =  this._work.Programs.Get();
+            }
+            else
+            {
+                TelimenaUser user = this._work.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
+                programs = this._work.Programs.GetProgramsForUser(user);
+            }
+
+            
+            var model = new ProgramsListViewModel();
+            foreach (Program program in programs)
+            {
+                if (!model.Programs.ContainsKey(program.ProgramId))
+                {
+                    model.Programs.Add(program.ProgramId, program.Name);
+                }
+            }
+
+            return this.PartialView("_ProgramsList", model);
+
+        }
     }
 }

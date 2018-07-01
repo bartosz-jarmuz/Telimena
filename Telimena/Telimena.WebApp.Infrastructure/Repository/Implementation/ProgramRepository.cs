@@ -36,6 +36,15 @@
             return await this.TelimenaContext.Programs.Include(x => x.DeveloperAccount).Where(x => x.DeveloperAccount != null && x.DeveloperAccount.Name == developerName).ToListAsync();
         }
 
+        public async Task<IEnumerable<Program>> GetProgramsForUserAsync(TelimenaUser user)
+        {
+             return await this.TelimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id).ToListAsync();
+        }
+        public IEnumerable<Program> GetProgramsForUser(TelimenaUser user)
+        {
+            return this.TelimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id).ToList();
+        }
+
         public UsageSummary GetUsage(Program program, ClientAppUser clientAppUser)
         {
             return this.TelimenaContext.ProgramUsages.FirstOrDefault(x => x.Program.ProgramId == program.ProgramId && x.ClientAppUser.Id == clientAppUser.Id);
