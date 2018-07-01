@@ -61,29 +61,6 @@
             return this.Ok();
         }
 
-        [HttpGet]
-        public async Task<IHttpActionResult> RegisterProgram(string programName)
-        {
-            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
-            if (prg == null)
-            {
-                return this.BadRequest($"Program [{programName}] not found. Ensure it was used at least one time");
-            }
-
-            if (prg.DeveloperAccount != null)
-            {
-                return this.BadRequest($"Program [{programName}] is already registered");
-            }
-
-            TelimenaUser user = await this._work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
-            DeveloperAccount dev = user.GetDeveloperAccountsLedByUser().FirstOrDefault();
-
-            dev?.AddProgram(prg);
-
-            await this._work.CompleteAsync();
-            return this.Ok();
-        }
-
         [AllowAnonymous]
         [HttpGet]
         public async Task<IHttpActionResult> GetLatestVersion(int programId)

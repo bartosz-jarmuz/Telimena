@@ -123,38 +123,6 @@ namespace Telimena.Tests
 
         }
 
-        [Test]
-        public void TestRegisterProgram_PrgNotFound()
-        {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
-            ProgramsController sut = new ProgramsController(unit);
-
-
-            var result = sut.RegisterProgram("NoSuchApp").GetAwaiter().GetResult();
-            Assert.IsInstanceOf<BadRequestErrorMessageResult>(result);
-            Assert.AreEqual("Program [NoSuchApp] not found. Ensure it was used at least one time", (result as BadRequestErrorMessageResult).Message);
-        }
-
-        [Test]
-        public void TestRegisterProgram_AllOk()
-        {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
-            ProgramsController sut = new ProgramsController(unit);
-            Helpers.SeedInitialPrograms(this.Context, 1, "TestApp", "TestUser");
-            
-            var teliUsr = Helpers.CreateTelimenaUser(this.Context, "look@me.now", "Some guys");
-            var identity = new GenericIdentity(teliUsr.UserName);
-            var principal = new GenericPrincipal(identity, new[] {TelimenaRoles.Developer});
-            var usr = new ClaimsPrincipal(principal);
-
-
-            sut.User = usr;
-
-
-            var result = sut.RegisterProgram(Helpers.GetName("TestApp")).GetAwaiter().GetResult();
-            Assert.IsInstanceOf<OkResult>(result);
-           Helpers.GetProgramAndUser(this.Context, "TestApp", "TestUser", out Program prg, out ClientAppUser _);
-            Assert.AreEqual(teliUsr.GetDeveloperAccountsLedByUser().Single(), prg.DeveloperAccount);
-        }
+        
     }
 }

@@ -234,7 +234,7 @@
     <Compile Include="Controllers\AdminDashboardController.cs" />
     <Compile Include="Controllers\Api\ProgramsController.cs" />
     <Compile Include="Controllers\Api\StatisticsHelperService.cs" />
-    <Compile Include="Controllers\Developer\ClaimAppController.cs" />
+    <Compile Include="Controllers\Developer\RegisterProgramController.cs" />
     <Compile Include="Controllers\Developer\DeveloperDashboardController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\PortalUsersController.cs" />
@@ -249,7 +249,7 @@
     <Compile Include="Models\Account\ChangePasswordViewModel.cs" />
     <Compile Include="Models\Account\RegisterViewModel.cs" />
     <Compile Include="Models\AdminDashboard\AdminDashboardViewModel.cs" />
-    <Compile Include="Models\Developer\ClaimAppViewModel.cs" />
+    <Compile Include="Models\Developer\RegisterProgramViewModel.cs" />
     <Compile Include="Models\PortalUsers\PortalUsersViewModel.cs" />
     <Compile Include="Models\Shared\BoxViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1915,7 +1915,7 @@
     <Content Include="Views\AdminDashboard\_SmallBox.cshtml" />
     <Content Include="Views\AdminDashboard\Apps.cshtml" />
     <Content Include="Views\AdminDashboard\_InfoBox.cshtml" />
-    <Content Include="Views\ClaimApp\Claim.cshtml" />
+    <Content Include="Views\RegisterProgram\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

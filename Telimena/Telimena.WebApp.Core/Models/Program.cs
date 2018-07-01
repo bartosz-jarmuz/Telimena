@@ -9,6 +9,12 @@
 
     public class Program
     {
+        protected Program() { }
+
+        public Program(string name)
+        {
+            this.Name = name;
+        }
         public int ProgramId { get; set; }
         public ICollection<ProgramAssembly> ProgramAssemblies { get; set; } = new List<ProgramAssembly>();
         public virtual ProgramAssembly PrimaryAssembly { get; set; }

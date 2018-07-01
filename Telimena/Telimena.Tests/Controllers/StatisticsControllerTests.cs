@@ -200,9 +200,8 @@ namespace Telimena.Tests
         {
             StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
 
-            unit.Programs.Add(new Program()
+            unit.Programs.Add(new Program("SomeApp")
             {
-                Name = "SomeApp",
                 PrimaryAssembly = new ProgramAssembly()
                 {
                     Name = "SomeApp.dll",

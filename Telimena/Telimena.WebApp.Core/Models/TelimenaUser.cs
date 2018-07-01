@@ -9,14 +9,19 @@
     using DotNetLittleHelpers;
     using Microsoft.AspNet.Identity.EntityFramework;
 
-    public sealed class TelimenaUser : IdentityUser
+    public class TelimenaUser : IdentityUser
     {
 
         //EF needs a default constructor
         // ReSharper disable once UnusedMember.Local
-        private TelimenaUser() { }
+        protected TelimenaUser() { }
 
         public TelimenaUser(string email, string displayName)
+        {
+            this.SetAttributes(email, displayName);
+        }
+
+        private void SetAttributes(string email, string displayName)
         {
             this.CreatedDate = DateTime.UtcNow;
             this.Email = email;
@@ -37,7 +42,7 @@
         /// <summary>
         /// Returns developer accounts associated with this user (e.g. dev accounts which main user is set to this user)
         /// </summary>
-        public RestrictedAccessCollection<DeveloperAccount> AssociatedDeveloperAccounts { get; set; } = new List<DeveloperAccount>();
+        public virtual RestrictedAccessCollection<DeveloperAccount> AssociatedDeveloperAccounts { get; set; } = new List<DeveloperAccount>();
 
         public void AssociateWithDeveloperAccount(DeveloperAccount developer)
         {
