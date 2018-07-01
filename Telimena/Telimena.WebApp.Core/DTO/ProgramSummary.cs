@@ -5,6 +5,7 @@
     public class ProgramSummary
     {
         public string ProgramName { get; set; }
+        public string DeveloperName { get; set; }
         public int ProgramId { get; set; }
 
         public string LatestVersion { get; set; }

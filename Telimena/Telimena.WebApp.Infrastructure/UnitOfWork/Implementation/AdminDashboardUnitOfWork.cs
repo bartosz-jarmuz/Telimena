@@ -43,6 +43,7 @@
                 ProgramSummary summary = new ProgramSummary()
                 {
                     ProgramName = program.Name,
+                    DeveloperName = program.DeveloperAccount?.Name??"N/A",
                     LatestVersion = program.PrimaryAssembly.LatestVersion.Version,
                     ProgramId = program.ProgramId,
                     RegisteredDate = program.RegisteredDate,

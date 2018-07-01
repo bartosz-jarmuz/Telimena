@@ -10,28 +10,36 @@
 @section styles{
     @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
 }
-
-<table width="100%" id="usersTable" class="table-condensed table table-striped table-bordered table-hover">
-    <thead>
+<div class="row">
+<div class="col-md-12">
+<div class="box box-primary">
+<div class="box-header">
+    <h3 class="box-title">All Portal Users</h3>
+</div>
+<div class="box-body">
+    <table  id="usersTable" class="table-condensed table table-striped table-bordered table-hover">
+        <thead>
         <tr>
-            <th>Number</th>
+            <th>Id</th>
             <th>Display Name</th>
             <th>Email (Login)</th>
-            <th>Created Date</th>
-            <th>Last Login Date</th>
+            <th>Developer acccounts</th>
+            <th>Created</th>
+            <th>Last Login</th>
             <th>Is Activated</th>
             <th>Roles</th>
             <th>Must change password</th>
-            <th>Id</th>
+            <th>Guid</th>
         </tr>
-    </thead>
-    <tbody>
+        </thead>
+        <tbody>
         @foreach (var user in Model.Users)
         {
             <tr>
                 <td>@user.UserNumber</td>
                 <td>@user.DisplayName</td>
                 <td>@user.Email</td>
+                <td>@string.Join(", ", user.GetDeveloperAccountsLedByUser().Select(x=>x.Name))</td>
                 <td>@user.CreatedDate</td>
                 <td>@user.LastLoginDate</td>
                 <td>
@@ -54,9 +62,13 @@
                 <td>@user.Id</td>
             </tr>
         }
-    </tbody>
+        </tbody>
 
-</table>
+    </table>
+            </div>
+        </div>
+    </div>
+</div>
 @section scripts
 {
     @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
