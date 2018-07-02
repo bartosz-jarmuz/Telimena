@@ -26,11 +26,13 @@
             await Task.Delay(1);
             Program program = await this._work.Programs.FirstOrDefaultAsync(x=>x.Name == programName);
 
-            var model = new ProgramDetailsViewModel()
+            var model = new ProgramDetailsViewModel();
+            if (program != null)
             {
-                ProgramId = program.ProgramId,
-                ProgramName = program.Name
-            };
+                model.ProgramId = program.ProgramId;
+                model.ProgramName = program.Name;
+            }
+
             return this.View("Index", model);
         }
 

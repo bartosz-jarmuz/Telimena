@@ -37,7 +37,7 @@ namespace Telimena.Tests
         {
             ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
             ProgramsController sut = new ProgramsController(unit);
-            Helpers.SeedInitialPrograms(this.Context,2, "TestApp", "NewGuy");
+            Helpers.SeedInitialPrograms(this.Context,1, "TestApp", "NewGuy");
             Helpers.GetProgramAndUser(this.Context, "TestApp", "NewGuy", out Program prg, out ClientAppUser usr);
             Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.LatestVersion.Version);
             var request = new SetLatestVersionRequest()

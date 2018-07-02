@@ -46,18 +46,8 @@
                 return this.BadRequest($"Version [{request.Version}] is not in valid format. Expected e.g. 1.0.0.0");
             }
 
-            AssemblyVersion assVersion = prg.PrimaryAssembly.GetVersion(request.Version);
-            if (assVersion == null)
-            {
-                assVersion = new AssemblyVersion()
-                {
-                    ProductionReleaseDate = DateTime.UtcNow,
-                    Version = request.Version
-                };
-            }
-
-            prg.PrimaryAssembly.LatestVersion = assVersion;
-
+            prg.PrimaryAssembly.SetLatestVersion(request.Version);
+            await this._work.CompleteAsync();
             return this.Ok();
         }
 
@@ -72,6 +62,18 @@
             }
 
             return this.Ok(prg.PrimaryAssembly.LatestVersion.Version);
+        }
+
+        [HttpGet]
+        public async Task<IHttpActionResult> GetVersionsCount(int programId)
+        {
+            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == programId);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program [{programId}] not found");
+            }
+
+            return this.Ok(prg.PrimaryAssembly.Versions.Count);
         }
 
         [HttpGet]

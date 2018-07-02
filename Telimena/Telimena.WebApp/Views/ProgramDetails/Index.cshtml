@@ -1,8 +1,128 @@
-﻿@model Telimena.WebApp.Models.ProgramDetails.ProgramDetailsViewModel
+﻿@using Telimena.WebApp.Core.Messages
+@model Telimena.WebApp.Models.ProgramDetails.ProgramDetailsViewModel
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Program details</h2>
-<h4>@Model.ProgramName, @Model.ProgramId</h4>
+@section styles{
+    @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
+}
 
+<div class="row">
+    <div class="col-md-4">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Program summary</h3>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    <label>Name: </label>
+                    <span>@Model.ProgramName</span>
+                </div>
+                <div class="form-group">
+                    <label>Id: </label>
+                    <span>@Model.ProgramId</span>
+                </div>
+                <div class="form-group">
+                    <label>Latest version: </label>
+                    <span id="latestVersion">...</span>
+                </div>
+                <div class="form-group">
+                    <label>Versions count: </label>
+                    <span id="versionsCount">...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Version controlling</h3>
+            </div>
+            <div class="box-body">
+                <label class="confirmation label" style="display: none"></label>
+                <div class="form-group">
+                    <label>Set latest version to: </label>
+                    <input type="text" id="newLatestVersionTextBox"/>
+                </div>
+                <div class="form-group">
+                    <div class="">
+                        <input type="submit" id="setLatestVersionButton" value="Set version" class="btn btn-primary"/>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
+
+<script type="text/javascript">
+        $(document).ready(function() {
+            LoadCurrentVersion();
+            $('#setLatestVersionButton').click(function () {
+                HideConfirmationBox(this);
+                SetLatestVersion(this);
+            });
+        });
+
+        function HideConfirmationBox(button) {
+            $(button).closest('.box-body').find('.confirmation').hide();
+    }
+
+        function ShowConfirmationBox(button, classToAdd, text) {
+            var btn = $(button).closest('.box-body').find('.confirmation');
+            btn.show().addClass(classToAdd).text(text);
+        }
+
+        function LoadCurrentVersion() {
+            $('#latestVersion').html('...');
+            $.ajax({
+                type: 'GET',
+                url: '/api'+'@Url.Action("GetLatestVersion", "Programs")',
+                data: { programId: @Model.ProgramId },
+                success: function(response) {
+                    $('#latestVersion').html(response);
+                }
+            });
+            $('#versionsCount').html('...');
+            $.ajax({
+                type: 'GET',
+                url: '/api'+'@Url.Action("GetVersionsCount", "Programs")',
+                data: { programId: @Model.ProgramId },
+                success: function(response) {
+                    $('#versionsCount').html(response);
+                }
+            });
+        }
+        function SetLatestVersion(button) {
+
+            var dataObject = JSON.stringify({
+                @nameof(SetLatestVersionRequest.ProgramId) : @Model.ProgramId,
+                @nameof(SetLatestVersionRequest.Version) : $('#newLatestVersionTextBox').val(),
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: '/api'+'@Url.Action("SetLatestVersion", "Programs")',
+                contentType: "application/json; charset=utf-8",
+                datatype: 'Json',
+                data: dataObject
+            })
+            .done(function () {
+                ShowConfirmationBox(button, 'label-success', 'Done!');
+            })
+            .fail(function (xhr) {
+                ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message );
+            }).
+            always(function() {
+                LoadCurrentVersion();
+            });
+        }
+</script>
+
+}

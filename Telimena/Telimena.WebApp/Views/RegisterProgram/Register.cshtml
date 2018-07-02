@@ -15,7 +15,7 @@
                 {
                     <label class="label label-success">Ownership claimed successfully!</label>
                 }
-                <section id="passwordForm">
+                <section>
                     @using (Html.BeginForm("Register", "RegisterProgram", FormMethod.Post, new {role = "form"}))
                     {
                         @Html.AntiForgeryToken()

@@ -86,23 +86,11 @@
         {
             if (programAssembly.Versions.AnyAndNotNull())
             {
-                if (programAssembly.Versions.All(x => x.Version != version))
-                {
-                    programAssembly.Versions.Add(new AssemblyVersion()
-                    {
-                        Version = version
-                    });
-                }
+                programAssembly.AddVersion(version);
             }
             else
             {
-                var assVersion = new AssemblyVersion()
-                {
-                    Version = version
-                };
-                programAssembly.Versions.Add(assVersion);
-                programAssembly.LatestVersion = assVersion;
-
+                programAssembly.SetLatestVersion(version);
             }
         }
     }

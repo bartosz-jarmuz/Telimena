@@ -1,6 +1,7 @@
 ﻿namespace Telimena.WebApp.Core.Models
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
@@ -22,9 +23,40 @@
         public string Title { get; set; }
         public string Company { get; set; }
         public string FullName { get; set; }
-        public virtual ICollection<AssemblyVersion> Versions { get; set; } = new List<AssemblyVersion>();
+        public virtual RestrictedAccessCollection<AssemblyVersion> Versions { get; set; } = new List<AssemblyVersion>();
 
-        public virtual AssemblyVersion LatestVersion { get; set; }
+        public virtual AssemblyVersion LatestVersion { get; private set; }
+
+        public void SetLatestVersion(string version)
+        {
+            var existingVersion = this.Versions.FirstOrDefault(x => x.Version == version);
+            if (existingVersion != null)
+            {
+                this.LatestVersion = existingVersion;
+            }
+            else
+            {
+                var assVersion = new AssemblyVersion()
+                {
+                    Version = version
+                };
+                ((Collection<AssemblyVersion>)this.Versions).Add(assVersion);
+                this.LatestVersion = assVersion;
+            }
+        }
+
+
+        public void AddVersion(string version)
+        {
+            if (this.Versions.All(x => x.Version != version))
+            {
+                ((Collection<AssemblyVersion>)this.Versions).Add(new AssemblyVersion()
+                {
+                    Version = version
+                });
+            }
+        }
+
 
         public AssemblyVersion GetVersion(string version)
         {
