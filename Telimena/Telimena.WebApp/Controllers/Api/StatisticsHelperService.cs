@@ -11,21 +11,21 @@
 
     public class StatisticsHelperService
     {
-        private readonly IStatisticsUnitOfWork work;
+        private readonly IStatisticsUnitOfWork _work;
 
         public StatisticsHelperService(IStatisticsUnitOfWork work)
         {
-            this.work = work;
+            this._work = work;
         }
 
         public async Task<ClientAppUser> GetUserInfoOrAddIfNotExists(UserInfo userDto)
         {
-            ClientAppUser user = await this.work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserName == userDto.UserName);
+            ClientAppUser user = await this._work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserName == userDto.UserName);
             if (user == null)
             {
                 user = Mapper.Map<ClientAppUser>(userDto);
                 user.RegisteredDate = DateTime.UtcNow;
-                this.work.ClientAppUsers.Add(user);
+                this._work.ClientAppUsers.Add(user);
             }
 
             return user;
@@ -33,7 +33,7 @@
 
         public async Task<Function> GetFunctionOrAddIfNotExists(string functionName, Program program)
         {
-            Function func = await this.work.Functions.FirstOrDefaultAsync(x => x.Name == functionName && x.Program.Name == program.Name);
+            Function func = await this._work.Functions.FirstOrDefaultAsync(x => x.Name == functionName && x.Program.Name == program.Name);
             if (func == null)
             {
                 func = new Function()
@@ -42,7 +42,7 @@
                     Program = program,
                     ProgramId = program.ProgramId
                 };
-                this.work.Functions.Add(func);
+                this._work.Functions.Add(func);
             }
 
             return func;
@@ -50,11 +50,11 @@
 
         public async Task<Program> GetProgramOrAddIfNotExists(ProgramInfo requestProgramInfo)
         {
-            Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Name == requestProgramInfo.Name);
+            Program program = await this._work.Programs.FirstOrDefaultAsync(x => x.Name == requestProgramInfo.Name);
             if (program == null)
             {
                 program = Mapper.Map<Program>(requestProgramInfo);
-                this.work.Programs.Add(program);
+                this._work.Programs.Add(program);
             }
             this.EnsureVersionIsRegistered(program.PrimaryAssembly, requestProgramInfo.PrimaryAssembly.Version);
 
@@ -73,7 +73,20 @@
                 }
             }
 
+            await this.EnsureDeveloperSet(requestProgramInfo, program);
             return program;
+        }
+
+        private async Task EnsureDeveloperSet(ProgramInfo info, Program program)
+        {
+            if (program.DeveloperAccount == null && info.DeveloperId != null)
+            {
+                var dev = await this._work.Developers.FirstOrDefaultAsync(x => x.Id == info.DeveloperId);
+                if (dev != null)
+                {
+                    program.DeveloperAccount = dev;
+                }
+            }
         }
 
         /// <summary>

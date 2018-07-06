@@ -515,6 +515,57 @@ namespace Telimena.Tests
             Assert.AreEqual(0, this.Context.ProgramAssemblies.Count(x=> x.Program.Name == prg.Name));
             Assert.AreEqual(0, this.Context.Programs.Count(x=> x.Name == prg.Name));
         }
+
+        [Test]
+        public void TestRegistration_DevIdProvided_DevNotFound()
+        {
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
+            StatisticsController sut = new StatisticsController(unit);
+            UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
+
+            RegistrationRequest request = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = userInfo, 
+                
+            };
+            request.ProgramInfo.DeveloperId = 1234123412;
+            RegistrationResponse response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
+            Helpers.AssertRegistrationResponse(response, prg, usr, 1);
+            Assert.IsNull(prg.DeveloperAccount);
+        }
+
+        [Test]
+        public void TestRegistration_DevIdProvided_DevFound()
+        {
+            var teliUser = new TelimenaUser("test12@me.now", Helpers.GetName("DevAccount Name"));
+            this.Context.Users.Add(teliUser);
+            this.Context.Developers.Add(new DeveloperAccount(teliUser));
+            this.Context.SaveChanges();
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
+            var devId = unit.Developers.FirstOrDefault(x => x.MainEmail == teliUser.Email).Id;
+            Assert.IsTrue(devId > 0);
+           
+            StatisticsController sut = new StatisticsController(unit);
+            UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
+
+            RegistrationRequest request = new RegistrationRequest()
+            {
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")),
+                TelimenaVersion = "1.0.0.0",
+                UserInfo = userInfo,
+            };
+
+            request.ProgramInfo.DeveloperId = devId;
+            RegistrationResponse response = sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
+            Helpers.AssertRegistrationResponse(response, prg, usr, 1);
+            Assert.AreEqual(devId, prg.DeveloperAccount.Id);
+            Assert.AreEqual(teliUser.Email, prg.DeveloperAccount.MainEmail);
+        }
+
         [Test]
         public void TestRegistration_SameAppEachTime()
         {
