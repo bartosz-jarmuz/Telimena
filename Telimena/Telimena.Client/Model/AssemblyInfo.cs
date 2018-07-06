@@ -1,9 +1,18 @@
 ﻿namespace Telimena.Client
 {
+    #region Using
     using System.Reflection;
+    #endregion
 
+    /// <summary>
+    ///     Holds data about an assembly
+    /// </summary>
     public class AssemblyInfo
     {
+        /// <summary>
+        ///     Creates an instance of AssemblyInfo, where assembly data is read from Assembly through reflection
+        /// </summary>
+        /// <param name="assembly"></param>
         public AssemblyInfo(Assembly assembly)
         {
             var assName = assembly.GetName();
@@ -18,6 +27,13 @@
             this.Trademark = assembly.GetCustomAttribute<AssemblyTrademarkAttribute>()?.Trademark;
         }
 
+        /// <summary>
+        ///     New instance of AssemblyInfo
+        /// </summary>
+        public AssemblyInfo()
+        {
+        }
+
         public string Product { get; set; }
         public string Trademark { get; set; }
         public string Description { get; set; }
@@ -25,12 +41,7 @@
         public string Title { get; set; }
         public string Company { get; set; }
         public string FullName { get; set; }
-
-        public AssemblyInfo()
-        {
-        }
-
-        public string Name { get;  set; }
-        public string Version { get;  set; }
+        public string Name { get; set; }
+        public string Version { get; set; }
     }
 }
