@@ -2,6 +2,7 @@
 @using Telimena.WebApp.Core.Interfaces
 @using Telimena.WebApp.Core.Models
 @using Telimena.WebApp.Infrastructure.Identity
+@using Telimena.WebApp.Models.PortalUsers
 @model Telimena.WebApp.Models.PortalUsers.PortalUsersViewModel
 @{
     ViewBag.Title = "Portal users";
@@ -39,8 +40,8 @@
                 <td>@user.UserNumber</td>
                 <td>@user.DisplayName</td>
                 <td>@user.Email</td>
-                <td>@string.Join(", ", user.GetDeveloperAccountsLedByUser().Select(x=>x.Name))</td>
-                <td>@user.CreatedDate</td>
+                <td>@string.Join(", ", user.DeveloperAccountsLed)</td>
+                <td>@user.RegisteredDate</td>
                 <td>@user.LastLoginDate</td>
                 <td>
                     @user.IsActivated -
@@ -54,9 +55,9 @@
                     })
                 </td>
                 <td>
-                    @Html.Partial("_RoleActivator", new Tuple<TelimenaUser, string>(user, TelimenaRoles.Admin)) <br/>
-                    @Html.Partial("_RoleActivator", new Tuple<TelimenaUser, string>(user, TelimenaRoles.Developer)) <br />
-                    @Html.Partial("_RoleActivator", new Tuple<TelimenaUser, string>(user, TelimenaRoles.Viewer))<br />
+                    @Html.Partial("_RoleActivator", new Tuple<TelimenaUserViewModel, string>(user, TelimenaRoles.Admin)) <br/>
+                    @Html.Partial("_RoleActivator", new Tuple<TelimenaUserViewModel, string>(user, TelimenaRoles.Developer)) <br />
+                    @Html.Partial("_RoleActivator", new Tuple<TelimenaUserViewModel, string>(user, TelimenaRoles.Viewer))<br />
                 </td>
                 <td>@user.MustChangePassword</td>
                 <td>@user.Id</td>

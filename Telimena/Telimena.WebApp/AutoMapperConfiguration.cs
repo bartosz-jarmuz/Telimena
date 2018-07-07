@@ -26,12 +26,4 @@ namespace Telimena.WebApp
             Mapper.AssertConfigurationIsValid();
         }
     }
-
-
-    public class AutoMapperWebProfile : Profile
-    {
-        public AutoMapperWebProfile()
-        {
-        }
-    }
 }

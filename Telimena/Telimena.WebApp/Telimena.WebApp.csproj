@@ -231,6 +231,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="AutoMapperConfiguration.cs" />
+    <Compile Include="AutoMapperWebProfile.cs" />
     <Compile Include="Controllers\AdminDashboardController.cs" />
     <Compile Include="Controllers\Api\ProgramsController.cs" />
     <Compile Include="Controllers\Api\StatisticsHelperService.cs" />
@@ -251,6 +252,7 @@
     <Compile Include="Models\AdminDashboard\AdminDashboardViewModel.cs" />
     <Compile Include="Models\Developer\RegisterProgramViewModel.cs" />
     <Compile Include="Models\PortalUsers\PortalUsersViewModel.cs" />
+    <Compile Include="Models\PortalUsers\TelimenaUserViewModel.cs" />
     <Compile Include="Models\ProgramDetails\ProgramDetailsViewModel.cs" />
     <Compile Include="Models\Shared\BoxViewModel.cs" />
     <Compile Include="Models\Shared\ProgramsListViewModel.cs" />

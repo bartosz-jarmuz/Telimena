@@ -20,6 +20,7 @@ namespace Telimena.Tests
     using Client;
     using DbIntegrationTestHelpers;
     using log4net;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using Moq;
     using NUnit.Framework;
     using WebApi.Controllers;
@@ -28,6 +29,7 @@ namespace Telimena.Tests
     using WebApp.Core.Messages;
     using WebApp.Core.Models;
     using WebApp.Infrastructure.Database;
+    using WebApp.Infrastructure.Identity;
     using WebApp.Infrastructure.UnitOfWork.Implementation;
     using WebApp.Models.Developer;
     #endregion
@@ -45,7 +47,8 @@ namespace Telimena.Tests
         [Test]
         public void TestRegisterProgram_PrgNotFound()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+
             RegisterProgramController sut = new RegisterProgramController(unit, new Mock<ILog>().Object);
 
 
@@ -66,7 +69,7 @@ namespace Telimena.Tests
         [Test]
         public void TestRegisterProgram_AllOk()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
             RegisterProgramController sut = new RegisterProgramController(unit, new Mock<ILog>().Object);
 
             Helpers.SeedInitialPrograms(this.Context, 1, "TestApp", "TestUser");

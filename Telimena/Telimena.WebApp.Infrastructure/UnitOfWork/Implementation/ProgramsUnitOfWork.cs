@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using Core.Models;
     using Database;
+    using Identity;
     using Repository;
     using Repository.Implementation;
 
@@ -10,24 +11,22 @@
     {
         private readonly TelimenaContext context;
 
-        internal ProgramsUnitOfWork() : this(new TelimenaContext())
-        {
-        }
 
-        public ProgramsUnitOfWork(TelimenaContext context)
+        public ProgramsUnitOfWork(TelimenaContext context, ITelimenaUserManager userManager)
         {
             this.context = context;
             this.Versions = new Repository<AssemblyVersion>(context);
+            this.Users = new Repository<TelimenaUser>(context);
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
-            this.Users = new Repository<TelimenaUser>(context);
             this.TelimenaToolkitDataRepository = new TelimenaToolkitDataRepository(context);
-
+            this.TelimenaUserManager = userManager;
         }
 
+        public IRepository<TelimenaUser> Users { get; }
+        public ITelimenaUserManager TelimenaUserManager { get; set; }
         public ITelimenaToolkitDataRepository TelimenaToolkitDataRepository { get; set; }
         public IRepository<AssemblyVersion> Versions { get; }
-        public IRepository<TelimenaUser> Users { get; }
         public IProgramRepository Programs { get; }
         public IFunctionRepository Functions { get; }
         public async Task CompleteAsync()

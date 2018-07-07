@@ -233,10 +233,10 @@
             var user = unit.UserManager.FindByNameAsync(model.Email).GetAwaiter().GetResult();
 
             Assert.AreEqual("Jim Beam", user.DisplayName);
-            Assert.IsTrue(user.CreatedDate.Date == DateTime.UtcNow.Date);
+            Assert.IsTrue(user.RegisteredDate.Date == DateTime.UtcNow.Date);
             Assert.IsFalse(user.IsActivated);
-            Assert.IsTrue(user.RoleNames.Contains(TelimenaRoles.Developer));
-            Assert.IsTrue(user.RoleNames.Contains(TelimenaRoles.Viewer));
+            Assert.IsTrue(unit.UserManager.IsInRoleAsync(user.Id, TelimenaRoles.Developer).GetAwaiter().GetResult());
+            Assert.IsTrue(unit.UserManager.IsInRoleAsync(user.Id, TelimenaRoles.Viewer).GetAwaiter().GetResult());
 
             DeveloperAccount developerAccount = unit.DeveloperRepository.SingleOrDefault(x => x.MainUser.Id == user.Id);
             Assert.AreEqual(user.DisplayName, developerAccount.MainUser.DisplayName);

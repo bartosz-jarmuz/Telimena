@@ -1,5 +1,5 @@
 ﻿@using Telimena.WebApp.Core.Interfaces
-@model Tuple<Telimena.WebApp.Core.Models.TelimenaUser, string>
+@model Tuple<Telimena.WebApp.Models.PortalUsers.TelimenaUserViewModel, string>
 
 @{
     bool hasRole = Model.Item1.RoleNames.Contains(Model.Item2);

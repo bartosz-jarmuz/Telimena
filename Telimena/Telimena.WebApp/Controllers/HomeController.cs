@@ -38,17 +38,8 @@ namespace Telimena.WebApi.Controllers
         [ChildActionOnly]
         public PartialViewResult ProgramsList()
         {
-            IEnumerable<Program> programs;
-            if (this.User.IsInRole(TelimenaRoles.Admin))
-            {
-                programs =  this._work.Programs.Get();
-            }
-            else
-            {
-                TelimenaUser user = this._work.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
-                programs = this._work.Programs.GetProgramsForUser(user);
-            }
-
+            TelimenaUser user = this._work.Users.FirstOrDefault(x=>x.UserName == this.User.Identity.Name);
+            IEnumerable<Program> programs = this._work.Programs.GetProgramsVisibleToUser(user, this.User);
             
             var model = new ProgramsListViewModel();
             foreach (Program program in programs)

@@ -17,12 +17,14 @@ namespace Telimena.Tests
     using System.Web.Http.Results;
     using Client;
     using DbIntegrationTestHelpers;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using NUnit.Framework;
     using WebApi.Controllers;
     using WebApp.Core.Interfaces;
     using WebApp.Core.Messages;
     using WebApp.Core.Models;
     using WebApp.Infrastructure.Database;
+    using WebApp.Infrastructure.Identity;
     using WebApp.Infrastructure.UnitOfWork.Implementation;
     #endregion
 
@@ -35,7 +37,8 @@ namespace Telimena.Tests
         [Test]
         public void TestGetSetLatestVersion_AllOk()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+
             ProgramsController sut = new ProgramsController(unit);
             Helpers.SeedInitialPrograms(this.Context,1, "TestApp", "NewGuy");
             Helpers.AddHelperAssemblies(this.Context, 1, Helpers.GetName("TestApp"));
@@ -76,7 +79,8 @@ namespace Telimena.Tests
         [Test]
         public void TestSetLatestVersion_RequestNull()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+
             ProgramsController sut = new ProgramsController(unit);
 
             var result = sut.SetLatestVersion(null).GetAwaiter().GetResult();
@@ -87,7 +91,8 @@ namespace Telimena.Tests
         [Test]
         public void TestSetLatestVersion_PrgNotFound()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+
             ProgramsController sut = new ProgramsController(unit);
            var request = new SetLatestVersionRequest()
             {
@@ -106,7 +111,8 @@ namespace Telimena.Tests
         [Test]
         public void TestSetLatestVersion_VersionFormatInvalid()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+
             ProgramsController sut = new ProgramsController(unit);
             var request = new SetLatestVersionRequest()
             {

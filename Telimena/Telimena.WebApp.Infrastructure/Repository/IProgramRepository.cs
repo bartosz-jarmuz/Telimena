@@ -1,6 +1,7 @@
 ﻿namespace Telimena.WebApp.Infrastructure.Repository
 {
     using System.Collections.Generic;
+    using System.Security.Principal;
     using System.Threading.Tasks;
     using Client;
     using Core.Models;
@@ -12,6 +13,7 @@
         Task<IEnumerable<Program>> GetProgramsForUserAsync(TelimenaUser user);
         //UsageData GetUsage(Program program, ClientAppUser clientAppUser);
         //Task<List<ProgramUsage>> GetAllUsages(Program program);
-        IEnumerable<Program> GetProgramsForUser(TelimenaUser user);
+        List<Program> GetProgramsVisibleToUser(TelimenaUser user, IPrincipal principal);
+        Task<List<Program>> GetProgramsVisibleToUserAsync(TelimenaUser user, IPrincipal principal);
     }
 }

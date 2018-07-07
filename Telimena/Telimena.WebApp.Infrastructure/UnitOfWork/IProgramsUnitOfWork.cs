@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using Core.Models;
+    using Identity;
     using Repository;
     using Repository.Implementation;
 
@@ -9,6 +10,7 @@
     {
         IRepository<AssemblyVersion> Versions { get; }
         IRepository<TelimenaUser> Users { get; }
+        ITelimenaUserManager TelimenaUserManager { get; set; }
 
         IProgramRepository Programs { get; }
 

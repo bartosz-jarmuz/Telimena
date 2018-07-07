@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace Telimena.WebApp.Models.PortalUsers
 {
-    using Core.Models;
-    using Infrastructure.Identity;
-
     public class PortalUsersViewModel
     {
-        public List<TelimenaUser> Users { get; set; }
+        public List<TelimenaUserViewModel> Users { get; set; } = new List<TelimenaUserViewModel>();
     }
 }

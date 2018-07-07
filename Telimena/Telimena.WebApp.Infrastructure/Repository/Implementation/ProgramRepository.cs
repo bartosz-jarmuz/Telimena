@@ -5,9 +5,11 @@
     using System.Collections.Generic;
     using System.Data.Entity;
     using System.Linq;
+    using System.Security.Principal;
     using System.Threading.Tasks;
     using AutoMapper;
     using Client;
+    using Core.Interfaces;
     using Core.Models;
     using Database;
     using DotNetLittleHelpers;
@@ -41,9 +43,26 @@
         {
              return await this.TelimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id).ToListAsync();
         }
-        public IEnumerable<Program> GetProgramsForUser(TelimenaUser user)
+        public List<Program> GetProgramsVisibleToUser(TelimenaUser user, IPrincipal principal)
         {
-            return this.TelimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id).ToList();
+            return this.GetProgramsVisibleToUserImpl(user, principal).ToList();
+        }
+        public Task<List<Program>> GetProgramsVisibleToUserAsync(TelimenaUser user, IPrincipal principal)
+        {
+            return this.GetProgramsVisibleToUserImpl(user, principal).ToListAsync();
+        }
+
+
+        private IQueryable<Program> GetProgramsVisibleToUserImpl(TelimenaUser user, IPrincipal principal)
+        {
+            if (principal != null && principal.IsInRole(TelimenaRoles.Admin))
+            {
+                return this.TelimenaContext.Programs;
+            }
+            else
+            {
+                return this.TelimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id);
+            }
         }
 
         public UsageSummary GetUsage(Program program, ClientAppUser clientAppUser)

@@ -7,6 +7,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Mvc;
+    using AutoMapper;
     using Core.Interfaces;
     using Core.Models;
     using Infrastructure.Identity;
@@ -78,10 +79,12 @@
             List<TelimenaUser> users = await this.userManager.Users.ToListAsync();
             foreach (TelimenaUser telimenaUser in users)
             {
-                telimenaUser.RoleNames = await this.userManager.GetRolesAsync(telimenaUser.Id);
+                var userViewModel = Mapper.Map<TelimenaUserViewModel>(telimenaUser);
+                userViewModel.RoleNames = await this.userManager.GetRolesAsync(telimenaUser.Id);
+                userViewModel.DeveloperAccountsLed = telimenaUser.GetDeveloperAccountsLedByUser().Select(x => x.Name);
+                model.Users.Add(userViewModel); 
             }
-            model.Users = users;
-            
+
             return model;
         }
     }
