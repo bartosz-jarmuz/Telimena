@@ -32,6 +32,36 @@
             TelimenaDbInitializer.CreateRole(manager, TelimenaRoles.Developer, context);
             TelimenaDbInitializer.CreateRole(manager, TelimenaRoles.Viewer, context);
 
+            TelimenaDbInitializer.CreateAdmin(context);
+            TelimenaDbInitializer.CreateDeveloper(context);
+            SeedTelimenasAss(context);
+        }
+
+        private static void CreateDeveloper(TelimenaContext context)
+        {
+#if DEBUG
+            if (!context.Users.Any(u => u.UserName == "test@teli.mena"))
+            {
+                UserStore<TelimenaUser> userStore = new UserStore<TelimenaUser>(context);
+                UserManager<TelimenaUser> userManager = new UserManager<TelimenaUser>(userStore);
+                TelimenaUser user = new TelimenaUser("test@teli.mena", "Telimena Test Dev")
+                {
+                    IsActivated = true,
+                };
+
+                userManager.Create(user, "123456");
+                userManager.AddToRole(user.Id, TelimenaRoles.Developer);
+
+                var developer = new Core.Models.DeveloperAccount(user);
+                context.Developers.Add(developer);
+                context.Users.Attach(user);
+            }
+#endif
+
+        }
+
+        private static void CreateAdmin(TelimenaContext context)
+        {
             if (!context.Users.Any(u => u.UserName == "superuser"))
             {
                 UserStore<TelimenaUser> userStore = new UserStore<TelimenaUser>(context);
@@ -47,7 +77,6 @@
                 userManager.Create(user, "123456");
                 userManager.AddToRole(user.Id, TelimenaRoles.Admin);
             }
-            SeedTelimenasAss(context);
         }
 
         private static void SeedTelimenasAss(TelimenaContext context)
