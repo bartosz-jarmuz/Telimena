@@ -28,6 +28,36 @@
         }
 
         /// <summary>
+        ///     Loads the referenced helper assemblies, e.g. for the purpose of updating
+        /// </summary>
+        /// <param name="assemblies"></param>
+        public void LoadHelperAssemblies(params Assembly[] assemblies)
+        {
+            foreach (Assembly assembly in assemblies)
+            {
+                this.HelperAssemblies.Add(assembly);
+            }
+
+            this.LoadAssemblyInfos(this.HelperAssemblies);
+        }
+
+        /// <summary>
+        ///     Loads the referenced helper assemblies, e.g. for the purpose of updating
+        /// </summary>
+        /// <param name="assemblyNames"></param>
+        public void LoadHelperAssembliesByName(params string[] assemblyNames)
+        {
+            var path = AppDomain.CurrentDomain.BaseDirectory;
+            foreach (string assemblyName in assemblyNames)
+            {
+                Assembly assembly = Assembly.LoadFrom(Path.Combine(path, assemblyName));
+                this.HelperAssemblies.Add(assembly);
+            }
+
+            this.LoadAssemblyInfos(this.HelperAssemblies);
+        }
+
+        /// <summary>
         ///     Report the usage of the application function.
         /// </summary>
         /// <param name="functionName"></param>
@@ -62,48 +92,9 @@
         }
 
         /// <summary>
-        /// Loads the referenced helper assemblies, e.g. for the purpose of updating
+        ///     Sends the initial app usage info
         /// </summary>
-        /// <param name="assemblies"></param>
-        public void LoadHelperAssemblies(params Assembly[] assemblies)
-        {
-            foreach (Assembly assembly in assemblies)
-            {
-                this.HelperAssemblies.Add(assembly);
-            }
-            this.LoadAssemblyInfos(this.HelperAssemblies);
-
-        }
-
-        /// <summary>
-        /// Loads the referenced helper assemblies, e.g. for the purpose of updating
-        /// </summary>
-        /// <param name="assemblyNames"></param>
-        public void LoadHelperAssembliesByName(params string[] assemblyNames)
-        {
-            var path = AppDomain.CurrentDomain.BaseDirectory;
-            foreach (string  assemblyName in assemblyNames)
-            {
-                Assembly assembly = Assembly.LoadFrom(Path.Combine(path, assemblyName));
-                this.HelperAssemblies.Add(assembly);
-            }
-
-            this.LoadAssemblyInfos(this.HelperAssemblies);
-        }
-
-        private void LoadAssemblyInfos(IEnumerable<Assembly> assemblies)
-        {
-            this.ProgramInfo.HelperAssemblies = new List<AssemblyInfo>();
-            foreach (Assembly assembly in assemblies)
-            {
-                this.ProgramInfo.HelperAssemblies.Add(new AssemblyInfo(assembly));
-            }
-        }
-        
-        /// <summary>
-         ///     Sends the initial app usage info
-         /// </summary>
-         /// <returns></returns>
+        /// <returns></returns>
         protected internal async Task<RegistrationResponse> RegisterClient(bool skipUsageIncrementation = false)
         {
             try
@@ -144,5 +135,13 @@
             }
         }
 
+        private void LoadAssemblyInfos(IEnumerable<Assembly> assemblies)
+        {
+            this.ProgramInfo.HelperAssemblies = new List<AssemblyInfo>();
+            foreach (Assembly assembly in assemblies)
+            {
+                this.ProgramInfo.HelperAssemblies.Add(new AssemblyInfo(assembly));
+            }
+        }
     }
 }

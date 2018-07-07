@@ -36,6 +36,7 @@
         public DbSet<DeveloperAccount> Developers { get; set; }
         public DbSet<ProgramAssembly> ProgramAssemblies { get; set; }
         public DbSet<AssemblyVersion> Versions { get; set; }
+        public DbSet<TelimenaToolkitData> TelimenaToolkitData { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

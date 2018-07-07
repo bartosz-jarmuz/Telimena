@@ -10,6 +10,7 @@
     using Client;
     using Core.Models;
     using Database;
+    using DotNetLittleHelpers;
     #endregion
 
     internal class ProgramRepository : Repository<Program>, IProgramRepository

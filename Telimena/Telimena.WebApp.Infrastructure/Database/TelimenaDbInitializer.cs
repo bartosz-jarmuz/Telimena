@@ -3,8 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Data.Entity;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using Client;
     using Core.Interfaces;
     using Core.Models;
     using Identity;
@@ -45,6 +47,19 @@
                 userManager.Create(user, "123456");
                 userManager.AddToRole(user.Id, TelimenaRoles.Admin);
             }
+            SeedTelimenasAss(context);
+        }
+
+        private static void SeedTelimenasAss(TelimenaContext context)
+        {
+            var ass = typeof(Telimena).Assembly;
+            var clientData = new TelimenaToolkitData()
+            {
+                ReleaseDate = new FileInfo(ass.Location).LastWriteTimeUtc,
+                Version = "1.0.0.0"
+            };
+            context.TelimenaToolkitData.Add(clientData);
+            context.SaveChanges();
         }
 
         private static void CreateRole(RoleManager<IdentityRole> manager, string roleName, TelimenaContext context)

@@ -2,6 +2,7 @@
 {
     #region Using
     using System;
+    using System.Collections.Generic;
     using System.IdentityModel;
     using System.Linq;
     using System.Threading.Tasks;
@@ -46,12 +47,12 @@
                 }
 
                 await this.work.CompleteAsync();
-
                 return new RegistrationResponse()
                 {
                     Count = usageSummary.SummaryCount,
                     ProgramId = program.ProgramId,
                     UserId = clientAppUser.Id,
+                    UpdateInfo = await this.GetUpdateInfo(program)
                 };
             }
             catch (Exception ex)
@@ -61,6 +62,35 @@
                     Error = new InvalidOperationException("Error while processing registration request", ex)
                 };
             }
+        }
+
+        private async Task<UpdateInfo> GetUpdateInfo(Program program)
+        {
+            var info = new UpdateInfo()
+            {
+                PrimaryAssemblyVersion = this.GetVersionInfo(program.PrimaryAssembly)
+                ,HelperAssemblyVersions = new List<VersionInfo>()
+            };
+            foreach (ProgramAssembly programAssembly in program.ProgramAssemblies.Where(x=>x.PrimaryOf != program))
+            {
+                info.HelperAssemblyVersions.Add(this.GetVersionInfo(programAssembly));
+            }
+            var toolkitData = await this.work.TelimenaToolkitDataRepository.GetLatestToolkitData();
+            info.LatestTelimenaVersion = toolkitData.Version;
+            info.IsTelimenaVersionBeta = toolkitData.IsBetaVersion;
+            return info;
+        }
+
+        private VersionInfo GetVersionInfo(ProgramAssembly assemblyInfo)
+        {
+            return new VersionInfo()
+            {
+                AssemblyId = assemblyInfo.ProgramAssemblyId,
+                AssemblyName = assemblyInfo.Name,
+                LatestVersion = assemblyInfo.LatestVersion.Version,
+                IsBeta = assemblyInfo.LatestVersion.IsBeta ?? false,
+                LatestVersionId = assemblyInfo.LatestVersion.Id
+            };
         }
 
         [HttpPost]

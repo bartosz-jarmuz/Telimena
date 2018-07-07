@@ -75,6 +75,7 @@
     <Compile Include="Models\ProgramUsageDetail.cs" />
     <Compile Include="Models\ProgramUsageSummary.cs" />
     <Compile Include="Models\ProgramAssembly.cs" />
+    <Compile Include="Models\TelimenaToolkitData.cs" />
     <Compile Include="Models\TelimenaUser.cs" />
     <Compile Include="Models\Base\UsageSummary.cs" />
     <Compile Include="Models\ClientAppUser.cs" />
