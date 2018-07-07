@@ -8,9 +8,4 @@
         public int LatestVersionId { get; set; }
         public bool IsBeta { get; set; }
     }
-
-    public class UpdateResponse : TelimenaResponseBase
-    {
-
-    }
 }

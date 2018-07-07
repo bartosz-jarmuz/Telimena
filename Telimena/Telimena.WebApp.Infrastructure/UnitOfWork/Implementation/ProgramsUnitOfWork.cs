@@ -21,8 +21,11 @@
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
             this.Users = new Repository<TelimenaUser>(context);
+            this.TelimenaToolkitDataRepository = new TelimenaToolkitDataRepository(context);
+
         }
 
+        public ITelimenaToolkitDataRepository TelimenaToolkitDataRepository { get; set; }
         public IRepository<AssemblyVersion> Versions { get; }
         public IRepository<TelimenaUser> Users { get; }
         public IProgramRepository Programs { get; }

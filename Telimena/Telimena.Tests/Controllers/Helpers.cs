@@ -89,10 +89,13 @@
             {
                 var assName = $"HelperAss{i}_{prgName}.dll";
                 var prg = context.Programs.First(x => x.Name == prgName);
-                prg.ProgramAssemblies.Add(new ProgramAssembly()
+                var ass = new ProgramAssembly()
                 {
                     Name = assName
-                });
+                };
+                prg.ProgramAssemblies.Add(ass);
+
+                StatisticsHelperService.EnsureVersionIsRegistered(ass, "0.0.1.0");
             }
         }
 

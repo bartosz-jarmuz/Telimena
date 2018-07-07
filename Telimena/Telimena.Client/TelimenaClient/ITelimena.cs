@@ -12,7 +12,7 @@
     /// </summary>
     public interface ITelimena
     {
-        Task<UpdateResponse> CheckForUpdates();
+        Task<LatestVersionResponse> CheckForUpdates();
         Task<RegistrationResponse> Initialize();
         Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null);
 

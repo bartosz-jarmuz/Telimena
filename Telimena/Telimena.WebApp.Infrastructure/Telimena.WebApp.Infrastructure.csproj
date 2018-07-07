@@ -118,7 +118,7 @@
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\Implementation\Repository.cs" />
     <Compile Include="Repository\Implementation\ProgramRepository.cs" />
-    <Compile Include="Repository\ITelimenaToolkitRepository.cs" />
+    <Compile Include="Repository\ITelimenaToolkitDataRepository.cs" />
     <Compile Include="UnitOfWork\IAdminDashboardUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\AccountUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\AdminDashboardUnitOfWork.cs" />

@@ -84,10 +84,10 @@
             $('#latestVersion').html('...');
             $.ajax({
                 type: 'GET',
-                url: '/api'+'@Url.Action("GetLatestVersion", "Programs")',
+                url: '/api'+'@Url.Action("GetLatestVersionInfo", "Programs")',
                 data: { programId: @Model.ProgramId },
                 success: function(response) {
-                    $('#latestVersion').html(response);
+                    $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
                 }
             });
             $('#versionsCount').html('...');

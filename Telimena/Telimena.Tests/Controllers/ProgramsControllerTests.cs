@@ -38,6 +38,8 @@ namespace Telimena.Tests
             ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context);
             ProgramsController sut = new ProgramsController(unit);
             Helpers.SeedInitialPrograms(this.Context,1, "TestApp", "NewGuy");
+            Helpers.AddHelperAssemblies(this.Context, 1, Helpers.GetName("TestApp"));
+
             Helpers.GetProgramAndUser(this.Context, "TestApp", "NewGuy", out Program prg, out ClientAppUser usr);
             Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.LatestVersion.Version);
             var request = new SetLatestVersionRequest()
@@ -50,8 +52,12 @@ namespace Telimena.Tests
             Assert.AreEqual("2.2.0.0", prg.PrimaryAssembly.LatestVersion.Version);
             Assert.IsInstanceOf<OkResult>(result);
 
-            result = sut.GetLatestVersion(request.ProgramId).GetAwaiter().GetResult();
-            Assert.AreEqual("2.2.0.0", (result as OkNegotiatedContentResult<string>).Content);
+            var latestVersionResponse = sut.GetLatestVersionInfo(request.ProgramId).GetAwaiter().GetResult();
+            Assert.AreEqual("2.2.0.0", latestVersionResponse.PrimaryAssemblyVersion.LatestVersion);
+            Assert.IsNull(latestVersionResponse.Error);
+            Assert.AreEqual("1.0.0.0", latestVersionResponse.LatestTelimenaVersion);
+            Assert.AreEqual(prg.ProgramAssemblies.Single(x=>x.PrimaryOf == null).ProgramAssemblyId, latestVersionResponse.HelperAssemblyVersions.Single().AssemblyId);
+            Assert.AreEqual("0.0.1.0", latestVersionResponse.HelperAssemblyVersions.Single().LatestVersion);
 
 
             request = new SetLatestVersionRequest()
@@ -63,8 +69,8 @@ namespace Telimena.Tests
             Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.LatestVersion.Version);
             Assert.IsInstanceOf<OkResult>(result);
 
-            result = sut.GetLatestVersion(request.ProgramId).GetAwaiter().GetResult();
-            Assert.AreEqual("1.2.3.4", (result as OkNegotiatedContentResult<string>).Content);
+            latestVersionResponse = sut.GetLatestVersionInfo(request.ProgramId).GetAwaiter().GetResult();
+            Assert.AreEqual("1.2.3.4", latestVersionResponse.PrimaryAssemblyVersion.LatestVersion);
         }
 
         [Test]

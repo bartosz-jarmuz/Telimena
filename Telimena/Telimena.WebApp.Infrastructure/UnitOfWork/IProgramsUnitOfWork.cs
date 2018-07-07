@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using Core.Models;
     using Repository;
+    using Repository.Implementation;
 
     public interface IProgramsUnitOfWork
     {
@@ -12,7 +13,7 @@
         IProgramRepository Programs { get; }
 
         IFunctionRepository Functions { get; }
-
+        ITelimenaToolkitDataRepository TelimenaToolkitDataRepository { get; set; }
         Task CompleteAsync();
     }
 }

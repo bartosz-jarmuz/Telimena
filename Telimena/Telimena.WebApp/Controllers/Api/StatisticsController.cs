@@ -52,7 +52,6 @@
                     Count = usageSummary.SummaryCount,
                     ProgramId = program.ProgramId,
                     UserId = clientAppUser.Id,
-                    UpdateInfo = await this.GetUpdateInfo(program)
                 };
             }
             catch (Exception ex)
@@ -64,34 +63,7 @@
             }
         }
 
-        private async Task<UpdateInfo> GetUpdateInfo(Program program)
-        {
-            var info = new UpdateInfo()
-            {
-                PrimaryAssemblyVersion = this.GetVersionInfo(program.PrimaryAssembly)
-                ,HelperAssemblyVersions = new List<VersionInfo>()
-            };
-            foreach (ProgramAssembly programAssembly in program.ProgramAssemblies.Where(x=>x.PrimaryOf != program))
-            {
-                info.HelperAssemblyVersions.Add(this.GetVersionInfo(programAssembly));
-            }
-            var toolkitData = await this.work.TelimenaToolkitDataRepository.GetLatestToolkitData();
-            info.LatestTelimenaVersion = toolkitData.Version;
-            info.IsTelimenaVersionBeta = toolkitData.IsBetaVersion;
-            return info;
-        }
-
-        private VersionInfo GetVersionInfo(ProgramAssembly assemblyInfo)
-        {
-            return new VersionInfo()
-            {
-                AssemblyId = assemblyInfo.ProgramAssemblyId,
-                AssemblyName = assemblyInfo.Name,
-                LatestVersion = assemblyInfo.LatestVersion.Version,
-                IsBeta = assemblyInfo.LatestVersion.IsBeta ?? false,
-                LatestVersionId = assemblyInfo.LatestVersion.Id
-            };
-        }
+        
 
         [HttpPost]
         public async Task<StatisticsUpdateResponse> UpdateProgramStatistics(StatisticsUpdateRequest updateRequest)
@@ -125,7 +97,7 @@
                 }
 
                 UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser, updateRequest.FunctionName);
-                this.helper.EnsureVersionIsRegistered(program.PrimaryAssembly, updateRequest.Version);
+                StatisticsHelperService.EnsureVersionIsRegistered(program.PrimaryAssembly, updateRequest.Version);
                 var versionInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version);
 
                 usageSummary.IncrementUsage(versionInfo);

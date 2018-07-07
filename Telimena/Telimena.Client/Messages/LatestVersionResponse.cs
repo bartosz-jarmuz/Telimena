@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class UpdateInfo 
+    public class LatestVersionResponse : TelimenaResponseBase
     {
         public VersionInfo PrimaryAssemblyVersion { get; set; }
         public ICollection<VersionInfo> HelperAssemblyVersions{ get; set; }

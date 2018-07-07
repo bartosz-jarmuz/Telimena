@@ -56,7 +56,7 @@
                 program = Mapper.Map<Program>(requestProgramInfo);
                 this._work.Programs.Add(program);
             }
-            this.EnsureVersionIsRegistered(program.PrimaryAssembly, requestProgramInfo.PrimaryAssembly.Version);
+            StatisticsHelperService.EnsureVersionIsRegistered(program.PrimaryAssembly, requestProgramInfo.PrimaryAssembly.Version);
 
             if (requestProgramInfo.HelperAssemblies.AnyAndNotNull())
             {
@@ -69,7 +69,7 @@
                         program.ProgramAssemblies.Add(existingAssembly);
                     }
 
-                    this.EnsureVersionIsRegistered(existingAssembly, helperAssembly.Version);
+                    StatisticsHelperService.EnsureVersionIsRegistered(existingAssembly, helperAssembly.Version);
                 }
             }
 
@@ -95,7 +95,7 @@
         /// <param name="programAssembly"></param>
         /// <param name="version"></param>
         /// <returns></returns>
-        public void EnsureVersionIsRegistered(ProgramAssembly programAssembly, string version)
+        public static void EnsureVersionIsRegistered(ProgramAssembly programAssembly, string version)
         {
             if (programAssembly.Versions.AnyAndNotNull())
             {

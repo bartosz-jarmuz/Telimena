@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
     using Core.Models;
 
-    internal sealed class TelimenaToolkitDataRepository :  ITelimenaToolkitRepository
+    internal sealed class TelimenaToolkitDataRepository :  ITelimenaToolkitDataRepository
     {
         private readonly DbContext _dbContext;
 

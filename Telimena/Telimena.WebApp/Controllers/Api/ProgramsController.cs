@@ -2,9 +2,7 @@
 {
     #region Using
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.IdentityModel;
     using System.Linq;
     using System.Threading.Tasks;
     using System.Web.Http;
@@ -24,6 +22,32 @@
         {
             this._work = work;
         }
+
+        [HttpGet]
+        public async Task<LatestVersionResponse> GetLatestVersionInfo(int programId)
+        {
+            try
+            {
+                Program program = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == programId);
+                if (program == null)
+                {
+                    return new LatestVersionResponse()
+                    {
+                        Error = new InvalidOperationException($"Failed to find program by Id: [{programId}]")
+                    };
+                }
+
+                return await this.CreateUpdateResponse(program);
+            }
+            catch (Exception ex)
+            {
+                return new LatestVersionResponse()
+                {
+                    Error = new InvalidOperationException("Error while processing registration request", ex)
+                };
+            }
+        }
+
 
         private readonly IProgramsUnitOfWork _work;
 
@@ -51,18 +75,7 @@
             return this.Ok();
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IHttpActionResult> GetLatestVersion(int programId)
-        {
-            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == programId);
-            if (prg == null)
-            {
-                return this.BadRequest($"Program [{programId}] not found");
-            }
-
-            return this.Ok(prg.PrimaryAssembly.LatestVersion.Version);
-        }
+        
 
         [HttpGet]
         public async Task<IHttpActionResult> GetVersionsCount(int programId)
@@ -80,6 +93,35 @@
         public async Task<IEnumerable<Program>> GetPrograms(int developerId)
         {
             return await this._work.Programs.GetAsync(x => x.DeveloperAccount.Id == developerId);
+        }
+
+        private async Task<LatestVersionResponse> CreateUpdateResponse(Program program)
+        {
+            var info = new LatestVersionResponse()
+            {
+                PrimaryAssemblyVersion = this.GetVersionInfo(program.PrimaryAssembly),
+                HelperAssemblyVersions = new List<VersionInfo>()
+            };
+            foreach (ProgramAssembly programAssembly in program.ProgramAssemblies.Where(x => x.PrimaryOf != program))
+            {
+                info.HelperAssemblyVersions.Add(this.GetVersionInfo(programAssembly));
+            }
+            var toolkitData = await this._work.TelimenaToolkitDataRepository.GetLatestToolkitData();
+            info.LatestTelimenaVersion = toolkitData.Version;
+            info.IsTelimenaVersionBeta = toolkitData.IsBetaVersion;
+            return info;
+        }
+
+        private VersionInfo GetVersionInfo(ProgramAssembly assemblyInfo)
+        {
+            return new VersionInfo()
+            {
+                AssemblyId = assemblyInfo.ProgramAssemblyId,
+                AssemblyName = assemblyInfo.Name,
+                LatestVersion = assemblyInfo.LatestVersion?.Version,
+                IsBeta = assemblyInfo.LatestVersion?.IsBeta ?? false,
+                LatestVersionId = assemblyInfo.LatestVersion?.Id??0
+            };
         }
 
     }

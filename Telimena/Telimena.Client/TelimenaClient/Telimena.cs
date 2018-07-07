@@ -15,11 +15,31 @@
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        public async Task<UpdateResponse> CheckForUpdates()
+        public async Task<LatestVersionResponse> CheckForUpdates()
         {
             await this.InitializeIfNeeded();
+            return null;
 
-            throw new NotImplementedException();
+            try
+            {
+                //string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.RegisterClient, request);
+                //RegistrationResponse response = this.Serializer.Deserialize<RegistrationResponse>(responseContent);
+                //this.UserId = response.UserId;
+                //this.ProgramId = response.ProgramId;
+                return null;
+            }
+            catch (Exception ex)
+            {
+                if (!this.SuppressAllErrors)
+                {
+                    throw;
+                }
+
+                //return new RegistrationResponse()
+                //{
+                //    Error = ex
+                //};
+            }
         }
 
         public async Task<RegistrationResponse> Initialize()

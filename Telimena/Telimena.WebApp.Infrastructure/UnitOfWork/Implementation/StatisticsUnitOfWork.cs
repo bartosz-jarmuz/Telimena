@@ -20,12 +20,11 @@
             this.ClientAppUsers = new Repository<ClientAppUser>(context);
             this.Versions = new Repository<AssemblyVersion>(context);
             this.Developers = new Repository<DeveloperAccount>(context);
-            this.TelimenaToolkitDataRepository = new TelimenaToolkitDataRepository(context);
             this.Functions= new FunctionRepository(context);
             this.Programs= new ProgramRepository(context);
         }
 
-        public ITelimenaToolkitRepository TelimenaToolkitDataRepository { get; set; }
+        public ITelimenaToolkitDataRepository TelimenaToolkitDataRepository { get; set; }
         public IRepository<DeveloperAccount> Developers { get; set; }
         public IRepository<AssemblyVersion> Versions { get; }
         public IRepository<ClientAppUser> ClientAppUsers { get; }

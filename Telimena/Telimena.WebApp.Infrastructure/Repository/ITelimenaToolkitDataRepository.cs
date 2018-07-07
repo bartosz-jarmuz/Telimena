@@ -3,7 +3,7 @@
     using System.Threading.Tasks;
     using Core.Models;
 
-    public interface ITelimenaToolkitRepository
+    public interface ITelimenaToolkitDataRepository
     {
         Task<TelimenaToolkitData> GetLatestToolkitData();
     }
