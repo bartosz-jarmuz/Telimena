@@ -5,5 +5,6 @@
     internal interface IMessenger
     {
         Task<string> SendPostRequest(string requestUri, object objectToPost);
+        Task<string> SendGetRequest(string requestUri);
     }
 }

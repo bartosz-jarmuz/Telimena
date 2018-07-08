@@ -17,6 +17,11 @@
         {
             return this._client.PostAsync(requestUri, httpContent);
         }
+
+        public Task<HttpResponseMessage> GetAsync(string requestUri)
+        {
+            return this._client.GetAsync(requestUri);
+        }
         #endregion
     }
 }

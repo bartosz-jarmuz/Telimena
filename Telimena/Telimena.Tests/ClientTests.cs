@@ -8,10 +8,12 @@ namespace Telimena.Tests
 {
     #region Using
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
     using Client;
+    using Client.Model;
     using DotNetLittleHelpers;
     using Moq;
     using Newtonsoft.Json;
@@ -21,13 +23,53 @@ namespace Telimena.Tests
     [TestFixture]
     public class ClientTests
     {
+
+
+        [Test]
+        public void Test_CheckForUpdates()
+        {
+            Telimena sut = new Telimena()
+            {
+                SuppressAllErrors = false
+            };
+            Assert.AreEqual("Telimena.Client", sut.ProgramInfo.PrimaryAssembly.Name);
+
+            sut.LoadHelperAssembliesByName("Telimena.Tests.dll", "Moq.dll");
+
+            var latestVersionResponse = new LatestVersionResponse()
+            {
+                PrimaryAssemblyVersion = new VersionInfo()
+                {
+                    AssemblyId = 1,
+                    AssemblyName = "Telimena.Client",
+                    LatestVersion = "3.1.0.0",
+                    LatestVersionId = 3
+                },
+                HelperAssemblyVersions = new List<VersionInfo>()
+                {
+                    new VersionInfo()
+                    {
+                        AssemblyName = "Telimena.Tests",
+                        LatestVersion = "3.1.0.1"
+                    }
+                }
+            };
+            this.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse));
+
+            UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
+            Assert.IsTrue(response.IsUpdateAvailable);
+            Assert.AreEqual("3.1.0.0", response.PrimaryAssemblyUpdateInfo.LatestVersionInfo.LatestVersion);
+            Assert.AreEqual("3.1.0.1", response.HelperAssembliesToUpdate.Single().LatestVersionInfo.LatestVersion);
+
+        }
+
         [Test]
         public void Test_InitializeRequestCreation()
         {
             Telimena telimena = new Telimena();
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Tests.dll", "Moq.dll");
-            this.SetupMockHttpClient(telimena);
+            this.SetupMockHttpClient(telimena, this.GetMockClient());
             this.Test_RegistrationFunction(telimena, () => telimena.Initialize().GetAwaiter().GetResult(), false);
         }
 
@@ -37,7 +79,7 @@ namespace Telimena.Tests
             Telimena telimena = new Telimena();
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Tests.dll", "Moq.dll");
-            this.SetupMockHttpClient(telimena);
+            this.SetupMockHttpClient(telimena, this.GetMockClient());
             this.Test_RegistrationFunction(telimena, () => telimena.RegisterClient().GetAwaiter().GetResult(), false);
             this.Test_RegistrationFunction(telimena, () => telimena.RegisterClient(true).GetAwaiter().GetResult(), true);
         }
@@ -195,6 +237,31 @@ namespace Telimena.Tests
             return client;
         }
 
+        private Mock<ITelimenaHttpClient> GetMockClientForCheckForUpdates(object responseObj)
+        {
+            Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
+            client.Setup(x => x.PostAsync("api/Statistics/RegisterClient", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
+            {
+                var response = new HttpResponseMessage();
+                var registrationResponse = new RegistrationResponse()
+                {
+                    Count = 0,
+                    ProgramId = 1,
+                    UserId = 2
+                };
+                response.Content = new StringContent(JsonConvert.SerializeObject(registrationResponse));
+                return Task.FromResult(response);
+            });
+            client.Setup(x => x.GetAsync(It.IsAny<string>())).Returns((string uri) =>
+            {
+                var response = new HttpResponseMessage();
+               
+                response.Content = new StringContent(JsonConvert.SerializeObject(responseObj));
+                return Task.FromResult(response);
+            });
+            return client;
+        }
+
         private Mock<ITelimenaHttpClient> GetMockClientForStaticClient_FirstRequestPass()
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
@@ -219,9 +286,8 @@ namespace Telimena.Tests
             return client;
         }
 
-        private void SetupMockHttpClient(Telimena telimena)
+        private void SetupMockHttpClient(Telimena telimena, Mock<ITelimenaHttpClient> client)
         {
-            var client = this.GetMockClient();
             telimena.Messenger = new Messenger(telimena.Serializer, client.Object, telimena.SuppressAllErrors);
         }
     }

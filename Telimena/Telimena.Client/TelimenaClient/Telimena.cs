@@ -7,6 +7,7 @@
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using Model;
     #endregion
 
     /// <summary>
@@ -15,18 +16,14 @@
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        public async Task<LatestVersionResponse> CheckForUpdates()
+        public async Task<UpdateCheckResult> CheckForUpdates()
         {
             await this.InitializeIfNeeded();
-            return null;
-
             try
             {
-                //string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.RegisterClient, request);
-                //RegistrationResponse response = this.Serializer.Deserialize<RegistrationResponse>(responseContent);
-                //this.UserId = response.UserId;
-                //this.ProgramId = response.ProgramId;
-                return null;
+                string responseContent = await this.Messenger.SendGetRequest(ApiRoutes.GetLatestVersionInfo + "?programId=" + this.ProgramId);
+                LatestVersionResponse response = this.Serializer.Deserialize<LatestVersionResponse>(responseContent);
+                return UpdateResponseReader.ReadResponse(this.ProgramInfo, response);
             }
             catch (Exception ex)
             {
@@ -35,10 +32,10 @@
                     throw;
                 }
 
-                //return new RegistrationResponse()
-                //{
-                //    Error = ex
-                //};
+                return new UpdateCheckResult()
+                {
+                    Error = ex
+                };
             }
         }
 

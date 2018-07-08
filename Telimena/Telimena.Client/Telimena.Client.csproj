@@ -44,7 +44,9 @@
   <ItemGroup>
     <Compile Include="ApiRoutes.cs" />
     <Compile Include="Messages\LatestVersionResponse.cs" />
-    <Compile Include="Messenger\UpdateResponseReader.cs" />
+    <Compile Include="Model\AssemblyUpdateInfo.cs" />
+    <Compile Include="Model\UpdateCheckResult.cs" />
+    <Compile Include="UpdateResponseReader.cs" />
     <Compile Include="Model\VersionInfo.cs" />
     <Compile Include="Messenger\ITelimenaHttpClient.cs" />
     <Compile Include="Messenger\IMessenger.cs" />

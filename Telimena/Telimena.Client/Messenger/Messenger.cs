@@ -38,5 +38,24 @@
             }
         }
 
+        public async Task<string> SendGetRequest(string requestUri)
+        {
+            try
+            {
+                HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri);
+                string responseContent = await response.Content.ReadAsStringAsync();
+                return responseContent;
+            }
+            catch (Exception)
+            {
+                if (!this.SuppressAllErrors)
+                {
+                    throw;
+                }
+
+                return "";
+            }
+        }
+
     }
 }

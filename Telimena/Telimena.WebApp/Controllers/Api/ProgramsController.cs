@@ -75,8 +75,6 @@
             return this.Ok();
         }
 
-        
-
         [HttpGet]
         public async Task<IHttpActionResult> GetVersionsCount(int programId)
         {

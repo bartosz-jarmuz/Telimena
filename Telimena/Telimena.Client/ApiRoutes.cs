@@ -4,5 +4,6 @@
     {
         public const string UpdateProgramStatistics = "api/Statistics/UpdateProgramStatistics";
         public const string RegisterClient = "api/Statistics/RegisterClient";
+        public const string GetLatestVersionInfo = "api/Programs/GetLatestVersionInfo";
     }
 }

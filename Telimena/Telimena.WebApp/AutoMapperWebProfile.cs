@@ -8,7 +8,10 @@
     {
         public AutoMapperWebProfile()
         {
-            this.CreateMap<TelimenaUser, TelimenaUserViewModel>();
+            this.CreateMap<TelimenaUser, TelimenaUserViewModel>()
+                .ForMember(x => x.RoleNames, o => o.Ignore())
+                .ForMember(x => x.DeveloperAccountsLed, o => o.Ignore());
+
 
         }
     }

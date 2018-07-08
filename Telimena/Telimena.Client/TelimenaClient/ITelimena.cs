@@ -4,6 +4,7 @@
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
+    using Model;
     #endregion
 
     /// <summary>
@@ -12,7 +13,7 @@
     /// </summary>
     public interface ITelimena
     {
-        Task<LatestVersionResponse> CheckForUpdates();
+        Task<UpdateCheckResult> CheckForUpdates();
         Task<RegistrationResponse> Initialize();
         Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null);
 
