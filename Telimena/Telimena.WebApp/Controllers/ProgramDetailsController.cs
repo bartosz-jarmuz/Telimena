@@ -23,7 +23,10 @@
         [HttpGet]
         public async Task<ActionResult> Index(string programName)
         {
-            await Task.Delay(1);
+            if (string.IsNullOrEmpty(programName))
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
             Program program = await this._work.Programs.FirstOrDefaultAsync(x=>x.Name == programName);
 
             var model = new ProgramDetailsViewModel();
