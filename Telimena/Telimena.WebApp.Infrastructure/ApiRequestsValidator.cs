@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Telimena.WebApp.Infrastructure
 {
+    using System.Web.Http;
     using Client;
     using Core.Messages;
 
@@ -24,6 +25,29 @@ namespace Telimena.WebApp.Infrastructure
         public static bool IsRequestValid(SetLatestVersionRequest request)
         {
             return request != null;
+        }
+
+
+        public static bool IsRequestValid(CreateUpdatePackageRequest request, out List<string> errorMessages)
+        {
+            errorMessages = new List<string>();
+            if (request != null && request.ProgramId > 0 && !string.IsNullOrEmpty(request.PackageVersion) )
+            {
+                if (Version.TryParse(request.PackageVersion, out Version _))
+                {
+                    return true;
+                }
+                else
+                {
+                    errorMessages.Add($"String [{request.PackageVersion}] is not a valid version format!");
+                }
+            }
+            else
+            {
+                errorMessages.Add($"Required request property is null!");
+            }
+
+            return false;
         }
     }
 }

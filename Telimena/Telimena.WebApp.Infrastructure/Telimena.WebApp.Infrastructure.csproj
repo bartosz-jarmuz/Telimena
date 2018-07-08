@@ -78,10 +78,16 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
@@ -111,6 +117,7 @@
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
+    <Compile Include="Repository\Implementation\UpdatePackageRepository.cs" />
     <Compile Include="Repository\Implementation\FunctionRepository.cs" />
     <Compile Include="Repository\IFunctionRepository.cs" />
     <Compile Include="Repository\Implementation\TelimenaToolkitDataRepository.cs" />
@@ -119,6 +126,7 @@
     <Compile Include="Repository\Implementation\Repository.cs" />
     <Compile Include="Repository\Implementation\ProgramRepository.cs" />
     <Compile Include="Repository\ITelimenaToolkitDataRepository.cs" />
+    <Compile Include="Repository\IUpdatePackageRepository.cs" />
     <Compile Include="UnitOfWork\IAdminDashboardUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\AccountUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\AdminDashboardUnitOfWork.cs" />

@@ -1,2 +1,12 @@
-﻿
+﻿.label-sm {
+    font-size: 75% !important;
+}
+
+.label-md {
+    font-size: 100% !important;
+}
+
+.label-lg {
+    font-size: 125% !important;
+}
 

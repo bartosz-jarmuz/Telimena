@@ -19,13 +19,15 @@
             this.Users = new Repository<TelimenaUser>(context);
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
-            this.TelimenaToolkitDataRepository = new TelimenaToolkitDataRepository(context);
+            this.TelimenaToolkitData = new TelimenaToolkitDataRepository(context);
+            this.UpdatePackages = new UpdatePackageRepository(context);
             this.TelimenaUserManager = userManager;
         }
 
         public IRepository<TelimenaUser> Users { get; }
         public ITelimenaUserManager TelimenaUserManager { get; set; }
-        public ITelimenaToolkitDataRepository TelimenaToolkitDataRepository { get; set; }
+        public ITelimenaToolkitDataRepository TelimenaToolkitData { get; set; }
+        public IUpdatePackageRepository UpdatePackages { get; set; }
         public IRepository<AssemblyVersion> Versions { get; }
         public IProgramRepository Programs { get; }
         public IFunctionRepository Functions { get; }

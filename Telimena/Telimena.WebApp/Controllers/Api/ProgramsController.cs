@@ -4,9 +4,13 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Mail;
     using System.Threading.Tasks;
+    using System.Web;
     using System.Web.Http;
+    using System.Web.Mvc;
     using Client;
+    using Newtonsoft.Json;
     using WebApp.Core.Interfaces;
     using WebApp.Core.Messages;
     using WebApp.Core.Models;
@@ -23,7 +27,7 @@
             this._work = work;
         }
 
-        [HttpGet]
+        [System.Web.Http.HttpGet]
         public async Task<LatestVersionResponse> GetLatestVersionInfo(int programId)
         {
             try
@@ -51,7 +55,7 @@
 
         private readonly IProgramsUnitOfWork _work;
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public async Task<IHttpActionResult> SetLatestVersion(SetLatestVersionRequest request)
         {
             if (!ApiRequestsValidator.IsRequestValid(request))
@@ -75,7 +79,7 @@
             return this.Ok();
         }
 
-        [HttpGet]
+        [System.Web.Http.HttpGet]
         public async Task<IHttpActionResult> GetVersionsCount(int programId)
         {
             Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == programId);
@@ -87,7 +91,7 @@
             return this.Ok(prg.PrimaryAssembly.Versions.Count);
         }
 
-        [HttpGet]
+        [System.Web.Http.HttpGet]
         public async Task<IEnumerable<Program>> GetPrograms(int developerId)
         {
             return await this._work.Programs.GetAsync(x => x.DeveloperAccount.Id == developerId);
@@ -95,7 +99,7 @@
 
         private async Task<LatestVersionResponse> CreateUpdateResponse(Program program)
         {
-            var info = new LatestVersionResponse()
+            LatestVersionResponse info = new LatestVersionResponse()
             {
                 PrimaryAssemblyVersion = this.GetVersionInfo(program.PrimaryAssembly),
                 HelperAssemblyVersions = new List<VersionInfo>()
@@ -104,7 +108,7 @@
             {
                 info.HelperAssemblyVersions.Add(this.GetVersionInfo(programAssembly));
             }
-            var toolkitData = await this._work.TelimenaToolkitDataRepository.GetLatestToolkitData();
+            TelimenaToolkitData toolkitData = await this._work.TelimenaToolkitData.GetLatestToolkitData();
             info.LatestTelimenaVersion = toolkitData.Version;
             info.IsTelimenaVersionBeta = toolkitData.IsBetaVersion;
             return info;
@@ -122,5 +126,45 @@
             };
         }
 
+        public IHttpActionResult ValidatePackageVersion(CreateUpdatePackageRequest request)
+        {
+            if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
+            {
+                return this.BadRequest(string.Join(", ", errors));
+            }
+
+            return this.Ok();
+        }
+
+        [System.Web.Http.HttpPost]
+        public async Task<IHttpActionResult> UploadUpdatePackage()
+        {
+            try
+            {
+                var reqString = HttpContext.Current.Request.Form["Model"];
+                CreateUpdatePackageRequest request = JsonConvert.DeserializeObject<CreateUpdatePackageRequest>(reqString);
+                HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ?
+                    HttpContext.Current.Request.Files[0] : null;
+                if (uploadedFile != null && uploadedFile.ContentLength > 0)
+                {
+                    byte[] fileByteArray = new byte[uploadedFile.ContentLength];
+                    uploadedFile.InputStream.Read(fileByteArray, 0, uploadedFile.ContentLength);
+                    Attachment newAttchment = new Attachment(uploadedFile.InputStream, uploadedFile.ContentType)
+                    {
+                        Name = uploadedFile.FileName
+                    };
+                    var pkg = await this._work.UpdatePackages.StorePackage(request.ProgramId, request.PackageVersion, null, uploadedFile.FileName);
+
+                    await this._work.CompleteAsync();
+                    return this.Ok(pkg.Id);
+                }
+
+                return this.BadRequest("Empty attachment");
+            }
+            catch (Exception ex)
+            {
+                return this.BadRequest(ex.Message);
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace Telimena.WebApi.Controllers
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using WebApp.Core.Interfaces;
@@ -29,12 +30,15 @@
             }
             Program program = await this._work.Programs.FirstOrDefaultAsync(x=>x.Name == programName);
 
-            var model = new ProgramDetailsViewModel();
+            ProgramDetailsViewModel model = new ProgramDetailsViewModel();
             if (program != null)
             {
                 model.ProgramId = program.ProgramId;
                 model.ProgramName = program.Name;
             }
+
+            List<UpdatePackage> packages = await this._work.UpdatePackages.GetAllPackages(model.ProgramId);
+            model.UpdatePackages = packages;
 
             return this.View("Index", model);
         }
