@@ -46,8 +46,8 @@
     <Reference Include="DbIntegrationTestHelpers, Version=1.0.26.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DbIntegrationTestHelpers.1.0.26\lib\net461\DbIntegrationTestHelpers.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetLittleHelpers, Version=1.0.63.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetLittleHelpers.1.0.63\lib\net461\DotNetLittleHelpers.dll</HintPath>
+    <Reference Include="DotNetLittleHelpers, Version=1.0.64.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetLittleHelpers.1.0.64\lib\net461\DotNetLittleHelpers.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
