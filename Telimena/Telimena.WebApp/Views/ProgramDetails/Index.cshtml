@@ -31,54 +31,101 @@
 
 
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">Program summary</h3>
-            </div>
-            <div class="box-body">
-                <div class="form-group">
-                    <label>Name: </label>
-                    <span>@Model.ProgramName</span>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Program summary</h3>
                 </div>
-                <div class="form-group">
-                    <label>Id: </label>
-                    <span>@Model.ProgramId</span>
-                </div>
-                <div class="form-group">
-                    <label>Latest version: </label>
-                    <span id="latestVersion">...</span>
-                </div>
-                <div class="form-group">
-                    <label>Versions count: </label>
-                    <span id="versionsCount">...</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">Version controlling</h3>
-            </div>
-            <div class="box-body">
-                <label class="confirmation label label-md" style="display: none"></label>
-                <div class="form-group">
-                    <label>Set latest version to: </label>
-                    <input type="text" id="newLatestVersionTextBox" />
-                </div>
-                <div class="form-group">
-                    <div class="">
-                        <input type="submit" id="setLatestVersionButton" value="Set version" class="btn btn-primary" />
-
+                <div class="box-body">
+                    <div class="form-group">
+                        <label>Name: </label>
+                        <span>@Model.ProgramName</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Id: </label>
+                        <span>@Model.ProgramId</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Latest version: </label>
+                        <span id="latestVersion">...</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Versions count: </label>
+                        <span id="versionsCount">...</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Download link: </label>
+                        <a href="@Model.PackageDownloadUrl">@Model.PackageDownloadUrl</a>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Version controlling</h3>
+                </div>
+                <div class="box-body">
+                    <label class="confirmation label label-md" style="display: none"></label>
+                    <div class="form-group">
+                        <label>Set latest version to: </label>
+                        <input type="text" id="newLatestVersionTextBox" />
+                    </div>
+                    <div class="form-group">
+                        <div class="">
+                            <input type="submit" id="setLatestVersionButton" value="Set version" class="btn btn-primary" />
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <form id="uploadProgramPackageForm" enctype="multipart/form-data" method="post">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">Main program package</h3>
+                        <h5>Upload the main program package</h5>
+                    </div>
+                    <div class="box-body">
+                        <label class="confirmation label label-md" style="display: none"></label>
+                        <div class="form-group">
+                            <span class="btn btn-success fileinput-button uploadedPackage">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>Select file</span>
+                                <input type="file"
+                                       name="uploadedPackage" />
+                            </span>
+                        </div>
+                        <div class="InfoContainer">
+                            <div class="info fileName">
+                            </div>
+                            <div class="info fileType">
+                            </div>
+                            <div class="info fileSize">
+                            </div>
+                        </div>
+                        <div class="progress CustomProgress">
+                            <div 
+                                 class="progress-bar" role="progressbar"
+                                 aria-valuenow="0" aria-valuemin="0"
+                                 aria-valuemax="100" style="width: 0%;">
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="">
+                                <input type="submit" value="Upload Package" class="btn btn-lg btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 <div class="row">
 
     <div class="col-md-6">
@@ -94,11 +141,11 @@
                         <input type="text" id="updatePackageVersion"/>
                     </div>
                     <div class="form-group">
-                        <span class="btn btn-success fileinput-button">
+                        <span class="btn btn-success fileinput-button uploadedPackage">
                             <i class="glyphicon glyphicon-plus"></i>
                             <span>Add files...</span>
                             <input type="file"
-                                   name="uploadedPackage" id="uploadedPackage"/>
+                                   name="uploadedPackage" />
                         </span>
                         <button class="btn btn-warning cancel"
                                 type="button" id="Cancel_btn">
@@ -107,16 +154,15 @@
                         </button>
                     </div>
                     <div class="InfoContainer">
-                        <div id="Imagecontainer"></div>
-                        <div id="fileName" class="info">
+                        <div class="info fileName">
                         </div>
-                        <div id="fileType" class="info">
+                        <div class="info fileType">
                         </div>
-                        <div id="fileSize" class="info">
+                        <div class="info fileSize">
                         </div>
                     </div>
                     <div class="progress CustomProgress">
-                        <div id="fileProgress"
+                        <div 
                              class="progress-bar" role="progressbar"
                              aria-valuenow="0" aria-valuemin="0"
                              aria-valuemax="100" style="width: 0%;">
@@ -155,167 +201,175 @@
 {
     @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        LoadCurrentVersion();
-        $('#setLatestVersionButton').click(function () {
-            HideConfirmationBox(this);
-            SetLatestVersion(this);
-        });
-        $('#uploadedPackage').change(SingleFileSelected);
-        $('#uploadUpdatePackageForm').submit(CreateUpdatePackage);
-    });
-
-    function SingleFileSelected(evt) {
-        var selectedFile = ($("#uploadedPackage"))[0].files[0];
-        if (selectedFile) {
-            var fileSize = 0;
-            if (selectedFile.size > 1048576) {
-                fileSize = Math.round(selectedFile.size * 100 / 1048576) / 100 + " MB";
-            }
-            else if (selectedFile.size > 1024) {
-                fileSize = Math.round(selectedFile.size * 100 / 1024) / 100 + " KB";
-            }
-            else {
-                fileSize = selectedFile.size + " Bytes";
-            }
-
-            $("#fileName").text("Name : " + selectedFile.name);
-            $("#fileType").text("Type : " + selectedFile.type);
-            $("#fileSize").text("Size : " + fileSize);
-        }
-    }
-
-    function UploadFile(button, modelString) {
-        var form = $('#uploadUpdatePackageForm')[0];
-        var formData = new FormData(form);
-        formData.append('Model', modelString);
-        $.ajax({
-            url: '/api' + '@Url.Action("UploadUpdatePackage", "Programs")',
-            type: 'POST',
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            xhr: function () { 
-                var myXhr = $.ajaxSettings.xhr();
-                if (myXhr.upload) { 
-                    myXhr.upload.addEventListener('progress', ProgressHandlingFunction,
-                        false); 
-                }
-                return myXhr;
-            },
-            //Ajax events
-            success: function(result) {
-                ShowConfirmationBox(button, "label-success", 'Uploaded package with ID: [' + result +']');
-            },
-            error: function (xhr) {
-                ShowConfirmationBox(button, "label-danger", xhr.responseJSON.Message );
-
-            },
-            complete: function (e, e2, e3) {
-                $(button).disable();
-            },
-                
-        });
-    }
-
-
-    function CreateUpdatePackage(e) {
-        e.preventDefault();
-        var model = {
-            @nameof(CreateUpdatePackageRequest.ProgramId) :@Model.ProgramId,
-            @nameof(CreateUpdatePackageRequest.PackageVersion) : $('#updatePackageVersion').val(),
-        };
-        var modelString = JSON.stringify(model);
-
-        ValidateUpdatePackageRequest($(this).find(':submit'), modelString, UploadFile);
-
-    }
-
-    function ProgressHandlingFunction(e) {
-        if (e.lengthComputable) {
-            var percentComplete = Math.round(e.loaded * 100 / e.total);
-            $("#fileProgress").css("width",
-                percentComplete + '%').attr('aria-valuenow', percentComplete);
-            $('#fileProgress span').text(percentComplete + "%");
-        }
-        else {
-            $('#fileProgress span').text('unable to compute');
-        }
-    }
-
-    function HideConfirmationBox(button) {
-        $(button).closest('.box-body').find('.confirmation').hide();
-}
-
-    function ShowConfirmationBox(button, classToAdd, text) {
-        var btn = $(button).closest('.box-body').find('.confirmation');
-        btn.show().attr("class", "confirmation label label-md " + classToAdd).text(text);
-    }
-
-    function ValidateUpdatePackageRequest(button, modelString, successCallback) {
-        
-        $.ajax({
-                type: 'POST',
-                url: '/api'+'@Url.Action("ValidatePackageVersion", "Programs")',
-                contentType: "application/json; charset=utf-8",
-                datatype: 'Json',
-                data: modelString
-            })
-            .done(function () {
-                successCallback(button, modelString);
-            })
-            .fail(function (xhr) {
-                ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
-            });
-    }
-
-    function LoadCurrentVersion() {
-        $('#latestVersion').html('...');
-        $.ajax({
-            type: 'GET',
-            url: '/api'+'@Url.Action("GetLatestVersionInfo", "Programs")',
-            data: { programId: @Model.ProgramId },
-            success: function(response) {
-                $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
-            }
-        });
-        $('#versionsCount').html('...');
-        $.ajax({
-            type: 'GET',
-            url: '/api'+'@Url.Action("GetVersionsCount", "Programs")',
-            data: { programId: @Model.ProgramId },
-            success: function(response) {
-                $('#versionsCount').html(response);
-            }
-        });
-    }
-
-    function SetLatestVersion(button) {
-
-        var dataObject = JSON.stringify({
-            @nameof(SetLatestVersionRequest.ProgramId) : @Model.ProgramId,
-            @nameof(SetLatestVersionRequest.Version) : $('#newLatestVersionTextBox').val(),
-        });
-
-        $.ajax({
-            type: 'POST',
-            url: '/api'+'@Url.Action("SetLatestVersion", "Programs")',
-            contentType: "application/json; charset=utf-8",
-            datatype: 'Json',
-            data: dataObject
-        })
-        .done(function () {
-            ShowConfirmationBox(button, 'label-success', 'Done!');
-        })
-        .fail(function (xhr) {
-            ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message );
-        }).
-        always(function() {
+    <script type="text/javascript">
+        $(document).ready(function() {
             LoadCurrentVersion();
+            $('#setLatestVersionButton').click(function() {
+                HideConfirmationBox(this);
+                SetLatestVersion(this);
+            });
+            $('.uploadedPackage').change(function(e) { SingleFileSelected(e,$(this).find('input')) });
+            $('#uploadUpdatePackageForm').submit(CreateUpdatePackage);
+            $('#uploadProgramPackageForm').submit(UploadProgramPackage);
         });
-    }
-</script>
+
+        function SingleFileSelected(evt, input) {
+            var selectedFile = $(input)[0].files[0];
+            if (selectedFile) {
+                var fileSize = 0;
+                if (selectedFile.size > 1048576) {
+                    fileSize = Math.round(selectedFile.size * 100 / 1048576) / 100 + " MB";
+                } else if (selectedFile.size > 1024) {
+                    fileSize = Math.round(selectedFile.size * 100 / 1024) / 100 + " KB";
+                } else {
+                    fileSize = selectedFile.size + " Bytes";
+                }
+                var infoContainer = input.closest('.form-group').next('.InfoContainer');
+                infoContainer.find(".fileName").text("Name : " + selectedFile.name);
+                infoContainer.find(".fileType").text("Type : " + selectedFile.type);
+                infoContainer.find(".fileSize").text("Size : " + fileSize);
+            }
+        }
+
+        function UploadFile(formData, url, button) {
+
+            $.ajax({
+                url: '/api' + url,
+                type: 'POST',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                xhr: function() {
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) {
+                        myXhr.upload.addEventListener('progress',
+                            function(e) {
+                                ProgressHandlingFunction(e, button);
+                            },
+                            false);
+                    }
+                    return myXhr;
+                },
+                //Ajax events
+                success: function(result) {
+                    ShowConfirmationBox(button, "label-success", 'Uploaded package with ID: [' + result + ']');
+                },
+                error: function(xhr) {
+                    ShowConfirmationBox(button, "label-danger", xhr.responseJSON.Message);
+
+                },
+                complete: function(e, e2, e3) {
+                    $(button).disable();
+                },
+
+            });
+        }
+
+
+        function CreateUpdatePackage(e) {
+            e.preventDefault();
+            var model = {
+                @nameof(CreateUpdatePackageRequest.ProgramId): @Model.ProgramId,
+                @nameof(CreateUpdatePackageRequest.PackageVersion): $('#updatePackageVersion').val(),
+            };
+            var modelString = JSON.stringify(model);
+
+            ValidateUpdatePackageRequest($(this).find(':submit'), modelString, UploadFile);
+        }
+
+        function UploadProgramPackage(e) {
+            e.preventDefault();
+            var form = $('#uploadProgramPackageForm')[0];
+            var formData = new FormData(form);
+            UploadFile(formData, '@Url.Action("UploadProgramPackage", "Programs")' + '/' + @Model.ProgramId, $(this).find(':submit'));
+        }
+
+        function ProgressHandlingFunction(e, button) {
+            var progressBar = $(button).closest('.form-group').prev('.progress').find('.progress-bar');
+            if (e.lengthComputable) {
+                var percentComplete = Math.round(e.loaded * 100 / e.total);
+                progressBar.css("width",
+                    percentComplete + '%').attr('aria-valuenow', percentComplete);
+                progressBar.find('span').text(percentComplete + "%");
+            } else {
+                progressBar.find('span').text('unable to compute');
+            }
+        }
+
+        function HideConfirmationBox(button) {
+            $(button).closest('.box-body').find('.confirmation').hide();
+        }
+
+        function ShowConfirmationBox(button, classToAdd, text) {
+            var btn = $(button).closest('.box-body').find('.confirmation');
+            btn.show().attr("class", "confirmation label label-md " + classToAdd).text(text);
+        }
+
+        function ValidateUpdatePackageRequest(button, modelString, successCallback) {
+
+            $.ajax({
+                    type: 'POST',
+                    url: '/api' + '@Url.Action("ValidatePackageVersion", "Programs")',
+                    contentType: "application/json; charset=utf-8",
+                    datatype: 'Json',
+                    data: modelString
+                })
+                .done(function() {
+                    var form = $('#uploadUpdatePackageForm')[0];
+                    var formData = new FormData(form);
+                    formData.append('Model', modelString);
+                    successCallback(formData, '@Url.Action("UploadUpdatePackage", "Programs")', button);
+                })
+                .fail(function(xhr) {
+                    ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
+                });
+        }
+
+        function LoadCurrentVersion() {
+            $('#latestVersion').html('...');
+            $.ajax({
+                type: 'GET',
+                url: '/api' + '@Url.Action("GetLatestVersionInfo", "Programs")',
+                data: { id: @Model.ProgramId },
+                success: function(response) {
+                    $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
+                }
+            });
+            $('#versionsCount').html('...');
+            $.ajax({
+                type: 'GET',
+                url: '/api' + '@Url.Action("GetVersionsCount", "Programs")',
+                data: { id: @Model.ProgramId },
+                success: function(response) {
+                    $('#versionsCount').html(response);
+                }
+            });
+        }
+
+        function SetLatestVersion(button) {
+
+            var dataObject = JSON.stringify({
+                @nameof(SetLatestVersionRequest.ProgramId): @Model.ProgramId,
+                @nameof(SetLatestVersionRequest.Version): $('#newLatestVersionTextBox').val(),
+            });
+
+            $.ajax({
+                    type: 'POST',
+                    url: '/api' + '@Url.Action("SetLatestVersion", "Programs")',
+                    contentType: "application/json; charset=utf-8",
+                    datatype: 'Json',
+                    data: dataObject
+                })
+                .done(function() {
+                    ShowConfirmationBox(button, 'label-success', 'Done!');
+                })
+                .fail(function(xhr) {
+                    ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
+                }).always(function() {
+                    LoadCurrentVersion();
+                });
+        }
+    </script>
 
 }

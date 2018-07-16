@@ -17,6 +17,7 @@
         IFunctionRepository Functions { get; }
         ITelimenaToolkitDataRepository TelimenaToolkitData { get; set; }
         IUpdatePackageRepository UpdatePackages { get; set; }
+        IProgramPackageRepository ProgramPackages { get; set; }
         Task CompleteAsync();
     }
 }

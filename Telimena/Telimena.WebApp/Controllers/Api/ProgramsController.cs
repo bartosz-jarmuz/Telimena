@@ -4,6 +4,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Net.Mail;
     using System.Threading.Tasks;
     using System.Web;
@@ -28,16 +31,16 @@
         }
 
         [System.Web.Http.HttpGet]
-        public async Task<LatestVersionResponse> GetLatestVersionInfo(int programId)
+        public async Task<LatestVersionResponse> GetLatestVersionInfo(int id)
         {
             try
             {
-                Program program = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == programId);
+                Program program = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == id);
                 if (program == null)
                 {
                     return new LatestVersionResponse()
                     {
-                        Error = new InvalidOperationException($"Failed to find program by Id: [{programId}]")
+                        Error = new InvalidOperationException($"Failed to find program by Id: [{id}]")
                     };
                 }
 
@@ -80,12 +83,12 @@
         }
 
         [System.Web.Http.HttpGet]
-        public async Task<IHttpActionResult> GetVersionsCount(int programId)
+        public async Task<IHttpActionResult> GetVersionsCount(int id)
         {
-            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == programId);
+            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == id);
             if (prg == null)
             {
-                return this.BadRequest($"Program [{programId}] not found");
+                return this.BadRequest($"Program [{id}] not found");
             }
 
             return this.Ok(prg.PrimaryAssembly.Versions.Count);
@@ -147,14 +150,53 @@
                     HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    byte[] fileByteArray = new byte[uploadedFile.ContentLength];
-                    uploadedFile.InputStream.Read(fileByteArray, 0, uploadedFile.ContentLength);
-                    Attachment newAttchment = new Attachment(uploadedFile.InputStream, uploadedFile.ContentType)
-                    {
-                        Name = uploadedFile.FileName
-                    };
-                    var pkg = await this._work.UpdatePackages.StorePackage(request.ProgramId, request.PackageVersion, null, uploadedFile.FileName);
+                   
+                    var pkg = await this._work.UpdatePackages.StorePackageAsync(request.ProgramId, request.PackageVersion, uploadedFile.InputStream, uploadedFile.FileName);
 
+                    await this._work.CompleteAsync();
+                    return this.Ok(pkg.Id);
+                }
+
+                return this.BadRequest("Empty attachment");
+            }
+            catch (Exception ex)
+            {
+                return this.BadRequest(ex.Message);
+            }
+        }
+
+        [System.Web.Http.AllowAnonymous]
+        [System.Web.Http.HttpGet]
+        public async Task<IHttpActionResult> GetProgramPackage(int programId)
+        {
+            var packageInfo = await this._work.ProgramPackages.GetPackageInfoForProgram(programId);
+
+            var bytes = await this._work.ProgramPackages.GetPackage(packageInfo.Id);
+            var result = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new ByteArrayContent(bytes)
+            };
+            result.Content.Headers.ContentDisposition =
+                new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
+                {
+                    FileName = packageInfo.FileName
+                };
+            result.Content.Headers.ContentType =
+                new MediaTypeHeaderValue("application/octet-stream");
+
+            return this.ResponseMessage(result);
+        }
+
+        [System.Web.Http.HttpPost]
+        public async Task<IHttpActionResult> UploadProgramPackage(int id)
+        {
+            try
+            {
+                HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ?
+                    HttpContext.Current.Request.Files[0] : null;
+                if (uploadedFile != null && uploadedFile.ContentLength > 0)
+                {
+                    var pkg = await this._work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName);
                     await this._work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }

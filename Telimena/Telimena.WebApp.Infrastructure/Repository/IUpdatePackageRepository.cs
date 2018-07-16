@@ -11,7 +11,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
     public interface IUpdatePackageRepository
     {
-        Task<UpdatePackage> StorePackage(int programId, string version, Stream fileStream, string fileName);
+        Task<UpdatePackage> StorePackageAsync(int programId, string version, Stream fileStream, string fileName);
 
         Task<UpdatePackage> GetPackage(int packageId);
         Task<List<UpdatePackage>> GetAllPackages(int programId);

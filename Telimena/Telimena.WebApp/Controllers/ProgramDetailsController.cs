@@ -1,5 +1,6 @@
 ﻿namespace Telimena.WebApi.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Web.Mvc;
@@ -36,6 +37,8 @@
                 model.ProgramId = program.ProgramId;
                 model.ProgramName = program.Name;
             }
+
+            model.PackageDownloadUrl = Request.Url.GetLeftPart(UriPartial.Authority) + @Url.HttpRouteUrl("DefaultApi", new {httproute = "", controller = "Programs", action = "GetProgramPackage", programId = model.ProgramId});
 
             List<UpdatePackage> packages = await this._work.UpdatePackages.GetAllPackages(model.ProgramId);
             model.UpdatePackages = packages;

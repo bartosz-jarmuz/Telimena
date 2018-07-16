@@ -117,10 +117,14 @@
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
+    <Compile Include="Repository\Implementation\IFileSaver.cs" />
+    <Compile Include="Repository\Implementation\LocalFileSaver.cs" />
+    <Compile Include="Repository\Implementation\ProgramPackageRepository.cs" />
     <Compile Include="Repository\Implementation\UpdatePackageRepository.cs" />
     <Compile Include="Repository\Implementation\FunctionRepository.cs" />
     <Compile Include="Repository\IFunctionRepository.cs" />
     <Compile Include="Repository\Implementation\TelimenaToolkitDataRepository.cs" />
+    <Compile Include="Repository\IProgramPackageRepository.cs" />
     <Compile Include="Repository\IProgramRepository.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\Implementation\Repository.cs" />

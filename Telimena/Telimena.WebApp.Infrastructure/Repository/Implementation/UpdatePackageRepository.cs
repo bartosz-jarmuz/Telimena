@@ -19,24 +19,29 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
     internal class UpdatePackageRepository : IUpdatePackageRepository
     {
-        public UpdatePackageRepository(DbContext dbContext)
+        private IFileSaver FileSaver { get; }
+
+        public UpdatePackageRepository(DbContext dbContext, IFileSaver fileSaver)
         {
+            this.FileSaver = fileSaver;
             this.TelimenaContext = dbContext as TelimenaContext;
         }
 
-        protected TelimenaContext TelimenaContext;
+        protected TelimenaContext TelimenaContext { get; }
 
-        #region Implementation of IUpdatePackageRepository
-        public Task<UpdatePackage> StorePackage(int programId, string version, Stream fileStream, string fileName)
+        public async Task<UpdatePackage> StorePackageAsync(int programId, string version, Stream fileStream, string fileName)
         {
             if (!Version.TryParse(version, out Version _))
             {
                 throw new InvalidOperationException("Version string not valid");
             }
-            var pkg = new UpdatePackage(programId, version);
+            var pkg = new UpdatePackage(fileName, programId, version, fileStream.Length);
 
             this.TelimenaContext.UpdatePackages.Add(pkg);
-            return Task.FromResult(pkg);
+
+            await this.FileSaver.SaveFile(pkg, fileStream);
+
+            return pkg;
 
         }
 
@@ -49,6 +54,5 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             return this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
         }
-        #endregion
     }
 }

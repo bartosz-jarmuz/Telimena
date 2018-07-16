@@ -23,6 +23,7 @@ namespace Telimena.WebApi
     using WebApp.Infrastructure.Database;
     using WebApp.Infrastructure.Identity;
     using WebApp.Infrastructure.Repository;
+    using WebApp.Infrastructure.Repository.Implementation;
     using WebApp.Infrastructure.UnitOfWork;
     using WebApp.Infrastructure.UnitOfWork.Implementation;
 
@@ -58,6 +59,7 @@ namespace Telimena.WebApi
     {
         public override void Load()
         {
+            this.Bind<IFileSaver>().To<LocalFileSaver>();
             this.Bind<ILog>().ToMethod(context =>
                 LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
             this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();
