@@ -23,7 +23,6 @@
         public async Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName)
         {
             ProgramPackageInfo pkg = new ProgramPackageInfo(fileName, programId, fileStream.Length);
-
             this.TelimenaContext.ProgramPackages.Add(pkg);
 
             await this.FileSaver.SaveFile(pkg, fileStream);

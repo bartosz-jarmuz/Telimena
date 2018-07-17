@@ -14,11 +14,11 @@
 
     public class ProgramDetailsController : Controller
     {
-        private readonly IProgramsUnitOfWork _work;
+        private IProgramsUnitOfWork Work { get; }
 
         public ProgramDetailsController(IProgramsUnitOfWork work)
         {
-            this._work = work;
+            this.Work = work;
         }
 
 
@@ -29,7 +29,7 @@
             {
                 return this.RedirectToAction("Index", "Home");
             }
-            Program program = await this._work.Programs.FirstOrDefaultAsync(x=>x.Name == programName);
+            Program program = await this.Work.Programs.FirstOrDefaultAsync(x=>x.Name == programName);
 
             ProgramDetailsViewModel model = new ProgramDetailsViewModel();
             if (program != null)
@@ -38,10 +38,14 @@
                 model.ProgramName = program.Name;
             }
 
-            model.PackageDownloadUrl = Request.Url.GetLeftPart(UriPartial.Authority) + @Url.HttpRouteUrl("DefaultApi", new {httproute = "", controller = "Programs", action = "GetProgramPackage", programId = model.ProgramId});
+            model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) + this.@Url.HttpRouteUrl("DefaultApi", new {httproute = "", controller = "Programs", action = "GetProgramPackage", programId = model.ProgramId});
 
-            List<UpdatePackage> packages = await this._work.UpdatePackages.GetAllPackages(model.ProgramId);
+            model.ProgramDownloadUrlFriendly = this.Request.Url.GetLeftPart(UriPartial.Authority) + this.@Url.HttpRouteUrl("DownloadAppRoute", new {  name = model.ProgramName });
+
+            List<UpdatePackage> packages = await this.Work.UpdatePackages.GetAllPackages(model.ProgramId);
             model.UpdatePackages = packages;
+
+            model.ProgramPackageInfo = await this.Work.ProgramPackages.GetPackageInfoForProgram(model.ProgramId);
 
             return this.View("Index", model);
         }

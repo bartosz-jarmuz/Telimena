@@ -27,7 +27,7 @@
     {
         public ProgramsController(IProgramsUnitOfWork work)
         {
-            this._work = work;
+            this.Work = work;
         }
 
         [System.Web.Http.HttpGet]
@@ -35,7 +35,7 @@
         {
             try
             {
-                Program program = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == id);
+                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.ProgramId == id);
                 if (program == null)
                 {
                     return new LatestVersionResponse()
@@ -56,7 +56,7 @@
         }
 
 
-        private readonly IProgramsUnitOfWork _work;
+        private IProgramsUnitOfWork Work { get; }
 
         [System.Web.Http.HttpPost]
         public async Task<IHttpActionResult> SetLatestVersion(SetLatestVersionRequest request)
@@ -66,7 +66,7 @@
                 return this.BadRequest($"SetLatestVersionRequest is invalid");
             }
 
-            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == request.ProgramId);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.ProgramId == request.ProgramId);
             if (prg == null)
             {
                 return this.BadRequest($"Program [{request.ProgramId}] not found");
@@ -78,14 +78,14 @@
             }
 
             prg.PrimaryAssembly.SetLatestVersion(request.Version);
-            await this._work.CompleteAsync();
+            await this.Work.CompleteAsync();
             return this.Ok();
         }
 
         [System.Web.Http.HttpGet]
         public async Task<IHttpActionResult> GetVersionsCount(int id)
         {
-            Program prg = await this._work.Programs.FirstOrDefaultAsync(x => x.ProgramId == id);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.ProgramId == id);
             if (prg == null)
             {
                 return this.BadRequest($"Program [{id}] not found");
@@ -97,7 +97,7 @@
         [System.Web.Http.HttpGet]
         public async Task<IEnumerable<Program>> GetPrograms(int developerId)
         {
-            return await this._work.Programs.GetAsync(x => x.DeveloperAccount.Id == developerId);
+            return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Id == developerId);
         }
 
         private async Task<LatestVersionResponse> CreateUpdateResponse(Program program)
@@ -111,7 +111,7 @@
             {
                 info.HelperAssemblyVersions.Add(this.GetVersionInfo(programAssembly));
             }
-            TelimenaToolkitData toolkitData = await this._work.TelimenaToolkitData.GetLatestToolkitData();
+            TelimenaToolkitData toolkitData = await this.Work.TelimenaToolkitData.GetLatestToolkitData();
             info.LatestTelimenaVersion = toolkitData.Version;
             info.IsTelimenaVersionBeta = toolkitData.IsBetaVersion;
             return info;
@@ -150,10 +150,8 @@
                     HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                   
-                    var pkg = await this._work.UpdatePackages.StorePackageAsync(request.ProgramId, request.PackageVersion, uploadedFile.InputStream, uploadedFile.FileName);
-
-                    await this._work.CompleteAsync();
+                    UpdatePackage pkg = await this.Work.UpdatePackages.StorePackageAsync(request.ProgramId, request.PackageVersion, uploadedFile.InputStream, uploadedFile.FileName);
+                    await this.Work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }
 
@@ -169,9 +167,9 @@
         [System.Web.Http.HttpGet]
         public async Task<IHttpActionResult> GetProgramPackage(int programId)
         {
-            var packageInfo = await this._work.ProgramPackages.GetPackageInfoForProgram(programId);
+            var packageInfo = await this.Work.ProgramPackages.GetPackageInfoForProgram(programId);
 
-            var bytes = await this._work.ProgramPackages.GetPackage(packageInfo.Id);
+            var bytes = await this.Work.ProgramPackages.GetPackage(packageInfo.Id);
             var result = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new ByteArrayContent(bytes)
@@ -187,6 +185,16 @@
             return this.ResponseMessage(result);
         }
 
+        [System.Web.Http.AllowAnonymous]
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("download-app/{name}", Name = "DownloadAppRoute")]
+        public async Task<IHttpActionResult> GetProgramPackage(string name)
+        {
+            var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == name);
+            return await this.GetProgramPackage(prg.ProgramId);
+        }
+
+
         [System.Web.Http.HttpPost]
         public async Task<IHttpActionResult> UploadProgramPackage(int id)
         {
@@ -196,8 +204,8 @@
                     HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    var pkg = await this._work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName);
-                    await this._work.CompleteAsync();
+                    var pkg = await this.Work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName);
+                    await this.Work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }
 
