@@ -1,4 +1,5 @@
-﻿@using Telimena.WebApp.Core.Messages
+﻿@using DotNetLittleHelpers
+@using Telimena.WebApp.Core.Messages
 @model Telimena.WebApp.Models.ProgramDetails.ProgramDetailsViewModel
 @{
     ViewBag.Title = "Index";
@@ -70,13 +71,13 @@
                 <div class="box-body">
                     <ul class="list-group list-group-unbordered">
                         <li class="list-group-item">
-                            <b>Package Id</b> <a class="pull-right">@Model.ProgramPackageInfo.Id</a>
+                            <b>Package Id</b> <a class="pull-right">@(Model.ProgramPackageInfo?.Id)</a>
                         </li>
                         <li class="list-group-item">
-                            <b>File Name</b> <a class="pull-right">@Model.ProgramPackageInfo.FileName</a>
+                            <b>File Name</b> <a class="pull-right">@(Model.ProgramPackageInfo?.FileName)</a>
                         </li>
                         <li class="list-group-item">
-                            <b>File Size</b> <a class="pull-right">@Model.ProgramPackageInfo.FileSizeBytes</a>
+                            <b>File Size</b> <a class="pull-right">@(Model.ProgramPackageInfo?.FileSizeBytes.GetSizeString())</a>
                         </li>
                     </ul>
                 </div>
@@ -217,7 +218,7 @@
                             <th>FileName</th>
                             <th>Version</th>
                             <th>Uploaded Date</th>
-                            <th>FileSize</th>
+                            <th>File Size</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -229,7 +230,7 @@
                             <td>@pkg.FileName</td>
                             <td>@pkg.Version</td>
                             <td>@pkg.UploadedDate</td>
-                            <td>@pkg.FileSizeBytes</td>
+                            <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
                         </tr>
                             }
                     </tbody>
