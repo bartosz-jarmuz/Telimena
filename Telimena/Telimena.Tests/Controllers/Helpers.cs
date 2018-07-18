@@ -35,7 +35,7 @@
         {
             Assert.IsNull(response.Error);
             Assert.AreEqual(expectedCount, response.Count);
-            Assert.AreEqual(prg.ProgramId, response.ProgramId);
+            Assert.AreEqual(prg.Id, response.ProgramId);
             Assert.AreEqual(usr.Id, response.UserId);
         }
 
@@ -44,7 +44,7 @@
             Assert.IsNull(response.Error);
             Assert.AreEqual(expectedCount, response.Count);
             Assert.AreEqual(funcName, response.FunctionName);
-            Assert.AreEqual(prg.ProgramId, response.ProgramId);
+            Assert.AreEqual(prg.Id, response.ProgramId);
             Assert.AreEqual(usr.Id, response.UserId);
         }
 

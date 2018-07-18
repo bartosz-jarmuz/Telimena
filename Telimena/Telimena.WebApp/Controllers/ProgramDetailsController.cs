@@ -34,7 +34,7 @@
             ProgramDetailsViewModel model = new ProgramDetailsViewModel();
             if (program != null)
             {
-                model.ProgramId = program.ProgramId;
+                model.ProgramId = program.Id;
                 model.ProgramName = program.Name;
             }
 

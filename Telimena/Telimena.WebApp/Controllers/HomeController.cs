@@ -44,9 +44,9 @@ namespace Telimena.WebApi.Controllers
             var model = new ProgramsListViewModel();
             foreach (Program program in programs)
             {
-                if (!model.Programs.ContainsKey(program.ProgramId))
+                if (!model.Programs.ContainsKey(program.Id))
                 {
-                    model.Programs.Add(program.ProgramId, program.Name);
+                    model.Programs.Add(program.Id, program.Name);
                 }
             }
 

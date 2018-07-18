@@ -54,7 +54,7 @@
 
         public void AddProgram(Program program)
         {
-            if (this.Programs.All(x => x.ProgramId != this.Id))
+            if (this.Programs.All(x => x.Id != this.Id))
             {
                 ((Collection<Program>)this.Programs).Add(program);
             }

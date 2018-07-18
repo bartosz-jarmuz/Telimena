@@ -9,7 +9,7 @@
 
     public class ProgramAssembly 
     {
-        public int ProgramAssemblyId { get; set; }
+        public int Id { get; set; }
 
         public int ProgramId { get; set; }
         public virtual Program Program { get; set; }

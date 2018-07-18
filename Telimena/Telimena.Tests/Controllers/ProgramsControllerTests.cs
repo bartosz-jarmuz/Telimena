@@ -47,7 +47,7 @@ namespace Telimena.Tests
             Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.LatestVersion.Version);
             var request = new SetLatestVersionRequest()
             {
-                ProgramId = prg.ProgramId,
+                ProgramId = prg.Id,
                 Version = "2.2.0.0"
             };
 
@@ -59,13 +59,13 @@ namespace Telimena.Tests
             Assert.AreEqual("2.2.0.0", latestVersionResponse.PrimaryAssemblyVersion.LatestVersion);
             Assert.IsNull(latestVersionResponse.Error);
             Assert.AreEqual("1.0.0.0", latestVersionResponse.LatestTelimenaVersion);
-            Assert.AreEqual(prg.ProgramAssemblies.Single(x=>x.PrimaryOf == null).ProgramAssemblyId, latestVersionResponse.HelperAssemblyVersions.Single().AssemblyId);
+            Assert.AreEqual(prg.ProgramAssemblies.Single(x=>x.PrimaryOf == null).Id, latestVersionResponse.HelperAssemblyVersions.Single().AssemblyId);
             Assert.AreEqual("0.0.1.0", latestVersionResponse.HelperAssemblyVersions.Single().LatestVersion);
 
 
             request = new SetLatestVersionRequest()
             {
-                ProgramId = prg.ProgramId,
+                ProgramId = prg.Id,
                 Version = "1.2.3.4"
             };
             result = sut.SetLatestVersion(request).GetAwaiter().GetResult();

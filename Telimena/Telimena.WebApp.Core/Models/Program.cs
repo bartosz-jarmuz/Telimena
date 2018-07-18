@@ -15,7 +15,7 @@
         {
             this.Name = name;
         }
-        public int ProgramId { get; set; }
+        public int Id { get; set; }
         public ICollection<ProgramAssembly> ProgramAssemblies { get; set; } = new List<ProgramAssembly>();
         public virtual ProgramAssembly PrimaryAssembly { get; set; }
         public virtual ICollection<Function> Functions { get; set; } = new List<Function>();

@@ -35,7 +35,7 @@
         {
             try
             {
-                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.ProgramId == id);
+                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
                 if (program == null)
                 {
                     return new LatestVersionResponse()
@@ -66,7 +66,7 @@
                 return this.BadRequest($"SetLatestVersionRequest is invalid");
             }
 
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.ProgramId == request.ProgramId);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
             if (prg == null)
             {
                 return this.BadRequest($"Program [{request.ProgramId}] not found");
@@ -85,7 +85,7 @@
         [System.Web.Http.HttpGet]
         public async Task<IHttpActionResult> GetVersionsCount(int id)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.ProgramId == id);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
             if (prg == null)
             {
                 return this.BadRequest($"Program [{id}] not found");
@@ -121,7 +121,7 @@
         {
             return new VersionInfo()
             {
-                AssemblyId = assemblyInfo.ProgramAssemblyId,
+                AssemblyId = assemblyInfo.Id,
                 AssemblyName = assemblyInfo.Name,
                 LatestVersion = assemblyInfo.LatestVersion?.Version,
                 IsBeta = assemblyInfo.LatestVersion?.IsBeta ?? false,
@@ -191,7 +191,7 @@
         public async Task<IHttpActionResult> GetProgramPackage(string name)
         {
             var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == name);
-            return await this.GetProgramPackage(prg.ProgramId);
+            return await this.GetProgramPackage(prg.Id);
         }
 
 

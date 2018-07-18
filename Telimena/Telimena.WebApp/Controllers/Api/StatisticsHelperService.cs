@@ -40,7 +40,7 @@
                 {
                     Name = functionName,
                     Program = program,
-                    ProgramId = program.ProgramId
+                    ProgramId = program.Id
                 };
                 this._work.Functions.Add(func);
             }

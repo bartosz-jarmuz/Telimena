@@ -50,7 +50,7 @@
                 return new RegistrationResponse()
                 {
                     Count = usageSummary.SummaryCount,
-                    ProgramId = program.ProgramId,
+                    ProgramId = program.Id,
                     UserId = clientAppUser.Id,
                 };
             }
@@ -106,7 +106,7 @@
                 return new StatisticsUpdateResponse()
                 {
                     Count = usageSummary.SummaryCount,
-                    ProgramId = program.ProgramId,
+                    ProgramId = program.Id,
                     UserId = clientAppUser.Id,
                     FunctionName = updateRequest.FunctionName
                 };
