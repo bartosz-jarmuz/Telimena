@@ -328,7 +328,7 @@
             e.preventDefault();
             var form = $('#uploadProgramPackageForm')[0];
             var formData = new FormData(form);
-            UploadFile(formData, '@Url.Action("UploadProgramPackage", "Programs")' + '/' + @Model.ProgramId, $(this).find(':submit'));
+            UploadFile(formData, '@Url.Action("AddProgramPackage", "ProgramPackages")' + '/' + @Model.ProgramId, $(this).find(':submit'));
         }
 
         function ProgressHandlingFunction(e, button) {
@@ -355,8 +355,8 @@
         function ValidateUpdatePackageRequest(button, modelString, successCallback) {
 
             $.ajax({
-                    type: 'POST',
-                    url: '/api' + '@Url.Action("ValidatePackageVersion", "Programs")',
+                    type: 'GET',
+                    url: '/api' + '@Url.Action("ValidatePackageVersion", "ProgramUpdates")',
                     contentType: "application/json; charset=utf-8",
                     datatype: 'Json',
                     data: modelString
@@ -365,7 +365,7 @@
                     var form = $('#uploadUpdatePackageForm')[0];
                     var formData = new FormData(form);
                     formData.append('Model', modelString);
-                    successCallback(formData, '@Url.Action("UploadUpdatePackage", "Programs")', button);
+                    successCallback(formData, '@Url.Action("UploadUpdatePackage", "ProgramUpdates")', button);
                 })
                 .fail(function(xhr) {
                     ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
@@ -376,7 +376,7 @@
             $('#latestVersion').html('...');
             $.ajax({
                 type: 'GET',
-                url: '/api' + '@Url.Action("GetLatestVersionInfo", "Programs")',
+                url: '/api' + '@Url.Action("GetLatestVersionInfo", "ProgramVersions")',
                 data: { id: @Model.ProgramId },
                 success: function(response) {
                     $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
@@ -385,7 +385,7 @@
             $('#versionsCount').html('...');
             $.ajax({
                 type: 'GET',
-                url: '/api' + '@Url.Action("GetVersionsCount", "Programs")',
+                url: '/api' + '@Url.Action("GetVersionsCount", "ProgramVersions")',
                 data: { id: @Model.ProgramId },
                 success: function(response) {
                     $('#versionsCount').html(response);
@@ -402,7 +402,7 @@
 
             $.ajax({
                     type: 'POST',
-                    url: '/api' + '@Url.Action("SetLatestVersion", "Programs")',
+                    url: '/api' + '@Url.Action("SetLatestVersion", "ProgramVersions")',
                     contentType: "application/json; charset=utf-8",
                     datatype: 'Json',
                     data: dataObject

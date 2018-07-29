@@ -1,16 +1,17 @@
-﻿namespace Telimena.WebApi.Controllers
+﻿using System;
+using System.IdentityModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Http;
+using Telimena.Client;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure;
+using Telimena.WebApp.Infrastructure.UnitOfWork;
+
+namespace Telimena.WebApp.Controllers.Api
 {
     #region Using
-    using System;
-    using System.Collections.Generic;
-    using System.IdentityModel;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Web.Http;
-    using Client;
-    using WebApp.Core.Models;
-    using WebApp.Infrastructure;
-    using WebApp.Infrastructure.UnitOfWork;
+
     #endregion
 
     public class StatisticsController : ApiController

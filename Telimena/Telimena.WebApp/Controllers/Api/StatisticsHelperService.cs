@@ -1,14 +1,14 @@
-﻿namespace Telimena.WebApi.Controllers
-{
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AutoMapper;
-    using Client;
-    using DotNetLittleHelpers;
-    using WebApp.Core.Models;
-    using WebApp.Infrastructure.UnitOfWork;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using DotNetLittleHelpers;
+using Telimena.Client;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.UnitOfWork;
 
+namespace Telimena.WebApp.Controllers.Api
+{
     public class StatisticsHelperService
     {
         private readonly IStatisticsUnitOfWork _work;

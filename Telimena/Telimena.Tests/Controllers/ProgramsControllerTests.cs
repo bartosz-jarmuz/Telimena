@@ -4,6 +4,8 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
+using Telimena.WebApp.Controllers.Api;
+
 namespace Telimena.Tests
 {
     #region Using

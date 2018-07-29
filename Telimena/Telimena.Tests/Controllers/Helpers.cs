@@ -1,4 +1,6 @@
-﻿namespace Telimena.Tests
+﻿using Telimena.WebApp.Controllers.Api;
+
+namespace Telimena.Tests
 {
     using System;
     using System.Linq;

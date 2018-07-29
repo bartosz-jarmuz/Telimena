@@ -233,6 +233,9 @@
     <Compile Include="AutoMapperConfiguration.cs" />
     <Compile Include="AutoMapperWebProfile.cs" />
     <Compile Include="Controllers\Admin\AdminDashboardController.cs" />
+    <Compile Include="Controllers\Api\ProgramPackagesController.cs" />
+    <Compile Include="Controllers\Api\ProgramVersionsController.cs" />
+    <Compile Include="Controllers\Api\ProgramUpdatesController.cs" />
     <Compile Include="Controllers\Api\ProgramsController.cs" />
     <Compile Include="Controllers\Api\StatisticsHelperService.cs" />
     <Compile Include="Controllers\Developer\RegisterProgramController.cs" />
