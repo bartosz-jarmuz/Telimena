@@ -33,13 +33,15 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         protected TelimenaContext TelimenaContext { get; }
 
-        public async Task<UpdatePackageInfo> StorePackageAsync(int programId, string version, Stream fileStream, string fileName)
+        public async Task<UpdatePackageInfo> StorePackageAsync(Program program, string version, Stream fileStream)
         {
             if (!Version.TryParse(version, out Version _))
             {
                 throw new InvalidOperationException("Version string not valid");
             }
-            var pkg = new UpdatePackageInfo(fileName, programId, version, fileStream.Length);
+
+            string fileName = program.Name + " Update v. " + version + ".zip";  
+            var pkg = new UpdatePackageInfo(fileName, program.Id, version, fileStream.Length);
 
             this.TelimenaContext.UpdatePackages.Add(pkg);
 

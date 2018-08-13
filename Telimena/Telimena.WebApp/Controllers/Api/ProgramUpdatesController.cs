@@ -139,8 +139,8 @@ namespace Telimena.WebApp.Controllers.Api
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    UpdatePackageInfo pkg = await this.Work.UpdatePackages.StorePackageAsync(request.ProgramId, request.PackageVersion, uploadedFile.InputStream,
-                        uploadedFile.FileName);
+                    var program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
+                    UpdatePackageInfo pkg = await this.Work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream);
                     await this.Work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }
