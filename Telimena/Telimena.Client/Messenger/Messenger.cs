@@ -1,4 +1,6 @@
-﻿namespace Telimena.Client
+﻿using System.IO;
+
+namespace Telimena.Client
 {
     using System;
     using System.Net.Http;
@@ -54,6 +56,24 @@
                 }
 
                 return "";
+            }
+        }
+
+        public async Task<Stream> DownloadFile(string requestUri)
+        {
+            try
+            {
+                HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri);
+                return await response.Content.ReadAsStreamAsync();
+            }
+            catch (Exception)
+            {
+                if (!this.SuppressAllErrors)
+                {
+                    throw;
+                }
+
+                return null;
             }
         }
 

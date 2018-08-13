@@ -1,4 +1,6 @@
-﻿namespace Telimena.Client
+﻿using System.IO;
+
+namespace Telimena.Client
 {
     using System.Threading.Tasks;
 
@@ -6,5 +8,6 @@
     {
         Task<string> SendPostRequest(string requestUri, object objectToPost);
         Task<string> SendGetRequest(string requestUri);
+        Task<Stream> DownloadFile(string requestUri);
     }
 }
