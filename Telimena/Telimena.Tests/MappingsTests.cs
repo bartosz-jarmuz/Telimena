@@ -7,7 +7,7 @@
     public class MappingsTests
     {
         [Test]
-        public void EnsureAutomapperConfigIsValid()
+        public void EnsureAutoMapperConfigIsValid()
         {
            
             AutoMapperConfiguration.Validate();
