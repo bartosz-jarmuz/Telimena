@@ -127,7 +127,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientTests.cs" />
     <Compile Include="Controllers\AccountControllerTests.cs" />
     <Compile Include="Controllers\AdminDashboardControllerTests.cs" />
     <Compile Include="Controllers\Helpers.cs" />
