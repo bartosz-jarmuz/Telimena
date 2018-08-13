@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Mvc;
 using AutoMapper;
 using DotNetLittleHelpers;
 using Newtonsoft.Json;
@@ -37,7 +38,7 @@ namespace Telimena.WebApp.Controllers.Api
         private IProgramsUnitOfWork Work { get; }
 
 
-        [HttpGet]
+        [System.Web.Http.HttpGet]
         public async Task<UpdateResponse> GetUpdateInfo(int programId, string version)
         {
             try
@@ -62,7 +63,7 @@ namespace Telimena.WebApp.Controllers.Api
             }
         }
 
-        private List<Client.UpdatePackageData> GetMatchingPackages(List<UpdatePackageInfo> updatePackages)
+        private List<UpdatePackageData> GetMatchingPackages(List<UpdatePackageInfo> updatePackages)
         {
             if (updatePackages.IsNullOrEmpty())
             {
@@ -71,14 +72,14 @@ namespace Telimena.WebApp.Controllers.Api
             UpdatePackageInfo newestPackage = updatePackages.First();
             if (newestPackage.IsStandalone)
             {
-                return new List<Client.UpdatePackageData>(){ Mapper.Map<Client.UpdatePackageData>(newestPackage) };
+                return new List<UpdatePackageData>(){ Mapper.Map<UpdatePackageData>(newestPackage) };
             }
             else
             {
-                var list = new List<Client.UpdatePackageData>();
+                var list = new List<UpdatePackageData>();
                 foreach (UpdatePackageInfo updatePackageInfo in updatePackages)
                 {
-                    list.Add(Mapper.Map<Client.UpdatePackageData>(updatePackageInfo));
+                    list.Add(Mapper.Map<UpdatePackageData>(updatePackageInfo));
                     if (updatePackageInfo.IsStandalone)
                     {
                         break;
@@ -107,7 +108,7 @@ namespace Telimena.WebApp.Controllers.Api
 
             if (updatesResponse.UpdatePackagesIncludingBeta.IsNullOrEmpty())
             {
-                updatesResponse.UpdatePackagesIncludingBeta = new List<Client.UpdatePackageData>(updatesResponse.UpdatePackages);
+                updatesResponse.UpdatePackagesIncludingBeta = new List<UpdatePackageData>(updatesResponse.UpdatePackages);
             }
             
 
@@ -117,7 +118,7 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public IHttpActionResult ValidatePackageVersion(CreateUpdatePackageRequest request)
         {
             if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
@@ -128,7 +129,7 @@ namespace Telimena.WebApp.Controllers.Api
             return this.Ok();
         }
 
-        [HttpPost]
+        [System.Web.Http.HttpPost]
         public async Task<IHttpActionResult> UploadUpdatePackage()
         {
             try
@@ -165,7 +166,7 @@ namespace Telimena.WebApp.Controllers.Api
                 Content = new ByteArrayContent(bytes)
             };
             result.Content.Headers.ContentDisposition =
-                new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
+                new ContentDispositionHeaderValue("attachment")
                 {
                     FileName = packageInfo.FileName
                 };
@@ -173,6 +174,16 @@ namespace Telimena.WebApp.Controllers.Api
                 new MediaTypeHeaderValue("application/octet-stream");
 
             return this.ResponseMessage(result);
+        }
+
+
+        [System.Web.Http.HttpPost]
+        public async Task<bool> ToggleBetaSetting(int updatePackageId, bool isBeta)
+        {
+            var pkg = await this.Work.UpdatePackages.FirstOrDefaultAsync(x=> x.Id == updatePackageId);
+            pkg.IsBeta = isBeta;
+            await this.Work.CompleteAsync();
+            return pkg.IsBeta;
         }
 
         [System.Web.Http.AllowAnonymous]
@@ -187,7 +198,7 @@ namespace Telimena.WebApp.Controllers.Api
                 Content = new ByteArrayContent(bytes)
             };
             result.Content.Headers.ContentDisposition =
-                new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
+                new ContentDispositionHeaderValue("attachment")
                 {
                     FileName = packageInfo.FileName
                 };

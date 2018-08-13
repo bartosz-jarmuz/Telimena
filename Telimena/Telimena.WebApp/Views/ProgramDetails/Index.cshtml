@@ -214,10 +214,12 @@
                 <h3 class="box-title">Update Packages</h3>
             </div>
             <div class="box-body">
+                <label class="confirmation label label-md" style="display: none"></label>
                 <table class="table table-bordered table-hover dataTable">
                     <thead>
                         <tr>
                             <th>Id</th>
+                            <th>Is Beta</th>
                             <th>FileName</th>
                             <th>Version</th>
                             <th>Uploaded Date</th>
@@ -225,17 +227,20 @@
                         </tr>
                     </thead>
                     <tbody>
-                        
-                            @foreach (var pkg in Model.UpdatePackages)
-                            {
-                        <tr>
-                            <td>@pkg.Id</td>
-                            <td>@pkg.FileName</td>
-                            <td>@pkg.Version</td>
-                            <td>@pkg.UploadedDate</td>
-                            <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
-                        </tr>
-                            }
+
+                        @foreach (var pkg in Model.UpdatePackages)
+                        {
+                            <tr>
+                                <td>@pkg.Id</td>
+                                <td style="text-align:  center">
+                                    <input  type="checkbox" data-pkg-id="@pkg.Id" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "") />
+                                </td>
+                                <td><a href="/api@(Url.Action("DownloadUpdatePackage", "ProgramUpdates") + "?id=" + pkg.Id)">@pkg.FileName</a></td>
+                                <td>@pkg.Version</td>
+                                <td>@pkg.UploadedDate</td>
+                                <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
+                            </tr>
+                        }
                     </tbody>
 
                 </table>
@@ -262,6 +267,22 @@
             $('#uploadUpdatePackageForm').submit(CreateUpdatePackage);
             $('#uploadProgramPackageForm').submit(UploadProgramPackage);
         });
+
+        function TogglePackageBeta(input) {
+            var id = $(input).data("pkg-id");
+
+            $.ajax({
+                type: 'POST',
+                url: '/api' + '@Url.Action("ToggleBetaSetting", "ProgramUpdates")' + "?updatePackageId=" + id + "&isBeta=" + input.checked,
+                success: function(result) {
+                    ShowConfirmationBox(input, "label-success", 'Set package with ID: [' + id + '] Beta flag to: '+ result);
+                },
+                error: function(xhr) {
+                    ShowConfirmationBox(input, "label-danger", xhr.responseJSON.Message);
+                }
+            });
+        }
+
         function SingleFileSelected(evt, input) {
             var selectedFile = $(input)[0].files[0];
             if (selectedFile) {

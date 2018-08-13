@@ -1931,6 +1931,7 @@
     <Content Include="Views\AdminDashboard\_InfoBox.cshtml" />
     <Content Include="Views\RegisterProgram\Register.cshtml" />
     <Content Include="Views\Shared\_ProgramsList.cshtml" />
+    <Content Include="Views\ProgramDetails\_PackageBetaActivator.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

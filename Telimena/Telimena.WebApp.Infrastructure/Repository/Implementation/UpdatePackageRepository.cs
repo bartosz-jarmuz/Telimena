@@ -19,12 +19,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
     using Database;
     #endregion
 
-    internal class UpdatePackageRepository : IUpdatePackageRepository
+    internal class UpdatePackageRepository : Repository<UpdatePackageInfo>, IUpdatePackageRepository
     {
         private IFileSaver FileSaver { get; }
         private IFileRetriever FileRetriever { get; }
 
-        public UpdatePackageRepository(DbContext dbContext, IFileSaver fileSaver, IFileRetriever fileRetriever)
+        public UpdatePackageRepository(DbContext dbContext, IFileSaver fileSaver, IFileRetriever fileRetriever) : base(dbContext)
         {
             this.FileSaver = fileSaver;
             this.FileRetriever = fileRetriever;
@@ -64,11 +64,6 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public Task<List<UpdatePackageInfo>> GetAllPackages(int programId)
         {
             return this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
-        }
-
-        public async Task<UpdatePackageInfo> GetLatestUpdatePackageInfo(int programId)
-        {
-            return await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
         }
 
         public async Task<List<UpdatePackageInfo>> GetAllPackagesNewerThan(int programId, string version)
