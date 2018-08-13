@@ -65,7 +65,9 @@
     <Compile Include="Interfaces\ITelimenaRepository.cs" />
     <Compile Include="Interfaces\Roles.cs" />
     <Compile Include="Messages\CreateUpdatePackageRequest.cs" />
+    <Compile Include="Messages\LatestVersionResponse.cs" />
     <Compile Include="Messages\SetLatestVersionRequest.cs" />
+    <Compile Include="DTO\VersionInfo.cs" />
     <Compile Include="Models\AssemblyVersion.cs" />
     <Compile Include="Models\Base\UsageDetail.cs" />
     <Compile Include="Models\DeveloperAccount.cs" />
@@ -83,7 +85,7 @@
     <Compile Include="Models\TelimenaUser.cs" />
     <Compile Include="Models\Base\UsageSummary.cs" />
     <Compile Include="Models\ClientAppUser.cs" />
-    <Compile Include="Models\UpdatePackage.cs" />
+    <Compile Include="Models\UpdatePackageInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -131,7 +131,8 @@
     <Compile Include="Controllers\AdminDashboardControllerTests.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\RegisterProgramController.cs" />
-    <Compile Include="Controllers\ProgramsControllerTests.cs" />
+    <Compile Include="Controllers\ProgramVersionsControllerTests.cs" />
+    <Compile Include="Controllers\UpdatePackageControllerTests.cs" />
     <Compile Include="MappingsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\StatisticsControllerTests.cs" />

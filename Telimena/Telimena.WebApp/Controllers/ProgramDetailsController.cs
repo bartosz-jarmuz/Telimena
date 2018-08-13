@@ -42,10 +42,10 @@
 
             model.ProgramDownloadUrlFriendly = this.Request.Url.GetLeftPart(UriPartial.Authority) + this.@Url.HttpRouteUrl("DownloadAppRoute", new {  name = model.ProgramName });
 
-            List<UpdatePackage> packages = await this.Work.UpdatePackages.GetAllPackages(model.ProgramId);
+            List<UpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(model.ProgramId);
             model.UpdatePackages = packages;
 
-            model.ProgramPackageInfo = await this.Work.ProgramPackages.GetPackageInfoForProgram(model.ProgramId);
+            model.ProgramPackageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(model.ProgramId);
 
             return this.View("Index", model);
         }

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
 namespace Telimena.WebApp.Controllers
 {
     using Core.Interfaces;
-    using Core.Models;
     using System.Threading.Tasks;
     using Infrastructure.Security;
 

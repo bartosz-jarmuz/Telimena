@@ -8,25 +8,18 @@ namespace Telimena.Tests
 {
     #region Using
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
     using System.Security.Claims;
     using System.Security.Principal;
-    using System.Threading;
     using System.Web;
-    using System.Web.Http.Results;
     using System.Web.Mvc;
-    using Client;
     using DbIntegrationTestHelpers;
     using log4net;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Moq;
     using NUnit.Framework;
-    using WebApi.Controllers;
     using WebApp.Controllers.Developer;
     using WebApp.Core.Interfaces;
-    using WebApp.Core.Messages;
     using WebApp.Core.Models;
     using WebApp.Infrastructure.Database;
     using WebApp.Infrastructure.Identity;

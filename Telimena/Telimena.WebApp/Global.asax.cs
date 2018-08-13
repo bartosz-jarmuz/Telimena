@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -19,13 +16,9 @@ namespace Telimena.WebApi
     using Ninject.Web.Common.WebHost;
     using Ninject.Web.WebApi;
     using WebApp;
-    using WebApp.Core.Interfaces;
     using WebApp.Infrastructure.Database;
     using WebApp.Infrastructure.Identity;
-    using WebApp.Infrastructure.Repository;
     using WebApp.Infrastructure.Repository.Implementation;
-    using WebApp.Infrastructure.UnitOfWork;
-    using WebApp.Infrastructure.UnitOfWork.Implementation;
 
     public class MvcApplication : NinjectHttpApplication
     {
@@ -60,6 +53,7 @@ namespace Telimena.WebApi
         public override void Load()
         {
             this.Bind<IFileSaver>().To<LocalFileSaver>();
+            this.Bind<IFileRetriever>().To<LocalFileRetriever>();
             this.Bind<ILog>().ToMethod(context =>
                 LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
             this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Telimena.WebApp.Models.Shared
+﻿namespace Telimena.WebApp.Models.Shared
 {
     public class BoxViewModel
     {

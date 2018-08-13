@@ -1,4 +1,7 @@
-﻿namespace Telimena.Client
+﻿using System.Linq;
+using System.Windows;
+
+namespace Telimena.Client
 {
     #region Using
     using System;
@@ -7,8 +10,16 @@
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
-    using Model;
+
     #endregion
+
+    public enum BetaVersionSettings
+    {
+        IgnoreBeta,
+        UseBeta,
+        AskUserEachTime
+    }
+
 
     /// <summary>
     ///     Telemetry and Lifecycle Management Engine App
@@ -16,14 +27,74 @@
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        public async Task<UpdateCheckResult> CheckForUpdates()
+
+        public async Task HandleUpdates(BetaVersionSettings betaVersionSettings)
         {
-            await this.InitializeIfNeeded();
             try
             {
-                string responseContent = await this.Messenger.SendGetRequest(ApiRoutes.GetLatestVersionInfo + "?programId=" + this.ProgramId);
-                LatestVersionResponse response = this.Serializer.Deserialize<LatestVersionResponse>(responseContent);
-                return UpdateResponseReader.ReadResponse(this.ProgramInfo, response);
+                IReadOnlyList<UpdatePackageData> packagesToInstall = null;
+                var response = await this.GetUpdateResponse();
+                if (response.UpdatePackagesIncludingBeta == null)
+                {
+                    return;
+                }
+                if (betaVersionSettings == BetaVersionSettings.UseBeta)
+                {
+                    packagesToInstall = response.UpdatePackagesIncludingBeta;
+                }
+                else if (betaVersionSettings == BetaVersionSettings.IgnoreBeta)
+                {
+                    packagesToInstall = response.UpdatePackages;
+                }
+                else if (betaVersionSettings == BetaVersionSettings.AskUserEachTime && response.UpdatePackagesIncludingBeta.Any(x=>x.IsBeta))
+                {
+                    var choice = MessageBox.Show(
+                        "There are {} update packages available, however {} of them are pre-release versions. Would you like to download the pre-release updates as well?",
+                        "Select updates", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (choice == MessageBoxResult.Yes)
+                    {
+                        packagesToInstall = response.UpdatePackagesIncludingBeta;
+                    }
+                    else
+                    {
+                        packagesToInstall = response.UpdatePackages;
+                    }
+                }
+
+                if (packagesToInstall != null && packagesToInstall.Any())
+                {
+
+                }
+
+
+            }
+            catch (Exception)
+            {
+                if (!this.SuppressAllErrors)
+                {
+                    throw;
+                }
+            }
+        }
+
+
+
+        protected async Task<UpdateResponse> GetUpdateResponse()
+        {
+            await this.InitializeIfNeeded();
+            string responseContent = await this.Messenger.SendGetRequest(ApiRoutes.GetUpdatesInfo + "?programId=" + this.ProgramId + "&version=" + this.ProgramVersion);
+            return this.Serializer.Deserialize<UpdateResponse>(responseContent);
+        }
+
+        public async Task<UpdateCheckResult> CheckForUpdates()
+        {
+            try
+            {
+                UpdateResponse response = await this.GetUpdateResponse();
+                return new UpdateCheckResult()
+                {
+                    UpdatesToInstall = response.UpdatePackagesIncludingBeta
+                };
             }
             catch (Exception ex)
             {

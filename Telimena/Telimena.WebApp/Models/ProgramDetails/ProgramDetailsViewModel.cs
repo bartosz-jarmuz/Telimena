@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace Telimena.WebApp.Models.ProgramDetails
 {
@@ -12,7 +9,7 @@ namespace Telimena.WebApp.Models.ProgramDetails
         public string ProgramName { get; set; }
         public int ProgramId { get; set; }
 
-        public ICollection<UpdatePackage> UpdatePackages { get; set; } = new List<UpdatePackage>(); //todo replace with VM
+        public ICollection<UpdatePackageInfo> UpdatePackages { get; set; } = new List<UpdatePackageInfo>(); //todo replace with VM
 
         public string ProgramDownloadUrl { get; set; }
 

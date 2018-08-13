@@ -7,12 +7,10 @@
     using System.Linq;
     using System.Security.Principal;
     using System.Threading.Tasks;
-    using AutoMapper;
-    using Client;
     using Core.Interfaces;
     using Core.Models;
     using Database;
-    using DotNetLittleHelpers;
+
     #endregion
 
     internal class ProgramRepository : Repository<Program>, IProgramRepository

@@ -12,9 +12,6 @@
     using Core.Models;
     using Infrastructure.Identity;
     using log4net;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.Owin.Security;
-    using Models.Account;
     using Models.PortalUsers;
     #endregion
 

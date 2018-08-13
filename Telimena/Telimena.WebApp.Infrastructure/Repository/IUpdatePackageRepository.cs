@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Telimena.WebApp.Infrastructure.Repository
@@ -11,9 +8,12 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
     public interface IUpdatePackageRepository
     {
-        Task<UpdatePackage> StorePackageAsync(int programId, string version, Stream fileStream, string fileName);
+        Task<UpdatePackageInfo> StorePackageAsync(int programId, string version, Stream fileStream, string fileName);
 
-        Task<UpdatePackage> GetPackage(int packageId);
-        Task<List<UpdatePackage>> GetAllPackages(int programId);
+        Task<byte[]> GetPackage(int packageId);
+        Task<List<UpdatePackageInfo>> GetAllPackages(int programId);
+        Task<UpdatePackageInfo> GetUpdatePackageInfo(int id);
+        Task<UpdatePackageInfo> GetLatestUpdatePackageInfo(int programId);
+        Task<List<UpdatePackageInfo>> GetAllPackagesNewerThan(int programId, string version);
     }
 }

@@ -13,7 +13,6 @@ namespace Telimena.Tests
     using System.Net.Http;
     using System.Threading.Tasks;
     using Client;
-    using Client.Model;
     using DotNetLittleHelpers;
     using Moq;
     using Newtonsoft.Json;
@@ -36,30 +35,21 @@ namespace Telimena.Tests
 
             sut.LoadHelperAssembliesByName("Telimena.Tests.dll", "Moq.dll");
 
-            var latestVersionResponse = new LatestVersionResponse()
+            var latestVersionResponse = new UpdateResponse()
             {
-                PrimaryAssemblyVersion = new VersionInfo()
+                UpdatePackages = new List<UpdatePackageData>()
                 {
-                    AssemblyId = 1,
-                    AssemblyName = "Telimena.Client",
-                    LatestVersion = "3.1.0.0",
-                    LatestVersionId = 3
-                },
-                HelperAssemblyVersions = new List<VersionInfo>()
-                {
-                    new VersionInfo()
-                    {
-                        AssemblyName = "Telimena.Tests",
-                        LatestVersion = "3.1.0.1"
-                    }
+                    new UpdatePackageData(){FileSizeBytes = 666, Id = 10001, IsStandalone = true},
+                    new UpdatePackageData(){FileSizeBytes = 666, Id = 10002}
                 }
             };
+            latestVersionResponse.UpdatePackagesIncludingBeta = new List<UpdatePackageData>(latestVersionResponse.UpdatePackages) ;
             this.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse));
 
             UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
             Assert.IsTrue(response.IsUpdateAvailable);
-            Assert.AreEqual("3.1.0.0", response.PrimaryAssemblyUpdateInfo.LatestVersionInfo.LatestVersion);
-            Assert.AreEqual("3.1.0.1", response.HelperAssembliesToUpdate.Single().LatestVersionInfo.LatestVersion);
+            //Assert.AreEqual("3.1.0.0", response.PrimaryAssemblyUpdateInfo.LatestVersionInfo.LatestVersion);
+            //Assert.AreEqual("3.1.0.1", response.HelperAssembliesToUpdate.Single().LatestVersionInfo.LatestVersion);
 
         }
 

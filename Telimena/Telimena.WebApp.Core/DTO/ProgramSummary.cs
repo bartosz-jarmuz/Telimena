@@ -21,6 +21,6 @@
         public DateTime? LastUsage { get; set; }
 
         public DateTime RegisteredDate { get; set; }
-
+        public int TotalTodayFunctionsUsageCount { get; set; }
     }
 }

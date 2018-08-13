@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Telimena.WebApp
+﻿namespace Telimena.WebApp
 {
     using AutoMapper;
-    using Client;
     using Infrastructure;
-    using Infrastructure.Repository;
-    using WebApi.Controllers;
 
     public static class AutoMapperConfiguration
     {

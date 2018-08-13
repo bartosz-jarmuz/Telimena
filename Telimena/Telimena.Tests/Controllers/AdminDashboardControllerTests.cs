@@ -1,9 +1,6 @@
 ﻿namespace Telimena.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using WebApp.Controllers;
-    using WebApp.Infrastructure.Database;
-    using WebApp.Infrastructure.Repository;
 
     [TestClass()]
     public class AdminDashboardControllerTests

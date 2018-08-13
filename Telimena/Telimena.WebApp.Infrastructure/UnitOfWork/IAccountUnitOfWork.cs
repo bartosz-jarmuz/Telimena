@@ -7,7 +7,6 @@
     using Microsoft.AspNet.Identity;
     using Microsoft.Owin.Security;
     using Repository;
-    using Repository.Implementation;
 
     public interface IAccountUnitOfWork
     {

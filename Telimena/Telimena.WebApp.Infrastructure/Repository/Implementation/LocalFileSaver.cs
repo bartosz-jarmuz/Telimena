@@ -27,4 +27,26 @@
             repositoryFile.FileLocation = fileLocation;
         }
     }
+
+    public class LocalFileRetriever : IFileRetriever
+    {
+        public LocalFileRetriever()
+        {
+            this.RootFolder = HostingEnvironment.MapPath("~/App_Data/");
+
+        }
+
+        private string RootFolder { get; }
+
+        public async Task<byte[]> GetFile(IRepositoryFile repositoryFile)
+        {
+            byte[] result;
+            using (FileStream stream = File.Open(repositoryFile.FileLocation, FileMode.Open))
+            {
+                result = new byte[stream.Length];
+                await stream.ReadAsync(result, 0, (int)stream.Length);
+            }
+            return result;
+        }
+    }
 }

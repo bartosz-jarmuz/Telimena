@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
-using Newtonsoft.Json;
-using Telimena.Client;
+using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -42,8 +40,17 @@ namespace Telimena.WebApp.Controllers.Api
                         Error = new InvalidOperationException($"Failed to find program by Id: [{id}]")
                     };
                 }
+                LatestVersionResponse info = new LatestVersionResponse
+                {
+                    PrimaryAssemblyVersion = this.GetVersionInfo(program.PrimaryAssembly),
+                    HelperAssemblyVersions = new List<VersionInfo>()
+                };
+                foreach (ProgramAssembly programAssembly in program.ProgramAssemblies.Where(x => x.PrimaryOf != program))
+                {
+                    info.HelperAssemblyVersions.Add(this.GetVersionInfo(programAssembly));
+                }
 
-                return await this.CreateLatestVersionResponse(program);
+                return info;
             }
             catch (Exception ex)
             {
@@ -90,24 +97,6 @@ namespace Telimena.WebApp.Controllers.Api
             return this.Ok(prg.PrimaryAssembly.Versions.Count);
         }
 
-        private async Task<LatestVersionResponse> CreateLatestVersionResponse(Program program)
-        {
-            LatestVersionResponse info = new LatestVersionResponse
-            {
-                PrimaryAssemblyVersion = this.GetVersionInfo(program.PrimaryAssembly),
-                HelperAssemblyVersions = new List<VersionInfo>()
-            };
-            foreach (ProgramAssembly programAssembly in program.ProgramAssemblies.Where(x => x.PrimaryOf != program))
-            {
-                info.HelperAssemblyVersions.Add(this.GetVersionInfo(programAssembly));
-            }
-
-            TelimenaToolkitData toolkitData = await this.Work.TelimenaToolkitData.GetLatestToolkitData();
-            info.LatestTelimenaVersion = toolkitData.Version;
-            info.IsTelimenaVersionBeta = toolkitData.IsBetaVersion;
-            return info;
-        }
-
         private VersionInfo GetVersionInfo(ProgramAssembly assemblyInfo)
         {
             return new VersionInfo
@@ -115,7 +104,6 @@ namespace Telimena.WebApp.Controllers.Api
                 AssemblyId = assemblyInfo.Id,
                 AssemblyName = assemblyInfo.Name,
                 LatestVersion = assemblyInfo.LatestVersion?.Version,
-                IsBeta = assemblyInfo.LatestVersion?.IsBeta ?? false,
                 LatestVersionId = assemblyInfo.LatestVersion?.Id ?? 0
             };
         }

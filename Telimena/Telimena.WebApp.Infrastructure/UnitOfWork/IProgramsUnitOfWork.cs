@@ -4,7 +4,6 @@
     using Core.Models;
     using Identity;
     using Repository;
-    using Repository.Implementation;
 
     public interface IProgramsUnitOfWork
     {

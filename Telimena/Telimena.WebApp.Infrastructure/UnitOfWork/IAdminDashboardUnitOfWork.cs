@@ -1,11 +1,8 @@
 ﻿namespace Telimena.WebApp.Infrastructure.Repository
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Core.DTO;
-    using Core.Models;
 
     public interface IAdminDashboardUnitOfWork
     {

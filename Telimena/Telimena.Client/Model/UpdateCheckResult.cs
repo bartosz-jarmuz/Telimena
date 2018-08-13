@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Telimena.Client.Model
+namespace Telimena.Client
 {
     public class UpdateCheckResult
     {
-        public bool IsUpdateAvailable => this.PrimaryAssemblyUpdateInfo != null || (this.HelperAssembliesToUpdate != null && this.HelperAssembliesToUpdate.Count != 0);
+        public bool IsUpdateAvailable => (this.UpdatesToInstall != null &&  this.UpdatesToInstall.Any());
         public Exception Error { get; set; }
-        public AssemblyUpdateInfo PrimaryAssemblyUpdateInfo { get; set; }
-        public ICollection<AssemblyUpdateInfo> HelperAssembliesToUpdate { get; set; } = new List<AssemblyUpdateInfo>();
+
+        public IReadOnlyList<UpdatePackageData> UpdatesToInstall { get; set; }
+
+
     }
 }

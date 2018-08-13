@@ -20,8 +20,8 @@
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
             this.TelimenaToolkitData = new TelimenaToolkitDataRepository(context);
-            this.UpdatePackages = new UpdatePackageRepository(context, new LocalFileSaver());
-            this.ProgramPackages = new ProgramPackageRepository(context, new LocalFileSaver());
+            this.UpdatePackages = new UpdatePackageRepository(context, new LocalFileSaver(), new LocalFileRetriever());
+            this.ProgramPackages = new ProgramPackageRepository(context, new LocalFileSaver(), new LocalFileRetriever());
             this.TelimenaUserManager = userManager;
         }
 

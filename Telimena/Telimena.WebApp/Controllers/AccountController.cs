@@ -8,8 +8,6 @@
     using Core.Interfaces;
     using Core.Models;
     using DotNetLittleHelpers;
-    using Infrastructure.Identity;
-    using Infrastructure.Repository;
     using Infrastructure.Security;
     using Infrastructure.UnitOfWork.Implementation;
     using log4net;

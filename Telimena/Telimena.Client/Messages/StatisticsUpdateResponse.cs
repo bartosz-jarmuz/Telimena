@@ -1,7 +1,5 @@
 ﻿namespace Telimena.Client
 {
-    using System;
-
     public class StatisticsUpdateResponse : TelimenaResponseBase
     {
         public string FunctionName { get; set; }

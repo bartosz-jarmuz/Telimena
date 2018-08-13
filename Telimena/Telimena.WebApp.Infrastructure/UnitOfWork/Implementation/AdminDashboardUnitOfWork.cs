@@ -2,14 +2,11 @@
 {
     #region Using
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Data.Entity;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Core.DTO;
-    using Core.Interfaces;
     using Core.Models;
     using Database;
     using DotNetLittleHelpers;
@@ -39,7 +36,7 @@
             foreach (Program program in programs)
             {
                 List<Function> functions = await this.Functions.FindAsync(x => x.ProgramId == program.Id);
-
+                var smrs = program.UsageSummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(smr => smr.UsageDetails.Count(detail=> (DateTime.UtcNow - detail.DateTime).Hours <= 24));
                 ProgramSummary summary = new ProgramSummary()
                 {
                     ProgramName = program.Name,
@@ -49,10 +46,11 @@
                     RegisteredDate = program.RegisteredDate,
                     LastUsage = program.UsageSummaries.MaxOrNull(x => x.LastUsageDateTime),
                     UsersCount = program.UsageSummaries.Count,
-                    TodayUsageCount = program.UsageSummaries.Where(x=> (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(x=>x.SummaryCount),
+                    TodayUsageCount = program.UsageSummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).TotalHours <= 24).Sum(smr => smr.UsageDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)),
                     TotalUsageCount = program.UsageSummaries.Sum(x=>x.SummaryCount),
                     FunctionsCount = functions.Count,
-                    TotalFunctionsUsageCount = functions.Sum(f=>f.UsageSummaries.Sum(s=>s.SummaryCount))
+                    TotalFunctionsUsageCount = functions.Sum(f=>f.UsageSummaries.Sum(s=>s.SummaryCount)),
+                    TotalTodayFunctionsUsageCount = functions.Sum(f=>f.UsageSummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).TotalHours <= 24).Sum(smr => smr.UsageDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)))
 
                 };
                 returnData.Add(summary);
@@ -81,10 +79,9 @@
                 AppUsersRegisteredLast7DaysCount = await this.context.AppUsers.CountAsync(x => DbFunctions.DiffDays(x.RegisteredDate, DateTime.UtcNow) <= 7),
                 TotalFunctionsCount = await this.context.Functions.CountAsync()
             };
-
-            int? value = await this.context.ProgramUsages.SumAsync(x => (int?)x.SummaryCount)??0;
+            int? value = await this.context.ProgramUsages.SumAsync(x => (int?)x.UsageDetails.Count)??0;
             summary.TotalProgramUsageCount = value ?? 0;
-            value = await this.context.FunctionUsages.SumAsync(x => (int?)x.SummaryCount) ?? 0;
+            value = await this.context.FunctionUsages.SumAsync(x => (int?)x.UsageDetails.Count) ?? 0;
             summary.TotalFunctionsUsageCount = value ?? 0;
 
             summary.NewestProgram = await this.context.Programs.OrderByDescending(x => x.Id)/*.Include(x=>x.Developer)*/.FirstOrDefaultAsync();

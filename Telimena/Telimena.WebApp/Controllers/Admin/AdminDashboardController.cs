@@ -1,24 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Telimena.WebApp.Controllers
 {
-    using System.Data.Entity;
-    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Core.DTO;
     using Core.Interfaces;
-    using Core.Models;
-    using DataTables.AspNet.Core;
-    using DataTables.AspNet.Mvc5;
     using Infrastructure.Repository;
     using Infrastructure.Security;
     using log4net;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
 
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class AdminDashboardController : Controller

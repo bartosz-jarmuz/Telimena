@@ -1,18 +1,12 @@
 ﻿namespace Telimena.WebApp.Infrastructure.Database
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity;
     using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
     using Client;
     using Core.Interfaces;
     using Core.Models;
-    using Identity;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
-    using UnitOfWork.Implementation;
 
 
     public class TelimenaDbInitializer : System.Data.Entity.DropCreateDatabaseIfModelChanges<TelimenaContext>

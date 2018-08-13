@@ -1,7 +1,6 @@
 ﻿namespace Telimena.WebApp.Core.Models
 {
     using System;
-    using System.ComponentModel.DataAnnotations.Schema;
 
     public abstract class UsageDetail
     {

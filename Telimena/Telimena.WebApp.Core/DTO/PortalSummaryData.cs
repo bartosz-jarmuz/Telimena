@@ -1,9 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Telimena.WebApp.Core.DTO
+﻿namespace Telimena.WebApp.Core.DTO
 {
     using Models;
 

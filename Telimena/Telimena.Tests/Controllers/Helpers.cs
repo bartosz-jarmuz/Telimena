@@ -2,18 +2,15 @@
 
 namespace Telimena.Tests
 {
-    using System;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using Client;
     using Microsoft.AspNet.Identity.EntityFramework;
     using NUnit.Framework;
-    using WebApi.Controllers;
     using WebApp.Core.Interfaces;
     using WebApp.Core.Models;
     using WebApp.Infrastructure.Database;
     using WebApp.Infrastructure.Identity;
-    using WebApp.Infrastructure.UnitOfWork;
     using WebApp.Infrastructure.UnitOfWork.Implementation;
 
     public static class Helpers

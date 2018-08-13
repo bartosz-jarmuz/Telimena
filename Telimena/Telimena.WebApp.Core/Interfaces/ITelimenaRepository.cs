@@ -1,13 +1,5 @@
 ﻿namespace Telimena.WebApp.Core.Interfaces
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Client;
-    using DTO;
-    using Models;
-
     //public interface ITelimenaRepository
     //{
     //    Task AddFunction(Function objectToAdd);

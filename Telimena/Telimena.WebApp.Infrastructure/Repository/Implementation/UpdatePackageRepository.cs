@@ -4,6 +4,8 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
+using DotNetLittleHelpers;
+
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
     #region Using
@@ -20,22 +22,24 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
     internal class UpdatePackageRepository : IUpdatePackageRepository
     {
         private IFileSaver FileSaver { get; }
+        private IFileRetriever FileRetriever { get; }
 
-        public UpdatePackageRepository(DbContext dbContext, IFileSaver fileSaver)
+        public UpdatePackageRepository(DbContext dbContext, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
             this.FileSaver = fileSaver;
+            this.FileRetriever = fileRetriever;
             this.TelimenaContext = dbContext as TelimenaContext;
         }
 
         protected TelimenaContext TelimenaContext { get; }
 
-        public async Task<UpdatePackage> StorePackageAsync(int programId, string version, Stream fileStream, string fileName)
+        public async Task<UpdatePackageInfo> StorePackageAsync(int programId, string version, Stream fileStream, string fileName)
         {
             if (!Version.TryParse(version, out Version _))
             {
                 throw new InvalidOperationException("Version string not valid");
             }
-            var pkg = new UpdatePackage(fileName, programId, version, fileStream.Length);
+            var pkg = new UpdatePackageInfo(fileName, programId, version, fileStream.Length);
 
             this.TelimenaContext.UpdatePackages.Add(pkg);
 
@@ -45,14 +49,37 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         }
 
-        public Task<UpdatePackage> GetPackage(int packageId)
+        public async Task<byte[]> GetPackage(int packageId)
         {
-            throw new NotImplementedException();
+            var pkg = await this.GetUpdatePackageInfo(packageId);
+
+            if (pkg != null)
+            {
+                return await this.FileRetriever.GetFile(pkg);
+            }
+
+            return null;
         }
 
-        public Task<List<UpdatePackage>> GetAllPackages(int programId)
+        public Task<List<UpdatePackageInfo>> GetAllPackages(int programId)
         {
             return this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
+        }
+
+        public async Task<UpdatePackageInfo> GetLatestUpdatePackageInfo(int programId)
+        {
+            return await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<UpdatePackageInfo>> GetAllPackagesNewerThan(int programId, string version)
+        {
+            return await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId && x.Version.IsNewerVersionThan(version)).OrderBy(x => x.Version, new VersionStringComparer()).ToListAsync();
+
+        }
+
+        public Task<UpdatePackageInfo> GetUpdatePackageInfo(int id)
+        {
+            return this.TelimenaContext.UpdatePackages.FirstOrDefaultAsync(x => x.Id == id);
         }
     }
 }

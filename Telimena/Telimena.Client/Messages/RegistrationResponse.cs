@@ -1,7 +1,5 @@
 ﻿namespace Telimena.Client
 {
-    using System;
-
     public class RegistrationResponse : TelimenaResponseBase
     {
         public int UserId { get; set; }

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Telimena.WebApp.Infrastructure.Security
+﻿namespace Telimena.WebApp.Infrastructure.Security
 {
-    using System.Web;
     using System.Web.Mvc;
     using System.Web.Routing;
     using Core.Interfaces;

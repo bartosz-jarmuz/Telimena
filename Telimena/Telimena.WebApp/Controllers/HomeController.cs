@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace Telimena.WebApi.Controllers
 {
-    using System.Threading.Tasks;
     using WebApp.Core.Interfaces;
     using WebApp.Core.Models;
     using WebApp.Infrastructure.Security;

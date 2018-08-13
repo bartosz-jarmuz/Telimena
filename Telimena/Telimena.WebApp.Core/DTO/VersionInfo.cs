@@ -1,4 +1,4 @@
-﻿namespace Telimena.Client
+﻿namespace Telimena.WebApp.Core.DTO
 {
     public class VersionInfo
     {
@@ -6,6 +6,5 @@
         public int AssemblyId { get; set; }
         public string LatestVersion { get; set; }
         public int LatestVersionId { get; set; }
-        public bool IsBeta { get; set; }
     }
 }

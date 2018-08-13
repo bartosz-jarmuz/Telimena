@@ -1,13 +1,10 @@
 ﻿namespace Telimena.Client
 {
     #region Using
-    using System;
+
     using System.Collections.Generic;
-    using System.Net.Http;
     using System.Reflection;
-    using System.Runtime.CompilerServices;
-    using System.Text;
-    using System.Threading.Tasks;
+
     #endregion
 
     /// <summary>
@@ -30,5 +27,6 @@
         internal ITelimenaHttpClient HttpClient { get; set; }
 
         private List<Assembly> HelperAssemblies { get; set; } = new List<Assembly>();
+        public string ProgramVersion => this.ProgramInfo?.PrimaryAssembly?.Version;
     }
 }

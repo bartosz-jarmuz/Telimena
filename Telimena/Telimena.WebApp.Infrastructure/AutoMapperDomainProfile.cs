@@ -8,6 +8,8 @@
     {
         public AutoMapperDomainProfile()
         {
+            this.CreateMap<UpdatePackageInfo, UpdatePackageData>();
+
             this.CreateMap<UserInfo, ClientAppUser>().
                 ForMember(x=>x.Id, o=>o.Ignore()).
                 ForMember(x=>x.RegisteredDate, o=>o.Ignore());

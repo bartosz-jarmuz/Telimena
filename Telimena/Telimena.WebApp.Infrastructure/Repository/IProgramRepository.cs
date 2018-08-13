@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Security.Principal;
     using System.Threading.Tasks;
-    using Client;
     using Core.Models;
 
     public interface IProgramRepository : IRepository<Program>

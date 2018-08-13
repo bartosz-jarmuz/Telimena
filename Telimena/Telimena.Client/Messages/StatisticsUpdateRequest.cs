@@ -1,7 +1,5 @@
 ﻿namespace Telimena.Client
 {
-    using System;
-
     public class StatisticsUpdateRequest 
     {
         public int UserId { get; set; }

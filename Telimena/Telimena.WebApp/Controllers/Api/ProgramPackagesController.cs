@@ -24,9 +24,9 @@ namespace Telimena.WebApp.Controllers.Api
 
         [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]
-        public async Task<IHttpActionResult> GetProgramPackage(int programId)
+        public async Task<IHttpActionResult> DownloadProgramPackage(int programId)
         {
-            var packageInfo = await this.Work.ProgramPackages.GetPackageInfoForProgram(programId);
+            var packageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(programId);
 
             var bytes = await this.Work.ProgramPackages.GetPackage(packageInfo.Id);
             var result = new HttpResponseMessage(HttpStatusCode.OK)
@@ -47,10 +47,10 @@ namespace Telimena.WebApp.Controllers.Api
         [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("download-app/{name}", Name = "DownloadAppRoute")]
-        public async Task<IHttpActionResult> GetProgramPackage(string name)
+        public async Task<IHttpActionResult> DownloadProgramPackage(string name)
         {
             var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == name);
-            return await this.GetProgramPackage(prg.Id);
+            return await this.DownloadProgramPackage(prg.Id);
         }
 
         [System.Web.Http.HttpPost]

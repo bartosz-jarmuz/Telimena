@@ -30,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -43,11 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRoutes.cs" />
-    <Compile Include="Messages\LatestVersionResponse.cs" />
-    <Compile Include="Model\AssemblyUpdateInfo.cs" />
+    <Compile Include="Messages\UpdateResponse.cs" />
     <Compile Include="Model\UpdateCheckResult.cs" />
-    <Compile Include="UpdateResponseReader.cs" />
-    <Compile Include="Model\VersionInfo.cs" />
+    <Compile Include="Model\UpdatePackageData.cs" />
+    <Compile Include="UpdatePackageSorter.cs" />
     <Compile Include="Messenger\ITelimenaHttpClient.cs" />
     <Compile Include="Messenger\IMessenger.cs" />
     <Compile Include="Messenger\TelimenaHttpClient.cs" />

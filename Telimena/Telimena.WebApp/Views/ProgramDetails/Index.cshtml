@@ -79,6 +79,9 @@
                         <li class="list-group-item">
                             <b>File Size</b> <a class="pull-right">@(Model.ProgramPackageInfo?.FileSizeBytes.GetSizeString())</a>
                         </li>
+                        <li class="list-group-item">
+                            <b>Uploaded date</b> <a class="pull-right">@(Model.ProgramPackageInfo?.UploadedDate)</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -303,11 +306,8 @@
                 },
                 error: function(xhr) {
                     ShowConfirmationBox(button, "label-danger", xhr.responseJSON.Message);
-
                 },
-                complete: function(e, e2, e3) {
-                    $(button).disable();
-                },
+               
 
             });
         }
@@ -355,7 +355,7 @@
         function ValidateUpdatePackageRequest(button, modelString, successCallback) {
 
             $.ajax({
-                    type: 'GET',
+                    type: 'POST',
                     url: '/api' + '@Url.Action("ValidatePackageVersion", "ProgramUpdates")',
                     contentType: "application/json; charset=utf-8",
                     datatype: 'Json',

@@ -1,13 +1,6 @@
 ﻿namespace Telimena.WebApp.Core.Models
 {
     using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-    using DotNetLittleHelpers;
-    using Microsoft.AspNet.Identity.EntityFramework;
 
     public class TelimenaToolkitData 
     {

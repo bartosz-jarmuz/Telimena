@@ -1,7 +1,5 @@
-﻿    using System.Data.Entity;
-    using NUnit.Framework;
+﻿using NUnit.Framework;
     using Telimena.WebApp;
-    using Telimena.WebApp.Infrastructure.Database;
 
 [SetUpFixture]
 public class TestInitializerInNoNamespace

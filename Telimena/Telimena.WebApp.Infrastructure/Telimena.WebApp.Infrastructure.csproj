@@ -117,6 +117,7 @@
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
+    <Compile Include="Repository\Implementation\IFileRetriever.cs" />
     <Compile Include="Repository\Implementation\IFileSaver.cs" />
     <Compile Include="Repository\Implementation\LocalFileSaver.cs" />
     <Compile Include="Repository\Implementation\ProgramPackageRepository.cs" />
