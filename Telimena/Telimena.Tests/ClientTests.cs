@@ -94,6 +94,46 @@ namespace Telimena.Tests
 
 
         [Test]
+        public void Test_PackageSorting()
+        {
+            var packages = new List<UpdatePackageData>()
+            {
+                new UpdatePackageData() {Id = 4, Version = "3.5"},
+                new UpdatePackageData() {Id = 2, Version = "2.0"},
+                new UpdatePackageData() {Id = 1, Version = "1.0"},
+                new UpdatePackageData() {Id = 3, Version = "3.0"},
+            };
+
+            var ordered = UpdateInstructionCreator.Sort(packages);
+            Assert.AreEqual(1, ordered[0].Id);
+            Assert.AreEqual(2, ordered[1].Id);
+            Assert.AreEqual(3, ordered[2].Id);
+            Assert.AreEqual(4, ordered[3].Id);
+        }
+
+        [Test]
+        public void Test_UpdateInstructionCreator()
+        {
+            var packages = new List<UpdatePackageData>()
+            {
+                new UpdatePackageData() {Id = 4, Version = "3.5", StoredFilePath = @"C:\AppFolder\Updates\Update v 3.5\Update v 3.5.zip" },
+                new UpdatePackageData() {Id = 2, Version = "2.0", StoredFilePath = @"C:\AppFolder\Updates\Update v 3.5\Update v 2.0.zip" },
+                new UpdatePackageData() {Id = 1, Version = "1.0", StoredFilePath = @"C:\AppFolder\Updates\Update v 3.5\Update v 1.0.zip" },
+                new UpdatePackageData() {Id = 3, Version = "3.0", StoredFilePath = @"C:\AppFolder\Updates\Update v 3.5\Update v 3.0.zip" },
+            };
+
+            var tuple = UpdateInstructionCreator.CreateXDoc(packages);
+            var xDoc = tuple.Item1;
+            var file = tuple.Item2;
+            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\UpdateInstructions.xml", file.FullName);
+            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 1.0.zip", xDoc.Root.Elements().ElementAt(0).Value);
+            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 2.0.zip", xDoc.Root.Elements().ElementAt(1).Value);
+            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.0.zip", xDoc.Root.Elements().ElementAt(2).Value);
+            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.5.zip", xDoc.Root.Elements().ElementAt(3).Value);
+        }
+
+
+        [Test]
         public void Test_StaticClient_WithProgramInfo()
         {
             Mock<ITelimenaHttpClient> client = this.GetMockClient();

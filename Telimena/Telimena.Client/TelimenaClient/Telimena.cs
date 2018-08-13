@@ -1,24 +1,15 @@
-﻿using System.Linq;
-using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Telimena.Client
 {
     #region Using
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
-    using System.Threading.Tasks;
 
     #endregion
-
-    public enum BetaVersionSettings
-    {
-        IgnoreBeta,
-        UseBeta,
-        AskUserEachTime
-    }
 
 
     /// <summary>
@@ -27,71 +18,12 @@ namespace Telimena.Client
     /// </summary>
     public partial class Telimena : ITelimena
     {
-
-        public async Task HandleUpdates(BetaVersionSettings betaVersionSettings)
-        {
-            try
-            {
-                IReadOnlyList<UpdatePackageData> packagesToInstall = null;
-                var response = await this.GetUpdateResponse();
-                if (response.UpdatePackagesIncludingBeta == null)
-                {
-                    return;
-                }
-                if (betaVersionSettings == BetaVersionSettings.UseBeta)
-                {
-                    packagesToInstall = response.UpdatePackagesIncludingBeta;
-                }
-                else if (betaVersionSettings == BetaVersionSettings.IgnoreBeta)
-                {
-                    packagesToInstall = response.UpdatePackages;
-                }
-                else if (betaVersionSettings == BetaVersionSettings.AskUserEachTime && response.UpdatePackagesIncludingBeta.Any(x=>x.IsBeta))
-                {
-                    var choice = MessageBox.Show(
-                        "There are {} update packages available, however {} of them are pre-release versions. Would you like to download the pre-release updates as well?",
-                        "Select updates", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (choice == MessageBoxResult.Yes)
-                    {
-                        packagesToInstall = response.UpdatePackagesIncludingBeta;
-                    }
-                    else
-                    {
-                        packagesToInstall = response.UpdatePackages;
-                    }
-                }
-
-                if (packagesToInstall != null && packagesToInstall.Any())
-                {
-
-                }
-
-
-            }
-            catch (Exception)
-            {
-                if (!this.SuppressAllErrors)
-                {
-                    throw;
-                }
-            }
-        }
-
-
-
-        protected async Task<UpdateResponse> GetUpdateResponse()
-        {
-            await this.InitializeIfNeeded();
-            string responseContent = await this.Messenger.SendGetRequest(ApiRoutes.GetUpdatesInfo + "?programId=" + this.ProgramId + "&version=" + this.ProgramVersion);
-            return this.Serializer.Deserialize<UpdateResponse>(responseContent);
-        }
-
         public async Task<UpdateCheckResult> CheckForUpdates()
         {
             try
             {
                 UpdateResponse response = await this.GetUpdateResponse();
-                return new UpdateCheckResult()
+                return new UpdateCheckResult
                 {
                     UpdatesToInstall = response.UpdatePackagesIncludingBeta
                 };
@@ -103,7 +35,7 @@ namespace Telimena.Client
                     throw;
                 }
 
-                return new UpdateCheckResult()
+                return new UpdateCheckResult
                 {
                     Error = ex
                 };
@@ -135,7 +67,7 @@ namespace Telimena.Client
         /// <param name="assemblyNames"></param>
         public void LoadHelperAssembliesByName(params string[] assemblyNames)
         {
-            var path = AppDomain.CurrentDomain.BaseDirectory;
+            string path = AppDomain.CurrentDomain.BaseDirectory;
             foreach (string assemblyName in assemblyNames)
             {
                 Assembly assembly = Assembly.LoadFrom(Path.Combine(path, assemblyName));
@@ -155,7 +87,7 @@ namespace Telimena.Client
             try
             {
                 await this.InitializeIfNeeded();
-                StatisticsUpdateRequest request = new StatisticsUpdateRequest()
+                StatisticsUpdateRequest request = new StatisticsUpdateRequest
                 {
                     ProgramId = this.ProgramId,
                     UserId = this.UserId,
@@ -172,11 +104,40 @@ namespace Telimena.Client
                     throw;
                 }
 
-                return new StatisticsUpdateResponse()
+                return new StatisticsUpdateResponse
                 {
                     Error = ex
                 };
             }
+        }
+
+
+        public async Task HandleUpdates(BetaVersionSettings betaVersionSettings)
+        {
+            try
+            {
+                UpdateResponse response = await this.GetUpdateResponse();
+
+                UpdateHandler handler = new UpdateHandler(this.Messenger, this.ProgramInfo, this.SuppressAllErrors, new DefaultWpfInputReceiver(),
+                    new UpdateInstaller());
+                await handler.HandleUpdates(response, betaVersionSettings);
+            }
+            catch (Exception)
+            {
+                if (!this.SuppressAllErrors)
+                {
+                    throw;
+                }
+            }
+        }
+
+
+        protected async Task<UpdateResponse> GetUpdateResponse()
+        {
+            await this.InitializeIfNeeded();
+            string responseContent =
+                await this.Messenger.SendGetRequest(ApiRoutes.GetUpdatesInfo + "?programId=" + this.ProgramId + "&version=" + this.ProgramVersion);
+            return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
         /// <summary>
@@ -187,7 +148,7 @@ namespace Telimena.Client
         {
             try
             {
-                RegistrationRequest request = new RegistrationRequest()
+                RegistrationRequest request = new RegistrationRequest
                 {
                     ProgramInfo = this.ProgramInfo,
                     TelimenaVersion = this.TelimenaVersion,
@@ -207,7 +168,7 @@ namespace Telimena.Client
                     throw;
                 }
 
-                return new RegistrationResponse()
+                return new RegistrationResponse
                 {
                     Error = ex
                 };

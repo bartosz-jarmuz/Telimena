@@ -8,7 +8,8 @@
     {
         public AutoMapperDomainProfile()
         {
-            this.CreateMap<UpdatePackageInfo, UpdatePackageData>();
+            this.CreateMap<UpdatePackageInfo, UpdatePackageData>().
+                ForMember(x=>x.StoredFilePath, o=>o.Ignore());
 
             this.CreateMap<UserInfo, ClientAppUser>().
                 ForMember(x=>x.Id, o=>o.Ignore()).

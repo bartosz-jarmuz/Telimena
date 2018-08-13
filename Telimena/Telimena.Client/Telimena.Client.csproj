@@ -47,7 +47,15 @@
     <Compile Include="Messages\UpdateResponse.cs" />
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
-    <Compile Include="UpdatePackageSorter.cs" />
+    <Compile Include="TelimenaClient\BetaVersionSettings.cs" />
+    <Compile Include="TelimenaClient\Updater\DefaultWpfInputReceiver.cs" />
+    <Compile Include="TelimenaClient\Updater\IInstallUpdates.cs" />
+    <Compile Include="TelimenaClient\Updater\IReceiveUserInput.cs" />
+    <Compile Include="TelimenaClient\Updater\UpdateHandler.cs" />
+    <Compile Include="TelimenaClient\Updater\UpdateInstaller.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\VersionStringComparer.cs" />
+    <Compile Include="Utilities\UpdateInstructionCreator.cs" />
     <Compile Include="Messenger\ITelimenaHttpClient.cs" />
     <Compile Include="Messenger\IMessenger.cs" />
     <Compile Include="Messenger\TelimenaHttpClient.cs" />

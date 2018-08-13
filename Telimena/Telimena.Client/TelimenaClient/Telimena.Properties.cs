@@ -1,9 +1,9 @@
-﻿namespace Telimena.Client
+﻿using System.Collections.Generic;
+using System.Reflection;
+
+namespace Telimena.Client
 {
     #region Using
-
-    using System.Collections.Generic;
-    using System.Reflection;
 
     #endregion
 
@@ -22,11 +22,12 @@
         public ProgramInfo ProgramInfo { get; internal set; }
         protected int ProgramId { get; set; }
         protected int UserId { get; set; }
+
         public bool SuppressAllErrors { get; set; } = true;
         protected string TelimenaVersion { get; }
         internal ITelimenaHttpClient HttpClient { get; set; }
 
-        private List<Assembly> HelperAssemblies { get; set; } = new List<Assembly>();
+        private List<Assembly> HelperAssemblies { get; } = new List<Assembly>();
         public string ProgramVersion => this.ProgramInfo?.PrimaryAssembly?.Version;
     }
 }
