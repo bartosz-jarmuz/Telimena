@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Telimena.Updater;
 
 namespace Telimena.Client.Tests
 {
@@ -112,10 +113,13 @@ namespace Telimena.Client.Tests
             XDocument xDoc = tuple.Item1;
             FileInfo file = tuple.Item2;
             Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\UpdateInstructions.xml", file.FullName);
-            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 1.0.zip", xDoc.Root.Elements().ElementAt(0).Value);
-            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 2.0.zip", xDoc.Root.Elements().ElementAt(1).Value);
-            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.0.zip", xDoc.Root.Elements().ElementAt(2).Value);
-            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.5.zip", xDoc.Root.Elements().ElementAt(3).Value);
+
+            var instructions = UpdateInstructionsReader.ParseDocument(xDoc);
+
+            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 1.0.zip", instructions.PackagePaths[0]);
+            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 2.0.zip", instructions.PackagePaths[1]);
+            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.0.zip", instructions.PackagePaths[2]);
+            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.5.zip", instructions.PackagePaths[3]);
         }
 
 

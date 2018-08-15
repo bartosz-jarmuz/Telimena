@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Telimena.Client;
 
-namespace Telimena
+namespace Telimena.Client
 {
+
+    
+
     internal static class UpdateInstructionCreator
     {
         internal static Tuple<XDocument, FileInfo> CreateXDoc(IEnumerable<UpdatePackageData> packages)
@@ -16,10 +18,12 @@ namespace Telimena
             FileInfo instructionsFile = new FileInfo(Path.Combine(updatesFolder.FullName, "UpdateInstructions.xml"));
             XDocument xDoc = new XDocument();
             xDoc.Add(new XElement("UpdateInstructions"));
+            var packagesToInstall = new XElement("PackagesToInstall");
+            xDoc.Root.Add(packagesToInstall);
             foreach (UpdatePackageData updatePackageData in sorted)
             {
                 // ReSharper disable once PossibleNullReferenceException
-                xDoc.Root.Add(new XElement("file", updatePackageData.StoredFilePath));
+                packagesToInstall.Add(new XElement("file", updatePackageData.StoredFilePath));
             }
             return new Tuple<XDocument, FileInfo>(xDoc, instructionsFile);
         }

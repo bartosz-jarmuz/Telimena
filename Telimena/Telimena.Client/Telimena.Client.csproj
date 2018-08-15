@@ -51,6 +51,7 @@
     <Compile Include="TelimenaClient\Updates\DefaultWpfInputReceiver.cs" />
     <Compile Include="TelimenaClient\Updates\IInstallUpdates.cs" />
     <Compile Include="TelimenaClient\Updates\IReceiveUserInput.cs" />
+    <Compile Include="TelimenaClient\Updates\StartInfoCreator.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateHandler.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateInstaller.cs" />
     <Compile Include="TelimenaClient\Updates\UpdaterDownloader.cs" />

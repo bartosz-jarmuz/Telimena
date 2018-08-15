@@ -8,7 +8,7 @@ namespace Telimena.Updater
     /// </summary>
     public partial class MainWindow : Window
     {
-        private UpdaterSettings UpdaterSettings { get; }
+        private UpdaterStartupSettings UpdaterStartupSettings { get; }
         private FileInfo InstructionsFile { get; }
 
         public MainWindow()
@@ -19,10 +19,10 @@ namespace Telimena.Updater
             Application.Current.Shutdown();
         }
 
-        public MainWindow(UpdaterSettings updaterSettings)
+        public MainWindow(UpdaterStartupSettings updaterStartupSettings)
         {
-            this.UpdaterSettings = updaterSettings;
-            this.InstructionsFile = this.UpdaterSettings?.InstructionsFile;
+            this.UpdaterStartupSettings = updaterStartupSettings;
+            this.InstructionsFile = this.UpdaterStartupSettings?.InstructionsFile;
 
             this.InitializeComponent();
         }

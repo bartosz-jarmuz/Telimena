@@ -10,19 +10,19 @@ namespace Telimena.Updater
 {
     internal static class CommandLineArgumentParser
     {
-        public static UpdaterSettings GetSettings(string[] args)
+        public static UpdaterStartupSettings GetSettings(string[] args)
         {
             if (args.Length == 0 || args.All(string.IsNullOrEmpty))
             {
                 return null;
             }
 
-            UpdaterSettings settings = new UpdaterSettings()
+            UpdaterStartupSettings startupSettings = new UpdaterStartupSettings()
             {
                 InstructionsFile = GetInstructionsArg(args)
             };
 
-            return settings;
+            return startupSettings;
         }
 
 

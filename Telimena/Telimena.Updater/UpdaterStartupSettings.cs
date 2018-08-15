@@ -2,7 +2,7 @@
 
 namespace Telimena.Updater
 {
-    public class UpdaterSettings
+    public class UpdaterStartupSettings
     {
         public FileInfo InstructionsFile { get; set; }
     }

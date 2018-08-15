@@ -5,20 +5,14 @@
 // -----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Xml.Linq;
-using Moq;
-using Newtonsoft.Json;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
-using Telimena.Updater;
+using Telimena.Client;
+using Assert = NUnit.Framework.Assert;
 
-namespace Telimena.Client.Tests
+namespace Telimena.Updater.Tests
 {
     #region Using
 
@@ -67,6 +61,7 @@ namespace Telimena.Client.Tests
 
             Assert.AreEqual(@"C:\An app\Updates\3.2\Instructions.xml", settings.InstructionsFile.FullName);
         }
+
     }
 }
 

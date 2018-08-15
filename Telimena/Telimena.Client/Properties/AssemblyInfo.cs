@@ -36,5 +36,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: InternalsVisibleTo("Telimena.Tests")]
 [assembly: InternalsVisibleTo("Telimena.Client.Tests")]
+[assembly: InternalsVisibleTo("Telimena.Updater.Tests")]
 [assembly: InternalsVisibleTo("TelimenaTestSandboxApp")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
