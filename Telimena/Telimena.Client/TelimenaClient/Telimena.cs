@@ -140,6 +140,8 @@ namespace Telimena.Client
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
+        
+
         /// <summary>
         ///     Sends the initial app usage info
         /// </summary>

@@ -4,6 +4,6 @@ namespace Telimena.Client
 {
     internal interface IInstallUpdates
     {
-        void InstallUpdates(FileInfo instructionsFile);
+        void InstallUpdates(FileInfo instructionsFile, FileInfo updaterFile);
     }
 }

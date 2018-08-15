@@ -18,13 +18,40 @@ namespace Telimena.Client
             this.UpdateInstaller = updateInstaller;
         }
 
+        public const string UpdaterFileName = "Updater.exe";
+
         private IMessenger Messenger { get; }
         private ProgramInfo ProgramInfo { get; }
         private bool SuppressAllErrors { get; }
         private IReceiveUserInput InputReceiver { get; }
         private IInstallUpdates UpdateInstaller { get; }
 
+        private string BasePath => AppDomain.CurrentDomain.BaseDirectory;
+
         protected string UpdatesFolderName => this.ProgramInfo?.Name + " Updates";
+
+
+        public static class PathFinder
+        {
+            public static FileInfo GetUpdaterExecutable(string basePath, string updatesFolderName)
+            {
+                DirectoryInfo updatesDir = GetUpdatesParentFolder(basePath, updatesFolderName);
+                return new FileInfo(Path.Combine(updatesDir.FullName, UpdaterFileName));
+            }
+
+            public static DirectoryInfo GetUpdatesParentFolder(string basePath, string updatesFolderName)
+            {
+                string path = Path.Combine(basePath, updatesFolderName);
+                return new DirectoryInfo(path);
+            }
+
+            public static DirectoryInfo GetUpdatesSubfolder(string basePath, string updatesFolderName, IEnumerable<UpdatePackageData> packagesToDownload)
+            {
+                DirectoryInfo dir = GetUpdatesParentFolder(basePath, updatesFolderName);
+                UpdatePackageData latestPkg = packagesToDownload.OrderBy(x => x.Version, new VersionStringComparer()).First();
+                return new DirectoryInfo(Path.Combine(dir.FullName, latestPkg.Version));
+            }
+        }
 
         public async Task HandleUpdates(UpdateResponse response, BetaVersionSettings betaVersionSettings)
         {
@@ -42,13 +69,13 @@ namespace Telimena.Client
                 {
                     await this.DownloadUpdatePackages(packagesToInstall);
 
-                    FileInfo instructions = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall);
+                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall);
 
                     bool installUpdatesNow = this.InputReceiver.ShowInstallUpdatesNowQuestion(packagesToInstall);
-
+                    FileInfo updaterFile = PathFinder.GetUpdaterExecutable(this.BasePath, this.UpdatesFolderName);
                     if (installUpdatesNow)
                     {
-                        this.UpdateInstaller.InstallUpdates(instructions);
+                        this.UpdateInstaller.InstallUpdates(instructionsFile, updaterFile);
                     }
                 }
             }
@@ -89,11 +116,9 @@ namespace Telimena.Client
         }
 
 
-        private DirectoryInfo GetUpdatesFolder(IEnumerable<UpdatePackageData> packagesToDownload, string basePath)
+        private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, string basePath)
         {
-            string path = Path.Combine(basePath, this.UpdatesFolderName);
-            UpdatePackageData latestPkg = packagesToDownload.OrderBy(x => x.Version, new VersionStringComparer()).First();
-            return new DirectoryInfo(Path.Combine(path, latestPkg.Version));
+            return PathFinder.GetUpdatesSubfolder(basePath, this.UpdatesFolderName, packagesToDownload);
         }
 
 
@@ -102,7 +127,7 @@ namespace Telimena.Client
             try
             {
                 List<Task> downloadTasks = new List<Task>();
-                DirectoryInfo updatesFolder = this.GetUpdatesFolder(packagesToDownload, AppDomain.CurrentDomain.BaseDirectory);
+                DirectoryInfo updatesFolder = this.GetUpdatesSubfolder(packagesToDownload, this.BasePath);
                 Directory.CreateDirectory(updatesFolder.FullName);
 
                 foreach (UpdatePackageData updatePackageData in packagesToDownload)

@@ -117,5 +117,30 @@ namespace Telimena.Client.Tests
             Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.0.zip", xDoc.Root.Elements().ElementAt(2).Value);
             Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.5.zip", xDoc.Root.Elements().ElementAt(3).Value);
         }
+
+
+        [Test]
+        public void Test_UpdaterPathFinder()
+        {
+            List<UpdatePackageData> packages = new List<UpdatePackageData>
+            {
+                new UpdatePackageData {Id = 4, Version = "3.5"},
+                new UpdatePackageData {Id = 2, Version = "2.0"},
+                new UpdatePackageData {Id = 1, Version = "1.0"},
+                new UpdatePackageData {Id = 3, Version = "3.0"}
+            };
+
+            var parentFolder = UpdateHandler.PathFinder.GetUpdatesParentFolder(@"C:\AppFolder", "App Updates");
+            Assert.AreEqual(@"C:\AppFolder\App Updates", parentFolder.FullName);
+
+            var updater = UpdateHandler.PathFinder.GetUpdaterExecutable(@"C:\AppFolder", "App Updates");
+            Assert.AreEqual(@"C:\AppFolder\App Updates\Updater.exe", updater.FullName);
+            
+            var subFolder = UpdateHandler.PathFinder.GetUpdatesSubfolder(@"C:\AppFolder", "App Updates",packages);
+            Assert.AreEqual(@"C:\AppFolder\App Updates\3.5", subFolder.FullName);
+
+        }
+
+
     }
 }

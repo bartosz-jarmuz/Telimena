@@ -61,6 +61,7 @@
     <Reference Include="nunit.framework, Version=3.10.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.10.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -75,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestStaticClient.cs" />
+    <Compile Include="UpdaterTests.cs" />
     <Compile Include="UpdateCheckTests.cs" />
     <Compile Include="TestRegistrationRequests.cs" />
     <Compile Include="Helpers.cs" />
@@ -88,6 +90,10 @@
     <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
       <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
       <Name>Telimena.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telimena.Updater\Telimena.Updater.csproj">
+      <Project>{6DEE078F-92BD-4F45-A876-BC4446217D83}</Project>
+      <Name>Telimena.Updater</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
