@@ -25,7 +25,10 @@
             this.Title = assembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
             this.Product = assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product;
             this.Trademark = assembly.GetCustomAttribute<AssemblyTrademarkAttribute>()?.Trademark;
+            this.Location = assembly.Location;
         }
+
+        public string Location { get; set; }
 
         /// <summary>
         ///     New instance of AssemblyInfo

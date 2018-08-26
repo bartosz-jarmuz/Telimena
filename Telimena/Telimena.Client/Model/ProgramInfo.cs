@@ -1,4 +1,8 @@
-﻿namespace Telimena.Client
+﻿using System.IO;
+using System.Web.Script.Serialization;
+using System.Xml.Serialization;
+
+namespace Telimena.Client
 {
     using System.Collections.Generic;
 
@@ -28,5 +32,6 @@
         /// </summary>
         public List<AssemblyInfo> HelperAssemblies { get; set; }
 
+        public string PrimaryAssemblyPath => this.PrimaryAssembly?.Location;
     }
 }

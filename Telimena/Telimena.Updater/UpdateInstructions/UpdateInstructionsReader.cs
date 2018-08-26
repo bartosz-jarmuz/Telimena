@@ -29,7 +29,18 @@ namespace Telimena.Updater
         {
             var instructions = new UpdateInstructions();
             ProcessPackagesSection(xDoc, instructions);
+            ProcessMetadataSection(xDoc, instructions);
             return instructions;
+        }
+
+        private static void ProcessMetadataSection(XDocument xDoc, UpdateInstructions instructions)
+        {
+            var section = xDoc.Root.Element("Metadata");
+            if (section != null)
+            {
+                instructions.LatestVersion = section.Element("LatestVersion")?.Value;
+                instructions.ProgramExecutableLocation = section.Element("ProgramExecutableLocation")?.Value;
+            }
         }
 
         private static void ProcessPackagesSection(XDocument xDoc, UpdateInstructions instructions)

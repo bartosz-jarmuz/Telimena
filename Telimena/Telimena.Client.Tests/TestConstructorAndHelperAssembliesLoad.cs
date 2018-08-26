@@ -58,6 +58,7 @@ namespace Telimena.Client.Tests
             Client.Telimena telimena = new Client.Telimena();
             Assert.AreEqual("Telimena.Client", telimena.ProgramInfo.Name);
             Assert.AreEqual("Telimena.Client", telimena.ProgramInfo.PrimaryAssembly.Name);
+            Assert.IsTrue(telimena.ProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Telimena.Client.dll"));
             Assert.IsNotNull(telimena.ProgramInfo.PrimaryAssembly.Version);
             Assert.IsNotNull(telimena.UserInfo.UserName);
             Assert.IsNotNull(telimena.UserInfo.MachineName);
@@ -74,6 +75,7 @@ namespace Telimena.Client.Tests
             Client.Telimena telimena = new Client.Telimena(pi);
             Assert.AreEqual("An App!", telimena.ProgramInfo.Name);
             Assert.AreEqual("Telimena.Client.Tests", telimena.ProgramInfo.PrimaryAssembly.Name);
+            Assert.IsTrue(telimena.ProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Telimena.Client.Tests.dll"));
             Assert.IsNotNull(telimena.ProgramInfo.PrimaryAssembly.Version);
             Assert.IsNotNull(telimena.UserInfo.UserName);
             Assert.IsNotNull(telimena.UserInfo.MachineName);

@@ -69,7 +69,7 @@ namespace Telimena.Client
                 {
                     await this.DownloadUpdatePackages(packagesToInstall);
 
-                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall);
+                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.ProgramInfo);
 
                     bool installUpdatesNow = this.InputReceiver.ShowInstallUpdatesNowQuestion(packagesToInstall);
                     FileInfo updaterFile = PathFinder.GetUpdaterExecutable(this.BasePath, this.UpdatesFolderName);

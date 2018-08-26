@@ -56,11 +56,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="FileReplacer.cs" />
-    <Compile Include="UpdateInstructionsReader.cs" />
-    <Compile Include="UpdateInstructions.cs" />
-    <Compile Include="UpdateWorker.cs" />
-    <Compile Include="UpdaterStartupSettings.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="UpdateWorker\FileReplacer.cs" />
+    <Compile Include="UpdateInstructions\UpdateInstructionsReader.cs" />
+    <Compile Include="UpdateInstructions\UpdateInstructions.cs" />
+    <Compile Include="UpdateWorker\UpdateWorker.cs" />
+    <Compile Include="CommandLineArguments\UpdaterStartupSettings.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -69,7 +70,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CommandLineArgumentParser.cs" />
+    <Compile Include="CommandLineArguments\CommandLineArgumentParser.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

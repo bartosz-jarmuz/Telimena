@@ -1,4 +1,6 @@
-﻿namespace Telimena.Client
+﻿using System.IO;
+
+namespace Telimena.Client
 {
     #region Using
     using System;

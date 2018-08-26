@@ -27,24 +27,7 @@ namespace Telimena.Updater
                 return;
             }
             FileReplacer.ReplaceFiles(programFolder, package, new DirectoryInfo(updatePackageFolderPath));
-            //foreach (string file in )
-            //{
-            //    string newPath = Path.Combine(PathProgramFolder, file.Replace(updatePackageFolderPath, "").Trim('\\'));
-                
-            //    try
-            //    {
-            //        MakeSureNoPreviousFileVersionExists(newPath);
-            //        Directory.CreateDirectory(Path.GetDirectoryName(newPath));
-            //        File.Copy(file, newPath, true);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        MoveTheWindowUp();
-            //        MessageBox.Show("Error occurred while replacing old files. Exception:\n" + ex.Message, "Update problem");
-            //        TopInfoLabel = "Updater - error - update failed";
-            //        return;
-            //    }
-            //}
+           
            // TopInfoLabel = "Updater - extracting...";
             //Thread.Sleep(700);
             if (Directory.Exists(updatePackageFolderPath))

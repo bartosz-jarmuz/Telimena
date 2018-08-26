@@ -109,13 +109,15 @@ namespace Telimena.Client.Tests
                 new UpdatePackageData {Id = 3, Version = "3.0", StoredFilePath = @"C:\AppFolder\Updates\Update v 3.5\Update v 3.0.zip"}
             };
 
-            Tuple<XDocument, FileInfo> tuple = UpdateInstructionCreator.CreateXDoc(packages);
+            Tuple<XDocument, FileInfo> tuple = UpdateInstructionCreator.CreateXDoc(packages, new ProgramInfo(){PrimaryAssembly = new AssemblyInfo(){Location = @"C:\AppFolder\MyApp.exe"}});
             XDocument xDoc = tuple.Item1;
             FileInfo file = tuple.Item2;
             Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\UpdateInstructions.xml", file.FullName);
 
             var instructions = UpdateInstructionsReader.ParseDocument(xDoc);
 
+            Assert.AreEqual(@"3.5", instructions.LatestVersion);
+            Assert.AreEqual(@"C:\AppFolder\MyApp.exe", instructions.ProgramExecutableLocation);
             Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 1.0.zip", instructions.PackagePaths[0]);
             Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 2.0.zip", instructions.PackagePaths[1]);
             Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.0.zip", instructions.PackagePaths[2]);
