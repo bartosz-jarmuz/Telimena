@@ -38,9 +38,7 @@
                 model.ProgramName = program.Name;
             }
 
-            model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) + this.@Url.HttpRouteUrl("DefaultApi", new {httproute = "", controller = "Programs", action = "GetProgramPackage", programId = model.ProgramId});
-
-            model.ProgramDownloadUrlFriendly = this.Request.Url.GetLeftPart(UriPartial.Authority) + this.@Url.HttpRouteUrl("DownloadAppRoute", new {  name = model.ProgramName });
+            model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) + this.@Url.HttpRouteUrl("DownloadAppRoute", new {  name = model.ProgramName });
 
             List<UpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(model.ProgramId);
             model.UpdatePackages = packages;

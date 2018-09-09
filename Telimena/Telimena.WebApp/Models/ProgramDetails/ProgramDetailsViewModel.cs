@@ -12,11 +12,6 @@ namespace Telimena.WebApp.Models.ProgramDetails
         public ICollection<UpdatePackageInfo> UpdatePackages { get; set; } = new List<UpdatePackageInfo>(); //todo replace with VM
 
         public string ProgramDownloadUrl { get; set; }
-
-        /// <summary>
-        /// A more human friendly program download url (by program name, not ID)
-        /// </summary>
-        public string ProgramDownloadUrlFriendly { get; set; }
         public ProgramPackageInfo ProgramPackageInfo { get; set; }
     }
 }
