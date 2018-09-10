@@ -38,7 +38,7 @@ namespace Telimena.WebApp.Controllers.Api
 
             try
             {
-                Program program = await this.helper.GetProgramOrAddIfNotExists(request.ProgramInfo);
+                Program program = await this.helper.GetProgramOrAddIfNotExists(request);
                 ClientAppUser clientAppUser = await this.helper.GetUserInfoOrAddIfNotExists(request.UserInfo);
                 UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser);
                 if (!request.SkipUsageIncrementation)

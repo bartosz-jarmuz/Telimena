@@ -16,7 +16,7 @@ using Telimena.WebApp.Infrastructure.UnitOfWork;
 namespace Telimena.Tests
 {
     [TestFixture]
-    public class UpdatePackageControllerTests : IntegrationTestsBase<TelimenaContext>
+    public class UpdatePackageControllerTests 
     {
         private Mock<IProgramsUnitOfWork> GetMockUnit(string prgVersion, List<UpdatePackageInfo> list)
         {

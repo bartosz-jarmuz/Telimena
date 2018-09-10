@@ -48,19 +48,19 @@ namespace Telimena.WebApp.Controllers.Api
             return func;
         }
 
-        public async Task<Program> GetProgramOrAddIfNotExists(ProgramInfo requestProgramInfo)
+        public async Task<Program> GetProgramOrAddIfNotExists(RegistrationRequest requestProgramInfo)
         {
-            Program program = await this._work.Programs.FirstOrDefaultAsync(x => x.Name == requestProgramInfo.Name);
+            Program program = await this._work.Programs.FirstOrDefaultAsync(x => x.Name == requestProgramInfo.ProgramInfo.Name);
             if (program == null)
             {
-                program = Mapper.Map<Program>(requestProgramInfo);
+                program = Mapper.Map<Program>(requestProgramInfo.ProgramInfo);
                 this._work.Programs.Add(program);
             }
-            StatisticsHelperService.EnsureVersionIsRegistered(program.PrimaryAssembly, requestProgramInfo.PrimaryAssembly.Version);
+            StatisticsHelperService.EnsureVersionIsRegistered(program.PrimaryAssembly, requestProgramInfo.ProgramInfo.PrimaryAssembly.Version);
 
-            if (requestProgramInfo.HelperAssemblies.AnyAndNotNull())
+            if (requestProgramInfo.ProgramInfo.HelperAssemblies.AnyAndNotNull())
             {
-                foreach (AssemblyInfo helperAssembly in requestProgramInfo.HelperAssemblies)
+                foreach (AssemblyInfo helperAssembly in requestProgramInfo.ProgramInfo.HelperAssemblies)
                 {
                     ProgramAssembly existingAssembly = program.ProgramAssemblies.FirstOrDefault(x => x.Name == helperAssembly.Name);
                     if (existingAssembly == null)
@@ -73,8 +73,26 @@ namespace Telimena.WebApp.Controllers.Api
                 }
             }
 
-            await this.EnsureDeveloperSet(requestProgramInfo, program);
+            await this.AssignToolkitVersion(program.PrimaryAssembly, requestProgramInfo.ProgramInfo.PrimaryAssembly.Version,
+                requestProgramInfo.TelimenaVersion);
+            await this.EnsureDeveloperSet(requestProgramInfo.ProgramInfo, program);
             return program;
+        }
+
+        private async Task AssignToolkitVersion(ProgramAssembly programAssembly,string programVersion, string toolkitVersion)
+        {
+            var toolkitData = await this._work.ToolkitData.FirstOrDefaultAsync(x => x.Version == toolkitVersion);
+            var assemblyVersion = programAssembly.GetVersion(programVersion);
+            if (toolkitData == null)
+            {
+                toolkitData = new TelimenaToolkitData()
+                {
+                    Version = toolkitVersion
+                    ,ReleaseDate = DateTime.UtcNow
+                };
+            }
+            assemblyVersion.ToolkitData = toolkitData;
+
         }
 
         private async Task EnsureDeveloperSet(ProgramInfo info, Program program)

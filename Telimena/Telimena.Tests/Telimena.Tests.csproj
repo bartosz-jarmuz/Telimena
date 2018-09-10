@@ -132,6 +132,7 @@
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\RegisterProgramController.cs" />
     <Compile Include="Controllers\ProgramVersionsControllerTests.cs" />
+    <Compile Include="Controllers\ToolkitDataRegistrationTests.cs" />
     <Compile Include="Controllers\UpdatePackageControllerTests.cs" />
     <Compile Include="MappingsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

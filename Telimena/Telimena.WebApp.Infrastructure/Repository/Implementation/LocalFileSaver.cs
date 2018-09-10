@@ -1,4 +1,6 @@
-﻿namespace Telimena.WebApp.Infrastructure.Repository.Implementation
+﻿using System;
+
+namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
     using System.IO;
     using System.Threading.Tasks;
@@ -17,7 +19,7 @@
 
         public async Task SaveFile(IRepositoryFile repositoryFile, Stream fileStream)
         {
-            var fileLocation = Path.Combine(this.RootFolder, "FileRepo", repositoryFile.FileName);
+            var fileLocation = Path.Combine(this.RootFolder, "FileRepo", Guid.NewGuid().ToString(), repositoryFile.FileName);
             Directory.CreateDirectory(Path.GetDirectoryName(fileLocation));
             using (Stream file = File.Create(fileLocation))
             {

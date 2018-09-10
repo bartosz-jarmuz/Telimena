@@ -5,11 +5,11 @@
     using System.Threading.Tasks;
     using Core.Models;
 
-    internal sealed class TelimenaToolkitDataRepository :  ITelimenaToolkitDataRepository
+    internal sealed class TelimenaToolkitDataRepository :  Repository<TelimenaToolkitData>, ITelimenaToolkitDataRepository
     {
         private readonly DbContext _dbContext;
 
-        public TelimenaToolkitDataRepository(DbContext dbContext)
+        public TelimenaToolkitDataRepository(DbContext dbContext) : base(dbContext)
         {
             this._dbContext = dbContext;
         }

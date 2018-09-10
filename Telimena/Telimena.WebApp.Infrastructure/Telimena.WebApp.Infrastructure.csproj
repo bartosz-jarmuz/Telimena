@@ -121,6 +121,7 @@
     <Compile Include="Repository\Implementation\IFileSaver.cs" />
     <Compile Include="Repository\Implementation\LocalFileSaver.cs" />
     <Compile Include="Repository\Implementation\ProgramPackageRepository.cs" />
+    <Compile Include="Repository\Implementation\UpdaterRepository.cs" />
     <Compile Include="Repository\Implementation\UpdatePackageRepository.cs" />
     <Compile Include="Repository\Implementation\FunctionRepository.cs" />
     <Compile Include="Repository\IFunctionRepository.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Repository\Implementation\Repository.cs" />
     <Compile Include="Repository\Implementation\ProgramRepository.cs" />
     <Compile Include="Repository\ITelimenaToolkitDataRepository.cs" />
+    <Compile Include="Repository\IUpdaterRepository.cs" />
     <Compile Include="Repository\IUpdatePackageRepository.cs" />
     <Compile Include="UnitOfWork\IAdminDashboardUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\AccountUnitOfWork.cs" />
@@ -140,7 +142,9 @@
     <Compile Include="Security\TelimenaAuthorizeAttribute.cs" />
     <Compile Include="UnitOfWork\IAccountUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\ProgramsUnitOfWork.cs" />
+    <Compile Include="UnitOfWork\Implementation\TelimenaToolkitDataUnitOfWork.cs" />
     <Compile Include="UnitOfWork\IProgramsUnitOfWork.cs" />
+    <Compile Include="UnitOfWork\ITelimenaToolkitDataUnitOfWork.cs" />
     <Compile Include="UnitOfWork\IStatisticsUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\StatisticsUnitOfWork.cs" />
   </ItemGroup>

@@ -26,6 +26,7 @@
         }
 
         public DbSet<Program> Programs { get; set; }
+        public DbSet<UpdaterInfo> UpdaterInfo { get; set; }
         public DbSet<Function> Functions { get; set; }
         public DbSet<ProgramUsageSummary> ProgramUsages { get; set; }
         public DbSet<ProgramUsageDetail> ProgramUsageDetails { get; set; }

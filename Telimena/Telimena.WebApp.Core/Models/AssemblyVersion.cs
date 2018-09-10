@@ -13,5 +13,7 @@
         public int ProgramAssemblyId { get; set; }
         [JsonIgnore]
         public virtual ProgramAssembly LatestVersionOf { get; set; }
+
+        public virtual TelimenaToolkitData ToolkitData { get; set; }
     }
 }

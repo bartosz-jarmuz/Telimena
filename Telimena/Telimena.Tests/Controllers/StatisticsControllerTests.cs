@@ -572,6 +572,7 @@ namespace Telimena.Tests
             Assert.AreEqual(teliUser.Email, prg.DeveloperAccount.MainEmail);
         }
 
+
         [Test]
         public void TestRegistration_SameAppEachTime()
         {
@@ -602,7 +603,6 @@ namespace Telimena.Tests
             Assert.AreEqual("1.2.3.4", prg.GetLatestVersion().Version);
             Assert.AreEqual(unit.Versions.Single(x=>x.ProgramAssemblyId == prg.PrimaryAssembly.Id).Id, prg.PrimaryAssembly.LatestVersion.Id);
             var firstVersionId = prg.PrimaryAssembly.LatestVersion.Id;
-
 
             //second time
             response = sut.RegisterClient(request).GetAwaiter().GetResult();

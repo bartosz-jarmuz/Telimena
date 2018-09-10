@@ -22,13 +22,14 @@
             this.Developers = new Repository<DeveloperAccount>(context);
             this.Functions= new FunctionRepository(context);
             this.Programs= new ProgramRepository(context);
+            this.ToolkitData = new TelimenaToolkitDataRepository(context);
         }
 
-        public ITelimenaToolkitDataRepository TelimenaToolkitDataRepository { get; set; }
         public IRepository<DeveloperAccount> Developers { get; set; }
         public IRepository<AssemblyVersion> Versions { get; }
         public IRepository<ClientAppUser> ClientAppUsers { get; }
         public IProgramRepository Programs { get; }
+        public ITelimenaToolkitDataRepository ToolkitData { get; }
         public IFunctionRepository Functions { get; }
         public async Task CompleteAsync()
         {

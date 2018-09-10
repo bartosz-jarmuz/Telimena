@@ -28,7 +28,6 @@
 
             TelimenaDbInitializer.CreateAdmin(context);
             TelimenaDbInitializer.CreateDeveloper(context);
-            SeedTelimenasAss(context);
         }
 
         private static void CreateDeveloper(TelimenaContext context)
@@ -73,17 +72,7 @@
             }
         }
 
-        private static void SeedTelimenasAss(TelimenaContext context)
-        {
-            var ass = typeof(Telimena).Assembly;
-            var clientData = new TelimenaToolkitData()
-            {
-                ReleaseDate = new FileInfo(ass.Location).LastWriteTimeUtc,
-                Version = "1.0.0.0"
-            };
-            context.TelimenaToolkitData.Add(clientData);
-            context.SaveChanges();
-        }
+      
 
         private static void CreateRole(RoleManager<IdentityRole> manager, string roleName, TelimenaContext context)
         {

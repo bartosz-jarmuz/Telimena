@@ -237,11 +237,13 @@
     <Compile Include="AutoMapperConfiguration.cs" />
     <Compile Include="AutoMapperWebProfile.cs" />
     <Compile Include="Controllers\Admin\AdminDashboardController.cs" />
+    <Compile Include="Controllers\Admin\ToolkitManagementController.cs" />
     <Compile Include="Controllers\Api\ProgramPackagesController.cs" />
     <Compile Include="Controllers\Api\ProgramVersionsController.cs" />
     <Compile Include="Controllers\Api\ProgramUpdatesController.cs" />
     <Compile Include="Controllers\Api\ProgramsController.cs" />
     <Compile Include="Controllers\Api\StatisticsHelperService.cs" />
+    <Compile Include="Controllers\Api\UpdaterController.cs" />
     <Compile Include="Controllers\Developer\RegisterProgramController.cs" />
     <Compile Include="Controllers\Developer\DeveloperDashboardController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -263,6 +265,7 @@
     <Compile Include="Models\ProgramDetails\ProgramDetailsViewModel.cs" />
     <Compile Include="Models\Shared\BoxViewModel.cs" />
     <Compile Include="Models\Shared\ProgramsListViewModel.cs" />
+    <Compile Include="Models\ToolkitManagement\ToolkitManagementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1929,6 +1932,7 @@
     <Content Include="Views\RegisterProgram\Register.cshtml" />
     <Content Include="Views\Shared\_ProgramsList.cshtml" />
     <Content Include="Views\ProgramDetails\_PackageBetaActivator.cshtml" />
+    <Content Include="Views\ToolkitManagement\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
