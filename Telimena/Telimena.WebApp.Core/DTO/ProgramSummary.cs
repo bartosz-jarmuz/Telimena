@@ -9,6 +9,7 @@
         public int ProgramId { get; set; }
 
         public string LatestVersion { get; set; }
+        public string AssociatedToolkitVersion { get; set; }
 
         public int UsersCount { get; set; }
 

@@ -50,6 +50,7 @@
                             <th># Usage total</th>
                             <th>@nameof(ProgramSummary.LastUsage)</th>
                             <th>Registered</th>
+                            <th>Telimena Version</th>
                         </tr>
                     </thead>
                 </table>
@@ -98,6 +99,8 @@
                             return datetime.toLocaleString();
                         }
                     },
+                    { "data": "@nameof(ProgramSummary.AssociatedToolkitVersion)"  },
+
                 ]
             });
         });

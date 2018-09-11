@@ -36,12 +36,12 @@
             foreach (Program program in programs)
             {
                 List<Function> functions = await this.Functions.FindAsync(x => x.ProgramId == program.Id);
-                var smrs = program.UsageSummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).Hours <= 24).Sum(smr => smr.UsageDetails.Count(detail=> (DateTime.UtcNow - detail.DateTime).Hours <= 24));
                 ProgramSummary summary = new ProgramSummary()
                 {
                     ProgramName = program.Name,
                     DeveloperName = program.DeveloperAccount?.Name??"N/A",
                     LatestVersion = program.PrimaryAssembly.LatestVersion.Version,
+                    AssociatedToolkitVersion = program.PrimaryAssembly.LatestVersion.ToolkitData?.Version,
                     ProgramId = program.Id,
                     RegisteredDate = program.RegisteredDate,
                     LastUsage = program.UsageSummaries.MaxOrNull(x => x.LastUsageDateTime),
