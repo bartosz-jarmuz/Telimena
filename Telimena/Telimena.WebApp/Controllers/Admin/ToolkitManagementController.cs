@@ -22,9 +22,9 @@ namespace Telimena.WebApi.Controllers
 
     public class ToolkitManagementController : Controller
     {
-        private readonly ITelimenaToolkitDataUnitOfWork work;
+        private readonly IToolkitDataUnitOfWork work;
 
-        public ToolkitManagementController(ITelimenaToolkitDataUnitOfWork work)
+        public ToolkitManagementController(IToolkitDataUnitOfWork work)
         {
             this.work = work;
         }
@@ -33,9 +33,14 @@ namespace Telimena.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            var infos = await this.work.UpdaterRepository.GetAsync();
-            var model = new ToolkitManagementViewModel();
-            model.UpdaterPackages = infos.ToList();
+            IEnumerable<UpdaterPackageInfo> updaterPackageInfos =
+                await this.work.UpdaterRepository.GetAsync(includeProperties: nameof(UpdaterPackageInfo.ToolkitData));
+            IEnumerable<TelimenaToolkitData> toolkitData = await this.work.ToolkitDataRepository.GetAsync(includeProperties: nameof(TelimenaToolkitData.TelimenaPackageInfo));
+            ToolkitManagementViewModel model = new ToolkitManagementViewModel
+            {
+                UpdaterPackages = updaterPackageInfos.ToList(),
+                ToolkitPackages = toolkitData.ToList()
+            };
             return this.View(model);
         }
 

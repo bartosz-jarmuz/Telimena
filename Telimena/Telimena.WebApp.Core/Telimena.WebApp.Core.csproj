@@ -81,11 +81,12 @@
     <Compile Include="Models\ProgramUsageSummary.cs" />
     <Compile Include="Models\ProgramAssembly.cs" />
     <Compile Include="Models\Base\RepositoryFileBase.cs" />
+    <Compile Include="Models\TelimenaPackageInfo.cs" />
     <Compile Include="Models\TelimenaToolkitData.cs" />
     <Compile Include="Models\TelimenaUser.cs" />
     <Compile Include="Models\Base\UsageSummary.cs" />
     <Compile Include="Models\ClientAppUser.cs" />
-    <Compile Include="Models\UpdaterInfo.cs" />
+    <Compile Include="Models\UpdaterPackageInfo.cs" />
     <Compile Include="Models\UpdatePackageInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

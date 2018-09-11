@@ -243,6 +243,7 @@
     <Compile Include="Controllers\Api\ProgramUpdatesController.cs" />
     <Compile Include="Controllers\Api\ProgramsController.cs" />
     <Compile Include="Controllers\Api\StatisticsHelperService.cs" />
+    <Compile Include="Controllers\Api\ToolkitController.cs" />
     <Compile Include="Controllers\Api\UpdaterController.cs" />
     <Compile Include="Controllers\Developer\RegisterProgramController.cs" />
     <Compile Include="Controllers\Developer\DeveloperDashboardController.cs" />

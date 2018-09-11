@@ -9,34 +9,156 @@
 @section styles{
     @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
     <style type="text/css">
-        .confirmation { }
+        .confirmation {
+        }
 
         .fileinput-button {
             position: relative;
             overflow: hidden;
         }
-        .fileinput-button input
-        {
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 0;
-            opacity: 0;
-            filter: alpha(opacity=0);
-            transform: translate(-300px, 0) scale(4);
-            font-size: 23px;
-            direction: ltr;
-            cursor: pointer;
-        }
+
+            .fileinput-button input {
+                position: absolute;
+                top: 0;
+                right: 0;
+                margin: 0;
+                opacity: 0;
+                filter: alpha(opacity=0);
+                transform: translate(-300px, 0) scale(4);
+                font-size: 23px;
+                direction: ltr;
+                cursor: pointer;
+            }
     </style>
 }
 
 
 <div class="row">
+    
+    
+    <div class="col-md-12 ">
+    <div class="box box-warning box-solid box-solid">
+        <div class="box-header">
+            <h3 class="box-title">Telimena Toolkit</h3>
+        </div>
+        <div class="box-body">
+            <div class="col-md-4">
+                <form id="uploadToolkitUpdatePackageForm" enctype="multipart/form-data" method="post">
+                    <div class="box box-warning box-solid">
+                        <div class="box-header">
+                            <h3 class="box-title">Upload new Toolkit Version</h3>
+                        </div>
+                        <div class="box-body">
+                            <label class="confirmation label label-md" style="display: none"></label>
+                            <div class="form-group">
+                                <label>Toolkit version: </label>
+                                <input type="text" id="toolkitUpdatePackageVersion" />
+                            </div>
+                            <div class="form-group">
+                                <span class="btn btn-success fileinput-button uploadedPackage">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <span>Add files...</span>
+                                    <input type="file"
+                                           name="uploadedPackage" />
+                                </span>
+                                @*<button class="btn btn-warning cancel"
+                                    type="button" >
+                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                <span>Cancel</span>
+                            </button>*@
+                            </div>
+                            <div class="InfoContainer">
+                                <div class="info fileName">
+                                </div>
+                                <div class="info fileType">
+                                </div>
+                                <div class="info fileSize">
+                                </div>
+                            </div>
+                            <div class="progress CustomProgress">
+                                <div class="progress-bar" role="progressbar"
+                                     aria-valuenow="0" aria-valuemin="0"
+                                     aria-valuemax="100" style="width: 0%;">
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="">
+                                    <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
-    <div class="col-md-3">
-        <form id="uploadUpdatePackageForm" enctype="multipart/form-data" method="post">
-            <div class="box box-primary">
+
+            <div class="col-md-8">
+
+
+                <div class="box box-warning box-solid">
+                    <div class="box-header">
+                        <h3 class="box-title">Toolkit Packages</h3>
+                    </div>
+                    <div class="box-body">
+                        <label class="confirmation label label-md" style="display: none"></label>
+                        <table class="table table-bordered table-hover dataTable">
+                            <thead>
+                                <tr>
+                                    <th>Toolkit Data Id</th>
+                                    <th>Package Id</th>
+                                    <th>Toolkit Version</th>
+                                    <th>Uploaded Date</th>
+                                    <th>File Size</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (TelimenaToolkitData toolkitData in Model.ToolkitPackages)
+                            {
+                                <tr>
+                                    <td>@(toolkitData.Id)</td>
+                                    <td>@(toolkitData.TelimenaPackageInfo?.Id)</td>
+
+                                    <td><a href="/api@(Url.Action("Get", "Toolkit") + "?id=" + toolkitData.TelimenaPackageInfo?.Id)">@toolkitData.Version</a></td>
+                                    @if (toolkitData.TelimenaPackageInfo != null)
+                                    {
+                                        <td>@(toolkitData.TelimenaPackageInfo?.UploadedDate)</td>
+                                    }
+                                    else
+                                    {
+                                        <td><label class="label label-danger">Package not uploaded</label></td>
+                                    }
+                                    <td>@(toolkitData.TelimenaPackageInfo?.FileSizeBytes.ConvertBytesToMegabytes()) MB</td>
+                                </tr>
+                            }
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    
+</div>
+
+
+
+<div class="row">
+      
+<div class="col-md-12 ">
+<div class="box box-success box-solid box-solid">
+<div class="box-header">
+    <h3 class="box-title">Updater</h3>
+</div>
+<div class="box-body">
+    <div class="col-md-4">
+        <form id="uploadUpdaterUpdatePackageForm" enctype="multipart/form-data" method="post">
+            <div class="box box-success  box-solid">
                 <div class="box-header">
                     <h3 class="box-title">Upload new Updater Version</h3>
                 </div>
@@ -44,7 +166,7 @@
                     <label class="confirmation label label-md" style="display: none"></label>
                     <div class="form-group">
                         <label>Updater version: </label>
-                        <input type="text" id="updatePackageVersion"/>
+                        <input type="text" id="updaterUpdatePackageVersion" />
                     </div>
                     <div class="form-group">
                         <span class="btn btn-success fileinput-button uploadedPackage">
@@ -53,11 +175,11 @@
                             <input type="file"
                                    name="uploadedPackage" />
                         </span>
-                        <button class="btn btn-warning cancel"
-                                type="button" id="Cancel_btn">
+                        @*<button class="btn btn-warning cancel"
+                                type="button" >
                             <i class="glyphicon glyphicon-ban-circle"></i>
                             <span>Cancel</span>
-                        </button>
+                        </button>*@
                     </div>
                     <div class="InfoContainer">
                         <div class="info fileName">
@@ -68,8 +190,7 @@
                         </div>
                     </div>
                     <div class="progress CustomProgress">
-                        <div 
-                             class="progress-bar" role="progressbar"
+                        <div class="progress-bar" role="progressbar"
                              aria-valuenow="0" aria-valuemin="0"
                              aria-valuemax="100" style="width: 0%;">
                             <span></span>
@@ -77,42 +198,19 @@
                     </div>
                     <div class="form-group">
                         <div class="">
-                            <input type="submit" value="Submit" class="btn btn-lg btn-primary"/>
+                            <input type="submit" value="Submit" class="btn btn-lg btn-primary" />
                         </div>
                     </div>
                 </div>
             </div>
         </form>
     </div>
-    <div class="col-md-3">
-    <div class="box box-primary">
-        <div class="box-header">
-            <h3 class="box-title">Updater version controlling</h3>
-        </div>
-        <div class="box-body">
-            <label class="confirmation label label-md" style="display: none"></label>
-            <div class="form-group">
-                <label>Latest version: </label>
-                <span id="latestVersion">...</span>
-            </div>
-            <div class="form-group">
-                <label>Set latest version to: </label>
-                <input type="text" id="newLatestVersionTextBox"/>
-            </div>
-            <div class="form-group">
-                <div class="">
-                    <input type="submit" id="setLatestVersionButton" value="Set version" class="btn btn-primary"/>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
-
-    <div class="col-md-6">
 
 
-        <div class="box box-primary">
+    <div class="col-md-8">
+
+
+        <div class="box box-success box-solid">
             <div class="box-header">
                 <h3 class="box-title">Updater Packages</h3>
             </div>
@@ -120,30 +218,34 @@
                 <label class="confirmation label label-md" style="display: none"></label>
                 <table class="table table-bordered table-hover dataTable">
                     <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Version</th>
-                        <th>Uploaded Date</th>
-                        <th>File Size</th>
-                    </tr>
+                        <tr>
+                            <th>Id</th>
+                            <th>Version</th>
+                            <th>Uploaded Date</th>
+                            <th>File Size</th>
+                            <th>Toolkit Version</th>
+                        </tr>
                     </thead>
                     <tbody>
 
-                    @foreach (UpdaterInfo pkg in Model.UpdaterPackages)
-                    {
-                        <tr>
-                            <td>@pkg.Id</td>
-                            
-                            <td><a href="/api@(Url.Action("GetUpdater", "Updater") + "?id=" + pkg.Id)">@pkg.Version</a></td>
-                            <td>@pkg.UploadedDate</td>
-                            <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
-                        </tr>
-                    }
+                        @foreach (UpdaterPackageInfo pkg in Model.UpdaterPackages)
+                        {
+                            <tr>
+                                <td>@pkg.Id</td>
+
+                                <td><a href="/api@(Url.Action("GetUpdater", "Updater") + "?id=" + pkg.Id)">@pkg.Version</a></td>
+                                <td>@pkg.UploadedDate</td>
+                                <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
+                                <td>@(pkg.ToolkitData?.Version)</td>
+                            </tr>
+                        }
                     </tbody>
 
                 </table>
 
             </div>
+        </div>
+        </div>
         </div>
     </div>
 </div>
@@ -153,16 +255,22 @@
     @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
 
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('.dataTable').DataTable();
 
-            LoadCurrentVersion();
-            $('#setLatestVersionButton').click(function() {
-                HideConfirmationBox(this);
-                SetLatestVersion(this);
+            $('.uploadedPackage').change(function(e) { SingleFileSelected(e, $(this).find('input')) });
+            $('#uploadUpdaterUpdatePackageForm').submit(function (e) {
+                e.preventDefault();
+                CreateUpdatePackage('@Url.Action("UploadUpdaterPackage", "Updater")',
+                    $('#updaterUpdatePackageVersion')[0],
+                    $(this));
             });
-            $('.uploadedPackage').change(function(e) { SingleFileSelected(e,$(this).find('input')) });
-            $('#uploadUpdatePackageForm').submit(CreateUpdatePackage);
+            $('#uploadToolkitUpdatePackageForm').submit(function (e) {
+                e.preventDefault();
+                CreateUpdatePackage('@Url.Action("Upload", "Toolkit")',
+                    $('#toolkitUpdatePackageVersion')[0],
+                    $(this));
+            });
         });
 
 
@@ -211,23 +319,21 @@
                 error: function(xhr) {
                     ShowConfirmationBox(button, "label-danger", xhr.responseJSON.Message);
                 },
-               
+
 
             });
         }
 
 
-        function CreateUpdatePackage(e) {
-            e.preventDefault();
+        function CreateUpdatePackage( url, versionElement, form) {
             var model = {
-                @nameof(CreateUpdatePackageRequest.PackageVersion): $('#updatePackageVersion').val(),
+                @nameof(CreateUpdatePackageRequest.PackageVersion): $(versionElement).val(),
             };
             var modelString = JSON.stringify(model);
 
-            var form = $('#uploadUpdatePackageForm')[0];
-            var formData = new FormData(form);
+            var formData = new FormData($(form)[0]);
             formData.append('Model', modelString);
-            UploadFile(formData, '@Url.Action("UploadUpdaterPackage", "Updater")', $(this).find(':submit'));
+            UploadFile(formData, url, $(form).find(':submit'));
         }
 
 
@@ -253,50 +359,6 @@
         }
 
 
-        function LoadCurrentVersion() {
-            $('#latestVersion').html('...');
-            $.ajax({
-                type: 'GET',
-                url: '/api' + '@Url.Action("GetLatestVersionInfo", "ProgramVersions")',
-             //   data: { id: 0 },
-                success: function(response) {
-                    $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
-                }
-            });
-            $('#versionsCount').html('...');
-            $.ajax({
-                type: 'GET',
-                url: '/api' + '@Url.Action("GetVersionsCount", "ProgramVersions")',
-        //        data: { id: 0 },
-                success: function(response) {
-                    $('#versionsCount').html(response);
-                }
-            });
-        }
-
-        function SetLatestVersion(button) {
-
-            var dataObject = JSON.stringify({
-                @nameof(SetLatestVersionRequest.ProgramId): 0,
-                @nameof(SetLatestVersionRequest.Version): $('#newLatestVersionTextBox').val(),
-            });
-
-            $.ajax({
-                    type: 'POST',
-                    url: '/api' + '@Url.Action("SetLatestVersion", "ProgramVersions")',
-                    contentType: "application/json; charset=utf-8",
-                    datatype: 'Json',
-                    data: dataObject
-                })
-                .done(function() {
-                    ShowConfirmationBox(button, 'label-success', 'Done!');
-                })
-                .fail(function(xhr) {
-                    ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
-                }).always(function() {
-                    LoadCurrentVersion();
-                });
-        }
     </script>
 
 }

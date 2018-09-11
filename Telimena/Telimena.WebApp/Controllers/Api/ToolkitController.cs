@@ -20,41 +20,39 @@ namespace Telimena.WebApp.Controllers.Api
 {
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
 
-    public class UpdaterController : ApiController
+    public class ToolkitController : ApiController
     {
         private readonly IToolkitDataUnitOfWork work;
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
 
-        public UpdaterController(IToolkitDataUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
+        public ToolkitController(IToolkitDataUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
             this.work = work;
             this.fileSaver = fileSaver;
             this.fileRetriever = fileRetriever;
         }
 
-        //public async Task<UpdaterPackageInfo> GetLatestUpdaterInfo()
-        //{
-
-        //}
+      
 
         [System.Web.Http.HttpGet]
-        public async Task<IHttpActionResult> GetUpdater(int id)
+        public async Task<IHttpActionResult> Get(int id)
         {
-            var updaterInfo = await this.work.UpdaterRepository.FirstOrDefaultAsync(x => x.Id == id);
-            if (updaterInfo == null)
+            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Id == id);
+            if (toolkitData == null)
             {
-                return this.BadRequest($"Updater id [{id}] does not exist");
+                return this.BadRequest($"Toolkit id [{id}] does not exist");
             }
-            var bytes = await this.work.UpdaterRepository.GetPackage(id,this.fileRetriever );
+            var bytes = await this.work.ToolkitDataRepository.GetPackage(toolkitData.Id, this.fileRetriever);
             var result = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new ByteArrayContent(bytes)
             };
+
             result.Content.Headers.ContentDisposition =
                 new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
                 {
-                    FileName = updaterInfo.FileName
+                    FileName = toolkitData.TelimenaPackageInfo.FileName
                 };
             result.Content.Headers.ContentType =
                 new MediaTypeHeaderValue("application/octet-stream");
@@ -64,7 +62,7 @@ namespace Telimena.WebApp.Controllers.Api
 
         [System.Web.Http.AllowAnonymous]
         [System.Web.Http.HttpGet]
-        public async Task<IHttpActionResult> GetUpdater(string version)
+        public async Task<IHttpActionResult> Get(string version)
         {
             if (!Version.TryParse(version, out _))
             {
@@ -76,11 +74,11 @@ namespace Telimena.WebApp.Controllers.Api
                 return this.BadRequest($"Updater version [{version}] does not exist");
             }
 
-            return await this.GetUpdater(updaterInfo.Id);
+            return await this.Get(updaterInfo.Id);
         }
 
         [System.Web.Http.HttpPost]
-        public async Task<IHttpActionResult> UploadUpdaterPackage()
+        public async Task<IHttpActionResult> Upload()
         {
             try
             {
@@ -89,7 +87,7 @@ namespace Telimena.WebApp.Controllers.Api
                 HttpPostedFile uploadedFile = System.Web.HttpContext.Current.Request.Files.Count > 0 ? System.Web.HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    var pkg = await this.work.UpdaterRepository.StorePackageAsync(request.PackageVersion, uploadedFile.InputStream, this.fileSaver);
+                    var pkg = await this.work.ToolkitDataRepository.StorePackageAsync(request.PackageVersion, uploadedFile.InputStream, this.fileSaver);
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }

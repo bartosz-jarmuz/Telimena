@@ -5,10 +5,10 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
     using Core.Models;
     using Repository;
 
-    public interface ITelimenaToolkitDataUnitOfWork
+    public interface IToolkitDataUnitOfWork
     {
         IUpdaterRepository UpdaterRepository { get; }
-        ITelimenaToolkitDataRepository TelimenaToolkitDataRepository { get; }
+        IToolkitDataRepository ToolkitDataRepository { get; }
         Task CompleteAsync();
     }
 }

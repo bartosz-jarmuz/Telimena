@@ -6,24 +6,24 @@
     using Repository;
     using Repository.Implementation;
 
-    public class TelimenaToolkitDataUnitOfWork : ITelimenaToolkitDataUnitOfWork
+    public class ToolkitDataUnitOfWork : IToolkitDataUnitOfWork
     {
         private readonly TelimenaContext context;
 
-        internal TelimenaToolkitDataUnitOfWork() : this(new TelimenaContext())
+        internal ToolkitDataUnitOfWork() : this(new TelimenaContext())
         {
         }
 
-        public TelimenaToolkitDataUnitOfWork(TelimenaContext context)
+        public ToolkitDataUnitOfWork(TelimenaContext context)
         {
             this.context = context;
-            this.UpdaterRepository = new UpdaterRepository(context, new LocalFileSaver(), new LocalFileRetriever());
-            this.TelimenaToolkitDataRepository = new TelimenaToolkitDataRepository(context);
+            this.UpdaterRepository = new UpdaterRepository(context);
+            this.ToolkitDataRepository = new ToolkitDataRepository(context);
         }
 
 
         public IUpdaterRepository UpdaterRepository { get; }
-        public ITelimenaToolkitDataRepository TelimenaToolkitDataRepository { get; }
+        public IToolkitDataRepository ToolkitDataRepository { get; }
 
         public async Task CompleteAsync()
         {

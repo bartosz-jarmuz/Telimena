@@ -85,10 +85,9 @@ namespace Telimena.WebApp.Controllers.Api
             var assemblyVersion = programAssembly.GetVersion(programVersion);
             if (toolkitData == null)
             {
-                toolkitData = new TelimenaToolkitData()
+                toolkitData = new TelimenaToolkitData(toolkitVersion)
                 {
-                    Version = toolkitVersion
-                    ,ReleaseDate = DateTime.UtcNow
+                    ReleaseDate = DateTime.UtcNow
                 };
             }
             assemblyVersion.ToolkitData = toolkitData;

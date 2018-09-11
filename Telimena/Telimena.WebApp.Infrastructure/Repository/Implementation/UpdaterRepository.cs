@@ -19,15 +19,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
     using Database;
     #endregion
 
-    internal class UpdaterRepository : Repository<UpdaterInfo>, IUpdaterRepository
+    internal class UpdaterRepository : Repository<UpdaterPackageInfo>, IUpdaterRepository
     {
-        private IFileSaver FileSaver { get; }
-        private IFileRetriever FileRetriever { get; }
+       
 
-        public UpdaterRepository(DbContext dbContext, IFileSaver fileSaver, IFileRetriever fileRetriever) : base(dbContext)
+        public UpdaterRepository(DbContext dbContext) : base(dbContext)
         {
-            this.FileSaver = fileSaver;
-            this.FileRetriever = fileRetriever;
             this.TelimenaContext = dbContext as TelimenaContext;
         }
 
@@ -38,29 +35,29 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         protected TelimenaContext TelimenaContext { get; }
 
-        public async Task<UpdaterInfo> StorePackageAsync(string version, Stream fileStream)
+        public async Task<UpdaterPackageInfo> StorePackageAsync(string version, Stream fileStream, IFileSaver fileSaver)
         {
             if (!Version.TryParse(version, out Version _))
             {
                 throw new InvalidOperationException("Version string not valid");
             }
 
-            var pkg = new UpdaterInfo( version, fileStream.Length);
+            var pkg = new UpdaterPackageInfo( version, fileStream.Length);
 
             this.TelimenaContext.UpdaterInfo.Add(pkg);
 
-            await this.FileSaver.SaveFile(pkg, fileStream);
+            await fileSaver.SaveFile(pkg, fileStream);
 
             return pkg;
         }
 
-        public async Task<byte[]> GetPackage(int packageId)
+        public async Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever)
         {
             var pkg = await this.TelimenaContext.UpdaterInfo.FirstOrDefaultAsync(x => x.Id == packageId);
 
             if (pkg != null)
             {
-                return await this.FileRetriever.GetFile(pkg);
+                return await fileRetriever.GetFile(pkg);
             }
 
             return null;
