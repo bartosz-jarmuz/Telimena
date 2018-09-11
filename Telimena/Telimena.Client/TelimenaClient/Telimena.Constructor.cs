@@ -21,8 +21,12 @@
         ///     Leave null, unless you want to use different assembly as the main one for program name,
         ///     version etc
         /// </param>
-        public Telimena(Assembly mainAssembly = null, string telemetryApiBaseUrl = DefaultApiUri)
+        public Telimena(Assembly mainAssembly = null, Uri telemetryApiBaseUrl = null)
         {
+            if (telemetryApiBaseUrl == null)
+            {
+                telemetryApiBaseUrl = defaultApiUri;
+            }
             Tuple<ProgramInfo, UserInfo, string> data = Telimena.LoadProgramData(mainAssembly);
             this.ProgramInfo = data.Item1;
             this.UserInfo = data.Item2;
@@ -30,13 +34,17 @@
 
             this.HttpClient = new TelimenaHttpClient(new HttpClient()
             {
-                BaseAddress = new Uri(telemetryApiBaseUrl)
+                BaseAddress = telemetryApiBaseUrl
             });
             this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
         }
 
-        public Telimena(ProgramInfo programInfo, string telemetryApiBaseUrl = DefaultApiUri)
+        public Telimena(ProgramInfo programInfo, Uri telemetryApiBaseUrl = null)
         {
+            if (telemetryApiBaseUrl == null)
+            {
+                telemetryApiBaseUrl = defaultApiUri;
+            }
             Tuple<ProgramInfo, UserInfo, string> data = Telimena.LoadProgramData(programInfo: programInfo);
             this.ProgramInfo = data.Item1;
             this.UserInfo = data.Item2;
@@ -44,7 +52,7 @@
 
             this.HttpClient = new TelimenaHttpClient(new HttpClient()
             {
-                BaseAddress = new Uri(telemetryApiBaseUrl)
+                BaseAddress = telemetryApiBaseUrl
             });
             this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
         }

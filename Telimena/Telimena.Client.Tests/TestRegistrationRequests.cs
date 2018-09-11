@@ -25,8 +25,9 @@ namespace Telimena.Client.Tests
                 RegistrationResponse result = function();
                 Assert.Fail("Exception expected");
             }
-            catch (AggregateException ex)
+            catch (Exception e)
             {
+                var ex = e as TelimenaException;
                 Assert.AreEqual(2, ex.InnerExceptions.Count);
                 Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
                 RegistrationRequest jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);

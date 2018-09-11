@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Telimena.Client
@@ -13,7 +14,7 @@ namespace Telimena.Client
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        private const string DefaultApiUri = "http://localhost:7757/";
+        private static readonly Uri defaultApiUri = new Uri( "http://localhost:7757/");
 
         private bool IsInitialized { get; set; }
         internal ITelimenaSerializer Serializer { get; set; } = new TelimenaSerializer();

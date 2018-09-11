@@ -55,8 +55,10 @@ namespace Telimena.Client.Tests
                 StatisticsUpdateResponse result = Client.Telimena.SendUsageReport(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
-            catch (AggregateException ex)
+            catch (Exception e)
             {
+                TelimenaException ex = e as TelimenaException;
+
                 Assert.AreEqual(2, ex.InnerExceptions.Count);
                 Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
                 RegistrationRequest jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);
@@ -71,16 +73,67 @@ namespace Telimena.Client.Tests
                 StatisticsUpdateResponse result = Client.Telimena.SendUsageReport(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
-            catch (AggregateException ex)
+            catch (Exception e)
             {
+                TelimenaException ex = e as TelimenaException;
+
                 Assert.AreEqual(2, ex.InnerExceptions.Count);
                 Assert.AreEqual("api/Statistics/UpdateProgramStatistics", ex.InnerExceptions[0].Message);
                 StatisticsUpdateRequest jObj = JsonConvert.DeserializeObject<StatisticsUpdateRequest>(ex.InnerExceptions[1].Message);
                 Assert.AreEqual(1, jObj.ProgramId);
                 Assert.AreEqual(2, jObj.UserId);
                 Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.FunctionName);
-                Assert.AreEqual("1.0.0.0", jObj.Version);
+                Assert.AreEqual("1.0.0.1", jObj.Version);
             }
+        }
+
+        [Test]
+        public void Test_StaticClient_IsProperFunctionRecorded()
+        {
+            var client = this.GetMockClientForStaticClient_FirstRequestPass();
+            try
+            {
+                Telimena.SendUsageReport(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
+                Assert.Fail("Error expected");
+            }
+            catch (Exception e)
+            {
+                TelimenaException ex = e as TelimenaException;
+                StatisticsUpdateRequest jObj = ex.RequestObjects[1].Value as StatisticsUpdateRequest;
+                Assert.AreEqual("Test_StaticClient_IsProperFunctionRecorded", jObj.FunctionName);
+            }
+
+            try
+            {
+                Telimena.SendUsageReport(suppressAllErrors: false).GetAwaiter().GetResult();
+                Assert.Fail("Error expected");
+            }
+            catch (Exception e)
+            {
+                TelimenaException ex = e as TelimenaException;
+                Assert.IsTrue(ex.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
+            }
+
+
+
+            var result = Telimena.SendUsageReport().GetAwaiter().GetResult();
+            TelimenaException err = result.Error as TelimenaException;
+            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
+
+            result = Telimena.SendUsageReport("BOOO").GetAwaiter().GetResult();
+            err = result.Error as TelimenaException;
+            Assert.IsTrue(err.Message.Contains("[BOOO]"));
+
+            result = Telimena.SendUsageReport(new ProgramInfo()).GetAwaiter().GetResult();
+            err = result.Error as TelimenaException;
+            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
+
+            result = Telimena.SendUsageReport(telemetryApiBaseUrl: new Uri("http://localhost:666")).GetAwaiter().GetResult();
+            err = result.Error as TelimenaException;
+            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
+
+
+           
         }
 
 
@@ -98,12 +151,15 @@ namespace Telimena.Client.Tests
                 StatisticsUpdateResponse result = Client.Telimena.SendUsageReport(client.Object, pi, suppressAllErrors: false).GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
-            catch (AggregateException ex)
+            catch (Exception e)
             {
+                TelimenaException ex = e as TelimenaException;
+
                 Assert.AreEqual(2, ex.InnerExceptions.Count);
                 Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
                 RegistrationRequest jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);
                 Assert.AreEqual(true, jObj.SkipUsageIncrementation);
+
                 pi.ThrowIfPublicPropertiesNotEqual(jObj.ProgramInfo, true);
             }
         }

@@ -30,14 +30,15 @@ namespace Telimena.Client
             }
             catch (Exception ex)
             {
+                TelimenaException exception = new TelimenaException($"Error occurred while sending check for updates request", ex,
+                    new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl()));
                 if (!this.SuppressAllErrors)
                 {
-                    throw;
+                    throw exception;
                 }
-
-                return new UpdateCheckResult
+                return new UpdateCheckResult()
                 {
-                    Error = ex
+                    Error = exception
                 };
             }
         }
@@ -84,10 +85,11 @@ namespace Telimena.Client
         /// <returns></returns>
         public async Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null)
         {
+            StatisticsUpdateRequest request = null;
             try
             {
                 await this.InitializeIfNeeded();
-                StatisticsUpdateRequest request = new StatisticsUpdateRequest
+                request = new StatisticsUpdateRequest
                 {
                     ProgramId = this.ProgramId,
                     UserId = this.UserId,
@@ -99,16 +101,18 @@ namespace Telimena.Client
             }
             catch (Exception ex)
             {
+                TelimenaException exception = new TelimenaException($"Error occurred while sending update [{functionName}] statistics request", ex,
+                    new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), request));
                 if (!this.SuppressAllErrors)
                 {
-                    throw;
+                    throw exception;
                 }
-
-                return new StatisticsUpdateResponse
+                return new StatisticsUpdateResponse()
                 {
-                    Error = ex
+                    Error = exception
                 };
             }
+           
         }
 
 
@@ -122,21 +126,27 @@ namespace Telimena.Client
                     new UpdateInstaller());
                 await handler.HandleUpdates(response, betaVersionSettings);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                TelimenaException exception = new TelimenaException($"Error occurred while handling updates", ex,
+                    new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl()));
                 if (!this.SuppressAllErrors)
                 {
-                    throw;
+                    throw exception;
                 }
             }
         }
 
+        private string GetUpdateRequestUrl()
+        {
+            return ApiRoutes.GetUpdatesInfo + "?programId=" + this.ProgramId + "&version=" + this.ProgramVersion;
+        }
 
         protected async Task<UpdateResponse> GetUpdateResponse()
         {
             await this.InitializeIfNeeded();
             string responseContent =
-                await this.Messenger.SendGetRequest(ApiRoutes.GetUpdatesInfo + "?programId=" + this.ProgramId + "&version=" + this.ProgramVersion);
+                await this.Messenger.SendGetRequest(this.GetUpdateRequestUrl());
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
@@ -148,9 +158,10 @@ namespace Telimena.Client
         /// <returns></returns>
         protected internal async Task<RegistrationResponse> RegisterClient(bool skipUsageIncrementation = false)
         {
+            RegistrationRequest request = null;
             try
             {
-                RegistrationRequest request = new RegistrationRequest
+                request = new RegistrationRequest
                 {
                     ProgramInfo = this.ProgramInfo,
                     TelimenaVersion = this.TelimenaVersion,
@@ -163,16 +174,18 @@ namespace Telimena.Client
                 this.ProgramId = response.ProgramId;
                 return response;
             }
+
             catch (Exception ex)
             {
+                TelimenaException exception = new TelimenaException($"Error occurred while sending registration request", ex,
+                    new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), request));
                 if (!this.SuppressAllErrors)
                 {
-                    throw;
+                    throw exception;
                 }
-
-                return new RegistrationResponse
+                return new RegistrationResponse()
                 {
-                    Error = ex
+                    Error = exception
                 };
             }
         }

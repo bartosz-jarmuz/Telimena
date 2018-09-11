@@ -14,7 +14,7 @@ namespace TelimenaTestSandboxApp
         public Form1()
         {
             this.InitializeComponent();
-            this.teli = new Telimena(telemetryApiBaseUrl: this.apiUrlTextBox.Text);
+            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
         }
 
 
@@ -51,7 +51,7 @@ namespace TelimenaTestSandboxApp
 
         private void setAppButton_Click(object sender, EventArgs e)
         {
-            this.teli = new Telimena(telemetryApiBaseUrl: this.apiUrlTextBox.Text);
+            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
             if (!string.IsNullOrEmpty(this.appNameTextBox.Text))
             {
                 this.teli.ProgramInfo = new ProgramInfo()

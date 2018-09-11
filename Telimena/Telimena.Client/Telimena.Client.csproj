@@ -48,6 +48,7 @@
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
     <Compile Include="TelimenaClient\BetaVersionSettings.cs" />
+    <Compile Include="TelimenaException.cs" />
     <Compile Include="TelimenaClient\Updates\DefaultWpfInputReceiver.cs" />
     <Compile Include="TelimenaClient\Updates\IInstallUpdates.cs" />
     <Compile Include="TelimenaClient\Updates\IReceiveUserInput.cs" />

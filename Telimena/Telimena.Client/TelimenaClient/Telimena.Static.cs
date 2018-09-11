@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Telimena.Client
 {
@@ -16,31 +17,50 @@ namespace Telimena.Client
     /// </summary>
     public partial class Telimena : ITelimena
     {
-
-
-       /// <summary>
-       /// Sends the usage report. The static method first calls a 'register' endpoint, without incrementing the usage, then sends the usage report <para/>
-       /// Static method is approximately two times slower than instance based
-       /// </summary>
-       /// <param name="telemetryApiBaseUrl">Base url of the telemetry api</param>
-       /// <param name="mainAssembly"></param>
-       /// <param name="suppressAllErrors"></param>
-       /// <param name="functionName"></param>
-       /// <returns></returns>
-        public static Task<StatisticsUpdateResponse> SendUsageReport(string telemetryApiBaseUrl = Telimena.DefaultApiUri, Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
+        /// <summary>
+        /// Sends the usage report. The static method first calls a 'register' endpoint, without incrementing the usage, then sends the usage report <para/>
+        /// Static method is approximately two times slower than instance based
+        /// </summary>
+        /// <param name="functionName"></param>
+        /// <param name="telemetryApiBaseUrl">Base url of the telemetry api</param>
+        /// <param name="mainAssembly"></param>
+        /// <param name="suppressAllErrors"></param>
+        /// <returns></returns>
+        public static Task<StatisticsUpdateResponse> SendUsageReport([CallerMemberName] string functionName = null, Uri telemetryApiBaseUrl = null,
+            Assembly mainAssembly = null, bool suppressAllErrors = true)
         {
+            if (telemetryApiBaseUrl == null)
+            {
+                telemetryApiBaseUrl = defaultApiUri;
+            }
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient()
             {
-                BaseAddress = new Uri(telemetryApiBaseUrl)
+                BaseAddress = telemetryApiBaseUrl
             });
             return Telimena.SendUsageReport(httpClient, null, mainAssembly, suppressAllErrors, functionName);
         }
 
-        public static Task<StatisticsUpdateResponse> SendUsageReport(ProgramInfo programInfo, string telemetryApiBaseUrl = Telimena.DefaultApiUri, Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
+
+
+        /// <summary>
+        /// Sends the usage report. The static method first calls a 'register' endpoint, without incrementing the usage, then sends the usage report <para/>
+        /// Static method is approximately two times slower than instance based
+        /// </summary>
+        /// <param name="programInfo"></param>
+        /// <param name="telemetryApiBaseUrl"></param>
+        /// <param name="mainAssembly"></param>
+        /// <param name="suppressAllErrors"></param>
+        /// <param name="functionName"></param>
+        /// <returns></returns>
+        public static Task<StatisticsUpdateResponse> SendUsageReport(ProgramInfo programInfo, Uri telemetryApiBaseUrl = null, Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
         {
+            if (telemetryApiBaseUrl == null)
+            {
+                telemetryApiBaseUrl = defaultApiUri;
+            }
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient()
             {
-                BaseAddress = new Uri(telemetryApiBaseUrl)
+                BaseAddress = telemetryApiBaseUrl
             });
             return Telimena.SendUsageReport(httpClient, programInfo, mainAssembly, suppressAllErrors, functionName);
         }
@@ -57,6 +77,8 @@ namespace Telimena.Client
         /// <returns></returns>
         internal static async Task<StatisticsUpdateResponse> SendUsageReport(ITelimenaHttpClient httpClient, ProgramInfo programInfo= null, Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
         {
+            RegistrationRequest registrationRequest = null;
+            StatisticsUpdateRequest updateRequest = null;
             try
             {
                 Tuple<ProgramInfo, UserInfo, string> data = Telimena.LoadProgramData(mainAssembly, programInfo);
@@ -65,7 +87,7 @@ namespace Telimena.Client
                 TelimenaSerializer serializer = new TelimenaSerializer();
                 Messenger messenger = new Messenger(serializer, httpClient, suppressAllErrors);
 
-                RegistrationRequest registrationRequest = new RegistrationRequest()
+                registrationRequest = new RegistrationRequest()
                 {
                     ProgramInfo = data.Item1,
                     TelimenaVersion = data.Item3,
@@ -75,7 +97,7 @@ namespace Telimena.Client
                 string responseContent = await messenger.SendPostRequest(ApiRoutes.RegisterClient, registrationRequest);
                 RegistrationResponse registrationResponse = serializer.Deserialize<RegistrationResponse>(responseContent);
 
-                StatisticsUpdateRequest updateRequest = new StatisticsUpdateRequest()
+                updateRequest = new StatisticsUpdateRequest()
                 {
                     ProgramId = registrationResponse.ProgramId,
                     UserId = registrationResponse.UserId,
@@ -87,13 +109,16 @@ namespace Telimena.Client
             }
             catch (Exception ex)
             {
+                var exception = new TelimenaException($"Error occurred while sending update [{functionName}] statistics request", ex, 
+                    new KeyValuePair<Type, object>(typeof(RegistrationRequest),registrationRequest),
+                    new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), updateRequest));
                 if (!suppressAllErrors)
                 {
-                    throw;
+                    throw exception;
                 }
                 return new StatisticsUpdateResponse()
                 {
-                    Error = ex
+                    Error = exception
                 };
             }
         }
