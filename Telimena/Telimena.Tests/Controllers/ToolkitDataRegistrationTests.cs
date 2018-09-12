@@ -44,7 +44,6 @@ namespace Telimena.Tests
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
 
             Assert.AreEqual("1.3.0.0", prg.PrimaryAssembly.LatestVersion.ToolkitData.Version);
-            Assert.AreEqual("1.2.3.4",toolkitData.RelatedAssemblies.Single().Version );
 
             int testProgPrimaryAssId = prg.PrimaryAssembly.Id;
             //now, different assembly  will use same toolkit version
@@ -58,10 +57,7 @@ namespace Telimena.Tests
             int otherProgPrimaryAssId = prg.PrimaryAssembly.Id;
 
             Assert.AreEqual("1.3.0.0", prg.PrimaryAssembly.LatestVersion.ToolkitData.Version);
-            Assert.AreEqual(2, toolkitData.RelatedAssemblies.Count);
-            Assert.IsNotNull(toolkitData.RelatedAssemblies.SingleOrDefault(x=>x.Version == "1.2.3.4" && x.Id == testProgPrimaryAssId));
-            Assert.IsNotNull(toolkitData.RelatedAssemblies.SingleOrDefault(x=>x.Version == "2.0.0" && x.Id == otherProgPrimaryAssId));
-
+            
             //now a new version of an assembly will use the same toolkit version
             request.ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: "3.0.0");
 
@@ -73,11 +69,7 @@ namespace Telimena.Tests
             Helpers.GetProgramAndUser(this.Context, "OtherProg", "NewGuy", out prg, out usr);
 
             Assert.AreEqual("1.3.0.0", prg.PrimaryAssembly.LatestVersion.ToolkitData.Version);
-            Assert.AreEqual(3, toolkitData.RelatedAssemblies.Count);
-            Assert.IsNotNull(toolkitData.RelatedAssemblies.SingleOrDefault(x => x.Version == "1.2.3.4" && x.Id == testProgPrimaryAssId));
-            Assert.IsNotNull(toolkitData.RelatedAssemblies.SingleOrDefault(x => x.Version == "2.0.0" && x.Id == otherProgPrimaryAssId));
-            Assert.IsNotNull(toolkitData.RelatedAssemblies.SingleOrDefault(x => x.Version == "3.0.0" && x.Id == prg.PrimaryAssembly.Versions.Last().Id));
-
+      
 
             //now an even newer version of an assembly will use a new toolkit version
             request.ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: "4.0.0");
@@ -93,14 +85,7 @@ namespace Telimena.Tests
             Helpers.GetProgramAndUser(this.Context, "OtherProg", "NewGuy", out prg, out usr);
 
             Assert.AreEqual("1.3.0.0", prg.PrimaryAssembly.LatestVersion.ToolkitData.Version);
-            Assert.AreEqual(3, toolkitData.RelatedAssemblies.Count);
-            Assert.IsNotNull(toolkitData.RelatedAssemblies.SingleOrDefault(x => x.Version == "1.2.3.4" && x.Id == testProgPrimaryAssId));
-            Assert.IsNotNull(toolkitData.RelatedAssemblies.SingleOrDefault(x => x.Version == "2.0.0" && x.Id == otherProgPrimaryAssId));
-            Assert.IsNotNull(toolkitData.RelatedAssemblies.SingleOrDefault(x => x.Version == "3.0.0"));
-
-            Assert.AreEqual(1, newToolkitData.RelatedAssemblies.Count);
-            Assert.IsNotNull(newToolkitData.RelatedAssemblies.SingleOrDefault(x => x.Version == "4.0.0" && x.Id == prg.PrimaryAssembly.Versions.Last().Id));
-
+      
         }
 
     }

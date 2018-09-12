@@ -223,7 +223,7 @@
                             <th>Version</th>
                             <th>Uploaded Date</th>
                             <th>File Size</th>
-                            <th>Toolkit Version</th>
+                            <th>Minimum toolkit Version</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -236,7 +236,7 @@
                                 <td><a href="/api@(Url.Action("GetUpdater", "Updater") + "?id=" + pkg.Id)">@pkg.Version</a></td>
                                 <td>@pkg.UploadedDate</td>
                                 <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
-                                <td>@(pkg.ToolkitData?.Version)</td>
+                                <td>@(pkg.MinimumRequiredToolkitVersion)</td>
                             </tr>
                         }
                     </tbody>

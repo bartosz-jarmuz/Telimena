@@ -14,9 +14,7 @@ namespace Telimena.WebApp.Core.Models
         }
         public int Id { get; set; }
         public string Version { get; set; }
-        public DateTime ReleaseDate { get; set; }
         public TelimenaPackageInfo TelimenaPackageInfo { get; set; }
 
-        public virtual RestrictedAccessCollection<AssemblyVersion> RelatedAssemblies { get; set; } = new List<AssemblyVersion>();
     }
 }

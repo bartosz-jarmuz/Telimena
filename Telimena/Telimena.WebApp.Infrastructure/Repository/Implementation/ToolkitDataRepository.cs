@@ -31,7 +31,6 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             {
                 data = new TelimenaToolkitData(version)
                 {
-                    ReleaseDate = DateTime.UtcNow
                 };
                 this.TelimenaContext.TelimenaToolkitData.Add(data);
             }

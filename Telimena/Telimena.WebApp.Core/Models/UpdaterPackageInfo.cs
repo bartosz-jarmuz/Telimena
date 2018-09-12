@@ -1,4 +1,6 @@
-﻿namespace Telimena.WebApp.Core.Models
+﻿using System;
+
+namespace Telimena.WebApp.Core.Models
 {
     public class UpdaterPackageInfo : RepositoryFileBase, IRepositoryFile
     {
@@ -12,6 +14,6 @@
         public int Id { get; set; }
         public string Version { get; set; }
 
-        public virtual TelimenaToolkitData ToolkitData { get; set; }
+        public string MinimumRequiredToolkitVersion { get; set; }
     }
 }
