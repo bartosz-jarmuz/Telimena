@@ -48,7 +48,7 @@ namespace Telimena.Client
             public static DirectoryInfo GetUpdatesSubfolder(string basePath, string updatesFolderName, IEnumerable<UpdatePackageData> packagesToDownload)
             {
                 DirectoryInfo dir = GetUpdatesParentFolder(basePath, updatesFolderName);
-                UpdatePackageData latestPkg = packagesToDownload.OrderBy(x => x.Version, new VersionStringComparer()).First();
+                UpdatePackageData latestPkg = packagesToDownload.OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).First();
                 return new DirectoryInfo(Path.Combine(dir.FullName, latestPkg.Version));
             }
         }

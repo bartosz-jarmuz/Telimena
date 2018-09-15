@@ -38,7 +38,7 @@
         public DbSet<ProgramAssembly> ProgramAssemblies { get; set; }
         public DbSet<AssemblyVersion> Versions { get; set; }
         public DbSet<TelimenaToolkitData> TelimenaToolkitData { get; set; }
-        public DbSet<UpdatePackageInfo> UpdatePackages { get; set; }
+        public DbSet<ProgramUpdatePackageInfo> UpdatePackages { get; set; }
         public DbSet<ProgramPackageInfo> ProgramPackages { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

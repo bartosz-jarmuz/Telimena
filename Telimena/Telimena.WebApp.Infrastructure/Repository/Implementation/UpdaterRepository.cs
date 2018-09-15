@@ -35,14 +35,46 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         protected TelimenaContext TelimenaContext { get; }
 
-        public async Task<UpdaterPackageInfo> StorePackageAsync(string version, Stream fileStream, IFileSaver fileSaver)
+        public async Task<UpdaterPackageInfo> GetNewestCompatibleUpdater(string version, string toolkitVersion, bool includingBeta)
         {
-            if (!Version.TryParse(version, out Version _))
+            ObjectValidator.Validate(()=>Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
+            ObjectValidator.Validate(()=>Version.TryParse(toolkitVersion, out _), new ArgumentException($"[{toolkitVersion}] is not a valid version string"));
+
+            UpdaterPackageInfo current = await this.TelimenaContext.UpdaterInfo.FirstOrDefaultAsync(x => x.Version == version);
+
+            List<UpdaterPackageInfo> newerOnes;
+            if (current != null)
             {
-                throw new InvalidOperationException("Version string not valid");
+                newerOnes = (await this.TelimenaContext.UpdaterInfo.Where(x => x.Id > current.Id).ToListAsync()).OrderByDescending(x=>x.Version, new TelimenaVersionStringComparer()).ToList();
+            }
+            else
+            {
+                newerOnes = (await this.TelimenaContext.UpdaterInfo.ToListAsync()).Where(x=>x.Version.IsNewerVersionThan(version)).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
             }
 
-            var pkg = new UpdaterPackageInfo( version, fileStream.Length);
+            if (newerOnes.Any())
+            {
+                List<UpdaterPackageInfo> compatibleOnes = newerOnes.Where(x => !x.MinimumRequiredToolkitVersion.IsNewerVersionThan(toolkitVersion)).ToList();
+                if (includingBeta)
+                {
+                    return compatibleOnes.FirstOrDefault();
+                }
+                else
+                {
+                    return compatibleOnes.FirstOrDefault(x => !x.IsBeta);
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<UpdaterPackageInfo> StorePackageAsync(string version, string minimumRequiredToolkitVersion, Stream fileStream, IFileSaver fileSaver)
+        {
+            ObjectValidator.Validate(() => Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
+
+            var pkg = new UpdaterPackageInfo( version, fileStream.Length, minimumRequiredToolkitVersion);
 
             this.TelimenaContext.UpdaterInfo.Add(pkg);
 

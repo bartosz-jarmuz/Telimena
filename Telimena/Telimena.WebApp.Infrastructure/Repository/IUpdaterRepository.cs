@@ -9,10 +9,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
     public interface IUpdaterRepository : IRepository<UpdaterPackageInfo>
     {
-        Task<UpdaterPackageInfo> StorePackageAsync(string version, Stream fileStream, IFileSaver fileSaver);
+        Task<UpdaterPackageInfo> StorePackageAsync(string version, string minimumRequiredToolkitVersion, Stream fileStream, IFileSaver fileSaver);
 
         Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever);
         Task<int> Save();
 
+        Task<UpdaterPackageInfo> GetNewestCompatibleUpdater(string version, string toolkitVersion, bool includingBeta);
     }
 }

@@ -9,7 +9,7 @@ namespace Telimena.WebApp.Models.ProgramDetails
         public string ProgramName { get; set; }
         public int ProgramId { get; set; }
 
-        public ICollection<UpdatePackageInfo> UpdatePackages { get; set; } = new List<UpdatePackageInfo>(); //todo replace with VM
+        public ICollection<ProgramUpdatePackageInfo> UpdatePackages { get; set; } = new List<ProgramUpdatePackageInfo>(); //todo replace with VM
 
         public string ProgramDownloadUrl { get; set; }
         public ProgramPackageInfo ProgramPackageInfo { get; set; }

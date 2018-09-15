@@ -32,7 +32,7 @@ namespace Telimena.Tests
     }
 
     [TestFixture]
-    public class RegisterProgramControllerTests : StaticContextIntegrationTestsBase<TelimenaContext>
+    public class RegisterProgramControllerTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
     {
         protected override Action SeedAction => () => TelimenaDbInitializer.SeedUsers(this.Context);
 

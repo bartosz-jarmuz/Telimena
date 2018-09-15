@@ -19,7 +19,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
     using Database;
     #endregion
 
-    internal class UpdatePackageRepository : Repository<UpdatePackageInfo>, IUpdatePackageRepository
+    internal class UpdatePackageRepository : Repository<ProgramUpdatePackageInfo>, IUpdatePackageRepository
     {
         private IFileSaver FileSaver { get; }
         private IFileRetriever FileRetriever { get; }
@@ -33,7 +33,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         protected TelimenaContext TelimenaContext { get; }
 
-        public async Task<UpdatePackageInfo> StorePackageAsync(Program program, string version, Stream fileStream)
+        public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string version, Stream fileStream)
         {
             if (!Version.TryParse(version, out Version _))
             {
@@ -41,7 +41,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
 
             string fileName = program.Name + " Update v. " + version + ".zip";  
-            var pkg = new UpdatePackageInfo(fileName, program.Id, version, fileStream.Length);
+            var pkg = new ProgramUpdatePackageInfo(fileName, program.Id, version, fileStream.Length);
 
             this.TelimenaContext.UpdatePackages.Add(pkg);
 
@@ -63,18 +63,44 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return null;
         }
 
-        public Task<List<UpdatePackageInfo>> GetAllPackages(int programId)
+        public Task<List<ProgramUpdatePackageInfo>> GetAllPackages(int programId)
         {
             return this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
         }
 
-        public async Task<List<UpdatePackageInfo>> GetAllPackagesNewerThan(int programId, string version)
+        public async Task<List<ProgramUpdatePackageInfo>> GetAllPackagesNewerThan(int programId, string version)
         {
-            return await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId && x.Version.IsNewerVersionThan(version)).OrderBy(x => x.Version, new VersionStringComparer()).ToListAsync();
+            var currentVersion = await this.TelimenaContext.UpdatePackages.FirstOrDefaultAsync(x => x.Version == version);
+
+            if (currentVersion != null)
+            {
+                return (await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId && x.Id > currentVersion.Id).ToListAsync()).OrderByDescending(x => x.Version, new VersionStringComparer()).ToList();
+            }
+            else
+            {
+                var packages = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
+                return packages.Where(x=>x.Version.IsNewerVersionThan(version)).OrderByDescending(x => x.Version, new VersionStringComparer()).ToList();
+            }
+
+
 
         }
 
-        public Task<UpdatePackageInfo> GetUpdatePackageInfo(int id)
+        public System.Linq.Expressions.Expression<Func<ProgramUpdatePackageInfo, bool>> IsNewerVersion( string v2)
+        {
+
+            return p =>
+                p.Version.IsNewerVersionThan(v2);
+
+                //(string.IsNullOrEmpty(name) ||
+                // p.registeredName.ToLower().Contains(name.ToLower()) ||
+                // p.alias.ToLower().Contains(name.ToLower()) ||
+                // p.charityId.ToLower().Contains(name.ToLower())) &&
+                //(string.IsNullOrEmpty(referenceNumber) ||
+                // p.charityReference.ToLower().Contains(referenceNumber.ToLower()));
+        }
+
+        public Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(int id)
         {
             return this.TelimenaContext.UpdatePackages.FirstOrDefaultAsync(x => x.Id == id);
         }

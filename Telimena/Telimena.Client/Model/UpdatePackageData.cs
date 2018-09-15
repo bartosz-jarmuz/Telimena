@@ -2,6 +2,7 @@
 {
     public class UpdatePackageData
     {
+        public UpdatePackageData() { }
         public string StoredFilePath { get; set; }
 
         public string FileName { get; set; }

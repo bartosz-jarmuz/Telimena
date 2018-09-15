@@ -1,9 +1,9 @@
 ﻿namespace Telimena.WebApp.Core.Models
 {
-    public class UpdatePackageInfo : RepositoryFileBase, IRepositoryFile
+    public class ProgramUpdatePackageInfo : RepositoryFileBase, IRepositoryFile
     {
-        protected UpdatePackageInfo() : base(){ }
-        public UpdatePackageInfo(string fileName, int programId, string version, long fileSizeBytes) : base(fileName, fileSizeBytes)
+        protected ProgramUpdatePackageInfo() : base(){ }
+        public ProgramUpdatePackageInfo(string fileName, int programId, string version, long fileSizeBytes) : base(fileName, fileSizeBytes)
         {
             this.ProgramId = programId;
             this.Version = version;

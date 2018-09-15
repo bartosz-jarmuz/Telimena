@@ -20,7 +20,7 @@
     using Assert = NUnit.Framework.Assert;
 
     [TestClass()]
-    public class AccountControllerTests : StaticContextIntegrationTestsBase<TelimenaContext>
+    public class AccountControllerTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
     {
 
         public AccountControllerTests()

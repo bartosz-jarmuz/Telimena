@@ -11,7 +11,7 @@ using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 namespace Telimena.Tests
 {
     [TestFixture]
-    public class ToolkitDataRegistrationTests : IntegrationTestsBase<TelimenaContext>
+    public class ToolkitDataRegistrationTests : IntegrationTestsContextNotShared<TelimenaContext>
     {
         public ToolkitDataRegistrationTests()
         {

@@ -2,15 +2,15 @@
 
 namespace Telimena
 {
-    public class VersionStringComparer : IComparer<string>
+    public class TelimenaVersionStringComparer : IComparer<string>
     {
         public int Compare(string firstOne, string secondOne)
         {
             if (firstOne.IsNewerVersionThan(secondOne))
             {
-                return -1;
+                return 1;
             }
-            return firstOne == secondOne ? 0 : 1;
+            return firstOne == secondOne ? 0 : -1;
         }
     }
 }

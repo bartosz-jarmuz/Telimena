@@ -7,7 +7,10 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using AutoMapper;
+using DotNetLittleHelpers;
 using Newtonsoft.Json;
+using Telimena.Client;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -79,6 +82,41 @@ namespace Telimena.WebApp.Controllers.Api
             return await this.GetUpdater(updaterInfo.Id);
         }
 
+        [System.Web.Http.AllowAnonymous]
+        [System.Web.Http.HttpGet]
+        public async Task<UpdateResponse> CheckForUpdate(string version, string toolkitVersion)
+        {
+           
+            if (!Version.TryParse(version, out _))
+            {
+                return new UpdateResponse() {Error = new ArgumentException($"[{version}] is not a valid version string")};
+            }
+            if (!Version.TryParse(toolkitVersion, out _))
+            {
+                return new UpdateResponse() {Error = new ArgumentException($"[{toolkitVersion}] is not a valid version string")};
+            }
+
+            UpdaterPackageInfo updaterInfoMaybeBeta = await this.work.UpdaterRepository.GetNewestCompatibleUpdater(version, toolkitVersion, true);
+            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetNewestCompatibleUpdater(version, toolkitVersion, false);
+            var response = new UpdateResponse();
+            if (updaterInfo != null)
+            {
+                response.UpdatePackages = new[] {Mapper.Map<UpdatePackageData>(updaterInfo)};
+                response.UpdatePackagesIncludingBeta = new[] {Mapper.Map<UpdatePackageData>(updaterInfo)};
+            }
+
+            if (updaterInfoMaybeBeta != null)
+            {
+                response.UpdatePackagesIncludingBeta = new[] { Mapper.Map<UpdatePackageData>(updaterInfoMaybeBeta) };
+            }
+
+            return response;
+
+        }
+
+       
+
+
         [System.Web.Http.HttpPost]
         public async Task<IHttpActionResult> UploadUpdaterPackage()
         {
@@ -89,7 +127,7 @@ namespace Telimena.WebApp.Controllers.Api
                 HttpPostedFile uploadedFile = System.Web.HttpContext.Current.Request.Files.Count > 0 ? System.Web.HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    var pkg = await this.work.UpdaterRepository.StorePackageAsync(request.PackageVersion, uploadedFile.InputStream, this.fileSaver);
+                    var pkg = await this.work.UpdaterRepository.StorePackageAsync(request.PackageVersion,"0.0.0.0", uploadedFile.InputStream, this.fileSaver);
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }

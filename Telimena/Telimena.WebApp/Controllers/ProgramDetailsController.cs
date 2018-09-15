@@ -40,7 +40,7 @@
 
             model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) + this.@Url.HttpRouteUrl("DownloadAppRoute", new {  name = model.ProgramName });
 
-            List<UpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(model.ProgramId);
+            List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(model.ProgramId);
             model.UpdatePackages = packages;
 
             model.ProgramPackageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(model.ProgramId);

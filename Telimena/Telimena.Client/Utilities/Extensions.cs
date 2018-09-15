@@ -10,7 +10,7 @@ namespace Telimena
 
         public static string GetMaxVersion(this IEnumerable<UpdatePackageData> packages)
         {
-            return packages.OrderBy(x => x.Version, new VersionStringComparer()).FirstOrDefault()?.Version;
+            return packages.OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).FirstOrDefault()?.Version;
         }
 
         public static bool IsNewerVersionThan(this string currentVersionString, string comparisonVersionString)

@@ -24,7 +24,7 @@ namespace Telimena.Tests
 
 
     [TestFixture]
-    public class ProgramVersionsControllerTests : StaticContextIntegrationTestsBase<TelimenaContext>
+    public class ProgramVersionsControllerTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
     {
         protected override Action SeedAction => () => TelimenaDbInitializer.SeedUsers(this.Context);
 

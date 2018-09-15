@@ -12,11 +12,12 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
+using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 
 namespace Telimena.Tests
 {
     [TestFixture]
-    public class UpdaterUpdatesTests
+    public class UpdaterUpdatesTests : IntegrationTestsContextNotShared<TelimenaContext>
     {
         //The updater  can evolve independently of the Toolkit - some changes might be breaking the contracts, but most - should not
         //there were several updater updates (maybe changing UI?)
@@ -39,9 +40,39 @@ namespace Telimena.Tests
 
         //todo - how to automatically check if an updater is compatible with certain toolkit versions?
 
+        private IToolkitDataUnitOfWork Prepare()
+        {
+            var unit = new ToolkitDataUnitOfWork(this.Context);
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.0.0", 1000, "0.0.0.0"));
+            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.1.0", 1000, "0.0.0.0"));
+            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.2.0", 1000, "0.5.0.0"));
+            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.3.0", 1000, "0.9.0.0"));
+            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.4.0", 1000, "0.9.0.0"));
+            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.5.0", 1000, "0.9.0.0"));
+            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.6.0", 1000, "1.3.0.0"));
+            unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.7.0", 1000, "1.3.0.0"){IsBeta = true});
+            unit.CompleteAsync().GetAwaiter().GetResult();
+            return unit;
+        }
+
+
+      
+
         [Test]
         public void Test_LatestUpdaterIsCompatible()
         {
+            var unit = this.Prepare();
+            var controller = new UpdaterController(unit, null, null);
+            var result = controller.CheckForUpdate("1.0", "1.3.0").GetAwaiter().GetResult();
+            Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
+            Assert.AreEqual("1.7.0", result.UpdatePackagesIncludingBeta.Single().Version);
             //todo - a request for update is made from toolkit v1.0
             //there were several updates of the updater since that time
             //however no breaking changes

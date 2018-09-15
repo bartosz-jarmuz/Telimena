@@ -13,7 +13,7 @@ namespace Telimena.WebApp.Core.Models
         [ForeignKey(nameof(TelimenaToolkitData))]
         public int Id { get; set; }
         public string Version { get; set; }
-
+        public bool IsBeta { get; set; }
         public virtual TelimenaToolkitData TelimenaToolkitData { get; set; }
     }
 }

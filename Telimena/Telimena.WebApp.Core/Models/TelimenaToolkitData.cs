@@ -16,5 +16,7 @@ namespace Telimena.WebApp.Core.Models
         public string Version { get; set; }
         public TelimenaPackageInfo TelimenaPackageInfo { get; set; }
 
+        public bool IntroducesBreakingChanges { get; set; }
+
     }
 }

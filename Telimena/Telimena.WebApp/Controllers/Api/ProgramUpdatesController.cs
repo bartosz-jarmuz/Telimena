@@ -19,7 +19,6 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
-using UpdatePackageInfo = Telimena.WebApp.Core.Models.UpdatePackageInfo;
 
 namespace Telimena.WebApp.Controllers.Api
 {
@@ -63,21 +62,21 @@ namespace Telimena.WebApp.Controllers.Api
             }
         }
 
-        private List<UpdatePackageData> GetMatchingPackages(List<UpdatePackageInfo> updatePackages)
+        private List<UpdatePackageData> GetMatchingPackages(List<ProgramUpdatePackageInfo> updatePackages)
         {
             if (updatePackages.IsNullOrEmpty())
             {
                 return null;
             }
-            UpdatePackageInfo newestPackage = updatePackages.First();
+            ProgramUpdatePackageInfo newestPackage = updatePackages.First();
             if (newestPackage.IsStandalone)
             {
                 return new List<UpdatePackageData>(){ Mapper.Map<UpdatePackageData>(newestPackage) };
             }
             else
             {
-                var list = new List<UpdatePackageData>();
-                foreach (UpdatePackageInfo updatePackageInfo in updatePackages)
+                List<UpdatePackageData> list = new List<UpdatePackageData>();
+                foreach (ProgramUpdatePackageInfo updatePackageInfo in updatePackages)
                 {
                     list.Add(Mapper.Map<UpdatePackageData>(updatePackageInfo));
                     if (updatePackageInfo.IsStandalone)
@@ -91,13 +90,13 @@ namespace Telimena.WebApp.Controllers.Api
 
         private async Task<UpdateResponse> GetUpdatePackagesResponse(Program program, string version)
         {
-            List<UpdatePackageInfo> updatePackages = (await this.Work.UpdatePackages.GetAllPackagesNewerThan(program.Id, version)).OrderBy(x=>x.Version, new VersionStringComparer()).ToList();
+            List<ProgramUpdatePackageInfo> updatePackages = (await this.Work.UpdatePackages.GetAllPackagesNewerThan(program.Id, version)).OrderByDescending(x=>x.Version, new TelimenaVersionStringComparer()).ToList();
             if (!updatePackages.Any())
             {
                 return new UpdateResponse();
             }
-            var nonBetaPackages = updatePackages.Where(x => !x.IsBeta).ToList();
-            var updatesResponse = new UpdateResponse();
+            List<ProgramUpdatePackageInfo> nonBetaPackages = updatePackages.Where(x => !x.IsBeta).ToList();
+            UpdateResponse updatesResponse = new UpdateResponse();
 
             if (updatePackages.Any(x=>x.IsBeta))
             {
@@ -139,8 +138,8 @@ namespace Telimena.WebApp.Controllers.Api
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    var program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
-                    UpdatePackageInfo pkg = await this.Work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream);
+                    Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
+                    ProgramUpdatePackageInfo pkg = await this.Work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream);
                     await this.Work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }
@@ -158,10 +157,10 @@ namespace Telimena.WebApp.Controllers.Api
         [System.Web.Http.HttpGet]
         public async Task<IHttpActionResult> GetUpdateInfo(int programId)
         {
-            var packageInfo = await this.Work.UpdatePackages.GetUpdatePackageInfo(programId);
+            ProgramUpdatePackageInfo packageInfo = await this.Work.UpdatePackages.GetUpdatePackageInfo(programId);
 
-            var bytes = await this.Work.UpdatePackages.GetPackage(packageInfo.Id);
-            var result = new HttpResponseMessage(HttpStatusCode.OK)
+            byte[] bytes = await this.Work.UpdatePackages.GetPackage(packageInfo.Id);
+            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new ByteArrayContent(bytes)
             };
@@ -180,7 +179,7 @@ namespace Telimena.WebApp.Controllers.Api
         [System.Web.Http.HttpPost]
         public async Task<bool> ToggleBetaSetting(int updatePackageId, bool isBeta)
         {
-            var pkg = await this.Work.UpdatePackages.FirstOrDefaultAsync(x=> x.Id == updatePackageId);
+            ProgramUpdatePackageInfo pkg = await this.Work.UpdatePackages.FirstOrDefaultAsync(x=> x.Id == updatePackageId);
             pkg.IsBeta = isBeta;
             await this.Work.CompleteAsync();
             return pkg.IsBeta;
@@ -190,10 +189,10 @@ namespace Telimena.WebApp.Controllers.Api
         [System.Web.Http.HttpGet]
         public async Task<IHttpActionResult> DownloadUpdatePackage(int id)
         {
-            var packageInfo = await this.Work.UpdatePackages.GetUpdatePackageInfo(id);
+            ProgramUpdatePackageInfo packageInfo = await this.Work.UpdatePackages.GetUpdatePackageInfo(id);
 
-            var bytes = await this.Work.UpdatePackages.GetPackage(packageInfo.Id);
-            var result = new HttpResponseMessage(HttpStatusCode.OK)
+            byte[] bytes = await this.Work.UpdatePackages.GetPackage(packageInfo.Id);
+            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new ByteArrayContent(bytes)
             };

@@ -22,7 +22,7 @@ namespace Telimena.Tests
 
 
     [TestFixture]
-    public class StatisticsControllerTests : StaticContextIntegrationTestsBase<TelimenaContext>
+    public class StatisticsControllerTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
     {
         public StatisticsControllerTests()
         {

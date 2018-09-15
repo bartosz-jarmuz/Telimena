@@ -6,13 +6,13 @@ namespace Telimena.WebApp.Infrastructure.Repository
     using System.IO;
     using Core.Models;
 
-    public interface IUpdatePackageRepository : IRepository<UpdatePackageInfo>
+    public interface IUpdatePackageRepository : IRepository<ProgramUpdatePackageInfo>
     {
-        Task<UpdatePackageInfo> StorePackageAsync(Program program, string version, Stream fileStream);
+        Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string version, Stream fileStream);
 
         Task<byte[]> GetPackage(int packageId);
-        Task<List<UpdatePackageInfo>> GetAllPackages(int programId);
-        Task<UpdatePackageInfo> GetUpdatePackageInfo(int id);
-        Task<List<UpdatePackageInfo>> GetAllPackagesNewerThan(int programId, string version);
+        Task<List<ProgramUpdatePackageInfo>> GetAllPackages(int programId);
+        Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(int id);
+        Task<List<ProgramUpdatePackageInfo>> GetAllPackagesNewerThan(int programId, string version);
     }
 }

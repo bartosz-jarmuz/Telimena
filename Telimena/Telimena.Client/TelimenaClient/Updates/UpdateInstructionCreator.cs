@@ -45,7 +45,7 @@ namespace Telimena.Client
 
         internal static List<UpdatePackageData> Sort(IEnumerable<UpdatePackageData> packages)
         {
-            return packages.OrderByDescending(x => x.Version, new VersionStringComparer()).ToList();
+            return packages.OrderBy(x => x.Version, new TelimenaVersionStringComparer()).ToList();
         }
 
         public static FileInfo CreateInstructionsFile(IEnumerable<UpdatePackageData> packages, ProgramInfo programInfo)

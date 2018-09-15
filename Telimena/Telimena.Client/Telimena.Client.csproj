@@ -57,7 +57,7 @@
     <Compile Include="TelimenaClient\Updates\UpdateInstaller.cs" />
     <Compile Include="TelimenaClient\Updates\UpdaterDownloader.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\VersionStringComparer.cs" />
+    <Compile Include="Utilities\TelimenaVersionStringComparer.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateInstructionCreator.cs" />
     <Compile Include="Messenger\ITelimenaHttpClient.cs" />
     <Compile Include="Messenger\IMessenger.cs" />
