@@ -86,19 +86,6 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         }
 
-        public System.Linq.Expressions.Expression<Func<ProgramUpdatePackageInfo, bool>> IsNewerVersion( string v2)
-        {
-
-            return p =>
-                p.Version.IsNewerVersionThan(v2);
-
-                //(string.IsNullOrEmpty(name) ||
-                // p.registeredName.ToLower().Contains(name.ToLower()) ||
-                // p.alias.ToLower().Contains(name.ToLower()) ||
-                // p.charityId.ToLower().Contains(name.ToLower())) &&
-                //(string.IsNullOrEmpty(referenceNumber) ||
-                // p.charityReference.ToLower().Contains(referenceNumber.ToLower()));
-        }
 
         public Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(int id)
         {

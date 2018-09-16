@@ -271,8 +271,8 @@ namespace Telimena.Tests
             ProgramUpdatesController sut = new ProgramUpdatesController(unit);
             UpdateResponse result = sut.GetUpdateInfo(1, "1.2.0.0").GetAwaiter().GetResult();
 
-            Assert.IsNull(result.UpdatePackagesIncludingBeta);
-            Assert.IsNull(result.UpdatePackages);
+            Assert.IsEmpty(result.UpdatePackagesIncludingBeta);
+            Assert.IsEmpty(result.UpdatePackages);
 
         }
     }

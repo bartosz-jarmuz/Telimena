@@ -49,12 +49,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
             else
             {
-                newerOnes = (await this.TelimenaContext.UpdaterInfo.ToListAsync()).Where(x=>x.Version.IsNewerVersionThan(version)).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+                newerOnes = (await this.TelimenaContext.UpdaterInfo.ToListAsync()).Where(x=> x.Version.IsNewerVersionThan(version)).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
             }
 
             if (newerOnes.Any())
             {
-                List<UpdaterPackageInfo> compatibleOnes = newerOnes.Where(x => !x.MinimumRequiredToolkitVersion.IsNewerVersionThan(toolkitVersion)).ToList();
+                List<UpdaterPackageInfo> compatibleOnes = newerOnes.Where(x => toolkitVersion.IsNewerOrEqualVersion(x.MinimumRequiredToolkitVersion)).ToList();
                 if (includingBeta)
                 {
                     return compatibleOnes.FirstOrDefault();
