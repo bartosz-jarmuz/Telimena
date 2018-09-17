@@ -29,12 +29,14 @@ namespace Telimena.WebApp.Controllers.Api
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramUpdatesController : ApiController
     {
-        public ProgramUpdatesController(IProgramsUnitOfWork work)
+        public ProgramUpdatesController(IProgramsUnitOfWork work, ITelimenaSerializer serializer)
         {
             this.work = work;
+            this.serializer = serializer;
         }
 
         private readonly IProgramsUnitOfWork work;
+        private readonly ITelimenaSerializer serializer;
 
 
         [System.Web.Http.HttpGet]

@@ -139,7 +139,16 @@ namespace Telimena.Client
 
         private string GetUpdateRequestUrl()
         {
-            return ApiRoutes.GetUpdatesInfo + "?programId=" + this.ProgramId + "&version=" + this.ProgramVersion;
+            var model = new UpdateRequest()
+            {
+                ProgramId = this.ProgramId,
+                ProgramVersion = this.ProgramVersion,
+                UserId = this.UserId,
+                ToolkitVersion = this.TelimenaVersion
+            };
+            var stringified = this.Serializer.Serialize(model);
+            var escaped = this.Serializer.UrlEncodeJson(stringified);
+            return ApiRoutes.GetUpdatesInfo + "?request=" + escaped;
         }
 
         protected async Task<UpdateResponse> GetUpdateResponse()

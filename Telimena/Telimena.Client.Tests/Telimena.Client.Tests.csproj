@@ -75,6 +75,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestSerializer.cs" />
     <Compile Include="TestStaticClient.cs" />
     <Compile Include="UpdateCheckTests.cs" />
     <Compile Include="TestRegistrationRequests.cs" />
