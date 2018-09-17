@@ -26,7 +26,6 @@
         }
 
         public DbSet<Program> Programs { get; set; }
-        public DbSet<UpdaterPackageInfo> UpdaterInfo { get; set; }
         public DbSet<Function> Functions { get; set; }
         public DbSet<ProgramUsageSummary> ProgramUsages { get; set; }
         public DbSet<ProgramUsageDetail> ProgramUsageDetails { get; set; }
@@ -38,7 +37,10 @@
         public DbSet<ProgramAssembly> ProgramAssemblies { get; set; }
         public DbSet<AssemblyVersion> Versions { get; set; }
         public DbSet<TelimenaToolkitData> TelimenaToolkitData { get; set; }
+        public DbSet<TelimenaPackageInfo> ToolkitPackages { get; set; }
         public DbSet<ProgramUpdatePackageInfo> UpdatePackages { get; set; }
+        public DbSet<UpdaterPackageInfo> UpdaterPackages { get; set; }
+
         public DbSet<ProgramPackageInfo> ProgramPackages { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

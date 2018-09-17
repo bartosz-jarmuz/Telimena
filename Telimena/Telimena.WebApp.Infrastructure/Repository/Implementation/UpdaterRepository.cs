@@ -40,16 +40,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             ObjectValidator.Validate(()=>Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
             ObjectValidator.Validate(()=>Version.TryParse(toolkitVersion, out _), new ArgumentException($"[{toolkitVersion}] is not a valid version string"));
 
-            UpdaterPackageInfo current = await this.TelimenaContext.UpdaterInfo.FirstOrDefaultAsync(x => x.Version == version);
+            UpdaterPackageInfo current = await this.TelimenaContext.UpdaterPackages.FirstOrDefaultAsync(x => x.Version == version);
 
             List<UpdaterPackageInfo> newerOnes;
             if (current != null)
             {
-                newerOnes = (await this.TelimenaContext.UpdaterInfo.Where(x => x.Id > current.Id).ToListAsync()).OrderByDescending(x=>x.Version, new TelimenaVersionStringComparer()).ToList();
+                newerOnes = (await this.TelimenaContext.UpdaterPackages.Where(x => x.Id > current.Id).ToListAsync()).OrderByDescending(x=>x.Version, new TelimenaVersionStringComparer()).ToList();
             }
             else
             {
-                newerOnes = (await this.TelimenaContext.UpdaterInfo.ToListAsync()).Where(x=> x.Version.IsNewerVersionThan(version)).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+                newerOnes = (await this.TelimenaContext.UpdaterPackages.ToListAsync()).Where(x=> x.Version.IsNewerVersionThan(version)).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
             }
 
             if (newerOnes.Any())
@@ -76,7 +76,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             var pkg = new UpdaterPackageInfo( version, fileStream.Length, minimumRequiredToolkitVersion);
 
-            this.TelimenaContext.UpdaterInfo.Add(pkg);
+            this.TelimenaContext.UpdaterPackages.Add(pkg);
 
             await fileSaver.SaveFile(pkg, fileStream);
 
@@ -85,7 +85,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever)
         {
-            var pkg = await this.TelimenaContext.UpdaterInfo.FirstOrDefaultAsync(x => x.Id == packageId);
+            var pkg = await this.TelimenaContext.UpdaterPackages.FirstOrDefaultAsync(x => x.Id == packageId);
 
             if (pkg != null)
             {

@@ -85,7 +85,7 @@ namespace Telimena.Tests
             Assert.AreEqual(0, result.UpdatePackages.Count);
             Assert.AreEqual("1.1.0", result.UpdatePackagesIncludingBeta.Single().Version);
 
-            result = controller.CheckForUpdate("1.0", "0.9.0").GetAwaiter().GetResult();
+            result = controller.CheckForUpdate("1.1.0", "0.9.0").GetAwaiter().GetResult();
             Assert.AreEqual("1.5.0", result.UpdatePackages.Single().Version);
             Assert.AreEqual("1.5.0", result.UpdatePackagesIncludingBeta.Single().Version);
 

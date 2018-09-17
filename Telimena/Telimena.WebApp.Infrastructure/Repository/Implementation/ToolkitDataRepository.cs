@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using DotNetLittleHelpers;
 using Telimena.WebApp.Infrastructure.Database;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
@@ -56,5 +58,22 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return null;
         }
 
+        public async Task<List<TelimenaPackageInfo>> GetPackagesNewerThan(string version)
+        {
+            ObjectValidator.Validate(() => Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
+
+            TelimenaPackageInfo current = (await this.TelimenaContext.ToolkitPackages.FirstOrDefaultAsync(x => x.Version == version));
+
+            if (current != null)
+            {
+                return (await this.TelimenaContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync()).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+            }
+            else
+            {
+                return (await this.TelimenaContext.ToolkitPackages.ToListAsync()).Where(x => x.Version.IsNewerVersionThan(version)).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+            }
+
+           
+        }
     }
 }

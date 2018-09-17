@@ -1,14 +1,22 @@
-﻿using NUnit.Framework;
+﻿using DbIntegrationTestHelpers;
+using NUnit.Framework;
+using Telimena.WebApp.Infrastructure.Database;
 
 namespace Telimena.Tests
 {
     [TestFixture]
-    public class ToolkitUpdatesTests
+    public class ToolkitUpdatesTests  :IntegrationTestsContextSharedPerClass<TelimenaContext>
     {
         //The toolkit can evolve independently of the client app - some changes might be breaking the contracts, but most - should not
         //a non-breaking change example - add new functions or overloads, pull more client data or handle changes in the web api
         //a breaking change would be renaming methods, changing the default URI etc - these are the things that would break the app if DLL is replaced
         //in such cases, the app needs to be recompiled against latest toolkit.
+
+
+        private void Seed()
+        {
+
+        }
 
         [Test]
         public void Test_SimpleScenario()
