@@ -38,22 +38,30 @@ namespace Telimena.WebApp.Controllers.Api
         private readonly IProgramsUnitOfWork work;
         private readonly ITelimenaSerializer serializer;
 
+        internal static UpdateRequest ReadRequest(string escapedJsonString, ITelimenaSerializer serializer)
+        {
+            var json = serializer.UrlDecodeJson(escapedJsonString);
+            var model = serializer.Deserialize<UpdateRequest>(json);
+            return model;
+        }
+
 
         [System.Web.Http.HttpGet]
-        public async Task<UpdateResponse> GetUpdateInfo(int programId, string version)
+        public async Task<UpdateResponse> GetUpdateInfo(string request)
         {
             try
             {
-                Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == programId);
+                var requestModel = ReadRequest(request, this.serializer);
+                Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == requestModel.ProgramId);
                 if (program == null)
                 {
                     return new UpdateResponse()
                     {
-                        Error = new BadRequestException($"Failed to find program by Id: [{programId}]")
+                        Error = new BadRequestException($"Failed to find program by Id: [{requestModel.ProgramId}]")
                     };
                 }
 
-                return await this.GetUpdatePackagesResponse(program, version);
+                return await this.GetUpdatePackagesResponse(program, requestModel.ProgramVersion);
             }
             catch (Exception ex)
             {

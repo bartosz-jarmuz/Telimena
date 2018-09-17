@@ -22,7 +22,7 @@ namespace Telimena.Client
         {
             try
             {
-                UpdateResponse response = await this.GetUpdateResponse();
+                UpdateResponse response = await this.GetUpdateResponse(true);
                 return new UpdateCheckResult
                 {
                     UpdatesToInstall = response.UpdatePackagesIncludingBeta
@@ -31,7 +31,7 @@ namespace Telimena.Client
             catch (Exception ex)
             {
                 TelimenaException exception = new TelimenaException($"Error occurred while sending check for updates request", ex,
-                    new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl()));
+                    new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(true)));
                 if (!this.SuppressAllErrors)
                 {
                     throw exception;
@@ -120,7 +120,7 @@ namespace Telimena.Client
         {
             try
             {
-                UpdateResponse response = await this.GetUpdateResponse();
+                UpdateResponse response = await this.GetUpdateResponse(true);
 
                 UpdateHandler handler = new UpdateHandler(this.Messenger, this.ProgramInfo, this.SuppressAllErrors, new DefaultWpfInputReceiver(),
                     new UpdateInstaller());
@@ -129,7 +129,7 @@ namespace Telimena.Client
             catch (Exception ex)
             {
                 TelimenaException exception = new TelimenaException($"Error occurred while handling updates", ex,
-                    new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl()));
+                    new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(true)));
                 if (!this.SuppressAllErrors)
                 {
                     throw exception;
@@ -137,7 +137,7 @@ namespace Telimena.Client
             }
         }
 
-        private string GetUpdateRequestUrl()
+        private string GetUpdateRequestUrl(bool takeBeta)
         {
             var model = new UpdateRequest()
             {
@@ -145,17 +145,18 @@ namespace Telimena.Client
                 ProgramVersion = this.ProgramVersion,
                 UserId = this.UserId,
                 ToolkitVersion = this.TelimenaVersion
+                ,AcceptBeta = takeBeta
             };
             var stringified = this.Serializer.Serialize(model);
             var escaped = this.Serializer.UrlEncodeJson(stringified);
             return ApiRoutes.GetUpdatesInfo + "?request=" + escaped;
         }
 
-        protected async Task<UpdateResponse> GetUpdateResponse()
+        protected async Task<UpdateResponse> GetUpdateResponse(bool takeBeta)
         {
             await this.InitializeIfNeeded();
             string responseContent =
-                await this.Messenger.SendGetRequest(this.GetUpdateRequestUrl());
+                await this.Messenger.SendGetRequest(this.GetUpdateRequestUrl(takeBeta));
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 

@@ -31,6 +31,12 @@ namespace Telimena.Client
             return serializer.Deserialize<T>(stringContent);
         }
 
+        public string SerializeAndEncode(object objectToPost)
+        {
+            var json = this.Serialize(objectToPost);
+            return UrlEncodeJson(json);
+        }
+
         public static string UrlEncodeJson(string jsonString)
         {
             return Uri.EscapeDataString(jsonString);
