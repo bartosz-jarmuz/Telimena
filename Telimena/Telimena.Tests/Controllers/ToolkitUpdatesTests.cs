@@ -46,10 +46,7 @@ namespace Telimena.Tests
             //the update of the application will contain the latest compatible Toolkit, based on what toolkit was the update compiled against
             //TBD - should the toolkit come from the update package or separately?
 
-            //todo - seems like no PK/FK relation needed for ToolkitData, ToolkitPackage, UpdaterPackage - it should be handled by querying the db for compatible resources
-            // potential methods to create
-            // .GetLatestCompatibleToolkit(programVersion)
-            // .GetLatestCompatibleUpdater(updaterVersion)
+        
         }
 
         [Test]

@@ -19,7 +19,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         private TelimenaContext TelimenaContext { get; }
 
-        public async Task<TelimenaToolkitData> StorePackageAsync(string version, Stream fileStream, IFileSaver fileSaver)
+        public async Task<TelimenaToolkitData> StorePackageAsync(string version, bool isBeta, bool introducesBreakingChanges, Stream fileStream, IFileSaver fileSaver)
         {
             if (!Version.TryParse(version, out Version _))
             {
@@ -34,6 +34,8 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
 
             TelimenaPackageInfo pkg = new TelimenaPackageInfo(version, fileStream.Length);
+            pkg.IsBeta = isBeta;
+            pkg.IntroducesBreakingChanges = introducesBreakingChanges;
             data.TelimenaPackageInfo = pkg;
 
             await fileSaver.SaveFile(pkg, fileStream);

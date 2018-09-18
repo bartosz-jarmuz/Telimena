@@ -10,6 +10,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
     {
         Task<byte[]> GetPackage(int toolkitDataId, IFileRetriever fileRetriever);
         Task<List<TelimenaPackageInfo>> GetPackagesNewerThan(string version);
-        Task<TelimenaToolkitData> StorePackageAsync(string version, Stream fileStream, IFileSaver fileSaver);
+        Task<TelimenaToolkitData> StorePackageAsync(string version, bool isBeta, bool introducesBreakingChanges, Stream fileStream, IFileSaver fileSaver);
     }
 }

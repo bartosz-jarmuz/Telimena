@@ -80,6 +80,10 @@ namespace Telimena.WebApp.Controllers.Api
                         {
                             listOfCompatiblePackages.Add(package);
                         }
+                        else //at this point a breaking package is not supported by the program, so time to break the loop - no point checking even newer ones
+                        {
+                            break;
+                        }
                     }
                 }
 
@@ -88,7 +92,6 @@ namespace Telimena.WebApp.Controllers.Api
 
             return packages.FirstOrDefault();
 
-            return null;
         }
 
         [HttpGet]
@@ -232,10 +235,12 @@ namespace Telimena.WebApp.Controllers.Api
         private async Task<string> GetMaximumSupportedToolkitVersion(List<ProgramUpdatePackageInfo> updatePackages, Program program
             , UpdateRequest updateRequest)
         {
+
+            string maxVersion = null;
             ProgramUpdatePackageInfo newestPackage = updatePackages.OrderByDescending(x => x.Id).FirstOrDefault();
             if (newestPackage != null)
             {
-                return newestPackage.SupportedToolkitVersion;
+                maxVersion = newestPackage.SupportedToolkitVersion;
             }
 
             //no updates now, so figure out what version is supported by the client already
@@ -243,10 +248,18 @@ namespace Telimena.WebApp.Controllers.Api
                 await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == updateRequest.ProgramVersion);
             if (previousPackage != null)
             {
-                return previousPackage.SupportedToolkitVersion;
+                maxVersion =  previousPackage.SupportedToolkitVersion;
             }
 
-            return (await this.work.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id)).SupportedToolkitVersion;
+            maxVersion =(await this.work.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id)).SupportedToolkitVersion;
+
+
+            if (updateRequest.ToolkitVersion.IsNewerOrEqualVersion(maxVersion))
+            {
+                return updateRequest.ToolkitVersion;
+            }
+
+            return maxVersion;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DbIntegrationTestHelpers;
 using Moq;
@@ -19,13 +20,15 @@ namespace Telimena.Tests
     {
         private readonly ITelimenaSerializer serializer = new TelimenaSerializer();
 
-        private IProgramsUnitOfWork GetUnit(List<ProgramUpdatePackageInfo> list)
+        private IProgramsUnitOfWork GetUnit(List<ProgramUpdatePackageInfo> list, List<TelimenaPackageInfo> toolkitPackages = null)
         {
             UpdatePackageRepository pkgRepo = new UpdatePackageRepository(this.Context, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             ProgramRepository prgRepo = new ProgramRepository(this.Context);
             ProgramPackageRepository prgPkgRepo = new ProgramPackageRepository(this.Context, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             prgPkgRepo.Add(new ProgramPackageInfo("Prg.zip", 1, 2222, "1.0.0.0"));
             prgRepo.Add(new Program("prg") {Id = 1});
+            
+            this.AddToolkits(toolkitPackages);
 
             foreach (ProgramUpdatePackageInfo programUpdatePackageInfo in list)
             {
@@ -35,6 +38,22 @@ namespace Telimena.Tests
             this.Context.SaveChanges();
             ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new Mock<ITelimenaUserManager>().Object);
             return unit;
+        }
+
+        private void AddToolkits(List<TelimenaPackageInfo> toolkitPackages = null)
+        {
+            var toolkitRepo = new ToolkitDataRepository(this.Context);
+            if (toolkitPackages == null)
+            {
+                toolkitRepo.StorePackageAsync("0.5.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("0.7.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.0.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.2.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.4.0.0", isBeta: false, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.6.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.8.0.0", isBeta: true, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("2.0.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
+            }
         }
 
         [Test]
@@ -51,24 +70,30 @@ namespace Telimena.Tests
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.7.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
-            Assert.AreEqual(4, result.UpdatePackages.Count());
+            Assert.AreEqual(5, result.UpdatePackages.Count());
 
-            Assert.AreEqual(5, result.UpdatePackages.ElementAt(0).Id);
-            Assert.AreEqual(3, result.UpdatePackages.ElementAt(1).Id);
-            Assert.AreEqual(2, result.UpdatePackages.ElementAt(2).Id);
-            Assert.AreEqual(1, result.UpdatePackages.ElementAt(3).Id);
+            Assert.IsTrue(result.UpdatePackages.Last().Version == "1.0.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip") ;
+            Assert.AreEqual(5, result.UpdatePackages[0].Id);
+            Assert.AreEqual(3, result.UpdatePackages[1].Id);
+            Assert.AreEqual(2, result.UpdatePackages[2].Id);
+            Assert.AreEqual(1, result.UpdatePackages[3].Id);
 
 
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
-            Assert.AreEqual(6, result.UpdatePackages.ElementAt(0).Id);
-            Assert.AreEqual(5, result.UpdatePackages.ElementAt(1).Id);
-            Assert.AreEqual(4, result.UpdatePackages.ElementAt(2).Id);
+            Assert.AreEqual(6, result.UpdatePackages[0].Id);
+            Assert.AreEqual(5, result.UpdatePackages[1].Id);
+            Assert.AreEqual(4, result.UpdatePackages[2].Id);
+            //return the version that is higher than max supported, but does not introduce breaking changes
+            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x=>x.FileName == "Telimena.Client.zip").Version);
+            //also check its the last package 
+            Assert.IsTrue(result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
+
         }
 
         [Test]
@@ -85,7 +110,7 @@ namespace Telimena.Tests
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "2.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual(0, result.UpdatePackages.Count());
@@ -96,9 +121,12 @@ namespace Telimena.Tests
 
             Assert.AreEqual(3, result.UpdatePackages.Count());
 
-            Assert.AreEqual(6, result.UpdatePackages.ElementAt(0).Id);
-            Assert.AreEqual(5, result.UpdatePackages.ElementAt(1).Id);
-            Assert.AreEqual(4, result.UpdatePackages.ElementAt(2).Id);
+            Assert.AreEqual(6, result.UpdatePackages[0].Id);
+            Assert.AreEqual(5, result.UpdatePackages[1].Id);
+            Assert.AreEqual(4, result.UpdatePackages[2].Id);
+            //no update for toolkit, because its already maxed
+            Assert.IsFalse(result.UpdatePackages.Any(x => x.FileName == "Telimena.Client.zip"));
+
         }
 
         [Test]
@@ -114,15 +142,23 @@ namespace Telimena.Tests
 
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.5.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
-            Assert.AreEqual(2, result.UpdatePackages.Single().Id);
+            Assert.AreEqual(2, result.UpdatePackages[0].Id);
+            Assert.AreEqual(2, result.UpdatePackages.Count);
+            //return the version that is higher than max supported, but does not introduce breaking changes
+            Assert.IsTrue(result.UpdatePackages.Last().Version == "1.0.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
 
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
-            Assert.AreEqual(3, result.UpdatePackages.Single().Id);
+            Assert.AreEqual(3, result.UpdatePackages[0].Id);
+            Assert.AreEqual(2, result.UpdatePackages.Count);
+
+            //return the version that is higher than max supported, but does not introduce breaking changes
+            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+
         }
 
         [Test]
@@ -137,7 +173,7 @@ namespace Telimena.Tests
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.8.0.0");
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
             Assert.AreEqual(0, result.UpdatePackages.Count());
@@ -146,12 +182,17 @@ namespace Telimena.Tests
             request.AcceptBeta = true;
 
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
-            Assert.AreEqual(4, result.UpdatePackages.Count());
+            Assert.AreEqual(5, result.UpdatePackages.Count());
 
-            Assert.AreEqual(4, result.UpdatePackages.ElementAt(0).Id);
-            Assert.AreEqual(3, result.UpdatePackages.ElementAt(1).Id);
-            Assert.AreEqual(2, result.UpdatePackages.ElementAt(2).Id);
-            Assert.AreEqual(1, result.UpdatePackages.ElementAt(3).Id);
+            Assert.AreEqual(4, result.UpdatePackages[0].Id);
+            Assert.AreEqual(3, result.UpdatePackages[1].Id);
+            Assert.AreEqual(2, result.UpdatePackages[2].Id);
+            Assert.AreEqual(1, result.UpdatePackages[3].Id);
+
+            //return the version that is supported, because it does not introduce breaking changes
+            Assert.AreEqual("2.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+
+
         }
 
         [Test]
@@ -170,18 +211,26 @@ namespace Telimena.Tests
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
             Assert.AreEqual(3, result.UpdatePackages.Single().Id);
+            //no toolkit update here, because 1.0 is the highest non beta that is already in use
+            Assert.IsFalse(result.UpdatePackages.Any(x=>x.FileName == "Telimena.Client.zip"));
 
 
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
 
-            Assert.AreEqual(4, result.UpdatePackages.Count);
+            Assert.AreEqual(5, result.UpdatePackages.Count);
 
-            Assert.AreEqual(4, result.UpdatePackages.ElementAt(0).Id);
-            Assert.AreEqual(3, result.UpdatePackages.ElementAt(1).Id);
-            Assert.AreEqual(2, result.UpdatePackages.ElementAt(2).Id);
-            Assert.AreEqual(1, result.UpdatePackages.ElementAt(3).Id);
+            Assert.AreEqual(4, result.UpdatePackages[0].Id);
+            Assert.AreEqual(3, result.UpdatePackages[1].Id);
+            Assert.AreEqual(2, result.UpdatePackages[2].Id);
+            Assert.AreEqual(1, result.UpdatePackages[3].Id);
+
+
+            //return the version that is higher than max supported, but does not introduce breaking changes
+            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+
+
         }
 
         [Test]
@@ -204,18 +253,27 @@ namespace Telimena.Tests
 
             Assert.AreEqual(3, result.UpdatePackages.Count());
 
-            Assert.AreEqual(6, result.UpdatePackages.ElementAt(0).Id);
-            Assert.AreEqual(5, result.UpdatePackages.ElementAt(1).Id);
-            Assert.AreEqual(4, result.UpdatePackages.ElementAt(2).Id);
+            Assert.AreEqual(6, result.UpdatePackages[0].Id);
+            Assert.AreEqual(5, result.UpdatePackages[1].Id);
+            Assert.AreEqual(4, result.UpdatePackages[2].Id);
+
+
+            //no update here - the version 1.2 is beta, whereas 1.4 has breaking changes
+            Assert.IsFalse(result.UpdatePackages.Any(x=>x.FileName == "Telimena.Client.zip"));
+
 
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
-            Assert.AreEqual(3, result.UpdatePackages.Count());
+            Assert.AreEqual(4, result.UpdatePackages.Count());
 
-            Assert.AreEqual(6, result.UpdatePackages.ElementAt(0).Id);
-            Assert.AreEqual(5, result.UpdatePackages.ElementAt(1).Id);
-            Assert.AreEqual(4, result.UpdatePackages.ElementAt(2).Id);
+            Assert.AreEqual(6, result.UpdatePackages[0].Id);
+            Assert.AreEqual(5, result.UpdatePackages[1].Id);
+            Assert.AreEqual(4, result.UpdatePackages[2].Id);
+
+            //return the version that is higher than max supported, but does not introduce breaking changes
+            Assert.IsTrue(result.UpdatePackages.Last().Version == "1.2.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
+
         }
 
         [Test]
@@ -250,19 +308,19 @@ namespace Telimena.Tests
 
             Assert.AreEqual(4, result.UpdatePackages.Count());
 
-            Assert.AreEqual(4, result.UpdatePackages.ElementAt(0).Id);
-            Assert.AreEqual(3, result.UpdatePackages.ElementAt(1).Id);
-            Assert.AreEqual(2, result.UpdatePackages.ElementAt(2).Id);
-            Assert.AreEqual(1, result.UpdatePackages.ElementAt(3).Id);
+            Assert.AreEqual(4, result.UpdatePackages[0].Id);
+            Assert.AreEqual(3, result.UpdatePackages[1].Id);
+            Assert.AreEqual(2, result.UpdatePackages[2].Id);
+            Assert.AreEqual(1, result.UpdatePackages[3].Id);
 
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual(4, result.UpdatePackages.Count());
 
-            Assert.AreEqual(4, result.UpdatePackages.ElementAt(0).Id);
-            Assert.AreEqual(3, result.UpdatePackages.ElementAt(1).Id);
-            Assert.AreEqual(2, result.UpdatePackages.ElementAt(2).Id);
-            Assert.AreEqual(1, result.UpdatePackages.ElementAt(3).Id);
+            Assert.AreEqual(4, result.UpdatePackages[0].Id);
+            Assert.AreEqual(3, result.UpdatePackages[1].Id);
+            Assert.AreEqual(2, result.UpdatePackages[2].Id);
+            Assert.AreEqual(1, result.UpdatePackages[3].Id);
         }
 
         [Test]

@@ -76,7 +76,7 @@ namespace Telimena.WebApp.Controllers.Api
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
                     TelimenaToolkitData pkg =
-                        await this.work.ToolkitDataRepository.StorePackageAsync(request.PackageVersion, uploadedFile.InputStream, this.fileSaver);
+                        await this.work.ToolkitDataRepository.StorePackageAsync(request.PackageVersion, false, false, uploadedFile.InputStream, this.fileSaver);
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }
