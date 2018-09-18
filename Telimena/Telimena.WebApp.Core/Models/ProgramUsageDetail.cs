@@ -4,6 +4,4 @@
     {
         public virtual ProgramUsageSummary UsageSummary { get; set; }
     }
-
-
 }

@@ -1,16 +1,15 @@
 ﻿using System.Threading.Tasks;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Repository;
 
 namespace Telimena.WebApp.Infrastructure.UnitOfWork
 {
-    using Core.Models;
-    using Repository;
-
     public interface IStatisticsUnitOfWork
     {
         IRepository<ClientAppUser> ClientAppUsers { get; }
         IRepository<AssemblyVersion> Versions { get; }
 
-        IProgramRepository Programs { get;  }
+        IProgramRepository Programs { get; }
 
         IToolkitDataRepository ToolkitData { get; }
 

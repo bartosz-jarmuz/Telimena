@@ -1,31 +1,35 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Web.Script.Serialization;
 using System.Windows.Forms;
+using Telimena.Client;
 
 namespace TelimenaTestSandboxApp
 {
-    using System.Diagnostics;
-    using System.Web.Script.Serialization;
-    using Telimena.Client;
-
     public partial class Form1 : Form
     {
-        private Telimena teli;
-
         public Form1()
         {
             this.InitializeComponent();
-            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
         }
 
+        private Telimena.Client.Telimena teli;
+
+        private async void InitializeButton_Click(object sender, EventArgs e)
+        {
+            RegistrationResponse response = await this.teli.Initialize();
+            this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + new JavaScriptSerializer().Serialize(response) + Environment.NewLine;
+        }
 
         private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
         {
             StatisticsUpdateResponse result;
-            var sw = Stopwatch.StartNew();
+            Stopwatch sw = Stopwatch.StartNew();
 
             if (!string.IsNullOrEmpty(this.functionNameTextBox.Text))
             {
-                result = await this.teli.ReportUsage(string.IsNullOrEmpty(this.functionNameTextBox.Text)? null : this.functionNameTextBox.Text);
+                result = await this.teli.ReportUsage(string.IsNullOrEmpty(this.functionNameTextBox.Text) ? null : this.functionNameTextBox.Text);
                 sw.Stop();
             }
             else
@@ -33,9 +37,11 @@ namespace TelimenaTestSandboxApp
                 result = await this.teli.ReportUsage();
                 sw.Stop();
             }
+
             if (result.Exception == null)
             {
-                this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " + new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
+                this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " +
+                                           new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
             }
             else
             {
@@ -43,56 +49,45 @@ namespace TelimenaTestSandboxApp
             }
         }
 
-        private async void InitializeButton_Click(object sender, EventArgs e)
-        {
-            var response = await this.teli.Initialize();
-            this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + new JavaScriptSerializer().Serialize(response) + Environment.NewLine;
-        }
-
         private void setAppButton_Click(object sender, EventArgs e)
         {
-            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
             if (!string.IsNullOrEmpty(this.appNameTextBox.Text))
             {
-                this.teli.ProgramInfo = new ProgramInfo()
+                this.teli.ProgramInfo = new ProgramInfo
                 {
-                    Name = this.appNameTextBox.Text,
-                    PrimaryAssembly = new AssemblyInfo()
-                    {
-                        Company = "Comp A Ny",
-                        Name = this.appNameTextBox.Text + ".dll",
-                        Version = "1.0.0.0"
-                    }
+                    Name = this.appNameTextBox.Text
+                    , PrimaryAssembly = new AssemblyInfo {Company = "Comp A Ny", Name = this.appNameTextBox.Text + ".dll", Version = "1.0.0.0"}
                 };
             }
 
-            if (!string.IsNullOrEmpty(this.userNameTextBox.Text)) 
+            if (!string.IsNullOrEmpty(this.userNameTextBox.Text))
             {
-                this.teli.UserInfo = new UserInfo()
-                {
-                    UserName = this.userNameTextBox.Text
-                };
+                this.teli.UserInfo = new UserInfo {UserName = this.userNameTextBox.Text};
             }
         }
 
         private async void static_sendUsageReportButton_Click(object sender, EventArgs e)
         {
             StatisticsUpdateResponse result;
-            var sw = Stopwatch.StartNew();
+            Stopwatch sw = Stopwatch.StartNew();
 
             if (!string.IsNullOrEmpty(this.static_functionNameTextBox.Text))
             {
-                result = await Telimena.SendUsageReport(string.IsNullOrEmpty(this.static_functionNameTextBox.Text) ? null : this.static_functionNameTextBox.Text);
+                result = await Telimena.Client.Telimena.SendUsageReport(string.IsNullOrEmpty(this.static_functionNameTextBox.Text)
+                    ? null
+                    : this.static_functionNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = await Telimena.SendUsageReport();
+                result = await Telimena.Client.Telimena.SendUsageReport();
                 sw.Stop();
             }
+
             if (result.Exception == null)
             {
-                this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms " +  new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
+                this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms " + new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
             }
             else
             {

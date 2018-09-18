@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Telimena.Updater
 {
@@ -17,14 +12,10 @@ namespace Telimena.Updater
                 return null;
             }
 
-            UpdaterStartupSettings startupSettings = new UpdaterStartupSettings()
-            {
-                InstructionsFile = GetInstructionsArg(args)
-            };
+            UpdaterStartupSettings startupSettings = new UpdaterStartupSettings {InstructionsFile = GetInstructionsArg(args)};
 
             return startupSettings;
         }
-
 
         private static FileInfo GetInstructionsArg(string[] args)
         {
@@ -32,7 +23,7 @@ namespace Telimena.Updater
             {
                 if (arg.StartsWith("instructions:"))
                 {
-                    var path = arg.Substring("instructions:".Length);
+                    string path = arg.Substring("instructions:".Length);
                     return new FileInfo(path);
                 }
             }

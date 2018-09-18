@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
+using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Identity;
+using Telimena.WebApp.Infrastructure.Repository;
+using Telimena.WebApp.Infrastructure.Repository.Implementation;
 
 namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 {
-    using Core.Interfaces;
-    using Core.Models;
-    using Database;
-    using Identity;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.Owin.Security;
-    using Repository;
-    using Repository.Implementation;
-
     public class AccountUnitOfWork : IAccountUnitOfWork
     {
         public AccountUnitOfWork(IAuthenticationManager authManager, ITelimenaUserManager userManager, TelimenaContext context)
@@ -23,10 +22,12 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
             this.DeveloperRepository = new Repository<DeveloperAccount>(context);
         }
 
+        private readonly TelimenaContext _context;
+
         public IAuthenticationManager AuthManager { get; }
         public ITelimenaUserManager UserManager { get; }
-        private readonly TelimenaContext _context;
         public IRepository<DeveloperAccount> DeveloperRepository { get; }
+
         public int Complete()
         {
             return this._context.SaveChanges();
@@ -39,14 +40,17 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
             {
                 TelimenaUser addedUser = await this.UserManager.FindByIdAsync(user.Id);
 
-               IdentityResult roleResult = await this.HandleRoleRegistrationAsync(roles, addedUser);
+                IdentityResult roleResult = await this.HandleRoleRegistrationAsync(roles, addedUser);
 
                 return new Tuple<IdentityResult, IdentityResult>(registerResult, roleResult);
             }
-            else
-            {
-                return new Tuple<IdentityResult, IdentityResult>(registerResult, null);
-            }
+
+            return new Tuple<IdentityResult, IdentityResult>(registerResult, null);
+        }
+
+        public Task CompleteAsync()
+        {
+            return this._context.SaveChangesAsync();
         }
 
         private async Task<IdentityResult> HandleRoleRegistrationAsync(string[] roles, TelimenaUser user)
@@ -60,27 +64,20 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
                     return roleresult;
                 }
             }
-           
+
 
             if (roles.Contains(TelimenaRoles.Developer))
             {
                 roleresult = await this.UserManager.AddToRoleAsync(user.Id, TelimenaRoles.Developer);
                 if (roleresult.Succeeded)
                 {
-                    var developer = new Core.Models.DeveloperAccount(user);
+                    DeveloperAccount developer = new DeveloperAccount(user);
                     this.DeveloperRepository.Add(developer);
                     this._context.Users.Attach(user);
-
-                    
-
                 }
             }
-            return roleresult;
-        }
 
-        public Task CompleteAsync()
-        {
-            return this._context.SaveChangesAsync();
+            return roleresult;
         }
     }
 }

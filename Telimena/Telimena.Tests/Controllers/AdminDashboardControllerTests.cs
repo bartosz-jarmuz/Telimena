@@ -1,8 +1,8 @@
-﻿namespace Telimena.Tests
-{
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-    [TestClass()]
+namespace Telimena.Tests
+{
+    [TestClass]
     public class AdminDashboardControllerTests
     {
         //[TestMethod()]

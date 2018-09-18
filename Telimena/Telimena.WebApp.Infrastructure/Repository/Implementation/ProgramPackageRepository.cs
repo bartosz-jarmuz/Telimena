@@ -1,13 +1,13 @@
-﻿namespace Telimena.WebApp.Infrastructure.Repository.Implementation
-{
-    using System.Collections.Generic;
-    using System.Data.Entity;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Core.Models;
-    using Database;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Database;
 
+namespace Telimena.WebApp.Infrastructure.Repository.Implementation
+{
     internal class ProgramPackageRepository : Repository<ProgramPackageInfo>, IProgramPackageRepository
     {
         public ProgramPackageRepository(DbContext dbContext, IFileSaver fileSaver, IFileRetriever fileRetriever) : base(dbContext)
@@ -16,9 +16,9 @@
             this.FileRetriever = fileRetriever;
             this.TelimenaContext = dbContext as TelimenaContext;
         }
-        
-        protected TelimenaContext TelimenaContext { get;  }
-        protected IFileSaver FileSaver { get;  }
+
+        protected TelimenaContext TelimenaContext { get; }
+        protected IFileSaver FileSaver { get; }
         protected IFileRetriever FileRetriever { get; }
 
         public async Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName, string supportedToolkitVersion)
@@ -33,7 +33,7 @@
 
         public async Task<byte[]> GetPackage(int packageId)
         {
-            var pkg = await this.TelimenaContext.ProgramPackages.FirstOrDefaultAsync(x => x.Id == packageId);
+            ProgramPackageInfo pkg = await this.TelimenaContext.ProgramPackages.FirstOrDefaultAsync(x => x.Id == packageId);
 
             if (pkg != null)
             {
@@ -43,11 +43,10 @@
             return null;
         }
 
-
-
         public async Task<ProgramPackageInfo> GetLatestProgramPackageInfo(int programId)
         {
-            List<ProgramPackageInfo> packages = await this.TelimenaContext.ProgramPackages.Where(x => x.ProgramId == programId).OrderByDescending(x => x.Id).ToListAsync();
+            List<ProgramPackageInfo> packages =
+                await this.TelimenaContext.ProgramPackages.Where(x => x.ProgramId == programId).OrderByDescending(x => x.Id).ToListAsync();
             return packages.FirstOrDefault();
         }
     }

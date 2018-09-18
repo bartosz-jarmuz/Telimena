@@ -1,19 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.IO;
 using System.Threading.Tasks;
+using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 
 namespace Telimena.WebApp.Infrastructure.Repository
 {
-    using System.IO;
-    using Core.Models;
-
     public interface IUpdaterRepository : IRepository<UpdaterPackageInfo>
     {
-        Task<UpdaterPackageInfo> StorePackageAsync(string version, string minimumRequiredToolkitVersion, Stream fileStream, IFileSaver fileSaver);
+        Task<UpdaterPackageInfo> GetNewestCompatibleUpdater(string version, string toolkitVersion, bool includingBeta);
 
         Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever);
         Task<int> Save();
-
-        Task<UpdaterPackageInfo> GetNewestCompatibleUpdater(string version, string toolkitVersion, bool includingBeta);
+        Task<UpdaterPackageInfo> StorePackageAsync(string version, string minimumRequiredToolkitVersion, Stream fileStream, IFileSaver fileSaver);
     }
 }

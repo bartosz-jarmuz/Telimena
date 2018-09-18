@@ -22,11 +22,10 @@ namespace Telimena.WebApp.Controllers.Api
 
         private IProgramsUnitOfWork Work { get; }
 
-        [System.Web.Http.HttpGet]
+        [HttpGet]
         public async Task<IEnumerable<Program>> GetPrograms(int developerId)
         {
             return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Id == developerId);
         }
-
     }
 }

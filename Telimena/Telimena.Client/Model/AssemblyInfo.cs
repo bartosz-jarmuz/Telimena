@@ -1,7 +1,9 @@
-﻿namespace Telimena.Client
+﻿using System.Reflection;
+
+namespace Telimena.Client
 {
     #region Using
-    using System.Reflection;
+
     #endregion
 
     /// <summary>
@@ -15,7 +17,7 @@
         /// <param name="assembly"></param>
         public AssemblyInfo(Assembly assembly)
         {
-            var assName = assembly.GetName();
+            AssemblyName assName = assembly.GetName();
             this.Name = assName.Name;
             this.FullName = assName.FullName;
             this.Version = assName.Version.ToString();
@@ -28,14 +30,14 @@
             this.Location = assembly.Location;
         }
 
-        public string Location { get; set; }
-
         /// <summary>
         ///     New instance of AssemblyInfo
         /// </summary>
         public AssemblyInfo()
         {
         }
+
+        public string Location { get; set; }
 
         public string Product { get; set; }
         public string Trademark { get; set; }

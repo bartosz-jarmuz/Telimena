@@ -1,23 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Security;
+using Telimena.WebApp.Infrastructure.UnitOfWork;
+using Telimena.WebApp.Models.Shared;
 
 namespace Telimena.WebApi.Controllers
 {
-    using WebApp.Core.Interfaces;
-    using WebApp.Core.Models;
-    using WebApp.Infrastructure.Security;
-    using WebApp.Infrastructure.UnitOfWork;
-    using WebApp.Models.Shared;
-
     [TelimenaAuthorize]
     public class HomeController : Controller
     {
-        private readonly IProgramsUnitOfWork _work;
-
         public HomeController(IProgramsUnitOfWork work)
         {
             this._work = work;
         }
+
+        private readonly IProgramsUnitOfWork _work;
 
         public ActionResult Index()
         {
@@ -25,19 +24,17 @@ namespace Telimena.WebApi.Controllers
             {
                 return this.RedirectToAction("Portal", "AdminDashboard");
             }
-            else
-            {
-                return this.RedirectToAction("Index", "DeveloperDashboard");
-            }
+
+            return this.RedirectToAction("Index", "DeveloperDashboard");
         }
 
         [ChildActionOnly]
         public PartialViewResult ProgramsList()
         {
-            TelimenaUser user = this._work.Users.FirstOrDefault(x=>x.UserName == this.User.Identity.Name);
+            TelimenaUser user = this._work.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
             IEnumerable<Program> programs = this._work.Programs.GetProgramsVisibleToUser(user, this.User);
-            
-            var model = new ProgramsListViewModel();
+
+            ProgramsListViewModel model = new ProgramsListViewModel();
             foreach (Program program in programs)
             {
                 if (!model.Programs.ContainsKey(program.Id))
@@ -47,7 +44,6 @@ namespace Telimena.WebApi.Controllers
             }
 
             return this.PartialView("_ProgramsList", model);
-
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Telimena.Client
 {
     public class TelimenaException : Exception
     {
-        public TelimenaException(string message, Exception innerException, params KeyValuePair<Type, object>[]  requestObjects ) : base(message,innerException)
+        public TelimenaException(string message, Exception innerException, params KeyValuePair<Type, object>[] requestObjects) : base(message, innerException)
         {
             this.RequestObjects = requestObjects;
             if (innerException is AggregateException exception)
@@ -15,11 +15,12 @@ namespace Telimena.Client
             }
             else
             {
-                this.InnerExceptions = new ReadOnlyCollection<Exception>(new []{innerException});
+                this.InnerExceptions = new ReadOnlyCollection<Exception>(new[] {innerException});
             }
         }
+
         public KeyValuePair<Type, object>[] RequestObjects { get; }
 
-        public ReadOnlyCollection<Exception> InnerExceptions { get;  }
+        public ReadOnlyCollection<Exception> InnerExceptions { get; }
     }
 }

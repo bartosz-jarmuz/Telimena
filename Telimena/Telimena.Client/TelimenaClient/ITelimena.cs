@@ -15,8 +15,9 @@ namespace Telimena.Client
     public interface ITelimena
     {
         Task<UpdateCheckResult> CheckForUpdates();
+
+        Task HandleUpdates(BetaVersionSettings betaVersionSettings);
         Task<RegistrationResponse> Initialize();
-        Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null);
 
         /// <summary>
         ///     Loads the referenced helper assemblies, e.g. for the purpose of updating
@@ -30,6 +31,6 @@ namespace Telimena.Client
         /// <param name="assemblyNames"></param>
         void LoadHelperAssembliesByName(params string[] assemblyNames);
 
-        Task HandleUpdates(BetaVersionSettings betaVersionSettings);
+        Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null);
     }
 }

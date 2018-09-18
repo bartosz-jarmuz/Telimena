@@ -1,16 +1,18 @@
-﻿using System;
-
-namespace Telimena.WebApp.Core.Models
+﻿namespace Telimena.WebApp.Core.Models
 {
     public class UpdaterPackageInfo : RepositoryFileBase, IRepositoryFile
     {
-        public const string UpdaterFileName = "Updater.zip";
-        protected UpdaterPackageInfo() : base(){ }
+        protected UpdaterPackageInfo()
+        {
+        }
+
         public UpdaterPackageInfo(string version, long fileSizeBytes, string minimumRequiredToolkitVersion) : base(UpdaterFileName, fileSizeBytes)
         {
             this.Version = version;
             this.MinimumRequiredToolkitVersion = minimumRequiredToolkitVersion;
         }
+
+        public const string UpdaterFileName = "Updater.zip";
 
         public int Id { get; set; }
         public string Version { get; set; }
@@ -18,6 +20,5 @@ namespace Telimena.WebApp.Core.Models
         public string MinimumRequiredToolkitVersion { get; set; }
 
         public bool IsBeta { get; set; }
-
     }
 }

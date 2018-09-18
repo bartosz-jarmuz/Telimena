@@ -6,8 +6,8 @@
 
     public enum BetaVersionSettings
     {
-        IgnoreBeta,
-        UseBeta,
-        AskUserEachTime
+        IgnoreBeta
+        , UseBeta
+        , AskUserEachTime
     }
 }

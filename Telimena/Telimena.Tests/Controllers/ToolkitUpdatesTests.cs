@@ -5,26 +5,16 @@ using Telimena.WebApp.Infrastructure.Database;
 namespace Telimena.Tests
 {
     [TestFixture]
-    public class ToolkitUpdatesTests  :IntegrationTestsContextSharedPerClass<TelimenaContext>
+    public class ToolkitUpdatesTests : IntegrationTestsContextSharedPerClass<TelimenaContext>
     {
         //The toolkit can evolve independently of the client app - some changes might be breaking the contracts, but most - should not
         //a non-breaking change example - add new functions or overloads, pull more client data or handle changes in the web api
         //a breaking change would be renaming methods, changing the default URI etc - these are the things that would break the app if DLL is replaced
         //in such cases, the app needs to be recompiled against latest toolkit.
 
-            //todo - IF an update request comes from assembly that does not support latest telimena yet, but the update packages do, then it should all be downloaded at the same time
+        //todo - IF an update request comes from assembly that does not support latest telimena yet, but the update packages do, then it should all be downloaded at the same time
         private void Seed()
         {
-
-        }
-
-        [Test]
-        public void Test_SimpleScenario()
-        {
-            //Todo - an update request comes from a program which uses toolkit 1.0
-            //there were several changes of the toolkit since that time - 1.1, 1.2, 1.3
-            //none of them is marked as 'introduces breaking changes'
-            //regardless whether there is an app update or not, we can prompt that an update is available, and download the toolkit 1.3
         }
 
         [Test]
@@ -62,6 +52,13 @@ namespace Telimena.Tests
             // .GetLatestCompatibleUpdater(updaterVersion)
         }
 
-
+        [Test]
+        public void Test_SimpleScenario()
+        {
+            //Todo - an update request comes from a program which uses toolkit 1.0
+            //there were several changes of the toolkit since that time - 1.1, 1.2, 1.3
+            //none of them is marked as 'introduces breaking changes'
+            //regardless whether there is an app update or not, we can prompt that an update is available, and download the toolkit 1.3
+        }
     }
 }

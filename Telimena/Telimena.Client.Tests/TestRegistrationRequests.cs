@@ -18,7 +18,7 @@ namespace Telimena.Client.Tests
     [TestFixture]
     public class TestRegistrationRequests
     {
-        public void Test_RegistrationFunction(Client.Telimena telimena, Func<RegistrationResponse> function, bool skipFlagExpectedValue)
+        public void Test_RegistrationFunction(Telimena telimena, Func<RegistrationResponse> function, bool skipFlagExpectedValue)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace Telimena.Client.Tests
             }
             catch (Exception e)
             {
-                var ex = e as TelimenaException;
+                TelimenaException ex = e as TelimenaException;
                 Assert.AreEqual(2, ex.InnerExceptions.Count);
                 Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
                 RegistrationRequest jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);
@@ -36,11 +36,10 @@ namespace Telimena.Client.Tests
             }
         }
 
-
         [Test]
         public void Test_InitializeRequestCreation()
         {
-            Client.Telimena telimena = new Client.Telimena();
+            Telimena telimena = new Telimena();
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
@@ -50,7 +49,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_RegisterRequestCreation()
         {
-            Client.Telimena telimena = new Client.Telimena();
+            Telimena telimena = new Telimena();
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());

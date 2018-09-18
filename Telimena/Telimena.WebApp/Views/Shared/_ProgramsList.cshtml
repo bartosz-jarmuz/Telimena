@@ -7,9 +7,13 @@
         </span>
     </a>
     <ul class="treeview-menu" style="display: block;">
-        @foreach (var app in Model.Programs)
+        @foreach (KeyValuePair<int, string> app in Model.Programs)
         {
-        <li><a href="@Url.Action("Index", "ProgramDetails", new {programName = app.Value})"><i class="fa fa-circle-o"></i> <span>@app.Value</span></a></li>
+            <li>
+                <a href="@Url.Action("Index", "ProgramDetails", new {programName = app.Value})">
+                    <i class="fa fa-circle-o"></i> <span>@app.Value</span>
+                </a>
+            </li>
         }
     </ul>
 </li>

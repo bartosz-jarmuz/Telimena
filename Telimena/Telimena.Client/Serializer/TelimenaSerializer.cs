@@ -1,28 +1,26 @@
 ﻿using System;
+using System.Web.Script.Serialization;
 
 namespace Telimena.Client
 {
-    using System.Web.Script.Serialization;
-
     internal class TelimenaSerializer : ITelimenaSerializer
     {
-
         public string Serialize(object objectToPost)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
-            serializer.RegisterConverters(new JavaScriptConverter[] { new NullPropertiesConverter() });
+            serializer.RegisterConverters(new JavaScriptConverter[] {new NullPropertiesConverter()});
             string jsonObject = serializer.Serialize(objectToPost);
             return jsonObject;
         }
 
         string ITelimenaSerializer.UrlEncodeJson(string jsonString)
         {
-            return TelimenaSerializer.UrlEncodeJson(jsonString);
+            return UrlEncodeJson(jsonString);
         }
 
         string ITelimenaSerializer.UrlDecodeJson(string escapedJsonString)
         {
-            return TelimenaSerializer.UrlDecodeJson(escapedJsonString);
+            return UrlDecodeJson(escapedJsonString);
         }
 
         public T Deserialize<T>(string stringContent)
@@ -33,13 +31,8 @@ namespace Telimena.Client
 
         public string SerializeAndEncode(object objectToPost)
         {
-            var json = this.Serialize(objectToPost);
+            string json = this.Serialize(objectToPost);
             return UrlEncodeJson(json);
-        }
-
-        public static string UrlEncodeJson(string jsonString)
-        {
-            return Uri.EscapeDataString(jsonString);
         }
 
         public static string UrlDecodeJson(string escapedJsonString)
@@ -47,5 +40,9 @@ namespace Telimena.Client
             return Uri.UnescapeDataString(escapedJsonString);
         }
 
+        public static string UrlEncodeJson(string jsonString)
+        {
+            return Uri.EscapeDataString(jsonString);
+        }
     }
 }

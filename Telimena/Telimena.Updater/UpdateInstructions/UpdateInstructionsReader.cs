@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -27,7 +24,7 @@ namespace Telimena.Updater
 
         internal static UpdateInstructions ParseDocument(XDocument xDoc)
         {
-            var instructions = new UpdateInstructions();
+            UpdateInstructions instructions = new UpdateInstructions();
             ProcessPackagesSection(xDoc, instructions);
             ProcessMetadataSection(xDoc, instructions);
             return instructions;
@@ -35,7 +32,7 @@ namespace Telimena.Updater
 
         private static void ProcessMetadataSection(XDocument xDoc, UpdateInstructions instructions)
         {
-            var section = xDoc.Root.Element("Metadata");
+            XElement section = xDoc.Root.Element("Metadata");
             if (section != null)
             {
                 instructions.LatestVersion = section.Element("LatestVersion")?.Value;
@@ -45,7 +42,7 @@ namespace Telimena.Updater
 
         private static void ProcessPackagesSection(XDocument xDoc, UpdateInstructions instructions)
         {
-            var packagesSection = xDoc.Root.Element("PackagesToInstall");
+            XElement packagesSection = xDoc.Root.Element("PackagesToInstall");
             if (packagesSection != null)
             {
                 instructions.PackagePaths = new List<string>();

@@ -3,9 +3,9 @@
     <!-- Logo -->
     <a href="@Url.Action("Index", "Home")" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
-        <div class="logo-mini" style="line-height: 20px; font-size:14px; margin-top:5px"><b>T</b>E<b>L</b>I<br /><b>M</b><b>E</b>N<b>A</b></div>
+        <div class="logo-mini" style="line-height: 20px; font-size: 14px; margin-top: 5px"><b>T</b>E<b>L</b>I<br/><b>M</b><b>E</b>N<b>A</b></div>
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg"   data-title="<div align='left'>Telemetry<br/>and<br/>Lifecycle<br/>Management<br/>Engine<br/>App</div>"><b>T</b>E<b>L</b>I<b>M</b><b>E</b>N<b>A</b></span>
+        <span class="logo-lg" data-title="<div align='left'>Telemetry<br/>and<br/>Lifecycle<br/>Management<br/>Engine<br/>App</div>"><b>T</b>E<b>L</b>I<b>M</b><b>E</b>N<b>A</b></span>
     </a>
 
     <!-- Header Navbar -->
@@ -74,7 +74,9 @@
                                 <!-- end notification -->
                             </ul>
                         </li>
-                        <li class="footer"><a href="#">View all</a></li>
+                        <li class="footer">
+                            <a href="#">View all</a>
+                        </li>
                     </ul>
                 </li>
                 <!-- Tasks Menu -->
@@ -136,10 +138,10 @@
                                 @Html.ActionLink("Change Password", "ChangePassword", "Account")
                             </div>
                             <div class="pull-right">
-                                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
-        {
-                        @Html.AntiForgeryToken()
-}
+                                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm"}))
+                                {
+                                    @Html.AntiForgeryToken()
+                                }
                                 <a href="javascript:document.getElementById('logoutForm').submit()" id="logoffLink"><i class="fa fa-sign-out fa-fw"></i> Log out</a>
                             </div>
                         </li>
@@ -147,7 +149,9 @@
                 </li>
                 <!-- Control Sidebar Toggle Button -->
                 <li>
-                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    <a href="#" data-toggle="control-sidebar">
+                        <i class="fa fa-gears"></i>
+                    </a>
                 </li>
             </ul>
         </div>

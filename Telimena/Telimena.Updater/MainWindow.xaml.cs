@@ -9,19 +9,15 @@ using Telimena.Updater.Annotations;
 namespace Telimena.Updater
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private string _updateVersionInfoLabel;
-        private UpdaterStartupSettings UpdaterStartupSettings { get; }
-        private FileInfo InstructionsFile { get; }
-
         public MainWindow()
         {
             this.InitializeComponent();
-            MessageBox.Show("In order to check for updates, run the main app.\r\n" +
-                            "The updater is not a standalone application.", "Telimena Updater", MessageBoxButton.OK,MessageBoxImage.Information);
+            MessageBox.Show("In order to check for updates, run the main app.\r\n" + "The updater is not a standalone application.", "Telimena Updater"
+                , MessageBoxButton.OK, MessageBoxImage.Information);
             Application.Current.Shutdown();
         }
 
@@ -34,6 +30,8 @@ namespace Telimena.Updater
             this.UpdateVersionInfoLabel = this.Instructions.LatestVersion;
         }
 
+        private string _updateVersionInfoLabel;
+
         public UpdateInstructions Instructions { get; set; }
 
         public string UpdateVersionInfoLabel
@@ -41,11 +39,18 @@ namespace Telimena.Updater
             get => this._updateVersionInfoLabel;
             set
             {
-                if (value == this._updateVersionInfoLabel) return;
+                if (value == this._updateVersionInfoLabel)
+                {
+                    return;
+                }
+
                 this._updateVersionInfoLabel = value;
                 this.OnPropertyChanged();
             }
         }
+
+        private UpdaterStartupSettings UpdaterStartupSettings { get; }
+        private FileInfo InstructionsFile { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -57,12 +62,14 @@ namespace Telimena.Updater
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            var worker = new UpdateWorker();
+            UpdateWorker worker = new UpdateWorker();
             worker.PerformUpdate(this.Instructions);
-            if (MessageBox.Show("Update complete. Would you like to run the app now?", "Update complete", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Update complete. Would you like to run the app now?", "Update complete", MessageBoxButton.YesNo
+                    , MessageBoxImage.Information) == MessageBoxResult.Yes)
             {
                 Process.Start(this.Instructions.ProgramExecutableLocation);
             }
+
             Environment.Exit(0);
         }
     }

@@ -4,14 +4,16 @@
 //  </copyright>
 // -----------------------------------------------------------------------
 
+using System;
+using System.Data.Entity;
+using System.Linq;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Database;
+
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
     #region Using
-    using System;
-    using System.Data.Entity;
-    using System.Linq;
-    using Core.Models;
-    using Database;
+
     #endregion
 
     internal class FunctionRepository : Repository<Function>, IFunctionRepository

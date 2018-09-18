@@ -1,18 +1,19 @@
-﻿namespace Telimena.Client
-{
-    using System.Net.Http;
-    using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 
+namespace Telimena.Client
+{
     internal class TelimenaHttpClient : ITelimenaHttpClient
     {
-        private readonly HttpClient _client;
-
         public TelimenaHttpClient(HttpClient client)
         {
             this._client = client;
         }
 
+        private readonly HttpClient _client;
+
         #region Implementation of IHttpClient
+
         public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent httpContent)
         {
             return this._client.PostAsync(requestUri, httpContent);
@@ -22,6 +23,7 @@
         {
             return this._client.GetAsync(requestUri);
         }
+
         #endregion
     }
 }

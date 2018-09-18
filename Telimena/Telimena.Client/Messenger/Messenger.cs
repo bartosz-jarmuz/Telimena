@@ -1,24 +1,24 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Telimena.Client
 {
-    using System;
-    using System.Net.Http;
-    using System.Text;
-    using System.Threading.Tasks;
-
     internal class Messenger : IMessenger
     {
-        public ITelimenaSerializer Serializer { get; }
-        public ITelimenaHttpClient HttpClient { get; }
-        public bool SuppressAllErrors { get; }
-
         public Messenger(ITelimenaSerializer serializer, ITelimenaHttpClient httpClient, bool suppressAllErrors)
         {
             this.Serializer = serializer;
             this.HttpClient = httpClient;
             this.SuppressAllErrors = suppressAllErrors;
         }
+
+        public ITelimenaSerializer Serializer { get; }
+        public ITelimenaHttpClient HttpClient { get; }
+        public bool SuppressAllErrors { get; }
+
         public async Task<string> SendPostRequest(string requestUri, object objectToPost)
         {
             try
@@ -76,6 +76,5 @@ namespace Telimena.Client
                 return null;
             }
         }
-
     }
 }

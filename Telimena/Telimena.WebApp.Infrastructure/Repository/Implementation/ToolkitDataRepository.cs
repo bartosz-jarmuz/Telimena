@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using DotNetLittleHelpers;
+using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
-    using System.Data.Entity;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Core.Models;
-
-    internal sealed class ToolkitDataRepository :  Repository<TelimenaToolkitData>, IToolkitDataRepository
+    internal sealed class ToolkitDataRepository : Repository<TelimenaToolkitData>, IToolkitDataRepository
     {
-        private TelimenaContext TelimenaContext { get; }
         public ToolkitDataRepository(DbContext dbContext) : base(dbContext)
         {
             this.TelimenaContext = dbContext as TelimenaContext;
         }
 
-     
+        private TelimenaContext TelimenaContext { get; }
 
         public async Task<TelimenaToolkitData> StorePackageAsync(string version, Stream fileStream, IFileSaver fileSaver)
         {
@@ -28,18 +26,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 throw new InvalidOperationException("Version string not valid");
             }
 
-            TelimenaToolkitData data = await this.TelimenaContext.TelimenaToolkitData.FirstOrDefaultAsync(x => x.Version == version); 
+            TelimenaToolkitData data = await this.TelimenaContext.TelimenaToolkitData.FirstOrDefaultAsync(x => x.Version == version);
             if (data == null)
             {
-                data = new TelimenaToolkitData(version)
-                {
-                };
+                data = new TelimenaToolkitData(version);
                 this.TelimenaContext.TelimenaToolkitData.Add(data);
             }
 
             TelimenaPackageInfo pkg = new TelimenaPackageInfo(version, fileStream.Length);
             data.TelimenaPackageInfo = pkg;
-            
+
             await fileSaver.SaveFile(pkg, fileStream);
 
             return data;
@@ -62,18 +58,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             ObjectValidator.Validate(() => Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
 
-            TelimenaPackageInfo current = (await this.TelimenaContext.ToolkitPackages.FirstOrDefaultAsync(x => x.Version == version));
+            TelimenaPackageInfo current = await this.TelimenaContext.ToolkitPackages.FirstOrDefaultAsync(x => x.Version == version);
 
             if (current != null)
             {
-                return (await this.TelimenaContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync()).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
-            }
-            else
-            {
-                return (await this.TelimenaContext.ToolkitPackages.ToListAsync()).Where(x => x.Version.IsNewerVersionThan(version)).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+                return (await this.TelimenaContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync())
+                    .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
             }
 
-           
+            return (await this.TelimenaContext.ToolkitPackages.ToListAsync()).Where(x => x.Version.IsNewerVersionThan(version))
+                .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
         }
     }
 }

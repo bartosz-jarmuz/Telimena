@@ -10,6 +10,7 @@ namespace Telimena
             {
                 return 1;
             }
+
             return firstOne == secondOne ? 0 : -1;
         }
     }

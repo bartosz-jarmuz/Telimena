@@ -1,7 +1,7 @@
-﻿namespace Telimena.WebApp.Core.Models
-{
-    using System;
+﻿using System;
 
+namespace Telimena.WebApp.Core.Models
+{
     public abstract class UsageDetail
     {
         public int Id { get; set; }
@@ -10,6 +10,6 @@
 
         public int? AssemblyVersionId { get; set; }
 
-       public virtual AssemblyVersion AssemblyVersion { get; set; }
+        public virtual AssemblyVersion AssemblyVersion { get; set; }
     }
 }

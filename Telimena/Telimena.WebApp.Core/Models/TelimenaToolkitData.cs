@@ -1,22 +1,20 @@
-﻿using System.Collections.Generic;
-using DotNetLittleHelpers;
-
-namespace Telimena.WebApp.Core.Models
+﻿namespace Telimena.WebApp.Core.Models
 {
-    using System;
-
-    public class TelimenaToolkitData 
+    public class TelimenaToolkitData
     {
-        protected TelimenaToolkitData() : base() { }
+        protected TelimenaToolkitData()
+        {
+        }
+
         public TelimenaToolkitData(string version)
         {
             this.Version = version;
         }
+
         public int Id { get; set; }
         public string Version { get; set; }
         public TelimenaPackageInfo TelimenaPackageInfo { get; set; }
 
         public bool IntroducesBreakingChanges { get; set; }
-
     }
 }

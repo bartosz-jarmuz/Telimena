@@ -1,11 +1,11 @@
-﻿namespace Telimena.WebApp.Core.Models
-{
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-    using DotNetLittleHelpers;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using DotNetLittleHelpers;
 
+namespace Telimena.WebApp.Core.Models
+{
     public class DeveloperAccount
     {
         //EF Required constructor
@@ -26,21 +26,29 @@
         public string MainEmail { get; set; }
         public int Id { get; set; }
 
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local - EF required
         public string MainUserId { get; private set; }
+
         [ForeignKey("MainUserId")]
         public virtual TelimenaUser MainUser { get; private set; }
 
-        public void SetMainUser(TelimenaUser user)
+        public virtual RestrictedAccessCollection<TelimenaUser> AssociatedUsers { get; set; } = new List<TelimenaUser>();
+
+        public virtual RestrictedAccessCollection<Program> Programs { get; set; } = new List<Program>();
+
+        public void AddProgram(Program program)
         {
-            this.MainUser = user;
-            this.AssociateUser(user);
+            if (this.Programs.All(x => x.Id != this.Id))
+            {
+                ((Collection<Program>) this.Programs).Add(program);
+            }
         }
 
         public void AssociateUser(TelimenaUser user)
         {
             if (!this.AssociatedUsers.Contains(user))
             {
-                ((Collection<TelimenaUser>)this.AssociatedUsers).Add(user);
+                ((Collection<TelimenaUser>) this.AssociatedUsers).Add(user);
             }
         }
 
@@ -48,21 +56,14 @@
         {
             if (this.AssociatedUsers.Contains(user))
             {
-                ((Collection<TelimenaUser>)this.AssociatedUsers).Remove(user);
+                ((Collection<TelimenaUser>) this.AssociatedUsers).Remove(user);
             }
         }
 
-        public void AddProgram(Program program)
+        public void SetMainUser(TelimenaUser user)
         {
-            if (this.Programs.All(x => x.Id != this.Id))
-            {
-                ((Collection<Program>)this.Programs).Add(program);
-            }
+            this.MainUser = user;
+            this.AssociateUser(user);
         }
-
-
-        public virtual RestrictedAccessCollection<TelimenaUser> AssociatedUsers { get; set; } = new List<TelimenaUser>();
-
-        public virtual RestrictedAccessCollection<Program> Programs { get; set; } = new List<Program>();
     }
 }

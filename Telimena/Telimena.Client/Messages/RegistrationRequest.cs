@@ -4,7 +4,7 @@
     {
         public UserInfo UserInfo { get; set; }
         public ProgramInfo ProgramInfo { get; set; }
-        public string TelimenaVersion { get; set; } 
+        public string TelimenaVersion { get; set; }
         public bool SkipUsageIncrementation { get; set; }
     }
 }

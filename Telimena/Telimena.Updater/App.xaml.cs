@@ -1,16 +1,15 @@
-﻿using System.IO;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Telimena.Updater
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    ///     Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {
-        void App_Startup(object sender, StartupEventArgs e)
+        private void App_Startup(object sender, StartupEventArgs e)
         {
-            var settings = CommandLineArgumentParser.GetSettings(e.Args);
+            UpdaterStartupSettings settings = CommandLineArgumentParser.GetSettings(e.Args);
             MainWindow mainWindow;
             if (settings == null)
             {
@@ -20,6 +19,7 @@ namespace Telimena.Updater
             {
                 mainWindow = new MainWindow(settings);
             }
+
             mainWindow.Show();
         }
     }

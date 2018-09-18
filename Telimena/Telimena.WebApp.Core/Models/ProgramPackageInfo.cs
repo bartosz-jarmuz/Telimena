@@ -2,15 +2,18 @@
 {
     public class ProgramPackageInfo : RepositoryFileBase, IRepositoryFile
     {
-        public int Id { get; set; }
-        public int ProgramId { get; set; }
-        protected ProgramPackageInfo() : base() { }
+        protected ProgramPackageInfo()
+        {
+        }
 
         public ProgramPackageInfo(string fileName, int programId, long fileSizeBytes, string supportedToolkitVersion) : base(fileName, fileSizeBytes)
         {
             this.ProgramId = programId;
             this.SupportedToolkitVersion = supportedToolkitVersion;
         }
+
+        public int Id { get; set; }
+        public int ProgramId { get; set; }
         public string SupportedToolkitVersion { get; set; }
     }
 }

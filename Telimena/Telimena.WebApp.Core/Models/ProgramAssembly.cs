@@ -1,11 +1,11 @@
-﻿namespace Telimena.WebApp.Core.Models
-{
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using DotNetLittleHelpers;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using DotNetLittleHelpers;
 
-    public class ProgramAssembly 
+namespace Telimena.WebApp.Core.Models
+{
+    public class ProgramAssembly
     {
         public int Id { get; set; }
 
@@ -25,40 +25,32 @@
 
         public virtual AssemblyVersion LatestVersion { get; private set; }
 
+        public void AddVersion(string version)
+        {
+            if (this.Versions.All(x => x.Version != version))
+            {
+                ((Collection<AssemblyVersion>) this.Versions).Add(new AssemblyVersion {Version = version});
+            }
+        }
+
+        public AssemblyVersion GetVersion(string version)
+        {
+            return this.Versions.FirstOrDefault(x => x.Version == version);
+        }
+
         public void SetLatestVersion(string version)
         {
-            var existingVersion = this.Versions.FirstOrDefault(x => x.Version == version);
+            AssemblyVersion existingVersion = this.Versions.FirstOrDefault(x => x.Version == version);
             if (existingVersion != null)
             {
                 this.LatestVersion = existingVersion;
             }
             else
             {
-                var assVersion = new AssemblyVersion()
-                {
-                    Version = version
-                };
-                ((Collection<AssemblyVersion>)this.Versions).Add(assVersion);
+                AssemblyVersion assVersion = new AssemblyVersion {Version = version};
+                ((Collection<AssemblyVersion>) this.Versions).Add(assVersion);
                 this.LatestVersion = assVersion;
             }
-        }
-
-
-        public void AddVersion(string version)
-        {
-            if (this.Versions.All(x => x.Version != version))
-            {
-                ((Collection<AssemblyVersion>)this.Versions).Add(new AssemblyVersion()
-                {
-                    Version = version
-                });
-            }
-        }
-
-
-        public AssemblyVersion GetVersion(string version)
-        {
-            return this.Versions.FirstOrDefault(x => x.Version == version);
         }
     }
 }

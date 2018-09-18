@@ -12,15 +12,12 @@ namespace Telimena.Client.Tests
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
             client.Setup(x => x.PostAsync(It.IsAny<string>(), It.IsAny<HttpContent>())).Callback((string uri, HttpContent content) =>
             {
-                throw new AggregateException(
-                    new AssertionException(uri),
-                    new AssertionException(content.ReadAsStringAsync().GetAwaiter().GetResult()));
+                throw new AggregateException(new AssertionException(uri), new AssertionException(content.ReadAsStringAsync().GetAwaiter().GetResult()));
             });
             return client;
         }
 
-
-        public static void SetupMockHttpClient(Client.Telimena telimena, Mock<ITelimenaHttpClient> client)
+        public static void SetupMockHttpClient(Telimena telimena, Mock<ITelimenaHttpClient> client)
         {
             telimena.Messenger = new Messenger(telimena.Serializer, client.Object, telimena.SuppressAllErrors);
         }

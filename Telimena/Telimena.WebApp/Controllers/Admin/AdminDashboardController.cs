@@ -1,39 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
+using log4net;
+using Newtonsoft.Json;
+using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Infrastructure.Repository;
+using Telimena.WebApp.Infrastructure.Security;
 
 namespace Telimena.WebApp.Controllers
 {
-    using System.Threading.Tasks;
-    using Core.DTO;
-    using Core.Interfaces;
-    using Infrastructure.Repository;
-    using Infrastructure.Security;
-    using log4net;
-    using Newtonsoft.Json;
-
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class AdminDashboardController : Controller
     {
-        private readonly ILog logger;
-        private readonly IAdminDashboardUnitOfWork unitOfWork;
-
         public AdminDashboardController(ILog logger, IAdminDashboardUnitOfWork unitOfWork)
         {
             this.logger = logger;
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<ActionResult> GetPortalSummary()
-        {
-            var summary = await this.unitOfWork.GetPortalSummary();
-            return this.PartialView("_PortalSummaryBoxes", summary);
-        }
+        private readonly ILog logger;
+        private readonly IAdminDashboardUnitOfWork unitOfWork;
 
-        public async Task<ActionResult> GetAllProgramsSummaryCounts()
+        public ActionResult Apps()
         {
-            var summary = await this.unitOfWork.GetAllProgramsSummaryCounts();
-            return this.PartialView("_AllProgramsSummaryBoxes", summary);
+            return this.View();
         }
 
         [HttpPost]
@@ -43,12 +35,19 @@ namespace Telimena.WebApp.Controllers
             return this.Content(JsonConvert.SerializeObject(summary));
         }
 
-        public ActionResult Portal()
+        public async Task<ActionResult> GetAllProgramsSummaryCounts()
         {
-            return this.View();
+            AllProgramsSummaryData summary = await this.unitOfWork.GetAllProgramsSummaryCounts();
+            return this.PartialView("_AllProgramsSummaryBoxes", summary);
         }
 
-        public ActionResult Apps()
+        public async Task<ActionResult> GetPortalSummary()
+        {
+            PortalSummaryData summary = await this.unitOfWork.GetPortalSummary();
+            return this.PartialView("_PortalSummaryBoxes", summary);
+        }
+
+        public ActionResult Portal()
         {
             return this.View();
         }

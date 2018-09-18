@@ -1,7 +1,7 @@
-﻿namespace Telimena.WebApp.Core.Models
-{
-    using System;
+﻿using System;
 
+namespace Telimena.WebApp.Core.Models
+{
     public abstract class RepositoryFileBase : IRepositoryFile
     {
         protected RepositoryFileBase()
@@ -14,7 +14,6 @@
             this.FileSizeBytes = fileSizeBytes;
             this.UploadedDate = DateTime.UtcNow;
         }
-
 
         public DateTime UploadedDate { get; set; }
         public string FileName { get; protected set; }

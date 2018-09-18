@@ -1,9 +1,10 @@
-﻿namespace Telimena.Client
+﻿using System;
+using System.Net.Http;
+using System.Reflection;
+
+namespace Telimena.Client
 {
     #region Using
-    using System;
-    using System.Net.Http;
-    using System.Reflection;
 
     #endregion
 
@@ -27,15 +28,13 @@
             {
                 telemetryApiBaseUrl = defaultApiUri;
             }
-            Tuple<ProgramInfo, UserInfo, string> data = Telimena.LoadProgramData(mainAssembly);
+
+            Tuple<ProgramInfo, UserInfo, string> data = LoadProgramData(mainAssembly);
             this.ProgramInfo = data.Item1;
             this.UserInfo = data.Item2;
             this.TelimenaVersion = data.Item3;
 
-            this.HttpClient = new TelimenaHttpClient(new HttpClient()
-            {
-                BaseAddress = telemetryApiBaseUrl
-            });
+            this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
         }
 
@@ -45,17 +44,14 @@
             {
                 telemetryApiBaseUrl = defaultApiUri;
             }
-            Tuple<ProgramInfo, UserInfo, string> data = Telimena.LoadProgramData(programInfo: programInfo);
+
+            Tuple<ProgramInfo, UserInfo, string> data = LoadProgramData(programInfo: programInfo);
             this.ProgramInfo = data.Item1;
             this.UserInfo = data.Item2;
             this.TelimenaVersion = data.Item3;
 
-            this.HttpClient = new TelimenaHttpClient(new HttpClient()
-            {
-                BaseAddress = telemetryApiBaseUrl
-            });
+            this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
         }
-
     }
 }

@@ -6,11 +6,19 @@ using System.Xml.Linq;
 
 namespace Telimena.Client
 {
-
-    
-
     internal static class UpdateInstructionCreator
     {
+        public static FileInfo CreateInstructionsFile(IEnumerable<UpdatePackageData> packages, ProgramInfo programInfo)
+        {
+            Tuple<XDocument, FileInfo> tuple = CreateXDoc(packages, programInfo);
+            XDocument xDoc = tuple.Item1;
+            FileInfo file = tuple.Item2;
+
+            xDoc.Save(file.FullName);
+
+            return file;
+        }
+
         internal static Tuple<XDocument, FileInfo> CreateXDoc(IEnumerable<UpdatePackageData> packages, ProgramInfo programInfo)
         {
             List<UpdatePackageData> sorted = Sort(packages);
@@ -23,18 +31,23 @@ namespace Telimena.Client
             return new Tuple<XDocument, FileInfo>(xDoc, instructionsFile);
         }
 
+        internal static List<UpdatePackageData> Sort(IEnumerable<UpdatePackageData> packages)
+        {
+            return packages.OrderBy(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+        }
+
         private static void InsertMetadata(XDocument xDoc, List<UpdatePackageData> sorted, ProgramInfo programInfo)
         {
-            var metadata = new XElement("Metadata");
+            XElement metadata = new XElement("Metadata");
             xDoc.Root.Add(metadata);
-            var newest = sorted.Last();
+            UpdatePackageData newest = sorted.Last();
             metadata.Add(new XElement("LatestVersion", newest.Version));
             metadata.Add(new XElement("ProgramExecutableLocation", programInfo.PrimaryAssemblyPath));
         }
 
         private static void InsertPackagesData(XDocument xDoc, List<UpdatePackageData> sorted)
         {
-            var packagesToInstall = new XElement("PackagesToInstall");
+            XElement packagesToInstall = new XElement("PackagesToInstall");
             xDoc.Root.Add(packagesToInstall);
             foreach (UpdatePackageData updatePackageData in sorted)
             {
@@ -42,22 +55,5 @@ namespace Telimena.Client
                 packagesToInstall.Add(new XElement("File", updatePackageData.StoredFilePath));
             }
         }
-
-        internal static List<UpdatePackageData> Sort(IEnumerable<UpdatePackageData> packages)
-        {
-            return packages.OrderBy(x => x.Version, new TelimenaVersionStringComparer()).ToList();
-        }
-
-        public static FileInfo CreateInstructionsFile(IEnumerable<UpdatePackageData> packages, ProgramInfo programInfo)
-        {
-            Tuple<XDocument, FileInfo> tuple = CreateXDoc(packages, programInfo);
-            XDocument xDoc= tuple.Item1;
-            FileInfo file = tuple.Item2;
-
-            xDoc.Save(file.FullName);
-
-            return file;
-        }
-
     }
 }

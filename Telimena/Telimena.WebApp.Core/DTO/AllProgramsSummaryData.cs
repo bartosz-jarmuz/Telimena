@@ -1,8 +1,8 @@
-﻿namespace Telimena.WebApp.Core.DTO
-{
-    using System.Collections.Generic;
-    using Models;
+﻿using System.Collections.Generic;
+using Telimena.WebApp.Core.Models;
 
+namespace Telimena.WebApp.Core.DTO
+{
     public class AllProgramsSummaryData
     {
         public int TotalProgramsCount { get; set; }

@@ -1,15 +1,16 @@
-﻿namespace Telimena.WebApp.Infrastructure.Repository.Implementation
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Security.Principal;
+using System.Threading.Tasks;
+using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Database;
+
+namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
     #region Using
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity;
-    using System.Linq;
-    using System.Security.Principal;
-    using System.Threading.Tasks;
-    using Core.Interfaces;
-    using Core.Models;
-    using Database;
 
     #endregion
 
@@ -27,40 +28,35 @@
             this.TelimenaContext.Programs.Add(objectToAdd);
         }
 
-        public void AddUsage(ProgramUsageSummary objectToAdd)
-        {
-            this.TelimenaContext.ProgramUsages.Add(objectToAdd);
-        }
-
         public async Task<IEnumerable<Program>> GetProgramsByDeveloperName(string developerName)
         {
-            return await this.TelimenaContext.Programs.Include(x => x.DeveloperAccount).Where(x => x.DeveloperAccount != null && x.DeveloperAccount.Name == developerName).ToListAsync();
+            return await this.TelimenaContext.Programs.Include(x => x.DeveloperAccount)
+                .Where(x => x.DeveloperAccount != null && x.DeveloperAccount.Name == developerName).ToListAsync();
         }
 
         public async Task<IEnumerable<Program>> GetProgramsForUserAsync(TelimenaUser user)
         {
-             return await this.TelimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id).ToListAsync();
+            return await this.TelimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id).ToListAsync();
         }
+
         public List<Program> GetProgramsVisibleToUser(TelimenaUser user, IPrincipal principal)
         {
             return this.GetProgramsVisibleToUserImpl(user, principal).ToList();
         }
+
         public Task<List<Program>> GetProgramsVisibleToUserAsync(TelimenaUser user, IPrincipal principal)
         {
             return this.GetProgramsVisibleToUserImpl(user, principal).ToListAsync();
         }
 
-
-        private IQueryable<Program> GetProgramsVisibleToUserImpl(TelimenaUser user, IPrincipal principal)
+        public void AddUsage(ProgramUsageSummary objectToAdd)
         {
-            if (principal != null && principal.IsInRole(TelimenaRoles.Admin))
-            {
-                return this.TelimenaContext.Programs;
-            }
-            else
-            {
-                return this.TelimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id);
-            }
+            this.TelimenaContext.ProgramUsages.Add(objectToAdd);
+        }
+
+        public Task<List<ProgramUsageSummary>> GetAllUsages(Program program)
+        {
+            return this.TelimenaContext.ProgramUsages.Where(x => x.Program.Id == program.Id).ToListAsync();
         }
 
         public UsageSummary GetUsage(Program program, ClientAppUser clientAppUser)
@@ -68,9 +64,14 @@
             return this.TelimenaContext.ProgramUsages.FirstOrDefault(x => x.Program.Id == program.Id && x.ClientAppUser.Id == clientAppUser.Id);
         }
 
-        public Task<List<ProgramUsageSummary>> GetAllUsages(Program program)
+        private IQueryable<Program> GetProgramsVisibleToUserImpl(TelimenaUser user, IPrincipal principal)
         {
-            return this.TelimenaContext.ProgramUsages.Where(x => x.Program.Id == program.Id).ToListAsync();
+            if (principal != null && principal.IsInRole(TelimenaRoles.Admin))
+            {
+                return this.TelimenaContext.Programs;
+            }
+
+            return this.TelimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id);
         }
     }
 }

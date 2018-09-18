@@ -1,7 +1,7 @@
-﻿namespace Telimena.WebApp.Infrastructure.Repository
-{
-    using Core.Models;
+﻿using Telimena.WebApp.Core.Models;
 
+namespace Telimena.WebApp.Infrastructure.Repository
+{
     public interface IFunctionRepository : IRepository<Function>
     {
         //void AddUsage(FunctionUsage objectToAdd);

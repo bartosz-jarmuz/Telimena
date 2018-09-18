@@ -1,7 +1,14 @@
-﻿ <ul class="sidebar-menu" data-widget="tree">
+﻿<ul class="sidebar-menu" data-widget="tree">
     <li class="header">DEVELOPER</li>
-    <li><a href="@Url.Action("Index", "DeveloperDashboard")"><i class="fa fa-users"></i> <span>Dashboard</span></a></li>
-    <li><a href="@Url.Action("Register", "RegisterProgram")"><i class="fa fa-link"></i> <span>Register application</span></a></li>
+    <li>
+        <a href="@Url.Action("Index", "DeveloperDashboard")">
+            <i class="fa fa-users"></i> <span>Dashboard</span>
+        </a>
+    </li>
+    <li>
+        <a href="@Url.Action("Register", "RegisterProgram")">
+            <i class="fa fa-link"></i> <span>Register application</span>
+        </a>
+    </li>
     @{ Html.RenderAction("ProgramsList", "Home"); }
 </ul>
-

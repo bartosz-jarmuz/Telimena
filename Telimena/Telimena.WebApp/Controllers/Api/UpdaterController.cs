@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -8,13 +6,11 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using AutoMapper;
-using DotNetLittleHelpers;
 using Newtonsoft.Json;
 using Telimena.Client;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
-using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
@@ -22,13 +18,8 @@ using Telimena.WebApp.Infrastructure.UnitOfWork;
 namespace Telimena.WebApp.Controllers.Api
 {
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
-
     public class UpdaterController : ApiController
     {
-        private readonly IToolkitDataUnitOfWork work;
-        private readonly IFileSaver fileSaver;
-        private readonly IFileRetriever fileRetriever;
-
         public UpdaterController(IToolkitDataUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
             this.work = work;
@@ -36,44 +27,66 @@ namespace Telimena.WebApp.Controllers.Api
             this.fileRetriever = fileRetriever;
         }
 
+        private readonly IToolkitDataUnitOfWork work;
+        private readonly IFileSaver fileSaver;
+        private readonly IFileRetriever fileRetriever;
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<UpdateResponse> CheckForUpdate(string version, string toolkitVersion)
+        {
+            if (!Version.TryParse(version, out _))
+            {
+                return new UpdateResponse {Exception = new ArgumentException($"[{version}] is not a valid version string")};
+            }
+
+            if (!Version.TryParse(toolkitVersion, out _))
+            {
+                return new UpdateResponse {Exception = new ArgumentException($"[{toolkitVersion}] is not a valid version string")};
+            }
+
+            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetNewestCompatibleUpdater(version, toolkitVersion, false);
+            UpdateResponse response = new UpdateResponse();
+            if (updaterInfo != null)
+            {
+                response.UpdatePackages = new[] {Mapper.Map<UpdatePackageData>(updaterInfo)};
+            }
+
+            return response;
+        }
+
         //public async Task<UpdaterPackageInfo> GetLatestUpdaterInfo()
         //{
 
         //}
 
-        [System.Web.Http.HttpGet]
+        [HttpGet]
         public async Task<IHttpActionResult> GetUpdater(int id)
         {
-            var updaterInfo = await this.work.UpdaterRepository.FirstOrDefaultAsync(x => x.Id == id);
+            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.FirstOrDefaultAsync(x => x.Id == id);
             if (updaterInfo == null)
             {
                 return this.BadRequest($"Updater id [{id}] does not exist");
             }
-            var bytes = await this.work.UpdaterRepository.GetPackage(id,this.fileRetriever );
-            var result = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new ByteArrayContent(bytes)
-            };
-            result.Content.Headers.ContentDisposition =
-                new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
-                {
-                    FileName = updaterInfo.FileName
-                };
-            result.Content.Headers.ContentType =
-                new MediaTypeHeaderValue("application/octet-stream");
+
+            byte[] bytes = await this.work.UpdaterRepository.GetPackage(id, this.fileRetriever);
+            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = updaterInfo.FileName};
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
             return this.ResponseMessage(result);
         }
 
-        [System.Web.Http.AllowAnonymous]
-        [System.Web.Http.HttpGet]
+        [AllowAnonymous]
+        [HttpGet]
         public async Task<IHttpActionResult> GetUpdater(string version)
         {
             if (!Version.TryParse(version, out _))
             {
                 return this.BadRequest($"[{version}] is not a valid version string");
             }
-            var updaterInfo = await this.work.UpdaterRepository.FirstOrDefaultAsync(x=>x.Version == version);
+
+            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.FirstOrDefaultAsync(x => x.Version == version);
             if (updaterInfo == null)
             {
                 return this.BadRequest($"Updater version [{version}] does not exist");
@@ -82,45 +95,18 @@ namespace Telimena.WebApp.Controllers.Api
             return await this.GetUpdater(updaterInfo.Id);
         }
 
-        [System.Web.Http.AllowAnonymous]
-        [System.Web.Http.HttpGet]
-        public async Task<UpdateResponse> CheckForUpdate(string version, string toolkitVersion)
-        {
-           
-            if (!Version.TryParse(version, out _))
-            {
-                return new UpdateResponse() {Exception = new ArgumentException($"[{version}] is not a valid version string")};
-            }
-            if (!Version.TryParse(toolkitVersion, out _))
-            {
-                return new UpdateResponse() {Exception = new ArgumentException($"[{toolkitVersion}] is not a valid version string")};
-            }
-
-            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetNewestCompatibleUpdater(version, toolkitVersion, false);
-            var response = new UpdateResponse();
-            if (updaterInfo != null)
-            {
-                response.UpdatePackages = new[] {Mapper.Map<UpdatePackageData>(updaterInfo)};
-            }
-
-            return response;
-
-        }
-
-       
-
-
-        [System.Web.Http.HttpPost]
+        [HttpPost]
         public async Task<IHttpActionResult> UploadUpdaterPackage()
         {
             try
             {
-                string reqString = System.Web.HttpContext.Current.Request.Form["Model"];
+                string reqString = HttpContext.Current.Request.Form["Model"];
                 CreateUpdatePackageRequest request = JsonConvert.DeserializeObject<CreateUpdatePackageRequest>(reqString);
-                HttpPostedFile uploadedFile = System.Web.HttpContext.Current.Request.Files.Count > 0 ? System.Web.HttpContext.Current.Request.Files[0] : null;
+                HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    var pkg = await this.work.UpdaterRepository.StorePackageAsync(request.PackageVersion,"0.0.0.0", uploadedFile.InputStream, this.fileSaver);
+                    UpdaterPackageInfo pkg =
+                        await this.work.UpdaterRepository.StorePackageAsync(request.PackageVersion, "0.0.0.0", uploadedFile.InputStream, this.fileSaver);
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }

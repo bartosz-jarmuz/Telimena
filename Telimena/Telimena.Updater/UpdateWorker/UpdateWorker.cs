@@ -10,32 +10,10 @@ namespace Telimena.Updater
     {
         public void PerformUpdate(UpdateInstructions instructions)
         {
-            foreach (var packagePath in instructions.PackagePaths)
+            foreach (string packagePath in instructions.PackagePaths)
             {
-                this.ProcessPackage(new FileInfo(packagePath));    
+                this.ProcessPackage(new FileInfo(packagePath));
             }
-        }
-
-        private void ProcessPackage(FileInfo package)
-        {
-           // TopInfoLabel = "Updater - unpacking...";
-           // Thread.Sleep(700);
-            string updatePackageFolderPath = package.FullName.Replace(".zip", "");
-            DirectoryInfo programFolder = Directory.GetParent(updatePackageFolderPath).Parent.Parent;
-            if (!PrepareAndValidatePackage(package, updatePackageFolderPath))
-            {
-                return;
-            }
-            FileReplacer.ReplaceFiles(programFolder, package, new DirectoryInfo(updatePackageFolderPath));
-           
-           // TopInfoLabel = "Updater - extracting...";
-            //Thread.Sleep(700);
-            if (Directory.Exists(updatePackageFolderPath))
-            {
-                Directory.Delete(updatePackageFolderPath, true);
-            }
-            //TopInfoLabel = "Updater - cleaning...";
-            //Thread.Sleep(700);
         }
 
         private static bool PrepareAndValidatePackage(FileInfo package, string updDirPath)
@@ -52,8 +30,9 @@ namespace Telimena.Updater
             catch (Exception ex)
             {
                 //MoveTheWindowUp();
-                MessageBox.Show("Error occurred while unpacking update package. Exception:\n" + ex.Message + "\nUpdate package will be removed and re-downloaded.",
-                    "Update problem");
+                MessageBox.Show(
+                    "Error occurred while unpacking update package. Exception:\n" + ex.Message + "\nUpdate package will be removed and re-downloaded."
+                    , "Update problem");
                 // TopInfoLabel = "Updater - error - update canceled";
                 try
                 {
@@ -70,6 +49,30 @@ namespace Telimena.Updater
             }
 
             return true;
+        }
+
+        private void ProcessPackage(FileInfo package)
+        {
+            // TopInfoLabel = "Updater - unpacking...";
+            // Thread.Sleep(700);
+            string updatePackageFolderPath = package.FullName.Replace(".zip", "");
+            DirectoryInfo programFolder = Directory.GetParent(updatePackageFolderPath).Parent.Parent;
+            if (!PrepareAndValidatePackage(package, updatePackageFolderPath))
+            {
+                return;
+            }
+
+            FileReplacer.ReplaceFiles(programFolder, package, new DirectoryInfo(updatePackageFolderPath));
+
+            // TopInfoLabel = "Updater - extracting...";
+            //Thread.Sleep(700);
+            if (Directory.Exists(updatePackageFolderPath))
+            {
+                Directory.Delete(updatePackageFolderPath, true);
+            }
+
+            //TopInfoLabel = "Updater - cleaning...";
+            //Thread.Sleep(700);
         }
     }
 }

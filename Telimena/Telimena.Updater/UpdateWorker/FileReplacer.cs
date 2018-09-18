@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -37,7 +36,6 @@ namespace Telimena.Updater
             TryCopy(updatedFile, targetFile);
         }
 
-
         private static void TryCopy(FileInfo source, FileInfo destination)
         {
             for (int i = 0; i < 3; i++)
@@ -54,9 +52,8 @@ namespace Telimena.Updater
                     //catch any error several times, then don't catch anymore
                 }
             }
+
             File.Copy(destination.FullName, source.FullName, true);
-
         }
-
     }
 }

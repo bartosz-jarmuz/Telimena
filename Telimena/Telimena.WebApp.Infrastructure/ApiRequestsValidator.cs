@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Telimena.Client;
+using Telimena.WebApp.Core.Messages;
 
 namespace Telimena.WebApp.Infrastructure
 {
-    using Client;
-    using Core.Messages;
-
     public static class ApiRequestsValidator
     {
         public static bool IsRequestValid(RegistrationRequest request)
@@ -23,24 +22,21 @@ namespace Telimena.WebApp.Infrastructure
             return request != null;
         }
 
-
         public static bool IsRequestValid(CreateUpdatePackageRequest request, out List<string> errorMessages)
         {
             errorMessages = new List<string>();
-            if (request != null && request.ProgramId > 0 && !string.IsNullOrEmpty(request.PackageVersion) )
+            if (request != null && request.ProgramId > 0 && !string.IsNullOrEmpty(request.PackageVersion))
             {
                 if (Version.TryParse(request.PackageVersion, out Version _))
                 {
                     return true;
                 }
-                else
-                {
-                    errorMessages.Add($"String [{request.PackageVersion}] is not a valid version format!");
-                }
+
+                errorMessages.Add($"String [{request.PackageVersion}] is not a valid version format!");
             }
             else
             {
-                errorMessages.Add($"Required request property is null!");
+                errorMessages.Add("Required request property is null!");
             }
 
             return false;

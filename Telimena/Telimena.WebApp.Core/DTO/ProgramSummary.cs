@@ -1,7 +1,7 @@
-﻿namespace Telimena.WebApp.Core.DTO
-{
-    using System;
+﻿using System;
 
+namespace Telimena.WebApp.Core.DTO
+{
     public class ProgramSummary
     {
         public string ProgramName { get; set; }

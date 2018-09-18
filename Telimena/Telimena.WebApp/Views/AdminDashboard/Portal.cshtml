@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Admin Dashboard";
 }
 
@@ -26,7 +25,7 @@
 @section scripts
 {
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             var url = $(".portal-summary").data("url");
             $(".portal-summary").load(url);
         });

@@ -35,15 +35,12 @@ namespace Telimena.WebApp.Controllers.Api
                 Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
                 if (program == null)
                 {
-                    return new LatestVersionResponse
-                    {
-                        Error = new InvalidOperationException($"Failed to find program by Id: [{id}]")
-                    };
+                    return new LatestVersionResponse {Error = new InvalidOperationException($"Failed to find program by Id: [{id}]")};
                 }
+
                 LatestVersionResponse info = new LatestVersionResponse
                 {
-                    PrimaryAssemblyVersion = this.GetVersionInfo(program.PrimaryAssembly),
-                    HelperAssemblyVersions = new List<VersionInfo>()
+                    PrimaryAssemblyVersion = this.GetVersionInfo(program.PrimaryAssembly), HelperAssemblyVersions = new List<VersionInfo>()
                 };
                 foreach (ProgramAssembly programAssembly in program.ProgramAssemblies.Where(x => x.PrimaryOf != program))
                 {
@@ -54,11 +51,20 @@ namespace Telimena.WebApp.Controllers.Api
             }
             catch (Exception ex)
             {
-                return new LatestVersionResponse
-                {
-                    Error = new InvalidOperationException("Error while processing registration request", ex)
-                };
+                return new LatestVersionResponse {Error = new InvalidOperationException("Error while processing registration request", ex)};
             }
+        }
+
+        [HttpGet]
+        public async Task<IHttpActionResult> GetVersionsCount(int id)
+        {
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program [{id}] not found");
+            }
+
+            return this.Ok(prg.PrimaryAssembly.Versions.Count);
         }
 
         [HttpPost]
@@ -66,7 +72,7 @@ namespace Telimena.WebApp.Controllers.Api
         {
             if (!ApiRequestsValidator.IsRequestValid(request))
             {
-                return this.BadRequest($"SetLatestVersionRequest is invalid");
+                return this.BadRequest("SetLatestVersionRequest is invalid");
             }
 
             Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
@@ -85,26 +91,14 @@ namespace Telimena.WebApp.Controllers.Api
             return this.Ok();
         }
 
-        [HttpGet]
-        public async Task<IHttpActionResult> GetVersionsCount(int id)
-        {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
-            if (prg == null)
-            {
-                return this.BadRequest($"Program [{id}] not found");
-            }
-
-            return this.Ok(prg.PrimaryAssembly.Versions.Count);
-        }
-
         private VersionInfo GetVersionInfo(ProgramAssembly assemblyInfo)
         {
             return new VersionInfo
             {
-                AssemblyId = assemblyInfo.Id,
-                AssemblyName = assemblyInfo.Name,
-                LatestVersion = assemblyInfo.LatestVersion?.Version,
-                LatestVersionId = assemblyInfo.LatestVersion?.Id ?? 0
+                AssemblyId = assemblyInfo.Id
+                , AssemblyName = assemblyInfo.Name
+                , LatestVersion = assemblyInfo.LatestVersion?.Version
+                , LatestVersionId = assemblyInfo.LatestVersion?.Id ?? 0
             };
         }
     }

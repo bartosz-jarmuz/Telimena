@@ -1,10 +1,10 @@
-﻿namespace Telimena.WebApp.Infrastructure.UnitOfWork
-{
-    using System.Threading.Tasks;
-    using Core.Models;
-    using Identity;
-    using Repository;
+﻿using System.Threading.Tasks;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Identity;
+using Telimena.WebApp.Infrastructure.Repository;
 
+namespace Telimena.WebApp.Infrastructure.UnitOfWork
+{
     public interface IProgramsUnitOfWork
     {
         IRepository<AssemblyVersion> Versions { get; }

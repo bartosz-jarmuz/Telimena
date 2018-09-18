@@ -1,8 +1,8 @@
 ﻿@using Telimena.WebApp.Core.DTO
-
 @{
     ViewBag.Title = "Admin Dashboard";
 }
+
 @section styles{
     @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
 }
@@ -37,21 +37,21 @@
             <div class="box-body">
                 <table id="allProgramsReport" class="table table-condensed table-bordered table-hover" data-url="@Url.Action("GetAllPrograms")">
                     <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Developer</th>
-                            <th>@nameof(ProgramSummary.LatestVersion)</th>
-                            <th># Functions</th>
-                            <th># Functions usages today</th>
-                            <th># Functions usages</th>
-                            <th># Users</th>
-                            <th># Usage today</th>
-                            <th># Usage total</th>
-                            <th>@nameof(ProgramSummary.LastUsage)</th>
-                            <th>Registered</th>
-                            <th>Telimena Version</th>
-                        </tr>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Developer</th>
+                        <th>@nameof(ProgramSummary.LatestVersion)</th>
+                        <th># Functions</th>
+                        <th># Functions usages today</th>
+                        <th># Functions usages</th>
+                        <th># Users</th>
+                        <th># Usage today</th>
+                        <th># Usage total</th>
+                        <th>@nameof(ProgramSummary.LastUsage)</th>
+                        <th>Registered</th>
+                        <th>Telimena Version</th>
+                    </tr>
                     </thead>
                 </table>
             </div>
@@ -63,31 +63,30 @@
 {
     @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
 
-<script type="text/javascript">
-        $(document).ready(function () {
+    <script type="text/javascript">
+        $(document).ready(function() {
             $(".apps-summary").load($(".apps-summary").data("url"));
 
             $('#allProgramsReport').DataTable({
-
                 "ajax": {
                     url: "@Url.Action("GetAllPrograms")",
                     method: "post",
-                    dataSrc:""
+                    dataSrc: ""
                 },
                 "columns": [
                     { "data": "@nameof(ProgramSummary.ProgramId)" },
                     { "data": "@nameof(ProgramSummary.ProgramName)" },
                     { "data": "@nameof(ProgramSummary.DeveloperName)" },
                     { "data": "@nameof(ProgramSummary.LatestVersion)" },
-                    { "data": "@nameof(ProgramSummary.FunctionsCount)"  },
-                    { "data": "@nameof(ProgramSummary.TotalTodayFunctionsUsageCount)"  },
-                    { "data": "@nameof(ProgramSummary.TotalFunctionsUsageCount)"  },
-                    { "data": "@nameof(ProgramSummary.UsersCount)"  },
-                    { "data": "@nameof(ProgramSummary.TodayUsageCount)"  },
-                    { "data": "@nameof(ProgramSummary.TotalUsageCount)"  },
+                    { "data": "@nameof(ProgramSummary.FunctionsCount)" },
+                    { "data": "@nameof(ProgramSummary.TotalTodayFunctionsUsageCount)" },
+                    { "data": "@nameof(ProgramSummary.TotalFunctionsUsageCount)" },
+                    { "data": "@nameof(ProgramSummary.UsersCount)" },
+                    { "data": "@nameof(ProgramSummary.TodayUsageCount)" },
+                    { "data": "@nameof(ProgramSummary.TotalUsageCount)" },
                     {
                         "data": "@nameof(ProgramSummary.LastUsage)",
-                        render: function (data, type, row, meta) {
+                        render: function(data, type, row, meta) {
                             var datetime = new Date(data);
                             return datetime.toLocaleString();
                         }
@@ -99,11 +98,10 @@
                             return datetime.toLocaleString();
                         }
                     },
-                    { "data": "@nameof(ProgramSummary.AssociatedToolkitVersion)"  },
-
+                    { "data": "@nameof(ProgramSummary.AssociatedToolkitVersion)" },
                 ]
             });
         });
-</script>
+    </script>
 
 }

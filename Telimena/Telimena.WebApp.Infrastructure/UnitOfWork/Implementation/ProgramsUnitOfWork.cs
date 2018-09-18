@@ -1,17 +1,14 @@
-﻿namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
-{
-    using System.Threading.Tasks;
-    using Core.Models;
-    using Database;
-    using Identity;
-    using Repository;
-    using Repository.Implementation;
+﻿using System.Threading.Tasks;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Identity;
+using Telimena.WebApp.Infrastructure.Repository;
+using Telimena.WebApp.Infrastructure.Repository.Implementation;
 
+namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
+{
     public class ProgramsUnitOfWork : IProgramsUnitOfWork
     {
-        private readonly TelimenaContext _context;
-
-
         public ProgramsUnitOfWork(TelimenaContext context, ITelimenaUserManager userManager)
         {
             this._context = context;
@@ -25,6 +22,8 @@
             this.TelimenaUserManager = userManager;
         }
 
+        private readonly TelimenaContext _context;
+
         public IRepository<TelimenaUser> Users { get; }
         public ITelimenaUserManager TelimenaUserManager { get; set; }
         public IToolkitDataRepository ToolkitData { get; set; }
@@ -33,6 +32,7 @@
         public IRepository<AssemblyVersion> Versions { get; }
         public IProgramRepository Programs { get; }
         public IFunctionRepository Functions { get; }
+
         public async Task CompleteAsync()
         {
             await this._context.SaveChangesAsync();

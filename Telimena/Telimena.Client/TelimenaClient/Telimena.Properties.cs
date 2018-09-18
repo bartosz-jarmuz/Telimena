@@ -14,21 +14,21 @@ namespace Telimena.Client
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        private static readonly Uri defaultApiUri = new Uri( "http://localhost:7757/");
-
-        private bool IsInitialized { get; set; }
-        internal ITelimenaSerializer Serializer { get; set; } = new TelimenaSerializer();
-        internal IMessenger Messenger { get; set; }
+        private static readonly Uri defaultApiUri = new Uri("http://localhost:7757/");
         public UserInfo UserInfo { get; internal set; }
         public ProgramInfo ProgramInfo { get; internal set; }
-        protected int ProgramId { get; set; }
-        protected int UserId { get; set; }
 
         public bool SuppressAllErrors { get; set; } = true;
+        public string ProgramVersion => this.ProgramInfo?.PrimaryAssembly?.Version;
+        protected int ProgramId { get; set; }
+        protected int UserId { get; set; }
         protected string TelimenaVersion { get; }
+        internal ITelimenaSerializer Serializer { get; set; } = new TelimenaSerializer();
+        internal IMessenger Messenger { get; set; }
         internal ITelimenaHttpClient HttpClient { get; set; }
 
+        private bool IsInitialized { get; set; }
+
         private List<Assembly> HelperAssemblies { get; } = new List<Assembly>();
-        public string ProgramVersion => this.ProgramInfo?.PrimaryAssembly?.Version;
     }
 }

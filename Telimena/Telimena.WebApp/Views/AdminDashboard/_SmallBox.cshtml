@@ -1,17 +1,19 @@
 ﻿@model Telimena.WebApp.Models.Shared.BoxViewModel
 
-    <div class="col-lg-3 col-xs-6">
-        <!-- small box -->
-        <div class="small-box box @Model.BackgroundColorClass">
-            <div class="inner">
-                <span class="info-box-text">@Model.Label</span>
-                <span class="info-box-number">@Model.Value</span>
-                <p> <small>@(Model.SecondaryLabel ?? " ")</small></p>
-            </div>
-            <div class="icon">
-                <i class="@Model.IconClass"></i>
-            </div>
-            <a href="@Model.MoreInfoUrl" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+<div class="col-lg-3 col-xs-6">
+    <!-- small box -->
+    <div class="small-box box @Model.BackgroundColorClass">
+        <div class="inner">
+            <span class="info-box-text">@Model.Label</span>
+            <span class="info-box-number">@Model.Value</span>
+            <p>
+                <small>@(Model.SecondaryLabel ?? " ")</small>
+            </p>
         </div>
-        
+        <div class="icon">
+            <i class="@Model.IconClass"></i>
+        </div>
+        <a href="@Model.MoreInfoUrl" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
     </div>
+
+</div>

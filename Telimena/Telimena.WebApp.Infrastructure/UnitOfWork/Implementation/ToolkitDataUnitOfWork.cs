@@ -1,15 +1,12 @@
-﻿namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
-{
-    using System.Threading.Tasks;
-    using Core.Models;
-    using Database;
-    using Repository;
-    using Repository.Implementation;
+﻿using System.Threading.Tasks;
+using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Repository;
+using Telimena.WebApp.Infrastructure.Repository.Implementation;
 
+namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
+{
     public class ToolkitDataUnitOfWork : IToolkitDataUnitOfWork
     {
-        private readonly TelimenaContext context;
-
         internal ToolkitDataUnitOfWork() : this(new TelimenaContext())
         {
         }
@@ -21,6 +18,7 @@
             this.ToolkitDataRepository = new ToolkitDataRepository(context);
         }
 
+        private readonly TelimenaContext context;
 
         public IUpdaterRepository UpdaterRepository { get; }
         public IToolkitDataRepository ToolkitDataRepository { get; }

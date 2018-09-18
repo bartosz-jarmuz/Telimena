@@ -1,18 +1,20 @@
-﻿namespace Telimena.WebApp.Controllers
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using AutoMapper;
+using log4net;
+using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Identity;
+using Telimena.WebApp.Models.PortalUsers;
+
+namespace Telimena.WebApp.Controllers
 {
     #region Using
-    using System;
-    using System.Collections.Generic;
-    using System.Data.Entity;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using System.Web.Mvc;
-    using AutoMapper;
-    using Core.Interfaces;
-    using Core.Models;
-    using Infrastructure.Identity;
-    using log4net;
-    using Models.PortalUsers;
+
     #endregion
 
     [Authorize(Roles = TelimenaRoles.Admin)]
@@ -35,19 +37,9 @@
         }
 
         [HttpPost]
-        public async Task<ActionResult> ToggleUserActivation(string userId, bool isActive)
-        {
-            var user = await this.userManager.FindByIdAsync(userId);
-            user.IsActivated = !isActive;
-            await this.userManager.UpdateAsync(user);
-            this.logger.Info($"User [{user.UserName}] activation status changed to [{user.IsActivated}]");
-            return this.Json(user.IsActivated);
-        }
-
-        [HttpPost]
         public async Task<ActionResult> ToggleRoleActivation(string userId, bool activateRole, string roleName)
         {
-            var user = await this.userManager.FindByIdAsync(userId);
+            TelimenaUser user = await this.userManager.FindByIdAsync(userId);
             try
             {
                 if (activateRole)
@@ -70,16 +62,26 @@
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult> ToggleUserActivation(string userId, bool isActive)
+        {
+            TelimenaUser user = await this.userManager.FindByIdAsync(userId);
+            user.IsActivated = !isActive;
+            await this.userManager.UpdateAsync(user);
+            this.logger.Info($"User [{user.UserName}] activation status changed to [{user.IsActivated}]");
+            return this.Json(user.IsActivated);
+        }
+
         private async Task<PortalUsersViewModel> InitializeModel()
         {
-            var model = new PortalUsersViewModel();
+            PortalUsersViewModel model = new PortalUsersViewModel();
             List<TelimenaUser> users = await this.userManager.Users.ToListAsync();
             foreach (TelimenaUser telimenaUser in users)
             {
-                var userViewModel = Mapper.Map<TelimenaUserViewModel>(telimenaUser);
+                TelimenaUserViewModel userViewModel = Mapper.Map<TelimenaUserViewModel>(telimenaUser);
                 userViewModel.RoleNames = await this.userManager.GetRolesAsync(telimenaUser.Id);
                 userViewModel.DeveloperAccountsLed = telimenaUser.GetDeveloperAccountsLedByUser().Select(x => x.Name);
-                model.Users.Add(userViewModel); 
+                model.Users.Add(userViewModel);
             }
 
             return model;

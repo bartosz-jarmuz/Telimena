@@ -8,7 +8,6 @@ namespace Telimena.Client
 {
     internal partial class UpdateHandler
     {
-        
         public UpdateHandler(IMessenger messenger, ProgramInfo programInfo, bool suppressAllErrors, IReceiveUserInput inputReceiver
             , IInstallUpdates updateInstaller)
         {
@@ -30,7 +29,6 @@ namespace Telimena.Client
         private IInstallUpdates UpdateInstaller { get; }
 
         private string BasePath => AppDomain.CurrentDomain.BaseDirectory;
-
 
         public async Task DownloadUpdatePackages(IReadOnlyList<UpdatePackageData> packagesToDownload)
         {
@@ -137,7 +135,6 @@ namespace Telimena.Client
 
         //    return packagesToInstall;
         //}
-
 
         private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, string basePath)
         {

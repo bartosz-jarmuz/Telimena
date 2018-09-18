@@ -1,6 +1,6 @@
 ﻿namespace Telimena.Client
 {
-    public class StatisticsUpdateRequest 
+    public class StatisticsUpdateRequest
     {
         public int UserId { get; set; }
         public int ProgramId { get; set; }

@@ -1,19 +1,21 @@
-﻿namespace Telimena.WebApp.Controllers
+﻿using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using DotNetLittleHelpers;
+using log4net;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
+using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Security;
+using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
+using Telimena.WebApp.Models.Account;
+
+namespace Telimena.WebApp.Controllers
 {
     #region Using
-    using System;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
-    using System.Web.Mvc;
-    using Core.Interfaces;
-    using Core.Models;
-    using DotNetLittleHelpers;
-    using Infrastructure.Security;
-    using Infrastructure.UnitOfWork.Implementation;
-    using log4net;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.Owin.Security;
-    using Models.Account;
+
     #endregion
 
     [TelimenaAuthorize]
@@ -53,7 +55,8 @@
                     TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(this.User.Identity.Name, model.OldPassword);
                     if (user != null)
                     {
-                        IdentityResult result = await this.unitOfWork.UserManager.ChangePasswordAsync(this.User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+                        IdentityResult result =
+                            await this.unitOfWork.UserManager.ChangePasswordAsync(this.User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
                         if (result.Succeeded)
                         {
                             user.MustChangePassword = false;
@@ -62,12 +65,10 @@
                             this.logger.Info($"[{this.User.Identity.Name}] password changed");
                             return this.View(model);
                         }
-                        else
+
+                        foreach (string error in result.Errors)
                         {
-                            foreach (string error in result.Errors)
-                            {
-                                this.ModelState.AddModelError("", error);
-                            }
+                            this.ModelState.AddModelError("", error);
                         }
                     }
                     else
@@ -83,7 +84,7 @@
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
-            return Content("<label class=\"warning\">Contact the administrator</label>");
+            return this.Content("<label class=\"warning\">Contact the administrator</label>");
         }
 
         [HttpGet]
@@ -110,10 +111,8 @@
                         this.logger.Info($"[{model.Email}] logged in.");
                         user.LastLoginDate = DateTime.UtcNow;
                         await this.unitOfWork.UserManager.UpdateAsync(user);
-                        ClaimsIdentity ident = await this.unitOfWork.UserManager.CreateIdentityAsync(user,
-                            DefaultAuthenticationTypes.ApplicationCookie);
-                        this.unitOfWork.AuthManager.SignIn(
-                            new AuthenticationProperties {IsPersistent = false}, ident);
+                        ClaimsIdentity ident = await this.unitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+                        this.unitOfWork.AuthManager.SignIn(new AuthenticationProperties {IsPersistent = false}, ident);
                         if (user.MustChangePassword)
                         {
                             return this.RedirectToAction("ChangePassword");
@@ -121,11 +120,9 @@
 
                         return this.Redirect(returnUrl ?? this.Url.Action("Index", "Home"));
                     }
-                    else
-                    {
-                        this.logger.Info($"[{model.Email}] logged in but not activated");
-                        return this.View("WaitForActivationInfo");
-                    }
+
+                    this.logger.Info($"[{model.Email}] logged in but not activated");
+                    return this.View("WaitForActivationInfo");
                 }
             }
 
@@ -171,21 +168,18 @@
 
                 if (results.Item1.Succeeded)
                 {
-                    if ((results.Item2 != null && results.Item2.Succeeded) || results.Item2 == null)
+                    if (results.Item2 != null && results.Item2.Succeeded || results.Item2 == null)
                     {
                         this.logger.Info($"User [{user.GetNameAndIdString()}] user registered and added to proper roles");
                         return this.View("WaitForActivationInfo");
                     }
-                    else
-                    {
 
-                        this.logger.Info($"User [{user.GetNameAndIdString()}] user registered but errors occurred while adding to roles: [{string.Join(",", results.Item2.Errors)}");
-                        foreach (string resultError in results.Item2.Errors)
-                        {
-                            this.ModelState.AddModelError("", resultError);
-                        }
+                    this.logger.Info(
+                        $"User [{user.GetNameAndIdString()}] user registered but errors occurred while adding to roles: [{string.Join(",", results.Item2.Errors)}");
+                    foreach (string resultError in results.Item2.Errors)
+                    {
+                        this.ModelState.AddModelError("", resultError);
                     }
-                    
                 }
                 else
                 {
@@ -218,6 +212,7 @@
                 this.ModelState.AddModelError("", "Provided new password does not match the repeated password");
                 valid = false;
             }
+
             if (model.Role != TelimenaRoles.Developer && model.Role != TelimenaRoles.Viewer)
             {
                 this.ModelState.AddModelError("", "Incorrect role specified");

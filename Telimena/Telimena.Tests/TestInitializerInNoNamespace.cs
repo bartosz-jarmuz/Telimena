@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-    using Telimena.WebApp;
+using Telimena.WebApp;
 
 [SetUpFixture]
 public class TestInitializerInNoNamespace
@@ -11,6 +11,8 @@ public class TestInitializerInNoNamespace
     }
 
     [OneTimeTearDown]
-    public void Teardown() { /* ... */ }
+    public void Teardown()
+    {
+        /* ... */
+    }
 }
-

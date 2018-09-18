@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using DbIntegrationTestHelpers;
-using Moq;
 using NUnit.Framework;
 using Telimena.Client;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
-using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 
@@ -19,7 +14,7 @@ namespace Telimena.Tests
     [TestFixture]
     public class UpdaterUpdatesTests : IntegrationTestsContextNotShared<TelimenaContext>
     {
-        protected override Action SeedAction => ()=>this.Prepare();
+        protected override Action SeedAction => () => this.Prepare();
         //The updater  can evolve independently of the Toolkit - some changes might be breaking the contracts, but most - should not
         //there were several updater updates (maybe changing UI?)
         //first two have no breaking changes - compatible with toolkit 0.0
@@ -43,10 +38,10 @@ namespace Telimena.Tests
 
         private IToolkitDataUnitOfWork Prepare()
         {
-            var unit = new ToolkitDataUnitOfWork(this.Context);
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
             unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.0.0", 1000, "0.0.0.0"));
             unit.CompleteAsync().GetAwaiter().GetResult();
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.1.0", 1000, "0.0.0.0") { IsBeta = true });
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.1.0", 1000, "0.0.0.0") {IsBeta = true});
             unit.CompleteAsync().GetAwaiter().GetResult();
             unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.2.0", 1000, "0.5.0.0"));
             unit.CompleteAsync().GetAwaiter().GetResult();
@@ -58,20 +53,17 @@ namespace Telimena.Tests
             unit.CompleteAsync().GetAwaiter().GetResult();
             unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.6.0", 1000, "1.3.0.0"));
             unit.CompleteAsync().GetAwaiter().GetResult();
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.7.0", 1000, "1.3.0.0"){ IsBeta = true });
+            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.7.0", 1000, "1.3.0.0") {IsBeta = true});
             unit.CompleteAsync().GetAwaiter().GetResult();
             return unit;
         }
 
-
-      
-
         [Test]
         public void Test_LatestUpdaterIsCompatible()
         {
-            var unit = new ToolkitDataUnitOfWork(this.Context);
-            var controller = new UpdaterController(unit, null, null);
-            var result = controller.CheckForUpdate("1.0", "1.3.0").GetAwaiter().GetResult();
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
+            UpdaterController controller = new UpdaterController(unit, null, null);
+            UpdateResponse result = controller.CheckForUpdate("1.0", "1.3.0").GetAwaiter().GetResult();
             Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
             //   Assert.AreEqual("1.7.0", result.UpdatePackagesIncludingBeta.Single().Version);
         }
@@ -79,25 +71,23 @@ namespace Telimena.Tests
         [Test]
         public void Test_LatestUpdaterIsNotCompatible_BreakingChanges()
         {
-            var unit = new ToolkitDataUnitOfWork(this.Context);
-            var controller = new UpdaterController(unit, null, null);
-            var result = controller.CheckForUpdate("1.0", "0.2.0").GetAwaiter().GetResult();
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
+            UpdaterController controller = new UpdaterController(unit, null, null);
+            UpdateResponse result = controller.CheckForUpdate("1.0", "0.2.0").GetAwaiter().GetResult();
             Assert.AreEqual(0, result.UpdatePackages.Count);
             //Assert.AreEqual("1.1.0", result.UpdatePackagesIncludingBeta.Single().Version);
 
             result = controller.CheckForUpdate("1.1.0", "0.9.0").GetAwaiter().GetResult();
             Assert.AreEqual("1.5.0", result.UpdatePackages.Single().Version);
             //  Assert.AreEqual("1.5.0", result.UpdatePackagesIncludingBeta.Single().Version);
-
         }
-
 
         [Test]
         public void Test_LatestUpdaterIsUsed()
         {
-            var unit = new ToolkitDataUnitOfWork(this.Context);
-            var controller = new UpdaterController(unit, null, null);
-            var result = controller.CheckForUpdate("1.1", "0.2.0").GetAwaiter().GetResult();
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
+            UpdaterController controller = new UpdaterController(unit, null, null);
+            UpdateResponse result = controller.CheckForUpdate("1.1", "0.2.0").GetAwaiter().GetResult();
             Assert.AreEqual(0, result.UpdatePackages.Count);
             //     Assert.AreEqual(0, result.UpdatePackagesIncludingBeta.Count);
 

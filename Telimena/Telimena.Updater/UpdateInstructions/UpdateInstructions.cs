@@ -4,7 +4,6 @@ namespace Telimena.Updater
 {
     public class UpdateInstructions
     {
-
         public string ProgramExecutableLocation { get; set; }
 
         public string LatestVersion { get; set; }

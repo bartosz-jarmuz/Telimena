@@ -55,7 +55,6 @@ namespace Telimena.Client
             }
         }
 
-
         protected async Task<UpdateResponse> GetUpdateResponse(bool takeBeta)
         {
             await this.InitializeIfNeeded();
@@ -63,10 +62,9 @@ namespace Telimena.Client
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
-
         private string GetUpdateRequestUrl(bool takeBeta)
         {
-            UpdateRequest model = new UpdateRequest(ProgramId, ProgramVersion, UserId, takeBeta, TelimenaVersion);
+            UpdateRequest model = new UpdateRequest(this.ProgramId, this.ProgramVersion, this.UserId, takeBeta, this.TelimenaVersion);
             string stringified = this.Serializer.Serialize(model);
             string escaped = this.Serializer.UrlEncodeJson(stringified);
             return ApiRoutes.GetUpdatesInfo + "?request=" + escaped;

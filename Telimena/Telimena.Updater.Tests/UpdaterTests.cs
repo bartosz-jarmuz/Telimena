@@ -5,12 +5,12 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Telimena.Client;
-using Assert = NUnit.Framework.Assert;
 
 namespace Telimena.Updater.Tests
 {
@@ -21,23 +21,24 @@ namespace Telimena.Updater.Tests
     [TestFixture]
     public class UpdaterTests
     {
-
         [DllImport("shell32.dll", SetLastError = true)]
-        static extern IntPtr CommandLineToArgvW(
-            [MarshalAs(UnmanagedType.LPWStr)] string lpCmdLine, out int pNumArgs);
+        private static extern IntPtr CommandLineToArgvW([MarshalAs(UnmanagedType.LPWStr)] string lpCmdLine, out int pNumArgs);
 
         private static string[] CommandLineToArgs(string commandLine)
         {
             int argc;
-            var argv = CommandLineToArgvW(commandLine, out argc);
+            IntPtr argv = CommandLineToArgvW(commandLine, out argc);
             if (argv == IntPtr.Zero)
-                throw new System.ComponentModel.Win32Exception();
+            {
+                throw new Win32Exception();
+            }
+
             try
             {
-                var args = new string[argc];
-                for (var i = 0; i < args.Length; i++)
+                string[] args = new string[argc];
+                for (int i = 0; i < args.Length; i++)
                 {
-                    var p = Marshal.ReadIntPtr(argv, i * IntPtr.Size);
+                    IntPtr p = Marshal.ReadIntPtr(argv, i * IntPtr.Size);
                     args[i] = Marshal.PtrToStringUni(p);
                 }
 
@@ -52,18 +53,14 @@ namespace Telimena.Updater.Tests
         [Test]
         public void Test_StartInfoParsing()
         {
-            var instructions = new FileInfo(@"C:\An app\Updates\3.2\Instructions.xml");
-            var updater = new FileInfo(@"C:\An app\Updates\Updater.exe");
-            var startInfo = StartInfoCreator.CreateStartInfo(instructions, updater);
+            FileInfo instructions = new FileInfo(@"C:\An app\Updates\3.2\Instructions.xml");
+            FileInfo updater = new FileInfo(@"C:\An app\Updates\Updater.exe");
+            ProcessStartInfo startInfo = StartInfoCreator.CreateStartInfo(instructions, updater);
 
             Assert.AreEqual(@"C:\An app\Updates\Updater.exe", startInfo.FileName);
-            var settings = CommandLineArgumentParser.GetSettings(CommandLineToArgs(startInfo.Arguments));
+            UpdaterStartupSettings settings = CommandLineArgumentParser.GetSettings(CommandLineToArgs(startInfo.Arguments));
 
             Assert.AreEqual(@"C:\An app\Updates\3.2\Instructions.xml", settings.InstructionsFile.FullName);
         }
-
     }
 }
-
-           
-

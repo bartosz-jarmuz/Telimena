@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Telimena.Client
 {
@@ -10,10 +6,9 @@ namespace Telimena.Client
     {
         internal UpdaterDownloader(ProgramInfo programInfo, IMessenger messenger)
         {
-
         }
 
-        public  Task EnsureUpdaterIsAvailable()
+        public Task EnsureUpdaterIsAvailable()
         {
             return Task.CompletedTask;
         }

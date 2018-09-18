@@ -1,7 +1,7 @@
-﻿namespace Telimena.WebApp
-{
-    using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
+namespace Telimena.WebApp
+{
     public class FilterConfig
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)

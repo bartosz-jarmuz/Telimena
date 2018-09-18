@@ -1,26 +1,24 @@
-﻿namespace Telimena.WebApi.Controllers
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Security;
+using Telimena.WebApp.Infrastructure.UnitOfWork;
+using Telimena.WebApp.Models.ProgramDetails;
+
+namespace Telimena.WebApi.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using System.Web.Mvc;
-    using WebApp.Core.Interfaces;
-    using WebApp.Core.Models;
-    using WebApp.Infrastructure.Security;
-    using WebApp.Infrastructure.UnitOfWork;
-    using WebApp.Models.ProgramDetails;
-
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
-
     public class ProgramDetailsController : Controller
     {
-        private IProgramsUnitOfWork Work { get; }
-
         public ProgramDetailsController(IProgramsUnitOfWork work)
         {
             this.Work = work;
         }
 
+        private IProgramsUnitOfWork Work { get; }
 
         [HttpGet]
         public async Task<ActionResult> Index(string programName)
@@ -29,7 +27,8 @@
             {
                 return this.RedirectToAction("Index", "Home");
             }
-            Program program = await this.Work.Programs.FirstOrDefaultAsync(x=>x.Name == programName);
+
+            Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
 
             ProgramDetailsViewModel model = new ProgramDetailsViewModel();
             if (program != null)
@@ -38,7 +37,8 @@
                 model.ProgramName = program.Name;
             }
 
-            model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) + this.@Url.HttpRouteUrl("DownloadAppRoute", new {  name = model.ProgramName });
+            model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) +
+                                       this.Url.HttpRouteUrl("DownloadAppRoute", new {name = model.ProgramName});
 
             List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(model.ProgramId);
             model.UpdatePackages = packages;
@@ -47,9 +47,5 @@
 
             return this.View("Index", model);
         }
-
-
     }
-
-    
 }

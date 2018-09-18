@@ -1,20 +1,20 @@
-﻿namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
-{
-    using System;
-    using System.Threading.Tasks;
-    using Core.Models;
-    using Identity;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.Owin.Security;
-    using Repository;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
+using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Identity;
+using Telimena.WebApp.Infrastructure.Repository;
 
+namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
+{
     public interface IAccountUnitOfWork
     {
         IRepository<DeveloperAccount> DeveloperRepository { get; }
         IAuthenticationManager AuthManager { get; }
         ITelimenaUserManager UserManager { get; }
-        Task CompleteAsync();
         int Complete();
+        Task CompleteAsync();
         Task<Tuple<IdentityResult, IdentityResult>> RegisterUserAsync(TelimenaUser user, string password, params string[] roles);
     }
 }

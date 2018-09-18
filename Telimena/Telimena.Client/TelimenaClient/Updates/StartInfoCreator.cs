@@ -7,11 +7,7 @@ namespace Telimena.Client
     {
         public static ProcessStartInfo CreateStartInfo(FileInfo instructionsFile, FileInfo updaterFile)
         {
-            return new ProcessStartInfo()
-            {
-                FileName = updaterFile.FullName,
-                Arguments = $"\"instructions:{instructionsFile.FullName}\""
-            };
+            return new ProcessStartInfo {FileName = updaterFile.FullName, Arguments = $"\"instructions:{instructionsFile.FullName}\""};
         }
     }
 }

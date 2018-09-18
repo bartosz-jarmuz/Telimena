@@ -1,13 +1,13 @@
-﻿namespace Telimena.WebApp.Models.PortalUsers
-{
-    using System;
-    using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
+namespace Telimena.WebApp.Models.PortalUsers
+{
     public class TelimenaUserViewModel
     {
-        public string Id { get;  set; }
-        public int UserNumber { get;  set; }
-        public DateTime RegisteredDate { get;  set; }
+        public string Id { get; set; }
+        public int UserNumber { get; set; }
+        public DateTime RegisteredDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
         public string DisplayName { get; set; }
         public string Email { get; set; }
