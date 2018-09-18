@@ -32,7 +32,7 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 return new RegistrationResponse()
                 {
-                    Error = new BadRequestException("Request is not valid")
+                    Exception = new BadRequestException("Request is not valid")
                 };
             }
 
@@ -59,7 +59,7 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 return new RegistrationResponse()
                 {
-                    Error = new InvalidOperationException("Error while processing registration request", ex)
+                    Exception = new InvalidOperationException("Error while processing registration request", ex)
                 };
             }
         }
@@ -73,7 +73,7 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 return new StatisticsUpdateResponse()
                 {
-                    Error = new BadRequestException("Request is not valid")
+                    Exception = new BadRequestException("Request is not valid")
                 };
             }
 
@@ -84,7 +84,7 @@ namespace Telimena.WebApp.Controllers.Api
                 {
                     return new StatisticsUpdateResponse()
                     {
-                        Error = new InvalidOperationException($"Program [{updateRequest.ProgramId}] is null")
+                        Exception = new InvalidOperationException($"Program [{updateRequest.ProgramId}] is null")
                     };
                 }
 
@@ -93,7 +93,7 @@ namespace Telimena.WebApp.Controllers.Api
                 {
                     return new StatisticsUpdateResponse()
                     {
-                        Error = new InvalidOperationException($"User [{updateRequest.UserId}] is null")
+                        Exception = new InvalidOperationException($"User [{updateRequest.UserId}] is null")
                     };
                 }
 
@@ -116,7 +116,7 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 return new StatisticsUpdateResponse()
                 {
-                    Error = new InvalidOperationException("Error while processing statistics update request", ex)
+                    Exception = new InvalidOperationException("Error while processing statistics update request", ex)
                 };
             }
         }

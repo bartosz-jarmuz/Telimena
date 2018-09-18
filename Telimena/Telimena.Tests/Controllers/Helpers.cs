@@ -32,7 +32,7 @@ namespace Telimena.Tests
 
         public static void AssertRegistrationResponse(RegistrationResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
         {
-            Assert.IsNull(response.Error);
+            Assert.IsNull(response.Exception);
             Assert.AreEqual(expectedCount, response.Count);
             Assert.AreEqual(prg.Id, response.ProgramId);
             Assert.AreEqual(usr.Id, response.UserId);
@@ -40,7 +40,7 @@ namespace Telimena.Tests
 
         public static void AssertUpdateResponse(StatisticsUpdateResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
         {
-            Assert.IsNull(response.Error);
+            Assert.IsNull(response.Exception);
             Assert.AreEqual(expectedCount, response.Count);
             Assert.AreEqual(funcName, response.FunctionName);
             Assert.AreEqual(prg.Id, response.ProgramId);

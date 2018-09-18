@@ -8,22 +8,22 @@
     using Core.Models;
     using Database;
 
-    internal class ProgramPackageRepository : IProgramPackageRepository
+    internal class ProgramPackageRepository : Repository<ProgramPackageInfo>, IProgramPackageRepository
     {
-        public ProgramPackageRepository(DbContext dbContext, IFileSaver fileSaver, IFileRetriever fileRetriever)
+        public ProgramPackageRepository(DbContext dbContext, IFileSaver fileSaver, IFileRetriever fileRetriever) : base(dbContext)
         {
             this.FileSaver = fileSaver;
             this.FileRetriever = fileRetriever;
             this.TelimenaContext = dbContext as TelimenaContext;
         }
-
+        
         protected TelimenaContext TelimenaContext { get;  }
         protected IFileSaver FileSaver { get;  }
         protected IFileRetriever FileRetriever { get; }
 
-        public async Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName)
+        public async Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName, string supportedToolkitVersion)
         {
-            ProgramPackageInfo pkg = new ProgramPackageInfo(fileName, programId, fileStream.Length);
+            ProgramPackageInfo pkg = new ProgramPackageInfo(fileName, programId, fileStream.Length, supportedToolkitVersion);
             this.TelimenaContext.ProgramPackages.Add(pkg);
 
             await this.FileSaver.SaveFile(pkg, fileStream);

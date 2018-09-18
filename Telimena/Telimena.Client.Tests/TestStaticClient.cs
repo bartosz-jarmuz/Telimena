@@ -117,19 +117,19 @@ namespace Telimena.Client.Tests
 
 
             var result = Telimena.SendUsageReport().GetAwaiter().GetResult();
-            TelimenaException err = result.Error as TelimenaException;
+            TelimenaException err = result.Exception as TelimenaException;
             Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
 
             result = Telimena.SendUsageReport("BOOO").GetAwaiter().GetResult();
-            err = result.Error as TelimenaException;
+            err = result.Exception as TelimenaException;
             Assert.IsTrue(err.Message.Contains("[BOOO]"));
 
             result = Telimena.SendUsageReport(new ProgramInfo()).GetAwaiter().GetResult();
-            err = result.Error as TelimenaException;
+            err = result.Exception as TelimenaException;
             Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
 
             result = Telimena.SendUsageReport(telemetryApiBaseUrl: new Uri("http://localhost:666")).GetAwaiter().GetResult();
-            err = result.Error as TelimenaException;
+            err = result.Exception as TelimenaException;
             Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
 
 

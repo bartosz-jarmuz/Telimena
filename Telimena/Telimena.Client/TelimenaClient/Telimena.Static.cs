@@ -118,7 +118,7 @@ namespace Telimena.Client
                 }
                 return new StatisticsUpdateResponse()
                 {
-                    Error = exception
+                    Exception = exception
                 };
             }
         }

@@ -89,25 +89,18 @@ namespace Telimena.WebApp.Controllers.Api
            
             if (!Version.TryParse(version, out _))
             {
-                return new UpdateResponse() {Error = new ArgumentException($"[{version}] is not a valid version string")};
+                return new UpdateResponse() {Exception = new ArgumentException($"[{version}] is not a valid version string")};
             }
             if (!Version.TryParse(toolkitVersion, out _))
             {
-                return new UpdateResponse() {Error = new ArgumentException($"[{toolkitVersion}] is not a valid version string")};
+                return new UpdateResponse() {Exception = new ArgumentException($"[{toolkitVersion}] is not a valid version string")};
             }
 
-            UpdaterPackageInfo updaterInfoMaybeBeta = await this.work.UpdaterRepository.GetNewestCompatibleUpdater(version, toolkitVersion, true);
             UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetNewestCompatibleUpdater(version, toolkitVersion, false);
             var response = new UpdateResponse();
             if (updaterInfo != null)
             {
                 response.UpdatePackages = new[] {Mapper.Map<UpdatePackageData>(updaterInfo)};
-                response.UpdatePackagesIncludingBeta = new[] {Mapper.Map<UpdatePackageData>(updaterInfo)};
-            }
-
-            if (updaterInfoMaybeBeta != null)
-            {
-                response.UpdatePackagesIncludingBeta = new[] { Mapper.Map<UpdatePackageData>(updaterInfoMaybeBeta) };
             }
 
             return response;

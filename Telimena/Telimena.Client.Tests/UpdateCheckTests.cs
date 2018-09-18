@@ -70,7 +70,7 @@ namespace Telimena.Client.Tests
                     new UpdatePackageData {FileSizeBytes = 666, Id = 10002}
                 }
             };
-            latestVersionResponse.UpdatePackagesIncludingBeta = new List<UpdatePackageData>(latestVersionResponse.UpdatePackages);
+            latestVersionResponse.UpdatePackages = new List<UpdatePackageData>(latestVersionResponse.UpdatePackages);
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse));
 
             UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();

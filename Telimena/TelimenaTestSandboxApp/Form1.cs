@@ -33,13 +33,13 @@ namespace TelimenaTestSandboxApp
                 result = await this.teli.ReportUsage();
                 sw.Stop();
             }
-            if (result.Error == null)
+            if (result.Exception == null)
             {
                 this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " + new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
             }
             else
             {
-                MessageBox.Show(result.Error.ToString());
+                MessageBox.Show(result.Exception.ToString());
             }
         }
 
@@ -90,13 +90,13 @@ namespace TelimenaTestSandboxApp
                 result = await Telimena.SendUsageReport();
                 sw.Stop();
             }
-            if (result.Error == null)
+            if (result.Exception == null)
             {
                 this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms " +  new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
             }
             else
             {
-                MessageBox.Show(result.Error.ToString());
+                MessageBox.Show(result.Exception.ToString());
             }
         }
     }

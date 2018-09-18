@@ -57,97 +57,133 @@ namespace Telimena.WebApp.Controllers.Api
                 {
                     return new UpdateResponse()
                     {
-                        Error = new BadRequestException($"Failed to find program by Id: [{requestModel.ProgramId}]")
+                        Exception = new BadRequestException($"Failed to find program by Id: [{requestModel.ProgramId}]")
                     };
                 }
+                List<ProgramUpdatePackageInfo> allUpdatePackages = (await this.work.UpdatePackages.GetAllPackagesNewerThan(requestModel.ProgramVersion, program.Id)).OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
 
-                return await this.GetUpdatePackagesResponse(program, requestModel.ProgramVersion);
+                var filteredPackages = this.FilterPackagesSet(allUpdatePackages,requestModel);
+                var supportedToolkitVersion = await this.GetMaximumSupportedToolkitVersion(filteredPackages, program, requestModel);
+                var toolkitPackage = await this.GetToolkitUpdateInfo(program, requestModel, supportedToolkitVersion);
+                var packageDataSets = new List<UpdatePackageData>(Mapper.Map<IEnumerable<UpdatePackageData>>(filteredPackages));
+                if (toolkitPackage != null)
+                {
+                    packageDataSets.Add(Mapper.Map<UpdatePackageData>(toolkitPackage));
+                }
+
+                
+
+                var response = new UpdateResponse()
+                {
+                    UpdatePackages = packageDataSets
+                };
+
+                return response;
             }
             catch (Exception ex)
             {
                 return new UpdateResponse
                 {
-                    Error = new InvalidOperationException("Error while processing registration request", ex)
+                    Exception = new InvalidOperationException("Error while processing registration request", ex)
                 };
             }
         }
 
-        [System.Web.Http.HttpGet]
-        public async Task<UpdateResponse> GetToolkitUpdateInfo(int programId, string programVersion, string toolkitVersion)
+
+        private async Task<string> GetMaximumSupportedToolkitVersion(List<ProgramUpdatePackageInfo> updatePackages, Program program, UpdateRequest updateRequest)
         {
-            Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == programId);
-            if (program == null)
+            var newestPackage = updatePackages.OrderByDescending(x => x.Id).FirstOrDefault();
+            if (newestPackage != null)
             {
-                return new UpdateResponse()
-                {
-                    Error = new BadRequestException($"Failed to find program by Id: [{programId}]")
-                };
-            }
-
-            return await this.GetToolkitUpdateInfo(program, programVersion, toolkitVersion);
-        }
-
-        private UpdateResponse PrepareResponseForToolkitPackages(List<TelimenaPackageInfo> packages)
-        {
-            var response = new UpdateResponse();
-            var sorted = packages.OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
-            var latestNonBeta = sorted.FirstOrDefault(x => !x.IsBeta);
-            var latest = sorted.FirstOrDefault();
-            if (latestNonBeta != null)
-            {
-                response.UpdatePackages = new[] { Mapper.Map<UpdatePackageData>(latestNonBeta) };
-            }
-
-            if (latest != null)
-            {
-                response.UpdatePackagesIncludingBeta = new[] { Mapper.Map<UpdatePackageData>(latestNonBeta) };
-            }
-
-            return response;
-        }
-
-        public async Task<UpdateResponse> GetToolkitUpdateInfo(Program program, string programVersion, string toolkitVersion)
-        {
-            if (!Version.TryParse(toolkitVersion, out _))
-            {
-                return new UpdateResponse() { Error = new ArgumentException($"[{toolkitVersion}] is not a valid version string") };
-            }
-
-
-
-            var packages = await this.work.ToolkitData.GetPackagesNewerThan(toolkitVersion);
-            if (packages.Any(x => x.IntroducesBreakingChanges))
-            {
-                IEnumerable<ProgramUpdatePackageInfo> updatePackages = (await this.work.UpdatePackages.GetAsync(x=>x.ProgramId == program.Id)); 
-
-
+                return newestPackage.SupportedToolkitVersion;
             }
             else
             {
-                return this.PrepareResponseForToolkitPackages(packages);
+                //no updates now, so figure out what version is supported by the client already
+                var previousPackage =
+                    await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == updateRequest.ProgramVersion);
+                if (previousPackage != null)
+                {
+                    return previousPackage.SupportedToolkitVersion;
+                }
+                else
+                {
+                    return (await this.work.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id)).SupportedToolkitVersion;
+                }
+            }
+        }
+
+    
+        public async Task<TelimenaPackageInfo> GetToolkitUpdateInfo(Program program, UpdateRequest request, string maximumSupportedToolkitVersion)
+        {
+            ObjectValidator.Validate(()=>Version.TryParse(request.ToolkitVersion, out _), new ArgumentException($"[{request.ToolkitVersion}] is not a valid version string"));
+
+            var packages = (await this.work.ToolkitData.GetPackagesNewerThan(request.ToolkitVersion)).OrderByDescending(x=>x.Version, new TelimenaVersionStringComparer()).ToList();
+
+            if (!request.AcceptBeta)
+            {
+                packages.RemoveAll(x => x.IsBeta);
+            }
+
+            if (packages.Any(x => x.IntroducesBreakingChanges))
+            {
+                packages.Reverse();
+                var listOfCompatiblePackages = new List<TelimenaPackageInfo>();
+                foreach (var package in packages)
+                {
+                    if (!package.IntroducesBreakingChanges)
+                    {
+                        listOfCompatiblePackages.Add(package);
+                    }
+                    else
+                    {
+                        if (maximumSupportedToolkitVersion.IsNewerOrEqualVersion(package.Version))
+                        {
+                            listOfCompatiblePackages.Add(package);
+                        }
+                    }
+                }
+
+                return listOfCompatiblePackages.LastOrDefault();
+            }
+            else
+            {
+                return packages.FirstOrDefault();
             }
 
             return null;
         }
 
+       
 
-        private List<UpdatePackageData> GetMatchingPackages(List<ProgramUpdatePackageInfo> updatePackages)
+
+        private List<ProgramUpdatePackageInfo> FilterPackagesSet(List<ProgramUpdatePackageInfo> updatePackages, UpdateRequest request)
         {
             if (updatePackages.IsNullOrEmpty())
             {
-                return null;
+                return new List<ProgramUpdatePackageInfo>();
             }
+
+            if (!request.AcceptBeta)
+            {
+                updatePackages.RemoveAll(x => x.IsBeta);
+                if (updatePackages.IsNullOrEmpty())
+                {
+                    return new List<ProgramUpdatePackageInfo>();
+                }
+            }
+
             ProgramUpdatePackageInfo newestPackage = updatePackages.First();
             if (newestPackage.IsStandalone)
             {
-                return new List<UpdatePackageData>(){ Mapper.Map<UpdatePackageData>(newestPackage) };
+                return new List<ProgramUpdatePackageInfo>(){ newestPackage };
             }
             else
             {
-                List<UpdatePackageData> list = new List<UpdatePackageData>();
+                List<ProgramUpdatePackageInfo> list = new List<ProgramUpdatePackageInfo>();
                 foreach (ProgramUpdatePackageInfo updatePackageInfo in updatePackages)
                 {
-                    list.Add(Mapper.Map<UpdatePackageData>(updatePackageInfo));
+                    list.Add(updatePackageInfo);
                     if (updatePackageInfo.IsStandalone)
                     {
                         break;
@@ -155,34 +191,6 @@ namespace Telimena.WebApp.Controllers.Api
                 }
                 return list;
             }
-        }
-
-        private async Task<UpdateResponse> GetUpdatePackagesResponse(Program program, string version)
-        {
-            List<ProgramUpdatePackageInfo> updatePackages = (await this.work.UpdatePackages.GetAllPackagesNewerThan(program.Id, version)).OrderByDescending(x=>x.Version, new TelimenaVersionStringComparer()).ToList();
-            if (!updatePackages.Any())
-            {
-                return new UpdateResponse();
-            }
-            List<ProgramUpdatePackageInfo> nonBetaPackages = updatePackages.Where(x => !x.IsBeta).ToList();
-            UpdateResponse updatesResponse = new UpdateResponse();
-
-            if (updatePackages.Any(x=>x.IsBeta))
-            {
-                updatesResponse.UpdatePackagesIncludingBeta = this.GetMatchingPackages(updatePackages);
-            }
-
-            updatesResponse.UpdatePackages = this.GetMatchingPackages(nonBetaPackages);
-
-            if (updatesResponse.UpdatePackagesIncludingBeta.IsNullOrEmpty())
-            {
-                updatesResponse.UpdatePackagesIncludingBeta = new List<UpdatePackageData>(updatesResponse.UpdatePackages);
-            }
-            
-
-            return updatesResponse;
-
-
         }
 
 
@@ -207,8 +215,9 @@ namespace Telimena.WebApp.Controllers.Api
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
+                    //todo - pass supported toolkit version
                     Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
-                    ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream);
+                    ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream, "0.0.0.0");
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }

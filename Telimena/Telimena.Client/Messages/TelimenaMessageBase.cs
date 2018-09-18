@@ -4,7 +4,7 @@
 
     public abstract class TelimenaResponseBase
     {
-        public Exception Error { get; set; }
+        public Exception Exception { get; set; }
     }
 
 }

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Telimena.Client
 {
-    internal class UpdateHandler
+    internal partial class UpdateHandler
     {
-        public UpdateHandler(IMessenger messenger, ProgramInfo programInfo, bool suppressAllErrors, IReceiveUserInput inputReceiver,
-            IInstallUpdates updateInstaller)
+        
+        public UpdateHandler(IMessenger messenger, ProgramInfo programInfo, bool suppressAllErrors, IReceiveUserInput inputReceiver
+            , IInstallUpdates updateInstaller)
         {
             this.Messenger = messenger;
             this.ProgramInfo = programInfo;
@@ -20,6 +21,8 @@ namespace Telimena.Client
 
         public const string UpdaterFileName = "Updater.exe";
 
+        protected string UpdatesFolderName => this.ProgramInfo?.Name + " Updates";
+
         private IMessenger Messenger { get; }
         private ProgramInfo ProgramInfo { get; }
         private bool SuppressAllErrors { get; }
@@ -27,99 +30,6 @@ namespace Telimena.Client
         private IInstallUpdates UpdateInstaller { get; }
 
         private string BasePath => AppDomain.CurrentDomain.BaseDirectory;
-
-        protected string UpdatesFolderName => this.ProgramInfo?.Name + " Updates";
-
-
-        public static class PathFinder
-        {
-            public static FileInfo GetUpdaterExecutable(string basePath, string updatesFolderName)
-            {
-                DirectoryInfo updatesDir = GetUpdatesParentFolder(basePath, updatesFolderName);
-                return new FileInfo(Path.Combine(updatesDir.FullName, UpdaterFileName));
-            }
-
-            public static DirectoryInfo GetUpdatesParentFolder(string basePath, string updatesFolderName)
-            {
-                string path = Path.Combine(basePath, updatesFolderName);
-                return new DirectoryInfo(path);
-            }
-
-            public static DirectoryInfo GetUpdatesSubfolder(string basePath, string updatesFolderName, IEnumerable<UpdatePackageData> packagesToDownload)
-            {
-                DirectoryInfo dir = GetUpdatesParentFolder(basePath, updatesFolderName);
-                UpdatePackageData latestPkg = packagesToDownload.OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).First();
-                return new DirectoryInfo(Path.Combine(dir.FullName, latestPkg.Version));
-            }
-        }
-
-        public async Task HandleUpdates(UpdateResponse response, BetaVersionSettings betaVersionSettings)
-        {
-            try
-            {
-                IReadOnlyList<UpdatePackageData> packagesToInstall = null;
-                if (response.UpdatePackagesIncludingBeta == null)
-                {
-                    return;
-                }
-
-                packagesToInstall = this.DeterminePackagesToInstall(response, betaVersionSettings);
-
-                if (packagesToInstall != null && packagesToInstall.Any())
-                {
-                    await this.DownloadUpdatePackages(packagesToInstall);
-
-                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.ProgramInfo);
-
-                    bool installUpdatesNow = this.InputReceiver.ShowInstallUpdatesNowQuestion(packagesToInstall);
-                    FileInfo updaterFile = PathFinder.GetUpdaterExecutable(this.BasePath, this.UpdatesFolderName);
-                    if (installUpdatesNow)
-                    {
-                        this.UpdateInstaller.InstallUpdates(instructionsFile, updaterFile);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                if (!this.SuppressAllErrors)
-                {
-                    throw;
-                }
-            }
-        }
-
-        private IReadOnlyList<UpdatePackageData> DeterminePackagesToInstall(UpdateResponse response, BetaVersionSettings betaVersionSettings)
-        {
-            IReadOnlyList<UpdatePackageData> packagesToInstall = null;
-            if (betaVersionSettings == BetaVersionSettings.UseBeta)
-            {
-                packagesToInstall = response.UpdatePackagesIncludingBeta;
-            }
-            else if (betaVersionSettings == BetaVersionSettings.IgnoreBeta)
-            {
-                packagesToInstall = response.UpdatePackages;
-            }
-            else if (betaVersionSettings == BetaVersionSettings.AskUserEachTime && response.UpdatePackagesIncludingBeta.Any(x => x.IsBeta))
-            {
-                bool includeBetaPackages = this.InputReceiver.ShowIncludeBetaPackagesQuestion(response);
-                if (includeBetaPackages)
-                {
-                    packagesToInstall = response.UpdatePackagesIncludingBeta;
-                }
-                else
-                {
-                    packagesToInstall = response.UpdatePackages;
-                }
-            }
-
-            return packagesToInstall;
-        }
-
-
-        private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, string basePath)
-        {
-            return PathFinder.GetUpdatesSubfolder(basePath, this.UpdatesFolderName, packagesToDownload);
-        }
 
 
         public async Task DownloadUpdatePackages(IReadOnlyList<UpdatePackageData> packagesToDownload)
@@ -146,6 +56,42 @@ namespace Telimena.Client
             }
         }
 
+        public async Task HandleUpdates(UpdateResponse response, BetaVersionSettings betaVersionSettings)
+        {
+            try
+            {
+                IReadOnlyList<UpdatePackageData> packagesToInstall = null;
+                if (response.UpdatePackages == null || !response.UpdatePackages.Any())
+                {
+                    return;
+                }
+
+                packagesToInstall = response.UpdatePackages;
+                //this.DeterminePackagesToInstall(response, betaVersionSettings);
+
+                if (packagesToInstall != null && packagesToInstall.Any())
+                {
+                    await this.DownloadUpdatePackages(packagesToInstall);
+
+                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.ProgramInfo);
+
+                    bool installUpdatesNow = this.InputReceiver.ShowInstallUpdatesNowQuestion(packagesToInstall);
+                    FileInfo updaterFile = PathFinder.GetUpdaterExecutable(this.BasePath, this.UpdatesFolderName);
+                    if (installUpdatesNow)
+                    {
+                        this.UpdateInstaller.InstallUpdates(instructionsFile, updaterFile);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                if (!this.SuppressAllErrors)
+                {
+                    throw;
+                }
+            }
+        }
+
         protected async Task StoreUpdatePackage(UpdatePackageData pkgData, DirectoryInfo updatesFolder)
         {
             Stream stream = await this.Messenger.DownloadFile(ApiRoutes.DownloadUpdatePackage + "?id=" + pkgData.Id);
@@ -154,8 +100,7 @@ namespace Telimena.Client
             try
             {
                 fileStream = new FileStream(pkgFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                await stream.CopyToAsync(fileStream).ContinueWith(
-                    copyTask => { fileStream.Close(); });
+                await stream.CopyToAsync(fileStream).ContinueWith(copyTask => { fileStream.Close(); });
                 pkgData.StoredFilePath = pkgFilePath;
             }
             catch
@@ -164,6 +109,39 @@ namespace Telimena.Client
 
                 throw;
             }
+        }
+
+        //private IReadOnlyList<UpdatePackageData> DeterminePackagesToInstall(UpdateResponse response, BetaVersionSettings betaVersionSettings)
+        //{
+        //    IReadOnlyList<UpdatePackageData> packagesToInstall = null;
+        //    if (betaVersionSettings == BetaVersionSettings.UseBeta)
+        //    {
+        //        packagesToInstall = response.UpdatePackagesIncludingBeta;
+        //    }
+        //    else if (betaVersionSettings == BetaVersionSettings.IgnoreBeta)
+        //    {
+        //        packagesToInstall = response.UpdatePackages;
+        //    }
+        //    else if (betaVersionSettings == BetaVersionSettings.AskUserEachTime && response.UpdatePackagesIncludingBeta.Any(x => x.IsBeta))
+        //    {
+        //        bool includeBetaPackages = this.InputReceiver.ShowIncludeBetaPackagesQuestion(response);
+        //        if (includeBetaPackages)
+        //        {
+        //            packagesToInstall = response.UpdatePackagesIncludingBeta;
+        //        }
+        //        else
+        //        {
+        //            packagesToInstall = response.UpdatePackages;
+        //        }
+        //    }
+
+        //    return packagesToInstall;
+        //}
+
+
+        private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, string basePath)
+        {
+            return PathFinder.GetUpdatesSubfolder(basePath, this.UpdatesFolderName, packagesToDownload);
         }
     }
 }

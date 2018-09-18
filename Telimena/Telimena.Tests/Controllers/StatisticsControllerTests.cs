@@ -192,7 +192,7 @@ namespace Telimena.Tests
 
             StatisticsController sut = new StatisticsController(unit);
             StatisticsUpdateResponse response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
-            Assert.IsTrue(response.Error.Message.Contains($"Program [{request.ProgramId}] is null"));
+            Assert.IsTrue(response.Exception.Message.Contains($"Program [{request.ProgramId}] is null"));
         }
 
         [Test]
@@ -221,7 +221,7 @@ namespace Telimena.Tests
 
             StatisticsController sut = new StatisticsController(unit);
             StatisticsUpdateResponse response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
-            Assert.AreEqual($"User [{request.UserId}] is null", response.Error.Message);
+            Assert.AreEqual($"User [{request.UserId}] is null", response.Exception.Message);
         }
 
         [Test]

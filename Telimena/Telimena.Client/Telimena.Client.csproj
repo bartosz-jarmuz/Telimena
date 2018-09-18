@@ -49,6 +49,9 @@
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
     <Compile Include="TelimenaClient\BetaVersionSettings.cs" />
+    <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
+    <Compile Include="TelimenaClient\Telimena.Updating.cs" />
+    <Compile Include="TelimenaClient\Updates\UpdateHandler.PathFinder.cs" />
     <Compile Include="TelimenaException.cs" />
     <Compile Include="TelimenaClient\Updates\DefaultWpfInputReceiver.cs" />
     <Compile Include="TelimenaClient\Updates\IInstallUpdates.cs" />
@@ -75,7 +78,7 @@
     <Compile Include="TelimenaClient\Telimena.Static.cs" />
     <Compile Include="TelimenaClient\Telimena.Constructor.cs" />
     <Compile Include="TelimenaClient\Telimena.Properties.cs" />
-    <Compile Include="TelimenaClient\Telimena.cs" />
+    <Compile Include="TelimenaClient\Telimena.Telemetry.cs" />
     <Compile Include="Model\ProgramInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Messages\TelimenaMessageBase.cs" />

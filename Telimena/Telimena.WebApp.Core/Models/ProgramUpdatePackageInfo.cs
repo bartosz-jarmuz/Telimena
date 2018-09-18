@@ -3,15 +3,17 @@
     public class ProgramUpdatePackageInfo : RepositoryFileBase, IRepositoryFile
     {
         protected ProgramUpdatePackageInfo() : base(){ }
-        public ProgramUpdatePackageInfo(string fileName, int programId, string version, long fileSizeBytes) : base(fileName, fileSizeBytes)
+        public ProgramUpdatePackageInfo(string fileName, int programId, string version, long fileSizeBytes, string supportedToolkitVersion) : base(fileName, fileSizeBytes)
         {
             this.ProgramId = programId;
             this.Version = version;
+            this.SupportedToolkitVersion = supportedToolkitVersion;
         }
 
         public int Id { get; set; }
         public int ProgramId { get; set; }
         public string Version { get; set; }
+        public string SupportedToolkitVersion { get; set; }
 
         public bool IsBeta { get; set; }
 

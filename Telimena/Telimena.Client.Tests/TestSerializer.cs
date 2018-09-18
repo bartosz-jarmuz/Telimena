@@ -22,19 +22,14 @@ namespace Telimena.Client.Tests
         public void Test_Serializer()
         {
 
-            var model = new UpdateRequest()
-            {
-                ProgramId = 23,
-                ProgramVersion = "1.2.0",
-                UserId = 99,
-                ToolkitVersion = "3.2.1.3"
-            };
+            var model = new UpdateRequest(23, "1.2.0", 99 ,true, "3.2.1.3");
+        
             ITelimenaSerializer sut = new TelimenaSerializer();
             var stringified = sut.Serialize(model);
             var escaped = sut.UrlEncodeJson(stringified);
 
-            Assert.AreEqual("{\"ProgramId\":23,\"UserId\":99,\"ProgramVersion\":\"1.2.0\",\"ToolkitVersion\":\"3.2.1.3\",\"AcceptBeta\":false}", stringified);
-            Assert.AreEqual("%7B%22ProgramId%22%3A23%2C%22UserId%22%3A99%2C%22ProgramVersion%22%3A%221.2.0%22%2C%22ToolkitVersion%22%3A%223.2.1.3%22%2C%22AcceptBeta%22%3Afalse%7D", escaped);
+            Assert.AreEqual("{\"ProgramId\":23,\"UserId\":99,\"ProgramVersion\":\"1.2.0\",\"ToolkitVersion\":\"3.2.1.3\",\"AcceptBeta\":true}", stringified);
+            Assert.AreEqual("%7B%22ProgramId%22%3A23%2C%22UserId%22%3A99%2C%22ProgramVersion%22%3A%221.2.0%22%2C%22ToolkitVersion%22%3A%223.2.1.3%22%2C%22AcceptBeta%22%3Atrue%7D", escaped);
 
             var unescaped = sut.UrlDecodeJson(escaped);
             Assert.AreEqual(stringified, unescaped);

@@ -12,7 +12,7 @@ namespace Telimena.Tests
         //a breaking change would be renaming methods, changing the default URI etc - these are the things that would break the app if DLL is replaced
         //in such cases, the app needs to be recompiled against latest toolkit.
 
-
+            //todo - IF an update request comes from assembly that does not support latest telimena yet, but the update packages do, then it should all be downloaded at the same time
         private void Seed()
         {
 

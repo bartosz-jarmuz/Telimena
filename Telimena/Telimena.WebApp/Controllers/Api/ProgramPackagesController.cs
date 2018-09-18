@@ -62,7 +62,7 @@ namespace Telimena.WebApp.Controllers.Api
                     HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    var pkg = await this.Work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName);
+                    var pkg = await this.Work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName, "0.0.0.0");
                     await this.Work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }
