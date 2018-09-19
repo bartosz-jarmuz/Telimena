@@ -80,6 +80,9 @@
                         <b>File Size</b> <a class="pull-right">@(Model.ProgramPackageInfo?.FileSizeBytes.GetSizeString())</a>
                     </li>
                     <li class="list-group-item">
+                        <b>Supported toolkit version</b> <a class="pull-right">@(Model.ProgramPackageInfo?.SupportedToolkitVersion)</a>
+                    </li>
+                    <li class="list-group-item">
                         <b>Uploaded date</b> <a class="pull-right">@(Model.ProgramPackageInfo?.UploadedDate)</a>
                     </li>
                 </ul>
@@ -99,6 +102,10 @@
                 </div>
                 <div class="box-body">
                     <label class="confirmation label label-md" style="display: none"></label>
+                    <div class="form-group">
+                        <label>Toolkit version used: </label>
+                        <input type="text" id="programPackageToolkitVersion"/>
+                    </div>
                     <div class="form-group">
                         <span class="btn btn-success fileinput-button uploadedPackage">
                             <i class="glyphicon glyphicon-plus"></i>
@@ -148,17 +155,16 @@
                         <input type="text" id="updatePackageVersion"/>
                     </div>
                     <div class="form-group">
+                        <label>Toolkit version used: </label>
+                        <input type="text" id="updatePackageToolkitVersion"/>
+                    </div>
+                    <div class="form-group">
                         <span class="btn btn-success fileinput-button uploadedPackage">
                             <i class="glyphicon glyphicon-plus"></i>
                             <span>Add files...</span>
                             <input type="file"
                                    name="uploadedPackage"/>
                         </span>
-                        <button class="btn btn-warning cancel"
-                                type="button" id="Cancel_btn">
-                            <i class="glyphicon glyphicon-ban-circle"></i>
-                            <span>Cancel</span>
-                        </button>
                     </div>
                     <div class="InfoContainer">
                         <div class="info fileName">
@@ -222,6 +228,7 @@
                         <th>Is Beta</th>
                         <th>FileName</th>
                         <th>Version</th>
+                        <th>Toolkit Version</th>
                         <th>Uploaded Date</th>
                         <th>File Size</th>
                     </tr>
@@ -239,6 +246,7 @@
                                 <a href="/api@(Url.Action("DownloadUpdatePackage", "ProgramUpdates") + "?id=" + pkg.Id)">@pkg.FileName</a>
                             </td>
                             <td>@pkg.Version</td>
+                            <td>@pkg.SupportedToolkitVersion</td>
                             <td>@pkg.UploadedDate</td>
                             <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
                         </tr>
@@ -267,7 +275,7 @@
             });
             $('.uploadedPackage').change(function(e) { SingleFileSelected(e, $(this).find('input')) });
             $('#uploadUpdatePackageForm').submit(CreateUpdatePackage);
-            $('#uploadProgramPackageForm').submit(UploadProgramPackage);
+            $('#uploadProgramPackageForm').submit(CreateProgramPackage);
         });
 
         function TogglePackageBeta(input) {
@@ -348,20 +356,26 @@
             var model = {
                 @nameof(CreateUpdatePackageRequest.ProgramId): @Model.ProgramId,
                 @nameof(CreateUpdatePackageRequest.PackageVersion): $('#updatePackageVersion').val(),
+                @nameof(CreateUpdatePackageRequest.ToolkitVersionUsed): $('#updatePackageToolkitVersion').val(),
             };
             var modelString = JSON.stringify(model);
 
             ValidateUpdatePackageRequest($(this).find(':submit'), modelString, UploadFile);
         }
 
-        function UploadProgramPackage(e) {
+        function CreateProgramPackage(e) {
             e.preventDefault();
-            var form = $('#uploadProgramPackageForm')[0];
-            var formData = new FormData(form);
-            UploadFile(formData,
-                '@Url.Action("AddProgramPackage", "ProgramPackages")' + '/' + @Model.ProgramId,
-                $(this).find(':submit'));
+            var model = {
+                @nameof(CreateProgramPackageRequest.ProgramId): @Model.ProgramId,
+                @nameof(CreateProgramPackageRequest.ToolkitVersionUsed): $('#programPackageToolkitVersion').val(),
+            };
+            var modelString = JSON.stringify(model);
+
+            ValidateProgramPackageRequest($(this).find(':submit'), modelString, UploadFile);
         }
+
+
+       
 
         function ProgressHandlingFunction(e, button) {
             var progressBar = $(button).closest('.form-group').prev('.progress').find('.progress-bar');
@@ -397,7 +411,27 @@
                     var form = $('#uploadUpdatePackageForm')[0];
                     var formData = new FormData(form);
                     formData.append('Model', modelString);
-                    successCallback(formData, '@Url.Action("UploadUpdatePackage", "ProgramUpdates")', button);
+                    successCallback(formData, '@Url.Action("Upload", "ProgramUpdates")', button);
+                })
+                .fail(function(xhr) {
+                    ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
+                });
+        }
+
+        function ValidateProgramPackageRequest(button, modelString, successCallback) {
+
+            $.ajax({
+                    type: 'POST',
+                    url: '/api' + '@Url.Action("Validate", "ProgramPackages")',
+                    contentType: "application/json; charset=utf-8",
+                    datatype: 'Json',
+                    data: modelString
+                })
+                .done(function() {
+                    var form = $('#uploadProgramPackageForm')[0];
+                    var formData = new FormData(form);
+                    formData.append('Model', modelString);
+                    successCallback(formData,  '@Url.Action("Upload", "ProgramPackages")' + '/' + @Model.ProgramId, button);
                 })
                 .fail(function(xhr) {
                     ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);

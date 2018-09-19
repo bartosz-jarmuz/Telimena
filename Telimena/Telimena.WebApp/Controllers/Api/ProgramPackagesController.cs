@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using Newtonsoft.Json;
 using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 
@@ -23,14 +27,27 @@ namespace Telimena.WebApp.Controllers.Api
         private IProgramsUnitOfWork Work { get; }
 
         [HttpPost]
-        public async Task<IHttpActionResult> AddProgramPackage(int id)
+        public IHttpActionResult Validate(CreateProgramPackageRequest request)
+        {
+            if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
+            {
+                return this.BadRequest(string.Join(", ", errors));
+            }
+
+            return this.Ok();
+        }
+
+        [HttpPost]
+        public async Task<IHttpActionResult> Upload(int id)
         {
             try
             {
+                string reqString = HttpContext.Current.Request.Form["Model"];
+                CreateUpdatePackageRequest request = JsonConvert.DeserializeObject<CreateUpdatePackageRequest>(reqString);
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName, "0.0.0.0");
+                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName,request.ToolkitVersionUsed);
                     await this.Work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }

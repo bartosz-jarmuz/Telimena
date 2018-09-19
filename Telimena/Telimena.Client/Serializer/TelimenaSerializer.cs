@@ -3,7 +3,7 @@ using System.Web.Script.Serialization;
 
 namespace Telimena.Client
 {
-    internal class TelimenaSerializer : ITelimenaSerializer
+    public class TelimenaSerializer : ITelimenaSerializer
     {
         public string Serialize(object objectToPost)
         {

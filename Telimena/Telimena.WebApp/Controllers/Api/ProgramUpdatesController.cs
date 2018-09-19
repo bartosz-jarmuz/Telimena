@@ -154,7 +154,7 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> UploadUpdatePackage()
+        public async Task<IHttpActionResult> Upload()
         {
             try
             {
@@ -163,10 +163,9 @@ namespace Telimena.WebApp.Controllers.Api
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    //todo - pass supported toolkit version
                     Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
                     ProgramUpdatePackageInfo pkg =
-                        await this.work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream, "0.0.0.0");
+                        await this.work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream, request.ToolkitVersionUsed);
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }

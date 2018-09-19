@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 
@@ -23,6 +25,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName, string supportedToolkitVersion)
         {
+            ObjectValidator.Validate(() => this.TelimenaContext.ToolkitPackages.Any(x => x.Version == supportedToolkitVersion)
+                , new ArgumentException($"There is no toolkit package with version [{supportedToolkitVersion}]"));
+
             ProgramPackageInfo pkg = new ProgramPackageInfo(fileName, programId, fileStream.Length, supportedToolkitVersion);
             this.TelimenaContext.ProgramPackages.Add(pkg);
 

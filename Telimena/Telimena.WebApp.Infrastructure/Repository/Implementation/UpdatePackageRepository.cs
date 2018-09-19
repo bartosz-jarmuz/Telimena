@@ -39,6 +39,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 , new InvalidOperationException($"[{version}] is not a valid version string"));
             ObjectValidator.Validate(() => Version.TryParse(supportedToolkitVersion, out Version _)
                 , new InvalidOperationException($"[{supportedToolkitVersion}] is not a valid version string"));
+            ObjectValidator.Validate(() => this.TelimenaContext.ToolkitPackages.Any(x => x.Version == supportedToolkitVersion)
+                , new ArgumentException($"There is no toolkit package with version [{supportedToolkitVersion}]"));
+
 
             string fileName = program.Name + " Update v. " + version + ".zip";
             ProgramUpdatePackageInfo pkg = new ProgramUpdatePackageInfo(fileName, program.Id, version, fileStream.Length, supportedToolkitVersion);
