@@ -16,7 +16,7 @@ namespace Telimena.Client
     {
         Task<UpdateCheckResult> CheckForUpdates();
 
-        Task HandleUpdates(BetaVersionSettings betaVersionSettings);
+        Task HandleUpdates(bool acceptBeta);
         Task<RegistrationResponse> Initialize();
 
         /// <summary>

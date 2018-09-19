@@ -8,10 +8,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 {
     public class StatisticsUnitOfWork : IStatisticsUnitOfWork
     {
-        internal StatisticsUnitOfWork() : this(new TelimenaContext())
-        {
-        }
-
+      
         public StatisticsUnitOfWork(TelimenaContext context)
         {
             this.context = context;

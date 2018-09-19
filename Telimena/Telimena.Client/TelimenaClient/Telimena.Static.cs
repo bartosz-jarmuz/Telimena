@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -83,7 +84,7 @@ namespace Telimena.Client
             StatisticsUpdateRequest updateRequest = null;
             try
             {
-                Tuple<ProgramInfo, UserInfo, string> data = LoadProgramData(mainAssembly, programInfo);
+               var data = LoadProgramData(mainAssembly, programInfo);
 
 
                 TelimenaSerializer serializer = new TelimenaSerializer();
@@ -91,7 +92,7 @@ namespace Telimena.Client
 
                 registrationRequest = new RegistrationRequest
                 {
-                    ProgramInfo = data.Item1, TelimenaVersion = data.Item3, UserInfo = data.Item2, SkipUsageIncrementation = true
+                    ProgramInfo = data.ProgramInfo, TelimenaVersion = data.TelimenaVersion, UserInfo = data.UserInfo, SkipUsageIncrementation = true
                 };
                 string responseContent = await messenger.SendPostRequest(ApiRoutes.RegisterClient, registrationRequest);
                 RegistrationResponse registrationResponse = serializer.Deserialize<RegistrationResponse>(responseContent);
@@ -101,7 +102,7 @@ namespace Telimena.Client
                     ProgramId = registrationResponse.ProgramId
                     , UserId = registrationResponse.UserId
                     , FunctionName = functionName
-                    , Version = data.Item1.PrimaryAssembly.Version
+                    , Version = data.ProgramInfo.PrimaryAssembly.Version
                 };
                 responseContent = await messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, updateRequest);
                 return serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
@@ -120,7 +121,7 @@ namespace Telimena.Client
             }
         }
 
-        private static Tuple<ProgramInfo, UserInfo, string> LoadProgramData(Assembly mainAssembly = null, ProgramInfo programInfo = null)
+        private static StartupData LoadProgramData(Assembly mainAssembly = null, ProgramInfo programInfo = null)
         {
             Assembly assembly = mainAssembly ?? Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             ProgramInfo info = programInfo;
@@ -132,7 +133,23 @@ namespace Telimena.Client
             UserInfo userInfo = new UserInfo {UserName = Environment.UserName, MachineName = Environment.MachineName};
 
             string telimenaVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            return new Tuple<ProgramInfo, UserInfo, string>(info, userInfo, telimenaVersion);
+            string updaterVersion = GetUpdaterVersion(info);
+
+            return new StartupData(info, userInfo, telimenaVersion, updaterVersion);
+        }
+
+        private static string GetUpdaterVersion(ProgramInfo programInfo)
+        {
+            var updaterFile = UpdateHandler.PathFinder.GetUpdaterExecutable(UpdateHandler.BasePath, UpdateHandler.GetUpdatesFolderName(programInfo));
+            if (updaterFile.Exists)
+            {
+                var version = FileVersionInfo.GetVersionInfo(updaterFile.FullName);
+                return version.FileVersion;
+            }
+            else
+            {
+                return "0.0.0.0";
+            }
         }
     }
 }

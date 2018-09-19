@@ -53,7 +53,7 @@ namespace Telimena.Updater
                 }
             }
 
-            File.Copy(destination.FullName, source.FullName, true);
+            File.Copy(source.FullName, destination.FullName, true);
         }
     }
 }

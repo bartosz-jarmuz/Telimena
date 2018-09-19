@@ -99,7 +99,8 @@ namespace Telimena.WebApp.Controllers.Api
         {
             try
             {
-                UpdateRequest requestModel = ReadRequest(request, this.serializer);
+                UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
+
                 Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == requestModel.ProgramId);
                 if (program == null)
                 {
@@ -189,12 +190,7 @@ namespace Telimena.WebApp.Controllers.Api
             return this.Ok();
         }
 
-        internal static UpdateRequest ReadRequest(string escapedJsonString, ITelimenaSerializer serializer)
-        {
-            string json = serializer.UrlDecodeJson(escapedJsonString);
-            UpdateRequest model = serializer.Deserialize<UpdateRequest>(json);
-            return model;
-        }
+        
 
         private List<ProgramUpdatePackageInfo> FilterPackagesSet(List<ProgramUpdatePackageInfo> updatePackages, UpdateRequest request)
         {

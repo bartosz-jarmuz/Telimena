@@ -46,9 +46,12 @@
             this.static_functionNameTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.static_sendUsageReportButton = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkForUpdateButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // apiUrlTextBox
@@ -125,7 +128,7 @@
             this.resultTextBox.Name = "resultTextBox";
             this.resultTextBox.ReadOnly = true;
             this.resultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.resultTextBox.Size = new System.Drawing.Size(715, 277);
+            this.resultTextBox.Size = new System.Drawing.Size(837, 277);
             this.resultTextBox.TabIndex = 0;
             // 
             // groupBox2
@@ -137,7 +140,7 @@
             this.groupBox2.Controls.Add(this.resultTextBox);
             this.groupBox2.Location = new System.Drawing.Point(20, 142);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(721, 296);
+            this.groupBox2.Size = new System.Drawing.Size(843, 296);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Result";
@@ -222,11 +225,32 @@
             this.static_sendUsageReportButton.UseVisualStyleBackColor = true;
             this.static_sendUsageReportButton.Click += new System.EventHandler(this.static_sendUsageReportButton_Click);
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.checkForUpdateButton);
+            this.groupBox3.Location = new System.Drawing.Point(690, 46);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(158, 90);
+            this.groupBox3.TabIndex = 9;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "App Updating";
+            // 
+            // checkForUpdateButton
+            // 
+            this.checkForUpdateButton.Location = new System.Drawing.Point(38, 31);
+            this.checkForUpdateButton.Name = "checkForUpdateButton";
+            this.checkForUpdateButton.Size = new System.Drawing.Size(75, 38);
+            this.checkForUpdateButton.TabIndex = 0;
+            this.checkForUpdateButton.Text = "Check for update";
+            this.checkForUpdateButton.UseVisualStyleBackColor = true;
+            this.checkForUpdateButton.Click += new System.EventHandler(this.checkForUpdateButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(753, 441);
+            this.ClientSize = new System.Drawing.Size(875, 441);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.setAppButton);
             this.Controls.Add(this.userNameTextBox);
@@ -245,6 +269,7 @@
             this.groupBox2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -270,6 +295,8 @@
         private System.Windows.Forms.TextBox static_functionNameTextBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button static_sendUsageReportButton;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button checkForUpdateButton;
     }
 }
 

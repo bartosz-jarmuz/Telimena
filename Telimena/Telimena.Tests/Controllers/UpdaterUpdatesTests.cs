@@ -14,6 +14,8 @@ namespace Telimena.Tests
     [TestFixture]
     public class UpdaterUpdatesTests : IntegrationTestsContextNotShared<TelimenaContext>
     {
+
+        private ITelimenaSerializer serializer = new TelimenaSerializer();
         protected override Action SeedAction => () => this.Prepare();
         //The updater  can evolve independently of the Toolkit - some changes might be breaking the contracts, but most - should not
         //there were several updater updates (maybe changing UI?)
@@ -62,8 +64,10 @@ namespace Telimena.Tests
         public void Test_LatestUpdaterIsCompatible()
         {
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
-            UpdaterController controller = new UpdaterController(unit, null, null);
-            UpdateResponse result = controller.CheckForUpdate("1.0", "1.3.0").GetAwaiter().GetResult();
+            UpdaterController controller = new UpdaterController(unit, serializer, null, null);
+            var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0", toolkitVersion: "1.3.0");
+
+            UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
             //   Assert.AreEqual("1.7.0", result.UpdatePackagesIncludingBeta.Single().Version);
         }
@@ -71,14 +75,19 @@ namespace Telimena.Tests
         [Test]
         public void Test_LatestUpdaterIsNotCompatible_BreakingChanges()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
-            UpdaterController controller = new UpdaterController(unit, null, null);
-            UpdateResponse result = controller.CheckForUpdate("1.0", "0.2.0").GetAwaiter().GetResult();
-            Assert.AreEqual(0, result.UpdatePackages.Count);
-            //Assert.AreEqual("1.1.0", result.UpdatePackagesIncludingBeta.Single().Version);
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context);
+            UpdaterController controller = new UpdaterController(work: unit, serializer: serializer, fileSaver: null, fileRetriever: null);
+            var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0", toolkitVersion: "0.2.0");
 
-            result = controller.CheckForUpdate("1.1.0", "0.9.0").GetAwaiter().GetResult();
-            Assert.AreEqual("1.5.0", result.UpdatePackages.Single().Version);
+            UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+
+            Assert.AreEqual(expected: 0, actual: result.UpdatePackages.Count);
+            //Assert.AreEqual("1.1.0", result.UpdatePackagesIncludingBeta.Single().Version);
+             request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.1.0", toolkitVersion: "0.9.0");
+
+            result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+
+            Assert.AreEqual(expected: "1.5.0", actual: result.UpdatePackages.Single().Version);
             //  Assert.AreEqual("1.5.0", result.UpdatePackagesIncludingBeta.Single().Version);
         }
 
@@ -86,19 +95,22 @@ namespace Telimena.Tests
         public void Test_LatestUpdaterIsUsed()
         {
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
-            UpdaterController controller = new UpdaterController(unit, null, null);
-            UpdateResponse result = controller.CheckForUpdate("1.1", "0.2.0").GetAwaiter().GetResult();
-            Assert.AreEqual(0, result.UpdatePackages.Count);
-            //     Assert.AreEqual(0, result.UpdatePackagesIncludingBeta.Count);
+            UpdaterController controller = new UpdaterController(unit, serializer, null, null);
+            var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.1", toolkitVersion: "0.2.0");
 
-            result = controller.CheckForUpdate("1.5", "1.0").GetAwaiter().GetResult();
-            Assert.AreEqual(0, result.UpdatePackages.Count);
-            //     Assert.AreEqual(0, result.UpdatePackagesIncludingBeta.Count);
+            UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
-
-            result = controller.CheckForUpdate("1.7", "2.0").GetAwaiter().GetResult();
             Assert.AreEqual(0, result.UpdatePackages.Count);
-            //      Assert.AreEqual(0, result.UpdatePackagesIncludingBeta.Count);
+            request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.5", toolkitVersion: "1.0");
+
+            result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+            Assert.AreEqual(0, result.UpdatePackages.Count);
+
+            request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.7", toolkitVersion: "2.0");
+
+            result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+
+            Assert.AreEqual(0, result.UpdatePackages.Count);
         }
     }
 }

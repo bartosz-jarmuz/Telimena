@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Telimena.Client
@@ -10,16 +11,18 @@ namespace Telimena.Client
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        public string b = "a";
-
-        private string a = "a";
-
         public async Task<UpdateCheckResult> CheckForUpdates()
         {
             try
             {
-                UpdateResponse response = await this.GetUpdateResponse(true);
-                return new UpdateCheckResult {UpdatesToInstall = response.UpdatePackages};
+                UpdateResponse programUpdateResponse = await this.GetProgramUpdateResponse(true);
+                UpdateResponse updaterUpdateResponse = await this.GetUpdaterUpdateResponse(true);
+
+                return new UpdateCheckResult
+                {
+                    ProgramUpdatesToInstall = programUpdateResponse.UpdatePackages
+                    ,UpdaterUpdate = updaterUpdateResponse?.UpdatePackages?.FirstOrDefault()
+                };
             }
             catch (Exception ex)
             {
@@ -34,15 +37,20 @@ namespace Telimena.Client
             }
         }
 
-        public async Task HandleUpdates(BetaVersionSettings betaVersionSettings)
+        
+
+        public async Task HandleUpdates(bool acceptBeta)
         {
             try
             {
-                UpdateResponse response = await this.GetUpdateResponse(true);
+                var programUpdateTask = this.GetProgramUpdateResponse(acceptBeta);
+                var updaterUpdateTask = this.GetUpdaterUpdateResponse(acceptBeta);
+                UpdateResponse programUpdateResponse = await programUpdateTask;
+                UpdateResponse updaterUpdateResponse = await updaterUpdateTask;
 
                 UpdateHandler handler = new UpdateHandler(this.Messenger, this.ProgramInfo, this.SuppressAllErrors, new DefaultWpfInputReceiver()
                     , new UpdateInstaller());
-                await handler.HandleUpdates(response, betaVersionSettings);
+                await handler.HandleUpdates(programUpdateResponse, updaterUpdateResponse);
             }
             catch (Exception ex)
             {
@@ -55,10 +63,17 @@ namespace Telimena.Client
             }
         }
 
-        protected async Task<UpdateResponse> GetUpdateResponse(bool takeBeta)
+        protected async Task<UpdateResponse> GetProgramUpdateResponse(bool takeBeta)
         {
             await this.InitializeIfNeeded();
             string responseContent = await this.Messenger.SendGetRequest(this.GetUpdateRequestUrl(takeBeta));
+            return this.Serializer.Deserialize<UpdateResponse>(responseContent);
+        }
+
+        protected async Task<UpdateResponse> GetUpdaterUpdateResponse(bool takeBeta)
+        {
+            await this.InitializeIfNeeded();
+            string responseContent = await this.Messenger.SendGetRequest(this.GetUpdaterUpdateRequestUrl(takeBeta));
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
@@ -67,7 +82,15 @@ namespace Telimena.Client
             UpdateRequest model = new UpdateRequest(this.ProgramId, this.ProgramVersion, this.UserId, takeBeta, this.TelimenaVersion);
             string stringified = this.Serializer.Serialize(model);
             string escaped = this.Serializer.UrlEncodeJson(stringified);
-            return ApiRoutes.GetUpdatesInfo + "?request=" + escaped;
+            return ApiRoutes.GetProgramUpdateInfo + "?request=" + escaped;
+        }
+
+        private string GetUpdaterUpdateRequestUrl(bool takeBeta)
+        {
+            UpdateRequest model = new UpdateRequest(this.ProgramId, this.ProgramVersion, this.UserId, takeBeta, this.TelimenaVersion, this.UpdaterVersion);
+            string stringified = this.Serializer.Serialize(model);
+            string escaped = this.Serializer.UrlEncodeJson(stringified);
+            return ApiRoutes.GetUpdaterUpdateInfo + "?request=" + escaped;
         }
     }
 }

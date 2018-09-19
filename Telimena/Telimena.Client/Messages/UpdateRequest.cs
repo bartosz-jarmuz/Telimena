@@ -7,14 +7,16 @@ namespace Telimena.Client
         [Obsolete("Only for serialization")]
         public UpdateRequest()
         {
+            
         }
 
-        public UpdateRequest(int programId, string programVersion, int userId, bool acceptBeta, string toolkitVersion)
+        public UpdateRequest(int programId, string programVersion, int userId, bool acceptBeta, string toolkitVersion, string updaterVersion = null)
         {
             this.ProgramId = programId;
             this.UserId = userId;
             this.ProgramVersion = programVersion;
             this.ToolkitVersion = toolkitVersion;
+            this.UpdaterVersion = updaterVersion;
             this.AcceptBeta = acceptBeta;
         }
 
@@ -27,5 +29,7 @@ namespace Telimena.Client
         public string ToolkitVersion { get; set; }
 
         public bool AcceptBeta { get; set; }
+
+        public string UpdaterVersion { get; set; }
     }
 }

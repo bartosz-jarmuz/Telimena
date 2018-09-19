@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using System.Data.SqlClient;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
@@ -11,7 +12,7 @@ namespace Telimena.WebApp
     {
         public void Configuration(IAppBuilder app)
         {
-            app.CreatePerOwinContext(() => new TelimenaContext());
+            app.CreatePerOwinContext(() => new TelimenaContext(new SqlConnection()));
             app.CreatePerOwinContext<TelimenaUserManager>(TelimenaUserManager.Create);
 
             app.UseCookieAuthentication(new CookieAuthenticationOptions

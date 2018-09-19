@@ -33,6 +33,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
@@ -48,8 +49,8 @@
     <Compile Include="Messages\UpdateResponse.cs" />
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
-    <Compile Include="TelimenaClient\BetaVersionSettings.cs" />
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
+    <Compile Include="TelimenaClient\Telimena.StartupData.cs" />
     <Compile Include="TelimenaClient\Telimena.Updating.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateHandler.PathFinder.cs" />
     <Compile Include="TelimenaException.cs" />
@@ -59,7 +60,6 @@
     <Compile Include="TelimenaClient\Updates\StartInfoCreator.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateHandler.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateInstaller.cs" />
-    <Compile Include="TelimenaClient\Updates\UpdaterDownloader.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\TelimenaVersionStringComparer.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateInstructionCreator.cs" />

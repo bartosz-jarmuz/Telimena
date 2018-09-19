@@ -6,9 +6,10 @@ namespace Telimena.Client
 {
     public class UpdateCheckResult
     {
-        public bool IsUpdateAvailable => this.UpdatesToInstall != null && this.UpdatesToInstall.Any();
+        public bool IsUpdateAvailable => this.ProgramUpdatesToInstall != null && this.ProgramUpdatesToInstall.Any();
         public Exception Error { get; set; }
 
-        public IReadOnlyList<UpdatePackageData> UpdatesToInstall { get; set; }
+        public IReadOnlyList<UpdatePackageData> ProgramUpdatesToInstall { get; set; }
+        public UpdatePackageData UpdaterUpdate { get; set; }
     }
 }

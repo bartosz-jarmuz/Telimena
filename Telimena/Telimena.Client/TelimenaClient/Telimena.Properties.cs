@@ -30,5 +30,6 @@ namespace Telimena.Client
         private bool IsInitialized { get; set; }
 
         private List<Assembly> HelperAssemblies { get; } = new List<Assembly>();
+        protected string UpdaterVersion { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System.Data.SqlClient;
+using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -53,7 +54,7 @@ namespace Telimena.WebApi
             this.Bind<ILog>().ToMethod(context => LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
             this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();
             this.Bind<ITelimenaUserManager>().ToMethod(c => HttpContext.Current.GetOwinContext().GetUserManager<TelimenaUserManager>()).InRequestScope();
-            this.Bind<TelimenaContext>().ToSelf().InRequestScope();
+            this.Bind<TelimenaContext>().ToSelf().InRequestScope().WithConstructorArgument(typeof(SqlConnection), new SqlConnection());
         }
     }
 }

@@ -29,10 +29,11 @@ namespace Telimena.Client
                 telemetryApiBaseUrl = defaultApiUri;
             }
 
-            Tuple<ProgramInfo, UserInfo, string> data = LoadProgramData(mainAssembly);
-            this.ProgramInfo = data.Item1;
-            this.UserInfo = data.Item2;
-            this.TelimenaVersion = data.Item3;
+           var data = LoadProgramData(mainAssembly);
+            this.ProgramInfo = data.ProgramInfo;
+            this.UserInfo = data.UserInfo;
+            this.TelimenaVersion = data.TelimenaVersion;
+            this.UpdaterVersion = data.UpdaterVersion;
 
             this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
@@ -45,10 +46,11 @@ namespace Telimena.Client
                 telemetryApiBaseUrl = defaultApiUri;
             }
 
-            Tuple<ProgramInfo, UserInfo, string> data = LoadProgramData(programInfo: programInfo);
-            this.ProgramInfo = data.Item1;
-            this.UserInfo = data.Item2;
-            this.TelimenaVersion = data.Item3;
+            var data = LoadProgramData(programInfo: programInfo);
+            this.ProgramInfo = data.ProgramInfo;
+            this.UserInfo = data.UserInfo;
+            this.TelimenaVersion = data.TelimenaVersion;
+            this.UpdaterVersion= data.UpdaterVersion;
 
             this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);

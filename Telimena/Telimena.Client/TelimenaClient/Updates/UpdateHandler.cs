@@ -11,79 +11,60 @@ namespace Telimena.Client
         public UpdateHandler(IMessenger messenger, ProgramInfo programInfo, bool suppressAllErrors, IReceiveUserInput inputReceiver
             , IInstallUpdates updateInstaller)
         {
-            this.Messenger = messenger;
-            this.ProgramInfo = programInfo;
-            this.SuppressAllErrors = suppressAllErrors;
-            this.InputReceiver = inputReceiver;
-            this.UpdateInstaller = updateInstaller;
+            this.messenger = messenger;
+            this.programInfo = programInfo;
+            this.suppressAllErrors = suppressAllErrors;
+            this.inputReceiver = inputReceiver;
+            this.updateInstaller = updateInstaller;
         }
 
         public const string UpdaterFileName = "Updater.exe";
 
-        protected string UpdatesFolderName => this.ProgramInfo?.Name + " Updates";
-
-        private IMessenger Messenger { get; }
-        private ProgramInfo ProgramInfo { get; }
-        private bool SuppressAllErrors { get; }
-        private IReceiveUserInput InputReceiver { get; }
-        private IInstallUpdates UpdateInstaller { get; }
-
-        private string BasePath => AppDomain.CurrentDomain.BaseDirectory;
-
-        public async Task DownloadUpdatePackages(IReadOnlyList<UpdatePackageData> packagesToDownload)
+        protected internal static string GetUpdatesFolderName(ProgramInfo programInfo)
         {
-            try
-            {
-                List<Task> downloadTasks = new List<Task>();
-                DirectoryInfo updatesFolder = this.GetUpdatesSubfolder(packagesToDownload, this.BasePath);
-                Directory.CreateDirectory(updatesFolder.FullName);
-
-                foreach (UpdatePackageData updatePackageData in packagesToDownload)
-                {
-                    downloadTasks.Add(this.StoreUpdatePackage(updatePackageData, updatesFolder));
-                }
-
-                await Task.WhenAll(downloadTasks);
-            }
-            catch (Exception)
-            {
-                if (!this.SuppressAllErrors)
-                {
-                    throw;
-                }
-            }
+            return programInfo.Name + " Updates";
         }
 
-        public async Task HandleUpdates(UpdateResponse response, BetaVersionSettings betaVersionSettings)
+        private readonly IMessenger messenger;
+        private readonly ProgramInfo programInfo;
+        private readonly bool suppressAllErrors;
+        private readonly IReceiveUserInput inputReceiver;
+        private readonly IInstallUpdates updateInstaller;
+
+        internal static string BasePath => AppDomain.CurrentDomain.BaseDirectory;
+
+        public async Task HandleUpdates(UpdateResponse programUpdateResponse, UpdateResponse updaterUpdateResponse)
         {
             try
             {
                 IReadOnlyList<UpdatePackageData> packagesToInstall = null;
-                if (response.UpdatePackages == null || !response.UpdatePackages.Any())
+                if (updaterUpdateResponse.UpdatePackages == null || !updaterUpdateResponse.UpdatePackages.Any())
                 {
                     return;
                 }
 
-                packagesToInstall = response.UpdatePackages;
-                //this.DeterminePackagesToInstall(response, betaVersionSettings);
+                packagesToInstall = updaterUpdateResponse.UpdatePackages;
 
+                var updaterInstallation = this.InstallUpdater(updaterUpdateResponse
+                    , PathFinder.GetUpdatesParentFolder(BasePath, GetUpdatesFolderName(this.programInfo)));
                 if (packagesToInstall != null && packagesToInstall.Any())
                 {
                     await this.DownloadUpdatePackages(packagesToInstall);
 
-                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.ProgramInfo);
+                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo);
 
-                    bool installUpdatesNow = this.InputReceiver.ShowInstallUpdatesNowQuestion(packagesToInstall);
-                    FileInfo updaterFile = PathFinder.GetUpdaterExecutable(this.BasePath, this.UpdatesFolderName);
+                    bool installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(packagesToInstall);
+                    await updaterInstallation;
+                    FileInfo updaterFile = PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo));
                     if (installUpdatesNow)
                     {
-                        this.UpdateInstaller.InstallUpdates(instructionsFile, updaterFile);
+                        this.updateInstaller.InstallUpdates(instructionsFile, updaterFile);
                     }
                 }
             }
             catch (Exception)
             {
-                if (!this.SuppressAllErrors)
+                if (!this.suppressAllErrors)
                 {
                     throw;
                 }
@@ -92,8 +73,13 @@ namespace Telimena.Client
 
         protected async Task StoreUpdatePackage(UpdatePackageData pkgData, DirectoryInfo updatesFolder)
         {
-            Stream stream = await this.Messenger.DownloadFile(ApiRoutes.DownloadUpdatePackage + "?id=" + pkgData.Id);
+            Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdatePackage + "?id=" + pkgData.Id);
             string pkgFilePath = Path.Combine(updatesFolder.FullName, pkgData.FileName);
+            await SaveStreamToPath(pkgData, pkgFilePath, stream);
+        }
+
+        private static async Task SaveStreamToPath(UpdatePackageData pkgData, string pkgFilePath, Stream stream)
+        {
             FileStream fileStream = null;
             try
             {
@@ -109,36 +95,51 @@ namespace Telimena.Client
             }
         }
 
-        //private IReadOnlyList<UpdatePackageData> DeterminePackagesToInstall(UpdateResponse response, BetaVersionSettings betaVersionSettings)
-        //{
-        //    IReadOnlyList<UpdatePackageData> packagesToInstall = null;
-        //    if (betaVersionSettings == BetaVersionSettings.UseBeta)
-        //    {
-        //        packagesToInstall = response.UpdatePackagesIncludingBeta;
-        //    }
-        //    else if (betaVersionSettings == BetaVersionSettings.IgnoreBeta)
-        //    {
-        //        packagesToInstall = response.UpdatePackages;
-        //    }
-        //    else if (betaVersionSettings == BetaVersionSettings.AskUserEachTime && response.UpdatePackagesIncludingBeta.Any(x => x.IsBeta))
-        //    {
-        //        bool includeBetaPackages = this.InputReceiver.ShowIncludeBetaPackagesQuestion(response);
-        //        if (includeBetaPackages)
-        //        {
-        //            packagesToInstall = response.UpdatePackagesIncludingBeta;
-        //        }
-        //        else
-        //        {
-        //            packagesToInstall = response.UpdatePackages;
-        //        }
-        //    }
+        private async Task DownloadUpdatePackages(IReadOnlyList<UpdatePackageData> packagesToDownload)
+        {
+            try
+            {
+                List<Task> downloadTasks = new List<Task>();
+                DirectoryInfo updatesFolder = this.GetUpdatesSubfolder(packagesToDownload, BasePath);
+                Directory.CreateDirectory(updatesFolder.FullName);
 
-        //    return packagesToInstall;
-        //}
+                foreach (UpdatePackageData updatePackageData in packagesToDownload)
+                {
+                    downloadTasks.Add(this.StoreUpdatePackage(updatePackageData, updatesFolder));
+                }
+
+                await Task.WhenAll(downloadTasks);
+            }
+            catch (Exception)
+            {
+                if (!this.suppressAllErrors)
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task InstallUpdater(UpdateResponse response, DirectoryInfo updatesFolder)
+        {
+            var pkgData = response?.UpdatePackages?.FirstOrDefault();
+
+            if (pkgData == null)
+            {
+                return;
+            }
+            Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdatePackage + "?id=" + pkgData.Id);
+            var pkgFile = new FileInfo(Path.Combine(updatesFolder.FullName, pkgData.FileName));
+            if (pkgFile.Exists)
+            {
+                pkgFile.Delete();
+            }
+            await SaveStreamToPath(pkgData, pkgFile.FullName, stream);
+            await this.updateInstaller.InstallUpdaterUpdate(pkgFile, PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo)));
+        }
 
         private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, string basePath)
         {
-            return PathFinder.GetUpdatesSubfolder(basePath, this.UpdatesFolderName, packagesToDownload);
+            return PathFinder.GetUpdatesSubfolder(basePath, GetUpdatesFolderName(this.programInfo), packagesToDownload);
         }
     }
 }

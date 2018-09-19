@@ -49,6 +49,11 @@ namespace TelimenaTestSandboxApp
             }
         }
 
+        private async void checkForUpdateButton_Click(object sender, EventArgs e)
+        {
+            await this.teli.HandleUpdates(false);
+        }
+
         private void setAppButton_Click(object sender, EventArgs e)
         {
             this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
@@ -94,5 +99,7 @@ namespace TelimenaTestSandboxApp
                 MessageBox.Show(result.Exception.ToString());
             }
         }
+
+       
     }
 }

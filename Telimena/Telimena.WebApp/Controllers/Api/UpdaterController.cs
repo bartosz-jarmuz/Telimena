@@ -11,6 +11,7 @@ using Telimena.Client;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
@@ -20,32 +21,27 @@ namespace Telimena.WebApp.Controllers.Api
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class UpdaterController : ApiController
     {
-        public UpdaterController(IToolkitDataUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
+        public UpdaterController(IToolkitDataUnitOfWork work, ITelimenaSerializer serializer, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
             this.work = work;
+            this.serializer = serializer;
             this.fileSaver = fileSaver;
             this.fileRetriever = fileRetriever;
         }
 
         private readonly IToolkitDataUnitOfWork work;
+        private readonly ITelimenaSerializer serializer;
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<UpdateResponse> CheckForUpdate(string version, string toolkitVersion)
+        public async Task<UpdateResponse> GetUpdateInfo(string request)
         {
-            if (!Version.TryParse(version, out _))
-            {
-                return new UpdateResponse {Exception = new ArgumentException($"[{version}] is not a valid version string")};
-            }
+            UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
 
-            if (!Version.TryParse(toolkitVersion, out _))
-            {
-                return new UpdateResponse {Exception = new ArgumentException($"[{toolkitVersion}] is not a valid version string")};
-            }
 
-            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetNewestCompatibleUpdater(version, toolkitVersion, false);
+            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetNewestCompatibleUpdater(requestModel.UpdaterVersion, requestModel.ToolkitVersion, false);
             UpdateResponse response = new UpdateResponse();
             if (updaterInfo != null)
             {

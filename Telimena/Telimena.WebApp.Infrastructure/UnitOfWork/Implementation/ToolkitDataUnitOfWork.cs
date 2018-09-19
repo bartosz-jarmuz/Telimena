@@ -7,10 +7,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 {
     public class ToolkitDataUnitOfWork : IToolkitDataUnitOfWork
     {
-        internal ToolkitDataUnitOfWork() : this(new TelimenaContext())
-        {
-        }
-
+       
         public ToolkitDataUnitOfWork(TelimenaContext context)
         {
             this.context = context;
