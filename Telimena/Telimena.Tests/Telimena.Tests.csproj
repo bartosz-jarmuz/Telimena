@@ -133,7 +133,6 @@
     <Compile Include="Controllers\RegisterProgramController.cs" />
     <Compile Include="Controllers\ProgramVersionsControllerTests.cs" />
     <Compile Include="Controllers\ToolkitDataRegistrationTests.cs" />
-    <Compile Include="Controllers\ToolkitUpdatesTests.cs" />
     <Compile Include="Controllers\UpdaterUpdatesTests.cs" />
     <Compile Include="Controllers\UpdatePackageControllerTests.cs" />
     <Compile Include="MappingsTests.cs" />

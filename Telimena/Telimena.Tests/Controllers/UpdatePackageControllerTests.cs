@@ -282,13 +282,36 @@ namespace Telimena.Tests
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>());
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.4.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
             Assert.IsEmpty(result.UpdatePackages);
             Assert.IsNull(result.Exception);
         }
+
+        [Test]
+        public void Test_OnlyToolkitUpdateAvailable()
+        {
+            IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>());
+
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.9.0.0");
+
+            UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+            Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single().Version);
+            Assert.AreEqual("Telimena.Client.zip", result.UpdatePackages.Single().FileName);
+            Assert.IsNull(result.Exception);
+
+
+            request.AcceptBeta = true;
+            result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single().Version);
+            Assert.AreEqual("Telimena.Client.zip", result.UpdatePackages.Single().FileName);
+
+            Assert.IsNull(result.Exception);
+        }
+
 
         [Test]
         public void Test_OnlyNonStandaloneUpdateAvailable()
@@ -298,7 +321,7 @@ namespace Telimena.Tests
                 new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, Id = 1}
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = false, Id = 2}
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, Id = 3}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, Id = 4}
+                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.6.0.0") {IsStandalone = false, Id = 4}
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
@@ -306,21 +329,28 @@ namespace Telimena.Tests
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
-            Assert.AreEqual(4, result.UpdatePackages.Count());
+            Assert.AreEqual(5, result.UpdatePackages.Count());
 
             Assert.AreEqual(4, result.UpdatePackages[0].Id);
             Assert.AreEqual(3, result.UpdatePackages[1].Id);
             Assert.AreEqual(2, result.UpdatePackages[2].Id);
             Assert.AreEqual(1, result.UpdatePackages[3].Id);
+            //one of the packages supports version 1.6, however 1.6 is beta. It is higher than 1.4 though, so 1.4 is OK
+            Assert.AreEqual("1.4.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+
 
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
-            Assert.AreEqual(4, result.UpdatePackages.Count());
+            Assert.AreEqual(5, result.UpdatePackages.Count());
 
             Assert.AreEqual(4, result.UpdatePackages[0].Id);
             Assert.AreEqual(3, result.UpdatePackages[1].Id);
             Assert.AreEqual(2, result.UpdatePackages[2].Id);
             Assert.AreEqual(1, result.UpdatePackages[3].Id);
+
+            //one of the packages supports version 1.6
+            Assert.AreEqual("1.6.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+
         }
 
         [Test]
@@ -335,14 +365,20 @@ namespace Telimena.Tests
 
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.0.0.1");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
-            Assert.AreEqual(3, result.UpdatePackages.Single().Id);
+            Assert.AreEqual(3, result.UpdatePackages[0].Id);
+            Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+
+
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
-            Assert.AreEqual(3, result.UpdatePackages.Single().Id);
+            Assert.AreEqual(3, result.UpdatePackages[0].Id);
+
+            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+
         }
 
         [Test]
@@ -353,7 +389,7 @@ namespace Telimena.Tests
                 new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true, Id = 1}
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true, Id = 2}
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, Id = 3}
-                , new ProgramUpdatePackageInfo("pkg.zip", 2, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true, Id = 4} //different program
+                , new ProgramUpdatePackageInfo("pkg.zip", 2, "1.2.0.4", 2222, "2.0.0.0") {IsStandalone = true, Id = 4} //different program
             });
 
 
@@ -363,10 +399,13 @@ namespace Telimena.Tests
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
             Assert.AreEqual(3, result.UpdatePackages.Single().Id);
+            //one of the packages accepts a higher version, but its a package for different program, so no updater update here
 
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
-            Assert.AreEqual(3, result.UpdatePackages.Single().Id);
+            Assert.AreEqual(3, result.UpdatePackages[0].Id);
+
+            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
         }
     }
 }

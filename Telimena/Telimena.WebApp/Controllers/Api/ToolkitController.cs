@@ -18,6 +18,18 @@ namespace Telimena.WebApp.Controllers.Api
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class ToolkitController : ApiController
     {
+        //The toolkit can evolve independently of the client app - some changes might be breaking the contracts, but most - should not
+        //a non-breaking change example - add new functions or overloads, pull more client data or handle changes in the web api
+        //a breaking change would be renaming methods, changing the default URI etc - these are the things that would break the app if DLL is replaced
+        //in such cases, the app needs to be recompiled against latest toolkit.
+
+        //todo - when a new toolkit version is uploaded and is marked as 'breaking changes'
+        //all the programs which were not compiled against that version should get a notification:
+        // - at developer portal, a box saying '4 of your apps need to be recompiled to use latest Telimena
+        //The dev should be able to open project in VS, update nuget and recompile
+        //then go to portal and upload update package - FOOBARER v.4.1
+        //When uploading an update, dev is prompted for version of toolkit that was used (later this becomes automatic)
+
         public ToolkitController(IToolkitDataUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
             this.work = work;

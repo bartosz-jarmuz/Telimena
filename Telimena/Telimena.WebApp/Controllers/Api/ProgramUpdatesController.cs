@@ -236,30 +236,37 @@ namespace Telimena.WebApp.Controllers.Api
             , UpdateRequest updateRequest)
         {
 
-            string maxVersion = null;
+            string maxVersionInPackages = null;
             ProgramUpdatePackageInfo newestPackage = updatePackages.OrderByDescending(x => x.Id).FirstOrDefault();
             if (newestPackage != null)
             {
-                maxVersion = newestPackage.SupportedToolkitVersion;
+                maxVersionInPackages = newestPackage.SupportedToolkitVersion;
             }
-
-            //no updates now, so figure out what version is supported by the client already
-            ProgramUpdatePackageInfo previousPackage =
-                await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == updateRequest.ProgramVersion);
-            if (previousPackage != null)
+            else
             {
-                maxVersion =  previousPackage.SupportedToolkitVersion;
+
+                //no updates now, so figure out what version is supported by the client already
+                ProgramUpdatePackageInfo previousPackage =
+                    await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == updateRequest.ProgramVersion);
+                if (previousPackage != null)
+                {
+                    maxVersionInPackages =  previousPackage.SupportedToolkitVersion;
+                }
+                else
+                {
+                    maxVersionInPackages = (await this.work.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id)).SupportedToolkitVersion;
+                }
+
             }
-
-            maxVersion =(await this.work.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id)).SupportedToolkitVersion;
-
-
-            if (updateRequest.ToolkitVersion.IsNewerOrEqualVersion(maxVersion))
+            if (updateRequest.ToolkitVersion.IsNewerOrEqualVersion(maxVersionInPackages))
             {
                 return updateRequest.ToolkitVersion;
             }
+            else
+            {
+                return maxVersionInPackages;
 
-            return maxVersion;
+            }
         }
     }
 }
