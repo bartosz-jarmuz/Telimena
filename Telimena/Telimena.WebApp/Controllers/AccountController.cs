@@ -19,7 +19,7 @@ namespace Telimena.WebApp.Controllers
     #endregion
 
     [TelimenaAuthorize]
-    public class AccountController : Controller 
+    public class AccountController : Controller
     {
         public AccountController(IAccountUnitOfWork unitOfWork, ILog logger)
         {
