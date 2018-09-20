@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using Telimena.Client;
@@ -12,6 +13,7 @@ namespace TelimenaTestSandboxApp
         {
             this.InitializeComponent();
             this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            this.Text = $"Sandbox v. {Assembly.GetExecutingAssembly().GetName().Version}";
         }
 
         private Telimena.Client.Telimena teli;

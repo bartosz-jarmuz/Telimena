@@ -24,14 +24,14 @@ namespace Telimena.Client.Tests
         private Mock<ITelimenaHttpClient> GetMockClientForStaticClient_FirstRequestPass()
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
-            client.Setup(x => x.PostAsync("api/Statistics/RegisterClient", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
+            client.Setup(x => x.PostAsync(ApiRoutes.RegisterClient, It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 RegistrationResponse registrationResponse = new RegistrationResponse {Count = 0, ProgramId = 1, UserId = 2};
                 response.Content = new StringContent(JsonConvert.SerializeObject(registrationResponse));
                 return Task.FromResult(response);
             });
-            client.Setup(x => x.PostAsync("api/Statistics/UpdateProgramStatistics", It.IsAny<HttpContent>())).Callback(
+            client.Setup(x => x.PostAsync(ApiRoutes.UpdateProgramStatistics, It.IsAny<HttpContent>())).Callback(
                 (string uri, HttpContent requestContent) =>
                 {
                     throw new AggregateException(new AssertionException(uri)
@@ -117,7 +117,7 @@ namespace Telimena.Client.Tests
                 TelimenaException ex = e as TelimenaException;
 
                 Assert.AreEqual(2, ex.InnerExceptions.Count);
-                Assert.AreEqual("api/Statistics/UpdateProgramStatistics", ex.InnerExceptions[0].Message);
+                Assert.AreEqual("api/Statistics/Update", ex.InnerExceptions[0].Message);
                 StatisticsUpdateRequest jObj = JsonConvert.DeserializeObject<StatisticsUpdateRequest>(ex.InnerExceptions[1].Message);
                 Assert.AreEqual(1, jObj.ProgramId);
                 Assert.AreEqual(2, jObj.UserId);

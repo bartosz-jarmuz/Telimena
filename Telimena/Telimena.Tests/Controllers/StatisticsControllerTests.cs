@@ -37,7 +37,7 @@ namespace Telimena.Tests
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
             StatisticsUpdateRequest request = new StatisticsUpdateRequest {ProgramId = prg.Id, FunctionName = "Func1", UserId = usr.Id, Version = "1.2.3.4"};
 
-            StatisticsUpdateResponse response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            StatisticsUpdateResponse response = sut.Update(request).GetAwaiter().GetResult();
 
             Helpers.AssertUpdateResponse(response, prg, usr, 1, "Func1");
 
@@ -56,7 +56,7 @@ namespace Telimena.Tests
             request = new StatisticsUpdateRequest {ProgramId = prg.Id, FunctionName = "Func1", UserId = otherUser.Id, Version = "1.2.3.4"};
 
             //run again with different user
-            response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            response = sut.Update(request).GetAwaiter().GetResult();
             Assert.AreEqual(1, response.Count);
             prg = unit.Programs.GetById(prg.Id);
             Assert.AreEqual(1, prg.Functions.Count);
@@ -68,7 +68,7 @@ namespace Telimena.Tests
 
             request = new StatisticsUpdateRequest {ProgramId = prg.Id, FunctionName = "Func1", UserId = usr.Id, Version = "1.2.3.4"};
             //run again with first user
-            response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            response = sut.Update(request).GetAwaiter().GetResult();
             func1 = prg.Functions.Single();
             Assert.AreEqual(2, func1.UsageSummaries.Count);
             Assert.AreEqual(2, func1.GetFunctionUsageSummary(response.UserId).SummaryCount);
@@ -91,7 +91,7 @@ namespace Telimena.Tests
             StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context);
 
             StatisticsController sut = new StatisticsController(unit);
-            StatisticsUpdateResponse response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            StatisticsUpdateResponse response = sut.Update(request).GetAwaiter().GetResult();
             Assert.IsTrue(response.Exception.Message.Contains($"Program [{request.ProgramId}] is null"));
         }
 
@@ -109,7 +109,7 @@ namespace Telimena.Tests
             StatisticsUpdateRequest request = new StatisticsUpdateRequest {ProgramId = prg.Id, UserId = 15646};
 
             StatisticsController sut = new StatisticsController(unit);
-            StatisticsUpdateResponse response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            StatisticsUpdateResponse response = sut.Update(request).GetAwaiter().GetResult();
             Assert.AreEqual($"User [{request.UserId}] is null", response.Exception.Message);
         }
 
@@ -462,7 +462,7 @@ namespace Telimena.Tests
             Helpers.GetProgramAndUser(this.Context, "TestApp3", "Jim Beam", out Program prg, out ClientAppUser usr);
             StatisticsUpdateRequest request = new StatisticsUpdateRequest {ProgramId = prg.Id, UserId = usr.Id, Version = "1.2.3.4"};
 
-            StatisticsUpdateResponse response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            StatisticsUpdateResponse response = sut.Update(request).GetAwaiter().GetResult();
             Assert.IsTrue(prg.Id > 0 && usr.Id > 0);
 
             Helpers.AssertUpdateResponse(response, prg, usr, 2, null);
@@ -475,7 +475,7 @@ namespace Telimena.Tests
 
 
             //run again
-            response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            response = sut.Update(request).GetAwaiter().GetResult();
 
             Helpers.AssertUpdateResponse(response, prg, usr, 3, null);
 
@@ -505,7 +505,7 @@ namespace Telimena.Tests
 
             StatisticsUpdateRequest request = new StatisticsUpdateRequest {ProgramId = prg.Id, UserId = usr.Id, Version = "1.2.3.4"};
 
-            StatisticsUpdateResponse response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            StatisticsUpdateResponse response = sut.Update(request).GetAwaiter().GetResult();
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);
 
             Assert.AreEqual(3, prg.UsageSummaries.Sum(x => x.UsageDetails.Count));
@@ -521,7 +521,7 @@ namespace Telimena.Tests
             Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.Version);
 
             request = new StatisticsUpdateRequest {ProgramId = prg.Id, UserId = usr.Id, Version = "2.0.0.0"};
-            response = sut.UpdateProgramStatistics(request).GetAwaiter().GetResult();
+            response = sut.Update(request).GetAwaiter().GetResult();
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);
 
             Assert.AreEqual(4, prg.UsageSummaries.Sum(x => x.UsageDetails.Count));

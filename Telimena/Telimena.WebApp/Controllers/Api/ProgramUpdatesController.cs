@@ -39,7 +39,7 @@ namespace Telimena.WebApp.Controllers.Api
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IHttpActionResult> DownloadUpdatePackage(int id)
+        public async Task<IHttpActionResult> Get(int id)
         {
             ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id);
 
@@ -91,7 +91,6 @@ namespace Telimena.WebApp.Controllers.Api
             }
 
             return packages.FirstOrDefault();
-
         }
 
         [HttpGet]
@@ -165,8 +164,8 @@ namespace Telimena.WebApp.Controllers.Api
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
                     Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
-                    ProgramUpdatePackageInfo pkg =
-                        await this.work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream, request.ToolkitVersionUsed);
+                    ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream
+                        , request.ToolkitVersionUsed);
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }
@@ -189,8 +188,6 @@ namespace Telimena.WebApp.Controllers.Api
 
             return this.Ok();
         }
-
-        
 
         private List<ProgramUpdatePackageInfo> FilterPackagesSet(List<ProgramUpdatePackageInfo> updatePackages, UpdateRequest request)
         {
@@ -230,7 +227,6 @@ namespace Telimena.WebApp.Controllers.Api
         private async Task<string> GetMaximumSupportedToolkitVersion(List<ProgramUpdatePackageInfo> updatePackages, Program program
             , UpdateRequest updateRequest)
         {
-
             string maxVersionInPackages = null;
             ProgramUpdatePackageInfo newestPackage = updatePackages.OrderByDescending(x => x.Id).FirstOrDefault();
             if (newestPackage != null)
@@ -239,29 +235,25 @@ namespace Telimena.WebApp.Controllers.Api
             }
             else
             {
-
                 //no updates now, so figure out what version is supported by the client already
                 ProgramUpdatePackageInfo previousPackage =
                     await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == updateRequest.ProgramVersion);
                 if (previousPackage != null)
                 {
-                    maxVersionInPackages =  previousPackage.SupportedToolkitVersion;
+                    maxVersionInPackages = previousPackage.SupportedToolkitVersion;
                 }
                 else
                 {
                     maxVersionInPackages = (await this.work.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id)).SupportedToolkitVersion;
                 }
-
             }
+
             if (updateRequest.ToolkitVersion.IsNewerOrEqualVersion(maxVersionInPackages))
             {
                 return updateRequest.ToolkitVersion;
             }
-            else
-            {
-                return maxVersionInPackages;
 
-            }
+            return maxVersionInPackages;
         }
     }
 }

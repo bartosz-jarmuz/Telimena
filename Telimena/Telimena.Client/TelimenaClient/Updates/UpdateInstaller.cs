@@ -2,15 +2,48 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Telimena.Client
 {
     internal class UpdateInstaller : IInstallUpdates
     {
-
         public async Task InstallUpdaterUpdate(FileInfo updaterPackage, FileInfo targetPath)
+        {
+            await UnpackUpdater(updaterPackage, targetPath);
+            await Cleanup(updaterPackage);
+        }
+
+        public void InstallUpdates(FileInfo instructionsFile, FileInfo updaterFile)
+        {
+            this.VerifyFilesExist(instructionsFile, updaterFile);
+            Process process = new Process {StartInfo = StartInfoCreator.CreateStartInfo(instructionsFile, updaterFile)};
+
+            process.Start();
+            Environment.Exit(0);
+        }
+
+        private static async Task Cleanup(FileInfo updaterPackage)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                try
+                {
+                    updaterPackage.Delete();
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    await Task.Delay(150 * (i + 1));
+                    if (i == 4)
+                    {
+                        throw new InvalidOperationException("Error occurred while cleaning up the updater package", ex);
+                    }
+                }
+            }
+        }
+
+        private static async Task UnpackUpdater(FileInfo updaterPackage, FileInfo targetPath)
         {
             for (int i = 0; i < 4; i++)
             {
@@ -26,19 +59,8 @@ namespace Telimena.Client
                     {
                         throw new InvalidOperationException("Error occurred while extracting the updater package", ex);
                     }
-
                 }
             }
-            
-        }
-
-        public void InstallUpdates(FileInfo instructionsFile, FileInfo updaterFile)
-        {
-            this.VerifyFilesExist(instructionsFile, updaterFile);
-            Process process = new Process {StartInfo = StartInfoCreator.CreateStartInfo(instructionsFile, updaterFile)};
-
-            process.Start();
-            Environment.Exit(0);
         }
 
         private void VerifyFilesExist(FileInfo instructionsFile, FileInfo updaterFile)

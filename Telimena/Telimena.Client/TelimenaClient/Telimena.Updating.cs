@@ -15,13 +15,14 @@ namespace Telimena.Client
         {
             try
             {
+                await this.InitializeIfNeeded();
+
                 UpdateResponse programUpdateResponse = await this.GetProgramUpdateResponse(true);
                 UpdateResponse updaterUpdateResponse = await this.GetUpdaterUpdateResponse(true);
 
                 return new UpdateCheckResult
                 {
-                    ProgramUpdatesToInstall = programUpdateResponse.UpdatePackages
-                    ,UpdaterUpdate = updaterUpdateResponse?.UpdatePackages?.FirstOrDefault()
+                    ProgramUpdatesToInstall = programUpdateResponse.UpdatePackages, UpdaterUpdate = updaterUpdateResponse?.UpdatePackages?.FirstOrDefault()
                 };
             }
             catch (Exception ex)
@@ -37,14 +38,14 @@ namespace Telimena.Client
             }
         }
 
-        
-
         public async Task HandleUpdates(bool acceptBeta)
         {
             try
             {
-                var programUpdateTask = this.GetProgramUpdateResponse(acceptBeta);
-                var updaterUpdateTask = this.GetUpdaterUpdateResponse(acceptBeta);
+                await this.InitializeIfNeeded();
+
+                Task<UpdateResponse> programUpdateTask = this.GetProgramUpdateResponse(acceptBeta);
+                Task<UpdateResponse> updaterUpdateTask = this.GetUpdaterUpdateResponse(acceptBeta);
                 UpdateResponse programUpdateResponse = await programUpdateTask;
                 UpdateResponse updaterUpdateResponse = await updaterUpdateTask;
 
@@ -65,14 +66,12 @@ namespace Telimena.Client
 
         protected async Task<UpdateResponse> GetProgramUpdateResponse(bool takeBeta)
         {
-            await this.InitializeIfNeeded();
             string responseContent = await this.Messenger.SendGetRequest(this.GetUpdateRequestUrl(takeBeta));
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
         protected async Task<UpdateResponse> GetUpdaterUpdateResponse(bool takeBeta)
         {
-            await this.InitializeIfNeeded();
             string responseContent = await this.Messenger.SendGetRequest(this.GetUpdaterUpdateRequestUrl(takeBeta));
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }

@@ -243,7 +243,7 @@
                                 <input type="checkbox" data-pkg-id="@pkg.Id" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "")/>
                             </td>
                             <td>
-                                <a href="/api@(Url.Action("DownloadUpdatePackage", "ProgramUpdates") + "?id=" + pkg.Id)">@pkg.FileName</a>
+                                <a href="/api@(Url.Action("Get", "ProgramUpdates") + "?id=" + pkg.Id)">@pkg.FileName</a>
                             </td>
                             <td>@pkg.Version</td>
                             <td>@pkg.SupportedToolkitVersion</td>
@@ -375,8 +375,6 @@
         }
 
 
-       
-
         function ProgressHandlingFunction(e, button) {
             var progressBar = $(button).closest('.form-group').prev('.progress').find('.progress-bar');
             if (e.lengthComputable) {
@@ -431,7 +429,8 @@
                     var form = $('#uploadProgramPackageForm')[0];
                     var formData = new FormData(form);
                     formData.append('Model', modelString);
-                    successCallback(formData,  '@Url.Action("Upload", "ProgramPackages")' + '/' + @Model.ProgramId, button);
+                    successCallback(formData, '@Url.Action("Upload", "ProgramPackages")' + '/' + @Model.ProgramId,
+                        button);
                 })
                 .fail(function(xhr) {
                     ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);

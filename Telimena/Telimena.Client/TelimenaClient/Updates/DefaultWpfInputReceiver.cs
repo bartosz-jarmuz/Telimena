@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace Telimena.Client
@@ -20,9 +21,10 @@ namespace Telimena.Client
 
         public bool ShowInstallUpdatesNowQuestion(IEnumerable<UpdatePackageData> packagesToInstall)
         {
-            string maxVersion = packagesToInstall.GetMaxVersion();
+            string maxVersion = packagesToInstall.Where(x => x.FileName != UpdateHandler.UpdaterFileName).GetMaxVersion();
 
-            MessageBoxResult choice = MessageBox.Show($"An update to version {maxVersion} was downloaded.\r\nWould you like to install now?");
+            MessageBoxResult choice = MessageBox.Show($"An update to version {maxVersion} was downloaded.\r\nWould you like to install now?"
+                , "Confirm installation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (choice == MessageBoxResult.Yes)
             {
                 return true;

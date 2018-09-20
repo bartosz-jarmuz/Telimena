@@ -54,7 +54,7 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<StatisticsUpdateResponse> UpdateProgramStatistics(StatisticsUpdateRequest updateRequest)
+        public async Task<StatisticsUpdateResponse> Update(StatisticsUpdateRequest updateRequest)
         {
             if (!ApiRequestsValidator.IsRequestValid(updateRequest))
             {

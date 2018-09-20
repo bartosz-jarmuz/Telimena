@@ -34,30 +34,13 @@ namespace Telimena.WebApp.Controllers.Api
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
 
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<UpdateResponse> GetUpdateInfo(string request)
-        {
-            UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
-
-
-            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetNewestCompatibleUpdater(requestModel.UpdaterVersion, requestModel.ToolkitVersion, false);
-            UpdateResponse response = new UpdateResponse();
-            if (updaterInfo != null)
-            {
-                response.UpdatePackages = new[] {Mapper.Map<UpdatePackageData>(updaterInfo)};
-            }
-
-            return response;
-        }
-
         //public async Task<UpdaterPackageInfo> GetLatestUpdaterInfo()
         //{
 
         //}
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetUpdater(int id)
+        public async Task<IHttpActionResult> Get(int id)
         {
             UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.FirstOrDefaultAsync(x => x.Id == id);
             if (updaterInfo == null)
@@ -75,7 +58,7 @@ namespace Telimena.WebApp.Controllers.Api
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IHttpActionResult> GetUpdater(string version)
+        public async Task<IHttpActionResult> Get(string version)
         {
             if (!Version.TryParse(version, out _))
             {
@@ -88,7 +71,24 @@ namespace Telimena.WebApp.Controllers.Api
                 return this.BadRequest($"Updater version [{version}] does not exist");
             }
 
-            return await this.GetUpdater(updaterInfo.Id);
+            return await this.Get(updaterInfo.Id);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<UpdateResponse> GetUpdateInfo(string request)
+        {
+            UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
+
+            UpdaterPackageInfo updaterInfo =
+                await this.work.UpdaterRepository.GetNewestCompatibleUpdater(requestModel.UpdaterVersion, requestModel.ToolkitVersion, false);
+            UpdateResponse response = new UpdateResponse();
+            if (updaterInfo != null)
+            {
+                response.UpdatePackages = new[] {Mapper.Map<UpdatePackageData>(updaterInfo)};
+            }
+
+            return response;
         }
 
         [HttpPost]

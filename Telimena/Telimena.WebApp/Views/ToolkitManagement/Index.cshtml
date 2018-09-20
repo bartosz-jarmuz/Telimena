@@ -236,7 +236,7 @@
                                     <td>@pkg.Id</td>
 
                                     <td>
-                                        <a href="/api@(Url.Action("GetUpdater", "Updater") + "?id=" + pkg.Id)">@pkg.Version</a>
+                                        <a href="/api@(Url.Action("Get", "Updater") + "?id=" + pkg.Id)">@pkg.Version</a>
                                     </td>
                                     <td>@pkg.UploadedDate</td>
                                     <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>

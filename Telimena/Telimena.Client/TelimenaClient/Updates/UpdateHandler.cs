@@ -20,11 +20,6 @@ namespace Telimena.Client
 
         public const string UpdaterFileName = "Updater.exe";
 
-        protected internal static string GetUpdatesFolderName(ProgramInfo programInfo)
-        {
-            return programInfo.Name + " Updates";
-        }
-
         private readonly IMessenger messenger;
         private readonly ProgramInfo programInfo;
         private readonly bool suppressAllErrors;
@@ -43,10 +38,9 @@ namespace Telimena.Client
                     return;
                 }
 
-                packagesToInstall = updaterUpdateResponse.UpdatePackages;
+                packagesToInstall = programUpdateResponse.UpdatePackages;
 
-                var updaterInstallation = this.InstallUpdater(updaterUpdateResponse
-                    , PathFinder.GetUpdatesParentFolder(BasePath, GetUpdatesFolderName(this.programInfo)));
+                await this.InstallUpdater(updaterUpdateResponse, PathFinder.GetUpdatesParentFolder(BasePath, GetUpdatesFolderName(this.programInfo)));
                 if (packagesToInstall != null && packagesToInstall.Any())
                 {
                     await this.DownloadUpdatePackages(packagesToInstall);
@@ -54,7 +48,6 @@ namespace Telimena.Client
                     FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo);
 
                     bool installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(packagesToInstall);
-                    await updaterInstallation;
                     FileInfo updaterFile = PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo));
                     if (installUpdatesNow)
                     {
@@ -71,21 +64,27 @@ namespace Telimena.Client
             }
         }
 
+        protected internal static string GetUpdatesFolderName(ProgramInfo programInfo)
+        {
+            return programInfo.Name + " Updates";
+        }
+
         protected async Task StoreUpdatePackage(UpdatePackageData pkgData, DirectoryInfo updatesFolder)
         {
             Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdatePackage + "?id=" + pkgData.Id);
-            string pkgFilePath = Path.Combine(updatesFolder.FullName, pkgData.FileName);
-            await SaveStreamToPath(pkgData, pkgFilePath, stream);
+            FileInfo pkgFile = new FileInfo(Path.Combine(updatesFolder.FullName, pkgData.FileName));
+            await SaveStreamToPath(pkgData, pkgFile, stream);
         }
 
-        private static async Task SaveStreamToPath(UpdatePackageData pkgData, string pkgFilePath, Stream stream)
+        private static async Task SaveStreamToPath(UpdatePackageData pkgData, FileInfo pkgFile, Stream stream)
         {
             FileStream fileStream = null;
             try
             {
-                fileStream = new FileStream(pkgFilePath, FileMode.Create, FileAccess.Write, FileShare.None);
+                pkgFile.Directory?.Create();
+                fileStream = new FileStream(pkgFile.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
                 await stream.CopyToAsync(fileStream).ContinueWith(copyTask => { fileStream.Close(); });
-                pkgData.StoredFilePath = pkgFilePath;
+                pkgData.StoredFilePath = pkgFile.FullName;
             }
             catch
             {
@@ -119,27 +118,29 @@ namespace Telimena.Client
             }
         }
 
+        private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, string basePath)
+        {
+            return PathFinder.GetUpdatesSubfolder(basePath, GetUpdatesFolderName(this.programInfo), packagesToDownload);
+        }
+
         private async Task InstallUpdater(UpdateResponse response, DirectoryInfo updatesFolder)
         {
-            var pkgData = response?.UpdatePackages?.FirstOrDefault();
+            UpdatePackageData pkgData = response?.UpdatePackages?.FirstOrDefault();
 
             if (pkgData == null)
             {
                 return;
             }
-            Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdatePackage + "?id=" + pkgData.Id);
-            var pkgFile = new FileInfo(Path.Combine(updatesFolder.FullName, pkgData.FileName));
+
+            Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdaterUpdatePackage + "?id=" + pkgData.Id);
+            FileInfo pkgFile = new FileInfo(Path.Combine(updatesFolder.FullName, pkgData.FileName));
             if (pkgFile.Exists)
             {
                 pkgFile.Delete();
             }
-            await SaveStreamToPath(pkgData, pkgFile.FullName, stream);
-            await this.updateInstaller.InstallUpdaterUpdate(pkgFile, PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo)));
-        }
 
-        private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, string basePath)
-        {
-            return PathFinder.GetUpdatesSubfolder(basePath, GetUpdatesFolderName(this.programInfo), packagesToDownload);
+            await SaveStreamToPath(pkgData, pkgFile, stream);
+            await this.updateInstaller.InstallUpdaterUpdate(pkgFile, PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo)));
         }
     }
 }
