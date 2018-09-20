@@ -1857,6 +1857,7 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\ionicons.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="ApplicationInsights.config">
@@ -1899,6 +1900,9 @@
     <Content Include="Content\Ionicons\scss\_ionicons-icons.scss" />
     <Content Include="Content\Ionicons\scss\_ionicons-variables.scss" />
     <Content Include="Connected Services\Application Insights\ConnectedService.json" />
+    <Content Include="fonts\ionicons.woff" />
+    <Content Include="fonts\ionicons.ttf" />
+    <Content Include="fonts\ionicons.eot" />
     <None Include="Properties\PublishProfiles\Telimena-dev - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
