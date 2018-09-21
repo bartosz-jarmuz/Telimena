@@ -12,6 +12,7 @@ using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
@@ -33,11 +34,6 @@ namespace Telimena.WebApp.Controllers.Api
         private readonly ITelimenaSerializer serializer;
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
-
-        //public async Task<UpdaterPackageInfo> GetLatestUpdaterInfo()
-        //{
-
-        //}
 
         [HttpGet]
         public async Task<IHttpActionResult> Get(int id)

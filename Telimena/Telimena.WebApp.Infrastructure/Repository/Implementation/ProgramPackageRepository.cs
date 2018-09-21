@@ -7,42 +7,40 @@ using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
-    internal class ProgramPackageRepository : Repository<ProgramPackageInfo>, IProgramPackageRepository
+    public class ProgramPackageRepository : Repository<ProgramPackageInfo>, IProgramPackageRepository
     {
-        public ProgramPackageRepository(DbContext dbContext, IFileSaver fileSaver, IFileRetriever fileRetriever) : base(dbContext)
+        public ProgramPackageRepository(DbContext dbContext) : base(dbContext)
         {
-            this.FileSaver = fileSaver;
-            this.FileRetriever = fileRetriever;
-            this.TelimenaContext = dbContext as TelimenaContext;
+            this.telimenaContext = dbContext as TelimenaContext;
         }
 
-        protected TelimenaContext TelimenaContext { get; }
-        protected IFileSaver FileSaver { get; }
-        protected IFileRetriever FileRetriever { get; }
-
-        public async Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName, string supportedToolkitVersion)
+        private readonly TelimenaContext telimenaContext;
+        private readonly string containerName = "program-packages";
+        public async Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName, string supportedToolkitVersion
+            , IFileSaver fileSaver)
         {
-            ObjectValidator.Validate(() => this.TelimenaContext.ToolkitPackages.Any(x => x.Version == supportedToolkitVersion)
+            ObjectValidator.Validate(() => this.telimenaContext.ToolkitPackages.Any(x => x.Version == supportedToolkitVersion)
                 , new ArgumentException($"There is no toolkit package with version [{supportedToolkitVersion}]"));
 
             ProgramPackageInfo pkg = new ProgramPackageInfo(fileName, programId, fileStream.Length, supportedToolkitVersion);
-            this.TelimenaContext.ProgramPackages.Add(pkg);
+            this.telimenaContext.ProgramPackages.Add(pkg);
 
-            await this.FileSaver.SaveFile(pkg, fileStream);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName);
 
             return pkg;
         }
 
-        public async Task<byte[]> GetPackage(int packageId)
+        public async Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever)
         {
-            ProgramPackageInfo pkg = await this.TelimenaContext.ProgramPackages.FirstOrDefaultAsync(x => x.Id == packageId);
+            ProgramPackageInfo pkg = await this.telimenaContext.ProgramPackages.FirstOrDefaultAsync(x => x.Id == packageId);
 
             if (pkg != null)
             {
-                return await this.FileRetriever.GetFile(pkg);
+                return await fileRetriever.GetFile(pkg, this.containerName);
             }
 
             return null;
@@ -51,7 +49,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public async Task<ProgramPackageInfo> GetLatestProgramPackageInfo(int programId)
         {
             List<ProgramPackageInfo> packages =
-                await this.TelimenaContext.ProgramPackages.Where(x => x.ProgramId == programId).OrderByDescending(x => x.Id).ToListAsync();
+                await this.telimenaContext.ProgramPackages.Where(x => x.ProgramId == programId).OrderByDescending(x => x.Id).ToListAsync();
             return packages.FirstOrDefault();
         }
     }

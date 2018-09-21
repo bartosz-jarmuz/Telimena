@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
@@ -22,13 +23,14 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
     internal class UpdaterRepository : Repository<UpdaterPackageInfo>, IUpdaterRepository
     {
+
         public UpdaterRepository(DbContext dbContext) : base(dbContext)
         {
             this.TelimenaContext = dbContext as TelimenaContext;
         }
 
         protected TelimenaContext TelimenaContext { get; }
-
+        private readonly string containerName = "toolkit-packages";
         public async Task<int> Save()
         {
             return await this.TelimenaContext.SaveChangesAsync();
@@ -75,7 +77,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             this.TelimenaContext.UpdaterPackages.Add(pkg);
 
-            await fileSaver.SaveFile(pkg, fileStream);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName);
 
             return pkg;
         }
@@ -86,7 +88,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             if (pkg != null)
             {
-                return await fileRetriever.GetFile(pkg);
+                return await fileRetriever.GetFile(pkg, this.containerName);
             }
 
             return null;

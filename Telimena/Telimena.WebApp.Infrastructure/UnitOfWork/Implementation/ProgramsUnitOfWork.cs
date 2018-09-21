@@ -17,8 +17,8 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
             this.ToolkitData = new ToolkitDataRepository(context);
-            this.UpdatePackages = new UpdatePackageRepository(context, new LocalFileSaver(), new LocalFileRetriever());
-            this.ProgramPackages = new ProgramPackageRepository(context, new LocalFileSaver(), new LocalFileRetriever());
+            this.UpdatePackages = new UpdatePackageRepository(context);
+            this.ProgramPackages = new ProgramPackageRepository(context);
             this.TelimenaUserManager = userManager;
         }
 

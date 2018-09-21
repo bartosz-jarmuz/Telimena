@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
-    internal class Repository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         public Repository(DbContext dbContext)
         {

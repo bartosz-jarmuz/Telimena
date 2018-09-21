@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
@@ -22,18 +23,17 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
     internal class UpdatePackageRepository : Repository<ProgramUpdatePackageInfo>, IUpdatePackageRepository
     {
-        public UpdatePackageRepository(DbContext dbContext, IFileSaver fileSaver, IFileRetriever fileRetriever) : base(dbContext)
+        public UpdatePackageRepository(DbContext dbContext) : base(dbContext)
         {
-            this.FileSaver = fileSaver;
-            this.FileRetriever = fileRetriever;
             this.TelimenaContext = dbContext as TelimenaContext;
         }
 
-        protected TelimenaContext TelimenaContext { get; }
-        private IFileSaver FileSaver { get; }
-        private IFileRetriever FileRetriever { get; }
+        private readonly string containerName = "update-packages";
 
-        public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string version, Stream fileStream, string supportedToolkitVersion)
+        protected TelimenaContext TelimenaContext { get; }
+
+        public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string version, Stream fileStream, string supportedToolkitVersion
+            , IFileSaver fileSaver)
         {
             ObjectValidator.Validate(() => Version.TryParse(version, out Version _)
                 , new InvalidOperationException($"[{version}] is not a valid version string"));
@@ -48,18 +48,18 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             this.TelimenaContext.UpdatePackages.Add(pkg);
 
-            await this.FileSaver.SaveFile(pkg, fileStream);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName);
 
             return pkg;
         }
 
-        public async Task<byte[]> GetPackage(int packageId)
+        public async Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever)
         {
             ProgramUpdatePackageInfo pkg = await this.GetUpdatePackageInfo(packageId);
 
             if (pkg != null)
             {
-                return await this.FileRetriever.GetFile(pkg);
+                return await fileRetriever.GetFile(pkg, this.containerName);
             }
 
             return null;

@@ -22,9 +22,9 @@ namespace Telimena.Tests
 
         private IProgramsUnitOfWork GetUnit(List<ProgramUpdatePackageInfo> list, List<TelimenaPackageInfo> toolkitPackages = null)
         {
-            UpdatePackageRepository pkgRepo = new UpdatePackageRepository(this.Context, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            UpdatePackageRepository pkgRepo = new UpdatePackageRepository(this.Context);
             ProgramRepository prgRepo = new ProgramRepository(this.Context);
-            ProgramPackageRepository prgPkgRepo = new ProgramPackageRepository(this.Context, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            ProgramPackageRepository prgPkgRepo = new ProgramPackageRepository(this.Context);
             prgPkgRepo.Add(new ProgramPackageInfo("Prg.zip", 1, 2222, "1.0.0.0"));
             prgRepo.Add(new Program("prg") {Id = 1});
             
@@ -45,14 +45,14 @@ namespace Telimena.Tests
             var toolkitRepo = new ToolkitDataRepository(this.Context);
             if (toolkitPackages == null)
             {
-                toolkitRepo.StorePackageAsync("0.5.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("0.7.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.0.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.2.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.4.0.0", isBeta: false, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.6.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.8.0.0", isBeta: true, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("2.0.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("0.5.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("0.7.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.0.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.2.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.4.0.0", isBeta: false, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.6.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.8.0.0", isBeta: true, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("2.0.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
             }
         }
 

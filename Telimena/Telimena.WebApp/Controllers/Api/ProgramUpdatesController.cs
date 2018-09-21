@@ -16,6 +16,7 @@ using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 
@@ -28,14 +29,19 @@ namespace Telimena.WebApp.Controllers.Api
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramUpdatesController : ApiController
     {
-        public ProgramUpdatesController(IProgramsUnitOfWork work, ITelimenaSerializer serializer)
+        private IFileRetriever FileRetriever { get; }
+
+        public ProgramUpdatesController(IProgramsUnitOfWork work, ITelimenaSerializer serializer, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
+            this.FileRetriever = fileRetriever;
             this.work = work;
             this.serializer = serializer;
+            this.fileSaver = fileSaver;
         }
 
         private readonly IProgramsUnitOfWork work;
         private readonly ITelimenaSerializer serializer;
+        private readonly IFileSaver fileSaver;
 
         [AllowAnonymous]
         [HttpGet]
@@ -43,7 +49,7 @@ namespace Telimena.WebApp.Controllers.Api
         {
             ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id);
 
-            byte[] bytes = await this.work.UpdatePackages.GetPackage(packageInfo.Id);
+            byte[] bytes = await this.work.UpdatePackages.GetPackage(packageInfo.Id, this.FileRetriever);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = packageInfo.FileName};
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
@@ -136,7 +142,7 @@ namespace Telimena.WebApp.Controllers.Api
         {
             ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(programId);
 
-            byte[] bytes = await this.work.UpdatePackages.GetPackage(packageInfo.Id);
+            byte[] bytes = await this.work.UpdatePackages.GetPackage(packageInfo.Id, this.FileRetriever);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = packageInfo.FileName};
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
@@ -165,7 +171,7 @@ namespace Telimena.WebApp.Controllers.Api
                 {
                     Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
                     ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream
-                        , request.ToolkitVersionUsed);
+                        , request.ToolkitVersionUsed, this.fileSaver);
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }

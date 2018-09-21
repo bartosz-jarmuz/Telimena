@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
     internal sealed class ToolkitDataRepository : Repository<TelimenaToolkitData>, IToolkitDataRepository
     {
+        private readonly string containerName = "toolkit-packages";
+
         public ToolkitDataRepository(DbContext dbContext) : base(dbContext)
         {
             this.TelimenaContext = dbContext as TelimenaContext;
@@ -38,7 +41,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             pkg.IntroducesBreakingChanges = introducesBreakingChanges;
             data.TelimenaPackageInfo = pkg;
 
-            await fileSaver.SaveFile(pkg, fileStream);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName);
 
             return data;
         }
@@ -50,7 +53,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             TelimenaPackageInfo pkg = toolkitData?.TelimenaPackageInfo;
             if (pkg != null)
             {
-                return await fileRetriever.GetFile(pkg);
+                return await fileRetriever.GetFile(pkg, this.containerName);
             }
 
             return null;

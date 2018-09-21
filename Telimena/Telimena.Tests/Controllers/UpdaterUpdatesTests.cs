@@ -64,7 +64,7 @@ namespace Telimena.Tests
         public void Test_LatestUpdaterIsCompatible()
         {
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
-            UpdaterController controller = new UpdaterController(unit, serializer, null, null);
+            UpdaterController controller = new UpdaterController(unit, serializer);
             var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0", toolkitVersion: "1.3.0");
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -76,7 +76,7 @@ namespace Telimena.Tests
         public void Test_LatestUpdaterIsNotCompatible_BreakingChanges()
         {
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context);
-            UpdaterController controller = new UpdaterController(work: unit, serializer: serializer, fileSaver: null, fileRetriever: null);
+            UpdaterController controller = new UpdaterController(work: unit, serializer: serializer);
             var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0", toolkitVersion: "0.2.0");
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -95,7 +95,7 @@ namespace Telimena.Tests
         public void Test_LatestUpdaterIsUsed()
         {
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
-            UpdaterController controller = new UpdaterController(unit, serializer, null, null);
+            UpdaterController controller = new UpdaterController(unit, serializer);
             var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.1", toolkitVersion: "0.2.0");
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
