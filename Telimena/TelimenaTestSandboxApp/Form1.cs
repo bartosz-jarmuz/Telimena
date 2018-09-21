@@ -16,12 +16,22 @@ namespace TelimenaTestSandboxApp
             this.Text = $"Sandbox v. {Assembly.GetExecutingAssembly().GetName().Version}";
         }
 
+        private string PresentResponse(TelimenaResponseBase response)
+        {
+            if (response.Exception != null)
+            {
+                return response.Exception.ToString();
+            }
+            return new JavaScriptSerializer().Serialize(response);
+        }
+
         private Telimena.Client.Telimena teli;
 
         private async void InitializeButton_Click(object sender, EventArgs e)
         {
             RegistrationResponse response = await this.teli.Initialize();
-            this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + new JavaScriptSerializer().Serialize(response) + Environment.NewLine;
+
+            this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + this.PresentResponse(response) + Environment.NewLine;
         }
 
         private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
@@ -42,8 +52,7 @@ namespace TelimenaTestSandboxApp
 
             if (result.Exception == null)
             {
-                this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " +
-                                           new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
+                this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " + this.PresentResponse(result) + Environment.NewLine;
             }
             else
             {
@@ -94,7 +103,7 @@ namespace TelimenaTestSandboxApp
 
             if (result.Exception == null)
             {
-                this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms " + new JavaScriptSerializer().Serialize(result) + Environment.NewLine;
+                this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms " + this.PresentResponse(result) + Environment.NewLine;
             }
             else
             {
