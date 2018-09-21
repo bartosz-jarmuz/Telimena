@@ -9,6 +9,7 @@ using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Identity;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
@@ -45,14 +46,14 @@ namespace Telimena.Tests
             var toolkitRepo = new ToolkitDataRepository(this.Context);
             if (toolkitPackages == null)
             {
-                toolkitRepo.StorePackageAsync("0.5.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("0.7.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.0.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.2.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.4.0.0", isBeta: false, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.6.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("1.8.0.0", isBeta: true, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync("2.0.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: TODO).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("0.5.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("0.7.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.0.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.2.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.4.0.0", isBeta: false, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.6.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("1.8.0.0", isBeta: true, introducesBreakingChanges: true, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync("2.0.0.0", isBeta: true, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
             }
         }
 
@@ -69,7 +70,7 @@ namespace Telimena.Tests
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Id = 6}
             });
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.7.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -109,7 +110,7 @@ namespace Telimena.Tests
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Id = 6}
             });
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "2.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -141,7 +142,7 @@ namespace Telimena.Tests
             });
 
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.5.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -172,7 +173,7 @@ namespace Telimena.Tests
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Id = 4}
             });
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.8.0.0");
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
@@ -206,7 +207,7 @@ namespace Telimena.Tests
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Id = 4}
             });
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
@@ -246,7 +247,7 @@ namespace Telimena.Tests
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, Id = 6}
             });
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -281,7 +282,7 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>());
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.4.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -295,7 +296,7 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>());
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.9.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -324,7 +325,7 @@ namespace Telimena.Tests
                 , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.6.0.0") {IsStandalone = false, Id = 4}
             });
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -364,7 +365,7 @@ namespace Telimena.Tests
             });
 
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.0.0.1");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -393,7 +394,7 @@ namespace Telimena.Tests
             });
 
 
-            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer);
+            ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
