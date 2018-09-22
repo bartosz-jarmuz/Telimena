@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -16,9 +17,15 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 
             CloudBlobClient client = storageAccount.CreateCloudBlobClient();
 
-            CloudBlobContainer container = client.GetContainerReference(containerName);
-
-            await container.CreateIfNotExistsAsync();
+            CloudBlobContainer container = client.GetContainerReference(containerName.ToLower());
+            try
+            {
+                await container.CreateIfNotExistsAsync();
+            }
+            catch (StorageException ex)
+            {
+                throw new InvalidOperationException($"Error while creating (if not exists) the container [{containerName}]", ex);
+            }
             return container;
         }
     }
