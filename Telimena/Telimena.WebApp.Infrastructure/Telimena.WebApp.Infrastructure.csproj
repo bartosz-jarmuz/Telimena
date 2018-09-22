@@ -162,9 +162,9 @@
     <Compile Include="Repository\IToolkitDataRepository.cs" />
     <Compile Include="Repository\IUpdaterRepository.cs" />
     <Compile Include="Repository\IUpdatePackageRepository.cs" />
-    <Compile Include="UnitOfWork\IAdminDashboardUnitOfWork.cs" />
+    <Compile Include="UnitOfWork\IProgramsDashboardUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\AccountUnitOfWork.cs" />
-    <Compile Include="UnitOfWork\Implementation\AdminDashboardUnitOfWork.cs" />
+    <Compile Include="UnitOfWork\Implementation\ProgramsDashboardUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Database\TelimenaDbInitializer.cs" />
     <Compile Include="Security\TelimenaAuthorizeAttribute.cs" />

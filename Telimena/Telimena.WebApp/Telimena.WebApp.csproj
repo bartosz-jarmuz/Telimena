@@ -1841,6 +1841,9 @@
     <Content Include="Content\Ionicons\src\woman.svg" />
     <Content Include="Content\Ionicons\src\wrench.svg" />
     <Content Include="Content\Ionicons\src\xbox.svg" />
+    <Content Include="Content\telilogo-alt.png" />
+    <Content Include="Content\telilogo.png" />
+    <Content Include="Content\Telimena-full-logo.png" />
     <Content Include="Content\tether\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
@@ -1903,6 +1906,9 @@
     <Content Include="fonts\ionicons.woff" />
     <Content Include="fonts\ionicons.ttf" />
     <Content Include="fonts\ionicons.eot" />
+    <Content Include="Content\telilogo-alt.xcf" />
+    <Content Include="Content\telilogo.xcf" />
+    <Content Include="Content\Telimena-full-logo.xcf" />
     <None Include="Properties\PublishProfiles\Telimena-dev - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -1953,10 +1959,10 @@
     <Content Include="Views\Error\AccessDenied.cshtml" />
     <Content Include="Views\Shared\_DeveloperLeftSideBar.cshtml" />
     <Content Include="Views\AdminDashboard\_PortalSummaryBoxes.cshtml" />
-    <Content Include="Views\AdminDashboard\_AllProgramsSummaryBoxes.cshtml" />
+    <Content Include="Views\Shared\_AllProgramsSummaryBoxes.cshtml" />
     <Content Include="Views\AdminDashboard\_SmallBox.cshtml" />
     <Content Include="Views\AdminDashboard\Apps.cshtml" />
-    <Content Include="Views\AdminDashboard\_InfoBox.cshtml" />
+    <Content Include="Views\Shared\_InfoBox.cshtml" />
     <Content Include="Views\RegisterProgram\Register.cshtml" />
     <Content Include="Views\Shared\_ProgramsList.cshtml" />
     <Content Include="Views\ProgramDetails\_PackageBetaActivator.cshtml" />

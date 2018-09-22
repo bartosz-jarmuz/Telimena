@@ -15,24 +15,25 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
     #endregion
 
-    public class AdminDashboardUnitOfWork : IAdminDashboardUnitOfWork
+    public class ProgramsDashboardUnitOfWork : IProgramsDashboardUnitOfWork
     {
-        public AdminDashboardUnitOfWork(TelimenaContext context)
+        public ProgramsDashboardUnitOfWork(TelimenaContext context)
         {
             this.context = context;
             this.Programs = new ProgramRepository(this.context);
             this.Functions = new FunctionRepository(this.context);
+            this.Users = new Repository<TelimenaUser>(this.context);
         }
 
         private readonly TelimenaContext context;
         public IFunctionRepository Functions { get; }
 
+        public IRepository<TelimenaUser> Users { get; }
         public IProgramRepository Programs { get; }
 
-        public async Task<IEnumerable<ProgramSummary>> GetProgramsSummary()
+        public async Task<IEnumerable<ProgramSummary>> GetProgramsSummary(List<Program> programs)
         {
             List<ProgramSummary> returnData = new List<ProgramSummary>();
-            IEnumerable<Program> programs = await this.Programs.GetAsync();
 
             foreach (Program program in programs)
             {
@@ -76,22 +77,28 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return summary;
         }
 
-        public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts()
+        public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)
         {
+            IEnumerable<int> programIds = programs.Select(x => x.Id);
+            List<Function> functions = programs.SelectMany(x => x.Functions).ToList();
+            IEnumerable<int> functionIds = functions.Select(x => x.Id);
+            List<ProgramUsageSummary> programUsageSummaries = await this.context.ProgramUsages.Where(usg => programIds.Contains(usg.ProgramId)).ToListAsync();
+            List<FunctionUsageSummary> functionUsageSummaries =
+                await this.context.FunctionUsages.Where(usg => functionIds.Contains(usg.FunctionId)).ToListAsync();
+            List<ClientAppUser> users = programUsageSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
             AllProgramsSummaryData summary = new AllProgramsSummaryData
             {
-                TotalProgramsCount = await this.context.Programs.CountAsync()
-                , TotalAppUsersCount = await this.context.AppUsers.CountAsync()
-                , AppUsersRegisteredLast7DaysCount =
-                    await this.context.AppUsers.CountAsync(x => DbFunctions.DiffDays(x.RegisteredDate, DateTime.UtcNow) <= 7)
-                , TotalFunctionsCount = await this.context.Functions.CountAsync()
+                TotalProgramsCount = programs.Count()
+                , TotalAppUsersCount = users.Count()
+                , AppUsersRegisteredLast7DaysCount = users.Count(x => (DateTime.UtcNow - x.RegisteredDate).TotalDays <= 7)
+                , TotalFunctionsCount = functions.Count()
             };
-            int? value = await this.context.ProgramUsages.SumAsync(x => (int?) x.UsageDetails.Count) ?? 0;
+            int? value = programUsageSummaries.Sum(x => (int?) x.UsageDetails.Count) ?? 0;
             summary.TotalProgramUsageCount = value ?? 0;
-            value = await this.context.FunctionUsages.SumAsync(x => (int?) x.UsageDetails.Count) ?? 0;
+            value = functionUsageSummaries.Sum(x => (int?) x.UsageDetails.Count) ?? 0;
             summary.TotalFunctionsUsageCount = value ?? 0;
 
-            summary.NewestProgram = await this.context.Programs.OrderByDescending(x => x.Id) /*.Include(x=>x.Developer)*/.FirstOrDefaultAsync();
+            summary.NewestProgram = programs.OrderByDescending(x => x.Id) /*.Include(x=>x.Developer)*/.FirstOrDefault();
 
             return summary;
         }

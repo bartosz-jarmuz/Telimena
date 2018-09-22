@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
@@ -14,14 +13,16 @@ namespace Telimena.WebApp.Controllers
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class AdminDashboardController : Controller
     {
-        public AdminDashboardController(ILog logger, IAdminDashboardUnitOfWork unitOfWork)
+        public AdminDashboardController(ILog logger, IProgramsDashboardUnitOfWork unitOfWork)
         {
             this.logger = logger;
             this.unitOfWork = unitOfWork;
+            this.dashboardBase = new ProgramsDashboardBase(unitOfWork);
         }
 
         private readonly ILog logger;
-        private readonly IAdminDashboardUnitOfWork unitOfWork;
+        private readonly IProgramsDashboardUnitOfWork unitOfWork;
+        private readonly ProgramsDashboardBase dashboardBase;
 
         public ActionResult Apps()
         {
@@ -31,13 +32,13 @@ namespace Telimena.WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> GetAllPrograms()
         {
-            List<ProgramSummary> summary = (await this.unitOfWork.GetProgramsSummary()).ToList();
-            return this.Content(JsonConvert.SerializeObject(summary));
+            List<ProgramSummary> programs = await this.dashboardBase.GetAllPrograms(this.User);
+            return this.Content(JsonConvert.SerializeObject(programs));
         }
 
         public async Task<ActionResult> GetAllProgramsSummaryCounts()
         {
-            AllProgramsSummaryData summary = await this.unitOfWork.GetAllProgramsSummaryCounts();
+            AllProgramsSummaryData summary = await this.dashboardBase.GetAllProgramsSummaryCounts(this.User);
             return this.PartialView("_AllProgramsSummaryBoxes", summary);
         }
 
