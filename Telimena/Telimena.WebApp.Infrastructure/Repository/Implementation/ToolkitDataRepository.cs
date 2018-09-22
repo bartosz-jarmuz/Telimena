@@ -29,19 +29,24 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 throw new InvalidOperationException("Version string not valid");
             }
 
-            TelimenaToolkitData data = await this.TelimenaContext.TelimenaToolkitData.FirstOrDefaultAsync(x => x.Version == version);
+            TelimenaToolkitData data = await this.TelimenaContext.TelimenaToolkitData.Where(x => x.Version == version).Include(nameof(TelimenaToolkitData.TelimenaPackageInfo)).FirstOrDefaultAsync();
             if (data == null)
             {
                 data = new TelimenaToolkitData(version);
                 this.TelimenaContext.TelimenaToolkitData.Add(data);
             }
 
-            TelimenaPackageInfo pkg = new TelimenaPackageInfo(version, fileStream.Length);
-            pkg.IsBeta = isBeta;
-            pkg.IntroducesBreakingChanges = introducesBreakingChanges;
-            data.TelimenaPackageInfo = pkg;
+            if (data.TelimenaPackageInfo == null)
+            {
+                TelimenaPackageInfo pkg = new TelimenaPackageInfo(version, fileStream.Length);
+                data.TelimenaPackageInfo = pkg;
 
-            await fileSaver.SaveFile(pkg, fileStream, this.containerName);
+            }
+
+            data.TelimenaPackageInfo.IsBeta = isBeta;
+            data.TelimenaPackageInfo.IntroducesBreakingChanges = introducesBreakingChanges;
+
+            await fileSaver.SaveFile(data.TelimenaPackageInfo, fileStream, this.containerName);
 
             return data;
         }

@@ -55,7 +55,7 @@ namespace Telimena.WebApp.Controllers.Api
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
 
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = toolkitData.TelimenaPackageInfo.FileName};
-            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
 
             return this.ResponseMessage(result);
         }

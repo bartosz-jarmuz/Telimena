@@ -13,7 +13,7 @@
 
         public int Id { get; set; }
         public string Version { get; set; }
-        public TelimenaPackageInfo TelimenaPackageInfo { get; set; }
+        public virtual TelimenaPackageInfo TelimenaPackageInfo { get; set; }
 
         public bool IntroducesBreakingChanges { get; set; }
     }
