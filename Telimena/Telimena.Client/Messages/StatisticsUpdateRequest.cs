@@ -6,5 +6,6 @@
         public int ProgramId { get; set; }
         public string FunctionName { get; set; }
         public string Version { get; set; }
+        public string CustomData { get; set; }
     }
 }

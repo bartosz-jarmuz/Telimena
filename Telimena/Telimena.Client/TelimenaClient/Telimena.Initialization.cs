@@ -55,8 +55,8 @@ namespace Telimena.Client
         {
             if (!this.IsInitialized)
             {
-                this.IsInitialized = true;
                 await this.Initialize();
+                this.IsInitialized = true;
             }
         }
 

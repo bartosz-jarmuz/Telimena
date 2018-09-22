@@ -46,7 +46,7 @@ namespace Telimena.Client.Tests
             Mock<ITelimenaHttpClient> client = this.GetMockClientForStaticClient_FirstRequestPass();
             try
             {
-                Telimena.SendUsageReport(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
+                Telimena.ReportUsageStatic(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
             catch (Exception e)
@@ -58,7 +58,7 @@ namespace Telimena.Client.Tests
 
             try
             {
-                Telimena.SendUsageReport(suppressAllErrors: false).GetAwaiter().GetResult();
+                Telimena.ReportUsageStatic(suppressAllErrors: false).GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
             catch (Exception e)
@@ -68,19 +68,19 @@ namespace Telimena.Client.Tests
             }
 
 
-            StatisticsUpdateResponse result = Telimena.SendUsageReport().GetAwaiter().GetResult();
+            StatisticsUpdateResponse result = Telimena.ReportUsageStatic().GetAwaiter().GetResult();
             TelimenaException err = result.Exception as TelimenaException;
             Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
 
-            result = Telimena.SendUsageReport("BOOO").GetAwaiter().GetResult();
+            result = Telimena.ReportUsageStatic("BOOO").GetAwaiter().GetResult();
             err = result.Exception as TelimenaException;
             Assert.IsTrue(err.Message.Contains("[BOOO]"));
 
-            result = Telimena.SendUsageReport(new ProgramInfo()).GetAwaiter().GetResult();
+            result = Telimena.ReportUsageStatic(new ProgramInfo()).GetAwaiter().GetResult();
             err = result.Exception as TelimenaException;
             Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
 
-            result = Telimena.SendUsageReport(telemetryApiBaseUrl: new Uri("http://localhost:666")).GetAwaiter().GetResult();
+            result = Telimena.ReportUsageStatic(telemetryApiBaseUrl: new Uri("http://localhost:666")).GetAwaiter().GetResult();
             err = result.Exception as TelimenaException;
             Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
         }
@@ -91,7 +91,7 @@ namespace Telimena.Client.Tests
             Mock<ITelimenaHttpClient> client = Helpers.GetMockClient();
             try
             {
-                StatisticsUpdateResponse result = Telimena.SendUsageReport(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
+                StatisticsUpdateResponse result = Telimena.ReportUsageStatic(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
             catch (Exception e)
@@ -109,7 +109,7 @@ namespace Telimena.Client.Tests
             client = this.GetMockClientForStaticClient_FirstRequestPass();
             try
             {
-                StatisticsUpdateResponse result = Telimena.SendUsageReport(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
+                StatisticsUpdateResponse result = Telimena.ReportUsageStatic(client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
             catch (Exception e)
@@ -133,7 +133,7 @@ namespace Telimena.Client.Tests
             ProgramInfo pi = new ProgramInfo {Name = "An App!", PrimaryAssembly = new AssemblyInfo(this.GetType().Assembly)};
             try
             {
-                StatisticsUpdateResponse result = Telimena.SendUsageReport(client.Object, pi, suppressAllErrors: false).GetAwaiter().GetResult();
+                StatisticsUpdateResponse result = Telimena.ReportUsageStatic(client.Object, pi, suppressAllErrors: false).GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
             catch (Exception e)

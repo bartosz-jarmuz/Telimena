@@ -29,7 +29,7 @@ namespace Telimena.Client
         /// <param name="mainAssembly"></param>
         /// <param name="suppressAllErrors"></param>
         /// <returns></returns>
-        public static Task<StatisticsUpdateResponse> SendUsageReport([CallerMemberName] string functionName = null, Uri telemetryApiBaseUrl = null
+        public static Task<StatisticsUpdateResponse> ReportUsageStatic([CallerMemberName] string functionName = null, Uri telemetryApiBaseUrl = null
             , Assembly mainAssembly = null, bool suppressAllErrors = true)
         {
             if (telemetryApiBaseUrl == null)
@@ -38,7 +38,7 @@ namespace Telimena.Client
             }
 
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
-            return SendUsageReport(httpClient, null, mainAssembly, suppressAllErrors, functionName);
+            return ReportUsageStatic(httpClient, null, mainAssembly, suppressAllErrors, functionName);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Telimena.Client
         /// <param name="suppressAllErrors"></param>
         /// <param name="functionName"></param>
         /// <returns></returns>
-        public static Task<StatisticsUpdateResponse> SendUsageReport(ProgramInfo programInfo, Uri telemetryApiBaseUrl = null, Assembly mainAssembly = null
+        public static Task<StatisticsUpdateResponse> ReportUsageStatic(ProgramInfo programInfo, Uri telemetryApiBaseUrl = null, Assembly mainAssembly = null
             , bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
         {
             if (telemetryApiBaseUrl == null)
@@ -62,7 +62,7 @@ namespace Telimena.Client
             }
 
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
-            return SendUsageReport(httpClient, programInfo, mainAssembly, suppressAllErrors, functionName);
+            return ReportUsageStatic(httpClient, programInfo, mainAssembly, suppressAllErrors, functionName);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Telimena.Client
         /// <param name="suppressAllErrors"></param>
         /// <param name="functionName"></param>
         /// <returns></returns>
-        internal static async Task<StatisticsUpdateResponse> SendUsageReport(ITelimenaHttpClient httpClient, ProgramInfo programInfo = null
+        internal static async Task<StatisticsUpdateResponse> ReportUsageStatic(ITelimenaHttpClient httpClient, ProgramInfo programInfo = null
             , Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
         {
             RegistrationRequest registrationRequest = null;

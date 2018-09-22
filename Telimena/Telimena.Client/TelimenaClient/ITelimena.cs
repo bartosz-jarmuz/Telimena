@@ -14,9 +14,26 @@ namespace Telimena.Client
     /// </summary>
     public interface ITelimena
     {
+        /// <summary>
+        /// Performs an update check and returns the result which allows custom handling of the update process.
+        /// It will return info about beta versions as well.
+        /// </summary>
+        /// <returns></returns>
         Task<UpdateCheckResult> CheckForUpdates();
 
+        /// <summary>
+        /// Handles the updating process from start to end
+        /// </summary>
+        /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
+        /// <returns></returns>
         Task HandleUpdates(bool acceptBeta);
+
+        /// <summary>
+        /// Initializes the Telimena client. <para/>
+        /// Each time initialization is called, it will increment the program usage statistics.
+        /// It should be called once per application execution
+        /// </summary>
+        /// <returns></returns>
         Task<RegistrationResponse> Initialize();
 
         /// <summary>
@@ -31,6 +48,21 @@ namespace Telimena.Client
         /// <param name="assemblyNames"></param>
         void LoadHelperAssembliesByName(params string[] assemblyNames);
 
+        /// <summary>
+        ///     Report the usage of the application function.
+        /// </summary>
+        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
+        /// <returns></returns>
         Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null);
+
+        /// <summary>
+        ///     Report the usage of the application function.
+        /// </summary>
+        /// <param name="customData">A JSON serialized object which contains some program specific custom data</param>
+        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
+        /// <returns></returns>
+        Task<StatisticsUpdateResponse> ReportUsageWithCustomData(string customData, [CallerMemberName] string functionName = null);
+
+        Task<StatisticsUpdateResponse> ReportUsageWithCustomData<T>(T customDataObject, [CallerMemberName] string functionName = null);
     }
 }
