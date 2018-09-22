@@ -22,9 +22,9 @@ namespace Telimena.WebApp.Core.Models
 
         public virtual ICollection<ProgramUsageDetail> UsageDetails { get; set; } = new List<ProgramUsageDetail>();
 
-        public override void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version)
+        public override void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version, string customData)
         {
-            ProgramUsageDetail usage = new ProgramUsageDetail {DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version};
+            ProgramUsageDetail usage = new ProgramUsageDetail {DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version, CustomUsageData = new ProgramCustomUsageData(customData) };
             this.UsageDetails.Add(usage);
             this.SummaryCount = this.UsageDetails.Count;
         }

@@ -10,12 +10,12 @@ namespace Telimena.WebApp.Core.Models
         public virtual ClientAppUser ClientAppUser { get; set; }
         public int? ClientAppUserId { get; set; }
 
-        public abstract void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version);
+        public abstract void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version, string customData);
 
-        public virtual void IncrementUsage(AssemblyVersion version)
+        public virtual void IncrementUsage(AssemblyVersion version, string customData = null)
         {
             this.LastUsageDateTime = DateTime.UtcNow;
-            this.UpdateUsageDetails(this.LastUsageDateTime, version);
+            this.UpdateUsageDetails(this.LastUsageDateTime, version, customData);
         }
     }
 }

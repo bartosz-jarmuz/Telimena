@@ -79,7 +79,7 @@ namespace Telimena.WebApp.Controllers.Api
                 StatisticsHelperService.EnsureVersionIsRegistered(program.PrimaryAssembly, updateRequest.Version);
                 AssemblyVersion versionInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version);
 
-                usageSummary.IncrementUsage(versionInfo);
+                usageSummary.IncrementUsage(versionInfo, updateRequest.CustomData);
 
                 await this.work.CompleteAsync();
                 return new StatisticsUpdateResponse

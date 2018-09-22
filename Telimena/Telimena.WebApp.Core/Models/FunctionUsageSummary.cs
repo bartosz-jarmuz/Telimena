@@ -11,9 +11,12 @@ namespace Telimena.WebApp.Core.Models
 
         #region Overrides of UsageSummary
 
-        public override void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version)
+        public override void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version, string customData)
         {
-            FunctionUsageDetail usage = new FunctionUsageDetail {DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version};
+            FunctionUsageDetail usage = new FunctionUsageDetail
+            {
+                DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version, CustomUsageData = new FunctionCustomUsageData(customData)
+            };
             this.UsageDetails.Add(usage);
             this.SummaryCount = this.UsageDetails.Count;
         }
