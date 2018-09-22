@@ -26,6 +26,7 @@ namespace TelimenaTestSandboxApp
         }
 
         private Telimena.Client.Telimena teli;
+        private TelimenaHammer hammer;
 
         private async void InitializeButton_Click(object sender, EventArgs e)
         {
@@ -58,6 +59,11 @@ namespace TelimenaTestSandboxApp
             {
                 MessageBox.Show(result.Exception.ToString());
             }
+        }
+
+        private void UpdateText(string text)
+        {
+            this.resultTextBox.Text = text + "\r\n" + this.resultTextBox.Text;
         }
 
         private async void checkForUpdateButton_Click(object sender, EventArgs e)
@@ -111,6 +117,26 @@ namespace TelimenaTestSandboxApp
             }
         }
 
-       
+        private async void hammer_StartButton_Click(object sender, EventArgs e)
+        {
+            this.hammer?.Stop();
+            this.hammer = new TelimenaHammer(
+                Convert.ToInt32(this.hammer_AppNumberSeedBox.Text),
+                Convert.ToInt32(this.hammer_numberOfApps_TextBox.Text),
+                 Convert.ToInt32(this.hammer_numberOfFuncs_TextBox.Text),
+                 Convert.ToInt32(this.hammer_numberOfUsers_TextBox.Text),
+                 Convert.ToInt32(this.hammer_delayMinTextBox.Text),
+                 Convert.ToInt32(this.hammer_delayMaxTextBox.Text),
+                 Convert.ToInt32(this.hammer_DurationTextBox.Text),
+                this.UpdateText
+                );
+
+           await this.hammer.Hit();
+        }
+
+        private void hammer_StopBtn_Click(object sender, EventArgs e)
+        {
+            this.hammer?.Stop();
+        }
     }
 }

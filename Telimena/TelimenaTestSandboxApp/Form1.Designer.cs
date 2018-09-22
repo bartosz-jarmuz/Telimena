@@ -48,10 +48,29 @@
             this.static_sendUsageReportButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.checkForUpdateButton = new System.Windows.Forms.Button();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.hammer_delayMinTextBox = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.hammer_numberOfFuncs_TextBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.hammer_numberOfUsers_TextBox = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.hammer_numberOfApps_TextBox = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.hammer_StartButton = new System.Windows.Forms.Button();
+            this.hammer_delayMaxTextBox = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.hammer_DurationTextBox = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.hammer_StopBtn = new System.Windows.Forms.Button();
+            this.hammer_AppNumberSeedBox = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // apiUrlTextBox
@@ -128,7 +147,7 @@
             this.resultTextBox.Name = "resultTextBox";
             this.resultTextBox.ReadOnly = true;
             this.resultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.resultTextBox.Size = new System.Drawing.Size(837, 277);
+            this.resultTextBox.Size = new System.Drawing.Size(1018, 277);
             this.resultTextBox.TabIndex = 0;
             // 
             // groupBox2
@@ -140,7 +159,7 @@
             this.groupBox2.Controls.Add(this.resultTextBox);
             this.groupBox2.Location = new System.Drawing.Point(20, 142);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(843, 296);
+            this.groupBox2.Size = new System.Drawing.Size(1024, 296);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Result";
@@ -230,14 +249,14 @@
             this.groupBox3.Controls.Add(this.checkForUpdateButton);
             this.groupBox3.Location = new System.Drawing.Point(690, 46);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(158, 90);
+            this.groupBox3.Size = new System.Drawing.Size(90, 90);
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "App Updating";
             // 
             // checkForUpdateButton
             // 
-            this.checkForUpdateButton.Location = new System.Drawing.Point(38, 31);
+            this.checkForUpdateButton.Location = new System.Drawing.Point(6, 19);
             this.checkForUpdateButton.Name = "checkForUpdateButton";
             this.checkForUpdateButton.Size = new System.Drawing.Size(75, 38);
             this.checkForUpdateButton.TabIndex = 0;
@@ -245,11 +264,189 @@
             this.checkForUpdateButton.UseVisualStyleBackColor = true;
             this.checkForUpdateButton.Click += new System.EventHandler(this.checkForUpdateButton_Click);
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.hammer_AppNumberSeedBox);
+            this.groupBox5.Controls.Add(this.label12);
+            this.groupBox5.Controls.Add(this.hammer_StopBtn);
+            this.groupBox5.Controls.Add(this.hammer_DurationTextBox);
+            this.groupBox5.Controls.Add(this.label11);
+            this.groupBox5.Controls.Add(this.label10);
+            this.groupBox5.Controls.Add(this.hammer_delayMaxTextBox);
+            this.groupBox5.Controls.Add(this.label9);
+            this.groupBox5.Controls.Add(this.hammer_delayMinTextBox);
+            this.groupBox5.Controls.Add(this.label8);
+            this.groupBox5.Controls.Add(this.hammer_numberOfFuncs_TextBox);
+            this.groupBox5.Controls.Add(this.label7);
+            this.groupBox5.Controls.Add(this.hammer_numberOfUsers_TextBox);
+            this.groupBox5.Controls.Add(this.label6);
+            this.groupBox5.Controls.Add(this.hammer_numberOfApps_TextBox);
+            this.groupBox5.Controls.Add(this.label5);
+            this.groupBox5.Controls.Add(this.hammer_StartButton);
+            this.groupBox5.Location = new System.Drawing.Point(786, 13);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(268, 123);
+            this.groupBox5.TabIndex = 9;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "HAMMER";
+            // 
+            // hammer_delayMinTextBox
+            // 
+            this.hammer_delayMinTextBox.Location = new System.Drawing.Point(91, 70);
+            this.hammer_delayMinTextBox.Name = "hammer_delayMinTextBox";
+            this.hammer_delayMinTextBox.Size = new System.Drawing.Size(38, 20);
+            this.hammer_delayMinTextBox.TabIndex = 8;
+            this.hammer_delayMinTextBox.Text = "300";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(7, 73);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(78, 13);
+            this.label8.TabIndex = 7;
+            this.label8.Text = "Delay between";
+            // 
+            // hammer_numberOfFuncs_TextBox
+            // 
+            this.hammer_numberOfFuncs_TextBox.Location = new System.Drawing.Point(232, 22);
+            this.hammer_numberOfFuncs_TextBox.Name = "hammer_numberOfFuncs_TextBox";
+            this.hammer_numberOfFuncs_TextBox.Size = new System.Drawing.Size(23, 20);
+            this.hammer_numberOfFuncs_TextBox.TabIndex = 6;
+            this.hammer_numberOfFuncs_TextBox.Text = "5";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(172, 25);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(58, 13);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "# of Funcs";
+            // 
+            // hammer_numberOfUsers_TextBox
+            // 
+            this.hammer_numberOfUsers_TextBox.Location = new System.Drawing.Point(69, 48);
+            this.hammer_numberOfUsers_TextBox.Name = "hammer_numberOfUsers_TextBox";
+            this.hammer_numberOfUsers_TextBox.Size = new System.Drawing.Size(27, 20);
+            this.hammer_numberOfUsers_TextBox.TabIndex = 4;
+            this.hammer_numberOfUsers_TextBox.Text = "5";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(7, 51);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(56, 13);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "# of Users";
+            // 
+            // hammer_numberOfApps_TextBox
+            // 
+            this.hammer_numberOfApps_TextBox.Location = new System.Drawing.Point(57, 22);
+            this.hammer_numberOfApps_TextBox.Name = "hammer_numberOfApps_TextBox";
+            this.hammer_numberOfApps_TextBox.Size = new System.Drawing.Size(28, 20);
+            this.hammer_numberOfApps_TextBox.TabIndex = 2;
+            this.hammer_numberOfApps_TextBox.Text = "3";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 25);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(56, 13);
+            this.label5.TabIndex = 1;
+            this.label5.Text = "# of Apps ";
+            // 
+            // hammer_StartButton
+            // 
+            this.hammer_StartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.hammer_StartButton.Location = new System.Drawing.Point(6, 96);
+            this.hammer_StartButton.Name = "hammer_StartButton";
+            this.hammer_StartButton.Size = new System.Drawing.Size(196, 23);
+            this.hammer_StartButton.TabIndex = 0;
+            this.hammer_StartButton.Text = "Hit the API with random calls";
+            this.hammer_StartButton.UseVisualStyleBackColor = true;
+            this.hammer_StartButton.Click += new System.EventHandler(this.hammer_StartButton_Click);
+            // 
+            // hammer_delayMaxTextBox
+            // 
+            this.hammer_delayMaxTextBox.Location = new System.Drawing.Point(164, 70);
+            this.hammer_delayMaxTextBox.Name = "hammer_delayMaxTextBox";
+            this.hammer_delayMaxTextBox.Size = new System.Drawing.Size(38, 20);
+            this.hammer_delayMaxTextBox.TabIndex = 10;
+            this.hammer_delayMaxTextBox.Text = "5000";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(133, 73);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(25, 13);
+            this.label9.TabIndex = 9;
+            this.label9.Text = "and";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(207, 73);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(20, 13);
+            this.label10.TabIndex = 11;
+            this.label10.Text = "ms";
+            // 
+            // hammer_DurationTextBox
+            // 
+            this.hammer_DurationTextBox.Location = new System.Drawing.Point(187, 48);
+            this.hammer_DurationTextBox.Name = "hammer_DurationTextBox";
+            this.hammer_DurationTextBox.Size = new System.Drawing.Size(40, 20);
+            this.hammer_DurationTextBox.TabIndex = 13;
+            this.hammer_DurationTextBox.Text = "1";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label11.Location = new System.Drawing.Point(113, 51);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(72, 13);
+            this.label11.TabIndex = 12;
+            this.label11.Text = "DURATION";
+            // 
+            // hammer_StopBtn
+            // 
+            this.hammer_StopBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.hammer_StopBtn.Location = new System.Drawing.Point(208, 96);
+            this.hammer_StopBtn.Name = "hammer_StopBtn";
+            this.hammer_StopBtn.Size = new System.Drawing.Size(53, 23);
+            this.hammer_StopBtn.TabIndex = 14;
+            this.hammer_StopBtn.Text = "Stop";
+            this.hammer_StopBtn.UseVisualStyleBackColor = true;
+            this.hammer_StopBtn.Click += new System.EventHandler(this.hammer_StopBtn_Click);
+            // 
+            // hammer_AppNumberSeedBox
+            // 
+            this.hammer_AppNumberSeedBox.Location = new System.Drawing.Point(150, 22);
+            this.hammer_AppNumberSeedBox.Name = "hammer_AppNumberSeedBox";
+            this.hammer_AppNumberSeedBox.Size = new System.Drawing.Size(16, 20);
+            this.hammer_AppNumberSeedBox.TabIndex = 16;
+            this.hammer_AppNumberSeedBox.Text = "0";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(88, 25);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(56, 13);
+            this.label12.TabIndex = 15;
+            this.label12.Text = "App#seed";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(875, 441);
+            this.ClientSize = new System.Drawing.Size(1056, 441);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.setAppButton);
@@ -270,6 +467,8 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -297,6 +496,24 @@
         private System.Windows.Forms.Button static_sendUsageReportButton;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button checkForUpdateButton;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.TextBox hammer_delayMinTextBox;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox hammer_numberOfFuncs_TextBox;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox hammer_numberOfUsers_TextBox;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox hammer_numberOfApps_TextBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button hammer_StartButton;
+        private System.Windows.Forms.TextBox hammer_delayMaxTextBox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox hammer_DurationTextBox;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button hammer_StopBtn;
+        private System.Windows.Forms.TextBox hammer_AppNumberSeedBox;
+        private System.Windows.Forms.Label label12;
     }
 }
 
