@@ -58,6 +58,7 @@ namespace Telimena.Tests
             FunctionUsageSummary usage = func1.GetFunctionUsageSummary(response.UserId);
             
             Assert.AreEqual(usr.Id, func1.GetFunctionUsageDetails(response.UserId).Single().UsageSummary.ClientAppUserId);
+          
             Assert.AreEqual(serialized, func1.GetFunctionUsageDetails(response.UserId).Single().CustomUsageData.Data);
 
             ClientAppUser otherUser = Helpers.GetUser(this.Context, "Jack Black");
@@ -74,7 +75,7 @@ namespace Telimena.Tests
             Assert.AreEqual(2, func1.UsageSummaries.Count);
             Assert.AreEqual(1, func1.GetFunctionUsageSummary(response.UserId).SummaryCount);
             Assert.AreEqual(1, usage.UsageDetails.Count);
-            Assert.AreEqual(null, func1.GetFunctionUsageDetails(response.UserId).Single().CustomUsageData.Data);
+            Assert.AreEqual(null, func1.GetFunctionUsageDetails(response.UserId).Single().CustomUsageData);
 
             customObj.SomeValue = 10100;
             serialized = new TelimenaSerializer().Serialize(customObj);
@@ -85,7 +86,7 @@ namespace Telimena.Tests
             Assert.AreEqual(2, func1.UsageSummaries.Count);
             Assert.AreEqual(2, func1.GetFunctionUsageSummary(response.UserId).SummaryCount);
             Assert.AreEqual(2, usage.UsageDetails.Count);
-
+      
 
             List<FunctionUsageDetail> details = func1.GetFunctionUsageDetails(response.UserId).OrderBy(x => x.Id).ToList();
             Assert.AreEqual(2, details.Count);
@@ -515,7 +516,7 @@ namespace Telimena.Tests
 
             ProgramUsageDetail detail = prg.GetLatestUsageDetail();
             Assert.AreEqual(usr2.Id, detail.UsageSummary.ClientAppUserId);
-            Assert.AreEqual(null, detail.CustomUsageData.Data);
+            Assert.AreEqual(null, detail.CustomUsageData);
             Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.Version);
 
             StatisticsUpdateRequest request = new StatisticsUpdateRequest {ProgramId = prg.Id, UserId = usr.Id, Version = "1.2.3.4"};

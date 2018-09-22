@@ -24,7 +24,14 @@ namespace Telimena.WebApp.Core.Models
 
         public override void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version, string customData)
         {
-            ProgramUsageDetail usage = new ProgramUsageDetail {DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version, CustomUsageData = new ProgramCustomUsageData(customData) };
+            ProgramUsageDetail usage = new ProgramUsageDetail
+            {
+                DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version
+            };
+            if (customData != null)
+            {
+                usage.CustomUsageData = new ProgramCustomUsageData(customData);
+            }
             this.UsageDetails.Add(usage);
             this.SummaryCount = this.UsageDetails.Count;
         }

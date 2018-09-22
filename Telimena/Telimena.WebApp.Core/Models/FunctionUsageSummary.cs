@@ -15,8 +15,12 @@ namespace Telimena.WebApp.Core.Models
         {
             FunctionUsageDetail usage = new FunctionUsageDetail
             {
-                DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version, CustomUsageData = new FunctionCustomUsageData(customData)
+                DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version
             };
+            if (customData != null)
+            {
+                usage.CustomUsageData = new FunctionCustomUsageData(customData);
+            }
             this.UsageDetails.Add(usage);
             this.SummaryCount = this.UsageDetails.Count;
         }
