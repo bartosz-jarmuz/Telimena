@@ -17,9 +17,10 @@ namespace TelimenaTestSandboxApp
             public TimeSpan TimeElapsed { get; set; }
         }
 
-        public TelimenaHammer(int appIndexSeed, int numberOfApps, int numberOfFuncs, int numberOfUsers, int delayMin, int delayMax, int durationMinutes
+        public TelimenaHammer(string url, int appIndexSeed, int numberOfApps, int numberOfFuncs, int numberOfUsers, int delayMin, int delayMax, int durationMinutes
             , Action<string> progressReport)
         {
+            this.url = url;
             this.appIndexSeed = appIndexSeed;
             this.numberOfApps = numberOfApps;
             this.numberOfFuncs = numberOfFuncs;
@@ -30,6 +31,7 @@ namespace TelimenaTestSandboxApp
             this.duration = TimeSpan.FromMinutes(durationMinutes);
         }
 
+        private readonly string url;
         private readonly int appIndexSeed;
         private readonly int numberOfApps;
         private readonly int numberOfFuncs;
@@ -54,7 +56,8 @@ namespace TelimenaTestSandboxApp
         public async Task Hit()
         {
             this.progressReport("HAMMER STARTING...\r\n\r\n");
-            this.Initialize();
+            await this.Initialize();
+            this.progressReport("HAMMER Apps Initialized. Start hitting...\r\n\r\n");
 
             this.timeoutStopwatch = new Stopwatch();
             this.timeoutStopwatch.Start();
@@ -79,8 +82,9 @@ namespace TelimenaTestSandboxApp
             return objectType + "_" + str + "_" + number;
         }
 
-        private void Initialize()
+        private async Task Initialize()
         {
+            Random rnd = new Random();
             this.users = new List<UserInfo>();
             for (int i = 0; i < this.numberOfUsers; i++)
             {
@@ -94,8 +98,11 @@ namespace TelimenaTestSandboxApp
             this.apps = new List<ProgramInfo>();
             for (int i = this.appIndexSeed; i < this.numberOfApps + this.appIndexSeed; i++)
             {
-                ProgramInfo programInfo = new ProgramInfo {Name = "Program_" + i, PrimaryAssembly = new AssemblyInfo {Name = "PrimaryAssembly_Program_" + i}};
+                ProgramInfo programInfo = new ProgramInfo {Name = "Program_" + i, PrimaryAssembly = new AssemblyInfo {Name = "PrimaryAssembly_Program_" + i, Version = $"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}" }};
                 this.apps.Add(programInfo);
+                Telimena.Client.Telimena teli = new Telimena.Client.Telimena(programInfo, new Uri(this.url));
+                await teli.RegisterClient();
+
             }
 
             this.funcs = new List<string>();
@@ -122,7 +129,7 @@ namespace TelimenaTestSandboxApp
             while (this.timeoutStopwatch.IsRunning && this.timeoutStopwatch.ElapsedMilliseconds < this.duration.TotalMilliseconds)
             {
                 ProgramInfo prg = this.apps[random.Next(0, this.apps.Count)];
-                Telimena.Client.Telimena teli = new Telimena.Client.Telimena(prg);
+                Telimena.Client.Telimena teli = new Telimena.Client.Telimena(prg, new Uri(this.url));
 
                 StatisticsUpdateResponse result;
                 if (random.Next(2) == 1)

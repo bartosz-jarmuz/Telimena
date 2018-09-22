@@ -120,7 +120,7 @@ namespace TelimenaTestSandboxApp
         private async void hammer_StartButton_Click(object sender, EventArgs e)
         {
             this.hammer?.Stop();
-            this.hammer = new TelimenaHammer(
+            this.hammer = new TelimenaHammer(this.apiUrlTextBox.Text,
                 Convert.ToInt32(this.hammer_AppNumberSeedBox.Text),
                 Convert.ToInt32(this.hammer_numberOfApps_TextBox.Text),
                  Convert.ToInt32(this.hammer_numberOfFuncs_TextBox.Text),
