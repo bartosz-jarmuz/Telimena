@@ -90,14 +90,14 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.static_functionNameTextBox.Text))
             {
-                result = await Telimena.Client.Telimena.SendUsageReport(string.IsNullOrEmpty(this.static_functionNameTextBox.Text)
+                result = await Telimena.Client.Telimena.ReportUsageStatic(string.IsNullOrEmpty(this.static_functionNameTextBox.Text)
                     ? null
                     : this.static_functionNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = await Telimena.Client.Telimena.SendUsageReport();
+                result = await Telimena.Client.Telimena.ReportUsageStatic();
                 sw.Stop();
             }
 
