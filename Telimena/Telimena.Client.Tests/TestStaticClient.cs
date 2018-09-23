@@ -59,7 +59,7 @@ namespace Telimena.Client.Tests
             try
             {
                 Telimena.ReportUsageStatic(suppressAllErrors: false).GetAwaiter().GetResult();
-                Assert.Fail("Error expected");
+                Assert.Fail("Error expected..");
             }
             catch (Exception e)
             {
