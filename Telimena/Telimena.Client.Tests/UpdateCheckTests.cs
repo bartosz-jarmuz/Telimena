@@ -7,13 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Telimena.Updater;
+using Telimena.WebApp.Core.Models;
 
 namespace Telimena.Client.Tests
 {
@@ -24,7 +27,7 @@ namespace Telimena.Client.Tests
     [TestFixture]
     public class TestUpdateChecks
     {
-        private Mock<ITelimenaHttpClient> GetMockClientForCheckForUpdates(object responseObj)
+        private Mock<ITelimenaHttpClient> GetMockClientForCheckForUpdates(object programUpdatesResponse, object updaterResponse)
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
             client.Setup(x => x.PostAsync("api/Statistics/RegisterClient", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
@@ -34,18 +37,25 @@ namespace Telimena.Client.Tests
                 response.Content = new StringContent(JsonConvert.SerializeObject(registrationResponse));
                 return Task.FromResult(response);
             });
-            client.Setup(x => x.GetAsync(It.IsAny<string>())).Returns((string uri) =>
+            client.Setup(x => x.GetAsync(It.IsRegex(".*" + Regex.Escape(ApiRoutes.GetProgramUpdateInfo)))).Returns((string uri) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
 
-                response.Content = new StringContent(JsonConvert.SerializeObject(responseObj));
+                response.Content = new StringContent(JsonConvert.SerializeObject(programUpdatesResponse));
+                return Task.FromResult(response);
+            });
+            client.Setup(x => x.GetAsync(It.IsRegex(".*" + Regex.Escape(ApiRoutes.GetUpdaterUpdateInfo)))).Returns((string uri) =>
+            {
+                HttpResponseMessage response = new HttpResponseMessage();
+
+                response.Content = new StringContent(JsonConvert.SerializeObject(updaterResponse));
                 return Task.FromResult(response);
             });
             return client;
         }
 
         [Test]
-        public void Test_CheckForUpdates()
+        public void Test_CheckForUpdates_OnlyProgram()
         {
             Telimena sut = new Telimena {SuppressAllErrors = false};
             Assert.AreEqual("Telimena.Client", sut.ProgramInfo.PrimaryAssembly.Name);
@@ -56,17 +66,91 @@ namespace Telimena.Client.Tests
             {
                 UpdatePackages = new List<UpdatePackageData>
                 {
-                    new UpdatePackageData {FileSizeBytes = 666, Id = 10001, IsStandalone = true}
-                    , new UpdatePackageData {FileSizeBytes = 666, Id = 10002}
+                    new UpdatePackageData {FileSizeBytes = 666, Id = 10001, IsBeta = true, Version = "3.1.0.0"}
+                    , new UpdatePackageData {FileSizeBytes = 666, Id = 10002, Version = "3.0.0.0"}
                 }
             };
-            latestVersionResponse.UpdatePackages = new List<UpdatePackageData>(latestVersionResponse.UpdatePackages);
-            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse));
+            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse, new UpdateResponse()));
 
             UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
             Assert.IsTrue(response.IsUpdateAvailable);
-            //Assert.AreEqual("3.1.0.0", response.PrimaryAssemblyUpdateInfo.LatestVersionInfo.LatestVersion);
-            //Assert.AreEqual("3.1.0.1", response.HelperAssembliesToUpdate.Single().LatestVersionInfo.LatestVersion);
+            Assert.AreEqual(2, response.ProgramUpdatesToInstall.Count);
+            Assert.IsNotNull(response.ProgramUpdatesToInstall.SingleOrDefault(x=>x.Version == "3.1.0.0" && x.IsBeta == true));
+            Assert.IsNotNull(response.ProgramUpdatesToInstall.SingleOrDefault(x=>x.Version == "3.0.0.0"));
+            Assert.IsNull(response.UpdaterUpdate);
+            Assert.IsNull(response.Exception);
+
+        }
+
+        [Test]
+        public void Test_CheckForUpdates_Program_AndUpdater()
+        {
+            Telimena sut = new Telimena { SuppressAllErrors = false };
+            Assert.AreEqual("Telimena.Client", sut.ProgramInfo.PrimaryAssembly.Name);
+
+            sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
+
+            UpdateResponse latestVersionResponse = new UpdateResponse
+            {
+                UpdatePackages = new List<UpdatePackageData>
+                {
+                    new UpdatePackageData {FileSizeBytes = 666, Id = 10001, IsBeta = true, Version = "3.1.0.0"}
+            }};
+            UpdateResponse updaterResponse = new UpdateResponse
+            {
+                UpdatePackages = new List<UpdatePackageData>
+                {
+                    new UpdatePackageData {FileName = UpdaterPackageInfo.UpdaterFileName, Version = "1.2"}
+                }
+            };
+            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse, updaterResponse));
+
+            UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
+            Assert.IsTrue(response.IsUpdateAvailable);
+            Assert.AreEqual(1, response.ProgramUpdatesToInstall.Count);
+            Assert.IsNotNull(response.ProgramUpdatesToInstall.SingleOrDefault(x => x.Version == "3.1.0.0" && x.IsBeta == true));
+            Assert.AreEqual("1.2", response.UpdaterUpdate.Version);
+            Assert.IsNull(response.Exception);
+
+        }
+
+        [Test]
+        public void Test_OnlyUpdaterUpdates()
+        {
+            Telimena sut = new Telimena { SuppressAllErrors = false };
+
+            UpdateResponse latestVersionResponse = new UpdateResponse
+            {
+                UpdatePackages = new List<UpdatePackageData>
+                {
+                    new UpdatePackageData {FileName = UpdaterPackageInfo.UpdaterFileName, Version = "1.2"}
+                }
+            };
+            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(), latestVersionResponse));
+
+            UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
+            Assert.IsFalse(response.IsUpdateAvailable);
+            Assert.AreEqual(0, response.ProgramUpdatesToInstall.Count);
+            Assert.AreEqual("1.2", response.UpdaterUpdate.Version);
+            Assert.IsNull(response.Exception);
+
+
+        }
+
+        [Test]
+        public void Test_NoUpdates()
+        {
+            Telimena sut = new Telimena { SuppressAllErrors = false };
+
+          
+            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(),new UpdateResponse()));
+
+            UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
+            Assert.IsFalse(response.IsUpdateAvailable);
+            Assert.AreEqual(0, response.ProgramUpdatesToInstall.Count);
+            Assert.IsNull(response.UpdaterUpdate);
+            Assert.IsNull(response.Exception);
+
         }
 
         [Test]

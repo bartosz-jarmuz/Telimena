@@ -34,7 +34,7 @@ namespace Telimena.Client
                     throw exception;
                 }
 
-                return new UpdateCheckResult {Error = exception};
+                return new UpdateCheckResult {Exception = exception};
             }
         }
 

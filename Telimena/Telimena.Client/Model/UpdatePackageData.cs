@@ -10,7 +10,6 @@
 
         public long FileSizeBytes { get; set; }
 
-        public bool IsStandalone { get; set; }
         public bool IsBeta { get; set; }
     }
 }

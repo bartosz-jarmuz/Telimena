@@ -10,11 +10,9 @@ namespace Telimena.WebApp.Infrastructure
         {
             this.CreateMap<ProgramUpdatePackageInfo, UpdatePackageData>().ForMember(x => x.StoredFilePath, o => o.Ignore());
 
-            this.CreateMap<UpdaterPackageInfo, UpdatePackageData>().ForMember(x => x.StoredFilePath, o => o.Ignore())
-                .ForMember(x => x.IsStandalone, o => o.Ignore());
+            this.CreateMap<UpdaterPackageInfo, UpdatePackageData>().ForMember(x => x.StoredFilePath, o => o.Ignore());
 
-            this.CreateMap<TelimenaPackageInfo, UpdatePackageData>().ForMember(x => x.StoredFilePath, o => o.Ignore())
-                .ForMember(x => x.IsStandalone, o => o.Ignore());
+            this.CreateMap<TelimenaPackageInfo, UpdatePackageData>().ForMember(x => x.StoredFilePath, o => o.Ignore());
 
             this.CreateMap<UserInfo, ClientAppUser>().ForMember(x => x.Id, o => o.Ignore()).ForMember(x => x.RegisteredDate, o => o.Ignore());
 
