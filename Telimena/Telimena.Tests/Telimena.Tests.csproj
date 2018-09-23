@@ -128,7 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AccountControllerTests.cs" />
-    <Compile Include="Controllers\AdminDashboardControllerTests.cs" />
+    <Compile Include="Controllers\ProgramsDashboardUnitOfWorkTests.cs" />
     <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\RegisterProgramController.cs" />
     <Compile Include="Controllers\ProgramVersionsControllerTests.cs" />
