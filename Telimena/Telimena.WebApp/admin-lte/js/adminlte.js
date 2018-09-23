@@ -17,6 +17,34 @@ if (typeof jQuery === 'undefined') {
 throw new Error('AdminLTE requires jQuery')
 }
 
+
+/* preserve menu state
+ * ======
+ */
+$.AdminLTESidebarTweak = {};
+
+$.AdminLTESidebarTweak.options = {
+    EnableRemember: true,
+    NoTransitionAfterReload: true
+    //Removes the transition after page reload.
+};
+
+$(function () {
+    "use strict";
+
+    $("body").on("collapsed.pushMenu", function () {
+        if ($.AdminLTESidebarTweak.options.EnableRemember) {
+            document.cookie = "toggleState=closed";
+        }
+    });
+    $("body").on("expanded.pushMenu", function () {
+        if ($.AdminLTESidebarTweak.options.EnableRemember) {
+            document.cookie = "toggleState=opened";
+        }
+    });
+
+   
+});
 /* BoxRefresh()
  * =========
  * Adds AJAX content control to a box.
@@ -1125,3 +1153,6 @@ throw new Error('AdminLTE requires jQuery')
   })
 
 }(jQuery)
+
+
+

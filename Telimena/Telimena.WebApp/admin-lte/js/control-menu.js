@@ -88,7 +88,8 @@ $(function () {
     })
 
     $('body').addClass(cls)
-    store('skin', cls)
+      store('skin', cls)
+      document.cookie = "currentSkin=" + cls;
     return false
   }
 
@@ -189,13 +190,13 @@ $(function () {
     + '<p>Activate the boxed layout</p>'
     + '</div>'
     // Sidebar Toggle
-    + '<div class="form-group">'
-    + '<label class="control-sidebar-subheading">'
-    + '<input type="checkbox"data-layout="sidebar-collapse"class="pull-right"/> '
-    + 'Toggle Sidebar'
-    + '</label>'
-    + '<p>Toggle the left sidebar\'s state (open or collapse)</p>'
-    + '</div>'
+    //+ '<div class="form-group">'
+    //+ '<label class="control-sidebar-subheading">'
+    //+ '<input type="checkbox"data-layout="sidebar-collapse"class="pull-right"/> '
+    //+ 'Toggle Sidebar'
+    //+ '</label>'
+    //+ '<p>Toggle the left sidebar\'s state (open or collapse)</p>'
+    //+ '</div>'
   
   )
   var $skinsList = $('<ul />', { 'class': 'list-unstyled clearfix' })

@@ -33,9 +33,25 @@
         window.appInsights=appInsights;
         appInsights.trackPageView();
     </script>
+    @{
+        string leftBarCollapsedState = "";
+
+        if (Request.Cookies["toggleState"].Value== "closed")
+        {
+            leftBarCollapsedState = "sidebar-collapse";
+        }
+
+        string currentSkin = Request.Cookies["currentSkin"]?.Value;
+
+        if (string.IsNullOrEmpty(currentSkin))
+        {
+            currentSkin = "skin-blue";
+        }
+    }
+
 </head>
 
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition @currentSkin sidebar-mini @leftBarCollapsedState">
 <div class="wrapper">
 
     @if (User.Identity.IsAuthenticated)
