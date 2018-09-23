@@ -507,6 +507,8 @@
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\dataTables.bootstrap.min.css" />
     <Content Include="Content\dataTables.bootstrap.min.js" />
+    <Content Include="Content\favicon-alt.ico" />
+    <Content Include="Content\favicon.ico" />
     <Content Include="Content\Ionicons\cheatsheet.html" />
     <Content Include="Content\Ionicons\css\ionicons.css" />
     <Content Include="Content\Ionicons\css\ionicons.min.css" />
