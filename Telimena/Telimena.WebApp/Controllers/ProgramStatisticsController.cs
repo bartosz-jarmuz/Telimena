@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Mvc;
 using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
-using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Security;
-using Telimena.WebApp.Infrastructure.UnitOfWork;
-using Telimena.WebApp.Models.ProgramDetails;
 using Telimena.WebApp.Models.ProgramStatistics;
 
-namespace Telimena.WebApi.Controllers
+namespace Telimena.WebApp.Controllers
 {
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramStatisticsController : Controller

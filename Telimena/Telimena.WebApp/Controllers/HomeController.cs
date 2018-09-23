@@ -6,7 +6,7 @@ using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Models.Shared;
 
-namespace Telimena.WebApi.Controllers
+namespace Telimena.WebApp.Controllers
 {
     [TelimenaAuthorize]
     public class HomeController : Controller

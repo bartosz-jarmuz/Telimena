@@ -10,7 +10,7 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Security;
 
-namespace Telimena.WebApp.Controllers
+namespace Telimena.WebApp.Controllers.Developer
 {
     public class ProgramsDashboardBase
     {

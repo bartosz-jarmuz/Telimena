@@ -274,10 +274,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProgramStatisticsController.cs" />
     <Compile Include="Controllers\ProgramManagementController.cs" />
-    <Compile Include="DataTables\Column.cs" />
-    <Compile Include="DataTables\DataTableAjaxPostModel.cs" />
-    <Compile Include="DataTables\Order.cs" />
-    <Compile Include="DataTables\Search.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

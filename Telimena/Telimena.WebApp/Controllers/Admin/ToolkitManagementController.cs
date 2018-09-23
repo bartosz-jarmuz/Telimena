@@ -8,7 +8,7 @@ using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Models.Updater;
 
-namespace Telimena.WebApi.Controllers
+namespace Telimena.WebApp.Controllers.Admin
 {
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class ToolkitManagementController : Controller

@@ -8,7 +8,7 @@ using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Models.ProgramDetails;
 
-namespace Telimena.WebApi.Controllers
+namespace Telimena.WebApp.Controllers
 {
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramManagementController : Controller

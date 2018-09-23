@@ -11,7 +11,7 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Models.PortalUsers;
 
-namespace Telimena.WebApp.Controllers
+namespace Telimena.WebApp.Controllers.Admin
 {
     #region Using
 
