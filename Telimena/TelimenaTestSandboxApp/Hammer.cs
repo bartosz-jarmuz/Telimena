@@ -131,10 +131,15 @@ namespace TelimenaTestSandboxApp
                 ProgramInfo prg = this.apps[random.Next(0, this.apps.Count)];
                 Telimena.Client.Telimena teli = new Telimena.Client.Telimena(prg, new Uri(this.url));
 
-                StatisticsUpdateResponse result;
-                if (random.Next(2) == 1)
+                TelimenaResponseBase result;
+                var operation = random.Next(4);
+                if (operation == 1)
                 {
                     result = await teli.ReportUsage();
+                }
+                else if (operation == 2)
+                {
+                    result = await teli.Initialize();
                 }
                 else
                 {
