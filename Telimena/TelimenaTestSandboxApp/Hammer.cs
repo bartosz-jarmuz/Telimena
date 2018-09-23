@@ -45,8 +45,9 @@ namespace TelimenaTestSandboxApp
         private Stopwatch timeoutStopwatch;
         private List<string> funcs;
 
-        public CustomData GetRandomData(Random random)
+        public CustomData GetRandomData()
         {
+            var random = new Random();
             return new CustomData
             {
                 PageCount = random.Next(1, 100), WordCount = random.Next(1, 99999), TimeElapsed = TimeSpan.FromMilliseconds(random.Next(1, 99999999))
@@ -149,7 +150,7 @@ namespace TelimenaTestSandboxApp
                     }
                     else
                     {
-                        result = await teli.ReportUsageWithCustomData(this.GetRandomData(random), this.funcs[random.Next(0, this.funcs.Count)]);
+                        result = await teli.ReportUsageWithCustomData(this.GetRandomData(), this.funcs[random.Next(0, this.funcs.Count)]);
                     }
                 }
 
