@@ -2,9 +2,11 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using Telimena.Updater.Annotations;
+using AssemblyLoadEventArgs = System.AssemblyLoadEventArgs;
 
 namespace Telimena.Updater
 {
@@ -13,6 +15,13 @@ namespace Telimena.Updater
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        internal MainWindow(UpdateInstructions instructions)
+        {
+            this.Instructions = instructions;
+            this.InitializeComponent();
+            this.UpdateVersionInfoLabel = this.Instructions.LatestVersion;
+            this.TitleLabel = "Updater v. " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
         public MainWindow()
         {
             this.InitializeComponent();
@@ -21,36 +30,41 @@ namespace Telimena.Updater
             Application.Current.Shutdown();
         }
 
-        public MainWindow(UpdaterStartupSettings updaterStartupSettings)
+        public MainWindow(UpdaterStartupSettings updaterStartupSettings) : this(UpdateInstructionsReader.Read(updaterStartupSettings.InstructionsFile))
         {
-            this.UpdaterStartupSettings = updaterStartupSettings;
-            this.InstructionsFile = this.UpdaterStartupSettings?.InstructionsFile;
-            this.Instructions = UpdateInstructionsReader.Read(this.InstructionsFile);
-            this.InitializeComponent();
-            this.UpdateVersionInfoLabel = this.Instructions.LatestVersion;
+           
         }
 
-        private string _updateVersionInfoLabel;
+        private string updateVersionInfoLabel;
+        private string titleLabel;
 
         public UpdateInstructions Instructions { get; set; }
 
         public string UpdateVersionInfoLabel
         {
-            get => this._updateVersionInfoLabel;
+            get => this.updateVersionInfoLabel;
             set
             {
-                if (value == this._updateVersionInfoLabel)
+                if (value == this.updateVersionInfoLabel)
                 {
                     return;
                 }
 
-                this._updateVersionInfoLabel = value;
+                this.updateVersionInfoLabel = value;
                 this.OnPropertyChanged();
             }
         }
 
-        private UpdaterStartupSettings UpdaterStartupSettings { get; }
-        private FileInfo InstructionsFile { get; }
+        public string TitleLabel
+        {
+            get => this.titleLabel;
+            set
+            {
+                if (value == this.titleLabel) return;
+                this.titleLabel = value;
+                this.OnPropertyChanged();
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

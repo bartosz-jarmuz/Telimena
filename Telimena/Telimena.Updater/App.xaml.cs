@@ -13,7 +13,9 @@ namespace Telimena.Updater
             MainWindow mainWindow;
             if (settings == null)
             {
-                mainWindow = new MainWindow();
+#if DEBUG
+                mainWindow = new MainWindow(new UpdateInstructions(){LatestVersion = "1.2.3.4"});
+#endif
             }
             else
             {
