@@ -21,6 +21,19 @@
     <div class="col-md-12">
         <div class="box box-primary">
             <div class="box-header">
+                <h3 class="box-title">Function Usages</h3>
+                @Html.ActionLink("Export custom data", "ExportFunctionUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = false }, new {@class = "btn btn-primary"})
+                @Html.ActionLink("Export custom data with generic data", "ExportFunctionUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = true}, new {@class = "btn btn-primary"})
+            </div>
+            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
+                <table id="functionUsageTable" class="table table-bordered table-hover ">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
                 <h3 class="box-title">Program Usages</h3>
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
@@ -29,17 +42,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-12">
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">Function Usages</h3>
-            </div>
-            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="functionUsageTable" class="table table-bordered table-hover ">
-                </table>
-            </div>
-        </div>
-    </div>
+
 </div>
 
 @section scripts
@@ -70,6 +73,13 @@
                         name:  "@nameof(UsageData.FunctionName)",
                         data:  "@nameof(UsageData.FunctionName).ToLowerFirstChar()",
                         title: "@nameof(UsageData.FunctionName)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(UsageData.ProgramVersion)",
+                        data:  "@nameof(UsageData.ProgramVersion).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.ProgramVersion)",
                         sortable: true,
                         searchable: true
                     },
@@ -109,6 +119,13 @@
                         title:"@nameof(UsageData.DateTime)",
                         sortable: true,
                         searchable: false
+                    },
+                    {
+                        name:  "@nameof(UsageData.ProgramVersion)",
+                        data:  "@nameof(UsageData.ProgramVersion).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.ProgramVersion)",
+                        sortable: true,
+                        searchable: true
                     },
                     {
                         name:  "@nameof(UsageData.UserName)",

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
@@ -75,13 +76,15 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 .Skip(skip).Take(take).ToListAsync();
             int totalCount = await this.context.ProgramUsageDetails.CountAsync(x => x.UsageSummary.ProgramId == programId);
             List<UsageData> result = new List<UsageData>();
-            foreach (ProgramUsageDetail programUsageDetail in usages)
+            foreach (ProgramUsageDetail detail in usages)
             {
                 UsageData data = new UsageData
                 {
-                    CustomData = programUsageDetail.CustomUsageData?.Data
-                    , DateTime = programUsageDetail.DateTime
-                    , UserName = programUsageDetail.UsageSummary.ClientAppUser.UserName
+                    CustomData = detail.CustomUsageData?.Data
+                    , DateTime = detail.DateTime
+                    , UserName = detail.UsageSummary.ClientAppUser.UserName
+                    , ProgramVersion = detail.AssemblyVersion.Version
+
                 };
                 result.Add(data);
             }
@@ -144,19 +147,68 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 .OrderBy(z => z.Id).Skip(skip).Take(take).ToListAsync();
             int totalCount = await this.context.FunctionUsageDetails.CountAsync(x => x.UsageSummary.Function.ProgramId == programId);
             List<UsageData> result = new List<UsageData>();
-            foreach (FunctionUsageDetail programUsageDetail in usages)
+            foreach (FunctionUsageDetail detail in usages)
             {
                 UsageData data = new UsageData
                 {
-                    CustomData = programUsageDetail.CustomUsageData?.Data
-                    , DateTime = programUsageDetail.DateTime
-                    , UserName = programUsageDetail.UsageSummary.ClientAppUser.UserName
-                    , FunctionName = programUsageDetail.UsageSummary.Function.Name
+                    CustomData = detail.CustomUsageData?.Data
+                    , DateTime = detail.DateTime
+                    , UserName = detail.UsageSummary.ClientAppUser.UserName
+                    , FunctionName = detail.UsageSummary.Function.Name
+                    , ProgramVersion = detail.AssemblyVersion.Version
                 };
                 result.Add(data);
             }
 
             return new UsageDataTableResult {TotalCount = totalCount, FilteredCount = totalCount, UsageData = result};
+        }
+
+        private dynamic GetCustomUsageDataObject(FunctionUsageDetail detail, bool includeGenericData)
+        {
+            try
+            {
+
+                var data = System.Web.Helpers.Json.Decode(detail.CustomUsageData.Data);
+
+                if (!includeGenericData)
+                {
+                    return data;
+                }
+                dynamic obj = new ExpandoObject();
+                obj.customData = data;
+                obj.genericData = new ExpandoObject();
+                obj.genericData.DateTime = detail.DateTime;
+                obj.genericData.detailId = detail.Id;
+                obj.genericData.programVersion = detail.AssemblyVersion.Version;
+                obj.genericData.functionName = detail.UsageSummary.Function.Name;
+                obj.genericData.userName = detail.UsageSummary.ClientAppUser.UserName;
+                obj.genericData.userId = detail.UsageSummary.ClientAppUserId;
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                dynamic obj = new ExpandoObject();
+                obj.Status = "Invalid CustomUsageData";
+                obj.Exception = ex.Message;
+                obj.UsageDetailId = detail.Id;
+                return obj;
+            }
+
+        }
+
+        public async Task<dynamic> ExportFunctionsUsageCustomData(int programId, bool includeGenericData)
+        {
+            List<FunctionUsageDetail> usages = await this.context.FunctionUsageDetails.Where(x => x.UsageSummary.Function.ProgramId == programId).ToListAsync();
+
+
+            dynamic root = new
+            {
+                data = usages.Where(x=>x.CustomUsageData?.Data != null).Select(x => this.GetCustomUsageDataObject(x, includeGenericData)).ToArray()
+            };
+
+            return root;
+
+
         }
     }
 }
