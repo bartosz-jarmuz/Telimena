@@ -9,10 +9,24 @@
     <ul class="treeview-menu" style="display: block;">
         @foreach (KeyValuePair<int, string> app in Model.Programs)
         {
-            <li>
-                <a href="@Url.Action("Index", "ProgramDetails", new {programName = app.Value})">
+            <li class="treeview">
+                <a href="#">
                     <i class="fa fa-circle-o"></i> <span>@app.Value</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
                 </a>
+                <ul class="treeview-menu" >
+                    <li><a href="@Url.Action("Index", "ProgramManagement", new {programName = app.Value})">
+                        <i class="fa fa-circle-o"></i> <span>Manage</span>
+                    </a></li>
+                    <li><a href="@Url.Action("Index", "ProgramStatistics", new {programName = app.Value})">
+                        <i class="fa fa-circle-o"></i> <span>View Statistics</span>
+                    </a></li>
+                </ul>
+                
+                
+                
             </li>
         }
     </ul>

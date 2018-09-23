@@ -62,6 +62,8 @@
     <Compile Include="DTO\AllProgramsSummaryData.cs" />
     <Compile Include="DTO\PortalSummaryData.cs" />
     <Compile Include="DTO\ProgramSummary.cs" />
+    <Compile Include="DTO\UsageDataTableResult.cs" />
+    <Compile Include="DTO\UsageViewModel.cs" />
     <Compile Include="Interfaces\ITelimenaRepository.cs" />
     <Compile Include="Interfaces\Roles.cs" />
     <Compile Include="Messages\CreateProgramPackageRequest.cs" />

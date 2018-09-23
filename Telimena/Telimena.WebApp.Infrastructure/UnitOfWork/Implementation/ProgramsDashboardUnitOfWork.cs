@@ -64,6 +64,31 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return returnData;
         }
 
+        public async Task<UsageDataTableResult> GetProgramUsageData(int programId, int skip, int take, string sortBy = null, bool sortDirection = true)
+        {
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                sortBy = nameof(UsageDetail.Id);
+            }
+
+            List<ProgramUsageDetail> usages = await this.context.ProgramUsageDetails.Where(x => x.UsageSummary.ProgramId == programId).OrderBy(z => z.Id)
+                .Skip(skip).Take(take).ToListAsync();
+            int totalCount = await this.context.ProgramUsageDetails.CountAsync(x => x.UsageSummary.ProgramId == programId);
+            List<UsageData> result = new List<UsageData>();
+            foreach (ProgramUsageDetail programUsageDetail in usages)
+            {
+                UsageData data = new UsageData
+                {
+                    CustomData = programUsageDetail.CustomUsageData?.Data
+                    , DateTime = programUsageDetail.DateTime
+                    , UserName = programUsageDetail.UsageSummary.ClientAppUser.UserName
+                };
+                result.Add(data);
+            }
+
+            return new UsageDataTableResult {TotalCount = totalCount, FilteredCount = totalCount, UsageData = result};
+        }
+
         public async Task<PortalSummaryData> GetPortalSummary()
         {
             PortalSummaryData summary = new PortalSummaryData
@@ -106,6 +131,32 @@ namespace Telimena.WebApp.Infrastructure.Repository
         public async Task CompleteAsync()
         {
             await this.context.SaveChangesAsync();
+        }
+
+        public async Task<UsageDataTableResult> GetProgramFunctionsUsageData(int programId, int skip, int take, string sortBy = null, bool sortDirection = true)
+        {
+            if (string.IsNullOrEmpty(sortBy))
+            {
+                sortBy = nameof(UsageDetail.Id);
+            }
+
+            List<FunctionUsageDetail> usages = await this.context.FunctionUsageDetails.Where(x => x.UsageSummary.Function.ProgramId == programId)
+                .OrderBy(z => z.Id).Skip(skip).Take(take).ToListAsync();
+            int totalCount = await this.context.FunctionUsageDetails.CountAsync(x => x.UsageSummary.Function.ProgramId == programId);
+            List<UsageData> result = new List<UsageData>();
+            foreach (FunctionUsageDetail programUsageDetail in usages)
+            {
+                UsageData data = new UsageData
+                {
+                    CustomData = programUsageDetail.CustomUsageData?.Data
+                    , DateTime = programUsageDetail.DateTime
+                    , UserName = programUsageDetail.UsageSummary.ClientAppUser.UserName
+                    , FunctionName = programUsageDetail.UsageSummary.Function.Name
+                };
+                result.Add(data);
+            }
+
+            return new UsageDataTableResult {TotalCount = totalCount, FilteredCount = totalCount, UsageData = result};
         }
     }
 }

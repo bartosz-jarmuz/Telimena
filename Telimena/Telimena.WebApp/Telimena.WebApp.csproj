@@ -272,7 +272,12 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Api\StatisticsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ProgramDetailsController.cs" />
+    <Compile Include="Controllers\ProgramStatisticsController.cs" />
+    <Compile Include="Controllers\ProgramManagementController.cs" />
+    <Compile Include="DataTables\Column.cs" />
+    <Compile Include="DataTables\DataTableAjaxPostModel.cs" />
+    <Compile Include="DataTables\Order.cs" />
+    <Compile Include="DataTables\Search.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -284,7 +289,8 @@
     <Compile Include="Models\Developer\RegisterProgramViewModel.cs" />
     <Compile Include="Models\PortalUsers\PortalUsersViewModel.cs" />
     <Compile Include="Models\PortalUsers\TelimenaUserViewModel.cs" />
-    <Compile Include="Models\ProgramDetails\ProgramDetailsViewModel.cs" />
+    <Compile Include="Models\ProgramStatistics\ProgramStatisticsViewModel.cs" />
+    <Compile Include="Models\ProgramManagement\ProgramManagementViewModel.cs" />
     <Compile Include="Models\Shared\BoxViewModel.cs" />
     <Compile Include="Models\Shared\ProgramsListViewModel.cs" />
     <Compile Include="Models\ToolkitManagement\ToolkitManagementViewModel.cs" />
@@ -503,6 +509,8 @@
     <Content Include="admin-lte\plugins\timepicker\bootstrap-timepicker.min.css" />
     <Content Include="admin-lte\plugins\timepicker\bootstrap-timepicker.min.js" />
     <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\dataTables.bootstrap.min.css" />
+    <Content Include="Content\dataTables.bootstrap.min.js" />
     <Content Include="Content\Ionicons\cheatsheet.html" />
     <Content Include="Content\Ionicons\css\ionicons.css" />
     <Content Include="Content\Ionicons\css\ionicons.min.css" />
@@ -1942,7 +1950,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\ProgramDetails\Index.cshtml" />
+    <Content Include="Views\ProgramManagement\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\WaitForActivationInfo.cshtml" />
@@ -1965,8 +1973,9 @@
     <Content Include="Views\Shared\_InfoBox.cshtml" />
     <Content Include="Views\RegisterProgram\Register.cshtml" />
     <Content Include="Views\Shared\_ProgramsList.cshtml" />
-    <Content Include="Views\ProgramDetails\_PackageBetaActivator.cshtml" />
+    <Content Include="Views\ProgramManagement\_PackageBetaActivator.cshtml" />
     <Content Include="Views\ToolkitManagement\Index.cshtml" />
+    <Content Include="Views\ProgramStatistics\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

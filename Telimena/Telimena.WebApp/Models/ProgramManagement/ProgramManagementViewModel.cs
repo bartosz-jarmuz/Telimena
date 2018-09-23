@@ -3,7 +3,7 @@ using Telimena.WebApp.Core.Models;
 
 namespace Telimena.WebApp.Models.ProgramDetails
 {
-    public class ProgramDetailsViewModel
+    public class ProgramManagementViewModel
     {
         public string ProgramName { get; set; }
         public int ProgramId { get; set; }

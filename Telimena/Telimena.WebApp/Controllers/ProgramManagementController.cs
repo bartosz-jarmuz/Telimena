@@ -11,9 +11,9 @@ using Telimena.WebApp.Models.ProgramDetails;
 namespace Telimena.WebApi.Controllers
 {
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
-    public class ProgramDetailsController : Controller
+    public class ProgramManagementController : Controller
     {
-        public ProgramDetailsController(IProgramsUnitOfWork work)
+        public ProgramManagementController(IProgramsUnitOfWork work)
         {
             this.Work = work;
         }
@@ -30,7 +30,7 @@ namespace Telimena.WebApi.Controllers
 
             Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
 
-            ProgramDetailsViewModel model = new ProgramDetailsViewModel();
+            ProgramManagementViewModel model = new ProgramManagementViewModel();
             if (program != null)
             {
                 model.ProgramId = program.Id;

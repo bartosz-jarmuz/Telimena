@@ -1,0 +1,127 @@
+﻿@using DotNetLittleHelpers
+@using Telimena.WebApp.Core.DTO
+@model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
+@{
+    ViewBag.Title = "Admin Dashboard";
+}
+
+@section styles{
+    @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
+}
+
+<section class="content-header">
+    <h1>
+        @Model.ProgramName
+        <small>Program statistics</small>
+    </h1>
+</section>
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Program Usages</h3>
+            </div>
+            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
+                <table id="programUsageTable" class="table table-bordered table-hover ">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Function Usages</h3>
+            </div>
+            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
+                <table id="functionUsageTable" class="table table-bordered table-hover ">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#functionUsageTable').DataTable({
+                serverSide: true,
+                searching: false,
+                processing: true,
+                ajax:  "@Url.Action("GetProgramFunctionsUsageData")" + "?programId=" + @Model.ProgramId,
+              
+                columns: [
+                    {
+                        name: "@nameof(UsageData.DateTime)",
+                        data: "@nameof(UsageData.DateTime).ToLowerFirstChar()",
+                        render: function(data, type, row, meta) {
+                            var datetime = new Date(data);
+                            return datetime.toLocaleString();
+                        },
+                        title:"@nameof(UsageData.DateTime)",
+                        sortable: true,
+                        searchable: false
+                    },
+                    {
+                        name:  "@nameof(UsageData.FunctionName)",
+                        data:  "@nameof(UsageData.FunctionName).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.FunctionName)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(UsageData.UserName)",
+                        data:  "@nameof(UsageData.UserName).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.UserName)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(UsageData.CustomData)",
+                        data:  "@nameof(UsageData.CustomData).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.CustomData)",
+                        sortable: true,
+                        searchable: false
+                    },
+                  
+                ]
+             
+            });
+
+            $('#programUsageTable').DataTable({
+                serverSide: true,
+                searching: false,
+                processing: true,
+                ajax:  "@Url.Action("GetProgramUsageData")" + "?programId=" + @Model.ProgramId,
+              
+                columns: [
+                    {
+                        name: "@nameof(UsageData.DateTime)",
+                        data: "@nameof(UsageData.DateTime).ToLowerFirstChar()",
+                        render: function(data, type, row, meta) {
+                            var datetime = new Date(data);
+                            return datetime.toLocaleString();
+                        },
+                        title:"@nameof(UsageData.DateTime)",
+                        sortable: true,
+                        searchable: false
+                    },
+                    {
+                        name:  "@nameof(UsageData.UserName)",
+                        data:  "@nameof(UsageData.UserName).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.UserName)",
+                        sortable: true,
+                        searchable: true
+                    },
+                  
+                ]
+             
+            });
+        });
+    </script>
+
+}
