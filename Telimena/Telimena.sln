@@ -18,6 +18,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{49A0912D-B751-48F2-8477-AF7FE1CF9EB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Desktop", "Desktop", "{5F78CFF4-E566-4E1F-BEA3-951C06C2093D}"
+	ProjectSection(SolutionItems) = preProject
+		TelimenaKey.snk = TelimenaKey.snk
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelimenaTestSandboxApp", "TelimenaTestSandboxApp\TelimenaTestSandboxApp.csproj", "{ACC4AFB3-4417-4736-BE49-37AEEF3EF458}"
 EndProject
