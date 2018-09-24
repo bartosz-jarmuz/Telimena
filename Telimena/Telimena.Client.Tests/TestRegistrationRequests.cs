@@ -28,9 +28,9 @@ namespace Telimena.Client.Tests
             catch (Exception e)
             {
                 TelimenaException ex = e as TelimenaException;
-                Assert.AreEqual(2, ex.InnerExceptions.Count);
-                Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
-                RegistrationRequest jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);
+                Assert.AreEqual(1, ex.InnerExceptions.Count);
+                Assert.AreEqual("An error occured while posting to [api/Statistics/RegisterClient]", ex.InnerExceptions[0].Message);
+                RegistrationRequest jObj = ex.RequestObjects[0].Value as RegistrationRequest;
                 Assert.AreEqual(skipFlagExpectedValue, jObj.SkipUsageIncrementation);
                 telimena.ProgramInfo.ThrowIfPublicPropertiesNotEqual(jObj.ProgramInfo, true);
             }

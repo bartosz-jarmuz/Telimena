@@ -8,16 +8,14 @@ namespace Telimena.Client
 {
     internal class Messenger : IMessenger
     {
-        public Messenger(ITelimenaSerializer serializer, ITelimenaHttpClient httpClient, bool suppressAllErrors)
+        public Messenger(ITelimenaSerializer serializer, ITelimenaHttpClient httpClient)
         {
             this.Serializer = serializer;
             this.HttpClient = httpClient;
-            this.SuppressAllErrors = suppressAllErrors;
         }
 
         public ITelimenaSerializer Serializer { get; }
         public ITelimenaHttpClient HttpClient { get; }
-        public bool SuppressAllErrors { get; }
 
         public async Task<string> SendPostRequest(string requestUri, object objectToPost)
         {
@@ -29,14 +27,9 @@ namespace Telimena.Client
                 string responseContent = await response.Content.ReadAsStringAsync();
                 return responseContent;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                if (!this.SuppressAllErrors)
-                {
-                    throw;
-                }
-
-                return "";
+               throw new InvalidOperationException($"An error occured while posting to [{requestUri}]",ex);
             }
         }
 
@@ -48,15 +41,10 @@ namespace Telimena.Client
                 string responseContent = await response.Content.ReadAsStringAsync();
                 return responseContent;
             }
-            catch (Exception)
-            {
-                if (!this.SuppressAllErrors)
+                catch (Exception ex)
                 {
-                    throw;
+                    throw new InvalidOperationException($"An error occured while getting from [{requestUri}]", ex);
                 }
-
-                return "";
-            }
         }
 
         public async Task<Stream> DownloadFile(string requestUri)
@@ -66,14 +54,10 @@ namespace Telimena.Client
                 HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri);
                 return await response.Content.ReadAsStreamAsync();
             }
-            catch (Exception)
+        
+            catch (Exception ex)
             {
-                if (!this.SuppressAllErrors)
-                {
-                    throw;
-                }
-
-                return null;
+                throw new InvalidOperationException($"An error occured while downloading from [{requestUri}]", ex);
             }
         }
     }

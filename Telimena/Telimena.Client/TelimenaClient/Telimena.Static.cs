@@ -102,7 +102,7 @@ namespace Telimena.Client
 
 
                 TelimenaSerializer serializer = new TelimenaSerializer();
-                Messenger messenger = new Messenger(serializer, httpClient, suppressAllErrors);
+                Messenger messenger = new Messenger(serializer, httpClient);
 
                 registrationRequest = new RegistrationRequest
                 {

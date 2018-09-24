@@ -100,9 +100,9 @@ namespace Telimena.Client.Tests
             {
                 TelimenaException ex = e as TelimenaException;
 
-                Assert.AreEqual(2, ex.InnerExceptions.Count);
-                Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
-                RegistrationRequest jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);
+                Assert.AreEqual(1, ex.InnerExceptions.Count);
+                Assert.AreEqual("An error occured while posting to [api/Statistics/RegisterClient]", ex.InnerExceptions[0].Message);
+                RegistrationRequest jObj = ex.RequestObjects[0].Value as RegistrationRequest;
                 Assert.AreEqual(true, jObj.SkipUsageIncrementation);
                 Assert.AreEqual(Assembly.GetExecutingAssembly().GetName().Name, jObj.ProgramInfo.Name);
                 Assert.AreEqual("Telimena.Client.Tests", jObj.ProgramInfo.PrimaryAssembly.Name);
@@ -118,9 +118,9 @@ namespace Telimena.Client.Tests
             {
                 TelimenaException ex = e as TelimenaException;
 
-                Assert.AreEqual(2, ex.InnerExceptions.Count);
-                Assert.AreEqual("api/Statistics/Update", ex.InnerExceptions[0].Message);
-                StatisticsUpdateRequest jObj = JsonConvert.DeserializeObject<StatisticsUpdateRequest>(ex.InnerExceptions[1].Message);
+                Assert.AreEqual(1, ex.InnerExceptions.Count);
+                Assert.AreEqual("An error occured while posting to [api/Statistics/Update]", ex.InnerExceptions[0].Message);
+                StatisticsUpdateRequest jObj = ex.RequestObjects[1].Value as StatisticsUpdateRequest;
                 Assert.AreEqual(1, jObj.ProgramId);
                 Assert.AreEqual(2, jObj.UserId);
                 Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.FunctionName);
@@ -142,9 +142,9 @@ namespace Telimena.Client.Tests
             {
                 TelimenaException ex = e as TelimenaException;
 
-                Assert.AreEqual(2, ex.InnerExceptions.Count);
-                Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
-                RegistrationRequest jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);
+                Assert.AreEqual(1, ex.InnerExceptions.Count);
+                Assert.AreEqual("An error occured while posting to [api/Statistics/RegisterClient]", ex.InnerExceptions[0].Message);
+                RegistrationRequest jObj = ex.RequestObjects[0].Value as RegistrationRequest;
                 Assert.AreEqual(true, jObj.SkipUsageIncrementation);
 
                 pi.ThrowIfPublicPropertiesNotEqual(jObj.ProgramInfo, true);

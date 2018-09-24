@@ -8,12 +8,11 @@ namespace Telimena.Client
 {
     internal partial class UpdateHandler
     {
-        public UpdateHandler(IMessenger messenger, ProgramInfo programInfo, bool suppressAllErrors, IReceiveUserInput inputReceiver
+        public UpdateHandler(IMessenger messenger, ProgramInfo programInfo, IReceiveUserInput inputReceiver
             , IInstallUpdates updateInstaller)
         {
             this.messenger = messenger;
             this.programInfo = programInfo;
-            this.suppressAllErrors = suppressAllErrors;
             this.inputReceiver = inputReceiver;
             this.updateInstaller = updateInstaller;
         }
@@ -22,7 +21,6 @@ namespace Telimena.Client
 
         private readonly IMessenger messenger;
         private readonly ProgramInfo programInfo;
-        private readonly bool suppressAllErrors;
         private readonly IReceiveUserInput inputReceiver;
         private readonly IInstallUpdates updateInstaller;
 
@@ -55,13 +53,10 @@ namespace Telimena.Client
                     }
                 }
             }
-            catch (Exception)
-            {
-                if (!this.suppressAllErrors)
+                catch (Exception ex)
                 {
-                    throw;
+                    throw new InvalidOperationException($"An error occured while handling updates", ex);
                 }
-            }
         }
 
         protected internal static string GetUpdatesFolderName(ProgramInfo programInfo)
@@ -109,12 +104,9 @@ namespace Telimena.Client
 
                 await Task.WhenAll(downloadTasks);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                if (!this.suppressAllErrors)
-                {
-                    throw;
-                }
+                throw new InvalidOperationException($"An error occured while downloading update packages", ex);
             }
         }
 

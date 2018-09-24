@@ -11,6 +11,7 @@ namespace Telimena.Client
     /// </summary>
     public partial class Telimena : ITelimena
     {
+        /// <inheritdoc />
         public async Task<UpdateCheckResult> CheckForUpdates()
         {
             try
@@ -38,6 +39,7 @@ namespace Telimena.Client
             }
         }
 
+        /// <inheritdoc />
         public async Task HandleUpdates(bool acceptBeta)
         {
             try
@@ -49,7 +51,7 @@ namespace Telimena.Client
                 UpdateResponse programUpdateResponse = await programUpdateTask;
                 UpdateResponse updaterUpdateResponse = await updaterUpdateTask;
 
-                UpdateHandler handler = new UpdateHandler(this.Messenger, this.ProgramInfo, this.SuppressAllErrors, new DefaultWpfInputReceiver()
+                UpdateHandler handler = new UpdateHandler(this.Messenger, this.ProgramInfo, new DefaultWpfInputReceiver()
                     , new UpdateInstaller());
                 await handler.HandleUpdates(programUpdateResponse, updaterUpdateResponse);
             }
@@ -78,10 +80,18 @@ namespace Telimena.Client
 
         private string GetUpdateRequestUrl(bool takeBeta)
         {
-            UpdateRequest model = new UpdateRequest(this.ProgramId, this.ProgramVersion, this.UserId, takeBeta, this.TelimenaVersion);
-            string stringified = this.Serializer.Serialize(model);
-            string escaped = this.Serializer.UrlEncodeJson(stringified);
-            return ApiRoutes.GetProgramUpdateInfo + "?request=" + escaped;
+            try
+            {
+
+                UpdateRequest model = new UpdateRequest(this.ProgramId, this.ProgramVersion, this.UserId, takeBeta, this.TelimenaVersion);
+                string stringified = this.Serializer.Serialize(model);
+                string escaped = this.Serializer.UrlEncodeJson(stringified);
+                return ApiRoutes.GetProgramUpdateInfo + "?request=" + escaped;
+            }
+            catch (Exception ex)
+            {
+                return $"Failed to get update request URL becacuse of {ex.Message}";
+            }
         }
 
         private string GetUpdaterUpdateRequestUrl(bool takeBeta)

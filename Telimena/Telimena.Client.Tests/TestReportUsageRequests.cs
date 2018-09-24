@@ -54,7 +54,7 @@ namespace Telimena.Client.Tests
                     throw new AggregateException(new AssertionException(uri)
                         , new AssertionException(requestContent.ReadAsStringAsync().GetAwaiter().GetResult()));
                 });
-            return new Messenger(new TelimenaSerializer(), client.Object, false); ;
+            return new Messenger(new TelimenaSerializer(), client.Object); ;
         }
 
         [Test]

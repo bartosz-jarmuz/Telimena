@@ -19,7 +19,7 @@ namespace Telimena.Client.Tests
 
         public static void SetupMockHttpClient(Telimena telimena, Mock<ITelimenaHttpClient> client)
         {
-            telimena.Messenger = new Messenger(telimena.Serializer, client.Object, telimena.SuppressAllErrors);
+            telimena.Messenger = new Messenger(telimena.Serializer, client.Object);
         }
     }
 }

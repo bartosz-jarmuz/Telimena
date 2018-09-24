@@ -44,7 +44,7 @@ namespace Telimena.Client
             this.UpdaterVersion = data.UpdaterVersion;
 
             this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
-            this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
+            this.Messenger = new Messenger(this.Serializer, this.HttpClient);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Telimena.Client
             this.UpdaterVersion = data.UpdaterVersion;
 
             this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
-            this.Messenger = new Messenger(this.Serializer, this.HttpClient, this.SuppressAllErrors);
+            this.Messenger = new Messenger(this.Serializer, this.HttpClient);
         }
 
     }
