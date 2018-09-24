@@ -12,11 +12,21 @@ namespace TelimenaTestSandboxApp
         public Form1()
         {
             this.InitializeComponent();
+            this.apiUrlTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.baseUri) ? "http://localhost:7757/" : Properties.Settings.Default.baseUri;
             this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
             this.Text = $"Sandbox v. {Assembly.GetExecutingAssembly().GetName().Version}";
         }
 
         private string PresentResponse(TelimenaResponseBase response)
+        {
+            if (response.Exception != null)
+            {
+                return response.Exception.ToString();
+            }
+            return new JavaScriptSerializer().Serialize(response);
+        }
+
+        private string PresentResponse(UpdateCheckResult response)
         {
             if (response.Exception != null)
             {
@@ -68,6 +78,12 @@ namespace TelimenaTestSandboxApp
 
         private async void checkForUpdateButton_Click(object sender, EventArgs e)
         {
+            var response = await this.teli.CheckForUpdates();
+            this.PresentResponse(response);
+        }
+
+        private async void handleUpdatesButton_Click(object sender, EventArgs e)
+        {
             await this.teli.HandleUpdates(false);
         }
 
@@ -87,6 +103,17 @@ namespace TelimenaTestSandboxApp
             {
                 this.teli.UserInfo = new UserInfo {UserName = this.userNameTextBox.Text};
             }
+
+            Properties.Settings.Default.baseUri = this.apiUrlTextBox.Text;
+            Properties.Settings.Default.Save();
+            
+        }
+
+        private void useCurrentAppButton_Click(object sender, EventArgs e)
+        {
+            this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            Properties.Settings.Default.baseUri = this.apiUrlTextBox.Text;
+            Properties.Settings.Default.Save();
         }
 
         private async void static_sendUsageReportButton_Click(object sender, EventArgs e)
@@ -138,5 +165,7 @@ namespace TelimenaTestSandboxApp
         {
             this.hammer?.Stop();
         }
+
+     
     }
 }
