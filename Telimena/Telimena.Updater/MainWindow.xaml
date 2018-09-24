@@ -12,7 +12,7 @@
         <StackPanel >
             <TextBlock Text="Update installer minimum version. Not for production usage." Foreground="Red" HorizontalAlignment="Center" Margin="15,3,15,25"/>
             <TextBlock Text="An update to version" HorizontalAlignment="Center" />
-            <TextBlock FontSize="16" Text="1.2.34.4" FontWeight="Bold" HorizontalAlignment="Center"  ></TextBlock>
+            <TextBlock FontSize="16" Text="{Binding ElementName=ThisUc, Path=UpdateVersionInfoLabel}" FontWeight="Bold" HorizontalAlignment="Center"  ></TextBlock>
             <TextBlock Text="was downloaded." HorizontalAlignment="Center" />
 
             <Button Content="Install now!" Click="ButtonBase_OnClick" Margin="15" FontSize="18"/>

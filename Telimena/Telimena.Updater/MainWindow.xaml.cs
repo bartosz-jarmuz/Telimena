@@ -77,14 +77,21 @@ namespace Telimena.Updater
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             UpdateWorker worker = new UpdateWorker();
-            worker.PerformUpdate(this.Instructions);
-            if (MessageBox.Show("Update complete. Would you like to run the app now?", "Update complete", MessageBoxButton.YesNo
-                    , MessageBoxImage.Information) == MessageBoxResult.Yes)
+            try
             {
-                Process.Start(this.Instructions.ProgramExecutableLocation);
+                worker.PerformUpdate(this.Instructions);
+                if (MessageBox.Show("Update complete. Would you like to run the app now?", "Update complete", MessageBoxButton.YesNo
+                        , MessageBoxImage.Information) == MessageBoxResult.Yes)
+                {
+                    Process.Start(this.Instructions.ProgramExecutableLocation);
+                }
             }
-
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while updating the program.\r\n{ex}");
+            }
             Environment.Exit(0);
+
         }
     }
 }
