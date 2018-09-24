@@ -294,7 +294,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="admin-lte\css\AdminLTE.css" />
-    <Content Include="admin-lte\css\AdminLTE.min.css" />
+    <Content Include="admin-lte\css\AdminLTE.min.css">
+      <DependentUpon>AdminLTE.css</DependentUpon>
+    </Content>
     <Content Include="admin-lte\css\alt\AdminLTE-bootstrap-social.css" />
     <Content Include="admin-lte\css\alt\AdminLTE-bootstrap-social.min.css" />
     <Content Include="admin-lte\css\alt\AdminLTE-fullcalendar.css" />
@@ -358,17 +360,26 @@
     <Content Include="admin-lte\img\user7-128x128.jpg" />
     <Content Include="admin-lte\img\user8-128x128.jpg" />
     <Content Include="admin-lte\js\adminlte.js" />
-    <Content Include="admin-lte\js\adminlte.min.js" />
+    <Content Include="admin-lte\js\adminlte.min.js">
+      <DependentUpon>adminlte.js</DependentUpon>
+    </Content>
     <Content Include="admin-lte\js\control-menu.js" />
     <Content Include="admin-lte\js\pages\dashboard.js" />
     <Content Include="admin-lte\js\pages\dashboard2.js" />
     <Content Include="admin-lte\plugins\bootstrap-slider\bootstrap-slider.js" />
     <Content Include="admin-lte\plugins\bootstrap-slider\slider.css" />
     <Content Include="admin-lte\plugins\bootstrap-wysihtml5\bootstrap3-wysihtml5.all.js" />
-    <Content Include="admin-lte\plugins\bootstrap-wysihtml5\bootstrap3-wysihtml5.all.min.js" />
+    <Content Include="admin-lte\plugins\bootstrap-wysihtml5\bootstrap3-wysihtml5.all.min.js">
+      <DependentUpon>bootstrap3-wysihtml5.all.js</DependentUpon>
+    </Content>
     <Content Include="admin-lte\plugins\bootstrap-wysihtml5\bootstrap3-wysihtml5.css" />
-    <Content Include="admin-lte\plugins\bootstrap-wysihtml5\bootstrap3-wysihtml5.min.css" />
+    <Content Include="admin-lte\plugins\bootstrap-wysihtml5\bootstrap3-wysihtml5.min.css">
+      <DependentUpon>bootstrap3-wysihtml5.css</DependentUpon>
+    </Content>
     <Content Include="admin-lte\plugins\iCheck\all.css" />
+    <Content Include="admin-lte\plugins\iCheck\all.min.css">
+      <DependentUpon>all.css</DependentUpon>
+    </Content>
     <Content Include="admin-lte\plugins\iCheck\flat\aero%402x.png" />
     <Content Include="admin-lte\plugins\iCheck\flat\aero.css" />
     <Content Include="admin-lte\plugins\iCheck\flat\aero.png" />
@@ -404,7 +415,9 @@
     <Content Include="admin-lte\plugins\iCheck\futurico\futurico.css" />
     <Content Include="admin-lte\plugins\iCheck\futurico\futurico.png" />
     <Content Include="admin-lte\plugins\iCheck\icheck.js" />
-    <Content Include="admin-lte\plugins\iCheck\icheck.min.js" />
+    <Content Include="admin-lte\plugins\iCheck\icheck.min.js">
+      <DependentUpon>icheck.js</DependentUpon>
+    </Content>
     <Content Include="admin-lte\plugins\iCheck\line\aero.css" />
     <Content Include="admin-lte\plugins\iCheck\line\blue.css" />
     <Content Include="admin-lte\plugins\iCheck\line\green.css" />
@@ -1915,6 +1928,7 @@
     <Content Include="Content\telilogo-alt.xcf" />
     <Content Include="Content\telilogo.xcf" />
     <Content Include="Content\Telimena-full-logo.xcf" />
+    <None Include="bundleconfig.json" />
     <None Include="Properties\PublishProfiles\Telimena-dev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\telimena-test - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
@@ -2035,8 +2049,10 @@
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.1.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets'))" />
+    <Error Condition="!Exists('..\packages\BuildBundlerMinifier.2.8.391\build\BuildBundlerMinifier.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BuildBundlerMinifier.2.8.391\build\BuildBundlerMinifier.targets'))" />
   </Target>
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />
+  <Import Project="..\packages\BuildBundlerMinifier.2.8.391\build\BuildBundlerMinifier.targets" Condition="Exists('..\packages\BuildBundlerMinifier.2.8.391\build\BuildBundlerMinifier.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
