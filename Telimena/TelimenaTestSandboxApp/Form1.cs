@@ -79,12 +79,14 @@ namespace TelimenaTestSandboxApp
         private async void checkForUpdateButton_Click(object sender, EventArgs e)
         {
             var response = await this.teli.CheckForUpdates();
-            this.PresentResponse(response);
+            this.UpdateText(this.PresentResponse(response));
         }
 
         private async void handleUpdatesButton_Click(object sender, EventArgs e)
         {
+            this.UpdateText("Handling updates...");
             await this.teli.HandleUpdates(false);
+            this.UpdateText("Finished handling updates...");
         }
 
         private void setAppButton_Click(object sender, EventArgs e)
