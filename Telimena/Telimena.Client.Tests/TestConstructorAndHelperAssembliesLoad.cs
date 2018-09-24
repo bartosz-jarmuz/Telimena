@@ -55,9 +55,9 @@ namespace Telimena.Client.Tests
         public void TestInitialize_NoParameters()
         {
             Telimena telimena = new Telimena();
-            Assert.AreEqual("Telimena.Client", telimena.ProgramInfo.Name);
-            Assert.AreEqual("Telimena.Client", telimena.ProgramInfo.PrimaryAssembly.Name);
-            Assert.IsTrue(telimena.ProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Telimena.Client.dll"));
+            Assert.AreEqual("Telimena.Client.Tests", telimena.ProgramInfo.Name);
+            Assert.AreEqual("Telimena.Client.Tests", telimena.ProgramInfo.PrimaryAssembly.Name);
+            Assert.IsTrue(telimena.ProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Telimena.Client.Tests.dll"));
             Assert.IsNotNull(telimena.ProgramInfo.PrimaryAssembly.Version);
             Assert.IsNotNull(telimena.UserInfo.UserName);
             Assert.IsNotNull(telimena.UserInfo.MachineName);
@@ -66,11 +66,11 @@ namespace Telimena.Client.Tests
         [Test]
         public void TestInitialize_ProgramInfo()
         {
-            ProgramInfo pi = new ProgramInfo {Name = "An App!", PrimaryAssembly = new AssemblyInfo(this.GetType().Assembly)};
+            ProgramInfo pi = new ProgramInfo {Name = "An App!", PrimaryAssembly = new AssemblyInfo(typeof(Mock).Assembly)};
             Telimena telimena = new Telimena(pi);
             Assert.AreEqual("An App!", telimena.ProgramInfo.Name);
-            Assert.AreEqual("Telimena.Client.Tests", telimena.ProgramInfo.PrimaryAssembly.Name);
-            Assert.IsTrue(telimena.ProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Telimena.Client.Tests.dll"));
+            Assert.AreEqual("Moq", telimena.ProgramInfo.PrimaryAssembly.Name);
+            Assert.IsTrue(telimena.ProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Moq.dll"));
             Assert.IsNotNull(telimena.ProgramInfo.PrimaryAssembly.Version);
             Assert.IsNotNull(telimena.UserInfo.UserName);
             Assert.IsNotNull(telimena.UserInfo.MachineName);

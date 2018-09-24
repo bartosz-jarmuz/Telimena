@@ -58,7 +58,7 @@ namespace Telimena.Client.Tests
         public void Test_CheckForUpdates_OnlyProgram()
         {
             Telimena sut = new Telimena {SuppressAllErrors = false};
-            Assert.AreEqual("Telimena.Client", sut.ProgramInfo.PrimaryAssembly.Name);
+            Assert.AreEqual("Telimena.Client.Tests", sut.ProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
@@ -86,7 +86,7 @@ namespace Telimena.Client.Tests
         public void Test_CheckForUpdates_Program_AndUpdater()
         {
             Telimena sut = new Telimena { SuppressAllErrors = false };
-            Assert.AreEqual("Telimena.Client", sut.ProgramInfo.PrimaryAssembly.Name);
+            Assert.AreEqual("Telimena.Client.Tests", sut.ProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 

@@ -6,6 +6,7 @@
 
 using System;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Moq;
@@ -103,8 +104,8 @@ namespace Telimena.Client.Tests
                 Assert.AreEqual("api/Statistics/RegisterClient", ex.InnerExceptions[0].Message);
                 RegistrationRequest jObj = JsonConvert.DeserializeObject<RegistrationRequest>(ex.InnerExceptions[1].Message);
                 Assert.AreEqual(true, jObj.SkipUsageIncrementation);
-                Assert.AreEqual("Telimena.Client", jObj.ProgramInfo.Name);
-                Assert.AreEqual("Telimena.Client", jObj.ProgramInfo.PrimaryAssembly.Name);
+                Assert.AreEqual(Assembly.GetExecutingAssembly().GetName().Name, jObj.ProgramInfo.Name);
+                Assert.AreEqual("Telimena.Client.Tests", jObj.ProgramInfo.PrimaryAssembly.Name);
             }
 
             client = this.GetMockClientForStaticClient_FirstRequestPass();
@@ -123,7 +124,7 @@ namespace Telimena.Client.Tests
                 Assert.AreEqual(1, jObj.ProgramId);
                 Assert.AreEqual(2, jObj.UserId);
                 Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.FunctionName);
-                Assert.AreEqual("1.0.0.1", jObj.Version);
+                Assert.IsTrue(Version.TryParse(jObj.Version, out _));
             }
         }
 

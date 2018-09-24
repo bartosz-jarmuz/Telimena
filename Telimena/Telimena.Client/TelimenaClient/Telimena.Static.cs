@@ -8,9 +8,6 @@ using System.Threading.Tasks;
 
 namespace Telimena.Client
 {
-    #region Using
-
-    #endregion
 
     /// <summary>
     ///     Telemetry and Lifecycle Management Engine App
@@ -29,12 +26,18 @@ namespace Telimena.Client
         /// <param name="mainAssembly"></param>
         /// <param name="suppressAllErrors"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static Task<StatisticsUpdateResponse> ReportUsageStatic([CallerMemberName] string functionName = null, Uri telemetryApiBaseUrl = null
             , Assembly mainAssembly = null, bool suppressAllErrors = true)
         {
             if (telemetryApiBaseUrl == null)
             {
                 telemetryApiBaseUrl = defaultApiUri;
+            }
+
+            if (mainAssembly == null)
+            {
+                mainAssembly = GetProperCallingAssembly();
             }
 
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
@@ -53,6 +56,7 @@ namespace Telimena.Client
         /// <param name="suppressAllErrors"></param>
         /// <param name="functionName"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static Task<StatisticsUpdateResponse> ReportUsageStatic(ProgramInfo programInfo, Uri telemetryApiBaseUrl = null, Assembly mainAssembly = null
             , bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
         {
@@ -61,6 +65,10 @@ namespace Telimena.Client
                 telemetryApiBaseUrl = defaultApiUri;
             }
 
+            if (mainAssembly == null)
+            {
+                mainAssembly = GetProperCallingAssembly();
+            }
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
             return ReportUsageStatic(httpClient, programInfo, mainAssembly, suppressAllErrors, functionName);
         }
@@ -82,6 +90,12 @@ namespace Telimena.Client
         {
             RegistrationRequest registrationRequest = null;
             StatisticsUpdateRequest updateRequest = null;
+
+            if (mainAssembly == null)
+            {
+                mainAssembly = GetProperCallingAssembly();
+            }
+
             try
             {
                var data = LoadProgramData(mainAssembly, programInfo);
@@ -121,9 +135,26 @@ namespace Telimena.Client
             }
         }
 
-        private static StartupData LoadProgramData(Assembly mainAssembly = null, ProgramInfo programInfo = null)
+        private static Assembly GetProperCallingAssembly()
         {
-            Assembly assembly = mainAssembly ?? Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+            StackTrace stackTrace = new StackTrace();
+            int index = 1;
+            AssemblyName currentAss = typeof(Telimena).Assembly.GetName();
+            while (true)
+            {
+                MethodBase method = stackTrace.GetFrame(index)?.GetMethod();
+                if (method?.DeclaringType?.Assembly.GetName().Name != currentAss.Name)
+                {
+                    if (method?.DeclaringType?.Assembly?.GetName()?.Name != "mscorlib")
+                    {
+                        return method.DeclaringType.Assembly;
+                    }
+                }
+                index++;
+            }
+        }
+        private static StartupData LoadProgramData(Assembly assembly, ProgramInfo programInfo = null)
+        {
             ProgramInfo info = programInfo;
             if (info == null)
             {
@@ -137,7 +168,6 @@ namespace Telimena.Client
 
             return new StartupData(info, userInfo, telimenaVersion, updaterVersion);
         }
-
         private static string GetUpdaterVersion(ProgramInfo programInfo)
         {
             var updaterFile = UpdateHandler.PathFinder.GetUpdaterExecutable(UpdateHandler.BasePath, UpdateHandler.GetUpdatesFolderName(programInfo));
