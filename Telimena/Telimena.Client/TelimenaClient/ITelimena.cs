@@ -70,5 +70,10 @@ namespace Telimena.Client
         /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
         /// <returns></returns>
         Task<StatisticsUpdateResponse> ReportUsageWithCustomData<T>(T customDataObject, [CallerMemberName] string functionName = null);
+
+        /// <summary>
+        /// If true, then Telimena will swallow any errors. Otherwise, it will rethrow
+        /// </summary>
+        bool SuppressAllErrors { get; set; }
     }
 }

@@ -21,7 +21,9 @@ namespace Telimena.Client
 #endif
         public UserInfo UserInfo { get; internal set; }
         public ProgramInfo ProgramInfo { get; internal set; }
-
+        /// <summary>
+        /// If true, then Telimena will swallow any errors. Otherwise, it will rethrow
+        /// </summary>
         public bool SuppressAllErrors { get; set; } = true;
         public string ProgramVersion => this.ProgramInfo?.PrimaryAssembly?.Version;
         protected int ProgramId { get; set; }
