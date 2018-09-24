@@ -14,7 +14,11 @@ namespace Telimena.Client
     /// </summary>
     public partial class Telimena : ITelimena
     {
+#if DEBUG
         private static readonly Uri defaultApiUri = new Uri("http://localhost:7757/");
+#else
+        private static readonly Uri defaultApiUri = new Uri("https://telimena-test.azurewebsites.net/");
+#endif
         public UserInfo UserInfo { get; internal set; }
         public ProgramInfo ProgramInfo { get; internal set; }
 
