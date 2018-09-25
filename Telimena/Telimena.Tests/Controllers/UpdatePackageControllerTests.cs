@@ -37,13 +37,13 @@ namespace Telimena.Tests
             }
 
             this.Context.SaveChanges();
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new Mock<ITelimenaUserManager>().Object);
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new Mock<ITelimenaUserManager>().Object, new AssemblyVersionReader());
             return unit;
         }
 
         private void AddToolkits(List<TelimenaPackageInfo> toolkitPackages = null)
         {
-            var toolkitRepo = new ToolkitDataRepository(this.Context);
+            var toolkitRepo = new ToolkitDataRepository(this.Context, new AssemblyVersionReader());
             if (toolkitPackages == null)
             {
                 toolkitRepo.StorePackageAsync("0.5.0.0", isBeta: false, introducesBreakingChanges: false, fileStream: Stream.Null, fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();

@@ -92,7 +92,7 @@ namespace Telimena.Tests
 
         public static void SeedInitialPrograms(TelimenaContext context, int progCount, string getName, string userName, [CallerMemberName] string caller = "")
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(context);
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(context, new AssemblyVersionReader());
             StatisticsController controller = new StatisticsController(unit);
             SeedInitialPrograms(controller, progCount, GetName(getName, caller), GetName(userName, caller));
         }

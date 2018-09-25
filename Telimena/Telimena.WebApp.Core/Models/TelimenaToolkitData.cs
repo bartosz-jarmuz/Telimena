@@ -16,5 +16,6 @@
         public virtual TelimenaPackageInfo TelimenaPackageInfo { get; set; }
 
         public bool IntroducesBreakingChanges { get; set; }
+
     }
 }

@@ -3,20 +3,21 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 
 namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 {
     public class ProgramsUnitOfWork : IProgramsUnitOfWork
     {
-        public ProgramsUnitOfWork(TelimenaContext context, ITelimenaUserManager userManager)
+        public ProgramsUnitOfWork(TelimenaContext context, ITelimenaUserManager userManager, IAssemblyVersionReader versionReader)
         {
             this._context = context;
             this.Versions = new Repository<AssemblyVersion>(context);
             this.Users = new Repository<TelimenaUser>(context);
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
-            this.ToolkitData = new ToolkitDataRepository(context);
+            this.ToolkitData = new ToolkitDataRepository(context, versionReader);
             this.UpdatePackages = new UpdatePackageRepository(context);
             this.ProgramPackages = new ProgramPackageRepository(context);
             this.TelimenaUserManager = userManager;

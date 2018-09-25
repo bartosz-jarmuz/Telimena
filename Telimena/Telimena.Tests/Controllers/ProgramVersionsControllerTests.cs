@@ -32,7 +32,7 @@ namespace Telimena.Tests
         [Test]
         public void TestGetSetLatestVersion_AllOk()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)), new AssemblyVersionReader());
 
             ProgramVersionsController sut = new ProgramVersionsController(unit);
             Helpers.SeedInitialPrograms(this.Context, 1, "TestApp", "NewGuy");
@@ -66,7 +66,7 @@ namespace Telimena.Tests
         [Test]
         public void TestSetLatestVersion_PrgNotFound()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)), new AssemblyVersionReader());
 
             ProgramVersionsController sut = new ProgramVersionsController(unit);
             SetLatestVersionRequest request = new SetLatestVersionRequest {ProgramId = 564265416, Version = "1.2.3.4"};
@@ -80,7 +80,7 @@ namespace Telimena.Tests
         [Test]
         public void TestSetLatestVersion_RequestNull()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)), new AssemblyVersionReader());
 
             ProgramVersionsController sut = new ProgramVersionsController(unit);
 
@@ -92,7 +92,7 @@ namespace Telimena.Tests
         [Test]
         public void TestSetLatestVersion_VersionFormatInvalid()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)), new AssemblyVersionReader());
 
             ProgramVersionsController sut = new ProgramVersionsController(unit);
             SetLatestVersionRequest request = new SetLatestVersionRequest {ProgramId = 1, Version = "notValid"};

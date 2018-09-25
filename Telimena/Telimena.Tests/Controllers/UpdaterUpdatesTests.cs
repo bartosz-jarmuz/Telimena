@@ -42,7 +42,7 @@ namespace Telimena.Tests
 
         private IToolkitDataUnitOfWork Prepare()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyVersionReader());
             unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.0.0", 1000, "0.0.0.0"));
             unit.CompleteAsync().GetAwaiter().GetResult();
             unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.1.0", 1000, "0.0.0.0") {IsBeta = true});
@@ -65,7 +65,7 @@ namespace Telimena.Tests
         [Test]
         public void Test_LatestUpdaterIsCompatible()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyVersionReader());
             UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0", toolkitVersion: "1.3.0");
 
@@ -77,7 +77,7 @@ namespace Telimena.Tests
         [Test]
         public void Test_LatestUpdaterIsNotCompatible_BreakingChanges()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context);
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context, versionReader: new AssemblyVersionReader());
             UpdaterController controller = new UpdaterController(work: unit, serializer: this.serializer, fileSaver: new Mock<IFileSaver>().Object, fileRetriever: new Mock<IFileRetriever>().Object);
             var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0", toolkitVersion: "0.2.0");
 
@@ -96,7 +96,7 @@ namespace Telimena.Tests
         [Test]
         public void Test_LatestUpdaterIsUsed()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context);
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyVersionReader());
             UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.1", toolkitVersion: "0.2.0");
 

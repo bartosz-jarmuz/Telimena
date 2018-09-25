@@ -18,6 +18,6 @@ namespace Telimena.WebApp.Core.Models
         public DateTime UploadedDate { get; set; }
         public string FileName { get; protected set; }
         public string FileLocation { get; set; }
-        public long FileSizeBytes { get; protected set; }
+        public long FileSizeBytes { get;  set; }
     }
 }

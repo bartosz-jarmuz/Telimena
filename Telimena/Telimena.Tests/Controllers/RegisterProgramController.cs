@@ -42,7 +42,7 @@ namespace Telimena.Tests
         [Test]
         public void TestRegisterProgram_AllOk()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)), new AssemblyVersionReader());
             RegisterProgramController sut = new RegisterProgramController(unit, new Mock<ILog>().Object);
 
             Helpers.SeedInitialPrograms(this.Context, 1, "TestApp", "TestUser");
@@ -67,7 +67,7 @@ namespace Telimena.Tests
         [Test]
         public void TestRegisterProgram_PrgNotFound()
         {
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)));
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context)), new AssemblyVersionReader());
 
             RegisterProgramController sut = new RegisterProgramController(unit, new Mock<ILog>().Object);
 

@@ -91,7 +91,7 @@ namespace Telimena.WebApp.Controllers.Api
                     TelimenaToolkitData pkg =
                         await this.work.ToolkitDataRepository.StorePackageAsync(request.PackageVersion, false, false, uploadedFile.InputStream, this.fileSaver);
                     await this.work.CompleteAsync();
-                    return this.Ok(pkg.Id);
+                    return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
                 }
 
                 return this.BadRequest("Empty attachment");

@@ -318,7 +318,7 @@
                 },
                 //Ajax events
                 success: function(result) {
-                    ShowConfirmationBox(button, "label-success", 'Uploaded package with ID: [' + result + ']');
+                    ShowConfirmationBox(button, "label-success", result);
                 },
                 error: function(xhr) {
                     ShowConfirmationBox(button, "label-danger", xhr.responseJSON.Message);
