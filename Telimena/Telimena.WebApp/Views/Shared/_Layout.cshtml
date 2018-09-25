@@ -69,14 +69,12 @@
         </section>
     </div>
 
-    @if (!User.Identity.IsAuthenticated)
-    {
-        @Html.Partial("_LayoutFooter")
-    }
     @if (User.Identity.IsAuthenticated)
     {
         @Html.Partial("_LayoutRightSideBar")
     }
+    @Html.Partial("_LayoutFooter")
+
 </div>
 
 @Scripts.Render("~/bundles/jquery")
