@@ -22,7 +22,7 @@ namespace Telimena.Client.Tests
         {
             try
             {
-                RegistrationResponse result = function();
+                RegistrationResponse result = function(); 
                 Assert.Fail("Exception expected");
             }
             catch (Exception e)
