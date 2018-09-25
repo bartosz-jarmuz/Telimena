@@ -2,8 +2,14 @@
 <footer class="main-footer">
     <!-- To the right -->
     <div class="pull-right hidden-xs">
-        TELIMENA
+        <small><a href="https://github.com/almasaeed2010/AdminLTE">Dashboard design</a></small>
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2018 <a href="#">Bartosz Jarmuż</a>.</strong> <small>Awesome Dashboard layout by <a href="https://github.com/almasaeed2010/AdminLTE">almasaeed2010</a>. All rights reserved.</small>
+    
+    @{
+        var ass = ViewContext.Controller.GetType().Assembly;
+        var version = ass.GetName().Version.ToString();
+    }
+  
+    <strong>TELIMENA v. @version</strong> 
 </footer>
