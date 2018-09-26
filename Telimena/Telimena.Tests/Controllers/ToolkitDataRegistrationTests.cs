@@ -6,6 +6,7 @@ using Telimena.Client;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 
 namespace Telimena.Tests
