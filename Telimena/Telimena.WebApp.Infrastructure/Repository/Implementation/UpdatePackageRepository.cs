@@ -7,7 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
@@ -23,8 +25,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
     internal class UpdatePackageRepository : Repository<ProgramUpdatePackageInfo>, IUpdatePackageRepository
     {
-        public UpdatePackageRepository(DbContext dbContext) : base(dbContext)
+        private readonly IAssemblyVersionReader versionReader;
+
+        public UpdatePackageRepository(DbContext dbContext, IAssemblyVersionReader versionReader) : base(dbContext)
         {
+            this.versionReader = versionReader;
             this.TelimenaContext = dbContext as TelimenaContext;
         }
 
@@ -32,19 +37,26 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         protected TelimenaContext TelimenaContext { get; }
 
-        public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string version, Stream fileStream, string supportedToolkitVersion
-            , IFileSaver fileSaver)
+        public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, Stream fileStream, string supportedToolkitVersion, IFileSaver fileSaver)
         {
-            ObjectValidator.Validate(() => Version.TryParse(version, out Version _)
-                , new InvalidOperationException($"[{version}] is not a valid version string"));
+            string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.Name, fileStream,  true);
+            fileStream.Position = 0;
+            string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(TelimenaPackageInfo.TelimenaAssemblyName, fileStream, false);
+            fileStream.Position = 0;
+            fileStream = await this.EnsureStreamIsZipped(TelimenaPackageInfo.TelimenaAssemblyName, fileStream);
+
+            if (actualToolkitVersion != null)
+            {
+                supportedToolkitVersion = actualToolkitVersion;
+            }
+
             ObjectValidator.Validate(() => Version.TryParse(supportedToolkitVersion, out Version _)
                 , new InvalidOperationException($"[{supportedToolkitVersion}] is not a valid version string"));
             ObjectValidator.Validate(() => this.TelimenaContext.ToolkitPackages.Any(x => x.Version == supportedToolkitVersion)
                 , new ArgumentException($"There is no toolkit package with version [{supportedToolkitVersion}]"));
 
-
-            string fileName = program.Name + " Update v. " + version + ".zip";
-            ProgramUpdatePackageInfo pkg = new ProgramUpdatePackageInfo(fileName, program.Id, version, fileStream.Length, supportedToolkitVersion);
+            string fileName = program.Name + " Update v. " + actualVersion + ".zip";
+            ProgramUpdatePackageInfo pkg = new ProgramUpdatePackageInfo(fileName, program.Id, actualVersion, fileStream.Length, supportedToolkitVersion);
 
             this.TelimenaContext.UpdatePackages.Add(pkg);
 

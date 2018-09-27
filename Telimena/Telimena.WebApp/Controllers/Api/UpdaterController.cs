@@ -88,19 +88,23 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> UploadUpdaterPackage()
+        public async Task<IHttpActionResult> Upload()
         {
             try
             {
-                string reqString = HttpContext.Current.Request.Form["Model"];
-                CreateUpdatePackageRequest request = JsonConvert.DeserializeObject<CreateUpdatePackageRequest>(reqString);
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
+                    if (uploadedFile.FileName != UpdaterPackageInfo.UpdaterFileName && !uploadedFile.FileName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return this.BadRequest(
+                            $"Incorrect file. Expected {UpdaterPackageInfo.UpdaterFileName} or {UpdaterPackageInfo.UpdaterPackageName}");
+                    }
+
                     UpdaterPackageInfo pkg =
-                        await this.work.UpdaterRepository.StorePackageAsync(request.PackageVersion, "0.0.0.0", uploadedFile.InputStream, this.fileSaver);
+                        await this.work.UpdaterRepository.StorePackageAsync("0.0.0.0", uploadedFile.InputStream, this.fileSaver);
                     await this.work.CompleteAsync();
-                    return this.Ok(pkg.Id);
+                    return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
                 }
 
                 return this.BadRequest("Empty attachment");

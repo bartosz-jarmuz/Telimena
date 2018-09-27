@@ -12,7 +12,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         public ToolkitDataUnitOfWork(TelimenaContext context, IAssemblyVersionReader versionReader)
         {
             this.context = context;
-            this.UpdaterRepository = new UpdaterRepository(context);
+            this.UpdaterRepository = new UpdaterRepository(context,versionReader);
             this.ToolkitDataRepository = new ToolkitDataRepository(context, versionReader);
         }
 

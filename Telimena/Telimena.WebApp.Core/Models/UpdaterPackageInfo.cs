@@ -6,13 +6,14 @@
         {
         }
 
-        public UpdaterPackageInfo(string version, long fileSizeBytes, string minimumRequiredToolkitVersion) : base(UpdaterFileName, fileSizeBytes)
+        public UpdaterPackageInfo(string version, long fileSizeBytes, string minimumRequiredToolkitVersion) : base(UpdaterPackageName, fileSizeBytes)
         {
             this.Version = version;
             this.MinimumRequiredToolkitVersion = minimumRequiredToolkitVersion;
         }
 
-        public const string UpdaterFileName = "Updater.zip";
+        public const string UpdaterPackageName = "Updater.zip";
+        public const string UpdaterFileName = "Updater.exe";
 
         public int Id { get; set; }
         public string Version { get; set; }

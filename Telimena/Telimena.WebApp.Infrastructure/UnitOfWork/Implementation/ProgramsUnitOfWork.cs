@@ -18,8 +18,8 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
             this.ToolkitData = new ToolkitDataRepository(context, versionReader);
-            this.UpdatePackages = new UpdatePackageRepository(context);
-            this.ProgramPackages = new ProgramPackageRepository(context);
+            this.UpdatePackages = new UpdatePackageRepository(context, versionReader);
+            this.ProgramPackages = new ProgramPackageRepository(context, versionReader);
             this.TelimenaUserManager = userManager;
         }
 

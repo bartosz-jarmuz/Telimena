@@ -33,27 +33,14 @@ namespace Telimena.WebApp.Controllers.Api
         private IProgramsUnitOfWork Work { get; }
 
         [HttpPost]
-        public IHttpActionResult Validate(CreateProgramPackageRequest request)
-        {
-            if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
-            {
-                return this.BadRequest(string.Join(", ", errors));
-            }
-
-            return this.Ok();
-        }
-
-        [HttpPost]
         public async Task<IHttpActionResult> Upload(int id)
         {
             try
             {
-                string reqString = HttpContext.Current.Request.Form["Model"];
-                CreateUpdatePackageRequest request = JsonConvert.DeserializeObject<CreateUpdatePackageRequest>(reqString);
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName,request.ToolkitVersionUsed, this.fileSaver);
+                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName, this.fileSaver);
                     await this.Work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }

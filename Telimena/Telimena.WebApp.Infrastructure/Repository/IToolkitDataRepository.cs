@@ -11,6 +11,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
     {
         Task<byte[]> GetPackage(int toolkitDataId, IFileRetriever fileRetriever);
         Task<List<TelimenaPackageInfo>> GetPackagesNewerThan(string version);
-        Task<TelimenaToolkitData> StorePackageAsync(string version, bool isBeta, bool introducesBreakingChanges, Stream fileStream, IFileSaver fileManager);
+        Task<TelimenaToolkitData> StorePackageAsync(bool isBeta, bool introducesBreakingChanges, Stream fileStream, IFileSaver fileManager);
     }
 }

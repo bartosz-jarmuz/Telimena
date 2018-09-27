@@ -83,13 +83,16 @@ namespace Telimena.WebApp.Controllers.Api
         {
             try
             {
-                string reqString = HttpContext.Current.Request.Form["Model"];
-                CreateUpdatePackageRequest request = JsonConvert.DeserializeObject<CreateUpdatePackageRequest>(reqString);
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
+                    if (uploadedFile.FileName != TelimenaPackageInfo.TelimenaAssemblyName &&!uploadedFile.FileName.EndsWith(".zip",StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return this.BadRequest(
+                            $"Incorrect file. Expected {TelimenaPackageInfo.TelimenaAssemblyName} or {TelimenaPackageInfo.ZippedPackageFileName}");
+                    }
                     TelimenaToolkitData pkg =
-                        await this.work.ToolkitDataRepository.StorePackageAsync(request.PackageVersion, false, false, uploadedFile.InputStream, this.fileSaver);
+                        await this.work.ToolkitDataRepository.StorePackageAsync(false, false, uploadedFile.InputStream, this.fileSaver);
                     await this.work.CompleteAsync();
                     return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
                 }

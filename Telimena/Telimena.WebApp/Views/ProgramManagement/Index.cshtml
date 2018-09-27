@@ -103,10 +103,6 @@
                 <div class="box-body">
                     <label class="confirmation label label-md" style="display: none"></label>
                     <div class="form-group">
-                        <label>Toolkit version used: </label>
-                        <input type="text" id="programPackageToolkitVersion"/>
-                    </div>
-                    <div class="form-group">
                         <span class="btn btn-success fileinput-button uploadedPackage">
                             <i class="glyphicon glyphicon-plus"></i>
                             <span>Select file</span>
@@ -142,7 +138,7 @@
 </div>
 <div class="row">
 
-    <div class="col-md-3">
+    <div class="col-md-6">
         <form id="uploadUpdatePackageForm" enctype="multipart/form-data" method="post">
             <div class="box box-primary">
                 <div class="box-header">
@@ -150,10 +146,6 @@
                 </div>
                 <div class="box-body">
                     <label class="confirmation label label-md" style="display: none"></label>
-                    <div class="form-group">
-                        <label>Update package version: </label>
-                        <input type="text" id="updatePackageVersion"/>
-                    </div>
                     <div class="form-group">
                         <label>Toolkit version used: </label>
                         <input type="text" id="updatePackageToolkitVersion"/>
@@ -190,26 +182,6 @@
                 </div>
             </div>
         </form>
-    </div>
-    <div class="col-md-3">
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">Version controlling</h3>
-            </div>
-            <div class="box-body">
-                <label class="confirmation label label-md" style="display: none"></label>
-                <div class="form-group">
-                    <label>Set latest version to: </label>
-                    <input type="text" id="newLatestVersionTextBox"/>
-                </div>
-                <div class="form-group">
-                    <div class="">
-                        <input type="submit" id="setLatestVersionButton" value="Set version" class="btn btn-primary"/>
-
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="col-md-6">
@@ -271,11 +243,15 @@
             LoadCurrentVersion();
             $('#setLatestVersionButton').click(function() {
                 HideConfirmationBox(this);
-                SetLatestVersion(this);
             });
             $('.uploadedPackage').change(function(e) { SingleFileSelected(e, $(this).find('input')) });
             $('#uploadUpdatePackageForm').submit(CreateUpdatePackage);
-            $('#uploadProgramPackageForm').submit(CreateProgramPackage);
+            $('#uploadProgramPackageForm').submit(function(e) {
+                e.preventDefault();
+                var form = $('#uploadProgramPackageForm')[0];
+                var formData = new FormData(form);
+                UploadFile(formData, '@Url.Action("Upload", "ProgramPackages")/' + @Model.ProgramId, $(this).find('input'));
+            });
         });
 
         function TogglePackageBeta(input) {
@@ -363,17 +339,6 @@
             ValidateUpdatePackageRequest($(this).find(':submit'), modelString, UploadFile);
         }
 
-        function CreateProgramPackage(e) {
-            e.preventDefault();
-            var model = {
-                @nameof(CreateProgramPackageRequest.ProgramId): @Model.ProgramId,
-                @nameof(CreateProgramPackageRequest.ToolkitVersionUsed): $('#programPackageToolkitVersion').val(),
-            };
-            var modelString = JSON.stringify(model);
-
-            ValidateProgramPackageRequest($(this).find(':submit'), modelString, UploadFile);
-        }
-
 
         function ProgressHandlingFunction(e, button) {
             var progressBar = $(button).closest('.form-group').prev('.progress').find('.progress-bar');
@@ -416,26 +381,7 @@
                 });
         }
 
-        function ValidateProgramPackageRequest(button, modelString, successCallback) {
-
-            $.ajax({
-                    type: 'POST',
-                    url: '/api' + '@Url.Action("Validate", "ProgramPackages")',
-                    contentType: "application/json; charset=utf-8",
-                    datatype: 'Json',
-                    data: modelString
-                })
-                .done(function() {
-                    var form = $('#uploadProgramPackageForm')[0];
-                    var formData = new FormData(form);
-                    formData.append('Model', modelString);
-                    successCallback(formData, '@Url.Action("Upload", "ProgramPackages")' + '/' + @Model.ProgramId,
-                        button);
-                })
-                .fail(function(xhr) {
-                    ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
-                });
-        }
+       
 
         function LoadCurrentVersion() {
             $('#latestVersion').html('...');
@@ -458,29 +404,7 @@
             });
         }
 
-        function SetLatestVersion(button) {
-
-            var dataObject = JSON.stringify({
-                @nameof(SetLatestVersionRequest.ProgramId): @Model.ProgramId,
-                @nameof(SetLatestVersionRequest.Version): $('#newLatestVersionTextBox').val(),
-            });
-
-            $.ajax({
-                    type: 'POST',
-                    url: '/api' + '@Url.Action("SetLatestVersion", "ProgramVersions")',
-                    contentType: "application/json; charset=utf-8",
-                    datatype: 'Json',
-                    data: dataObject
-                })
-                .done(function() {
-                    ShowConfirmationBox(button, 'label-success', 'Done!');
-                })
-                .fail(function(xhr) {
-                    ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
-                }).always(function() {
-                    LoadCurrentVersion();
-                });
-        }
+     
     </script>
 
 }

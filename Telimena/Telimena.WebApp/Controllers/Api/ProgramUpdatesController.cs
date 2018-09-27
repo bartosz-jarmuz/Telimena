@@ -170,7 +170,7 @@ namespace Telimena.WebApp.Controllers.Api
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
                     Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
-                    ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, request.PackageVersion, uploadedFile.InputStream
+                    ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, uploadedFile.InputStream
                         , request.ToolkitVersionUsed, this.fileSaver);
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);

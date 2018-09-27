@@ -75,7 +75,6 @@
     <Compile Include="DTO\UsageViewModel.cs" />
     <Compile Include="Interfaces\ITelimenaRepository.cs" />
     <Compile Include="Interfaces\Roles.cs" />
-    <Compile Include="Messages\CreateProgramPackageRequest.cs" />
     <Compile Include="Messages\CreateUpdatePackageRequest.cs" />
     <Compile Include="Messages\LatestVersionResponse.cs" />
     <Compile Include="Messages\SetLatestVersionRequest.cs" />

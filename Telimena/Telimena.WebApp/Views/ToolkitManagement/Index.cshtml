@@ -50,10 +50,6 @@
                             <div class="box-body">
                                 <label class="confirmation label label-md" style="display: none"></label>
                                 <div class="form-group">
-                                    <label>Toolkit version: </label>
-                                    <input type="text" id="toolkitUpdatePackageVersion"/>
-                                </div>
-                                <div class="form-group">
                                     <span class="btn btn-success fileinput-button uploadedPackage">
                                         <i class="glyphicon glyphicon-plus"></i>
                                         <span>Add files...</span>
@@ -167,7 +163,7 @@
                         <div class="box-body">
                             <label class="confirmation label label-md" style="display: none"></label>
                             <div class="form-group">
-                                <label>Updater version: </label>
+                                <label>Required toolkit version: </label>
                                 <input type="text" id="updaterUpdatePackageVersion"/>
                             </div>
                             <div class="form-group">
@@ -253,6 +249,7 @@
         </div>
     </div>
 </div>
+</div>
 
 @section scripts
 {
@@ -265,15 +262,15 @@
             $('.uploadedPackage').change(function(e) { SingleFileSelected(e, $(this).find('input')) });
             $('#uploadUpdaterUpdatePackageForm').submit(function(e) {
                 e.preventDefault();
-                CreateUpdatePackage('@Url.Action("UploadUpdaterPackage", "Updater")',
-                    $('#updaterUpdatePackageVersion')[0],
-                    $(this));
+                var form = $('#uploadUpdaterUpdatePackageForm')[0];
+                var formData = new FormData(form);
+                UploadFile(formData,  '@Url.Action("Upload", "Updater")', $(this).find(':submit'));
             });
             $('#uploadToolkitUpdatePackageForm').submit(function(e) {
                 e.preventDefault();
-                CreateUpdatePackage('@Url.Action("Upload", "Toolkit")',
-                    $('#toolkitUpdatePackageVersion')[0],
-                    $(this));
+                var form = $('#uploadToolkitUpdatePackageForm')[0];
+                var formData = new FormData(form);
+                UploadFile(formData, '@Url.Action("Upload", "Toolkit")', $(this).find(':submit'));
             });
         });
 
@@ -326,18 +323,6 @@
 
 
             });
-        }
-
-
-        function CreateUpdatePackage(url, versionElement, form) {
-            var model = {
-                @nameof(CreateUpdatePackageRequest.PackageVersion): $(versionElement).val(),
-            };
-            var modelString = JSON.stringify(model);
-
-            var formData = new FormData($(form)[0]);
-            formData.append('Model', modelString);
-            UploadFile(formData, url, $(form).find(':submit'));
         }
 
 
