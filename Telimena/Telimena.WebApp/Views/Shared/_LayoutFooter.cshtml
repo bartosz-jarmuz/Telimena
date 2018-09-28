@@ -1,4 +1,6 @@
-﻿<!-- Main Footer -->
+﻿@using System.Diagnostics
+@using System.Reflection
+<!-- Main Footer -->
 <footer class="main-footer">
     <!-- To the right -->
     <div class="pull-right hidden-xs">
@@ -7,9 +9,11 @@
     <!-- Default to the left -->
     
     @{
-        var ass = ViewContext.Controller.GetType().Assembly;
-        var version = ass.GetName().Version.ToString();
+        Assembly ass = ViewContext.Controller.GetType().Assembly;
+        string version = ass.GetName().Version.ToString();
+        DateTime lastDeploymentDate = new FileInfo(ass.Location).LastWriteTimeUtc;
+        TimeSpan dateDiff = (DateTime.UtcNow - lastDeploymentDate);
     }
   
-    <strong>TELIMENA v. @version</strong> 
+    <strong>TELIMENA v. @version</strong> Deployed @lastDeploymentDate.ToString("U") UTC (@dateDiff.TotalHours.ToString("F") hours ago)
 </footer>
