@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
-using Telimena.ToolkitClient;
+using TelimenaClient;
 
 namespace TelimenaTestSandboxApp
 {

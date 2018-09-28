@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     internal interface ITelimenaHttpClient
     {

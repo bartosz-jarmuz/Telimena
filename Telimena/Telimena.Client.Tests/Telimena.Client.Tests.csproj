@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestReportUsageRequests.cs" />
+    <Compile Include="TestSandboxAppBuilding.cs" />
     <Compile Include="TestSerializer.cs" />
     <Compile Include="TestStaticClient.cs" />
     <Compile Include="UpdateCheckTests.cs" />
@@ -105,6 +106,10 @@
     <ProjectReference Include="..\Telimena.WebApp.Core\Telimena.WebApp.Core.csproj">
       <Project>{FFD85253-874C-41CB-9242-9267BFA3647B}</Project>
       <Name>Telimena.WebApp.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TelimenaTestSandboxApp\TelimenaTestSandboxApp.csproj">
+      <Project>{acc4afb3-4417-4736-be49-37aeef3ef458}</Project>
+      <Name>TelimenaTestSandboxApp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

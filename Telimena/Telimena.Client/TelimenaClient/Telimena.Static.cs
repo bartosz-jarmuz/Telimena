@@ -5,9 +5,9 @@ using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Telimena.ToolkitClient.Serializer;
+using TelimenaClient.Serializer;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
 
     /// <summary>

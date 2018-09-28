@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Telimena.Updater;
 using Telimena.WebApp.Core.Models;
-using Telimena.ToolkitClient;
+using TelimenaClient;
 
 namespace Telimena.Client.Tests
 {
@@ -58,7 +58,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_CheckForUpdates_OnlyProgram()
         {
-            ToolkitClient.Telimena sut = new ToolkitClient.Telimena {SuppressAllErrors = false};
+            TelimenaClient.Telimena sut = new TelimenaClient.Telimena {SuppressAllErrors = false};
             Assert.AreEqual("Telimena.Client.Tests", sut.ProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
@@ -86,7 +86,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_CheckForUpdates_Program_AndUpdater()
         {
-            ToolkitClient.Telimena sut = new ToolkitClient.Telimena { SuppressAllErrors = false };
+            TelimenaClient.Telimena sut = new TelimenaClient.Telimena { SuppressAllErrors = false };
             Assert.AreEqual("Telimena.Client.Tests", sut.ProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
@@ -118,7 +118,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_OnlyUpdaterUpdates()
         {
-            ToolkitClient.Telimena sut = new ToolkitClient.Telimena { SuppressAllErrors = false };
+            TelimenaClient.Telimena sut = new TelimenaClient.Telimena { SuppressAllErrors = false };
 
             UpdateResponse latestVersionResponse = new UpdateResponse
             {
@@ -141,7 +141,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_NoUpdates()
         {
-            ToolkitClient.Telimena sut = new ToolkitClient.Telimena { SuppressAllErrors = false };
+            TelimenaClient.Telimena sut = new TelimenaClient.Telimena { SuppressAllErrors = false };
 
           
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(),new UpdateResponse()));

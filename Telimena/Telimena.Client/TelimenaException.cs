@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     /// <summary>
     /// Class TelimenaException.

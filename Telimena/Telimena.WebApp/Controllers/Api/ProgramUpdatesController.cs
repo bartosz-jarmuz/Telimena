@@ -18,8 +18,8 @@ using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
-using Telimena.ToolkitClient;
-using Telimena.ToolkitClient.Serializer;
+using TelimenaClient;
+using TelimenaClient.Serializer;
 
 namespace Telimena.WebApp.Controllers.Api
 {

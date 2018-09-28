@@ -6,8 +6,8 @@
 
 using DotNetLittleHelpers;
 using NUnit.Framework;
-using Telimena.ToolkitClient;
-using Telimena.ToolkitClient.Serializer;
+using TelimenaClient;
+using TelimenaClient.Serializer;
 
 namespace Telimena.Client.Tests
 {

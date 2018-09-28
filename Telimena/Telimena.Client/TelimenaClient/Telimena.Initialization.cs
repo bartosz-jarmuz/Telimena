@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     #region Using
 

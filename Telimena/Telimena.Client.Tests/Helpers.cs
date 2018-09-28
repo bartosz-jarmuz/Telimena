@@ -2,7 +2,7 @@
 using System.Net.Http;
 using Moq;
 using NUnit.Framework;
-using Telimena.ToolkitClient;
+using TelimenaClient;
 
 namespace Telimena.Client.Tests
 {
@@ -18,7 +18,7 @@ namespace Telimena.Client.Tests
             return client;
         }
 
-        public static void SetupMockHttpClient(ToolkitClient.Telimena telimena, Mock<ITelimenaHttpClient> client)
+        public static void SetupMockHttpClient(TelimenaClient.Telimena telimena, Mock<ITelimenaHttpClient> client)
         {
             telimena.Messenger = new Messenger(telimena.Serializer, client.Object);
         }

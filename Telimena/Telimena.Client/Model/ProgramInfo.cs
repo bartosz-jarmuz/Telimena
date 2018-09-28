@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     /// <summary>
     ///     A data about a program

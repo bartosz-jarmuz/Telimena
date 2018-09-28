@@ -7,7 +7,7 @@
     <ProjectGuid>{8BC1DD73-2520-4361-9845-282E87442339}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Telimena.ToolkitClient</RootNamespace>
+    <RootNamespace>TelimenaClient</RootNamespace>
     <AssemblyName>Telimena.Client</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -14,8 +14,8 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
-using Telimena.ToolkitClient;
-using Telimena.ToolkitClient.Serializer;
+using TelimenaClient;
+using TelimenaClient.Serializer;
 
 namespace Telimena.Tests
 {

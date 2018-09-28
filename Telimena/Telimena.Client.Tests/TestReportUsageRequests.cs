@@ -11,8 +11,8 @@ using DotNetLittleHelpers;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Telimena.ToolkitClient;
-using Telimena.ToolkitClient.Serializer;
+using TelimenaClient;
+using TelimenaClient.Serializer;
 
 namespace Telimena.Client.Tests
 {
@@ -63,7 +63,7 @@ namespace Telimena.Client.Tests
         public void Test_NoCustomData()
         {
 
-            ToolkitClient.Telimena telimena = new ToolkitClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
             {
                 SuppressAllErrors = false
             };
@@ -88,7 +88,7 @@ namespace Telimena.Client.Tests
         public void Test_NullCustomData()
         {
 
-            ToolkitClient.Telimena telimena = new ToolkitClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
             {
                 SuppressAllErrors = false
             };
@@ -113,7 +113,7 @@ namespace Telimena.Client.Tests
         public void Test_CustomDataString()
         {
 
-            ToolkitClient.Telimena telimena = new ToolkitClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
             {
                 SuppressAllErrors = false
             };
@@ -137,7 +137,7 @@ namespace Telimena.Client.Tests
         public void Test_CustomDataObject()
         {
 
-            ToolkitClient.Telimena telimena = new ToolkitClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
             {
                 SuppressAllErrors = false
             };
@@ -164,7 +164,7 @@ namespace Telimena.Client.Tests
         public void Test_InvalidDataObject()
         {
 
-            ToolkitClient.Telimena telimena = new ToolkitClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
             {
                 SuppressAllErrors = false
             };

@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     #region Using
 

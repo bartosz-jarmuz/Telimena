@@ -6,7 +6,7 @@ using System.Web.Http;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
-using Telimena.ToolkitClient;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers.Api
 {

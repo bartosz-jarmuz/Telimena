@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     #region Using
 

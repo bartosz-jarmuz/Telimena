@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.IO;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     internal static class StartInfoCreator
     {

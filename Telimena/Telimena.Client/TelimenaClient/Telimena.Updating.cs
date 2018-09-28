@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     /// <summary>
     /// Telemetry and Lifecycle Management Engine App

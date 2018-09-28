@@ -15,7 +15,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     #region Using
 

@@ -1,4 +1,4 @@
-﻿namespace Telimena.ToolkitClient
+﻿namespace TelimenaClient
 {
     /// <summary>
     /// Class RegistrationResponse.

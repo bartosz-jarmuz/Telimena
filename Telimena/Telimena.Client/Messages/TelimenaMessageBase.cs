@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     /// <summary>
     /// Class TelimenaResponseBase.

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     internal static class UpdateInstructionCreator
     {

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Telimena.WebApp.Core.Models;
-using Telimena.ToolkitClient;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure
 {

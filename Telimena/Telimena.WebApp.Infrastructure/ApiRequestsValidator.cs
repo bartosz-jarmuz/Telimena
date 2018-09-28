@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Messages;
-using Telimena.ToolkitClient;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure
 {

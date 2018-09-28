@@ -1,4 +1,4 @@
-﻿namespace Telimena.ToolkitClient
+﻿namespace TelimenaClient
 {
     internal static class ApiRoutes
     {

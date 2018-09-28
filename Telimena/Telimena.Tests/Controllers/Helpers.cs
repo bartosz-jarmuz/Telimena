@@ -9,7 +9,7 @@ using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
-using Telimena.ToolkitClient;
+using TelimenaClient;
 
 namespace Telimena.Tests
 {

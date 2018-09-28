@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Telimena.ToolkitClient.Serializer;
+using TelimenaClient.Serializer;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     #region Using
 

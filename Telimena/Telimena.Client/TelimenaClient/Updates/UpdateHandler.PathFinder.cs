@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Telimena.ToolkitClient
+namespace TelimenaClient
 {
     internal partial class UpdateHandler
     {

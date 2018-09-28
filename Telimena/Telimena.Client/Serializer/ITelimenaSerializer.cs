@@ -1,5 +1,5 @@
 ﻿
-namespace Telimena.ToolkitClient.Serializer
+namespace TelimenaClient.Serializer
 {
     /// <summary>
     /// Interface ITelimenaSerializer
