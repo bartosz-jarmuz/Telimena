@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>$packageName</id>
+    <version>$version$</version>
+    <title>$packageName</title>
+    <authors>Bartosz Jarmuż</authors>
+    <owners>Bartosz Jarmuż</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$packageDescription</description>
+    <copyright>Copyright © Bartosz Jarmuż 2018</copyright>
+    <tags>telemetry lifecycle</tags>
+  </metadata>
+</package>
