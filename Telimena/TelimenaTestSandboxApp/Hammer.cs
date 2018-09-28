@@ -7,7 +7,7 @@ using TelimenaClient;
 
 namespace TelimenaTestSandboxApp
 {
-    internal class TelimenaHammer
+    public class TelimenaHammer
     {
         public class CustomData
         {

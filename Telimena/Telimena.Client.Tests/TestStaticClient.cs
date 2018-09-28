@@ -19,7 +19,7 @@ namespace TelimenaClient.Tests
 
     #endregion
 
-    [TestFixture, Ignore("Static tests seem problematic ATM")]
+    [TestFixture]
     public class TestStaticClient
     {
         private Mock<ITelimenaHttpClient> GetMockClientForStaticClient_FirstRequestPass()
@@ -41,7 +41,7 @@ namespace TelimenaClient.Tests
             return client;
         }
 
-        [Test, Ignore("temporarily")]
+        [Test]
         public void Test_StaticClient_IsProperFunctionRecorded()
         {
             Mock<ITelimenaHttpClient> client = this.GetMockClientForStaticClient_FirstRequestPass();

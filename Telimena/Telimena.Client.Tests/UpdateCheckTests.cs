@@ -24,7 +24,7 @@ namespace TelimenaClient.Tests
 
     #endregion
 
-    [TestFixture, Ignore("temporarily")]
+    [TestFixture]
     public class TestUpdateChecks
     {
         private Mock<ITelimenaHttpClient> GetMockClientForCheckForUpdates(object programUpdatesResponse, object updaterResponse)

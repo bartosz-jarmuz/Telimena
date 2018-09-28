@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using TelimenaTestSandboxApp;
 
 namespace TelimenaClient.Tests
 {
@@ -8,7 +9,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void JustCallItEnsureItBuilds()
         {
-            var form = new TelimenaTestSandboxApp.Form1();
+            TelimenaHammer hammer = null;//no action needed
         }
     }
 }
