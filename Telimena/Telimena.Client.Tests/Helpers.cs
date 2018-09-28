@@ -2,9 +2,8 @@
 using System.Net.Http;
 using Moq;
 using NUnit.Framework;
-using TelimenaClient;
 
-namespace Telimena.Client.Tests
+namespace TelimenaClient.Tests
 {
     internal static class Helpers
     {

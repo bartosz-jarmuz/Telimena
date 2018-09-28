@@ -6,10 +6,9 @@
 
 using DotNetLittleHelpers;
 using NUnit.Framework;
-using TelimenaClient;
 using TelimenaClient.Serializer;
 
-namespace Telimena.Client.Tests
+namespace TelimenaClient.Tests
 {
     #region Using
 

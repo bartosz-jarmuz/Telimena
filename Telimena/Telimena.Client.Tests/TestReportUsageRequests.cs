@@ -7,14 +7,12 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DotNetLittleHelpers;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using TelimenaClient;
 using TelimenaClient.Serializer;
 
-namespace Telimena.Client.Tests
+namespace TelimenaClient.Tests
 {
     #region Using
 

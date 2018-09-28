@@ -6,11 +6,9 @@
 
 using System;
 using DotNetLittleHelpers;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using TelimenaClient;
 
-namespace Telimena.Client.Tests
+namespace TelimenaClient.Tests
 {
     #region Using
 

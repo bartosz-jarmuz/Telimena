@@ -19,9 +19,11 @@ namespace TelimenaClient
         /// <summary>
         /// The default API URI
         /// </summary>
-        private static readonly Uri DefaultApiUri = new Uri("http://localhost:7757/");
+        internal static readonly Uri DefaultApiUri = new Uri("http://localhost:7757/");
+#elif Dev
+        internal static readonly Uri DefaultApiUri = new Uri("https://telimena-dev.azurewebsites.net/");
 #else
-        private static readonly Uri DefaultApiUri = new Uri("https://telimena-test.azurewebsites.net/");
+        internal static readonly Uri DefaultApiUri = new Uri("https://telimena-test.azurewebsites.net/");
 #endif
         /// <summary>
         /// Gets the user information.

@@ -17,9 +17,8 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Telimena.Updater;
 using Telimena.WebApp.Core.Models;
-using TelimenaClient;
 
-namespace Telimena.Client.Tests
+namespace TelimenaClient.Tests
 {
     #region Using
 
