@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 namespace Telimena.Client
 {
     /// <summary>
-    ///     Telemetry and Lifecycle Management Engine App
-    ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
+    /// Telemetry and Lifecycle Management Engine App
+    /// <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
     /// </summary>
     public partial class Telimena : ITelimena
     {
+        /// <summary>
+        /// Performs an update check and returns the result which allows custom handling of the update process.
+        /// It will return info about beta versions as well.
+        /// </summary>
+        /// <returns>Task&lt;UpdateCheckResult&gt;.</returns>
         /// <inheritdoc />
         public async Task<UpdateCheckResult> CheckForUpdates()
         {
@@ -39,6 +44,11 @@ namespace Telimena.Client
             }
         }
 
+        /// <summary>
+        /// Handles the updating process from start to end
+        /// </summary>
+        /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
+        /// <returns>Task.</returns>
         /// <inheritdoc />
         public async Task HandleUpdates(bool acceptBeta)
         {
@@ -66,18 +76,33 @@ namespace Telimena.Client
             }
         }
 
+        /// <summary>
+        /// Gets the program update response.
+        /// </summary>
+        /// <param name="takeBeta">if set to <c>true</c> [take beta].</param>
+        /// <returns>Task&lt;UpdateResponse&gt;.</returns>
         protected async Task<UpdateResponse> GetProgramUpdateResponse(bool takeBeta)
         {
             string responseContent = await this.Messenger.SendGetRequest(this.GetUpdateRequestUrl(takeBeta));
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
+        /// <summary>
+        /// Gets the updater update response.
+        /// </summary>
+        /// <param name="takeBeta">if set to <c>true</c> [take beta].</param>
+        /// <returns>Task&lt;UpdateResponse&gt;.</returns>
         protected async Task<UpdateResponse> GetUpdaterUpdateResponse(bool takeBeta)
         {
             string responseContent = await this.Messenger.SendGetRequest(this.GetUpdaterUpdateRequestUrl(takeBeta));
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
+        /// <summary>
+        /// Gets the update request URL.
+        /// </summary>
+        /// <param name="takeBeta">if set to <c>true</c> [take beta].</param>
+        /// <returns>System.String.</returns>
         private string GetUpdateRequestUrl(bool takeBeta)
         {
             try
@@ -94,6 +119,11 @@ namespace Telimena.Client
             }
         }
 
+        /// <summary>
+        /// Gets the updater update request URL.
+        /// </summary>
+        /// <param name="takeBeta">if set to <c>true</c> [take beta].</param>
+        /// <returns>System.String.</returns>
         private string GetUpdaterUpdateRequestUrl(bool takeBeta)
         {
             UpdateRequest model = new UpdateRequest(this.ProgramId, this.ProgramVersion, this.UserId, takeBeta, this.TelimenaVersion, this.UpdaterVersion);

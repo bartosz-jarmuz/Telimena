@@ -28,7 +28,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             return version;
         }
 
-        public async Task<string> GetVersionFromPackage(string assemblyName, Stream fileStream, bool required = true)
+        public async Task<string> GetVersionFromPackage(string nameOfFileToCheck, Stream fileStream, bool required = true)
         {
             var zipPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), "package.zip");
             Directory.CreateDirectory(Path.GetDirectoryName(zipPath));
@@ -43,7 +43,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 
             foreach (string file in Directory.GetFiles(Path.GetDirectoryName(zipPath), "*", SearchOption.AllDirectories))
             {
-                if (Path.GetFileName(file).Equals(assemblyName, StringComparison.InvariantCultureIgnoreCase) || Path.GetFileNameWithoutExtension(file).Equals(assemblyName, StringComparison.InvariantCultureIgnoreCase))
+                if (Path.GetFileName(file).Equals(nameOfFileToCheck, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return FileVersionInfo.GetVersionInfo(file).FileVersion;
                 }
@@ -51,7 +51,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 
             if (required)
             {
-                throw new FileNotFoundException( $"Failed to find the required assembly in the uploaded package. [{assemblyName}] should be present.", assemblyName);
+                throw new FileNotFoundException( $"Failed to find the required assembly in the uploaded package. [{nameOfFileToCheck}] should be present.", nameOfFileToCheck);
             }
 
             return null;

@@ -39,7 +39,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, Stream fileStream, string supportedToolkitVersion, IFileSaver fileSaver)
         {
-            string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.Name, fileStream,  true);
+            string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  true);
             fileStream.Position = 0;
             string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(TelimenaPackageInfo.TelimenaAssemblyName, fileStream, false);
             fileStream.Position = 0;

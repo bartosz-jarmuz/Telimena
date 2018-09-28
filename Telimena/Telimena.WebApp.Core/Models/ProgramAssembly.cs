@@ -8,12 +8,11 @@ namespace Telimena.WebApp.Core.Models
     public class ProgramAssembly
     {
         public int Id { get; set; }
-
         public int ProgramId { get; set; }
         public virtual Program Program { get; set; }
         public virtual Program PrimaryOf { get; set; }
-
         public string Name { get; set; }
+        public string Extension { get; set; }
         public string Product { get; set; }
         public string Trademark { get; set; }
         public string Description { get; set; }
@@ -23,6 +22,10 @@ namespace Telimena.WebApp.Core.Models
         public string FullName { get; set; }
         public virtual RestrictedAccessCollection<AssemblyVersion> Versions { get; set; } = new List<AssemblyVersion>();
 
+        public string GetFileName()
+        {
+            return this.Name + this.Extension;
+        }
         public virtual AssemblyVersion LatestVersion { get; private set; }
 
         public void AddVersion(string version)

@@ -14,8 +14,5 @@
         public int Id { get; set; }
         public string Version { get; set; }
         public virtual TelimenaPackageInfo TelimenaPackageInfo { get; set; }
-
-        public bool IntroducesBreakingChanges { get; set; }
-
     }
 }

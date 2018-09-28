@@ -15,6 +15,14 @@ namespace Telimena.Client
     /// </summary>
     public partial class Telimena : ITelimena
     {
+        /// <summary>
+        /// Report the usage of the application function.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="customDataObject">A simple data object to be serialized and sent to Telimena. MUST BE JSON SERIALIZABLE</param>
+        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
+        /// <returns>Task&lt;StatisticsUpdateResponse&gt;.</returns>
+        /// <exception cref="ArgumentException">Invalid object passed as custom data for telemetry.</exception>
         public Task<StatisticsUpdateResponse> ReportUsageWithCustomData<T>(T customDataObject, [CallerMemberName] string functionName = null)
         {
             string serialized = null;

@@ -29,7 +29,7 @@ namespace Telimena.Client
         {
             if (telemetryApiBaseUrl == null)
             {
-                telemetryApiBaseUrl = defaultApiUri;
+                telemetryApiBaseUrl = DefaultApiUri;
             }
 
             if (mainAssembly == null)
@@ -59,7 +59,7 @@ namespace Telimena.Client
         {
             if (telemetryApiBaseUrl == null)
             {
-                telemetryApiBaseUrl = defaultApiUri;
+                telemetryApiBaseUrl = DefaultApiUri;
             }
 
             Assembly assembly = GetProperCallingAssembly();

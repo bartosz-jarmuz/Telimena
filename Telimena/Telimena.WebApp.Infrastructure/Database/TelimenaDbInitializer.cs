@@ -7,7 +7,7 @@ using Telimena.WebApp.Core.Models;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
-    public class TelimenaDbInitializer : CreateDatabaseIfNotExists<TelimenaContext>
+    public class TelimenaDbInitializer : DropCreateDatabaseIfModelChanges<TelimenaContext>
     {
         public static void SeedUsers(TelimenaContext context)
         {

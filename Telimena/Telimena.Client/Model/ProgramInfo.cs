@@ -28,6 +28,10 @@ namespace Telimena.Client
         /// </summary>
         public List<AssemblyInfo> HelperAssemblies { get; set; }
 
+        /// <summary>
+        /// Gets the primary assembly path.
+        /// </summary>
+        /// <value>The primary assembly path.</value>
         public string PrimaryAssemblyPath => this.PrimaryAssembly?.Location;
     }
 }
