@@ -42,7 +42,7 @@ namespace Telimena.Client.Tests
             return client;
         }
 
-        [Test]
+        [Test, Ignore("temporarily")]
         public void Test_StaticClient_IsProperFunctionRecorded()
         {
             Mock<ITelimenaHttpClient> client = this.GetMockClientForStaticClient_FirstRequestPass();
