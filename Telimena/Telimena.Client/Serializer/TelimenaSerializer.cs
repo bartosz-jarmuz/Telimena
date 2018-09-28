@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Script.Serialization;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient.Serializer
 {
     /// <summary>
     /// Handles serialization 

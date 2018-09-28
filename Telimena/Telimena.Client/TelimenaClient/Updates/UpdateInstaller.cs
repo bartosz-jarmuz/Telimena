@@ -4,7 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient
 {
     internal class UpdateInstaller : IInstallUpdates
     {

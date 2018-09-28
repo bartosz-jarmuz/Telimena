@@ -1,4 +1,4 @@
-﻿namespace Telimena.Client
+﻿namespace Telimena.ToolkitClient
 {
     /// <summary>
     /// Class StatisticsUpdateResponse.

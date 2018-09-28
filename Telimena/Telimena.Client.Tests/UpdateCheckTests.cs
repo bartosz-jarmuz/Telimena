@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Telimena.Updater;
 using Telimena.WebApp.Core.Models;
+using Telimena.ToolkitClient;
 
 namespace Telimena.Client.Tests
 {
@@ -57,7 +58,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_CheckForUpdates_OnlyProgram()
         {
-            Telimena sut = new Telimena {SuppressAllErrors = false};
+            ToolkitClient.Telimena sut = new ToolkitClient.Telimena {SuppressAllErrors = false};
             Assert.AreEqual("Telimena.Client.Tests", sut.ProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
@@ -85,7 +86,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_CheckForUpdates_Program_AndUpdater()
         {
-            Telimena sut = new Telimena { SuppressAllErrors = false };
+            ToolkitClient.Telimena sut = new ToolkitClient.Telimena { SuppressAllErrors = false };
             Assert.AreEqual("Telimena.Client.Tests", sut.ProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
@@ -117,7 +118,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_OnlyUpdaterUpdates()
         {
-            Telimena sut = new Telimena { SuppressAllErrors = false };
+            ToolkitClient.Telimena sut = new ToolkitClient.Telimena { SuppressAllErrors = false };
 
             UpdateResponse latestVersionResponse = new UpdateResponse
             {
@@ -140,7 +141,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_NoUpdates()
         {
-            Telimena sut = new Telimena { SuppressAllErrors = false };
+            ToolkitClient.Telimena sut = new ToolkitClient.Telimena { SuppressAllErrors = false };
 
           
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(),new UpdateResponse()));

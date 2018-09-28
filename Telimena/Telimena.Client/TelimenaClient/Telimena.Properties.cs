@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Telimena.ToolkitClient.Serializer;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient
 {
     #region Using
 
@@ -20,7 +21,7 @@ namespace Telimena.Client
         /// </summary>
         private static readonly Uri DefaultApiUri = new Uri("http://localhost:7757/");
 #else
-        private static readonly Uri defaultApiUri = new Uri("https://telimena-test.azurewebsites.net/");
+        private static readonly Uri DefaultApiUri = new Uri("https://telimena-test.azurewebsites.net/");
 #endif
         /// <summary>
         /// Gets the user information.

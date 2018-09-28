@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient
 {
     #region Using
 

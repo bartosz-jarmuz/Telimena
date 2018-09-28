@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient
 {
     internal class DefaultWpfInputReceiver : IReceiveUserInput
     {

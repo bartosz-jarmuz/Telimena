@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Web.Script.Serialization;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient.Serializer
 {
     internal class NullPropertiesConverter : JavaScriptConverter
     {

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telimena.Client;
+using Telimena.ToolkitClient;
+using Telimena.ToolkitClient.Serializer;
 
 namespace Telimena.WebApp.Infrastructure
 {

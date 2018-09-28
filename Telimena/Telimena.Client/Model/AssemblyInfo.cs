@@ -11,10 +11,11 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+
 using System.IO;
 using System.Reflection;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient
 {
     #region Using
 

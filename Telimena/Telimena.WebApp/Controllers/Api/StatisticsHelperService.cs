@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using DotNetLittleHelpers;
-using Telimena.Client;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
+using Telimena.ToolkitClient;
 
 namespace Telimena.WebApp.Controllers.Api
 {

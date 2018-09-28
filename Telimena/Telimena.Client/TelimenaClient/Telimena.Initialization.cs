@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient
 {
     #region Using
 
@@ -16,6 +16,12 @@ namespace Telimena.Client
     /// </summary>
     public partial class Telimena : ITelimena
     {
+        /// <summary>
+        /// Initializes the Telimena client. <para />
+        /// Each time initialization is called, it will increment the program usage statistics.
+        /// It should be called once per application execution
+        /// </summary>
+        /// <returns>Task&lt;RegistrationResponse&gt;.</returns>
         public async Task<RegistrationResponse> Initialize()
         {
             return await this.RegisterClient();

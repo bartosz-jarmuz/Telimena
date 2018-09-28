@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Telimena.Client
+﻿namespace Telimena.ToolkitClient
 {
     /// <summary>
     ///     Telemetry and Lifecycle Management Engine App

@@ -3,10 +3,10 @@ using System.IdentityModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Telimena.Client;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
+using Telimena.ToolkitClient;
 
 namespace Telimena.WebApp.Controllers.Api
 {

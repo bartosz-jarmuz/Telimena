@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using DotNetLittleHelpers;
-using Telimena.Client;
 using Telimena.WebApp.Core.Messages;
+using Telimena.ToolkitClient;
 
 namespace Telimena.WebApp.Infrastructure
 {

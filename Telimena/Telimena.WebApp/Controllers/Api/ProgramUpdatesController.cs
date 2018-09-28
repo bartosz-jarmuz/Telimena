@@ -11,7 +11,6 @@ using System.Web.Http;
 using AutoMapper;
 using DotNetLittleHelpers;
 using Newtonsoft.Json;
-using Telimena.Client;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -19,6 +18,8 @@ using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
+using Telimena.ToolkitClient;
+using Telimena.ToolkitClient.Serializer;
 
 namespace Telimena.WebApp.Controllers.Api
 {

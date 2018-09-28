@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
-using Telimena.Client;
+using Telimena.ToolkitClient;
 
 namespace TelimenaTestSandboxApp
 {
@@ -13,7 +13,7 @@ namespace TelimenaTestSandboxApp
         {
             this.InitializeComponent();
             this.apiUrlTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.baseUri) ? "http://localhost:7757/" : Properties.Settings.Default.baseUri;
-            this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
             this.Text = $"Sandbox v. {Assembly.GetExecutingAssembly().GetName().Version}";
         }
 
@@ -35,7 +35,7 @@ namespace TelimenaTestSandboxApp
             return new JavaScriptSerializer().Serialize(response);
         }
 
-        private Telimena.Client.Telimena teli;
+        private Telimena teli;
         private TelimenaHammer hammer;
 
         private async void InitializeButton_Click(object sender, EventArgs e)
@@ -91,7 +91,7 @@ namespace TelimenaTestSandboxApp
 
         private void setAppButton_Click(object sender, EventArgs e)
         {
-            this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
             if (!string.IsNullOrEmpty(this.appNameTextBox.Text))
             {
                 this.teli.ProgramInfo = new ProgramInfo
@@ -113,7 +113,7 @@ namespace TelimenaTestSandboxApp
 
         private void useCurrentAppButton_Click(object sender, EventArgs e)
         {
-            this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
             Properties.Settings.Default.baseUri = this.apiUrlTextBox.Text;
             Properties.Settings.Default.Save();
         }
@@ -125,14 +125,14 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.static_functionNameTextBox.Text))
             {
-                result = await Telimena.Client.Telimena.ReportUsageStatic(string.IsNullOrEmpty(this.static_functionNameTextBox.Text)
+                result = await Telimena.ReportUsageStatic(string.IsNullOrEmpty(this.static_functionNameTextBox.Text)
                     ? null
                     : this.static_functionNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = await Telimena.Client.Telimena.ReportUsageStatic();
+                result = await Telimena.ReportUsageStatic();
                 sw.Stop();
             }
 

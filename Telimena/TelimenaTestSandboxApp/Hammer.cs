@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
-using Telimena.Client;
+using Telimena.ToolkitClient;
 
 namespace TelimenaTestSandboxApp
 {
@@ -101,7 +101,7 @@ namespace TelimenaTestSandboxApp
             {
                 ProgramInfo programInfo = new ProgramInfo {Name = "Program_" + i, PrimaryAssembly = new AssemblyInfo {Name = "PrimaryAssembly_Program_" + i, Version = $"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}" }};
                 this.apps.Add(programInfo);
-                Telimena.Client.Telimena teli = new Telimena.Client.Telimena(programInfo, new Uri(this.url));
+                Telimena teli = new Telimena(programInfo, new Uri(this.url));
                 await teli.RegisterClient();
 
             }
@@ -130,7 +130,7 @@ namespace TelimenaTestSandboxApp
             while (this.timeoutStopwatch.IsRunning && this.timeoutStopwatch.ElapsedMilliseconds < this.duration.TotalMilliseconds)
             {
                 ProgramInfo prg = this.apps[random.Next(0, this.apps.Count)];
-                Telimena.Client.Telimena teli = new Telimena.Client.Telimena(prg, new Uri(this.url));
+                Telimena teli = new Telimena(prg, new Uri(this.url));
 
                 TelimenaResponseBase result;
                 var operation = random.Next(4);

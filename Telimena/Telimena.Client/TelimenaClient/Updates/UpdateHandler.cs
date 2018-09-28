@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient
 {
     internal partial class UpdateHandler
     {

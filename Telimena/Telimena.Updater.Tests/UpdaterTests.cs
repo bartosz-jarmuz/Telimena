@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
-using Telimena.Client;
+using Telimena.ToolkitClient;
 
 namespace Telimena.Updater.Tests
 {

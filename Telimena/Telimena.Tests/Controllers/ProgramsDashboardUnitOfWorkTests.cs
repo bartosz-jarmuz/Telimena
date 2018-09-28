@@ -1,7 +1,6 @@
 ﻿using DbIntegrationTestHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Telimena.Client;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Identity;

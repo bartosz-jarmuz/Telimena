@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Telimena
+namespace Telimena.ToolkitClient
 {
     /// <summary>
     /// Compares versions

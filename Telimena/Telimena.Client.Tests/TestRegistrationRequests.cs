@@ -8,6 +8,7 @@ using System;
 using DotNetLittleHelpers;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Telimena.ToolkitClient;
 
 namespace Telimena.Client.Tests
 {
@@ -18,7 +19,7 @@ namespace Telimena.Client.Tests
     [TestFixture]
     public class TestRegistrationRequests
     {
-        public void Test_RegistrationFunction(Telimena telimena, Func<RegistrationResponse> function, bool skipFlagExpectedValue)
+        public void Test_RegistrationFunction(ToolkitClient.Telimena telimena, Func<RegistrationResponse> function, bool skipFlagExpectedValue)
         {
             try
             {
@@ -39,7 +40,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_InitializeRequestCreation()
         {
-            Telimena telimena = new Telimena();
+            ToolkitClient.Telimena telimena = new ToolkitClient.Telimena();
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
@@ -49,7 +50,7 @@ namespace Telimena.Client.Tests
         [Test]
         public void Test_RegisterRequestCreation()
         {
-            Telimena telimena = new Telimena();
+            ToolkitClient.Telimena telimena = new ToolkitClient.Telimena();
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());

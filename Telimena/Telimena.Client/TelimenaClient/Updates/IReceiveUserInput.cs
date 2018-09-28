@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Telimena.Client
+namespace Telimena.ToolkitClient
 {
     /// <summary>
     /// Interface IReceiveUserInput
