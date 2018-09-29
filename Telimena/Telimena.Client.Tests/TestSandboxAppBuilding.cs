@@ -10,6 +10,7 @@ namespace TelimenaClient.Tests
         public void JustCallItEnsureItBuilds()
         {
             TelimenaHammer hammer = null;//no action needed
+            Assert.IsNull(hammer);
         }
     }
 }
