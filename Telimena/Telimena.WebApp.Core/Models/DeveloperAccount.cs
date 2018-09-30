@@ -33,6 +33,7 @@ namespace Telimena.WebApp.Core.Models
         public virtual RestrictedAccessCollection<TelimenaUser> AssociatedUsers { get; set; } = new List<TelimenaUser>();
 
         public virtual RestrictedAccessCollection<Program> Programs { get; set; } = new List<Program>();
+        public virtual RestrictedAccessCollection<Updater> Updaters { get; set; } = new List<Updater>();
 
         public void AddProgram(Program program)
         {

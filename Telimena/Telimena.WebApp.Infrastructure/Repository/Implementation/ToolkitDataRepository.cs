@@ -28,9 +28,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<TelimenaToolkitData> StorePackageAsync(bool isBeta, bool introducesBreakingChanges, Stream fileStream, IFileSaver fileSaver)
         {
-            string actualVersion = await this.versionReader.GetFileVersion(fileStream, TelimenaPackageInfo.TelimenaAssemblyName, true);
+            string actualVersion = await this.versionReader.GetFileVersion(fileStream, DefaultToolkitNames.TelimenaAssemblyName, true);
             fileStream.Position = 0;
-            fileStream = await this.EnsureStreamIsZipped(TelimenaPackageInfo.TelimenaAssemblyName, fileStream);
+            fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream);
 
             TelimenaToolkitData data = await this.TelimenaContext.TelimenaToolkitData.Where(x => x.Version == actualVersion).Include(nameof(TelimenaToolkitData.TelimenaPackageInfo)).FirstOrDefaultAsync();
             if (data == null)

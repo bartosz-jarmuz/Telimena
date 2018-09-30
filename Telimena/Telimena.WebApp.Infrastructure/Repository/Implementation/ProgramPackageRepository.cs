@@ -8,6 +8,7 @@ using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
@@ -26,7 +27,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName, IFileSaver fileSaver)
         {
-            string toolkitVersion = await this.versionReader.GetVersionFromPackage(TelimenaPackageInfo.TelimenaAssemblyName, fileStream, true);
+            string toolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, true);
           
             ProgramPackageInfo pkg = new ProgramPackageInfo(fileName, programId, fileStream.Length, toolkitVersion);
             this.telimenaContext.ProgramPackages.Add(pkg);

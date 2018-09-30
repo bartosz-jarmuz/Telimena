@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IdentityModel;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -39,7 +41,7 @@ namespace Telimena.WebApp.Controllers.Api
         [HttpGet]
         public async Task<IHttpActionResult> Get(int id)
         {
-            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.FirstOrDefaultAsync(x => x.Id == id);
+            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetPackageInfo(id);
             if (updaterInfo == null)
             {
                 return this.BadRequest($"Updater id [{id}] does not exist");
@@ -55,14 +57,20 @@ namespace Telimena.WebApp.Controllers.Api
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IHttpActionResult> Get(string version)
+        public async Task<IHttpActionResult> Get(string internalName, string version)
         {
             if (!Version.TryParse(version, out _))
             {
                 return this.BadRequest($"[{version}] is not a valid version string");
             }
 
-            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.FirstOrDefaultAsync(x => x.Version == version);
+            var updater = await this.work.UpdaterRepository.GetUpdater(internalName);
+            if (updater == null)
+            {
+                return this.BadRequest($"Updater [{internalName}] does not exist");
+            }
+
+            UpdaterPackageInfo updaterInfo = this.work.UpdaterRepository.GetPackageForVersion(updater, version);
             if (updaterInfo == null)
             {
                 return this.BadRequest($"Updater version [{version}] does not exist");
@@ -76,9 +84,16 @@ namespace Telimena.WebApp.Controllers.Api
         public async Task<UpdateResponse> GetUpdateInfo(string request)
         {
             UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
-
+            var program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == requestModel.ProgramId);
+            if (program == null)
+            {
+                return new UpdateResponse()
+                {
+                    Exception = new BadRequestException($"Program with id [{requestModel.ProgramId}] does not exist")
+                };
+            }
             UpdaterPackageInfo updaterInfo =
-                await this.work.UpdaterRepository.GetNewestCompatibleUpdater(requestModel.UpdaterVersion, requestModel.ToolkitVersion, false);
+                await this.work.UpdaterRepository.GetNewestCompatibleUpdater(program, requestModel.UpdaterVersion, requestModel.ToolkitVersion, false);
             UpdateResponse response = new UpdateResponse();
             if (updaterInfo != null)
             {
@@ -89,21 +104,36 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> Upload()
+        public async Task<IHttpActionResult> Upload(UploadUpdaterRequest request)
         {
             try
             {
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    if (uploadedFile.FileName != UpdaterPackageInfo.UpdaterFileName && !uploadedFile.FileName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+                    TelimenaUser user = await this.work.Users.GetByPrincipalAsync(this.User);
+                    Updater updater = await this.work.UpdaterRepository.GetUpdater(request.UpdaterInternalName);
+
+                    if (updater == null)
+                    {
+                        updater = new Updater(uploadedFile.FileName, request.UpdaterInternalName);
+                        this.work.UpdaterRepository.Add(updater);
+                    }
+
+                    if (user.AssociatedDeveloperAccounts.All(x => x.Id != updater.DeveloperAccount.Id))
                     {
                         return this.BadRequest(
-                            $"Incorrect file. Expected {UpdaterPackageInfo.UpdaterFileName} or {UpdaterPackageInfo.UpdaterPackageName}");
+                            $"Updater '{updater.InternalName}' is managed by a team that you don't belong to - '{updater.DeveloperAccount.Name}'");
+                    }
+
+                    if (uploadedFile.FileName != updater.FileName && !uploadedFile.FileName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return this.BadRequest(
+                            $"Incorrect file. Expected {updater.FileName} or a zip package with it");
                     }
 
                     UpdaterPackageInfo pkg =
-                        await this.work.UpdaterRepository.StorePackageAsync("0.0.0.0", uploadedFile.InputStream, this.fileSaver);
+                        await this.work.UpdaterRepository.StorePackageAsync(updater, request.MinimumCompatibleToolkitVersion, uploadedFile.InputStream, this.fileSaver);
                     await this.work.CompleteAsync();
                     return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
                 }

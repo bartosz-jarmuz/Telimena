@@ -6,14 +6,11 @@
         {
         }
 
-        public UpdaterPackageInfo(string version, long fileSizeBytes, string minimumRequiredToolkitVersion) : base(UpdaterPackageName, fileSizeBytes)
+        public UpdaterPackageInfo(string version,string fileName, long fileSizeBytes, string minimumRequiredToolkitVersion) : base(fileName, fileSizeBytes)
         {
             this.Version = version;
             this.MinimumRequiredToolkitVersion = minimumRequiredToolkitVersion;
         }
-
-        public const string UpdaterPackageName = "Updater.zip";
-        public const string UpdaterFileName = "Updater.exe";
 
         public int Id { get; set; }
         public string Version { get; set; }
@@ -21,5 +18,9 @@
         public string MinimumRequiredToolkitVersion { get; set; }
 
         public bool IsBeta { get; set; }
+
+        public Updater Updater { get; set; }
+
+        public int UpdaterId { get; set; }
     }
 }

@@ -13,6 +13,7 @@ using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers.Api
 {
@@ -60,24 +61,7 @@ namespace Telimena.WebApp.Controllers.Api
             return this.ResponseMessage(result);
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IHttpActionResult> Get(string version)
-        {
-            if (!Version.TryParse(version, out _))
-            {
-                return this.BadRequest($"[{version}] is not a valid version string");
-            }
-
-            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.FirstOrDefaultAsync(x => x.Version == version);
-            if (updaterInfo == null)
-            {
-                return this.BadRequest($"Updater version [{version}] does not exist");
-            }
-
-            return await this.Get(updaterInfo.Id);
-        }
-
+      
         [HttpPost]
         public async Task<IHttpActionResult> Upload()
         {
@@ -86,10 +70,10 @@ namespace Telimena.WebApp.Controllers.Api
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    if (uploadedFile.FileName != TelimenaPackageInfo.TelimenaAssemblyName &&!uploadedFile.FileName.EndsWith(".zip",StringComparison.InvariantCultureIgnoreCase))
+                    if (uploadedFile.FileName != DefaultToolkitNames.TelimenaAssemblyName &&!uploadedFile.FileName.EndsWith(".zip",StringComparison.InvariantCultureIgnoreCase))
                     {
                         return this.BadRequest(
-                            $"Incorrect file. Expected {TelimenaPackageInfo.TelimenaAssemblyName} or {TelimenaPackageInfo.ZippedPackageFileName}");
+                            $"Incorrect file. Expected {DefaultToolkitNames.TelimenaAssemblyName} or {DefaultToolkitNames.ZippedPackageName}");
                     }
                     TelimenaToolkitData pkg =
                         await this.work.ToolkitDataRepository.StorePackageAsync(false, false, uploadedFile.InputStream, this.fileSaver);

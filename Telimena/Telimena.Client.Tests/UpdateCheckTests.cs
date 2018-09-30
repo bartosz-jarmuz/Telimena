@@ -100,7 +100,7 @@ namespace TelimenaClient.Tests
             {
                 UpdatePackages = new List<UpdatePackageData>
                 {
-                    new UpdatePackageData {FileName = UpdaterPackageInfo.UpdaterPackageName, Version = "1.2"}
+                    new UpdatePackageData {FileName = DefaultToolkitNames.UpdaterFileName, Version = "1.2"}
                 }
             };
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse, updaterResponse));
@@ -123,7 +123,7 @@ namespace TelimenaClient.Tests
             {
                 UpdatePackages = new List<UpdatePackageData>
                 {
-                    new UpdatePackageData {FileName = UpdaterPackageInfo.UpdaterPackageName, Version = "1.2"}
+                    new UpdatePackageData {FileName = DefaultToolkitNames.UpdaterFileName, Version = "1.2"}
                 }
             };
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(), latestVersionResponse));

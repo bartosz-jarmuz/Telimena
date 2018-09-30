@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -9,14 +10,12 @@ namespace Telimena.WebApp.Core.Models
         {
         }
 
-        public TelimenaPackageInfo(string version, long fileSizeBytes) : base(ZippedPackageFileName, fileSizeBytes)
+        public TelimenaPackageInfo(string version, long fileSizeBytes) : base(DefaultToolkitNames.ZippedPackageName, fileSizeBytes)
         {
             this.Version = version;
         }
 
-        public const string ZippedPackageFileName = "Telimena.Client.zip";
-        public const string TelimenaAssemblyName = "Telimena.Client.dll";
-
+        
         [ForeignKey(nameof(TelimenaToolkitData))]
         public int Id { get; set; }
 

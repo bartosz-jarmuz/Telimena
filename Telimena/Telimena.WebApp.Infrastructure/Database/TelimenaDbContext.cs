@@ -60,6 +60,7 @@ namespace Telimena.WebApp.Infrastructure.Database
         public DbSet<TelimenaPackageInfo> ToolkitPackages { get; set; }
         public DbSet<ProgramUpdatePackageInfo> UpdatePackages { get; set; }
         public DbSet<UpdaterPackageInfo> UpdaterPackages { get; set; }
+        public DbSet<Updater> Updaters { get; set; }
 
         public DbSet<ProgramPackageInfo> ProgramPackages { get; set; }
 

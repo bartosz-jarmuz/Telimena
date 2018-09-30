@@ -33,13 +33,7 @@ namespace Telimena.Tests
             prgPkgRepo.Add(new ProgramPackageInfo("Prg.zip", 1, 2222, "1.0.0.0"));
             prgRepo.Add(new Program("prg") {Id = 1});
 
-            Mock<IAssemblyVersionReader> reader = new Mock<IAssemblyVersionReader>();
-            reader.Setup(x => x.GetFileVersion(It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<bool>())).Returns((Stream stream, string assName, bool singleFile) =>
-            {
-                var str = ExtractString(stream);
-                Assert.IsTrue(stream.CanRead);
-                return Task.FromResult(str);
-            });
+            Mock<IAssemblyVersionReader> reader = TestingUtilities.GetMockVersionReader();
             this.AddToolkits(reader.Object, toolkitPackages);
 
             foreach (ProgramUpdatePackageInfo programUpdatePackageInfo in list)
@@ -56,29 +50,7 @@ namespace Telimena.Tests
             return unit;
         }
 
-
-        public static string ExtractString(Stream stream, Encoding encoding =null)
-        {
-            if (encoding == null)
-            {
-                encoding = Encoding.UTF8;
-            }
-            using (var sr = new StreamReader(stream, encoding,false, 1024,true))
-            {
-                return sr.ReadToEnd();
-            }
-
-        }
-
-        public static Stream GenerateStream(string s)
-        {
-            var stream = new MemoryStream();
-            var writer = new StreamWriter(stream, Encoding.UTF8, 1024, true);
-            writer.Write(s);
-            writer.Flush();
-            stream.Position = 0;
-            return stream;
-        }
+        
 
         private void AddToolkits(IAssemblyVersionReader reader, List<TelimenaPackageInfo> toolkitPackages = null)
         {
@@ -86,14 +58,14 @@ namespace Telimena.Tests
             var toolkitRepo = new ToolkitDataRepository(this.Context, reader);
             if (toolkitPackages == null)
             {
-                toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: GenerateStream("0.5.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: GenerateStream("0.7.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: GenerateStream("1.0.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false,  fileStream: GenerateStream("1.2.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: true,  fileStream: GenerateStream("1.4.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false,  fileStream: GenerateStream("1.6.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: true,   fileStream: GenerateStream("1.8.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
-                toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false,  fileStream: GenerateStream("2.0.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("0.5.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("0.7.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("1.0.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false,  fileStream: TestingUtilities.GenerateStream("1.2.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: true,  fileStream: TestingUtilities.GenerateStream("1.4.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false,  fileStream: TestingUtilities.GenerateStream("1.6.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: true,   fileStream: TestingUtilities.GenerateStream("1.8.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
+                toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false,  fileStream: TestingUtilities.GenerateStream("2.0.0.0"), fileSaver: new Mock<IFileSaver>().Object ).GetAwaiter().GetResult();
             }
         }
 

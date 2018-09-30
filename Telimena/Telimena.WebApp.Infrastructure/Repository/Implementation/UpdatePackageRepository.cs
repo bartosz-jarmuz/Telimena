@@ -16,6 +16,7 @@ using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
@@ -41,9 +42,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  true);
             fileStream.Position = 0;
-            string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(TelimenaPackageInfo.TelimenaAssemblyName, fileStream, false);
+            string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, false);
             fileStream.Position = 0;
-            fileStream = await this.EnsureStreamIsZipped(TelimenaPackageInfo.TelimenaAssemblyName, fileStream);
+            fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream);
 
             if (actualToolkitVersion != null)
             {

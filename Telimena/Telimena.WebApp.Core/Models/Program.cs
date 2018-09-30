@@ -31,6 +31,8 @@ namespace Telimena.WebApp.Core.Models
 
         public virtual DeveloperAccount DeveloperAccount { get; set; }
 
+        public virtual Updater Updater { get; set; }
+
         public ProgramUsageDetail GetLatestUsageDetail()
         {
             ProgramUsageSummary summary = this.UsageSummaries.MaxFirstBy(x => x.LastUsageDateTime);

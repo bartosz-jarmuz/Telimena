@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
@@ -22,9 +23,20 @@ namespace Telimena.WebApp.Infrastructure.Database
             CreateDeveloper(context);
         }
 
+        public static void SeedToolkit(TelimenaContext context)
+        {
+            if (!context.Updaters.Any(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName))
+            {
+                var updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
+                context.Updaters.Add(updater);
+            }
+       
+        }
+
         protected override void Seed(TelimenaContext context)
         {
             SeedUsers(context);
+            SeedToolkit(context);
             context.SaveChanges();
         }
 
@@ -37,15 +49,26 @@ namespace Telimena.WebApp.Infrastructure.Database
                 TelimenaUser user = new TelimenaUser("superuser", "Super User")
                 {
                     IsActivated = true,
-#if RELEASE
+#if DEBUG
+                   MustChangePassword = false
+#else
                    MustChangePassword = true
 #endif
+
                 };
 
                 userManager.Create(user, "123456");
                 userManager.AddToRole(user.Id, TelimenaRoles.Admin);
+
+                var developer = new DeveloperAccount(user);
+                developer.Name = DefaultToolkitNames.TelimenaSystemDevTeam;
+                context.Developers.Add(developer);
+
+              
             }
         }
+
+
 
         private static void CreateDeveloper(TelimenaContext context)
         {

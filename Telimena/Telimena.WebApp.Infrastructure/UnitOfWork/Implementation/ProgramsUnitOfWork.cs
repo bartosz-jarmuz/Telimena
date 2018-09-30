@@ -14,7 +14,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         {
             this._context = context;
             this.Versions = new Repository<AssemblyVersion>(context);
-            this.Users = new Repository<TelimenaUser>(context);
+            this.Users = new UserRepository(context);
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
             this.ToolkitData = new ToolkitDataRepository(context, versionReader);
@@ -24,8 +24,8 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         }
 
         private readonly TelimenaContext _context;
+        public IUserRepository Users { get; }
 
-        public IRepository<TelimenaUser> Users { get; }
         public ITelimenaUserManager TelimenaUserManager { get; set; }
         public IToolkitDataRepository ToolkitData { get; set; }
         public IUpdatePackageRepository UpdatePackages { get; set; }
