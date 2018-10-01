@@ -10,8 +10,8 @@ namespace TelimenaClient
     {
         public async Task InstallUpdaterUpdate(FileInfo updaterPackage, FileInfo targetPath)
         {
-            await UnpackUpdater(updaterPackage, targetPath);
-            await Cleanup(updaterPackage);
+            await UnpackUpdater(updaterPackage, targetPath).ConfigureAwait(false);
+            await Cleanup(updaterPackage).ConfigureAwait(false);
         }
 
         public void InstallUpdates(FileInfo instructionsFile, FileInfo updaterFile)
@@ -34,7 +34,7 @@ namespace TelimenaClient
                 }
                 catch (Exception ex)
                 {
-                    await Task.Delay(150 * (i + 1));
+                    await Task.Delay(150 * (i + 1)).ConfigureAwait(false);
                     if (i == 4)
                     {
                         throw new InvalidOperationException("Error occurred while cleaning up the updater package", ex);
@@ -54,7 +54,7 @@ namespace TelimenaClient
                 }
                 catch (Exception ex)
                 {
-                    await Task.Delay(150 * (i + 1));
+                    await Task.Delay(150 * (i + 1)).ConfigureAwait(false);
                     if (i == 4)
                     {
                         throw new InvalidOperationException("Error occurred while extracting the updater package", ex);

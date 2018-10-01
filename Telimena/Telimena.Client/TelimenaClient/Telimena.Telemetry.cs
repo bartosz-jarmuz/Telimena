@@ -54,7 +54,7 @@ namespace TelimenaClient
             StatisticsUpdateRequest request = null;
             try
             {
-                await this.InitializeIfNeeded();
+                await this.InitializeIfNeeded().ConfigureAwait(false);
                 request = new StatisticsUpdateRequest
                 {
                     ProgramId = this.ProgramId,
@@ -63,7 +63,7 @@ namespace TelimenaClient
                     Version = this.ProgramInfo.PrimaryAssembly.Version,
                     CustomData = customData
                 };
-                string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request);
+                string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request).ConfigureAwait(false);
                 return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
             }
             catch (Exception ex)
@@ -105,7 +105,7 @@ namespace TelimenaClient
                     , UserInfo = this.UserInfo
                     , SkipUsageIncrementation = skipUsageIncrementation
                 };
-                string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.RegisterClient, request);
+                string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.RegisterClient, request).ConfigureAwait(false);
                 RegistrationResponse response = this.Serializer.Deserialize<RegistrationResponse>(responseContent);
                 this.UserId = response.UserId;
                 this.ProgramId = response.ProgramId;

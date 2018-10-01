@@ -24,7 +24,7 @@ namespace TelimenaClient
         /// <returns>Task&lt;RegistrationResponse&gt;.</returns>
         public async Task<RegistrationResponse> Initialize()
         {
-            return await this.RegisterClient();
+            return await this.RegisterClient().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace TelimenaClient
         {
             if (!this.IsInitialized)
             {
-                var response = await this.Initialize();
+                var response = await this.Initialize().ConfigureAwait(false);
                 if (response.Exception == null)
                 {
                     this.IsInitialized = true;

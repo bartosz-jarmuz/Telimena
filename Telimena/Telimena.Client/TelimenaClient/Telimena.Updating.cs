@@ -21,10 +21,10 @@ namespace TelimenaClient
         {
             try
             {
-                await this.InitializeIfNeeded();
+                await this.InitializeIfNeeded().ConfigureAwait(false);
 
-                UpdateResponse programUpdateResponse = await this.GetProgramUpdateResponse(true);
-                UpdateResponse updaterUpdateResponse = await this.GetUpdaterUpdateResponse(true);
+                UpdateResponse programUpdateResponse = await this.GetProgramUpdateResponse(true).ConfigureAwait(false);
+                UpdateResponse updaterUpdateResponse = await this.GetUpdaterUpdateResponse(true).ConfigureAwait(false);
 
                 return new UpdateCheckResult
                 {
@@ -58,12 +58,12 @@ namespace TelimenaClient
 
                 Task<UpdateResponse> programUpdateTask = this.GetProgramUpdateResponse(acceptBeta);
                 Task<UpdateResponse> updaterUpdateTask = this.GetUpdaterUpdateResponse(acceptBeta);
-                UpdateResponse programUpdateResponse = await programUpdateTask;
-                UpdateResponse updaterUpdateResponse = await updaterUpdateTask;
+                UpdateResponse programUpdateResponse = await programUpdateTask.ConfigureAwait(false);
+                UpdateResponse updaterUpdateResponse = await updaterUpdateTask.ConfigureAwait(false);
 
                 UpdateHandler handler = new UpdateHandler(this.Messenger, this.ProgramInfo, new DefaultWpfInputReceiver()
                     , new UpdateInstaller());
-                await handler.HandleUpdates(programUpdateResponse, updaterUpdateResponse);
+                await handler.HandleUpdates(programUpdateResponse, updaterUpdateResponse).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -83,7 +83,7 @@ namespace TelimenaClient
         /// <returns>Task&lt;UpdateResponse&gt;.</returns>
         protected async Task<UpdateResponse> GetProgramUpdateResponse(bool takeBeta)
         {
-            string responseContent = await this.Messenger.SendGetRequest(this.GetUpdateRequestUrl(takeBeta));
+            string responseContent = await this.Messenger.SendGetRequest(this.GetUpdateRequestUrl(takeBeta)).ConfigureAwait(false);
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
@@ -94,7 +94,7 @@ namespace TelimenaClient
         /// <returns>Task&lt;UpdateResponse&gt;.</returns>
         protected async Task<UpdateResponse> GetUpdaterUpdateResponse(bool takeBeta)
         {
-            string responseContent = await this.Messenger.SendGetRequest(this.GetUpdaterUpdateRequestUrl(takeBeta));
+            string responseContent = await this.Messenger.SendGetRequest(this.GetUpdaterUpdateRequestUrl(takeBeta)).ConfigureAwait(false);
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 

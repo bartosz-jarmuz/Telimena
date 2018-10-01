@@ -38,10 +38,10 @@ namespace TelimenaClient
 
                 packagesToInstall = programUpdateResponse.UpdatePackages;
 
-                await this.InstallUpdater(updaterUpdateResponse, PathFinder.GetUpdatesParentFolder(BasePath, GetUpdatesFolderName(this.programInfo)));
+                await this.InstallUpdater(updaterUpdateResponse, PathFinder.GetUpdatesParentFolder(BasePath, GetUpdatesFolderName(this.programInfo))).ConfigureAwait(false);
                 if (packagesToInstall != null && packagesToInstall.Any())
                 {
-                    await this.DownloadUpdatePackages(packagesToInstall);
+                    await this.DownloadUpdatePackages(packagesToInstall).ConfigureAwait(false);
 
                     FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo);
 
@@ -66,9 +66,9 @@ namespace TelimenaClient
 
         protected async Task StoreUpdatePackage(UpdatePackageData pkgData, DirectoryInfo updatesFolder)
         {
-            Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdatePackage + "?id=" + pkgData.Id);
+            Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdatePackage + "?id=" + pkgData.Id).ConfigureAwait(false);
             FileInfo pkgFile = new FileInfo(Path.Combine(updatesFolder.FullName, pkgData.FileName));
-            await SaveStreamToPath(pkgData, pkgFile, stream);
+            await SaveStreamToPath(pkgData, pkgFile, stream).ConfigureAwait(false);
         }
 
         private static async Task SaveStreamToPath(UpdatePackageData pkgData, FileInfo pkgFile, Stream stream)
@@ -78,7 +78,7 @@ namespace TelimenaClient
             {
                 pkgFile.Directory?.Create();
                 fileStream = new FileStream(pkgFile.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
-                await stream.CopyToAsync(fileStream).ContinueWith(copyTask => { fileStream.Close(); });
+                await stream.CopyToAsync(fileStream).ContinueWith(copyTask => { fileStream.Close(); }).ConfigureAwait(false);
                 pkgData.StoredFilePath = pkgFile.FullName;
             }
             catch
@@ -102,7 +102,7 @@ namespace TelimenaClient
                     downloadTasks.Add(this.StoreUpdatePackage(updatePackageData, updatesFolder));
                 }
 
-                await Task.WhenAll(downloadTasks);
+                await Task.WhenAll(downloadTasks).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -124,15 +124,15 @@ namespace TelimenaClient
                 return;
             }
 
-            Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdaterUpdatePackage + "?id=" + pkgData.Id);
+            Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdaterUpdatePackage + "?id=" + pkgData.Id).ConfigureAwait(false);
             FileInfo pkgFile = new FileInfo(Path.Combine(updatesFolder.FullName, pkgData.FileName));
             if (pkgFile.Exists)
             {
                 pkgFile.Delete();
             }
 
-            await SaveStreamToPath(pkgData, pkgFile, stream);
-            await this.updateInstaller.InstallUpdaterUpdate(pkgFile, PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo)));
+            await SaveStreamToPath(pkgData, pkgFile, stream).ConfigureAwait(false);
+            await this.updateInstaller.InstallUpdaterUpdate(pkgFile, PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo))).ConfigureAwait(false);
         }
     }
 }

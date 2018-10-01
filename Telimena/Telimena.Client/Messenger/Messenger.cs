@@ -24,8 +24,8 @@ namespace TelimenaClient
             {
                 string jsonObject = this.Serializer.Serialize(objectToPost);
                 StringContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await this.HttpClient.PostAsync(requestUri, content);
-                string responseContent = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await this.HttpClient.PostAsync(requestUri, content).ConfigureAwait(false);
+                string responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 return responseContent;
             }
             catch (Exception ex)
@@ -38,8 +38,8 @@ namespace TelimenaClient
         {
             try
             {
-                HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri);
-                string responseContent = await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri).ConfigureAwait(false);
+                string responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 return responseContent;
             }
                 catch (Exception ex)
@@ -52,8 +52,8 @@ namespace TelimenaClient
         {
             try
             {
-                HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri);
-                return await response.Content.ReadAsStreamAsync();
+                HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri).ConfigureAwait(false);
+                return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             }
         
             catch (Exception ex)

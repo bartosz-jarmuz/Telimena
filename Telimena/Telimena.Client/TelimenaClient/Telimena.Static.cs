@@ -109,7 +109,7 @@ namespace TelimenaClient
                 {
                     ProgramInfo = data.ProgramInfo, TelimenaVersion = data.TelimenaVersion, UserInfo = data.UserInfo, SkipUsageIncrementation = true
                 };
-                string responseContent = await messenger.SendPostRequest(ApiRoutes.RegisterClient, registrationRequest);
+                string responseContent = await messenger.SendPostRequest(ApiRoutes.RegisterClient, registrationRequest).ConfigureAwait(false);
                 RegistrationResponse registrationResponse = serializer.Deserialize<RegistrationResponse>(responseContent);
 
                 updateRequest = new StatisticsUpdateRequest
@@ -119,7 +119,7 @@ namespace TelimenaClient
                     , FunctionName = functionName
                     , Version = data.ProgramInfo.PrimaryAssembly.Version
                 };
-                responseContent = await messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, updateRequest);
+                responseContent = await messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, updateRequest).ConfigureAwait(false);
                 return serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
             }
             catch (Exception ex)
