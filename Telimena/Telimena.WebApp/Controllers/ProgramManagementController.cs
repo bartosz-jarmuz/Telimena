@@ -23,12 +23,12 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(string programName)
         {
-            if (string.IsNullOrEmpty(programName))
+            Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
+
+            if (program == null)
             {
                 return this.RedirectToAction("Index", "Home");
             }
-
-            Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
 
             ProgramManagementViewModel model = new ProgramManagementViewModel();
             if (program != null)

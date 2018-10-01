@@ -39,6 +39,8 @@
                 <h3 class="box-title">Program summary</h3>
             </div>
             <div class="box-body">
+                <label class="confirmation label label-md" style="display: none"></label>
+
                 <div class="form-group">
                     <label>Name: </label>
                     <span>@Model.ProgramName</span>
@@ -58,6 +60,9 @@
                 <div class="form-group">
                     <label>Download link: </label>
                     <a href="@Model.ProgramDownloadUrl">@Model.ProgramDownloadUrl</a>
+                </div>
+                <div class="form-group">
+                    <input type="button" class="btn btn-danger" id="deleteProgramButton" value="Delete program"/>
                 </div>
             </div>
         </div>
@@ -244,6 +249,9 @@
             $('#setLatestVersionButton').click(function() {
                 HideConfirmationBox(this);
             });
+            $('#deleteProgramButton').click(function () {
+                DeleteProgram(this);
+            });
             $('.uploadedPackage').change(function(e) { SingleFileSelected(e, $(this).find('input')) });
             $('#uploadUpdatePackageForm').submit(CreateUpdatePackage);
             $('#uploadProgramPackageForm').submit(function(e) {
@@ -253,6 +261,34 @@
                 UploadFile(formData, '@Url.Action("Upload", "ProgramPackages")/' + @Model.ProgramId, $(this).find('input'));
             });
         });
+
+
+        function DeleteProgram(input) {
+            if (confirm('Are you sure you want to delete the program? (this cannot be undone!)')) {
+
+                var prgName = prompt("If you're so sure, please enter the program name", "");
+                if (prgName !== '@Model.ProgramName') {
+                    ShowConfirmationBox(input, "label-default", "Program name mismatched. Deleting cancelled");
+                    return;
+                }
+
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/api' + '@Url.Action("Delete", "Programs", new {id = @Model.ProgramId})',
+                    success: function (result) {
+                        ShowConfirmationBox(input,
+                            "label-success",
+                            result);
+                    },
+                    error: function (xhr) {
+                        ShowConfirmationBox(input, "label-danger", xhr.responseJSON.Message);
+                    }
+                });
+            } else {
+                // Do nothing!
+            }
+           
+        }
 
         function TogglePackageBeta(input) {
             var id = $(input).data("pkg-id");

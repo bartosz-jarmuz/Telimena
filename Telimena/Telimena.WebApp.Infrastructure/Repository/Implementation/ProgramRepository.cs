@@ -28,6 +28,24 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             this.TelimenaContext.Programs.Add(objectToAdd);
         }
 
+        public override void Remove(Program program)
+        {
+            this.TelimenaContext.FunctionUsageDetails.RemoveRange(this.TelimenaContext.FunctionUsageDetails.Where(x => x.UsageSummary.Function.ProgramId == program.Id));
+            this.TelimenaContext.FunctionUsages.RemoveRange(this.TelimenaContext.FunctionUsages.Where(x => x.Function.ProgramId == program.Id));
+            this.TelimenaContext.Functions.RemoveRange(this.TelimenaContext.Functions.Where(x => x.ProgramId == program.Id));
+
+            this.TelimenaContext.ProgramUsageDetails.RemoveRange(this.TelimenaContext.ProgramUsageDetails.Where(x => x.UsageSummary.ProgramId == program.Id));
+            this.TelimenaContext.ProgramUsages.RemoveRange(this.TelimenaContext.ProgramUsages.Where(x => x.ProgramId == program.Id));
+
+            this.TelimenaContext.Versions.RemoveRange(this.TelimenaContext.Versions.Where(x => x.ProgramAssembly.ProgramId == program.Id));
+            this.TelimenaContext.ProgramAssemblies.RemoveRange(this.TelimenaContext.ProgramAssemblies.Where(x => x.ProgramId == program.Id));
+
+            this.TelimenaContext.ProgramPackages.RemoveRange(this.TelimenaContext.ProgramPackages.Where(x => x.ProgramId == program.Id));
+
+            this.TelimenaContext.Programs.Remove(program);
+
+        }
+
         public async Task<IEnumerable<Program>> GetProgramsByDeveloperName(string developerName)
         {
             return await this.TelimenaContext.Programs.Include(x => x.DeveloperAccount)
