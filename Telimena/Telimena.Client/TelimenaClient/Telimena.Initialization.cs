@@ -61,8 +61,11 @@ namespace TelimenaClient
         {
             if (!this.IsInitialized)
             {
-                await this.Initialize();
-                this.IsInitialized = true;
+                var response = await this.Initialize();
+                if (response.Exception == null)
+                {
+                    this.IsInitialized = true;
+                }
             }
         }
 
