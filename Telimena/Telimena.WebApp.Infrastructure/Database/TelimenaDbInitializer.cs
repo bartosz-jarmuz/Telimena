@@ -1,14 +1,16 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Migrations;
 using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
-    public class TelimenaDbInitializer : DropCreateDatabaseIfModelChanges<TelimenaContext>
+    public class TelimenaDbInitializer : MigrateDatabaseToLatestVersion<TelimenaContext, Configuration>
     {
         public static void SeedUsers(TelimenaContext context)
         {
@@ -28,17 +30,12 @@ namespace Telimena.WebApp.Infrastructure.Database
             if (!context.Updaters.Any(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName))
             {
                 var updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
-                context.Updaters.Add(updater);
+                context.Updaters.AddOrUpdate(updater);
             }
        
         }
 
-        protected override void Seed(TelimenaContext context)
-        {
-            SeedUsers(context);
-            SeedToolkit(context);
-            context.SaveChanges();
-        }
+        
 
         private static void CreateAdmin(TelimenaContext context)
         {
@@ -62,7 +59,7 @@ namespace Telimena.WebApp.Infrastructure.Database
 
                 var developer = new DeveloperAccount(user);
                 developer.Name = DefaultToolkitNames.TelimenaSystemDevTeam;
-                context.Developers.Add(developer);
+                context.Developers.AddOrUpdate(developer);
 
               
             }
@@ -83,7 +80,7 @@ namespace Telimena.WebApp.Infrastructure.Database
                 userManager.AddToRole(user.Id, TelimenaRoles.Developer);
 
                 DeveloperAccount developer = new DeveloperAccount(user);
-                context.Developers.Add(developer);
+                context.Developers.AddOrUpdate(developer);
                 context.Users.Attach(user);
             }
 #endif

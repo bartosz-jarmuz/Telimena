@@ -158,6 +158,19 @@
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
+    <Compile Include="Migrations\201810011624284_InitialCreate.cs" />
+    <Compile Include="Migrations\201810011624284_InitialCreate.Designer.cs">
+      <DependentUpon>201810011624284_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810012008366_testProperty.cs" />
+    <Compile Include="Migrations\201810012008366_testProperty.Designer.cs">
+      <DependentUpon>201810012008366_testProperty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810012025373_testProperty1.cs" />
+    <Compile Include="Migrations\201810012025373_testProperty1.Designer.cs">
+      <DependentUpon>201810012025373_testProperty1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\AzureFileSaver.cs" />
@@ -212,7 +225,17 @@
       <Name>Telimena.WebApp.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201810011624284_InitialCreate.resx">
+      <DependentUpon>201810011624284_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810012008366_testProperty.resx">
+      <DependentUpon>201810012008366_testProperty.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810012025373_testProperty1.resx">
+      <DependentUpon>201810012025373_testProperty1.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
