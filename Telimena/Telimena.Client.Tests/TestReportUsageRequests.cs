@@ -66,19 +66,28 @@ namespace TelimenaClient.Tests
                 SuppressAllErrors = false
             };
             telimena.Messenger = this.GetMessenger_FirstRequestPass();
-               
-            try
+
+                
+            Action act = () => telimena.ReportUsageAsync().GetAwaiter().GetResult();
+            for (int i = 0; i < 2; i++)
             {
-                telimena.ReportUsage().GetAwaiter().GetResult();
-                Assert.Fail("Error expected");
+                try
+                {
+                    act();
+                    Assert.Fail("Error expected");
+                }
+                catch (Exception e)
+                {
+                    TelimenaException ex = e as TelimenaException;
+                    StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
+                    Assert.AreEqual("Test_NoCustomData", jObj.FunctionName);
+                    Assert.AreEqual(null, jObj.CustomData);
+                }
+
+                act = () => telimena.ReportUsageBlocking();
             }
-            catch (Exception e)
-            {
-                TelimenaException ex = e as TelimenaException;
-                StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                Assert.AreEqual("Test_NoCustomData", jObj.FunctionName);
-                Assert.AreEqual(null, jObj.CustomData);
-            }
+
+            
 
         }
 
@@ -92,19 +101,23 @@ namespace TelimenaClient.Tests
             };
             telimena.Messenger = this.GetMessenger_FirstRequestPass();
 
-            try
+            Action act = () => telimena.ReportUsageWithCustomDataAsync(null).GetAwaiter().GetResult();
+            for (int i = 0; i < 2; i++)
             {
-                telimena.ReportUsageWithCustomData(null).GetAwaiter().GetResult();
-                Assert.Fail("Error expected");
+                try
+                {
+                    act();
+                    Assert.Fail("Error expected");
+                }
+                catch (Exception e)
+                {
+                    TelimenaException ex = e as TelimenaException;
+                    StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
+                    Assert.AreEqual("Test_NullCustomData", jObj.FunctionName);
+                    Assert.AreEqual(null, jObj.CustomData);
+                }
+                act = () => telimena.ReportUsageWithCustomDataBlocking(null);
             }
-            catch (Exception e)
-            {
-                TelimenaException ex = e as TelimenaException;
-                StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                Assert.AreEqual("Test_NullCustomData", jObj.FunctionName);
-                Assert.AreEqual(null, jObj.CustomData);
-            }
-
         }
 
         [Test]
@@ -116,18 +129,24 @@ namespace TelimenaClient.Tests
                 SuppressAllErrors = false
             };
             telimena.Messenger = this.GetMessenger_FirstRequestPass();
+            Action act = () => telimena.ReportUsageWithCustomDataAsync("AAAAAA").GetAwaiter().GetResult();
 
-            try
+            for (int i = 0; i < 2; i++)
             {
-                telimena.ReportUsageWithCustomData("AAAAAA").GetAwaiter().GetResult();
-                Assert.Fail("Error expected");
-            }
-            catch (Exception e)
-            {
-                TelimenaException ex = e as TelimenaException;
-                StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                Assert.AreEqual("AAAAAA", jObj.CustomData);
-                Assert.AreEqual("Test_CustomDataString", jObj.FunctionName);
+                try
+                {
+                    act();
+                    Assert.Fail("Error expected");
+                }
+                catch (Exception e)
+                {
+                    TelimenaException ex = e as TelimenaException;
+                    StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
+                    Assert.AreEqual("AAAAAA", jObj.CustomData);
+                    Assert.AreEqual("Test_CustomDataString", jObj.FunctionName);
+                }
+                act = () => telimena.ReportUsageWithCustomDataBlocking("AAAAAA");
+
             }
         }
 
@@ -142,18 +161,24 @@ namespace TelimenaClient.Tests
             telimena.Messenger = this.GetMessenger_FirstRequestPass();
             var obj = new CustomDataObject();
             obj.SomeValue = 333;
-            try
+            Action act = () => telimena.ReportUsageWithCustomDataAsync(obj).GetAwaiter().GetResult();
+            for (int i = 0; i < 2; i++)
             {
-                telimena.ReportUsageWithCustomData(obj).GetAwaiter().GetResult();
-                Assert.Fail("Error expected");
-            }
-            catch (Exception e)
-            {
-                TelimenaException ex = e as TelimenaException;
-                StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                Assert.AreEqual("Test_CustomDataObject", jObj.FunctionName);
+                try
+                {
+                    act();
+                    Assert.Fail("Error expected");
+                }
+                catch (Exception e)
+                {
+                    TelimenaException ex = e as TelimenaException;
+                    StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
+                    Assert.AreEqual("Test_CustomDataObject", jObj.FunctionName);
 
-                Assert.AreEqual("{\"SomeValue\":333,\"TrySerializingThisBadBoy\":null}", jObj.CustomData);
+                    Assert.AreEqual("{\"SomeValue\":333,\"TrySerializingThisBadBoy\":null}", jObj.CustomData);
+                }
+                act = () => telimena.ReportUsageWithCustomDataBlocking(obj);
+
             }
         }
 
@@ -168,15 +193,21 @@ namespace TelimenaClient.Tests
             };
             telimena.Messenger = this.GetMessenger_FirstRequestPass();
             var obj = new NonSerializableObject(99);
-            try
+            Action act = () => telimena.ReportUsageWithCustomDataAsync(null).GetAwaiter().GetResult();
+            for (int i = 0; i < 2; i++)
             {
-                telimena.ReportUsageWithCustomData(obj).GetAwaiter().GetResult();
-                Assert.Fail("Error expected");
-            }
-            catch (Exception e)
-            {
-                ArgumentException ex = e as ArgumentException;
-                Assert.AreEqual("Invalid object passed as custom data for telemetry.", ex.Message);
+                try
+                {
+                    telimena.ReportUsageWithCustomDataAsync(obj).GetAwaiter().GetResult();
+                    Assert.Fail("Error expected");
+                }
+                catch (Exception e)
+                {
+                    ArgumentException ex = e as ArgumentException;
+                    Assert.AreEqual("Invalid object passed as custom data for telemetry.", ex.Message);
+                }
+
+                act = () => telimena.ReportUsageWithCustomDataBlocking(null);
             }
         }
     }

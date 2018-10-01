@@ -42,7 +42,8 @@ namespace TelimenaClient.Tests
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
-            this.Test_RegistrationFunction(telimena, () => telimena.Initialize().GetAwaiter().GetResult(), false);
+            this.Test_RegistrationFunction(telimena, () => telimena.InitializeAsync().GetAwaiter().GetResult(), false);
+            this.Test_RegistrationFunction(telimena, () => telimena.InitializeBlocking(), false);
         }
 
         [Test]

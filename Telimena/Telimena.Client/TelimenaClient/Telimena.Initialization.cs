@@ -16,21 +16,19 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        /// <summary>
-        /// Initializes the Telimena client. <para />
-        /// Each time initialization is called, it will increment the program usage statistics.
-        /// It should be called once per application execution
-        /// </summary>
-        /// <returns>Task&lt;RegistrationResponse&gt;.</returns>
-        public async Task<RegistrationResponse> Initialize()
+        /// <inheritdoc />
+        public async Task<RegistrationResponse> InitializeAsync()
         {
             return await this.RegisterClient().ConfigureAwait(false);
         }
 
-        /// <summary>
-        ///     Loads the referenced helper assemblies, e.g. for the purpose of updating
-        /// </summary>
-        /// <param name="assemblies"></param>
+        /// <inheritdoc />
+        public RegistrationResponse InitializeBlocking()
+        {
+            return Task.Run(this.InitializeAsync).GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc />
         public void LoadHelperAssemblies(params Assembly[] assemblies)
         {
             foreach (Assembly assembly in assemblies)
@@ -41,10 +39,7 @@ namespace TelimenaClient
             this.LoadAssemblyInfos(this.HelperAssemblies);
         }
 
-        /// <summary>
-        ///     Loads the referenced helper assemblies, e.g. for the purpose of updating
-        /// </summary>
-        /// <param name="assemblyNames"></param>
+        /// <inheritdoc />
         public void LoadHelperAssembliesByName(params string[] assemblyNames)
         {
             string path = AppDomain.CurrentDomain.BaseDirectory;
@@ -61,7 +56,7 @@ namespace TelimenaClient
         {
             if (!this.IsInitialized)
             {
-                var response = await this.Initialize().ConfigureAwait(false);
+                var response = await this.InitializeAsync().ConfigureAwait(false);
                 if (response.Exception == null)
                 {
                     this.IsInitialized = true;

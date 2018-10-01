@@ -15,20 +15,18 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        /// <summary>
-        /// Report the usage of the application function.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="customDataObject">A simple data object to be serialized and sent to Telimena. MUST BE JSON SERIALIZABLE</param>
-        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
-        /// <returns>Task&lt;StatisticsUpdateResponse&gt;.</returns>
-        /// <exception cref="ArgumentException">Invalid object passed as custom data for telemetry.</exception>
-        public Task<StatisticsUpdateResponse> ReportUsageWithCustomData<T>(T customDataObject, [CallerMemberName] string functionName = null)
+        /// <inheritdoc />
+        public StatisticsUpdateResponse ReportUsageWithCustomDataBlocking(string customData, [CallerMemberName] string functionName = null)
+        {
+            return Task.Run(() => this.ReportUsageWithCustomDataAsync(customData, functionName)).GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc />
+        public Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync<T>(T customDataObject, [CallerMemberName] string functionName = null)
         {
             string serialized = null;
             if (customDataObject != null)
             {
-
                 try
                 {
                     serialized = this.Serializer.Serialize(customDataObject);
@@ -39,17 +37,23 @@ namespace TelimenaClient
                 }
             }
 
-            return this.ReportUsageWithCustomData(serialized, functionName);
+            return this.ReportUsageWithCustomDataAsync(serialized, functionName);
         }
 
+        /// <inheritdoc />
+        public StatisticsUpdateResponse ReportUsageWithCustomDataBlocking<T>(T customDataObject, [CallerMemberName] string functionName = null)
+        {
+            return Task.Run(() => this.ReportUsageWithCustomDataAsync(customDataObject, functionName)).GetAwaiter().GetResult();
+        }
 
-        /// <summary>
-            ///     Report the usage of the application function.
-            /// </summary>
-            /// <param name="customData">A JSON serialized object which contains some program specific custom data</param>
-            /// <param name="functionName"></param>
-            /// <returns></returns>
-            public async Task<StatisticsUpdateResponse> ReportUsageWithCustomData(string customData, [CallerMemberName] string functionName = null)
+        /// <inheritdoc />
+        public StatisticsUpdateResponse ReportUsageBlocking([CallerMemberName] string functionName = null)
+        {
+            return Task.Run(() => this.ReportUsageAsync(functionName)).GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc />
+        public async Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync(string customData, [CallerMemberName] string functionName = null)
         {
             StatisticsUpdateRequest request = null;
             try
@@ -57,11 +61,11 @@ namespace TelimenaClient
                 await this.InitializeIfNeeded().ConfigureAwait(false);
                 request = new StatisticsUpdateRequest
                 {
-                    ProgramId = this.ProgramId,
-                    UserId = this.UserId,
-                    FunctionName = functionName,
-                    Version = this.ProgramInfo.PrimaryAssembly.Version,
-                    CustomData = customData
+                    ProgramId = this.ProgramId
+                    , UserId = this.UserId
+                    , FunctionName = functionName
+                    , Version = this.ProgramInfo.PrimaryAssembly.Version
+                    , CustomData = customData
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request).ConfigureAwait(false);
                 return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
@@ -75,18 +79,14 @@ namespace TelimenaClient
                     throw exception;
                 }
 
-                return new StatisticsUpdateResponse { Exception = exception };
+                return new StatisticsUpdateResponse {Exception = exception};
             }
         }
 
-        /// <summary>
-        ///     Report the usage of the application function.
-        /// </summary>
-        /// <param name="functionName"></param>
-        /// <returns></returns>
-        public Task<StatisticsUpdateResponse> ReportUsage([CallerMemberName] string functionName = null)
+        /// <inheritdoc />
+        public Task<StatisticsUpdateResponse> ReportUsageAsync([CallerMemberName] string functionName = null)
         {
-            return this.ReportUsageWithCustomData(null, functionName);
+            return this.ReportUsageWithCustomDataAsync(null, functionName);
         }
 
         /// <summary>

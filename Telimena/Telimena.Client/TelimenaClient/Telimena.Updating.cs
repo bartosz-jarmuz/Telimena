@@ -11,13 +11,8 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        /// <summary>
-        /// Performs an update check and returns the result which allows custom handling of the update process.
-        /// It will return info about beta versions as well.
-        /// </summary>
-        /// <returns>Task&lt;UpdateCheckResult&gt;.</returns>
         /// <inheritdoc />
-        public async Task<UpdateCheckResult> CheckForUpdates()
+        public async Task<UpdateCheckResult> CheckForUpdatesAsync()
         {
             try
             {
@@ -44,13 +39,14 @@ namespace TelimenaClient
             }
         }
 
-        /// <summary>
-        /// Handles the updating process from start to end
-        /// </summary>
-        /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
-        /// <returns>Task.</returns>
         /// <inheritdoc />
-        public async Task HandleUpdates(bool acceptBeta)
+        public UpdateCheckResult CheckForUpdatesBlocking()
+        {
+            return Task.Run(this.CheckForUpdatesAsync).GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc />
+        public async Task HandleUpdatesAsync(bool acceptBeta)
         {
             try
             {
@@ -74,6 +70,12 @@ namespace TelimenaClient
                     throw exception;
                 }
             }
+        }
+
+        /// <inheritdoc />
+        public void HandleUpdatesBlocking(bool acceptBeta)
+        {
+            Task.Run(()=> this.HandleUpdatesAsync(acceptBeta)).GetAwaiter().GetResult();
         }
 
         /// <summary>

@@ -40,7 +40,7 @@ namespace TelimenaTestSandboxApp
 
         private async void InitializeButton_Click(object sender, EventArgs e)
         {
-            RegistrationResponse response = await this.teli.Initialize();
+            RegistrationResponse response = await this.teli.InitializeAsync();
 
             this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + this.PresentResponse(response) + Environment.NewLine;
         }
@@ -52,18 +52,45 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.functionNameTextBox.Text))
             {
-                result = await this.teli.ReportUsage(string.IsNullOrEmpty(this.functionNameTextBox.Text) ? null : this.functionNameTextBox.Text);
+                result = await this.teli.ReportUsageAsync(string.IsNullOrEmpty(this.functionNameTextBox.Text) ? null : this.functionNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = await this.teli.ReportUsage();
+                result = await this.teli.ReportUsageAsync();
                 sw.Stop();
             }
 
             if (result.Exception == null)
             {
                 this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " + this.PresentResponse(result) + Environment.NewLine;
+            }
+            else
+            {
+                MessageBox.Show(result.Exception.ToString());
+            }
+        }
+
+        private void sendSync_button_Click(object sender, EventArgs e)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+
+            StatisticsUpdateResponse result;
+
+            if (!string.IsNullOrEmpty(this.functionNameTextBox.Text))
+            {
+                result = this.teli.ReportUsageBlocking(string.IsNullOrEmpty(this.functionNameTextBox.Text) ? null : this.functionNameTextBox.Text);
+                sw.Stop();
+            }
+            else
+            {
+                result = this.teli.ReportUsageBlocking();
+                sw.Stop();
+            }
+
+            if (result.Exception == null)
+            {
+                this.resultTextBox.Text += $@"BLOCKING INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " + this.PresentResponse(result) + Environment.NewLine;
             }
             else
             {
@@ -78,14 +105,14 @@ namespace TelimenaTestSandboxApp
 
         private async void checkForUpdateButton_Click(object sender, EventArgs e)
         {
-            var response = await this.teli.CheckForUpdates();
+            var response = await this.teli.CheckForUpdatesAsync();
             this.UpdateText(this.PresentResponse(response));
         }
 
         private async void handleUpdatesButton_Click(object sender, EventArgs e)
         {
             this.UpdateText("Handling updates...");
-            await this.teli.HandleUpdates(false);
+            await this.teli.HandleUpdatesAsync(false);
             this.UpdateText("Finished handling updates...");
         }
 
@@ -168,6 +195,6 @@ namespace TelimenaTestSandboxApp
             this.hammer?.Stop();
         }
 
-     
+       
     }
 }

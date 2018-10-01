@@ -47,6 +47,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.static_sendUsageReportButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.handleUpdatesButton = new System.Windows.Forms.Button();
             this.checkForUpdateButton = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.hammer_AppNumberSeedBox = new System.Windows.Forms.TextBox();
@@ -66,8 +67,8 @@
             this.hammer_numberOfApps_TextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.hammer_StartButton = new System.Windows.Forms.Button();
-            this.handleUpdatesButton = new System.Windows.Forms.Button();
             this.useCurrentAppButton = new System.Windows.Forms.Button();
+            this.sendSync_button = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -93,6 +94,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.sendSync_button);
             this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.functionNameTextBox);
             this.groupBox1.Controls.Add(this.F);
@@ -255,6 +257,16 @@
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "App Updating";
+            // 
+            // handleUpdatesButton
+            // 
+            this.handleUpdatesButton.Location = new System.Drawing.Point(6, 58);
+            this.handleUpdatesButton.Name = "handleUpdatesButton";
+            this.handleUpdatesButton.Size = new System.Drawing.Size(75, 36);
+            this.handleUpdatesButton.TabIndex = 1;
+            this.handleUpdatesButton.Text = "Handle updates";
+            this.handleUpdatesButton.UseVisualStyleBackColor = true;
+            this.handleUpdatesButton.Click += new System.EventHandler(this.handleUpdatesButton_Click);
             // 
             // checkForUpdateButton
             // 
@@ -443,16 +455,6 @@
             this.hammer_StartButton.UseVisualStyleBackColor = true;
             this.hammer_StartButton.Click += new System.EventHandler(this.hammer_StartButton_Click);
             // 
-            // handleUpdatesButton
-            // 
-            this.handleUpdatesButton.Location = new System.Drawing.Point(6, 58);
-            this.handleUpdatesButton.Name = "handleUpdatesButton";
-            this.handleUpdatesButton.Size = new System.Drawing.Size(75, 36);
-            this.handleUpdatesButton.TabIndex = 1;
-            this.handleUpdatesButton.Text = "Handle updates";
-            this.handleUpdatesButton.UseVisualStyleBackColor = true;
-            this.handleUpdatesButton.Click += new System.EventHandler(this.handleUpdatesButton_Click);
-            // 
             // useCurrentAppButton
             // 
             this.useCurrentAppButton.Location = new System.Drawing.Point(696, 7);
@@ -462,6 +464,16 @@
             this.useCurrentAppButton.Text = "Use Current";
             this.useCurrentAppButton.UseVisualStyleBackColor = true;
             this.useCurrentAppButton.Click += new System.EventHandler(this.useCurrentAppButton_Click);
+            // 
+            // sendSync_button
+            // 
+            this.sendSync_button.Location = new System.Drawing.Point(156, 48);
+            this.sendSync_button.Name = "sendSync_button";
+            this.sendSync_button.Size = new System.Drawing.Size(75, 23);
+            this.sendSync_button.TabIndex = 5;
+            this.sendSync_button.Text = "Send sync";
+            this.sendSync_button.UseVisualStyleBackColor = true;
+            this.sendSync_button.Click += new System.EventHandler(this.sendSync_button_Click);
             // 
             // Form1
             // 
@@ -539,6 +551,7 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button handleUpdatesButton;
         private System.Windows.Forms.Button useCurrentAppButton;
+        private System.Windows.Forms.Button sendSync_button;
     }
 }
 

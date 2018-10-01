@@ -72,7 +72,7 @@ namespace TelimenaClient.Tests
             };
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse, new UpdateResponse()));
 
-            UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
+            UpdateCheckResult response = sut.CheckForUpdatesAsync().GetAwaiter().GetResult();
             Assert.IsTrue(response.IsUpdateAvailable);
             Assert.AreEqual(2, response.ProgramUpdatesToInstall.Count);
             Assert.IsNotNull(response.ProgramUpdatesToInstall.SingleOrDefault(x=>x.Version == "3.1.0.0" && x.IsBeta == true));
@@ -105,7 +105,7 @@ namespace TelimenaClient.Tests
             };
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse, updaterResponse));
 
-            UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
+            UpdateCheckResult response = sut.CheckForUpdatesAsync().GetAwaiter().GetResult();
             Assert.IsTrue(response.IsUpdateAvailable);
             Assert.AreEqual(1, response.ProgramUpdatesToInstall.Count);
             Assert.IsNotNull(response.ProgramUpdatesToInstall.SingleOrDefault(x => x.Version == "3.1.0.0" && x.IsBeta == true));
@@ -128,7 +128,7 @@ namespace TelimenaClient.Tests
             };
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(), latestVersionResponse));
 
-            UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
+            UpdateCheckResult response = sut.CheckForUpdatesAsync().GetAwaiter().GetResult();
             Assert.IsFalse(response.IsUpdateAvailable);
             Assert.AreEqual(0, response.ProgramUpdatesToInstall.Count);
             Assert.AreEqual("1.2", response.UpdaterUpdate.Version);
@@ -145,7 +145,7 @@ namespace TelimenaClient.Tests
           
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(),new UpdateResponse()));
 
-            UpdateCheckResult response = sut.CheckForUpdates().GetAwaiter().GetResult();
+            UpdateCheckResult response = sut.CheckForUpdatesAsync().GetAwaiter().GetResult();
             Assert.IsFalse(response.IsUpdateAvailable);
             Assert.AreEqual(0, response.ProgramUpdatesToInstall.Count);
             Assert.IsNull(response.UpdaterUpdate);

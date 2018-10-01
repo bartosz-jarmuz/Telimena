@@ -136,21 +136,21 @@ namespace TelimenaTestSandboxApp
                 var operation = random.Next(4);
                 if (operation == 1)
                 {
-                    result = await teli.ReportUsage();
+                    result = await teli.ReportUsageAsync();
                 }
                 else if (operation == 2)
                 {
-                    result = await teli.Initialize();
+                    result = await teli.InitializeAsync();
                 }
                 else
                 {
                     if (random.Next(2) == 1)
                     {
-                        result = await teli.ReportUsage(this.funcs[random.Next(0, this.funcs.Count)]);
+                        result = await teli.ReportUsageAsync(this.funcs[random.Next(0, this.funcs.Count)]);
                     }
                     else
                     {
-                        result = await teli.ReportUsageWithCustomData(this.GetRandomData(), this.funcs[random.Next(0, this.funcs.Count)]);
+                        result = await teli.ReportUsageWithCustomDataAsync(this.GetRandomData(), this.funcs[random.Next(0, this.funcs.Count)]);
                     }
                 }
 
