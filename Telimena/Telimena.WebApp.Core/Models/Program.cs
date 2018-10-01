@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using DotNetLittleHelpers;
 
@@ -24,6 +25,8 @@ namespace Telimena.WebApp.Core.Models
         public virtual ICollection<ProgramUsageSummary> UsageSummaries { get; set; } = new List<ProgramUsageSummary>();
         public DateTime RegisteredDate { get; set; }
 
+        [StringLength(450)]
+        [Index(IsUnique = true)]
         [Required]
         public string Name { get; set; }
 
