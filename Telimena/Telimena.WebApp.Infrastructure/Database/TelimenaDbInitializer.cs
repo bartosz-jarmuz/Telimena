@@ -10,7 +10,8 @@ using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
-    public class TelimenaDbInitializer : MigrateDatabaseToLatestVersion<TelimenaContext, Configuration>
+    //public class TelimenaDbInitializer : MigrateDatabaseToLatestVersion<TelimenaContext, Configuration>
+    public class TelimenaDbInitializer : DropCreateDatabaseAlways<TelimenaContext>
     {
         public static void SeedUsers(TelimenaContext context)
         {
