@@ -36,7 +36,13 @@ namespace Telimena.WebApp.Infrastructure.Database
        
         }
 
-        
+        protected override void Seed(TelimenaContext context)
+        {
+            SeedUsers(context);
+            SeedToolkit(context);
+            context.SaveChanges();
+        }
+
 
         private static void CreateAdmin(TelimenaContext context)
         {
