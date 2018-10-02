@@ -47,7 +47,7 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.3.18275.2")]
-[assembly: AssemblyFileVersion("0.3.18275.2")]
+[assembly: AssemblyVersion("0.3.18275.3")]
+[assembly: AssemblyFileVersion("0.3.18275.3")]
 [assembly: InternalsVisibleTo("Telimena.Client.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c971ad3e98a859ebdad5167d153292910c2fd4bbf59e41005addb7bf3f5fcf42552125709c9768719dfdfbc6af2cbac13aa0369b19cfc67f260b5b0f78cc8a3dee96bf2ad1b6795b9a9643d71dc2cc8b90c03a591ef1578f4cd000fce54eb7f7c8c660fd7a12089860ea2e0326b2a1e7635f17ae9c8ef0c62a54176432545ac3")]
 [assembly: InternalsVisibleTo("Telimena.Updater.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c971ad3e98a859ebdad5167d153292910c2fd4bbf59e41005addb7bf3f5fcf42552125709c9768719dfdfbc6af2cbac13aa0369b19cfc67f260b5b0f78cc8a3dee96bf2ad1b6795b9a9643d71dc2cc8b90c03a591ef1578f4cd000fce54eb7f7c8c660fd7a12089860ea2e0326b2a1e7635f17ae9c8ef0c62a54176432545ac3")]

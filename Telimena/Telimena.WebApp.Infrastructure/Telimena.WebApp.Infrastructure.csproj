@@ -158,7 +158,6 @@
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\AzureFileSaver.cs" />
