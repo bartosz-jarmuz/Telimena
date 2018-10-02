@@ -10,8 +10,8 @@ using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
-    //public class TelimenaDbInitializer : MigrateDatabaseToLatestVersion<TelimenaContext, Configuration>
-    public class TelimenaDbInitializer : DropCreateDatabaseIfModelChanges<TelimenaContext>
+    public class TelimenaDbInitializer : MigrateDatabaseToLatestVersion<TelimenaContext, Configuration>
+   // public class TelimenaDbInitializer : DropCreateDatabaseIfModelChanges<TelimenaContext>
     {
         public static void SeedUsers(TelimenaContext context)
         {
@@ -35,14 +35,6 @@ namespace Telimena.WebApp.Infrastructure.Database
             }
        
         }
-
-        protected override void Seed(TelimenaContext context)
-        {
-            SeedUsers(context);
-            SeedToolkit(context);
-            context.SaveChanges();
-        }
-
 
         private static void CreateAdmin(TelimenaContext context)
         {
