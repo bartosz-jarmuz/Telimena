@@ -158,9 +158,9 @@
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
-    <Compile Include="Migrations\201810021508244_Initial.cs" />
-    <Compile Include="Migrations\201810021508244_Initial.Designer.cs">
-      <DependentUpon>201810021508244_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201810021548162_InitialDb.cs" />
+    <Compile Include="Migrations\201810021548162_InitialDb.Designer.cs">
+      <DependentUpon>201810021548162_InitialDb.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyVersionReader.cs" />
@@ -218,8 +218,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201810021508244_Initial.resx">
-      <DependentUpon>201810021508244_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201810021548162_InitialDb.resx">
+      <DependentUpon>201810021548162_InitialDb.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -34,7 +34,7 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.Name == programName);
 
             ProgramStatisticsViewModel model = new ProgramStatisticsViewModel() {ProgramId = program.Id, ProgramName = program.Name};
 
@@ -44,7 +44,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> ExportFunctionUsageCustomData(int programId, bool includeGenericData)
         {
-            Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == programId);
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.Id == programId);
             if (program == null)
             {
                 throw new BadRequestException($"Program {programId} does not exist");

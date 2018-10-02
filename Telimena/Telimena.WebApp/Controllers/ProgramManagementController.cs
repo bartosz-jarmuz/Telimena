@@ -23,7 +23,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(string programName)
         {
-            Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.Name == programName);
 
             if (program == null)
             {
