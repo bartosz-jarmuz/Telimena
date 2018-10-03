@@ -37,10 +37,7 @@ namespace Telimena.WebApp.Core.Models
 
         public virtual DeveloperAccount DeveloperAccount { get; set; }
 
-        public void AddPackage(UpdaterPackageInfo package)
-        {
-            ((Collection<UpdaterPackageInfo>)this.Packages).Add(package);
-        }
+        public bool IsPublic { get; set; }
     }
 
 
