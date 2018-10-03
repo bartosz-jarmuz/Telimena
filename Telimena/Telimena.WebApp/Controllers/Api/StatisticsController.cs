@@ -82,15 +82,28 @@ namespace Telimena.WebApp.Controllers.Api
                 usageSummary.IncrementUsage(versionInfo, updateRequest.CustomData);
 
                 await this.work.CompleteAsync();
-                return new StatisticsUpdateResponse
-                {
-                    Count = usageSummary.SummaryCount, ProgramId = program.Id, UserId = clientAppUser.Id, FunctionName = updateRequest.FunctionName
-                };
+                return PrepareResponse(updateRequest, usageSummary, program, clientAppUser);
             }
             catch (Exception ex)
             {
                 return new StatisticsUpdateResponse {Exception = new InvalidOperationException("Error while processing statistics update request", ex)};
             }
+        }
+
+        private static StatisticsUpdateResponse PrepareResponse(StatisticsUpdateRequest updateRequest, UsageSummary usageSummary, Program program
+            , ClientAppUser clientAppUser)
+        {
+
+            StatisticsUpdateResponse response = new StatisticsUpdateResponse
+            {
+                Count = usageSummary.SummaryCount, ProgramId = program.Id, UserId = clientAppUser.Id, FunctionName = updateRequest.FunctionName
+            };
+            if (usageSummary is FunctionUsageSummary summary)
+            {
+                response.FunctionId = summary.FunctionId;
+            }
+
+            return response;
         }
 
         private async Task<UsageSummary> GetFunctionUsageData(Program program, ClientAppUser clientAppUser, string functionName)

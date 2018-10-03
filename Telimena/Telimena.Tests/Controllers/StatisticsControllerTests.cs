@@ -47,7 +47,7 @@ namespace Telimena.Tests
 
             StatisticsUpdateResponse response = sut.Update(request).GetAwaiter().GetResult();
 
-            Helpers.AssertUpdateResponse(response, prg, usr, 1, "Func1");
+            Helpers.AssertUpdateResponse(response, prg, usr, 1, "Func1",1);
 
             Function func1 = prg.Functions.Single();
 

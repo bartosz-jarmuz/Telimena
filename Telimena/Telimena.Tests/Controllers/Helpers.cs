@@ -36,11 +36,13 @@ namespace Telimena.Tests
             Assert.AreEqual(usr.Id, response.UserId);
         }
 
-        public static void AssertUpdateResponse(StatisticsUpdateResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
+        public static void AssertUpdateResponse(StatisticsUpdateResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null, int funcId = 0)
         {
             Assert.IsNull(response.Exception);
             Assert.AreEqual(expectedCount, response.Count);
             Assert.AreEqual(funcName, response.FunctionName);
+            Assert.AreEqual(funcId, response.FunctionId);
+
             Assert.AreEqual(prg.Id, response.ProgramId);
             Assert.AreEqual(usr.Id, response.UserId);
         }
