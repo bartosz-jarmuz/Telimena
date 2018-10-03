@@ -159,9 +159,13 @@
     <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
     <Compile Include="Migrations\201810032114071_addedIsPublic.cs" />
-    <Compile Include="Migrations\201810032114071_addedIsPublic.Designer.cs" />
+    <Compile Include="Migrations\201810032114071_addedIsPublic.Designer.cs" >
+	  <DependentUpon>201810032114071_addedIsPublic.cs</DependentUpon>
+	</Compile>
     <Compile Include="Migrations\201810032119208_addedIsPublic2.cs" />
-    <Compile Include="Migrations\201810032119208_addedIsPublic2.Designer.cs" />
+    <Compile Include="Migrations\201810032119208_addedIsPublic2.Designer.cs" >
+	  <DependentUpon>201810032119208_addedIsPublic2.cs</DependentUpon>
+	</Compile>
     <Compile Include="Migrations\201810032120310_addedIsPublic3.cs" />
     <Compile Include="Migrations\201810032120310_addedIsPublic3.Designer.cs">
       <DependentUpon>201810032120310_addedIsPublic3.cs</DependentUpon>
@@ -222,8 +226,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201810032114071_addedIsPublic.resx" />
-    <EmbeddedResource Include="Migrations\201810032119208_addedIsPublic2.resx" />
+    <EmbeddedResource Include="Migrations\201810032114071_addedIsPublic.resx" >
+      <DependentUpon>201810032114071_addedIsPublic.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810032119208_addedIsPublic2.resx">
+      <DependentUpon>201810032119208_addedIsPublic2.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201810032120310_addedIsPublic3.resx">
       <DependentUpon>201810032120310_addedIsPublic3.cs</DependentUpon>
     </EmbeddedResource>
