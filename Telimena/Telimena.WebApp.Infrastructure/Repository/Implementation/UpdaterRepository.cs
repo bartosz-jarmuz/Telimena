@@ -35,9 +35,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         protected TelimenaContext TelimenaContext { get; }
         private readonly string containerName = "toolkit-packages";
 
-        public void Add(Updater updater)
+        public Updater Add(string fileName, string internalName, TelimenaUser user)
         {
+           var updater = new Updater(fileName, internalName);
             this.TelimenaContext.Updaters.Add(updater);
+            updater.DeveloperAccount = user.AssociatedDeveloperAccounts.FirstOrDefault(x => x.MainUserId == user.Id);
+            return updater;
         }
 
         public UpdaterPackageInfo GetPackageForVersion(Updater updater, string version)
@@ -54,6 +57,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public async Task<IEnumerable<UpdaterPackageInfo>> GetPackages(string updaterInternalName)
         {
             return (await this.TelimenaContext.UpdaterPackages.Where(x => x.Updater.InternalName == updaterInternalName).ToListAsync()).AsReadOnly();
+        }
+
+        public async Task<IEnumerable<UpdaterPackageInfo>> GetAllPackages()
+        {
+            return (await this.TelimenaContext.UpdaterPackages.ToListAsync()).AsReadOnly();
         }
 
         public async Task<UpdaterPackageInfo> GetNewestCompatibleUpdater(Program program, string version, string toolkitVersion, bool includingBeta)
@@ -98,6 +106,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             if (updater == null && updaterInternalName == DefaultToolkitNames.UpdaterInternalName) //create the default updater
             {
                 updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
+                updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
+            }
+            if (updater != null && updater.DeveloperAccount == null)
+            {
                 updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
             }
 

@@ -24,7 +24,7 @@ namespace Telimena.WebApp.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            IEnumerable<UpdaterPackageInfo> updaterPackageInfos = await this.work.UpdaterRepository.GetPackages(DefaultToolkitNames.UpdaterInternalName);
+            IEnumerable<UpdaterPackageInfo> updaterPackageInfos = await this.work.UpdaterRepository.GetAllPackages();
             IEnumerable<TelimenaToolkitData> toolkitData =
                 await this.work.ToolkitDataRepository.GetAsync(includeProperties: nameof(TelimenaToolkitData.TelimenaPackageInfo));
             ToolkitManagementViewModel model = new ToolkitManagementViewModel

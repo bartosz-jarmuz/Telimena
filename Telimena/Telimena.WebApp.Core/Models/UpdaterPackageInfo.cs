@@ -19,7 +19,7 @@
 
         public bool IsBeta { get; set; }
 
-        public Updater Updater { get; set; }
+        public virtual Updater Updater { get; set; }
 
         public int UpdaterId { get; set; }
     }

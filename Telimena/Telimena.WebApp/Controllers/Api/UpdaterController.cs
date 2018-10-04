@@ -104,10 +104,13 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IHttpActionResult> Upload(UploadUpdaterRequest request)
+        public async Task<IHttpActionResult> Upload()
         {
             try
             {
+                string reqString = HttpContext.Current.Request.Form["Model"];
+                UploadUpdaterRequest request = JsonConvert.DeserializeObject<UploadUpdaterRequest>(reqString);
+
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
@@ -116,8 +119,7 @@ namespace Telimena.WebApp.Controllers.Api
 
                     if (updater == null)
                     {
-                        updater = new Updater(uploadedFile.FileName, request.UpdaterInternalName);
-                        this.work.UpdaterRepository.Add(updater);
+                        this.work.UpdaterRepository.Add(uploadedFile.FileName, request.UpdaterInternalName, user);
                     }
 
                     if (user.AssociatedDeveloperAccounts.All(x => x.Id != updater.DeveloperAccount.Id))

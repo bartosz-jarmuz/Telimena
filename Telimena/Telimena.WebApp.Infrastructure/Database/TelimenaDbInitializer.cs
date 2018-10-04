@@ -10,8 +10,8 @@ using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
+    
     public class TelimenaDbInitializer : MigrateDatabaseToLatestVersion<TelimenaContext, Configuration>
-   // public class TelimenaDbInitializer : DropCreateDatabaseIfModelChanges<TelimenaContext>
     {
         public static void SeedUsers(TelimenaContext context)
         {
@@ -30,6 +30,7 @@ namespace Telimena.WebApp.Infrastructure.Database
             if (!context.Updaters.Any(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName))
             {
                 var updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
+                updater.DeveloperAccount = context.Developers.FirstOrDefault(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
                 context.Updaters.AddOrUpdate(updater);
             }
        

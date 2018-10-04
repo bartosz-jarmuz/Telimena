@@ -1,7 +1,8 @@
 ﻿@using DotNetLittleHelpers
 @using Telimena.WebApp.Core.Messages
 @using Telimena.WebApp.Core.Models
-@model Telimena.WebApp.Models.Updater.ToolkitManagementViewModel
+@using TelimenaClient
+@model global::Telimena.WebApp.Models.Updater.ToolkitManagementViewModel
 @{
     ViewBag.Title = "Index";
 }
@@ -151,7 +152,7 @@
 <div class="col-md-12 ">
     <div class="box box-success box-solid box-solid">
         <div class="box-header">
-            <h3 class="box-title">Updater</h3>
+            <h3 class="box-title">Updaters</h3>
         </div>
         <div class="box-body">
             <div class="col-md-4">
@@ -164,7 +165,11 @@
                             <label class="confirmation label label-md" style="display: none"></label>
                             <div class="form-group">
                                 <label>Required toolkit version: </label>
-                                <input type="text" id="updaterUpdatePackageVersion"/>
+                                <input type="text" id="updaterToolkitVersionNeeded" value="0.0.0.0"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Internal name: </label>
+                                <input type="text" id="updaterInternalName" value="@DefaultToolkitNames.UpdaterInternalName"/>
                             </div>
                             <div class="form-group">
                                 <span class="btn btn-success fileinput-button uploadedPackage">
@@ -173,11 +178,6 @@
                                     <input type="file"
                                            name="uploadedPackage"/>
                                 </span>
-                                @*<button class="btn btn-warning cancel"
-                                type="button" >
-                            <i class="glyphicon glyphicon-ban-circle"></i>
-                            <span>Cancel</span>
-                        </button>*@
                             </div>
                             <div class="InfoContainer">
                                 <div class="info fileName">
@@ -218,6 +218,10 @@
                             <thead>
                             <tr>
                                 <th>Id</th>
+                                <th>Internal name</th>
+                                <th>Is public</th>
+                                <th>Owner</th>
+                                <th>File</th>
                                 <th>Version</th>
                                 <th>Uploaded Date</th>
                                 <th>File Size</th>
@@ -230,7 +234,10 @@
                             {
                                 <tr>
                                     <td>@pkg.Id</td>
-
+                                    <td>@pkg.Updater.InternalName</td>
+                                    <td>@pkg.Updater.IsPublic</td>
+                                    <td>@pkg.Updater.DeveloperAccount.Name</td>
+                                    <td>@pkg.Updater.FileName</td>
                                     <td>
                                         <a href="/api@(Url.Action("Get", "Updater") + "?id=" + pkg.Id)">@pkg.Version</a>
                                     </td>
@@ -264,6 +271,8 @@
                 e.preventDefault();
                 var form = $('#uploadUpdaterUpdatePackageForm')[0];
                 var formData = new FormData(form);
+                var modelString = CreateUpdaterPackage();
+                formData.append('Model', modelString);
                 UploadFile(formData,  '@Url.Action("Upload", "Updater")', $(this).find(':submit'));
             });
             $('#uploadToolkitUpdatePackageForm').submit(function(e) {
@@ -292,6 +301,16 @@
                 infoContainer.find(".fileSize").text("Size : " + fileSize);
             }
         }
+
+        function CreateUpdaterPackage() {
+            var model = {
+                @nameof(UploadUpdaterRequest.MinimumCompatibleToolkitVersion): $('#updaterToolkitVersionNeeded').val(),
+                @nameof(UploadUpdaterRequest.UpdaterInternalName): $('#updaterInternalName').val(),
+            };
+            return JSON.stringify(model);
+
+        }
+
 
         function UploadFile(formData, url, button) {
 

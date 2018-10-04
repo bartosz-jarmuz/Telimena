@@ -31,6 +31,7 @@ namespace Telimena.Tests
         protected override Action SeedAction =>
             () =>
             {
+                TelimenaDbInitializer.SeedUsers(this.Context);
                 TelimenaDbInitializer.SeedToolkit(this.Context);
                 this.Prepare();
 
@@ -61,50 +62,49 @@ namespace Telimena.Tests
             this.assemblyVersionReader = GetMockVersionReader().Object;
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyVersionReader);
 
-            var updater = unit.UpdaterRepository.GetUpdater(DefaultToolkitNames.UpdaterInternalName).GetAwaiter().GetResult();
-            var updaterOther = new WebApp.Core.Models.Updater(this.otherUpdaterInternalName, "Updater.msi");
-            unit.UpdaterRepository.Add(updaterOther);
+            var defaultUpdater = unit.UpdaterRepository.GetUpdater(DefaultToolkitNames.UpdaterInternalName).GetAwaiter().GetResult();
+            var user = unit.Users.FirstOrDefault();
+            var updaterOther = unit.UpdaterRepository.Add("Updater.msi", this.otherUpdaterInternalName, user);
 
-            var ultraNewest = new WebApp.Core.Models.Updater("UltraNewest", "UltraNewest");
-            unit.UpdaterRepository.Add(ultraNewest);
+            var ultraNewest = unit.UpdaterRepository.Add("UltraNewest", "UltraNewest", user);
 
             unit.CompleteAsync().GetAwaiter().GetResult();
-            updater = unit.UpdaterRepository.GetUpdater(DefaultToolkitNames.UpdaterInternalName).GetAwaiter().GetResult();
-            Assert.IsTrue(updater.Id > 0);
+            defaultUpdater = unit.UpdaterRepository.GetUpdater(DefaultToolkitNames.UpdaterInternalName).GetAwaiter().GetResult();
+            Assert.IsTrue(defaultUpdater.Id > 0);
 
             this.InsertPrograms(unit, updaterOther);
 
 
-            unit.UpdaterRepository.StorePackageAsync(updater, "0.0.0.0", GenerateStream("1.0.0"), this.saver).GetAwaiter().GetResult();
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.0.0.0", GenerateStream("1.0.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
-            Assert.AreEqual(1, updater.Packages.Count);
+            Assert.AreEqual(1, defaultUpdater.Packages.Count);
 
-            var pkg = unit.UpdaterRepository.StorePackageAsync(updater, "0.0.0.0", GenerateStream("1.1.0"), this.saver).GetAwaiter().GetResult();
+            var pkg = unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.0.0.0", GenerateStream("1.1.0"), this.saver).GetAwaiter().GetResult();
             pkg.IsBeta = true;
             unit.CompleteAsync().GetAwaiter().GetResult();
-            Assert.AreEqual(2, updater.Packages.Count);
+            Assert.AreEqual(2, defaultUpdater.Packages.Count);
 
-            unit.UpdaterRepository.StorePackageAsync(updater, "0.5.0.0", GenerateStream("1.2.0"), this.saver).GetAwaiter().GetResult();
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.5.0.0", GenerateStream("1.2.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
-            Assert.AreEqual(3, updater.Packages.Count);
+            Assert.AreEqual(3, defaultUpdater.Packages.Count);
 
-            unit.UpdaterRepository.StorePackageAsync(updater, "0.9.0.0", GenerateStream("1.3.0"), this.saver).GetAwaiter().GetResult();
-            unit.CompleteAsync().GetAwaiter().GetResult();
-
-            unit.UpdaterRepository.StorePackageAsync(updater, "0.9.0.0", GenerateStream("1.4.0"), this.saver).GetAwaiter().GetResult();
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.9.0.0", GenerateStream("1.3.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
 
-            unit.UpdaterRepository.StorePackageAsync(updater, "0.9.0.0", GenerateStream("1.5.0"), this.saver).GetAwaiter().GetResult();
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.9.0.0", GenerateStream("1.4.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
 
-            unit.UpdaterRepository.StorePackageAsync(updater, "1.3.0.0", GenerateStream("1.6.0"), this.saver).GetAwaiter().GetResult();
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.9.0.0", GenerateStream("1.5.0"), this.saver).GetAwaiter().GetResult();
+            unit.CompleteAsync().GetAwaiter().GetResult();
+
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "1.3.0.0", GenerateStream("1.6.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
 
 
             unit.UpdaterRepository.StorePackageAsync(updaterOther, "0.0.2.0", GenerateStream("1.6.5"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
 
-            pkg = unit.UpdaterRepository.StorePackageAsync(updater, "1.3.0.0", GenerateStream("1.7.0"), this.saver).GetAwaiter().GetResult();
+            pkg = unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "1.3.0.0", GenerateStream("1.7.0"), this.saver).GetAwaiter().GetResult();
             pkg.IsBeta = true;
             unit.CompleteAsync().GetAwaiter().GetResult();
 
@@ -117,7 +117,7 @@ namespace Telimena.Tests
             unit.UpdaterRepository.StorePackageAsync(ultraNewest, "0.0.0.0", GenerateStream("9.8.5"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
 
-            Assert.IsTrue(updater.Packages.Count > 4);
+            Assert.IsTrue(defaultUpdater.Packages.Count > 4);
             return unit;
         }
 
