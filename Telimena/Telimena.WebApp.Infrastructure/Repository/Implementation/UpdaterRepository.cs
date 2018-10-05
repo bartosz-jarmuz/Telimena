@@ -35,6 +35,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         protected TelimenaContext TelimenaContext { get; }
         private readonly string containerName = "toolkit-packages";
 
+        public Task<Updater> GetUpdater(int id)
+        {
+            return this.TelimenaContext.Updaters.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public Updater Add(string fileName, string internalName, TelimenaUser user)
         {
            var updater = new Updater(fileName, internalName);

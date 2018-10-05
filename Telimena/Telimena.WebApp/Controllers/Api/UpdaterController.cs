@@ -55,6 +55,20 @@ namespace Telimena.WebApp.Controllers.Api
             return this.ResponseMessage(result);
         }
 
+        [HttpPut]
+        public async Task<IHttpActionResult> SetIsPublic(int id, bool isPublic)
+        {
+            var updater = await this.work.UpdaterRepository.GetUpdater(id);
+            if (updater == null)
+            {
+                return this.BadRequest($"Updater id [{id}] does not exist");
+            }
+
+            updater.IsPublic = isPublic;
+            await this.work.CompleteAsync();
+            return this.Ok($"Set package with ID: {id} public flag to: {isPublic}");
+        }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IHttpActionResult> Get(string internalName, string version)

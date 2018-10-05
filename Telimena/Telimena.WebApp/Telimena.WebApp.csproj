@@ -1986,7 +1986,6 @@
     <Content Include="Views\Shared\_InfoBox.cshtml" />
     <Content Include="Views\RegisterProgram\Register.cshtml" />
     <Content Include="Views\Shared\_ProgramsList.cshtml" />
-    <Content Include="Views\ProgramManagement\_PackageBetaActivator.cshtml" />
     <Content Include="Views\ToolkitManagement\Index.cshtml" />
     <Content Include="Views\ProgramStatistics\Index.cshtml" />
   </ItemGroup>
