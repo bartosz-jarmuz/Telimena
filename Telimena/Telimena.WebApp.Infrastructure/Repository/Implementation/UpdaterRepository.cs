@@ -105,6 +105,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return null;
         }
 
+        public async Task<IEnumerable<Updater>> GetPublicUpdaters()
+        {
+            return await this.TelimenaContext.Updaters.Where(x => x.IsPublic).ToListAsync();
+        }
+
         public async Task<Updater> GetUpdater(string updaterInternalName)
         {
             var updater = await this.TelimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == updaterInternalName);

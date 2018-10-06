@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Web.Mvc;
 using Telimena.WebApp.Core.Models;
 
 namespace Telimena.WebApp.Models.ProgramDetails
@@ -12,5 +13,9 @@ namespace Telimena.WebApp.Models.ProgramDetails
 
         public string ProgramDownloadUrl { get; set; }
         public ProgramPackageInfo ProgramPackageInfo { get; set; }
+
+        public int SelectedUpdaterId { get;set; }
+
+        public List<SelectListItem> UpdatersSelectList { get; set; }
     }
 }

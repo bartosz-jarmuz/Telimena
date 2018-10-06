@@ -16,6 +16,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
         IFunctionRepository Functions { get; }
         IToolkitDataRepository ToolkitData { get; set; }
         IUpdatePackageRepository UpdatePackages { get; set; }
+        IUpdaterRepository UpdaterRepository { get; set; }
         IProgramPackageRepository ProgramPackages { get; set; }
         Task CompleteAsync();
     }

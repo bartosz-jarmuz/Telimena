@@ -20,6 +20,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
             this.ToolkitData = new ToolkitDataRepository(context, versionReader);
             this.UpdatePackages = new UpdatePackageRepository(context, versionReader);
             this.ProgramPackages = new ProgramPackageRepository(context, versionReader);
+            this.UpdaterRepository = new UpdaterRepository(context, versionReader);
             this.TelimenaUserManager = userManager;
         }
 
@@ -29,6 +30,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         public ITelimenaUserManager TelimenaUserManager { get; set; }
         public IToolkitDataRepository ToolkitData { get; set; }
         public IUpdatePackageRepository UpdatePackages { get; set; }
+        public IUpdaterRepository UpdaterRepository { get; set; }
         public IProgramPackageRepository ProgramPackages { get; set; }
         public IRepository<AssemblyVersion> Versions { get; }
         public IProgramRepository Programs { get; }

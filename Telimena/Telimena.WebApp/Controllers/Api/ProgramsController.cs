@@ -28,6 +28,10 @@ namespace Telimena.WebApp.Controllers.Api
         public async Task<IHttpActionResult> Delete(int id)
         {
             var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program with Id {id} does not exist");
+            }
             try
             {
                 this.Work.Programs.Remove(prg);
@@ -40,6 +44,25 @@ namespace Telimena.WebApp.Controllers.Api
             return this.Ok($"Program {prg.Name} (ID: {id}) deleted successfully");
         }
 
+        [HttpPut]
+        public async Task<IHttpActionResult> SetUpdater(int programId, int updaterId)
+        {
+            var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == programId);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program with Id {programId} does not exist");
+            }
+
+            var updater = await this.Work.UpdaterRepository.GetUpdater(updaterId);
+            if (updater == null)
+            {
+                return this.BadRequest($"Updater with Id {updaterId} does not exist");
+            }
+
+            prg.Updater = updater;
+            await this.Work.CompleteAsync();
+            return this.Ok($"Updater set to {updater.InternalName}");
+        }
 
         [HttpGet]
         public async Task<IEnumerable<Program>> GetPrograms(int developerId)

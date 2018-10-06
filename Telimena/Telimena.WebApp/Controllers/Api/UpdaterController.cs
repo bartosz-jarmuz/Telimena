@@ -64,6 +64,10 @@ namespace Telimena.WebApp.Controllers.Api
                 return this.BadRequest($"Updater id [{id}] does not exist");
             }
 
+            if (updater.InternalName == DefaultToolkitNames.UpdaterInternalName)
+            {
+                return this.BadRequest($"Cannot change default updater");
+            }
             updater.IsPublic = isPublic;
             await this.work.CompleteAsync();
             return this.Ok($"Set package with ID: {id} public flag to: {isPublic}");

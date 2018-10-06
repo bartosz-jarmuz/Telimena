@@ -10,6 +10,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
     public interface IUpdaterRepository 
     {
         Task<UpdaterPackageInfo> GetNewestCompatibleUpdater(Program program, string version, string toolkitVersion, bool includingBeta);
+        Task<IEnumerable<Updater>> GetPublicUpdaters();
 
         Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever);
         Task<UpdaterPackageInfo> StorePackageAsync(Updater updater, string minimumRequiredToolkitVersion, Stream fileStream, IFileSaver fileSaver);

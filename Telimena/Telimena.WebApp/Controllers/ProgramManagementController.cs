@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Telimena.WebApp.Core.Interfaces;
@@ -44,6 +45,22 @@ namespace Telimena.WebApp.Controllers
             model.UpdatePackages = packages;
 
             model.ProgramPackageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(model.ProgramId);
+
+            var publicUpdaters = await this.Work.UpdaterRepository.GetPublicUpdaters();
+            model.UpdatersSelectList = new List<SelectListItem>();
+            foreach (Updater publicUpdater in publicUpdaters)
+            {
+                var item = new SelectListItem() {
+                    Text = publicUpdater.InternalName,
+                    Value = publicUpdater.Id.ToString()
+                };
+                if (publicUpdater.Id == program.Updater.Id)
+                {
+                    item.Selected = true;
+                }
+                model.UpdatersSelectList.Add(item);
+               
+            }
 
             return this.View("Index", model);
         }

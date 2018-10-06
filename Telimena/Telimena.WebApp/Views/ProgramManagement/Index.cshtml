@@ -62,7 +62,12 @@
                     <a href="@Model.ProgramDownloadUrl">@Model.ProgramDownloadUrl</a>
                 </div>
                 <div class="form-group">
-                    <input type="button" class="btn btn-danger" id="deleteProgramButton" value="Delete program"/>
+                    <label>Updater: </label>
+                    @Html.DropDownList("Updaters", Model.UpdatersSelectList, new {id = "updaterSelectList"})
+                    <input type='submit' id="submitUpdaterChange" value='Submit'/>
+                </div>
+                <div class="form-group">
+                    <input type="button" class="btn btn-danger" id="deleteProgramButton" value="Delete program" />
                 </div>
             </div>
         </div>
@@ -252,6 +257,9 @@
             $('#deleteProgramButton').click(function () {
                 DeleteProgram(this);
             });
+            $('#submitUpdaterChange').click(function() {
+                SetUpdater(this);
+            });
             $('.uploadedPackage').change(function(e) { SingleFileSelected(e, $(this).find('input')) });
             $('#uploadUpdatePackageForm').submit(CreateUpdatePackage);
             $('#uploadProgramPackageForm').submit(function(e) {
@@ -288,6 +296,26 @@
                 // Do nothing!
             }
            
+        }
+
+        
+        function SetUpdater(input) {
+            var id = $('#updaterSelectList').val();
+
+            $.ajax({
+                type: 'PUT',
+                url: '/api' +
+                    '@Url.Action("SetUpdater", "Programs")?programId=' + @Model.ProgramId+ '&updaterId=' + id,
+                success: function(result) {
+                    ShowConfirmationBox(input,
+                        "label-success",
+                        result + ". Reloading page...");
+                    setTimeout(location.reload.bind(location), 1500);
+                },
+                error: function(xhr) {
+                    ShowConfirmationBox(input, "label-danger", xhr.responseJSON.Message);
+                }
+            });
         }
 
         function TogglePackageBeta(input) {

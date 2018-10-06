@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
@@ -25,6 +26,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public override void Add(Program objectToAdd)
         {
             objectToAdd.RegisteredDate = DateTime.UtcNow;
+            if (objectToAdd.Updater == null)
+            {
+                objectToAdd.Updater = this.TelimenaContext.Updaters.FirstOrDefault(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName);
+            }
             this.TelimenaContext.Programs.Add(objectToAdd);
         }
 
