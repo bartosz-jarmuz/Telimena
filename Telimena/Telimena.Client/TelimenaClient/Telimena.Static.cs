@@ -169,9 +169,20 @@ namespace TelimenaClient
 
             return new StartupData(info, userInfo, telimenaVersion, updaterVersion);
         }
+
+        /// <summary>
+        /// Gets the name of the updater file.
+        /// </summary>
+        /// <returns>System.String.</returns>
+        public static string GetUpdaterFileName()
+        {
+            return DefaultToolkitNames.UpdaterFileName;
+        }
+
+
         private static string GetUpdaterVersion(ProgramInfo programInfo)
         {
-            var updaterFile = UpdateHandler.PathFinder.GetUpdaterExecutable(UpdateHandler.BasePath, UpdateHandler.GetUpdatesFolderName(programInfo));
+            var updaterFile = UpdateHandler.PathFinder.GetUpdaterExecutable(UpdateHandler.BasePath, UpdateHandler.GetUpdatesFolderName(programInfo), GetUpdaterFileName());
             if (updaterFile.Exists)
             {
                 var version = FileVersionInfo.GetVersionInfo(updaterFile.FullName);

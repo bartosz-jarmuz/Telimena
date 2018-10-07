@@ -21,7 +21,7 @@ namespace TelimenaClient
 
         public bool ShowInstallUpdatesNowQuestion(IEnumerable<UpdatePackageData> packagesToInstall)
         {
-            string maxVersion = packagesToInstall.Where(x => x.FileName != UpdateHandler.UpdaterFileName).GetMaxVersion();
+            string maxVersion = packagesToInstall.Where(x => x.FileName != Telimena.GetUpdaterFileName()).GetMaxVersion();
 
             MessageBoxResult choice = MessageBox.Show($"An update to version {maxVersion} was downloaded.\r\nWould you like to install now?"
                 , "Confirm installation", MessageBoxButton.YesNo, MessageBoxImage.Question);

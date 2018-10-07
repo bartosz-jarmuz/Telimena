@@ -72,6 +72,5 @@ namespace TelimenaClient
             this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.HttpClient);
         }
-
     }
 } 

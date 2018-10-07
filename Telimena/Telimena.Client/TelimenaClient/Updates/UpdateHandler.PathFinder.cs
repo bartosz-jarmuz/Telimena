@@ -8,10 +8,10 @@ namespace TelimenaClient
     {
         public static class PathFinder
         {
-            public static FileInfo GetUpdaterExecutable(string basePath, string updatesFolderName)
+            public static FileInfo GetUpdaterExecutable(string basePath, string updatesFolderName, string updaterFileName)
             {
                 DirectoryInfo updatesDir = GetUpdatesParentFolder(basePath, updatesFolderName);
-                return new FileInfo(Path.Combine(updatesDir.FullName, UpdaterFileName));
+                return new FileInfo(Path.Combine(updatesDir.FullName, updaterFileName));
             }
 
             public static DirectoryInfo GetUpdatesParentFolder(string basePath, string updatesFolderName)

@@ -17,8 +17,6 @@ namespace TelimenaClient
             this.updateInstaller = updateInstaller;
         }
 
-        public const string UpdaterFileName = "Updater.exe";
-
         private readonly IMessenger messenger;
         private readonly ProgramInfo programInfo;
         private readonly IReceiveUserInput inputReceiver;
@@ -38,7 +36,7 @@ namespace TelimenaClient
 
                 packagesToInstall = programUpdateResponse.UpdatePackages;
 
-                await this.InstallUpdater(updaterUpdateResponse, PathFinder.GetUpdatesParentFolder(BasePath, GetUpdatesFolderName(this.programInfo))).ConfigureAwait(false);
+                FileInfo updaterFile = await this.InstallUpdater(updaterUpdateResponse, PathFinder.GetUpdatesParentFolder(BasePath, GetUpdatesFolderName(this.programInfo))).ConfigureAwait(false);
                 if (packagesToInstall != null && packagesToInstall.Any())
                 {
                     await this.DownloadUpdatePackages(packagesToInstall).ConfigureAwait(false);
@@ -46,7 +44,6 @@ namespace TelimenaClient
                     FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo);
 
                     bool installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(packagesToInstall);
-                    FileInfo updaterFile = PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo));
                     if (installUpdatesNow)
                     {
                         this.updateInstaller.InstallUpdates(instructionsFile, updaterFile);
@@ -115,13 +112,13 @@ namespace TelimenaClient
             return PathFinder.GetUpdatesSubfolder(basePath, GetUpdatesFolderName(this.programInfo), packagesToDownload);
         }
 
-        private async Task InstallUpdater(UpdateResponse response, DirectoryInfo updatesFolder)
+        private async Task<FileInfo> InstallUpdater(UpdateResponse response, DirectoryInfo updatesFolder)
         {
             UpdatePackageData pkgData = response?.UpdatePackages?.FirstOrDefault();
-
+            var updaterExecutable = PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo), Telimena.GetUpdaterFileName());
             if (pkgData == null)
             {
-                return;
+                return updaterExecutable;
             }
 
             Stream stream = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdaterUpdatePackage + "?id=" + pkgData.Id).ConfigureAwait(false);
@@ -132,7 +129,8 @@ namespace TelimenaClient
             }
 
             await SaveStreamToPath(pkgData, pkgFile, stream).ConfigureAwait(false);
-            await this.updateInstaller.InstallUpdaterUpdate(pkgFile, PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo))).ConfigureAwait(false);
+            await this.updateInstaller.InstallUpdaterUpdate(pkgFile, updaterExecutable).ConfigureAwait(false);
+            return updaterExecutable;
         }
     }
 }
