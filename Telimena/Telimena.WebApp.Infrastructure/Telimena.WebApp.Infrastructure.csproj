@@ -154,18 +154,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRequestsValidator.cs" />
+    <Compile Include="Audit\Audit.cs" />
+    <Compile Include="Audit\AuditAttribute.cs" />
+    <Compile Include="Audit\AuditFilter.cs" />
+    <Compile Include="Audit\AuditingContext.cs" />
+    <Compile Include="Audit\AuditingLevel.cs" />
+    <Compile Include="Audit\AuditingModes.cs" />
+    <Compile Include="Audit\DebugAuditLogger.cs" />
+    <Compile Include="Audit\IAudit.cs" />
+    <Compile Include="Audit\IAuditLogger.cs" />
     <Compile Include="AutoMapperDomainProfile.cs" />
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Identity\Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
     <Compile Include="Migrations\201810032114071_addedIsPublic.cs" />
-    <Compile Include="Migrations\201810032114071_addedIsPublic.Designer.cs" >
-	  <DependentUpon>201810032114071_addedIsPublic.cs</DependentUpon>
-	</Compile>
+    <Compile Include="Migrations\201810032114071_addedIsPublic.Designer.cs">
+      <DependentUpon>201810032114071_addedIsPublic.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201810032119208_addedIsPublic2.cs" />
-    <Compile Include="Migrations\201810032119208_addedIsPublic2.Designer.cs" >
-	  <DependentUpon>201810032119208_addedIsPublic2.cs</DependentUpon>
-	</Compile>
+    <Compile Include="Migrations\201810032119208_addedIsPublic2.Designer.cs">
+      <DependentUpon>201810032119208_addedIsPublic2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201810032120310_addedIsPublic3.cs" />
     <Compile Include="Migrations\201810032120310_addedIsPublic3.Designer.cs">
       <DependentUpon>201810032120310_addedIsPublic3.cs</DependentUpon>
@@ -226,7 +235,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201810032114071_addedIsPublic.resx" >
+    <EmbeddedResource Include="Migrations\201810032114071_addedIsPublic.resx">
       <DependentUpon>201810032114071_addedIsPublic.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201810032119208_addedIsPublic2.resx">

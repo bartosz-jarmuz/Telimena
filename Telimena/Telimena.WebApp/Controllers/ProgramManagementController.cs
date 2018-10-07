@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Security;
@@ -21,6 +22,7 @@ namespace Telimena.WebApp.Controllers
 
         private IProgramsUnitOfWork Work { get; }
 
+        [Audit]
         [HttpGet]
         public async Task<ActionResult> Index(string programName)
         {

@@ -6,6 +6,7 @@ using DotNetLittleHelpers;
 using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
+using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Security;
@@ -30,12 +31,15 @@ namespace Telimena.WebApp.Controllers
         private readonly IAccountUnitOfWork unitOfWork;
         private readonly ILog logger;
 
+
+        [Audit]
         [HttpGet]
         public ActionResult ChangePassword()
         {
             return this.View();
         }
 
+        [Audit]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -81,6 +85,7 @@ namespace Telimena.WebApp.Controllers
             return this.View(model);
         }
 
+        [Audit]
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
@@ -88,6 +93,7 @@ namespace Telimena.WebApp.Controllers
         }
 
         [HttpGet]
+        [Audit]
         [AllowAnonymous]
         public ActionResult Login()
         {
@@ -96,6 +102,7 @@ namespace Telimena.WebApp.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [Audit]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
@@ -142,6 +149,7 @@ namespace Telimena.WebApp.Controllers
             return this.RedirectToAction("Index", "Home");
         }
 
+        [Audit]
         [HttpGet]
         [AllowAnonymous]
         public ActionResult Register()
@@ -151,6 +159,7 @@ namespace Telimena.WebApp.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [Audit]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {

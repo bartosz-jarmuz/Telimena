@@ -137,7 +137,7 @@ namespace Telimena.WebApp.Controllers.Api
 
                     if (updater == null)
                     {
-                        this.work.UpdaterRepository.Add(uploadedFile.FileName, request.UpdaterInternalName, user);
+                       updater = this.work.UpdaterRepository.Add(uploadedFile.FileName, request.UpdaterInternalName, user);
                     }
 
                     if (user.AssociatedDeveloperAccounts.All(x => x.Id != updater.DeveloperAccount.Id))

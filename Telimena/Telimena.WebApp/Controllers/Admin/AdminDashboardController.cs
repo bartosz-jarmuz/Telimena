@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
+using MvcAuditLogger;
 using Newtonsoft.Json;
 using Telimena.WebApp.Controllers.Developer;
 using Telimena.WebApp.Core.DTO;
@@ -25,6 +26,7 @@ namespace Telimena.WebApp.Controllers.Admin
         private readonly IProgramsDashboardUnitOfWork unitOfWork;
         private readonly ProgramsDashboardBase dashboardBase;
 
+        [Audit]
         public ActionResult Apps()
         {
             return this.View();
@@ -49,6 +51,7 @@ namespace Telimena.WebApp.Controllers.Admin
             return this.PartialView("_PortalSummaryBoxes", summary);
         }
 
+        [Audit]
         public ActionResult Portal()
         {
             return this.View();

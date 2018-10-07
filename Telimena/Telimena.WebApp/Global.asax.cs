@@ -7,11 +7,13 @@ using DataTables.AspNet.Mvc5;
 using log4net;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using MvcAuditLogger;
 using Ninject;
 using Ninject.Extensions.Conventions;
 using Ninject.Modules;
 using Ninject.Web.Common;
 using Ninject.Web.Common.WebHost;
+using Ninject.Web.Mvc.FilterBindingSyntax;
 using Ninject.Web.WebApi;
 using Telimena.WebApp;
 using Telimena.WebApp.Controllers.Api;
@@ -30,7 +32,8 @@ namespace Telimena.WebApi
             StandardKernel kernel = new StandardKernel();
             kernel.Load(new ServiceModule());
             kernel.Bind(x => x.FromAssembliesMatching("Telimena.*.dll").SelectAllClasses().Excluding(typeof(TelimenaUserManager)).BindDefaultInterface());
-
+            kernel.BindFilter<AuditFilter>(FilterScope.Action, null).WhenActionMethodHas<AuditAttribute>();
+            kernel.Bind<IAuditLogger>().To<DebugAuditLogger>();
             GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
             return kernel;
         }

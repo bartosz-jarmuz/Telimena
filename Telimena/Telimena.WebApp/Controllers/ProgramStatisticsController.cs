@@ -6,6 +6,7 @@ using System.Web.Http.Results;
 using System.Web.Mvc;
 using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
+using MvcAuditLogger;
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
@@ -26,6 +27,7 @@ namespace Telimena.WebApp.Controllers
 
         private IProgramsDashboardUnitOfWork Work { get; }
 
+        [Audit]
         [HttpGet]
         public async Task<ActionResult> Index(string programName)
         {
@@ -41,6 +43,8 @@ namespace Telimena.WebApp.Controllers
             return this.View("Index", model);
         }
 
+
+        [Audit]
         [HttpGet]
         public async Task<ActionResult> ExportFunctionUsageCustomData(int programId, bool includeGenericData)
         {
@@ -62,7 +66,7 @@ namespace Telimena.WebApp.Controllers
 
 
 
-        public async Task<JsonResult> GetProgramUsageData(int programId, IDataTablesRequest request)
+        private async Task<JsonResult> GetProgramUsageData(int programId, IDataTablesRequest request)
         {
             UsageDataTableResult result = await this.Work.GetProgramUsageData(programId, request.Start, request.Length, "Id",true);
 
@@ -71,7 +75,7 @@ namespace Telimena.WebApp.Controllers
             return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
         }
 
-        public async Task<JsonResult> GetProgramFunctionsUsageData(int programId, IDataTablesRequest request)
+        private async Task<JsonResult> GetProgramFunctionsUsageData(int programId, IDataTablesRequest request)
         {
             UsageDataTableResult result = await this.Work.GetProgramFunctionsUsageData(programId, request.Start, request.Length, "Id", true);
 

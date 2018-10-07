@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Security;
@@ -18,6 +19,7 @@ namespace Telimena.WebApp.Controllers
 
         private readonly IProgramsUnitOfWork work;
 
+        [Audit]
         public ActionResult Index()
         {
             if (this.User.IsInRole(TelimenaRoles.Admin))

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using AutoMapper;
 using log4net;
+using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Identity;
@@ -30,12 +31,14 @@ namespace Telimena.WebApp.Controllers.Admin
         private readonly ITelimenaUserManager userManager;
 
         [HttpGet]
+        [Audit]
         public async Task<ActionResult> Index()
         {
             PortalUsersViewModel model = await this.InitializeModel();
             return this.View(model);
         }
 
+        [Audit]
         [HttpPost]
         public async Task<ActionResult> ToggleRoleActivation(string userId, bool activateRole, string roleName)
         {
@@ -62,6 +65,7 @@ namespace Telimena.WebApp.Controllers.Admin
             }
         }
 
+        [Audit]
         [HttpPost]
         public async Task<ActionResult> ToggleUserActivation(string userId, bool isActive)
         {

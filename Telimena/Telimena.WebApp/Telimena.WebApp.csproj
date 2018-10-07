@@ -265,6 +265,7 @@
     <Compile Include="Controllers\Api\StatisticsHelperService.cs" />
     <Compile Include="Controllers\Api\ToolkitController.cs" />
     <Compile Include="Controllers\Api\UpdaterController.cs" />
+    <Compile Include="Controllers\Developer\ProgramsDashboardBase.cs" />
     <Compile Include="Controllers\Developer\RegisterProgramController.cs" />
     <Compile Include="Controllers\Developer\DeveloperDashboardController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />

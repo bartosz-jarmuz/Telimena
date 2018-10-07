@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using log4net;
+using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Security;
@@ -22,12 +23,14 @@ namespace Telimena.WebApp.Controllers.Developer
         private readonly IProgramsUnitOfWork _work;
         private ILog logger;
 
+        [Audit]
         [HttpGet]
         public ActionResult Register()
         {
             return this.View();
         }
 
+        [Audit]
         [HttpPost]
         public async Task<ActionResult> Register(RegisterProgramViewModel model)
         {
