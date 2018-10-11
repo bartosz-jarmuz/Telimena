@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http.Results;
@@ -65,19 +67,24 @@ namespace Telimena.WebApp.Controllers
         }
 
 
-
-        private async Task<JsonResult> GetProgramUsageData(int programId, IDataTablesRequest request)
+        [HttpGet]
+        public async Task<JsonResult> GetProgramUsageData(int programId, IDataTablesRequest request)
         {
-            UsageDataTableResult result = await this.Work.GetProgramUsageData(programId, request.Start, request.Length, "Id",true);
+            IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x=>x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
+                
+            UsageDataTableResult result = await this.Work.GetProgramUsageData(programId, request.Start, request.Length, sorts);
 
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
 
             return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
         }
 
-        private async Task<JsonResult> GetProgramFunctionsUsageData(int programId, IDataTablesRequest request)
+        [HttpGet]
+        public async Task<JsonResult> GetProgramFunctionsUsageData(int programId, IDataTablesRequest request)
         {
-            UsageDataTableResult result = await this.Work.GetProgramFunctionsUsageData(programId, request.Start, request.Length, "Id", true);
+            IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
+
+            UsageDataTableResult result = await this.Work.GetProgramFunctionsUsageData(programId, request.Start, request.Length, sorts);
 
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
 
