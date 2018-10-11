@@ -1,12 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using DataTables.AspNet.Core;
+using DataTables.AspNet.Mvc5;
+using DotNetLittleHelpers;
 using log4net;
 using MvcAuditLogger;
 using Newtonsoft.Json;
 using Telimena.WebApp.Controllers.Developer;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Security;
 
@@ -15,15 +22,17 @@ namespace Telimena.WebApp.Controllers.Admin
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class AdminDashboardController : Controller
     {
-        public AdminDashboardController(ILog logger, IProgramsDashboardUnitOfWork unitOfWork)
+        public AdminDashboardController(ILog logger, IProgramsDashboardUnitOfWork unitOfWork, AuditingContext auditingContext)
         {
             this.logger = logger;
             this.unitOfWork = unitOfWork;
+            this.auditingContext = auditingContext;
             this.dashboardBase = new ProgramsDashboardBase(unitOfWork);
         }
 
         private readonly ILog logger;
         private readonly IProgramsDashboardUnitOfWork unitOfWork;
+        private readonly AuditingContext auditingContext;
         private readonly ProgramsDashboardBase dashboardBase;
 
         [Audit]
@@ -38,6 +47,78 @@ namespace Telimena.WebApp.Controllers.Admin
             List<ProgramSummary> programs = await this.dashboardBase.GetAllPrograms(this.User);
             return this.Content(JsonConvert.SerializeObject(programs));
         }
+
+        [HttpGet]
+        public async Task<ActionResult> GetLastAuditData(IDataTablesRequest request)
+        {
+            List<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending)).ToList();
+
+
+            var totalCount = await this.auditingContext.AuditRecords.CountAsync();
+            var query = this.auditingContext.AuditRecords.AsQueryable();
+            var take = request.Length;
+            if (take == -1)
+            {
+                take = totalCount;
+            }
+            List<Audit> data = await query.OrderByMany(sorts).Skip(request.Start).Take(take).ToListAsync();
+
+            DataTablesResponse response = DataTablesResponse.Create(request, totalCount, totalCount, data);
+
+            return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+
+        }
+
+        private static IOrderedQueryable<Audit> ApplyOrderingQuery(IEnumerable<Tuple<string, bool>> sortBy, IQueryable<Audit> query) 
+        {
+            List<Tuple<string, bool>> rules = sortBy?.ToList();
+            if (rules == null || !rules.Any())
+            {
+                rules = new List<Tuple<string, bool>>();
+                {
+                    new Tuple<string, bool>(nameof(UsageDetail.Id), true);
+                };
+            }
+
+            foreach (Tuple<string, bool> rule in rules)
+            {
+                if (rule.Item1 == nameof(Audit.Timestamp) || rule.Item1 == nameof(UsageDetail.DateTime) || rule.Item1 == nameof(UsageDetail.AssemblyVersion))
+                {
+                    query = query.OrderBy(rule.Item1, rule.Item2);
+                }
+                //else if (rule.Item1 == nameof(UsageData.UserName))
+                //{
+                //    if (typeof(T) == typeof(ProgramUsageDetail))
+                //    {
+                //        query = query.OrderBy(x => (x as ProgramUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
+                //    }
+                //    else
+                //    {
+                //        query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
+                //    }
+                //}
+                //else if (rule.Item1 == nameof(UsageData.CustomData))
+                //{
+                //    if (typeof(T) == typeof(ProgramUsageDetail))
+                //    {
+                //        query = query.OrderBy(x => (x as ProgramUsageDetail).CustomUsageData.Data, rule.Item2);
+                //    }
+                //    else
+                //    {
+                //        query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
+                //    }
+                //}
+                //else if (rule.Item1 == nameof(UsageData.FunctionName) && typeof(T) == typeof(FunctionUsageDetail))
+                //{
+                //    query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
+                //}
+            }
+
+            var orderedQuery = query as IOrderedQueryable<Audit>;
+            return orderedQuery;
+        }
+
+
 
         public async Task<ActionResult> GetAllProgramsSummaryCounts()
         {

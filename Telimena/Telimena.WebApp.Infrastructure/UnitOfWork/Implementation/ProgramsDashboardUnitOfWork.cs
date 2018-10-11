@@ -65,37 +65,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return returnData;
         }
 
-        public async Task<UsageDataTableResult> GetProgramUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
-        {
-            
-
-            IQueryable<ProgramUsageDetail> query = this.context.ProgramUsageDetails.Where(x => x.UsageSummary.ProgramId == programId);
-
-            IOrderedQueryable<ProgramUsageDetail> orderedQuery = ApplyOrderingQuery(sortBy, query);
-
-            int totalCount = await this.context.ProgramUsageDetails.CountAsync(x => x.UsageSummary.ProgramId == programId);
-
-            if (take == -1)
-            {
-                take = totalCount;
-            }
-            List <ProgramUsageDetail> usages = await orderedQuery.Skip(skip).Take(take).ToListAsync();
-            List<UsageData> result = new List<UsageData>();
-            foreach (ProgramUsageDetail detail in usages)
-            {
-                UsageData data = new UsageData
-                {
-                    CustomData = detail.CustomUsageData?.Data
-                    , DateTime = detail.DateTime
-                    , UserName = detail.UsageSummary.ClientAppUser.UserName
-                    , ProgramVersion = detail.AssemblyVersion.Version
-
-                };
-                result.Add(data);
-            }
-
-            return new UsageDataTableResult {TotalCount = totalCount, FilteredCount = totalCount, UsageData = result};
-        }
 
         private static IOrderedQueryable<T> ApplyOrderingQuery<T>(IEnumerable<Tuple<string, bool>> sortBy, IQueryable<T> query) where T: UsageDetail
         {
@@ -216,6 +185,40 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
 
             return new UsageDataTableResult {TotalCount = totalCount, FilteredCount = totalCount, UsageData = result};
+        }
+        public async Task<UsageDataTableResult> GetProgramUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
+        {
+
+
+            IQueryable<ProgramUsageDetail> query = this.context.ProgramUsageDetails.Where(x => x.UsageSummary.ProgramId == programId);
+
+            IOrderedQueryable<ProgramUsageDetail> orderedQuery = ApplyOrderingQuery(sortBy, query);
+
+            int totalCount = await this.context.ProgramUsageDetails.CountAsync(x => x.UsageSummary.ProgramId == programId);
+
+            if (take == -1)
+            {
+                take = totalCount;
+            }
+            List<ProgramUsageDetail> usages = await orderedQuery.Skip(skip).Take(take).ToListAsync();
+            List<UsageData> result = new List<UsageData>();
+            foreach (ProgramUsageDetail detail in usages)
+            {
+                UsageData data = new UsageData
+                {
+                    CustomData = detail.CustomUsageData?.Data
+                    ,
+                    DateTime = detail.DateTime
+                    ,
+                    UserName = detail.UsageSummary.ClientAppUser.UserName
+                    ,
+                    ProgramVersion = detail.AssemblyVersion.Version
+
+                };
+                result.Add(data);
+            }
+
+            return new UsageDataTableResult { TotalCount = totalCount, FilteredCount = totalCount, UsageData = result };
         }
 
         private dynamic GetCustomUsageDataObject(FunctionUsageDetail detail, bool includeGenericData)

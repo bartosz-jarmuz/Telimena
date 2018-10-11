@@ -1,7 +1,12 @@
-﻿@{
+﻿@using DotNetLittleHelpers
+@using MvcAuditLogger
+@using Telimena.WebApp.Core.DTO
+@{
     ViewBag.Title = "Admin Dashboard";
 }
-
+@section styles{
+    @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
+}
 <section class="content-header">
     <h1>
         Admin Dashboard
@@ -20,14 +25,80 @@
             <i class="fa fa-refresh fa-spin"></i>
         </div>
     </div>
+  
+
 </section>
+
+<div class="row ">
+    <div class="col-md-6 col-md-push-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Portal usage audit</h3>
+            </div>
+            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
+                <table id="auditSummaryTable" class="table table-bordered table-hover "></table>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section scripts
 {
+    @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
+
     <script type="text/javascript">
         $(document).ready(function() {
             var url = $(".portal-summary").data("url");
             $(".portal-summary").load(url);
+
+            $('#auditSummaryTable').DataTable({
+                serverSide: true,
+                searching: false,
+                processing: true,
+                lengthMenu: [[15, 30, 70, -1], [15, 30, 70, "All"]],
+                pageLength: 15,
+                order: [[ 0, 'desc' ]],
+                ajax:  "@Url.Action("GetLastAuditData")",
+
+                columns: [
+                    {
+                        name: "@nameof(Audit.Timestamp)",
+                        data: "@nameof(Audit.Timestamp).ToLowerFirstChar()",
+                        render: function(data, type, row, meta) {
+                            var datetime = new Date(data);
+                            return datetime.toLocaleString();
+                        },
+                        title:"@nameof(Audit.Timestamp)",
+                        sortable: true,
+                        searchable: false
+                    },
+                    {
+                        name:  "@nameof(Audit.UserName)",
+                        data:  "@nameof(Audit.UserName).ToLowerFirstChar()",
+                        title: "@nameof(Audit.UserName)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(Audit.IPAddress)",
+                        data:  "ipAddress",
+                        title: "@nameof(Audit.IPAddress)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(Audit.AreaAccessed)",
+                        data:  "@nameof(Audit.AreaAccessed).ToLowerFirstChar()",
+                        title: "@nameof(Audit.AreaAccessed)",
+                        sortable: true,
+                        searchable: true
+                    },
+
+                ]
+
+            });
+
         });
     </script>
 
