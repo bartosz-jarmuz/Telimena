@@ -13,11 +13,13 @@ namespace TelimenaClient
         /// <param name="response">The response.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         bool ShowIncludeBetaPackagesQuestion(UpdateResponse response);
+
         /// <summary>
         /// Shows the install updates now question.
         /// </summary>
-        /// <param name="packagesToInstall">The packages to install.</param>
+        /// <param name="maxVersion"></param>
+        /// <param name="programInfo"></param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        bool ShowInstallUpdatesNowQuestion(IEnumerable<UpdatePackageData> packagesToInstall);
+        bool ShowInstallUpdatesNowQuestion(string maxVersion, ProgramInfo programInfo);
     }
 }

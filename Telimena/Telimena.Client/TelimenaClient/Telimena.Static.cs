@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -179,10 +180,28 @@ namespace TelimenaClient
             return DefaultToolkitNames.UpdaterFileName;
         }
 
+        /// <summary>
+        /// Gets the telimena working directory - should be the program path, but it might be not write-accessible, in which case try working from my documents
+        /// </summary>
+        /// <param name="programInfo">The program information.</param>
+        /// <returns>DirectoryInfo.</returns>
+        public static DirectoryInfo GetTelimenaWorkingDirectory(ProgramInfo programInfo)
+        {
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            if (!basePath.IsDirectoryWritable())
+            {
+                var dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                return new DirectoryInfo(Path.Combine(dir, programInfo.Name));
+            }
+            else
+            {
+                return new DirectoryInfo(basePath);
+            }
+        }
 
         private static string GetUpdaterVersion(ProgramInfo programInfo)
         {
-            var updaterFile = UpdateHandler.PathFinder.GetUpdaterExecutable(UpdateHandler.BasePath, UpdateHandler.GetUpdatesFolderName(programInfo), GetUpdaterFileName());
+            var updaterFile = UpdateHandler.PathFinder.GetUpdaterExecutable(GetTelimenaWorkingDirectory(programInfo), UpdateHandler.GetUpdatesFolderName(programInfo), GetUpdaterFileName());
             if (updaterFile.Exists)
             {
                 var version = FileVersionInfo.GetVersionInfo(updaterFile.FullName);

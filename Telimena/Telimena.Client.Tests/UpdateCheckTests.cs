@@ -209,13 +209,13 @@ namespace TelimenaClient.Tests
                 , new UpdatePackageData {Id = 3, Version = "3.0"}
             };
 
-            DirectoryInfo parentFolder = UpdateHandler.PathFinder.GetUpdatesParentFolder(@"C:\AppFolder", "App Updates");
+            DirectoryInfo parentFolder = UpdateHandler.PathFinder.GetUpdatesParentFolder(new DirectoryInfo(@"C:\AppFolder"), "App Updates");
             Assert.AreEqual(@"C:\AppFolder\App Updates", parentFolder.FullName);
 
-            FileInfo updater = UpdateHandler.PathFinder.GetUpdaterExecutable(@"C:\AppFolder", "App Updates");
+            FileInfo updater = UpdateHandler.PathFinder.GetUpdaterExecutable(new DirectoryInfo(@"C:\AppFolder"), "App Updates", "Updater.exe");
             Assert.AreEqual(@"C:\AppFolder\App Updates\Updater.exe", updater.FullName);
 
-            DirectoryInfo subFolder = UpdateHandler.PathFinder.GetUpdatesSubfolder(@"C:\AppFolder", "App Updates", packages);
+            DirectoryInfo subFolder = UpdateHandler.PathFinder.GetUpdatesSubfolder(new DirectoryInfo( @"C:\AppFolder"), "App Updates", packages);
             Assert.AreEqual(@"C:\AppFolder\App Updates\3.5", subFolder.FullName);
         }
     }

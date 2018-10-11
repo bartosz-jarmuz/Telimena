@@ -7,13 +7,13 @@
     <ProjectGuid>{06FED956-F08F-497F-8CBD-87AFAA312AD7}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Telimena.PackageTriggerUpdater</RootNamespace>
-    <AssemblyName>Telimena.PackageTriggerUpdater</AssemblyName>
+    <AssemblyName>Updater</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>

@@ -1,11 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace TelimenaClient
 {
     internal static class Extensions
     {
+        public static bool IsDirectoryWritable(this DirectoryInfo dir, bool throwIfFails = false)
+        {
+            return dir.FullName.IsDirectoryWritable(throwIfFails);
+        }
+
+        public static bool IsDirectoryWritable(this string dirPath, bool throwIfFails = false)
+        {
+            try
+            {
+                using (FileStream fs = File.Create(
+                    Path.Combine(
+                        dirPath,
+                        Path.GetRandomFileName()
+                    ),
+                    1,
+                    FileOptions.DeleteOnClose)
+                )
+                { }
+                return true;
+            }
+            catch
+            {
+                if (throwIfFails)
+                    throw;
+                else
+                    return false;
+            }
+        }
+
         /// <summary>
         ///     Returns 1 if first version is larger, -1 if version is smaller and 0 if they are equal.
         ///     Expects a version in format "1.0.0.0", between 2 and 4 segments

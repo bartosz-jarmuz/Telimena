@@ -22,7 +22,10 @@ namespace TelimenaClient
         private readonly IReceiveUserInput inputReceiver;
         private readonly IInstallUpdates updateInstaller;
 
-        internal static string BasePath => AppDomain.CurrentDomain.BaseDirectory;
+
+    
+
+
 
         public async Task HandleUpdates(UpdateResponse programUpdateResponse, UpdateResponse updaterUpdateResponse)
         {
@@ -36,16 +39,16 @@ namespace TelimenaClient
 
                 packagesToInstall = programUpdateResponse.UpdatePackages;
 
-                FileInfo updaterFile = await this.InstallUpdater(updaterUpdateResponse, PathFinder.GetUpdatesParentFolder(BasePath, GetUpdatesFolderName(this.programInfo))).ConfigureAwait(false);
+                FileInfo updaterFile = await this.InstallUpdater(updaterUpdateResponse, PathFinder.GetUpdatesParentFolder(Telimena.GetTelimenaWorkingDirectory(this.programInfo), GetUpdatesFolderName(this.programInfo))).ConfigureAwait(false);
                 if (packagesToInstall != null && packagesToInstall.Any())
                 {
                     await this.DownloadUpdatePackages(packagesToInstall).ConfigureAwait(false);
 
                     FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo);
-
-                    bool installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(packagesToInstall);
+                    string maxVersion = packagesToInstall.Where(x => x.FileName != Telimena.GetUpdaterFileName()).GetMaxVersion();
+                    bool installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(maxVersion, this.programInfo);
                     if (installUpdatesNow)
-                    {
+                    { 
                         this.updateInstaller.InstallUpdates(instructionsFile, updaterFile);
                     }
                 }
@@ -91,7 +94,7 @@ namespace TelimenaClient
             try
             {
                 List<Task> downloadTasks = new List<Task>();
-                DirectoryInfo updatesFolder = this.GetUpdatesSubfolder(packagesToDownload, BasePath);
+                DirectoryInfo updatesFolder = this.GetUpdatesSubfolder(packagesToDownload, Telimena.GetTelimenaWorkingDirectory(this.programInfo));
                 Directory.CreateDirectory(updatesFolder.FullName);
 
                 foreach (UpdatePackageData updatePackageData in packagesToDownload)
@@ -107,15 +110,15 @@ namespace TelimenaClient
             }
         }
 
-        private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, string basePath)
+        private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, DirectoryInfo workingDirectory)
         {
-            return PathFinder.GetUpdatesSubfolder(basePath, GetUpdatesFolderName(this.programInfo), packagesToDownload);
+            return PathFinder.GetUpdatesSubfolder(workingDirectory, GetUpdatesFolderName(this.programInfo), packagesToDownload);
         }
 
         private async Task<FileInfo> InstallUpdater(UpdateResponse response, DirectoryInfo updatesFolder)
         {
             UpdatePackageData pkgData = response?.UpdatePackages?.FirstOrDefault();
-            var updaterExecutable = PathFinder.GetUpdaterExecutable(BasePath, GetUpdatesFolderName(this.programInfo), Telimena.GetUpdaterFileName());
+            var updaterExecutable = PathFinder.GetUpdaterExecutable(Telimena.GetTelimenaWorkingDirectory(this.programInfo), GetUpdatesFolderName(this.programInfo), Telimena.GetUpdaterFileName());
             if (pkgData == null)
             {
                 return updaterExecutable;
@@ -128,7 +131,15 @@ namespace TelimenaClient
                 pkgFile.Delete();
             }
 
-            await SaveStreamToPath(pkgData, pkgFile, stream).ConfigureAwait(false);
+            try
+            {
+                await SaveStreamToPath(pkgData, pkgFile, stream).ConfigureAwait(false);
+
+            }
+            catch (IOException)
+            {
+
+            }
             await this.updateInstaller.InstallUpdaterUpdate(pkgFile, updaterExecutable).ConfigureAwait(false);
             return updaterExecutable;
         }
