@@ -80,12 +80,13 @@
     <Compile Include="Messages\UpdateRequest.cs" />
     <Compile Include="Messages\UpdateResponse.cs" />
     <Compile Include="DefaultToolkitNames.cs" />
+    <Compile Include="Model\LiveProgramInfo.cs" />
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
     <Compile Include="TelimenaClient\Telimena.StartupData.cs" />
     <Compile Include="TelimenaClient\Telimena.Updating.cs" />
-    <Compile Include="TelimenaClient\Updates\UpdateHandler.PathFinder.cs" />
+    <Compile Include="TelimenaClient\Updates\UpdateHandler.Locator.cs" />
     <Compile Include="TelimenaException.cs" />
     <Compile Include="TelimenaClient\Updates\DefaultWpfInputReceiver.cs" />
     <Compile Include="TelimenaClient\Updates\IInstallUpdates.cs" />

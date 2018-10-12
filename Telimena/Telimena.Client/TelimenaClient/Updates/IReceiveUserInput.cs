@@ -20,6 +20,6 @@ namespace TelimenaClient
         /// <param name="maxVersion"></param>
         /// <param name="programInfo"></param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        bool ShowInstallUpdatesNowQuestion(string maxVersion, ProgramInfo programInfo);
+        bool ShowInstallUpdatesNowQuestion(string maxVersion, LiveProgramInfo programInfo);
     }
 }

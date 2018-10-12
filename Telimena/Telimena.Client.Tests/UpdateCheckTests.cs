@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -30,6 +31,12 @@ namespace TelimenaClient.Tests
         private Mock<ITelimenaHttpClient> GetMockClientForCheckForUpdates(object programUpdatesResponse, object updaterResponse)
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
+            client.Setup(x => x.GetAsync(It.IsRegex("^" + Regex.Escape(ApiRoutes.GetProgramUpdaterName)))).Returns((string uri) =>
+            {
+                HttpResponseMessage response = new HttpResponseMessage();
+                response.Content = new StringContent("MyUpdater.exe");
+                return Task.FromResult(response);
+            });
             client.Setup(x => x.PostAsync("api/Statistics/RegisterClient", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
@@ -58,7 +65,7 @@ namespace TelimenaClient.Tests
         public void Test_CheckForUpdates_OnlyProgram()
         {
             TelimenaClient.Telimena sut = new TelimenaClient.Telimena {SuppressAllErrors = false};
-            Assert.AreEqual("Telimena.Client.Tests", sut.ProgramInfo.PrimaryAssembly.Name);
+            Assert.AreEqual("Telimena.Client.Tests", sut.StaticProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
@@ -74,6 +81,7 @@ namespace TelimenaClient.Tests
 
             UpdateCheckResult response = sut.CheckForUpdatesAsync().GetAwaiter().GetResult();
             Assert.IsTrue(response.IsUpdateAvailable);
+            Assert.AreEqual("MyUpdater.exe", sut.LiveProgramInfo.UpdaterName);
             Assert.AreEqual(2, response.ProgramUpdatesToInstall.Count);
             Assert.IsNotNull(response.ProgramUpdatesToInstall.SingleOrDefault(x=>x.Version == "3.1.0.0" && x.IsBeta == true));
             Assert.IsNotNull(response.ProgramUpdatesToInstall.SingleOrDefault(x=>x.Version == "3.0.0.0"));
@@ -86,7 +94,7 @@ namespace TelimenaClient.Tests
         public void Test_CheckForUpdates_Program_AndUpdater()
         {
             TelimenaClient.Telimena sut = new TelimenaClient.Telimena { SuppressAllErrors = false };
-            Assert.AreEqual("Telimena.Client.Tests", sut.ProgramInfo.PrimaryAssembly.Name);
+            Assert.AreEqual("Telimena.Client.Tests", sut.StaticProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
@@ -208,15 +216,45 @@ namespace TelimenaClient.Tests
                 , new UpdatePackageData {Id = 1, Version = "1.0"}
                 , new UpdatePackageData {Id = 3, Version = "3.0"}
             };
+            var temp = Path.GetTempPath();
+            var locator = new UpdateHandler.Locator(new LiveProgramInfo(new ProgramInfo()
+            {
+                Name = "MyApp"
+            })
+            {
+                UpdaterName = "MyUpdater.exe"
+            }, temp);
 
-            DirectoryInfo parentFolder = UpdateHandler.PathFinder.GetUpdatesParentFolder(new DirectoryInfo(@"C:\AppFolder"), "App Updates");
-            Assert.AreEqual(@"C:\AppFolder\App Updates", parentFolder.FullName);
+            DirectoryInfo parentFolder = locator.GetUpdatesParentFolder();
+            Assert.AreEqual($@"{temp}MyApp Updates", parentFolder.FullName);
 
-            FileInfo updater = UpdateHandler.PathFinder.GetUpdaterExecutable(new DirectoryInfo(@"C:\AppFolder"), "App Updates", "Updater.exe");
-            Assert.AreEqual(@"C:\AppFolder\App Updates\Updater.exe", updater.FullName);
+            FileInfo updater = locator.GetUpdater();
+            Assert.AreEqual($@"{temp}MyApp Updates\MyUpdater.exe", updater.FullName);
 
-            DirectoryInfo subFolder = UpdateHandler.PathFinder.GetUpdatesSubfolder(new DirectoryInfo( @"C:\AppFolder"), "App Updates", packages);
-            Assert.AreEqual(@"C:\AppFolder\App Updates\3.5", subFolder.FullName);
+            DirectoryInfo subFolder = locator.GetCurrentUpdateSubfolder(packages);
+            Assert.AreEqual($@"{temp}MyApp Updates\3.5", subFolder.FullName);
+        }
+
+        [Test]
+        public void Test_UpdaterPathFinder_NonWritable()
+        {
+            var temp = Path.GetTempPath() + "Locked";
+            DirectorySecurity securityRules = new DirectorySecurity();
+            securityRules.AddAccessRule(new FileSystemAccessRule("Users", FileSystemRights.Write, AccessControlType.Deny));
+
+            Directory.CreateDirectory(temp, securityRules);
+
+            var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var locator = new UpdateHandler.Locator(new LiveProgramInfo(new ProgramInfo() {Name = "MyApp" })
+            {
+                UpdaterName = "MyUpdater.exe"
+            }, temp);
+
+            DirectoryInfo parentFolder = locator.GetUpdatesParentFolder();
+            Assert.AreEqual($@"{myDocs}\Telimena\MyApp\MyApp Updates", parentFolder.FullName);
+
+            FileInfo updater = locator.GetUpdater();
+            Assert.AreEqual($@"{myDocs}\Telimena\MyApp\MyApp Updates\MyUpdater.exe", updater.FullName);
         }
     }
 }

@@ -37,10 +37,9 @@ namespace TelimenaClient
             }
 
             StartupData data = LoadProgramData(mainAssembly);
-            this.ProgramInfo = data.ProgramInfo;
+            this.StaticProgramInfo = data.ProgramInfo;
             this.UserInfo = data.UserInfo;
             this.TelimenaVersion = data.TelimenaVersion;
-            this.UpdaterVersion = data.UpdaterVersion;
 
             this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.HttpClient);
@@ -64,10 +63,9 @@ namespace TelimenaClient
             Assembly assembly = GetProperCallingAssembly();
 
             StartupData data = LoadProgramData(assembly, programInfo);
-            this.ProgramInfo = data.ProgramInfo;
+            this.StaticProgramInfo = data.ProgramInfo;
             this.UserInfo = data.UserInfo;
             this.TelimenaVersion = data.TelimenaVersion;
-            this.UpdaterVersion = data.UpdaterVersion;
 
             this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.HttpClient);

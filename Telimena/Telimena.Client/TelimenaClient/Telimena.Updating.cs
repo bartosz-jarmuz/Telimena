@@ -57,7 +57,7 @@ namespace TelimenaClient
                 UpdateResponse programUpdateResponse = await programUpdateTask.ConfigureAwait(false);
                 UpdateResponse updaterUpdateResponse = await updaterUpdateTask.ConfigureAwait(false);
 
-                UpdateHandler handler = new UpdateHandler(this.Messenger, this.ProgramInfo, new DefaultWpfInputReceiver()
+                UpdateHandler handler = new UpdateHandler(this.Messenger, this.LiveProgramInfo, new DefaultWpfInputReceiver()
                     , new UpdateInstaller());
                 await handler.HandleUpdates(programUpdateResponse, updaterUpdateResponse).ConfigureAwait(false);
             }
@@ -110,7 +110,7 @@ namespace TelimenaClient
             try
             {
 
-                UpdateRequest model = new UpdateRequest(this.ProgramId, this.ProgramVersion, this.UserId, takeBeta, this.TelimenaVersion);
+                UpdateRequest model = new UpdateRequest(this.LiveProgramInfo.ProgramId, this.ProgramVersion, this.LiveProgramInfo.UserId, takeBeta, this.TelimenaVersion);
                 string stringified = this.Serializer.Serialize(model);
                 string escaped = this.Serializer.UrlEncodeJson(stringified);
                 return ApiRoutes.GetProgramUpdateInfo + "?request=" + escaped;
@@ -128,7 +128,7 @@ namespace TelimenaClient
         /// <returns>System.String.</returns>
         private string GetUpdaterUpdateRequestUrl(bool takeBeta)
         {
-            UpdateRequest model = new UpdateRequest(this.ProgramId, this.ProgramVersion, this.UserId, takeBeta, this.TelimenaVersion, this.UpdaterVersion);
+            UpdateRequest model = new UpdateRequest(this.LiveProgramInfo.ProgramId, this.ProgramVersion, this.LiveProgramInfo.UserId, takeBeta, this.TelimenaVersion, "");
             string stringified = this.Serializer.Serialize(model);
             string escaped = this.Serializer.UrlEncodeJson(stringified);
             return ApiRoutes.GetUpdaterUpdateInfo + "?request=" + escaped;

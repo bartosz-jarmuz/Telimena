@@ -19,7 +19,10 @@ namespace TelimenaClient
         /// <inheritdoc />
         public async Task<RegistrationResponse> InitializeAsync()
         {
-            return await this.RegisterClient().ConfigureAwait(false);
+            var response = await this.RegisterClient().ConfigureAwait(false);
+            
+            await LoadLiveData(response);
+            return response;
         }
 
         /// <inheritdoc />
@@ -66,10 +69,37 @@ namespace TelimenaClient
 
         private void LoadAssemblyInfos(IEnumerable<Assembly> assemblies)
         {
-            this.ProgramInfo.HelperAssemblies = new List<AssemblyInfo>();
+            this.StaticProgramInfo.HelperAssemblies = new List<AssemblyInfo>();
             foreach (Assembly assembly in assemblies)
             {
-                this.ProgramInfo.HelperAssemblies.Add(new AssemblyInfo(assembly));
+                this.StaticProgramInfo.HelperAssemblies.Add(new AssemblyInfo(assembly));
+            }
+        }
+
+        private async Task LoadLiveData(RegistrationResponse response)
+        {
+            try
+            {
+                this.LiveProgramInfo = new LiveProgramInfo(this.StaticProgramInfo)
+                {
+                    ProgramId = response.ProgramId,
+                    UserId = response.UserId
+                };
+
+                Task<string> updaterNameTask = this.Messenger.SendGetRequest($"{ApiRoutes.GetProgramUpdaterName}?programId={this.LiveProgramInfo.ProgramId}");
+
+                await Task.WhenAll(updaterNameTask);
+
+                this.LiveProgramInfo.UpdaterName = updaterNameTask.Result;
+
+            }
+            catch (Exception ex)
+            {
+                TelimenaException exception = new TelimenaException("Error occurred while loading live program info", ex);
+                if (!this.SuppressAllErrors)
+                {
+                    throw exception;
+                }
             }
         }
     }

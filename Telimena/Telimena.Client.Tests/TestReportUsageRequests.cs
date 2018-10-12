@@ -6,6 +6,7 @@
 
 using System;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Moq;
 using Newtonsoft.Json;
@@ -41,6 +42,12 @@ namespace TelimenaClient.Tests
         private IMessenger GetMessenger_FirstRequestPass()
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
+            client.Setup(x => x.GetAsync(It.IsRegex("^"+Regex.Escape(ApiRoutes.GetProgramUpdaterName)))).Returns((string uri) =>
+            {
+                HttpResponseMessage response = new HttpResponseMessage();
+                response.Content = new StringContent("Updater.exe");
+                return Task.FromResult(response);
+            });
             client.Setup(x => x.PostAsync(ApiRoutes.RegisterClient, It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
@@ -78,6 +85,7 @@ namespace TelimenaClient.Tests
                 }
                 catch (Exception e)
                 {
+                    Assert.AreEqual("Updater.exe", telimena.LiveProgramInfo.UpdaterName);
                     TelimenaException ex = e as TelimenaException;
                     StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
                     Assert.AreEqual("Test_NoCustomData", jObj.FunctionName);

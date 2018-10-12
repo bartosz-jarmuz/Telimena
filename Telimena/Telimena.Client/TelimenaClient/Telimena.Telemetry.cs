@@ -61,10 +61,10 @@ namespace TelimenaClient
                 await this.InitializeIfNeeded().ConfigureAwait(false);
                 request = new StatisticsUpdateRequest
                 {
-                    ProgramId = this.ProgramId
-                    , UserId = this.UserId
+                    ProgramId = this.LiveProgramInfo.ProgramId
+                    , UserId = this.LiveProgramInfo.UserId
                     , FunctionName = functionName
-                    , Version = this.ProgramInfo.PrimaryAssembly.Version
+                    , Version = this.StaticProgramInfo.PrimaryAssembly.Version
                     , CustomData = customData
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request).ConfigureAwait(false);
@@ -100,15 +100,13 @@ namespace TelimenaClient
             {
                 request = new RegistrationRequest
                 {
-                    ProgramInfo = this.ProgramInfo
+                    ProgramInfo = this.StaticProgramInfo
                     , TelimenaVersion = this.TelimenaVersion
                     , UserInfo = this.UserInfo
                     , SkipUsageIncrementation = skipUsageIncrementation
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.RegisterClient, request).ConfigureAwait(false);
                 RegistrationResponse response = this.Serializer.Deserialize<RegistrationResponse>(responseContent);
-                this.UserId = response.UserId;
-                this.ProgramId = response.ProgramId;
                 return response;
             }
 

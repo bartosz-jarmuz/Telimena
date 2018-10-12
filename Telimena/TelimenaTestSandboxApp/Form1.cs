@@ -42,7 +42,7 @@ namespace TelimenaTestSandboxApp
         {
             RegistrationResponse response = await this.teli.InitializeAsync();
 
-            this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + this.PresentResponse(response) + Environment.NewLine;
+            this.resultTextBox.Text += this.teli.StaticProgramInfo.Name + " - " + this.PresentResponse(response) + Environment.NewLine;
         }
 
         private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
@@ -63,7 +63,7 @@ namespace TelimenaTestSandboxApp
 
             if (result.Exception == null)
             {
-                this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " + this.PresentResponse(result) + Environment.NewLine;
+                this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.StaticProgramInfo.Name + " - " + this.PresentResponse(result) + Environment.NewLine;
             }
             else
             {
@@ -90,7 +90,7 @@ namespace TelimenaTestSandboxApp
 
             if (result.Exception == null)
             {
-                this.resultTextBox.Text += $@"BLOCKING INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " + this.PresentResponse(result) + Environment.NewLine;
+                this.resultTextBox.Text += $@"BLOCKING INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.StaticProgramInfo.Name + " - " + this.PresentResponse(result) + Environment.NewLine;
             }
             else
             {
@@ -121,7 +121,7 @@ namespace TelimenaTestSandboxApp
             this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
             if (!string.IsNullOrEmpty(this.appNameTextBox.Text))
             {
-                this.teli.ProgramInfo = new ProgramInfo
+                this.teli.StaticProgramInfo = new ProgramInfo
                 {
                     Name = this.appNameTextBox.Text
                     , PrimaryAssembly = new AssemblyInfo {Company = "Comp A Ny", Name = this.appNameTextBox.Text + ".dll", Version = "1.0.0.0"}

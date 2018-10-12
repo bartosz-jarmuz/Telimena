@@ -166,51 +166,9 @@ namespace TelimenaClient
             UserInfo userInfo = new UserInfo {UserName = Environment.UserName, MachineName = Environment.MachineName};
 
             string telimenaVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            string updaterVersion = GetUpdaterVersion(info);
 
-            return new StartupData(info, userInfo, telimenaVersion, updaterVersion);
+            return new StartupData(info, userInfo, telimenaVersion);
         }
-
-        /// <summary>
-        /// Gets the name of the updater file.
-        /// </summary>
-        /// <returns>System.String.</returns>
-        public static string GetUpdaterFileName()
-        {
-            return DefaultToolkitNames.UpdaterFileName;
-        }
-
-        /// <summary>
-        /// Gets the telimena working directory - should be the program path, but it might be not write-accessible, in which case try working from my documents
-        /// </summary>
-        /// <param name="programInfo">The program information.</param>
-        /// <returns>DirectoryInfo.</returns>
-        public static DirectoryInfo GetTelimenaWorkingDirectory(ProgramInfo programInfo)
-        {
-            var basePath = AppDomain.CurrentDomain.BaseDirectory;
-            if (!basePath.IsDirectoryWritable())
-            {
-                var dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                return new DirectoryInfo(Path.Combine(dir, programInfo.Name));
-            }
-            else
-            {
-                return new DirectoryInfo(basePath);
-            }
-        }
-
-        private static string GetUpdaterVersion(ProgramInfo programInfo)
-        {
-            var updaterFile = UpdateHandler.PathFinder.GetUpdaterExecutable(GetTelimenaWorkingDirectory(programInfo), UpdateHandler.GetUpdatesFolderName(programInfo), GetUpdaterFileName());
-            if (updaterFile.Exists)
-            {
-                var version = FileVersionInfo.GetVersionInfo(updaterFile.FullName);
-                return version.FileVersion;
-            }
-            else
-            {
-                return "0.0.0.0";
-            }
-        }
+      
     }
 }

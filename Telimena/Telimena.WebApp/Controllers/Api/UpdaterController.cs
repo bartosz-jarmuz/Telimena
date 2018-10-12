@@ -39,6 +39,23 @@ namespace Telimena.WebApp.Controllers.Api
         private readonly IFileRetriever fileRetriever;
 
         [HttpGet]
+        public async Task<HttpResponseMessage> GetProgramUpdaterName(int programId)
+        {
+            Program program = await this.work.Programs.FirstOrDefaultAsync(x=>x.Id == programId);
+            if (program == null)
+            {
+                throw new BadRequestException($"Program with id [{programId}] does not exist");
+            }
+
+            var name = program.Updater?.FileName ?? DefaultToolkitNames.UpdaterFileName;
+
+            var resp = new HttpResponseMessage(HttpStatusCode.OK);
+            resp.Content = new StringContent(name, System.Text.Encoding.UTF8, "text/plain");
+            return resp;
+        }
+
+
+        [HttpGet]
         public async Task<IHttpActionResult> Get(int id)
         {
             UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetPackageInfo(id);

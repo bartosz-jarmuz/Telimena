@@ -31,10 +31,16 @@ namespace TelimenaClient
         /// <value>The user information.</value>
         public UserInfo UserInfo { get; internal set; }
         /// <summary>
-        /// Gets the program information.
+        /// Gets the program information from the assemblies.
         /// </summary>
         /// <value>The program information.</value>
-        public ProgramInfo ProgramInfo { get; internal set; }
+        public ProgramInfo StaticProgramInfo { get; internal set; }
+
+        /// <summary>
+        /// Gets the live program information
+        /// </summary>
+        /// <value>The live program information.</value>
+        public LiveProgramInfo LiveProgramInfo { get; internal set; }
         /// <summary>
         /// If true, then Telimena will swallow any errors. Otherwise, it will rethrow
         /// </summary>
@@ -44,17 +50,8 @@ namespace TelimenaClient
         /// Gets the program version.
         /// </summary>
         /// <value>The program version.</value>
-        public string ProgramVersion => this.ProgramInfo?.PrimaryAssembly?.Version;
-        /// <summary>
-        /// Gets or sets the program identifier.
-        /// </summary>
-        /// <value>The program identifier.</value>
-        protected int ProgramId { get; set; }
-        /// <summary>
-        /// Gets or sets the user identifier.
-        /// </summary>
-        /// <value>The user identifier.</value>
-        protected int UserId { get; set; }
+        public string ProgramVersion => this.StaticProgramInfo?.PrimaryAssembly?.Version;
+       
         /// <summary>
         /// Gets the telimena version.
         /// </summary>
@@ -87,10 +84,5 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The helper assemblies.</value>
         private List<Assembly> HelperAssemblies { get; } = new List<Assembly>();
-        /// <summary>
-        /// Gets or sets the updater version.
-        /// </summary>
-        /// <value>The updater version.</value>
-        protected string UpdaterVersion { get; set; }
     }
 }

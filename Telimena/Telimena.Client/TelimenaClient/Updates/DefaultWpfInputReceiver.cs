@@ -19,11 +19,11 @@ namespace TelimenaClient
             return false;
         }
 
-        public bool ShowInstallUpdatesNowQuestion(string maxVersion, ProgramInfo programInfo)
+        public bool ShowInstallUpdatesNowQuestion(string maxVersion, LiveProgramInfo programInfo)
         {
 
             MessageBoxResult choice = MessageBox.Show($"An update to version {maxVersion} was downloaded.\r\nWould you like to install now?"
-                , $"{programInfo.Name} update installation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                , $"{programInfo.Program.Name} update installation", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (choice == MessageBoxResult.Yes)
             {
                 return true;

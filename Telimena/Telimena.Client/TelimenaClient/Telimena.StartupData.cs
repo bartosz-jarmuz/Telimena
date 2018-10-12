@@ -8,18 +8,16 @@
     {
         private class StartupData
         {
-            public StartupData(ProgramInfo programInfo, UserInfo userInfo, string telimenaVersion, string updaterVersion)
+            public StartupData(ProgramInfo programInfo, UserInfo userInfo, string telimenaVersion)
             {
                 this.ProgramInfo = programInfo;
                 this.UserInfo = userInfo;
                 this.TelimenaVersion = telimenaVersion;
-                this.UpdaterVersion = updaterVersion;
             }
 
             public ProgramInfo ProgramInfo { get; set; }
             public UserInfo UserInfo { get; set; }
             public  string TelimenaVersion { get; set; }
-            public  string UpdaterVersion { get; set; }
         }
     }
 }

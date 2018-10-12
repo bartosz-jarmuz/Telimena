@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,44 +9,42 @@ namespace TelimenaClient
 {
     internal partial class UpdateHandler
     {
-        public UpdateHandler(IMessenger messenger, ProgramInfo programInfo, IReceiveUserInput inputReceiver
+        public UpdateHandler(IMessenger messenger, LiveProgramInfo programInfo, IReceiveUserInput inputReceiver
             , IInstallUpdates updateInstaller)
         {
             this.messenger = messenger;
             this.programInfo = programInfo;
             this.inputReceiver = inputReceiver;
             this.updateInstaller = updateInstaller;
+            this.locator = new Locator(programInfo);
         }
 
         private readonly IMessenger messenger;
-        private readonly ProgramInfo programInfo;
+        private readonly LiveProgramInfo programInfo;
         private readonly IReceiveUserInput inputReceiver;
         private readonly IInstallUpdates updateInstaller;
-
-
-    
-
-
+        private readonly Locator locator;
 
         public async Task HandleUpdates(UpdateResponse programUpdateResponse, UpdateResponse updaterUpdateResponse)
         {
             try
             {
                 IReadOnlyList<UpdatePackageData> packagesToInstall = null;
-                if (updaterUpdateResponse.UpdatePackages == null || !updaterUpdateResponse.UpdatePackages.Any())
+                if (programUpdateResponse.UpdatePackages == null || !programUpdateResponse.UpdatePackages.Any())
                 {
                     return;
                 }
 
                 packagesToInstall = programUpdateResponse.UpdatePackages;
 
-                FileInfo updaterFile = await this.InstallUpdater(updaterUpdateResponse, PathFinder.GetUpdatesParentFolder(Telimena.GetTelimenaWorkingDirectory(this.programInfo), GetUpdatesFolderName(this.programInfo))).ConfigureAwait(false);
+                FileInfo updaterFile = await this.InstallUpdater(updaterUpdateResponse, this.locator.GetUpdatesParentFolder()).ConfigureAwait(false);
+                //FileInfo updaterFile = await this.InstallUpdater(updaterUpdateResponse, PathFinder.GetUpdatesParentFolder(Telimena.GetTelimenaWorkingDirectory(this.programInfo), GetUpdatesFolderName(this.programInfo))).ConfigureAwait(false);
                 if (packagesToInstall != null && packagesToInstall.Any())
                 {
                     await this.DownloadUpdatePackages(packagesToInstall).ConfigureAwait(false);
 
-                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo);
-                    string maxVersion = packagesToInstall.Where(x => x.FileName != Telimena.GetUpdaterFileName()).GetMaxVersion();
+                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo.Program);
+                    string maxVersion = packagesToInstall.GetMaxVersion();
                     bool installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(maxVersion, this.programInfo);
                     if (installUpdatesNow)
                     { 
@@ -59,9 +58,18 @@ namespace TelimenaClient
                 }
         }
 
-        protected internal static string GetUpdatesFolderName(ProgramInfo programInfo)
+        private string GetUpdaterVersion()
         {
-            return programInfo.Name + " Updates";
+            var updaterFile = this.locator.GetUpdater();
+            if (updaterFile.Exists)
+            {
+                var version = FileVersionInfo.GetVersionInfo(updaterFile.FullName);
+                return version.FileVersion;
+            }
+            else
+            {
+                return "0.0.0.0";
+            }
         }
 
         protected async Task StoreUpdatePackage(UpdatePackageData pkgData, DirectoryInfo updatesFolder)
@@ -94,7 +102,7 @@ namespace TelimenaClient
             try
             {
                 List<Task> downloadTasks = new List<Task>();
-                DirectoryInfo updatesFolder = this.GetUpdatesSubfolder(packagesToDownload, Telimena.GetTelimenaWorkingDirectory(this.programInfo));
+                DirectoryInfo updatesFolder = this.locator.GetCurrentUpdateSubfolder(packagesToDownload);
                 Directory.CreateDirectory(updatesFolder.FullName);
 
                 foreach (UpdatePackageData updatePackageData in packagesToDownload)
@@ -110,15 +118,10 @@ namespace TelimenaClient
             }
         }
 
-        private DirectoryInfo GetUpdatesSubfolder(IEnumerable<UpdatePackageData> packagesToDownload, DirectoryInfo workingDirectory)
-        {
-            return PathFinder.GetUpdatesSubfolder(workingDirectory, GetUpdatesFolderName(this.programInfo), packagesToDownload);
-        }
-
         private async Task<FileInfo> InstallUpdater(UpdateResponse response, DirectoryInfo updatesFolder)
         {
             UpdatePackageData pkgData = response?.UpdatePackages?.FirstOrDefault();
-            var updaterExecutable = PathFinder.GetUpdaterExecutable(Telimena.GetTelimenaWorkingDirectory(this.programInfo), GetUpdatesFolderName(this.programInfo), Telimena.GetUpdaterFileName());
+            var updaterExecutable = this.locator.GetUpdater();
             if (pkgData == null)
             {
                 return updaterExecutable;

@@ -8,5 +8,6 @@
         public const string DownloadUpdatePackage = "api/ProgramUpdates/Get";
         public const string GetUpdaterUpdateInfo = "api/Updater/GetUpdateInfo";
         public const string DownloadUpdaterUpdatePackage = "api/Updater/Get";
+        public const string GetProgramUpdaterName = "api/Updater/GetProgramUpdaterName";
     }
 }
