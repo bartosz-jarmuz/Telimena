@@ -55,7 +55,7 @@ namespace Telimena.WebApp.Controllers.Api
             byte[] bytes = await this.work.ToolkitDataRepository.GetPackage(toolkitData.Id, this.fileRetriever);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
 
-            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = toolkitData.TelimenaPackageInfo.FileName};
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = toolkitData.TelimenaPackageInfo.ZippedFileName };
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
 
             return this.ResponseMessage(result);

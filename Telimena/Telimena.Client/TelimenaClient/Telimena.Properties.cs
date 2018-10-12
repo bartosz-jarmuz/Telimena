@@ -20,6 +20,7 @@ namespace TelimenaClient
         /// The default API URI
         /// </summary>
         internal static readonly Uri DefaultApiUri = new Uri("http://localhost:7757/");
+
 #elif Dev
         internal static readonly Uri DefaultApiUri = new Uri("https://telimena-dev.azurewebsites.net/");
 #else
@@ -78,6 +79,11 @@ namespace TelimenaClient
         /// </summary>
         /// <value><c>true</c> if this instance is initialized; otherwise, <c>false</c>.</value>
         private bool IsInitialized { get; set; }
+        /// <summary>
+        /// Locator provides paths to toolkit files and folders.
+        /// </summary>
+        /// <value>The locator.</value>
+        private Locator Locator { get; set; }
 
         /// <summary>
         /// Gets the helper assemblies.

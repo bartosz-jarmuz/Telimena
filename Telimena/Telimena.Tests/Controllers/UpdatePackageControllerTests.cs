@@ -83,7 +83,7 @@ namespace Telimena.Tests
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.7.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.7.0.0", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
@@ -123,7 +123,7 @@ namespace Telimena.Tests
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "2.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "2.0.0.0", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual(0, result.UpdatePackages.Count());
@@ -155,7 +155,7 @@ namespace Telimena.Tests
 
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.5.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.5.0.0", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
@@ -186,7 +186,7 @@ namespace Telimena.Tests
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.8.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.8.0.0", "1.0.0.0");
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
             Assert.AreEqual(0, result.UpdatePackages.Count());
@@ -220,7 +220,7 @@ namespace Telimena.Tests
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0", "1.0.0.0");
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
             Assert.AreEqual(3, result.UpdatePackages.Single().Id);
@@ -260,7 +260,7 @@ namespace Telimena.Tests
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
@@ -295,7 +295,7 @@ namespace Telimena.Tests
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>());
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.4.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.4.0.0", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
@@ -309,7 +309,7 @@ namespace Telimena.Tests
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>());
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.9.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.9.0.0", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single().Version);
@@ -338,7 +338,7 @@ namespace Telimena.Tests
             });
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
@@ -378,7 +378,7 @@ namespace Telimena.Tests
 
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.0.0.1");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.0.0.1", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
@@ -407,7 +407,7 @@ namespace Telimena.Tests
 
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0");
+            UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "1.0.0.0", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 

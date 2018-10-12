@@ -217,7 +217,7 @@ namespace TelimenaClient.Tests
                 , new UpdatePackageData {Id = 3, Version = "3.0"}
             };
             var temp = Path.GetTempPath();
-            var locator = new UpdateHandler.Locator(new LiveProgramInfo(new ProgramInfo()
+            var locator = new Locator(new LiveProgramInfo(new ProgramInfo()
             {
                 Name = "MyApp"
             })
@@ -245,7 +245,7 @@ namespace TelimenaClient.Tests
             Directory.CreateDirectory(temp, securityRules);
 
             var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var locator = new UpdateHandler.Locator(new LiveProgramInfo(new ProgramInfo() {Name = "MyApp" })
+            var locator = new Locator(new LiveProgramInfo(new ProgramInfo() {Name = "MyApp" })
             {
                 UpdaterName = "MyUpdater.exe"
             }, temp);

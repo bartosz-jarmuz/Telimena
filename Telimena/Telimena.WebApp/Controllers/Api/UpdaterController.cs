@@ -66,8 +66,8 @@ namespace Telimena.WebApp.Controllers.Api
 
             byte[] bytes = await this.work.UpdaterRepository.GetPackage(id, this.fileRetriever);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
-            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = updaterInfo.FileName};
-            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = updaterInfo.ZippedFileName };
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
 
             return this.ResponseMessage(result);
         }
@@ -81,7 +81,7 @@ namespace Telimena.WebApp.Controllers.Api
                 return this.BadRequest($"Updater id [{id}] does not exist");
             }
 
-            if (updater.InternalName == DefaultToolkitNames.UpdaterInternalName)
+            if (!isPublic && updater.InternalName == DefaultToolkitNames.UpdaterInternalName)
             {
                 return this.BadRequest($"Cannot change default updater");
             }

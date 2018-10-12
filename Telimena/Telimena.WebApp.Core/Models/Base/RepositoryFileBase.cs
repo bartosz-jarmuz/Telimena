@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -17,6 +18,22 @@ namespace Telimena.WebApp.Core.Models
 
         public DateTime UploadedDate { get; set; }
         public string FileName { get; protected set; }
+
+        public string ZippedFileName
+        {
+            get
+            {
+                if (this.FileName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return this.FileName;
+                }
+                else
+                {
+                    return Path.GetFileNameWithoutExtension(this.FileName) + ".zip";
+                }
+            }
+        }
+
         public string FileLocation { get; set; }
         public long FileSizeBytes { get;  set; }
     }

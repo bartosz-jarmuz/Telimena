@@ -21,7 +21,9 @@ namespace TelimenaClient
         {
             var response = await this.RegisterClient().ConfigureAwait(false);
             
-            await LoadLiveData(response);
+            await this.LoadLiveData(response).ConfigureAwait(false);
+
+            this.Locator = new Locator(this.LiveProgramInfo);
             return response;
         }
 
@@ -88,7 +90,7 @@ namespace TelimenaClient
 
                 Task<string> updaterNameTask = this.Messenger.SendGetRequest($"{ApiRoutes.GetProgramUpdaterName}?programId={this.LiveProgramInfo.ProgramId}");
 
-                await Task.WhenAll(updaterNameTask);
+                await Task.WhenAll(updaterNameTask).ConfigureAwait(false);
 
                 this.LiveProgramInfo.UpdaterName = updaterNameTask.Result;
 

@@ -19,8 +19,9 @@ namespace TelimenaClient
         /// It will return info about beta versions as well.
         /// <para>This is an ASYNC method which should be awaited</para>
         /// </summary>
+        /// <param name="acceptBeta"></param>
         /// <returns></returns>
-        Task<UpdateCheckResult> CheckForUpdatesAsync();
+        Task<UpdateCheckResult> CheckForUpdatesAsync(bool acceptBeta = true);
 
 
         /// <summary>

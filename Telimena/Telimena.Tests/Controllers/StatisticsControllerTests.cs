@@ -70,7 +70,7 @@ namespace Telimena.Tests
             request = new StatisticsUpdateRequest {ProgramId = prg.Id, FunctionName = "Func1", UserId = otherUser.Id, Version = "1.2.3.4"};
             response = sut.Update(request).GetAwaiter().GetResult();
             Assert.AreEqual(1, response.Count);
-            prg = unit.Programs.GetById(prg.Id);
+            prg = unit.Programs.FirstOrDefaultAsync(x => x.Id == prg.Id).GetAwaiter().GetResult();
             Assert.AreEqual(1, prg.Functions.Count);
             func1 = prg.Functions.Single();
             Assert.AreEqual("Func1", func1.Name);

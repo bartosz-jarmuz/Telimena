@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -48,12 +49,18 @@ namespace TelimenaClient
                 }
         }
 
-        public async Task<Stream> DownloadFile(string requestUri)
+        public async Task<FileDownloadResult> DownloadFile(string requestUri)
         {
             try
             {
                 HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri).ConfigureAwait(false);
-                return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return new FileDownloadResult()
+                {
+                    FileName = response.Content.Headers.ContentDisposition.FileName.Trim('\"')
+                    ,Stream = stream
+                };
             }
         
             catch (Exception ex)

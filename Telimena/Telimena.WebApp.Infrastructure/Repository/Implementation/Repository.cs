@@ -81,7 +81,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> filter = null
             , Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "")
         {
-            IQueryable<TEntity> query = this.PrepareQuery(filter, includeProperties);
+            IQueryable<TEntity> query = PrepareQuery(this.DbContext, filter, includeProperties);
 
             if (orderBy != null)
             {
@@ -94,7 +94,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null
             , string includeProperties = "")
         {
-            IQueryable<TEntity> query = this.PrepareQuery(filter, includeProperties);
+            IQueryable<TEntity> query = PrepareQuery(this.DbContext, filter, includeProperties);
             if (orderBy != null)
             {
                 return orderBy(query).ToList();
@@ -123,9 +123,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return this.DbContext.Set<TEntity>().CountAsync();
         }
 
-        private IQueryable<TEntity> PrepareQuery(Expression<Func<TEntity, bool>> filter, string includeProperties)
+        internal static IQueryable<TEntity> PrepareQuery(DbContext dbContext, Expression<Func<TEntity, bool>> filter, string includeProperties)
         {
-            IQueryable<TEntity> query = this.DbContext.Set<TEntity>();
+            IQueryable<TEntity> query = dbContext.Set<TEntity>();
 
             if (filter != null)
             {

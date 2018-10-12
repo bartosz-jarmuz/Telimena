@@ -112,7 +112,18 @@ namespace TelimenaTestSandboxApp
         private async void handleUpdatesButton_Click(object sender, EventArgs e)
         {
             this.UpdateText("Handling updates...");
-            await this.teli.HandleUpdatesAsync(false);
+            var suppressAllErrors = this.teli.SuppressAllErrors;
+            this.teli.SuppressAllErrors = false;
+            try
+            {
+                await this.teli.HandleUpdatesAsync(false);
+            }
+            catch (Exception ex)
+            {
+                this.UpdateText(ex.ToString());
+            }
+
+            this.teli.SuppressAllErrors = suppressAllErrors;
             this.UpdateText("Finished handling updates...");
         }
 

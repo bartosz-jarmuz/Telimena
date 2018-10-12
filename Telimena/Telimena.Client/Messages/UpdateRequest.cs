@@ -25,7 +25,7 @@ namespace TelimenaClient
         /// <param name="acceptBeta">if set to <c>true</c> [accept beta].</param>
         /// <param name="toolkitVersion">The toolkit version.</param>
         /// <param name="updaterVersion">The updater version.</param>
-        public UpdateRequest(int programId, string programVersion, int userId, bool acceptBeta, string toolkitVersion, string updaterVersion = null)
+        public UpdateRequest(int programId, string programVersion, int userId, bool acceptBeta, string toolkitVersion, string updaterVersion)
         {
             this.ProgramId = programId;
             this.UserId = userId;

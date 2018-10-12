@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace TelimenaClient
@@ -11,15 +14,23 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
+        /// <param name="acceptBeta"></param>
         /// <inheritdoc />
-        public async Task<UpdateCheckResult> CheckForUpdatesAsync()
+        public async Task<UpdateCheckResult> CheckForUpdatesAsync(bool acceptBeta = true)
         {
+            UpdateRequest updateRequest = null;
+            
             try
             {
                 await this.InitializeIfNeeded().ConfigureAwait(false);
+                string updaterVersion = this.GetUpdaterVersion();
+                updateRequest = new UpdateRequest(this.LiveProgramInfo.ProgramId, this.ProgramVersion, this.LiveProgramInfo.UserId, acceptBeta, this.TelimenaVersion, updaterVersion);
 
-                UpdateResponse programUpdateResponse = await this.GetProgramUpdateResponse(true).ConfigureAwait(false);
-                UpdateResponse updaterUpdateResponse = await this.GetUpdaterUpdateResponse(true).ConfigureAwait(false);
+                ConfiguredTaskAwaitable<UpdateResponse> programUpdateTask = this.GetUpdateResponse(this.GetUpdateRequestUrl(ApiRoutes.GetProgramUpdateInfo, updateRequest)).ConfigureAwait(false);
+                ConfiguredTaskAwaitable<UpdateResponse> updaterUpdateTask = this.GetUpdateResponse(this.GetUpdateRequestUrl(ApiRoutes.GetUpdaterUpdateInfo, updateRequest)).ConfigureAwait(false);
+
+                UpdateResponse programUpdateResponse = await programUpdateTask;
+                UpdateResponse updaterUpdateResponse = await updaterUpdateTask;
 
                 return new UpdateCheckResult
                 {
@@ -29,7 +40,10 @@ namespace TelimenaClient
             catch (Exception ex)
             {
                 TelimenaException exception = new TelimenaException("Error occurred while sending check for updates request", ex
-                    , new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(true)));
+                    , new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(ApiRoutes.GetProgramUpdateInfo, updateRequest))
+                    , new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(ApiRoutes.GetUpdaterUpdateInfo, updateRequest))
+                    
+                    );
                 if (!this.SuppressAllErrors)
                 {
                     throw exception;
@@ -42,7 +56,7 @@ namespace TelimenaClient
         /// <inheritdoc />
         public UpdateCheckResult CheckForUpdatesBlocking()
         {
-            return Task.Run(this.CheckForUpdatesAsync).GetAwaiter().GetResult();
+            return Task.Run(() => this.CheckForUpdatesAsync()).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
@@ -50,21 +64,21 @@ namespace TelimenaClient
         {
             try
             {
-                await this.InitializeIfNeeded();
-
-                Task<UpdateResponse> programUpdateTask = this.GetProgramUpdateResponse(acceptBeta);
-                Task<UpdateResponse> updaterUpdateTask = this.GetUpdaterUpdateResponse(acceptBeta);
-                UpdateResponse programUpdateResponse = await programUpdateTask.ConfigureAwait(false);
-                UpdateResponse updaterUpdateResponse = await updaterUpdateTask.ConfigureAwait(false);
-
-                UpdateHandler handler = new UpdateHandler(this.Messenger, this.LiveProgramInfo, new DefaultWpfInputReceiver()
-                    , new UpdateInstaller());
-                await handler.HandleUpdates(programUpdateResponse, updaterUpdateResponse).ConfigureAwait(false);
+                UpdateCheckResult checkResult = await this.CheckForUpdatesAsync(acceptBeta);
+                if (checkResult.Exception == null)
+                {
+                    UpdateHandler handler = new UpdateHandler(this.Messenger, this.LiveProgramInfo, new DefaultWpfInputReceiver()
+                        , new UpdateInstaller(), this.Locator);
+                    await handler.HandleUpdates(checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate).ConfigureAwait(false);
+                }
+                else
+                {
+                    throw checkResult.Exception;
+                }
             }
             catch (Exception ex)
             {
-                TelimenaException exception = new TelimenaException("Error occurred while handling updates", ex
-                    , new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(true)));
+                TelimenaException exception = new TelimenaException("Error occurred while handling updates", ex);
                 if (!this.SuppressAllErrors)
                 {
                     throw exception;
@@ -79,59 +93,45 @@ namespace TelimenaClient
         }
 
         /// <summary>
-        /// Gets the program update response.
+        /// Gets the updater update response.
         /// </summary>
-        /// <param name="takeBeta">if set to <c>true</c> [take beta].</param>
         /// <returns>Task&lt;UpdateResponse&gt;.</returns>
-        protected async Task<UpdateResponse> GetProgramUpdateResponse(bool takeBeta)
+        protected async Task<UpdateResponse> GetUpdateResponse(string requestUri)
         {
-            string responseContent = await this.Messenger.SendGetRequest(this.GetUpdateRequestUrl(takeBeta)).ConfigureAwait(false);
+            string responseContent = await this.Messenger.SendGetRequest(requestUri).ConfigureAwait(false);
             return this.Serializer.Deserialize<UpdateResponse>(responseContent);
         }
 
-        /// <summary>
-        /// Gets the updater update response.
-        /// </summary>
-        /// <param name="takeBeta">if set to <c>true</c> [take beta].</param>
-        /// <returns>Task&lt;UpdateResponse&gt;.</returns>
-        protected async Task<UpdateResponse> GetUpdaterUpdateResponse(bool takeBeta)
+        private string GetUpdaterVersion()
         {
-            string responseContent = await this.Messenger.SendGetRequest(this.GetUpdaterUpdateRequestUrl(takeBeta)).ConfigureAwait(false);
-            return this.Serializer.Deserialize<UpdateResponse>(responseContent);
+            FileInfo updaterFile = this.Locator.GetUpdater();
+            if (updaterFile.Exists)
+            {
+                FileVersionInfo version = FileVersionInfo.GetVersionInfo(updaterFile.FullName);
+                return string.IsNullOrEmpty(version.FileVersion) ? "0.0.0.0" : version.FileVersion;
+            }
+            else
+            {
+                return "0.0.0.0";
+            }
         }
 
         /// <summary>
         /// Gets the update request URL.
         /// </summary>
-        /// <param name="takeBeta">if set to <c>true</c> [take beta].</param>
         /// <returns>System.String.</returns>
-        private string GetUpdateRequestUrl(bool takeBeta)
+        private string GetUpdateRequestUrl(string baseUri, UpdateRequest model)
         {
             try
             {
-
-                UpdateRequest model = new UpdateRequest(this.LiveProgramInfo.ProgramId, this.ProgramVersion, this.LiveProgramInfo.UserId, takeBeta, this.TelimenaVersion);
-                string stringified = this.Serializer.Serialize(model);
-                string escaped = this.Serializer.UrlEncodeJson(stringified);
-                return ApiRoutes.GetProgramUpdateInfo + "?request=" + escaped;
+                string stringifier = this.Serializer.Serialize(model);
+                string escaped = this.Serializer.UrlEncodeJson(stringifier);
+                return baseUri + "?request=" + escaped;
             }
             catch (Exception ex)
             {
-                return $"Failed to get update request URL becacuse of {ex.Message}";
+                return $"Failed to get update request URL because of {ex.Message}";
             }
-        }
-
-        /// <summary>
-        /// Gets the updater update request URL.
-        /// </summary>
-        /// <param name="takeBeta">if set to <c>true</c> [take beta].</param>
-        /// <returns>System.String.</returns>
-        private string GetUpdaterUpdateRequestUrl(bool takeBeta)
-        {
-            UpdateRequest model = new UpdateRequest(this.LiveProgramInfo.ProgramId, this.ProgramVersion, this.LiveProgramInfo.UserId, takeBeta, this.TelimenaVersion, "");
-            string stringified = this.Serializer.Serialize(model);
-            string escaped = this.Serializer.UrlEncodeJson(stringified);
-            return ApiRoutes.GetUpdaterUpdateInfo + "?request=" + escaped;
         }
     }
 }

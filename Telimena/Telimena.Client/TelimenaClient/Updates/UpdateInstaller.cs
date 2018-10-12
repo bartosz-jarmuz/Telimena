@@ -10,8 +10,11 @@ namespace TelimenaClient
     {
         public async Task InstallUpdaterUpdate(FileInfo updaterPackage, FileInfo targetPath)
         {
-            await UnpackUpdater(updaterPackage, targetPath).ConfigureAwait(false);
-            await Cleanup(updaterPackage).ConfigureAwait(false);
+            var wasUnpacked = await UnpackUpdater(updaterPackage, targetPath).ConfigureAwait(false);
+            if (wasUnpacked)
+            {
+                await Cleanup(updaterPackage).ConfigureAwait(false);
+            }
         }
 
         public void InstallUpdates(FileInfo instructionsFile, FileInfo updaterFile)
@@ -43,17 +46,30 @@ namespace TelimenaClient
             }
         }
 
-        private static async Task UnpackUpdater(FileInfo updaterPackage, FileInfo targetPath)
+        private static async Task<bool> UnpackUpdater(FileInfo updaterPackage, FileInfo targetPath)
         {
+
+            if (updaterPackage.FullName == targetPath.FullName)
+            {
+                return false; //not an archive
+            }
             for (int i = 0; i < 4; i++)
             {
                 try
                 {
                     ZipFile.ExtractToDirectory(updaterPackage.FullName, targetPath.DirectoryName);
-                    break;
+                    return true;
                 }
                 catch (Exception ex)
                 {
+                    if (ex.Message.Contains(targetPath.FullName) && targetPath.Exists)
+                    {
+                        try
+                        {
+                            targetPath.Delete();
+                        }
+                        catch (Exception) { }
+                    }
                     await Task.Delay(150 * (i + 1)).ConfigureAwait(false);
                     if (i == 4)
                     {
@@ -61,6 +77,8 @@ namespace TelimenaClient
                     }
                 }
             }
+
+            return false;
         }
 
         private void VerifyFilesExist(FileInfo instructionsFile, FileInfo updaterFile)

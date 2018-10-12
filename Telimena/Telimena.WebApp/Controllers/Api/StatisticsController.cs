@@ -63,7 +63,7 @@ namespace Telimena.WebApp.Controllers.Api
 
             try
             {
-                Program program = this.work.Programs.GetById(updateRequest.ProgramId);
+                Program program = await this.work.Programs.FirstOrDefaultAsync(x=>x.Id == updateRequest.ProgramId);
                 if (program == null)
                 {
                     return new StatisticsUpdateResponse {Exception = new InvalidOperationException($"Program [{updateRequest.ProgramId}] is null")};
