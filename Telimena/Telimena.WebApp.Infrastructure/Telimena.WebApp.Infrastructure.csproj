@@ -179,6 +179,10 @@
     <Compile Include="Migrations\201810032120310_addedIsPublic3.Designer.cs">
       <DependentUpon>201810032120310_addedIsPublic3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201810121605503_updaterRoundtripWip.cs" />
+    <Compile Include="Migrations\201810121605503_updaterRoundtripWip.Designer.cs">
+      <DependentUpon>201810121605503_updaterRoundtripWip.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
@@ -243,6 +247,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201810032120310_addedIsPublic3.resx">
       <DependentUpon>201810032120310_addedIsPublic3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810121605503_updaterRoundtripWip.resx">
+      <DependentUpon>201810121605503_updaterRoundtripWip.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
