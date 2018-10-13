@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +7,7 @@ using Telimena.PackageTriggerUpdater.CommandLineArguments;
 
 namespace Telimena.PackageTriggerUpdater
 {
-    class Program
+    partial class Program
     {
         static void Main(string[] args)
         {
@@ -22,16 +20,9 @@ namespace Telimena.PackageTriggerUpdater
             UpdaterStartupSettings settings = CommandLineArgumentParser.GetSettings(args);
             UpdateInstructions instructions = UpdateInstructionsReader.Read(settings.InstructionsFile);
             Console.WriteLine($"Read update instructions from {settings.InstructionsFile}");
-            var package = instructions.PackagePaths.FirstOrDefault();
-            if (package != null && File.Exists(package))
-            {
-                Console.WriteLine($"Launching package {package}.");
-                Process.Start(package);
-            }
-            else
-            {
-                Console.WriteLine($"Failed to find package from {settings.InstructionsFile}");
-            }
+          
+                        var worker = new PackageUpdaterWorker();
+            worker.TriggerUpdate(settings, instructions);
         }
     }
 }

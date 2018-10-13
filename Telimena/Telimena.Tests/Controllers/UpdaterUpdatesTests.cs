@@ -151,14 +151,14 @@ namespace Telimena.Tests
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
+            Assert.AreEqual("api/Updater/Get?id=7", result.UpdatePackages.Single().DownloadUrl);
 
             request = new UpdateRequest(programId: this.programWithDifferentUpdater.Id, programVersion: "0.0", userId: 1, acceptBeta: false
                 , updaterVersion: "1.0", toolkitVersion: "1.3.0");
 
             result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.5", result.UpdatePackages.Single().Version);
-
-
+            Assert.AreEqual("api/Updater/Get?id=8", result.UpdatePackages[0].DownloadUrl);
         }
 
 

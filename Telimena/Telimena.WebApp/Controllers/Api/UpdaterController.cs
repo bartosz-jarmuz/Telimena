@@ -132,7 +132,9 @@ namespace Telimena.WebApp.Controllers.Api
             UpdateResponse response = new UpdateResponse();
             if (updaterInfo != null)
             {
-                response.UpdatePackages = new[] {Mapper.Map<UpdatePackageData>(updaterInfo)};
+                var info = Mapper.Map<UpdatePackageData>(updaterInfo);
+                info.DownloadUrl = Router.Api.DownloadUpdaterUpdate(updaterInfo);
+                response.UpdatePackages = new[] {info};
             }
 
             return response;

@@ -23,7 +23,6 @@ namespace TelimenaClient
             Process process = new Process {StartInfo = StartInfoCreator.CreateStartInfo(instructionsFile, updaterFile)};
 
             process.Start();
-            Environment.Exit(0);
         }
 
         private static async Task Cleanup(FileInfo updaterPackage)

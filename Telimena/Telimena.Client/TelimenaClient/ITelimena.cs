@@ -38,7 +38,7 @@ namespace TelimenaClient
         /// </summary>
         /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
         /// <returns></returns>
-        Task HandleUpdatesAsync(bool acceptBeta);
+        Task<UpdateCheckResult> HandleUpdatesAsync(bool acceptBeta);
 
         /// <summary>
         /// Handles the updating process from start to end

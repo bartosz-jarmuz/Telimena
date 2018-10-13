@@ -133,8 +133,9 @@ namespace Telimena.Tests
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
             Assert.AreEqual(3, result.UpdatePackages.Count());
-
             Assert.AreEqual(6, result.UpdatePackages[0].Id);
+            Assert.AreEqual("api/ProgramUpdates/Get?id=6", result.UpdatePackages[0].DownloadUrl);
+
             Assert.AreEqual(5, result.UpdatePackages[1].Id);
             Assert.AreEqual(4, result.UpdatePackages[2].Id);
             //no update for toolkit, because its already maxed
@@ -167,10 +168,12 @@ namespace Telimena.Tests
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual(3, result.UpdatePackages[0].Id);
+            Assert.AreEqual("api/ProgramUpdates/Get?id=3", result.UpdatePackages[0].DownloadUrl);
             Assert.AreEqual(2, result.UpdatePackages.Count);
 
             //return the version that is higher than max supported, but does not introduce breaking changes
-            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip"
+                                                                         && x.DownloadUrl == $"api/Toolkit/Get?id=4").Version);
 
         }
 

@@ -10,9 +10,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using NUnit.Framework;
+using Telimena.Updater;
 using TelimenaClient;
 
-namespace Telimena.Updater.Tests
+namespace TelimenaUpdaterTests.DefaultUpdater
 {
     #region Using
 

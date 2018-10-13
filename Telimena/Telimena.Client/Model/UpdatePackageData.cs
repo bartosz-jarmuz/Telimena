@@ -38,5 +38,12 @@
         /// </summary>
         /// <value><c>true</c> if this instance is beta; otherwise, <c>false</c>.</value>
         public bool IsBeta { get; set; }
+
+        /// <summary>
+        /// Gets or sets the download URL.
+        /// </summary>
+        /// <value>The download URL.</value>
+        public string DownloadUrl { get; set; }
+
     }
 }

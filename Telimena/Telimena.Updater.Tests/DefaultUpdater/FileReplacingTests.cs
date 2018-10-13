@@ -9,46 +9,20 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
+using Telimena.Updater;
 using Assert = NUnit.Framework.Assert;
 
-namespace Telimena.Updater.Tests
+namespace TelimenaUpdaterTests.DefaultUpdater
 {
     #region Using
 
     #endregion
 
-    public static class DirectoryCopy
-    {
-        public static void Copy(string sourceDirectory, string targetDirectory)
-        {
-            DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
-            DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
-
-            Copy(diSource, diTarget);
-        }
-
-        public static void Copy(DirectoryInfo source, DirectoryInfo target)
-        {
-            Directory.CreateDirectory(target.FullName);
-
-            foreach (FileInfo fi in source.GetFiles())
-            {
-                fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
-            }
-
-            foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
-            {
-                DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
-                Copy(diSourceSubDir, nextTargetSubDir);
-            }
-        }
-    }
-
     [TestFixture]
     [DeploymentItem("MockDisk")]
     public class FileReplacingTests
     {
-        private DirectoryInfo MyAppFolder => new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MockDisk", "MyAppFolder"));
+        private DirectoryInfo MyAppFolder => new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MockDisk", "DefaultUpdater/MyAppFolder"));
         private DirectoryInfo Update12Folder => this.MyAppFolder.CreateSubdirectory(Path.Combine("Updates", "1.2"));
 
         private void CreateBackup()

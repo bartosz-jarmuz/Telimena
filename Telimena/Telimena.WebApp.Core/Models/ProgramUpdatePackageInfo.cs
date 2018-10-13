@@ -1,4 +1,7 @@
-﻿namespace Telimena.WebApp.Core.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using TelimenaClient;
+
+namespace Telimena.WebApp.Core.Models
 {
     public class ProgramUpdatePackageInfo : RepositoryFileBase, IRepositoryFile
     {

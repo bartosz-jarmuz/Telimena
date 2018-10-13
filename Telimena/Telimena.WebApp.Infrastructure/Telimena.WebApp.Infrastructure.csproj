@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRequestsValidator.cs" />
+    <Compile Include="ApiRouter.cs" />
     <Compile Include="Audit\Audit.cs" />
     <Compile Include="Audit\AuditAttribute.cs" />
     <Compile Include="Audit\AuditFilter.cs" />

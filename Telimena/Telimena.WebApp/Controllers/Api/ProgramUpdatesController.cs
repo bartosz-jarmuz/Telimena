@@ -20,6 +20,7 @@ using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using TelimenaClient;
 using TelimenaClient.Serializer;
+using WebGrease.Css.Extensions;
 
 namespace Telimena.WebApp.Controllers.Api
 {
@@ -53,11 +54,12 @@ namespace Telimena.WebApp.Controllers.Api
             byte[] bytes = await this.work.UpdatePackages.GetPackage(packageInfo.Id, this.FileRetriever);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = packageInfo.FileName};
-            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
 
             return this.ResponseMessage(result);
         }
 
+        [HttpGet]
         public async Task<TelimenaPackageInfo> GetToolkitUpdateInfo(Program program, UpdateRequest request, string maximumSupportedToolkitVersion)
         {
             ObjectValidator.Validate(() => Version.TryParse(request.ToolkitVersion, out _)
@@ -120,10 +122,17 @@ namespace Telimena.WebApp.Controllers.Api
                 List<ProgramUpdatePackageInfo> filteredPackages = this.FilterPackagesSet(allUpdatePackages, requestModel);
                 string supportedToolkitVersion = await this.GetMaximumSupportedToolkitVersion(filteredPackages, program, requestModel);
                 TelimenaPackageInfo toolkitPackage = await this.GetToolkitUpdateInfo(program, requestModel, supportedToolkitVersion);
-                List<UpdatePackageData> packageDataSets = new List<UpdatePackageData>(Mapper.Map<IEnumerable<UpdatePackageData>>(filteredPackages));
+
+                List<UpdatePackageData> packageDataSets = new List<UpdatePackageData>();
+                foreach (ProgramUpdatePackageInfo programUpdatePackageInfo in filteredPackages)
+                {
+                    packageDataSets.Add(Mapper.Map<ProgramUpdatePackageInfo, UpdatePackageData>(programUpdatePackageInfo,
+                        options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadProgramUpdate(info))));
+                }
                 if (toolkitPackage != null)
                 {
-                    packageDataSets.Add(Mapper.Map<UpdatePackageData>(toolkitPackage));
+                    packageDataSets.Add(Mapper.Map<TelimenaPackageInfo,UpdatePackageData>(toolkitPackage,options => 
+                        options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadToolkitUpdate(info))));
                 }
 
 
@@ -135,20 +144,6 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 return new UpdateResponse {Exception = new InvalidOperationException("Error while processing registration request", ex)};
             }
-        }
-
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IHttpActionResult> GetUpdateInfo(int programId)
-        {
-            ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(programId);
-
-            byte[] bytes = await this.work.UpdatePackages.GetPackage(packageInfo.Id, this.FileRetriever);
-            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
-            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = packageInfo.FileName};
-            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-
-            return this.ResponseMessage(result);
         }
 
         [HttpPost]
@@ -171,7 +166,7 @@ namespace Telimena.WebApp.Controllers.Api
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
                     Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
-                    ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, uploadedFile.InputStream
+                    ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, uploadedFile.FileName, uploadedFile.InputStream
                         , request.ToolkitVersionUsed, this.fileSaver);
                     await this.work.CompleteAsync();
                     return this.Ok(pkg.Id);

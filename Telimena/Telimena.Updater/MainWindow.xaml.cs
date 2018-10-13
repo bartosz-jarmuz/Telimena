@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -79,6 +79,8 @@ namespace Telimena.Updater
             UpdateWorker worker = new UpdateWorker();
             try
             {
+                ProcessKiller.Kill(this.Instructions.ProgramExecutableLocation);
+
                 worker.PerformUpdate(this.Instructions);
                 if (MessageBox.Show("Update complete. Would you like to run the app now?", "Update complete", MessageBoxButton.YesNo
                         , MessageBoxImage.Information) == MessageBoxResult.Yes)

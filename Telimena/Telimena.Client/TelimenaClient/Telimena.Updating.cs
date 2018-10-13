@@ -60,7 +60,7 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public async Task HandleUpdatesAsync(bool acceptBeta)
+        public async Task<UpdateCheckResult> HandleUpdatesAsync(bool acceptBeta)
         {
             try
             {
@@ -75,6 +75,8 @@ namespace TelimenaClient
                 {
                     throw checkResult.Exception;
                 }
+
+                return checkResult;
             }
             catch (Exception ex)
             {
@@ -83,6 +85,8 @@ namespace TelimenaClient
                 {
                     throw exception;
                 }
+
+                return new UpdateCheckResult() {Exception = ex};
             }
         }
 

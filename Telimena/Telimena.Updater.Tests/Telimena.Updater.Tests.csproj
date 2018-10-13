@@ -7,7 +7,7 @@
     <ProjectGuid>{28B94E69-56EC-49B1-887E-AB96B77D30BE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Telimena.Updater.Tests</RootNamespace>
+    <RootNamespace>TelimenaUpdaterTests</RootNamespace>
     <AssemblyName>Telimena.Updater.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -75,36 +75,47 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DirectoryCopy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FileReplacingTests.cs" />
-    <Compile Include="UpdaterTests.cs" />
+    <Compile Include="DefaultUpdater\FileReplacingTests.cs" />
+    <Compile Include="PackageTriggerUpdaterTests.cs" />
+    <Compile Include="DefaultUpdater\UpdaterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\TelimenaKey.snk">
       <Link>Properties\TelimenaKey.snk</Link>
     </None>
-    <None Include="MockDisk\MyAppFolder\Updates\1.2\MyApp Update v. 1.1.zip">
+    <None Include="MockDisk\DefaultUpdater\MyAppFolder\Updates\1.2\MyApp Update v. 1.1.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MockDisk\MyAppFolder\Updates\1.2\MyApp Update v. 1.2.zip">
+    <None Include="MockDisk\DefaultUpdater\MyAppFolder\Updates\1.2\MyApp Update v. 1.2.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MockDisk\PackageTriggerUpdater\MyPackageBasedAppFolder\Updates\1.1\MyPackageBasedApp Update v. 1.1.pkg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MockDisk\PackageTriggerUpdater\MyPackageBasedAppFolder\Updates\1.2\MyPackageBasedApp Update v. 1.2.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="MockDisk\MyAppFolder\Libs\SomeLib3.dll">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\Libs\SomeLib3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MockDisk\MyAppFolder\MyApp.exe">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\MyApp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MockDisk\MyAppFolder\Libs\Some Nested Lib.dll">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\Libs\Some Nested Lib.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MockDisk\MyAppFolder\SomeLib1.dll">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\SomeLib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MockDisk\MyAppFolder\SomeLib3.dll">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\SomeLib3.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MockDisk\PackageTriggerUpdater\MyPackageBasedAppFolder\MyPackageBasedApp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -113,11 +124,16 @@
       <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
       <Name>Telimena.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Telimena.PackageTriggerUpdater\Telimena.PackageTriggerUpdater.csproj">
+      <Project>{06fed956-f08f-497f-8cbd-87afaa312ad7}</Project>
+      <Name>Telimena.PackageTriggerUpdater</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Telimena.Updater\Telimena.Updater.csproj">
       <Project>{6DEE078F-92BD-4F45-A876-BC4446217D83}</Project>
       <Name>Telimena.Updater</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

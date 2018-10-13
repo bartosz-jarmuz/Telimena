@@ -8,11 +8,20 @@ namespace Telimena.WebApp.Infrastructure
     {
         public AutoMapperDomainProfile()
         {
-            this.CreateMap<ProgramUpdatePackageInfo, UpdatePackageData>().ForMember(x => x.StoredFilePath, o => o.Ignore());
+            this.CreateMap<ProgramUpdatePackageInfo, UpdatePackageData>()
+                .ForMember(x => x.StoredFilePath, o => o.Ignore())
+                .ForMember(x => x.DownloadUrl, o => o.Ignore())
+                ;
 
-            this.CreateMap<UpdaterPackageInfo, UpdatePackageData>().ForMember(x => x.StoredFilePath, o => o.Ignore());
+            this.CreateMap<UpdaterPackageInfo, UpdatePackageData>()
+                .ForMember(x => x.StoredFilePath, o => o.Ignore())
+                .ForMember(x => x.DownloadUrl, o => o.Ignore())
+                ;
 
-            this.CreateMap<TelimenaPackageInfo, UpdatePackageData>().ForMember(x => x.StoredFilePath, o => o.Ignore());
+            this.CreateMap<TelimenaPackageInfo, UpdatePackageData>()
+                .ForMember(x => x.StoredFilePath, o => o.Ignore())
+                .ForMember(x => x.DownloadUrl, o => o.Ignore())
+                ;
 
             this.CreateMap<UserInfo, ClientAppUser>().ForMember(x => x.Id, o => o.Ignore()).ForMember(x => x.RegisteredDate, o => o.Ignore());
 

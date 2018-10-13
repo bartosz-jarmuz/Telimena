@@ -84,6 +84,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ProcessKiller.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="UpdateWorker\FileReplacer.cs" />
     <Compile Include="UpdateInstructions\UpdateInstructionsReader.cs" />

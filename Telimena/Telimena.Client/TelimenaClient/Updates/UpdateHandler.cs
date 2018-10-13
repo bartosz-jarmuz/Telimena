@@ -51,7 +51,7 @@ namespace TelimenaClient
 
         protected async Task StoreUpdatePackage(UpdatePackageData pkgData, DirectoryInfo updatesFolder)
         {
-            FileDownloadResult result = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdatePackage + "?id=" + pkgData.Id).ConfigureAwait(false);
+            FileDownloadResult result = await this.messenger.DownloadFile(pkgData.DownloadUrl).ConfigureAwait(false);
             FileInfo pkgFile = new FileInfo(Path.Combine(updatesFolder.FullName, result.FileName));
             await SaveStreamToPath(pkgData, pkgFile, result.Stream).ConfigureAwait(false);
         }
@@ -103,7 +103,7 @@ namespace TelimenaClient
                 return updaterExecutable;
             }
 
-            var result = await this.messenger.DownloadFile(ApiRoutes.DownloadUpdaterUpdatePackage + "?id=" + pkgData.Id).ConfigureAwait(false);
+            var result = await this.messenger.DownloadFile(pkgData.DownloadUrl).ConfigureAwait(false);
             FileInfo pkgFile = new FileInfo(Path.Combine(this.locator.GetUpdatesParentFolder().FullName, result.FileName));
             if (pkgFile.Exists)
             {
