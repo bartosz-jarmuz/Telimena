@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Drawing;
+using NUnit.Framework;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
@@ -20,7 +21,9 @@ public class TestInitializerInNoNamespace
         switch (browser)
         {
             case "Chrome":
-                PortalTestBase.RemoteDriver = new ChromeDriver();
+                var opt = new ChromeOptions();
+                opt.AddArgument("--headless");
+                PortalTestBase.RemoteDriver = new ChromeDriver(opt);
                 break;
             case "Firefox":
                 PortalTestBase.RemoteDriver = new FirefoxDriver();
@@ -32,6 +35,7 @@ public class TestInitializerInNoNamespace
                 PortalTestBase.RemoteDriver = new ChromeDriver();
                 break;
         }
+
 
     }
 

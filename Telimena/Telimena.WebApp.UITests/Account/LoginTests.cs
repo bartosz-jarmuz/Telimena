@@ -37,7 +37,7 @@ namespace Telimena.WebApp.UITests.Account
                 IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
                 submit.Click();
 
-                if (this.Driver.FindElement(By.Id(Strings.Id.PasswordForm)) == null)
+                if (this.TryFind(Strings.Id.PasswordForm) == null)
                 {
                     this.RecognizeAdminDashboardPage();
 

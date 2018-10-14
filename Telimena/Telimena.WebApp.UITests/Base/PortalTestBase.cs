@@ -22,7 +22,8 @@ namespace Telimena.WebApp.UITests.Base
 
         protected static string GetSetting(string key)
         {
-            return  WebConfigurationManager.AppSettings.Get(key);
+            var x =  NUnit.Framework.TestContext.Parameters[key];
+            return x;
         }
         protected static T GetSetting<T>(string key) 
         {
@@ -55,6 +56,7 @@ namespace Telimena.WebApp.UITests.Base
         [OneTimeSetUp]
         public void TestInitialize()
         {
+            
             if (this.isLocalTestSetting)
             {
                 this.TestEngine = new LocalHostTestEngine();
@@ -86,13 +88,26 @@ namespace Telimena.WebApp.UITests.Base
             wait.Until(x => x.FindElement(By.Id(Strings.Id.PortalSummary)));
         }
 
+        public IWebElement TryFind(string nameOrId, int timeoutSeconds = 10)
+        {
+            try
+            {
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(timeoutSeconds));
+                return wait.Until(x => x.FindElement(By.Id(nameOrId)));
+            }
+            catch { }
+
+            return null;
+        }
+
         protected void HandlerError(Exception ex, [CallerMemberName] string memberName = "")
         {
             Screenshot screen = this.Screenshooter.GetScreenshot();
             var path = Common.CreatePngPath(memberName);
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
             var page = this.Driver.PageSource;
-            throw new InvalidOperationException(page, ex);
+
+            throw new AssertFailedException(ex.ToString() + "\r\n\r\n" + page, ex);
 
             //this.TestContext.AddResultFile(path);
         }
