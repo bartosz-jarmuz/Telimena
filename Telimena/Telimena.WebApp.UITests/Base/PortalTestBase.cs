@@ -82,7 +82,7 @@ namespace Telimena.WebApp.UITests.Base
 
         public void RecognizeAdminDashboardPage()
         {
-            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(45));
             wait.Until(x => x.FindElement(By.Id(Strings.Id.PortalSummary)));
         }
 
@@ -91,8 +91,10 @@ namespace Telimena.WebApp.UITests.Base
             Screenshot screen = this.Screenshooter.GetScreenshot();
             var path = Common.CreatePngPath(memberName);
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
+            var page = this.Driver.PageSource;
+            throw new InvalidOperationException(page, ex);
+
             //this.TestContext.AddResultFile(path);
-            throw ex;
         }
 
         public void LoginAdminIfNeeded()
