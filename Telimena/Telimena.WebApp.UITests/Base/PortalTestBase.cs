@@ -34,7 +34,9 @@ namespace Telimena.WebApp.UITests.Base
         public readonly string UserName = GetSetting(ConfigKeys.UserName);
         public readonly string AdminPassword = GetSetting(ConfigKeys.AdminPassword);
         public readonly string UserPassword = GetSetting(ConfigKeys.UserPassword);
-        private readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
+
+        private readonly bool isLocalTestSetting = true;
+        //private readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
 
 
         internal static RemoteWebDriver RemoteDriver;
