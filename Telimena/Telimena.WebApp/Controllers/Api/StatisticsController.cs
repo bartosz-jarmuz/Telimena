@@ -2,6 +2,7 @@
 using System.IdentityModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
@@ -36,12 +37,13 @@ namespace Telimena.WebApp.Controllers.Api
             try
             {
                 Program program = await this.helper.GetProgramOrAddIfNotExists(request);
-                ClientAppUser clientAppUser = await this.helper.GetUserInfoOrAddIfNotExists(request.UserInfo);
+                var ip = this.GetClientIp();
+                ClientAppUser clientAppUser = await this.helper.GetUserInfoOrAddIfNotExists(request.UserInfo, ip);
                 UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser);
                 if (!request.SkipUsageIncrementation)
                 {
                     AssemblyVersion version = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version);
-                    usageSummary.IncrementUsage(version);
+                    usageSummary.IncrementUsage(version, ip);
                 }
 
                 await this.work.CompleteAsync();
@@ -79,7 +81,8 @@ namespace Telimena.WebApp.Controllers.Api
                 StatisticsHelperService.EnsureVersionIsRegistered(program.PrimaryAssembly, updateRequest.Version);
                 AssemblyVersion versionInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version);
 
-                usageSummary.IncrementUsage(versionInfo, updateRequest.CustomData);
+                var ip = this.GetClientIp();
+                usageSummary.IncrementUsage(versionInfo, ip, updateRequest.CustomData);
 
                 await this.work.CompleteAsync();
                 return PrepareResponse(updateRequest, usageSummary, program, clientAppUser);
@@ -117,6 +120,23 @@ namespace Telimena.WebApp.Controllers.Api
             }
 
             return usageSummary;
+        }
+
+        private string GetClientIp()
+        {
+            if (this.Request?.Properties != null && this.Request.Properties.ContainsKey("MS_HttpContext"))
+            {
+                if (this.Request.Properties["MS_HttpContext"] is HttpContextWrapper ctxWrp)
+                {
+                    return ctxWrp.Request.UserHostAddress;
+                }
+                else if (this.Request.Properties["MS_HttpContext"] is HttpContextBase ctx)
+                {
+                    return ctx.Request.UserHostAddress;
+                }
+            }
+
+            return null;
         }
 
         private UsageSummary GetProgramUsageData(Program program, ClientAppUser clientAppUser)

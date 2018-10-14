@@ -5,6 +5,5 @@
         public virtual FunctionUsageSummary UsageSummary { get; set; }
 
         public virtual FunctionCustomUsageData CustomUsageData { get; set; }
-
     }
 }

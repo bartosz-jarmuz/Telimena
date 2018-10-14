@@ -7,7 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Web;
+using System.Web.Http;
 using DbIntegrationTestHelpers;
+using Moq;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Core.Models;
@@ -403,6 +407,68 @@ namespace Telimena.Tests
             Assert.AreEqual(5, prg.UsageSummaries.Sum(x => x.SummaryCount));
             Assert.AreEqual(2, prg.UsageSummaries.Count);
             Assert.AreEqual(5, prg.UsageSummaries.Sum(x => x.UsageDetails.Count));
+        }
+
+        private void SetIp(ApiController controller, string ip)
+        {
+            var request = new Mock<HttpRequestBase>();
+            // Not working - IsAjaxRequest() is static extension method and cannot be mocked
+            // request.Setup(x => x.IsAjaxRequest()).Returns(true /* or false */);
+            // use this
+            request.SetupGet(x => x.UserHostAddress).Returns(ip);
+
+            //var ctx = new Mock<HttpContextWrapper>();
+            //ctx.SetupGet(x => x.Request).Returns(request.Object);
+
+            Mock<HttpContextBase> mockContext = new Mock<HttpContextBase>();
+            mockContext.SetupAllProperties();
+            mockContext.Setup(c => c.Request).Returns(request.Object);
+
+            TestingUtilities.SetReuqest(controller, HttpMethod.Post, new Dictionary<string, object>() { { "MS_HttpContext", mockContext.Object} });
+
+        }
+
+        [Test]
+        public void TestIp_Ok()
+        {
+            StatisticsUnitOfWork unit;
+            StatisticsController sut;
+            RegistrationRequest request = null;
+            UserInfo userInfo;
+            for (int i = 0; i <= 2; i++)
+            {
+
+                unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+                 sut = new StatisticsController(unit);
+
+                SetIp(sut, "1.2.3.4");
+                userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
+
+                request = new RegistrationRequest
+                {
+                    ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg")), TelimenaVersion = "1.0.0.0", UserInfo = userInfo
+                };
+
+                RegistrationResponse response = sut.RegisterClient(request).GetAwaiter().GetResult();
+                Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
+
+                Assert.AreEqual("1.2.3.4", usr.IpAddresses.Single());
+
+            }
+
+            unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            sut = new StatisticsController(unit);
+
+            SetIp(sut, "2.2.3.4");
+            userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
+
+
+            sut.RegisterClient(request).GetAwaiter().GetResult();
+            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program _, out ClientAppUser usr2);
+
+            Assert.AreEqual("1.2.3.4", usr2.IpAddresses[0]);
+            Assert.AreEqual("2.2.3.4", usr2.IpAddresses[1]);
+
         }
 
         [Test]

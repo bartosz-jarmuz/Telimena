@@ -22,11 +22,11 @@ namespace Telimena.WebApp.Core.Models
 
         public virtual ICollection<ProgramUsageDetail> UsageDetails { get; set; } = new List<ProgramUsageDetail>();
 
-        public override void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version, string customData)
+        public override void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersion version, string customData)
         {
             ProgramUsageDetail usage = new ProgramUsageDetail
             {
-                DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version
+                DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version, IpAddress = ipAddress
             };
             if (customData != null)
             {

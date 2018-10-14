@@ -11,11 +11,11 @@ namespace Telimena.WebApp.Core.Models
 
         #region Overrides of UsageSummary
 
-        public override void UpdateUsageDetails(DateTime lastUsageDateTime, AssemblyVersion version, string customData)
+        public override void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersion version, string customData)
         {
             FunctionUsageDetail usage = new FunctionUsageDetail
             {
-                DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version
+                DateTime = lastUsageDateTime, UsageSummary = this, AssemblyVersion = version, IpAddress = ipAddress
             };
             if (customData != null)
             {

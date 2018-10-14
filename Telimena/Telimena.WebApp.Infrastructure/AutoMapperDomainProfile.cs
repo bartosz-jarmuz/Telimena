@@ -23,7 +23,11 @@ namespace Telimena.WebApp.Infrastructure
                 .ForMember(x => x.DownloadUrl, o => o.Ignore())
                 ;
 
-            this.CreateMap<UserInfo, ClientAppUser>().ForMember(x => x.Id, o => o.Ignore()).ForMember(x => x.RegisteredDate, o => o.Ignore());
+            this.CreateMap<UserInfo, ClientAppUser>()
+                .ForMember(x => x.Id, o => o.Ignore())
+                .ForMember(x => x.IpAddresses, o => o.Ignore())
+                .ForMember(x => x.IpAddressesString, o => o.Ignore())
+                .ForMember(x => x.RegisteredDate, o => o.Ignore());
 
             this.CreateMap<AssemblyInfo, ProgramAssembly>().ForMember(x => x.PrimaryOf, o => o.Ignore()).ForMember(x => x.ProgramId, o => o.Ignore())
                 .ForMember(x => x.Id, o => o.Ignore()).ForMember(x => x.Versions, o => o.Ignore()).ForMember(x => x.LatestVersion, o => o.Ignore())

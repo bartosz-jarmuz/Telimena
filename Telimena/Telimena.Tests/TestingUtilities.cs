@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using System.Web.Http.Hosting;
+using System.Web.Mvc;
+using System.Web.Routing;
 using Moq;
 using NUnit.Framework;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
@@ -12,6 +18,24 @@ namespace Telimena.Tests
 {
   public static  class TestingUtilities
     {
+
+        public static void SetReuqest(ApiController controller, HttpMethod method, Dictionary<string, object> properties, string url = "http://mstest/things/1")
+        {
+            var httpConfig = new HttpConfiguration();
+            controller.Configuration = httpConfig;
+
+            // Fake the request.
+            //
+            var httpRequest = new HttpRequestMessage(method, url);
+            foreach (KeyValuePair<string, object> keyValuePair in properties)
+            {
+                httpRequest.Properties.Add(keyValuePair.Key, keyValuePair.Value);
+            }
+            httpRequest.Properties[HttpPropertyKeys.HttpConfigurationKey] = httpConfig;
+
+            controller.Request = httpRequest;
+        }
+
         public static Mock<IAssemblyVersionReader> GetMockVersionReader()
         {
             Mock<IAssemblyVersionReader> reader = new Mock<IAssemblyVersionReader>();

@@ -9,6 +9,7 @@ namespace Telimena.WebApp.Core.Models
         public int UsageSummaryId { get; set; }
 
         public int? AssemblyVersionId { get; set; }
+        public string IpAddress { get; set; }
 
         public virtual AssemblyVersion AssemblyVersion { get; set; }
     }

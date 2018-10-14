@@ -80,16 +80,23 @@ namespace Telimena.WebApp.Controllers.Api
             return program;
         }
 
-        public async Task<ClientAppUser> GetUserInfoOrAddIfNotExists(UserInfo userDto)
+        public async Task<ClientAppUser> GetUserInfoOrAddIfNotExists(UserInfo userDto, string ip)
         {
             ClientAppUser user = await this._work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserName == userDto.UserName);
             if (user == null)
             {
                 user = Mapper.Map<ClientAppUser>(userDto);
                 user.RegisteredDate = DateTime.UtcNow;
+                user.IpAddresses.Add(ip);
                 this._work.ClientAppUsers.Add(user);
             }
-
+            else
+            {
+                if (!user.IpAddresses.Contains(ip))
+                {
+                    user.IpAddresses.Add(ip);
+                }
+            }
             return user;
         }
 
