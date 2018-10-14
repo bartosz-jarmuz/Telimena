@@ -82,7 +82,7 @@ namespace Telimena.WebApp.UITests.Base
 
         public void RecognizeAdminDashboardPage()
         {
-            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(45));
+            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             wait.Until(x => x.FindElement(By.Id(Strings.Id.PortalSummary)));
         }
 

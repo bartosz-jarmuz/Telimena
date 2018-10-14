@@ -23,7 +23,7 @@ namespace Telimena.WebApp.UITests.Account
     public class LoginTests : PortalTestBase
     {
 
-        //[Test]
+        [Test]
         public void AdminLoginOk()
         {
             try
