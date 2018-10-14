@@ -78,11 +78,18 @@
     <Compile Include="Base\PortalTestBase.cs" />
     <Compile Include="Base\TestFileNames.cs" />
     <Compile Include="Base\Common.cs" />
+    <Compile Include="Navigation\NavigationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Telimena.WebApp\Telimena.WebApp.csproj">
+      <Project>{EB646426-47C4-464A-ABB0-415CA73B432F}</Project>
+      <Name>Telimena.WebApp</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

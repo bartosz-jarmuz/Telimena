@@ -292,6 +292,7 @@
     <Compile Include="Models\Shared\ProgramsListViewModel.cs" />
     <Compile Include="Models\ToolkitManagement\ToolkitManagementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UiStrings\Id.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="admin-lte\css\AdminLTE.css" />

@@ -10,6 +10,9 @@ using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
+using Telimena.WebApp.UiStrings;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestContext = Microsoft.VisualStudio.TestTools.UnitTesting.TestContext;
 
 namespace Telimena.WebApp.UITests.Base
 {
@@ -87,7 +90,13 @@ namespace Telimena.WebApp.UITests.Base
 
         }
 
+        public void GoToAdminHomePage()
+        {
+            this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
+            this.LoginAdminIfNeeded();
+        }
 
+        public TestContext TestContext { get; set; }
 
         public string GetAbsoluteUrl(string relativeUrl)
         {
@@ -97,30 +106,38 @@ namespace Telimena.WebApp.UITests.Base
         public void RecognizeAdminDashboardPage()
         {
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
-            wait.Until(x => x.FindElement(By.Id("portalSummary")));
+            wait.Until(x => x.FindElement(By.Id(Strings.Id.PortalSummary)));
         }
 
         protected void HandlerError(Exception ex, [CallerMemberName] string memberName = "")
         {
             Screenshot screen = this.Screenshooter.GetScreenshot();
-            screen.SaveAsFile(Common.CreatePngPath(memberName), ScreenshotImageFormat.Png);
+            var path = Common.CreatePngPath(memberName);
+            screen.SaveAsFile(path, ScreenshotImageFormat.Png);
+            this.TestContext.AddResultFile(path);
             throw ex;
+        }
+
+        public void LoginAdminIfNeeded()
+        {
+            this.LoginIfNeeded(this.AdminName, this.AdminPassword);
         }
 
         private void LoginIfNeeded(string userName, string password)
         {
-            if (this.Driver.Url.Contains("Login") && this.Driver.FindElement(new ByIdOrName("loginForm")) != null)
+            if (this.Driver.Url.Contains("Login") && this.Driver.FindElement(new ByIdOrName(Strings.Id.LoginForm)) != null)
             {
-                IWebElement login = this.Driver.FindElement(new ByIdOrName("login"));
+                IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
+
                 if (login != null)
                 {
-                    IWebElement pass = this.Driver.FindElement(new ByIdOrName("password"));
+                    IWebElement pass = this.Driver.FindElement(new ByIdOrName(Strings.Id.Password));
                     login.SendKeys(userName);
                     pass.SendKeys(password);
-                    IWebElement submit = this.Driver.FindElement(new ByIdOrName("submit"));
+                    IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
                     submit.Click();
-                    WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
-                    wait.Until(x => x.FindElement(new ByIdOrName("__AjaxAntiForgeryForm")));
+                    this.RecognizeAdminDashboardPage();
+
                 }
             }
         }
