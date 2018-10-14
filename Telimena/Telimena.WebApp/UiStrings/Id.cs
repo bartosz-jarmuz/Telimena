@@ -22,6 +22,7 @@
             public const string RegisterApplicationForm = "RegisterApplicationForm";
             public const string RegisterApplicationLink = "RegisterApplicationLink";
             public const string ApiDocsLink  = "ApiDocsLink";
+            public const string PasswordForm = "PasswordForm";
         }
     }
 }
