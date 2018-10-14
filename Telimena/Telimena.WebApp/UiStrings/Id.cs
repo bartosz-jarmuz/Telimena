@@ -14,6 +14,9 @@
             public const string LogsLink  = "LogsLink";
             public const string PortalUsersLink  = "PortalUsersLink";
             public const string ToolkitManagementLink = "ToolkitManagementLink";
-    }
+            public const string AppsSummary = "AppsSummary";
+            public const string ToolkitManagementForm = "ToolkitManagementForm";
+            public const string PortalUsersTable = "PortalUsersTable";
+        }
     }
 }

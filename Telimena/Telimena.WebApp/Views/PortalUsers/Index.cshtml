@@ -1,5 +1,6 @@
 ﻿@using Telimena.WebApp.Core.Interfaces
 @using Telimena.WebApp.Models.PortalUsers
+@using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.PortalUsers.PortalUsersViewModel
 @{
     ViewBag.Title = "Portal users";
@@ -16,7 +17,7 @@
                 <h3 class="box-title">All Portal Users</h3>
             </div>
             <div class="box-body">
-                <table id="usersTable" class="table-condensed table table-striped table-bordered table-hover">
+                <table id="@Strings.Id.PortalUsersTable" class="table-condensed table table-striped table-bordered table-hover">
                     <thead>
                     <tr>
                         <th>Id</th>
@@ -71,7 +72,7 @@
     <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#usersTable').DataTable();
+            $('#@Strings.Id.PortalUsersTable').DataTable();
         });
 
         function pageReload() {

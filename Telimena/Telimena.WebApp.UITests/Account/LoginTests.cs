@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using OpenQA.Selenium;
@@ -10,13 +11,17 @@ using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
+using Assert = NUnit.Framework.Assert;
+using TestContext = Microsoft.VisualStudio.TestTools.UnitTesting.TestContext;
 
 namespace Telimena.WebApp.UITests.Account
 {
+
+
+
+    [TestClass]
     public class LoginTests : PortalTestBase
     {
-
-
 
         [Test]
         public void AdminLoginOk()

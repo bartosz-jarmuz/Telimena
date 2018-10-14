@@ -19,9 +19,6 @@ namespace Telimena.WebApp.UITests.Base
     [TestFixture]
     public abstract class PortalTestBase
     {
-        protected PortalTestBase()
-        {
-        }
 
         protected static string GetSetting(string key)
         {
@@ -45,7 +42,6 @@ namespace Telimena.WebApp.UITests.Base
         internal ITakesScreenshot Screenshooter => this.Driver as ITakesScreenshot;
 
         protected ITestEngine TestEngine { get; set; }
-
 
         [OneTimeTearDown]
         public void TestCleanup()
@@ -96,7 +92,6 @@ namespace Telimena.WebApp.UITests.Base
             this.LoginAdminIfNeeded();
         }
 
-        public TestContext TestContext { get; set; }
 
         public string GetAbsoluteUrl(string relativeUrl)
         {
@@ -114,7 +109,7 @@ namespace Telimena.WebApp.UITests.Base
             Screenshot screen = this.Screenshooter.GetScreenshot();
             var path = Common.CreatePngPath(memberName);
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
-            this.TestContext.AddResultFile(path);
+            //this.TestContext.AddResultFile(path);
             throw ex;
         }
 
