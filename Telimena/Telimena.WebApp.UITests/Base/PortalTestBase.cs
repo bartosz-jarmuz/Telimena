@@ -37,8 +37,8 @@ namespace Telimena.WebApp.UITests.Base
         private readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
 
 
-        internal RemoteWebDriver RemoteDriver;
-        internal IWebDriver Driver => this.RemoteDriver;
+        internal static RemoteWebDriver RemoteDriver;
+        internal IWebDriver Driver => RemoteDriver;
         internal ITakesScreenshot Screenshooter => this.Driver as ITakesScreenshot;
 
         protected ITestEngine TestEngine { get; set; }
@@ -47,7 +47,6 @@ namespace Telimena.WebApp.UITests.Base
         public void TestCleanup()
         {
             this.TestEngine.BaseCleanup();
-            this.RemoteDriver.Dispose();
 
         }
 
@@ -62,29 +61,10 @@ namespace Telimena.WebApp.UITests.Base
             {
                 this.TestEngine = new DeployedTestEngine();
             }
-            this.SetBrowser("Chrome");
             this.TestEngine.BaseInitialize();
         }
 
-        public void SetBrowser(string browser)
-        {
-            switch (browser)
-            {
-                case "Chrome":
-                    this.RemoteDriver = new ChromeDriver();
-                    break;
-                case "Firefox":
-                    this.RemoteDriver = new FirefoxDriver();
-                    break;
-                case "IE":
-                    this.RemoteDriver = new InternetExplorerDriver();
-                    break;
-                default:
-                    this.RemoteDriver = new ChromeDriver();
-                    break;
-            }
-
-        }
+      
 
         public void GoToAdminHomePage()
         {

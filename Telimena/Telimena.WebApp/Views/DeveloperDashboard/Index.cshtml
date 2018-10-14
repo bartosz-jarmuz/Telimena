@@ -1,4 +1,5 @@
 ﻿@using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.UiStrings
 @{
     ViewBag.Title = "Admin Dashboard";
 }
@@ -7,7 +8,7 @@
     @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
 }
 
-<section class="content-header">
+<section id="@Strings.Id.DeveloperDashboard" class="content-header">
     <h1>
         Dashboard
         <small>All your programs summary</small>

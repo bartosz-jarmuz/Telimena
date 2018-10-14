@@ -17,6 +17,11 @@
             public const string AppsSummary = "AppsSummary";
             public const string ToolkitManagementForm = "ToolkitManagementForm";
             public const string PortalUsersTable = "PortalUsersTable";
+            public const string DeveloperDashboardLink = "DeveloperDashboardLink";
+            public const string DeveloperDashboard  = "DeveloperDashboard";
+            public const string RegisterApplicationForm = "RegisterApplicationForm";
+            public const string RegisterApplicationLink = "RegisterApplicationLink";
+            public const string ApiDocsLink  = "ApiDocsLink";
         }
     }
 }

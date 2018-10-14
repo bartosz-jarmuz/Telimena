@@ -1,5 +1,6 @@
 ﻿@using Telimena.WebApp.Core.Interfaces
 @using Telimena.WebApp.Infrastructure.Identity
+@using Telimena.WebApp.UiStrings
 <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
@@ -17,7 +18,7 @@
         <ul class="sidebar-menu" data-widget="tree">
             <li class="header">ABOUT</li>
             <li>
-                <a href="/swagger">
+                <a href="/swagger" id="@Strings.Id.ApiDocsLink">
                     <i class="fa fa-book"></i> <span>API Docs</span>
                 </a>
             </li>

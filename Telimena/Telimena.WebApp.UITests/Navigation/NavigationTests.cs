@@ -36,6 +36,14 @@ namespace Telimena.WebApp.UITests.Navigation
                 this.Driver.FindElement(By.Id(Strings.Id.PortalUsersLink)).Click();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.PortalUsersTable)));
 
+                this.Driver.FindElement(By.Id(Strings.Id.DeveloperDashboardLink)).Click();
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.DeveloperDashboard)));
+
+                this.Driver.FindElement(By.Id(Strings.Id.RegisterApplicationLink)).Click();
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
+
+                //this.Driver.FindElement(By.Id(Strings.Id.ApiDocsLink)).Click();
+                //wait.Until(ExpectedConditions.ElementIsVisible(By.Id("")));
 
             }
             catch (Exception ex)

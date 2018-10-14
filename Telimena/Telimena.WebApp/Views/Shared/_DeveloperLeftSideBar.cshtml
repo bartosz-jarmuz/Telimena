@@ -1,12 +1,13 @@
-﻿<ul class="sidebar-menu" data-widget="tree">
+﻿@using Telimena.WebApp.UiStrings
+<ul class="sidebar-menu" data-widget="tree">
     <li class="header">DEVELOPER</li>
     <li>
-        <a href="@Url.Action("Index", "DeveloperDashboard")">
+        <a href="@Url.Action("Index", "DeveloperDashboard")" id="@Strings.Id.DeveloperDashboardLink">
             <i class="fa fa-users"></i> <span>Dashboard</span>
         </a>
     </li>
     <li>
-        <a href="@Url.Action("Register", "RegisterProgram")">
+        <a href="@Url.Action("Register", "RegisterProgram")" id="@Strings.Id.RegisterApplicationLink">
             <i class="fa fa-link"></i> <span>Register application</span>
         </a>
     </li>
