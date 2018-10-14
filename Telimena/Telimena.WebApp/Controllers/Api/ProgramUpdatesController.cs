@@ -59,8 +59,7 @@ namespace Telimena.WebApp.Controllers.Api
             return this.ResponseMessage(result);
         }
 
-        [HttpGet]
-        public async Task<TelimenaPackageInfo> GetToolkitUpdateInfo(Program program, UpdateRequest request, string maximumSupportedToolkitVersion)
+        private async Task<TelimenaPackageInfo> GetToolkitUpdateInfo(Program program, UpdateRequest request, string maximumSupportedToolkitVersion)
         {
             ObjectValidator.Validate(() => Version.TryParse(request.ToolkitVersion, out _)
                 , new ArgumentException($"[{request.ToolkitVersion}] is not a valid version string"));

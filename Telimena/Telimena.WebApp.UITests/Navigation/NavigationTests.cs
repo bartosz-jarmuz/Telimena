@@ -8,6 +8,7 @@ using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
 using SeleniumExtras.WaitHelpers;
+using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
 namespace Telimena.WebApp.UITests.Navigation
@@ -42,8 +43,10 @@ namespace Telimena.WebApp.UITests.Navigation
                 this.Driver.FindElement(By.Id(Strings.Id.RegisterApplicationLink)).Click();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
 
-                //this.Driver.FindElement(By.Id(Strings.Id.ApiDocsLink)).Click();
-                //wait.Until(ExpectedConditions.ElementIsVisible(By.Id("")));
+                this.Driver.FindElement(By.Id(Strings.Id.ApiDocsLink)).Click();
+               var apiInfo =  wait.Until(ExpectedConditions.ElementIsVisible(By.Id("api_info")));
+
+                Assert.AreEqual("Telimena.WebApp", apiInfo.Text);
 
             }
             catch (Exception ex)
