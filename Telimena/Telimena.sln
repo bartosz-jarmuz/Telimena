@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.PackageTriggerUpdater", "Telimena.PackageTriggerUpdater\Telimena.PackageTriggerUpdater.csproj", "{06FED956-F08F-497F-8CBD-87AFAA312AD7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp.UITests", "Telimena.WebApp.UITests\Telimena.WebApp.UITests.csproj", "{DEEC1BEE-E8AA-47F0-97C6-2FA5F4D9E7D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +103,12 @@ Global
 		{06FED956-F08F-497F-8CBD-87AFAA312AD7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{06FED956-F08F-497F-8CBD-87AFAA312AD7}.ReleaseDev|Any CPU.ActiveCfg = Release|Any CPU
 		{06FED956-F08F-497F-8CBD-87AFAA312AD7}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
+		{DEEC1BEE-E8AA-47F0-97C6-2FA5F4D9E7D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEEC1BEE-E8AA-47F0-97C6-2FA5F4D9E7D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEEC1BEE-E8AA-47F0-97C6-2FA5F4D9E7D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEEC1BEE-E8AA-47F0-97C6-2FA5F4D9E7D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEEC1BEE-E8AA-47F0-97C6-2FA5F4D9E7D3}.ReleaseDev|Any CPU.ActiveCfg = Release|Any CPU
+		{DEEC1BEE-E8AA-47F0-97C6-2FA5F4D9E7D3}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,6 +124,7 @@ Global
 		{69EA245A-0DBB-4697-9E0B-C89D8ECBFEFA} = {2387CFF9-603F-4C8E-A14D-64FF9603CE70}
 		{28B94E69-56EC-49B1-887E-AB96B77D30BE} = {2387CFF9-603F-4C8E-A14D-64FF9603CE70}
 		{06FED956-F08F-497F-8CBD-87AFAA312AD7} = {5F78CFF4-E566-4E1F-BEA3-951C06C2093D}
+		{DEEC1BEE-E8AA-47F0-97C6-2FA5F4D9E7D3} = {2387CFF9-603F-4C8E-A14D-64FF9603CE70}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4AE5AB23-7640-4456-8051-8AC946EFBA9B}
