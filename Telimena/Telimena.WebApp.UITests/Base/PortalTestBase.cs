@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Web.Configuration;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -107,9 +108,21 @@ namespace Telimena.WebApp.UITests.Base
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
             var page = this.Driver.PageSource;
 
-            throw new AssertFailedException(ex.ToString() + "\r\n\r\n" + page, ex);
+            throw new AssertFailedException(ex.ToString() + "\r\n\r\n"+ this.PresentParams() + "\r\n\r\n" + page, ex);
 
             //this.TestContext.AddResultFile(path);
+        }
+
+        private string PresentParams()
+        {
+            var sb = new StringBuilder();
+            sb.Append("TestContext Parameters: ");
+            foreach (var testParameter in NUnit.Framework.TestContext.Parameters.Names)
+            {
+                sb.Append(testParameter + ": " + NUnit.Framework.TestContext.Parameters[testParameter] + " ");
+            }
+
+            return sb.ToString();
         }
 
         public void LoginAdminIfNeeded()
