@@ -3,7 +3,7 @@
   <TestRunParameters>
     <Parameter name="AdminName" value="superuser" />
     <Parameter name="AdminPassword" value="123456" />
-    <Parameter name="PortalUrl" value="https://telimena-dev.azurewebsites.net" />
+    <Parameter name="PortalUrl" value="" />
     <Parameter name="IsLocalTest" value="True" />
   </TestRunParameters>
 
