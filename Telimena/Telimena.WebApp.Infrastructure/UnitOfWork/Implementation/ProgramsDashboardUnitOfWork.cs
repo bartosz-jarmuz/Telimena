@@ -107,7 +107,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 }
                 else if (rule.Item1 == nameof(UsageData.FunctionName) && typeof(T) == typeof (FunctionUsageDetail))
                 {
-                    query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
+                    query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.Function.Name, rule.Item2);
                 }
             }
 
