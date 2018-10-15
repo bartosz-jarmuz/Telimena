@@ -17,17 +17,6 @@ using TestContext = Microsoft.VisualStudio.TestTools.UnitTesting.TestContext;
 namespace Telimena.WebApp.UITests.Account
 {
 
-    [TestClass]
-    public class TestTest
-    {
-        [TestMethod]
-        public void TestTheTests()
-        {
-            Assert.IsTrue(true);
-        }
-    }
-
-    [TestClass]
     [TestFixture]
     public class LoginTests : PortalTestBase
     {
