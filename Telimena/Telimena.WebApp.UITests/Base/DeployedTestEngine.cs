@@ -4,7 +4,13 @@ namespace Telimena.WebApp.UITests.Base
 {
     public sealed class DeployedTestEngine : ITestEngine
     {
-        public readonly string PortalUrl = ConfigurationManager.AppSettings.Get(ConfigKeys.PortalUrl);
+
+        private readonly string portalUrl;
+
+        public DeployedTestEngine(string portalUrl)
+        {
+            this.portalUrl = portalUrl;
+        }
 
         public string GetAbsoluteUrl(string relativeUrl)
         {
@@ -12,7 +18,7 @@ namespace Telimena.WebApp.UITests.Base
             {
                 relativeUrl = "/" + relativeUrl;
             }
-            return $"{this.PortalUrl.TrimEnd('/')}/{relativeUrl}";
+            return $"{this.portalUrl.TrimEnd('/')}/{relativeUrl}";
         }
 
         public void BaseInitialize()

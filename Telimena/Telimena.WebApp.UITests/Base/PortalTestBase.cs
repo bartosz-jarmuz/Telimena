@@ -63,7 +63,7 @@ namespace Telimena.WebApp.UITests.Base
             }
             else
             {
-                this.TestEngine = new DeployedTestEngine();
+                this.TestEngine = new DeployedTestEngine(GetSetting<string>(ConfigKeys.PortalUrl));
             }
             this.TestEngine.BaseInitialize();
         }
@@ -106,7 +106,6 @@ namespace Telimena.WebApp.UITests.Base
             var path = Common.CreatePngPath(memberName);
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
             var page = this.Driver.PageSource;
-
             throw new AssertFailedException(ex.ToString() + "\r\n\r\n"+ this.PresentParams() + "\r\n\r\n" + page, ex);
 
             //this.TestContext.AddResultFile(path);
@@ -115,6 +114,7 @@ namespace Telimena.WebApp.UITests.Base
         private string PresentParams()
         {
             var sb = new StringBuilder();
+            sb.Append("Url: " + this.Driver.Url);
             sb.Append("TestContext Parameters: ");
             foreach (var testParameter in NUnit.Framework.TestContext.Parameters.Names)
             {
