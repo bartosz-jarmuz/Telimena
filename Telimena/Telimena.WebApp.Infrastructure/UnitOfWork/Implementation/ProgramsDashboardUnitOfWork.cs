@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 
 namespace Telimena.WebApp.Infrastructure.Repository
@@ -65,54 +67,118 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return returnData;
         }
 
-
-        private static IOrderedQueryable<T> ApplyOrderingQuery<T>(IEnumerable<Tuple<string, bool>> sortBy, IQueryable<T> query) where T: UsageDetail
+        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, string key, bool desc, int index) where T: UsageDetail
         {
-            List<Tuple<string, bool>> rules = sortBy?.ToList();
-            if (rules == null || !rules.Any())
+            if (index == 0)
             {
-                rules = new List<Tuple<string, bool>>();
+                return query.OrderBy(key, desc);
+            }
+            else
+            {
+                return (query as IOrderedQueryable<T>).ThenBy(key, desc);
+            }
+        }
+
+        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, Expression<Func<T,string>> key, bool desc, int index) where T : UsageDetail
+        {
+            if (index == 0)
+            {
+                return query.OrderBy(key, desc);
+            }
+            else
+            {
+                if (desc)
                 {
-                    new Tuple<string, bool>(nameof(UsageDetail.Id), true);
-                };
+                    return (query as IOrderedQueryable<T>).ThenByDescending(key);
+                }
+                return (query as IOrderedQueryable<T>).ThenBy(key);
+            }
+        }
+
+        internal static async Task<List<T>> ApplyOrderingQuery<T>(IEnumerable<Tuple<string, bool>> sortBy, IQueryable<T> query, int skip, int take) where T: UsageDetail
+        {
+            List<Tuple<string, bool>> rules = sortBy.ToList();
+
+         //   query = query.OrderByDescending(x => x.Id);
+            try
+            {
+
+                for (int index = 0; index < rules.Count; index++)
+                {
+                    Tuple<string, bool> rule = rules[index];
+                    if (rule.Item1 == nameof(UsageData.DateTime))
+                    {
+                        query = Order(query, rule.Item1, rule.Item2, index);
+                    }
+                    else if (rule.Item1 == nameof(UsageData.ProgramVersion))
+                    {
+                        query = Order(query, x=>x.AssemblyVersion.Version, rule.Item2, index);
+                    }
+                    else if (rule.Item1 == nameof(UsageData.UserName))
+                    {
+                        if (typeof(T) == typeof(ProgramUsageDetail))
+                        {
+                            query = Order(query, x => (x as ProgramUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2, index);
+                        }
+                        else
+                        {
+                            query = Order(query, x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2, index);
+                        }
+                    }
+                    else if (rule.Item1 == nameof(UsageData.CustomData))
+                    {
+                        if (typeof(T) == typeof(ProgramUsageDetail))
+                        {
+                            query = Order(query, x => (x as ProgramUsageDetail).CustomUsageData.Data, rule.Item2, index);
+                        }
+                        else
+                        {
+                            query = Order(query, x => (x as FunctionUsageDetail).CustomUsageData.Data, rule.Item2, index);
+                        }
+                    }
+                    else if (rule.Item1 == nameof(UsageData.FunctionName) && typeof(T) == typeof(FunctionUsageDetail))
+                    {
+                        query = Order(query, x => (x as FunctionUsageDetail).UsageSummary.Function.Name, rule.Item2, index);
+                    }
+                }
+
+                var orderedQuery = query as IOrderedQueryable<T>;
+                if (!OrderingMethodFinder.OrderMethodExists(orderedQuery.Expression))
+                {
+                    orderedQuery = query.OrderByDescending(x => x.Id);
+                }
+                return await orderedQuery.Skip(skip).Take(take).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return await query.OrderByDescending(x=>x.Id).Skip(skip).Take(take).ToListAsync();
+            }
+        }
+
+        class OrderingMethodFinder : ExpressionVisitor
+        {
+            bool _orderingMethodFound = false;
+
+            protected override Expression VisitMethodCall(MethodCallExpression node)
+            {
+                var name = node.Method.Name;
+
+                if (node.Method.DeclaringType == typeof(Queryable) && (
+                        name.StartsWith("OrderBy", StringComparison.Ordinal) ||
+                        name.StartsWith("ThenBy", StringComparison.Ordinal)))
+                {
+                    _orderingMethodFound = true;
+                }
+
+                return base.VisitMethodCall(node);
             }
 
-            foreach (Tuple<string, bool> rule in rules)
+            public static bool OrderMethodExists(Expression expression)
             {
-                if (rule.Item1 == nameof(UsageDetail.Id) || rule.Item1 == nameof(UsageDetail.DateTime) || rule.Item1 == nameof(UsageDetail.AssemblyVersion))
-                {
-                    query = query.OrderBy(rule.Item1, rule.Item2);
-                }
-                else if (rule.Item1 == nameof(UsageData.UserName))
-                {
-                    if (typeof(T) == typeof(ProgramUsageDetail))
-                    {
-                        query = query.OrderBy(x => (x as ProgramUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
-                    }
-                    else
-                    {
-                        query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
-                    }
-                }
-                else if (rule.Item1 == nameof(UsageData.CustomData))
-                {
-                    if (typeof(T) == typeof(ProgramUsageDetail))
-                    {
-                        query = query.OrderBy(x => (x as ProgramUsageDetail).CustomUsageData.Data, rule.Item2);
-                    }
-                    else
-                    {
-                        query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
-                    }
-                }
-                else if (rule.Item1 == nameof(UsageData.FunctionName) && typeof(T) == typeof (FunctionUsageDetail))
-                {
-                    query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.Function.Name, rule.Item2);
-                }
+                var visitor = new OrderingMethodFinder();
+                visitor.Visit(expression);
+                return visitor._orderingMethodFound;
             }
-
-            var orderedQuery = query as IOrderedQueryable<T>;
-            return orderedQuery;
         }
 
         public async Task<PortalSummaryData> GetPortalSummary()
@@ -162,14 +228,14 @@ namespace Telimena.WebApp.Infrastructure.Repository
         public async Task<UsageDataTableResult> GetProgramFunctionsUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
         {
             IQueryable<FunctionUsageDetail> query = this.context.FunctionUsageDetails.Where(x => x.UsageSummary.Function.ProgramId == programId);
-
-            IOrderedQueryable<FunctionUsageDetail> orderedQuery = ApplyOrderingQuery(sortBy, query);
             int totalCount = await this.context.FunctionUsageDetails.CountAsync(x => x.UsageSummary.Function.ProgramId == programId);
             if (take == -1)
             {
                 take = totalCount;
             }
-            List<FunctionUsageDetail> usages = await orderedQuery.Skip(skip).Take(take).ToListAsync();
+
+            List<FunctionUsageDetail> usages = await ApplyOrderingQuery(sortBy, query, skip, take);
+
             List<UsageData> result = new List<UsageData>();
             foreach (FunctionUsageDetail detail in usages)
             {
@@ -191,16 +257,15 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
 
             IQueryable<ProgramUsageDetail> query = this.context.ProgramUsageDetails.Where(x => x.UsageSummary.ProgramId == programId);
-
-            IOrderedQueryable<ProgramUsageDetail> orderedQuery = ApplyOrderingQuery(sortBy, query);
-
             int totalCount = await this.context.ProgramUsageDetails.CountAsync(x => x.UsageSummary.ProgramId == programId);
 
             if (take == -1)
             {
                 take = totalCount;
             }
-            List<ProgramUsageDetail> usages = await orderedQuery.Skip(skip).Take(take).ToListAsync();
+
+            List<ProgramUsageDetail> usages = await ApplyOrderingQuery(sortBy, query, skip, take);
+
             List<UsageData> result = new List<UsageData>();
             foreach (ProgramUsageDetail detail in usages)
             {

@@ -26,7 +26,7 @@
                 @Html.ActionLink("Export custom data with generic data", "ExportFunctionUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = true}, new {@class = "btn btn-primary"})
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="functionUsageTable" class="table table-bordered table-hover ">
+                <table id="functionUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;">
                 </table>
             </div>
         </div>
@@ -37,7 +37,7 @@
                 <h3 class="box-title">Program Usages</h3>
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="programUsageTable" class="table table-bordered table-hover ">
+                <table id="programUsageTable" class="table table-bordered table-hover table-condensed"  style="width: 100%;">
                 </table>
             </div>
         </div>
