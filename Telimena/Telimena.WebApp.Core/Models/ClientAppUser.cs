@@ -32,8 +32,8 @@ namespace Telimena.WebApp.Core.Models
 
         public string IpAddressesString
         {
-            get => String.Join(",", this.ipAddresses);
-            set => this.ipAddresses = value.Split(',').ToList();
+            get => String.Join(",", this.ipAddresses??new List<string>());
+            set => this.ipAddresses = value?.Split(',')?.ToList()?? new List<string>();
         }
     }
 
