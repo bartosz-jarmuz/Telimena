@@ -33,12 +33,12 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            ProgramManagementViewModel model = new ProgramManagementViewModel();
-            if (program != null)
+            ProgramManagementViewModel model = new ProgramManagementViewModel
             {
-                model.ProgramId = program.Id;
-                model.ProgramName = program.Name;
-            }
+                ProgramId = program.Id,
+                ProgramName = program.Name
+            };
+
 
             model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) +
                                        this.Url.HttpRouteUrl("DownloadAppRoute", new {name = model.ProgramName});
