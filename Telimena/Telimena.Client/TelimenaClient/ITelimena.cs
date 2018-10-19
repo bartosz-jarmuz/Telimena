@@ -46,7 +46,7 @@ namespace TelimenaClient
         /// </summary>
         /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
         /// <returns></returns>
-        void HandleUpdatesBlocking(bool acceptBeta);
+        UpdateCheckResult HandleUpdatesBlocking(bool acceptBeta);
 
         /// <summary>
         /// Initializes the Telimena client. <para/>

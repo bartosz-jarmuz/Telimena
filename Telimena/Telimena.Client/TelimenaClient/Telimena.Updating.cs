@@ -91,9 +91,9 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public void HandleUpdatesBlocking(bool acceptBeta)
+        public UpdateCheckResult HandleUpdatesBlocking(bool acceptBeta)
         {
-            Task.Run(()=> this.HandleUpdatesAsync(acceptBeta)).GetAwaiter().GetResult();
+            return Task.Run(()=> this.HandleUpdatesAsync(acceptBeta)).GetAwaiter().GetResult();
         }
 
         /// <summary>
