@@ -22,6 +22,10 @@ namespace Telimena.WebApp.UITests.IntegrationTests.TestAppInteraction
         public static FileInfo ExtractApp(string fileName)
         {
             FileInfo zipPath = AppsFolder.GetFiles().FirstOrDefault(x=>x.Name == fileName);
+            if (zipPath == null)
+            {
+                throw  new FileNotFoundException($"Failed to find {fileName} file in {AppsFolder.FullName}");
+            }
             var dir = new DirectoryInfo(Path.Combine(zipPath.DirectoryName, zipPath.Name + "_Extracted"));
             if (dir.Exists)
             {

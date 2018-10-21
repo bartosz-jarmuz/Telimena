@@ -12,13 +12,16 @@ namespace AutomaticTestsClient
         static void Main(string[] args)
         {
             Arguments arguments;
+            Console.WriteLine("Loading Arguments...");
+            string decoded = "";
             try
             {
-                arguments = JsonConvert.DeserializeObject<Arguments>(Base64Decode(args[0]));
+                 decoded = Base64Decode(args[0]);
+                arguments = JsonConvert.DeserializeObject<Arguments>(decoded);
             }
             catch (Exception ex)
             {
-                throw new ArgumentException($"Error while deserializing [{args[0]}]", ex);
+                throw new ArgumentException($"Error while deserializing [{args[0]}], decoded: {decoded}", ex);
             }
 
             Console.WriteLine("Arguments loaded OK");

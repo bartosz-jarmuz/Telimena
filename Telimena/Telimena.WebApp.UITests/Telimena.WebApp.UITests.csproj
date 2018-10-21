@@ -107,7 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="IntegrationTests\Apps\TestApp v1.0.0.0.zip" />
+    <None Include="IntegrationTests\Apps\TestApp v1.0.0.0.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

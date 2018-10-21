@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
@@ -11,16 +12,26 @@ namespace Telimena.WebApp.UITests.IntegrationTests.TestAppInteraction
     {
         private static ProcessStartInfo CreateStartInfo(FileInfo testAppFile, Arguments arguments)
         {
+            var serialized = JsonConvert.SerializeObject(arguments);
+            var encoded = Base64Encode(serialized);
+            Log($"Starting app {testAppFile.FullName}");
+            Log($"Start info Arguments {serialized}");
+            Log($"Start info Encoded arguments{encoded}");
             return new ProcessStartInfo
             {
                 FileName = testAppFile.FullName
-                , Arguments = Base64Encode(JsonConvert.SerializeObject(arguments))
+                , Arguments = encoded
                 , RedirectStandardError = true
                 , RedirectStandardOutput = true
                 , UseShellExecute = false
             };
         }
 
+        private static void Log(string info)
+        {
+            Console.WriteLine(info);
+            Debug.WriteLine(info);
+        }
       
 
         public static string Base64Encode(string plainText)
