@@ -25,10 +25,10 @@ namespace Telimena.WebApp.UITests.IntegrationTests.TestAppInteraction
             var dir = new DirectoryInfo(Path.Combine(zipPath.DirectoryName, zipPath.Name + "_Extracted"));
             if (dir.Exists)
             {
-                var exe = dir.GetFiles().FirstOrDefault(x => x.Name.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase));
-                if (exe != null)
+                FileInfo exe = dir.GetFiles().FirstOrDefault(x => x.Name.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase));
+                if (exe != null && exe.Exists)
                 {
-                    return exe;
+                    exe.Delete();
                 }
                 dir.Delete(true);
             }
