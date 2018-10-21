@@ -55,7 +55,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.Driver.FindElement(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_menu")).Click();
+                this.Driver.FindElement(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_xmenu")).Click();
                 var statLink = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_statsLink")));
 
                 statLink.Click();
