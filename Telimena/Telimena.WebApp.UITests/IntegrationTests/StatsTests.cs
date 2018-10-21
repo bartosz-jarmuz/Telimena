@@ -27,6 +27,9 @@ namespace Telimena.WebApp.UITests.IntegrationTests
 
             try
             {
+                this.LaunchTestsApp();
+
+
                 var previous = this.GetLatestUsageFromTable();
                 this.LaunchTestsApp();
                 var current = this.GetLatestUsageFromTable();
