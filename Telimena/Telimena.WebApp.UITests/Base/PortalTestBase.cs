@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -130,13 +131,25 @@ namespace Telimena.WebApp.UITests.Base
             return null;
         }
 
-        protected void HandlerError(Exception ex, [CallerMemberName] string memberName = "")
+        protected void HandlerError(Exception ex, List<string> output = null, List<string> errors = null, [CallerMemberName] string memberName = "")
         {
             Screenshot screen = this.Screenshooter.GetScreenshot();
             var path = Common.CreatePngPath(memberName);
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
             var page = this.Driver.PageSource;
-            throw new AssertFailedException(ex.ToString() + "\r\n\r\n"+ this.PresentParams() + "\r\n\r\n" + page, ex);
+
+            string errorOutputs = "";
+            if (errors != null)
+            {
+                errorOutputs = String.Join("\r\n", errors);
+            }
+            string normalOutputs = "";
+            if (errors != null)
+            {
+                normalOutputs = String.Join("\r\n", normalOutputs);
+            }
+
+            throw new AssertFailedException($"{ex}\r\n\r\n{this.PresentParams()}\r\n\r\n{errorOutputs}\r\n\r\n{normalOutputs}\r\n\r\n{page}", ex);
 
             //this.TestContext.AddResultFile(path);
         }

@@ -21,15 +21,24 @@ namespace Telimena.WebApp.UITests.IntegrationTests
     [TestFixture()]
     public class StatsTests : PortalTestBase
     {
+
+        List<string> errors = new List<string>();
+        List<string> outputs = new List<string>();
+
+        [SetUp]
+        public void ResetLists()
+        {
+            errors = new List<string>();
+            outputs = new List<string>();
+        }
         [Test]
-        public void Test()
+        public void Test_AppUsageTable()
         {
 
             try
             {
                 this.LaunchTestsApp();
-
-
+                Task.Delay(1000).GetAwaiter().GetResult();
                 var previous = this.GetLatestUsageFromTable();
                 this.LaunchTestsApp();
                 var current = this.GetLatestUsageFromTable();
@@ -91,8 +100,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests
 
             Arguments args = new Arguments() {ApiUrl = this.BaseUrl, Action = Actions.Initialize};
 
-            List<string> errors = new List<string>();
-            List<string> outputs = new List<string>();
+       
 
             Process process = ProcessCreator.Create(exe, args, outputs, errors);
             process.Start();
