@@ -131,7 +131,7 @@ namespace Telimena.WebApp.UITests.Base
             return null;
         }
 
-        protected void HandlerError(Exception ex, List<string> output = null, List<string> errors = null, [CallerMemberName] string memberName = "")
+        protected void HandlerError(Exception ex, List<string> outputs = null, List<string> errors = null, [CallerMemberName] string memberName = "")
         {
             Screenshot screen = this.Screenshooter.GetScreenshot();
             var path = Common.CreatePngPath(memberName);
@@ -144,9 +144,9 @@ namespace Telimena.WebApp.UITests.Base
                 errorOutputs = String.Join("\r\n", errors);
             }
             string normalOutputs = "";
-            if (errors != null)
+            if (outputs != null)
             {
-                normalOutputs = String.Join("\r\n", normalOutputs);
+                normalOutputs = String.Join("\r\n", outputs);
             }
 
             throw new AssertFailedException($"{ex}\r\n\r\n{this.PresentParams()}\r\n\r\n{errorOutputs}\r\n\r\n{normalOutputs}\r\n\r\n{page}", ex);

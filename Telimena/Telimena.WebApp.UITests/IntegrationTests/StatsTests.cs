@@ -35,8 +35,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests
         public void Test_AppUsageTable()
         {
 
-            try
-            {
+          
                 this.LaunchTestsApp();
                 Task.Delay(1000).GetAwaiter().GetResult();
                 var previous = this.GetLatestUsageFromTable();
@@ -45,11 +44,6 @@ namespace Telimena.WebApp.UITests.IntegrationTests
 
                 Assert.IsTrue(current > previous);
 
-            }
-            catch (Exception ex)
-            {
-                this.HandlerError(ex);
-            }
 
         }
 
@@ -89,7 +83,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests
             }
             catch (Exception ex)
             {
-                this.HandlerError(ex);
+                this.HandlerError(ex, this.outputs,this.errors);
                 return default(DateTime);
             }
         }
