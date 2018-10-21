@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -116,6 +117,11 @@ namespace Telimena.WebApp.UITests.Base
         public void RecognizeAdminDashboardPage()
         {
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+            if (this.Driver.Url.Contains("ChangePassword"))
+            {
+                Debug.WriteLine("Going from change password page to Admin dashboard");
+                this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
+            }
             wait.Until(x => x.FindElement(By.Id(Strings.Id.PortalSummary)));
         }
 

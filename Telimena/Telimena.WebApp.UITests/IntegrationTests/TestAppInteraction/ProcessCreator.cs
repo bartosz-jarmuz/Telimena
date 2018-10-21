@@ -29,7 +29,6 @@ namespace Telimena.WebApp.UITests.IntegrationTests.TestAppInteraction
 
         private static void Log(string info)
         {
-            Console.WriteLine(info);
             Debug.WriteLine(info);
         }
       

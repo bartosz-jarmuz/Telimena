@@ -39,10 +39,13 @@ namespace Telimena.WebApp.UITests.IntegrationTests
                 this.LaunchTestsApp();
                 Task.Delay(1000).GetAwaiter().GetResult();
                 var previous = this.GetLatestUsageFromTable();
-                this.LaunchTestsApp();
-                var current = this.GetLatestUsageFromTable();
+            Task.Delay(1000).GetAwaiter().GetResult();
 
-                Assert.IsTrue(current > previous);
+            this.LaunchTestsApp();
+
+              var current = this.GetLatestUsageFromTable();
+
+                Assert.IsTrue(current > previous, $"current {current} is not larger than previous {previous}");
 
 
         }
