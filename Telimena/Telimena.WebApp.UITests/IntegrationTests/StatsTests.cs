@@ -63,20 +63,8 @@ namespace Telimena.WebApp.UITests.IntegrationTests
 
                 statLink.Click();
 
-                var programsTable = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUsageTable)));
+                var programsTable = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.ProgramUsageTable)));
 
-                var sorter = programsTable.FindElements(By.TagName("th")).FirstOrDefault(x => x.Text == "DateTime");
-                if (sorter.GetAttribute("class") != "sorting_desc")
-                {
-                    sorter.Click();
-                    wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUsageTable)));
-                    if (sorter.GetAttribute("class") != "sorting_desc")
-                    {
-                        sorter.Click();
-                        wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUsageTable)));
-
-                    }
-                }
 
                 var latestRow = programsTable.FindElement(By.TagName("tbody")).FindElements(By.TagName("tr")).FirstOrDefault();
 
