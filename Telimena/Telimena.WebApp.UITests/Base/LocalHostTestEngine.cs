@@ -13,7 +13,10 @@ namespace Telimena.WebApp.UITests.Base
         {
             this.portalAppName = "Telimena.WebApp";
             this.portalPort = 7757;
+            this.BaseUrl = $"http://localhost:{this.portalPort}";
         }
+
+        
 
         private readonly string portalAppName;
         private readonly int portalPort;
@@ -25,10 +28,10 @@ namespace Telimena.WebApp.UITests.Base
             {
                 relativeUrl = "/" + relativeUrl;
             }
-            return $"http://localhost:{this.portalPort}/{relativeUrl}";
+            return $"{this.BaseUrl}/{relativeUrl}";
         }
 
-
+        public string BaseUrl { get; }
 
         [TearDown]
         [TestCleanup]

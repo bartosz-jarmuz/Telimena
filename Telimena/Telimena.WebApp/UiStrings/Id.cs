@@ -23,6 +23,9 @@
             public const string RegisterApplicationLink = "RegisterApplicationLink";
             public const string ApiDocsLink  = "ApiDocsLink";
             public const string PasswordForm = "PasswordForm";
+            public const string MyAppsList = "MyAppsList ";
+            public const string ProgramUsageTable = "ProgramUsageTable";
+            public const string FunctionUsageTable = "FunctionUsageTable";
         }
     }
 }

@@ -32,6 +32,10 @@ namespace Telimena.WebApp
                 , "~/admin-lte/js/control-menu.js"
                 , "~/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"
                 , "~/admin-lte/plugins/iCheck/icheck.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/telimena").Include(
+                 "~/Scripts/telimena-common.js"));
+
         }
     }
 }

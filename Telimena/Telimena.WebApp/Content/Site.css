@@ -10,3 +10,7 @@
     font-size: 125% !important;
 }
 
+/* ReSharper disable once DeclarationIsEmpty */
+.utcdate-tolocaldate {
+  /*handles conversion of date to local in elements text*/   
+}

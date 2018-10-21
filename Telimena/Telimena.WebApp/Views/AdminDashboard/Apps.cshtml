@@ -88,15 +88,13 @@
                     {
                         "data": "@nameof(ProgramSummary.LastUsage)",
                         render: function(data, type, row, meta) {
-                            var datetime = new Date(data);
-                            return datetime.toLocaleString();
+                            return toFormattedTimestamp(new Date(data));
                         }
                     },
                     {
                         "data": "@nameof(ProgramSummary.RegisteredDate)",
                         render: function(data, type, row, meta) {
-                            var datetime = new Date(data);
-                            return datetime.toLocaleString();
+                            return toFormattedTimestamp(new Date(data));
                         }
                     },
                     { "data": "@nameof(ProgramSummary.AssociatedToolkitVersion)" },

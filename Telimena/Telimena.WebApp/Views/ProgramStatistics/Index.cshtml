@@ -1,5 +1,6 @@
 ﻿@using DotNetLittleHelpers
 @using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
 @{
     ViewBag.Title = "Admin Dashboard";
@@ -26,7 +27,7 @@
                 @Html.ActionLink("Export custom data with generic data", "ExportFunctionUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = true}, new {@class = "btn btn-primary"})
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="functionUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;">
+                <table id="@Strings.Id.FunctionUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;">
                 </table>
             </div>
         </div>
@@ -37,7 +38,7 @@
                 <h3 class="box-title">Program Usages</h3>
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="programUsageTable" class="table table-bordered table-hover table-condensed"  style="width: 100%;">
+                <table id="@Strings.Id.ProgramUsageTable" class="table table-bordered table-hover table-condensed"  style="width: 100%;">
                 </table>
             </div>
         </div>
@@ -51,7 +52,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#functionUsageTable').DataTable({
+            $('#@Strings.Id.FunctionUsageTable').DataTable({
                 serverSide: true,
                 searching: false,
                 processing: true,
@@ -65,9 +66,7 @@
                         name: "@nameof(UsageData.DateTime)",
                         data: "@nameof(UsageData.DateTime).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
-                            var datetime = new Date(data);
-                            return datetime.toLocaleString();
-                        },
+                            return toFormattedTimestamp(new Date(data));                        },
                         title:"@nameof(UsageData.DateTime)",
                         sortable: true,
                         searchable: false
@@ -105,7 +104,7 @@
              
             });
 
-            $('#programUsageTable').DataTable({
+            $('#@Strings.Id.ProgramUsageTable').DataTable({
                 serverSide: true,
                 searching: false,
                 processing: true,
@@ -119,8 +118,7 @@
                         name: "@nameof(UsageData.DateTime)",
                         data: "@nameof(UsageData.DateTime).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
-                            var datetime = new Date(data);
-                            return datetime.toLocaleString();
+                            return toFormattedTimestamp(new Date(data));;
                         },
                         title:"@nameof(UsageData.DateTime)",
                         sortable: true,

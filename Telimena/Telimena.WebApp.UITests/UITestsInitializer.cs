@@ -22,7 +22,11 @@ public class TestInitializerInNoNamespace
         {
             case "Chrome":
                 var opt = new ChromeOptions();
+#if DEBUG
+
+#else
                 opt.AddArgument("--headless");
+#endif
                 PortalTestBase.RemoteDriver = new ChromeDriver(opt);
                 break;
             case "Firefox":

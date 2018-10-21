@@ -48,8 +48,15 @@
 {
     @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
 
+    
+
     <script type="text/javascript">
-        $(document).ready(function() {
+
+
+        $(document).ready(function () {
+
+
+
             var url = $(".portal-summary").data("url");
             $(".portal-summary").load(url);
 
@@ -67,8 +74,7 @@
                         name: "@nameof(Audit.Timestamp)",
                         data: "@nameof(Audit.Timestamp).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
-                            var datetime = new Date(data);
-                            return datetime.toLocaleString();
+                            return toFormattedTimestamp(new Date(data));
                         },
                         title:"@nameof(Audit.Timestamp)",
                         sortable: true,

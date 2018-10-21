@@ -12,8 +12,8 @@
         Assembly ass = ViewContext.Controller.GetType().Assembly;
         string version = ass.GetName().Version.ToString();
         DateTime lastDeploymentDate = new FileInfo(ass.Location).LastWriteTimeUtc;
-        TimeSpan dateDiff = (DateTime.UtcNow - lastDeploymentDate);
+        TimeSpan dateDiff = (DateTime.Now - lastDeploymentDate);
     }
   
-    <strong>TELIMENA v. @version</strong> Deployed @lastDeploymentDate.ToString("U") UTC (@dateDiff.TotalHours.ToString("F") hours ago)
+    <strong>TELIMENA v. @version</strong> Deployed @lastDeploymentDate UTC (@dateDiff.TotalHours.ToString("F") hours ago)
 </footer>
