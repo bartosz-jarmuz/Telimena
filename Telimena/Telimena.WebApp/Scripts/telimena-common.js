@@ -34,6 +34,9 @@ function isValidDate(d) {
 }
 
 function toFormattedTimestamp(utcDate) {
+    if (utcDate === '' || utcDate === undefined) {
+        return '';
+    }
     if (!isValidDate(utcDate)) {
         utcDate = toDdMmYyyy(utcDate);
     }
