@@ -16,7 +16,12 @@ Number.prototype.padLeft = function (base, chr) {
 
 function globalUtcConversion() {
     $('.utcdate-tolocaldate').each(function () {
-        $(this).html(toFormattedTimestamp($(this).text()));
+        try {
+            $(this).html(toFormattedTimestamp($(this).text()));
+        }
+        catch (ex) {
+            //do nothing
+        }
     });
 }
 

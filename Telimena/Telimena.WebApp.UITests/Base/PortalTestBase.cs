@@ -104,8 +104,16 @@ namespace Telimena.WebApp.UITests.Base
 
         public void GoToAdminHomePage()
         {
-            this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
-            this.LoginAdminIfNeeded();
+            try
+            {
+
+                this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
+                this.LoginAdminIfNeeded();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Error while logging in admin", ex);
+            }
         }
 
 
@@ -119,7 +127,7 @@ namespace Telimena.WebApp.UITests.Base
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             if (this.Driver.Url.Contains("ChangePassword"))
             {
-                Debug.WriteLine("Going from change password page to Admin dashboard");
+                Log("Going from change password page to Admin dashboard");
                 this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
             }
             wait.Until(x => x.FindElement(By.Id(Strings.Id.PortalSummary)));
@@ -136,6 +144,29 @@ namespace Telimena.WebApp.UITests.Base
 
             return null;
         }
+
+        public IWebElement TryFind(By by, int timeoutSeconds = 10)
+        {
+            try
+            {
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(timeoutSeconds));
+                return wait.Until(x => x.FindElement(by));
+            }
+            catch { }
+
+            return null;
+        }
+
+        protected  bool IsLoggedIn()
+        {
+            if (this.TryFind(Strings.Id.MainHeader) != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
 
         protected void HandlerError(Exception ex, List<string> outputs = null, List<string> errors = null, [CallerMemberName] string memberName = "")
         {
@@ -173,6 +204,11 @@ namespace Telimena.WebApp.UITests.Base
             return sb.ToString();
         }
 
+        protected static void Log(string info)
+        {
+            Debug.WriteLine("UiTestsLogger:" + info);
+        }
+
         public void LoginAdminIfNeeded()
         {
             this.LoginIfNeeded(this.AdminName, this.AdminPassword);
@@ -180,9 +216,14 @@ namespace Telimena.WebApp.UITests.Base
 
         private void LoginIfNeeded(string userName, string password)
         {
-            if (this.Driver.Url.Contains("Login") && this.Driver.FindElement(new ByIdOrName(Strings.Id.LoginForm)) != null)
+            if (!this.IsLoggedIn())
             {
-                Debug.WriteLine("Trying to log in...");
+                this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/Login"));
+            }
+
+            if (this.Driver.Url.IndexOf("Login", StringComparison.InvariantCultureIgnoreCase) != -1 && this.Driver.FindElement(new ByIdOrName(Strings.Id.LoginForm)) != null)
+            {
+                Log("Trying to log in...");
                 IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
 
                 if (login != null)
@@ -199,7 +240,7 @@ namespace Telimena.WebApp.UITests.Base
             }
             else
             {
-                Debug.WriteLine("Skipping logging in");
+                Log("Skipping logging in");
             }
         }
     }

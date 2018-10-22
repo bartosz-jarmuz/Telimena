@@ -27,6 +27,10 @@ namespace Telimena.WebApp.UITests.Account
             try
             {
                 this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
+                if (this.IsLoggedIn())
+                {
+                    this.LogOut();
+                }
 
                 IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
                 IWebElement pass = this.Driver.FindElement(new ByIdOrName(Strings.Id.Password));
@@ -46,6 +50,13 @@ namespace Telimena.WebApp.UITests.Account
                 this.HandlerError(ex);
             }
         }
+
+        private void LogOut()
+        {
+            this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/LogOff"));
+            this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
+        }
+
 
         [Test]
         public void AdminLogin_Failed()

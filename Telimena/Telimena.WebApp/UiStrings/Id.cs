@@ -26,6 +26,7 @@
             public const string MyAppsList = "MyAppsList ";
             public const string ProgramUsageTable = "ProgramUsageTable";
             public const string FunctionUsageTable = "FunctionUsageTable";
+            public const string MainHeader = "MainHeader";
         }
     }
 }
