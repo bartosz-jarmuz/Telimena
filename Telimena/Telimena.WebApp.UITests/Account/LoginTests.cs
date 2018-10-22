@@ -26,11 +26,12 @@ namespace Telimena.WebApp.UITests.Account
         {
             try
             {
-                this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
                 if (this.IsLoggedIn())
                 {
                     this.LogOut();
                 }
+                this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/Login"));
+
 
                 IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
                 IWebElement pass = this.Driver.FindElement(new ByIdOrName(Strings.Id.Password));
@@ -63,7 +64,12 @@ namespace Telimena.WebApp.UITests.Account
         {
             try
             {
-                this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
+                if (this.IsLoggedIn())
+                {
+                    this.LogOut();
+                }
+                this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/Login"));
+
 
                 IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
                 IWebElement pass = this.Driver.FindElement(new ByIdOrName(Strings.Id.Password));
