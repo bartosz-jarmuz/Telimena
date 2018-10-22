@@ -20,7 +20,7 @@ using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 namespace Telimena.WebApp.UITests.IntegrationTests
 {
     [TestFixture()]
-    public class StatsTests : PortalTestBase
+    public partial class UiTests : PortalTestBase
     {
 
         List<string> errors = new List<string>();

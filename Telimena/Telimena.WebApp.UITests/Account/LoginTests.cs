@@ -18,7 +18,7 @@ namespace Telimena.WebApp.UITests.Account
 {
 
     [TestFixture]
-    public class LoginTests : PortalTestBase
+    public partial class LoginTests : PortalTestBase
     {
 
         [Test]
@@ -50,6 +50,7 @@ namespace Telimena.WebApp.UITests.Account
             {
                 this.HandlerError(ex);
             }
+
         }
 
         private void LogOut()
@@ -68,7 +69,7 @@ namespace Telimena.WebApp.UITests.Account
                 {
                     this.LogOut();
                 }
-                this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/Login"));
+                               this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/Login"));
 
 
                 IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
