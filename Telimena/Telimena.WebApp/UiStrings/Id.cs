@@ -2,6 +2,8 @@
 {
     public static class Strings
     {
+        public const string DateTimeFormat = "dd.MM.yyyy HH:mm:ss";
+
         public static class Id
         {
             public const string LoginForm = "LoginForm";

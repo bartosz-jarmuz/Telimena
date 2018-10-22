@@ -97,6 +97,7 @@
     <Compile Include="Base\PortalTestBase.cs" />
     <Compile Include="Base\TestFileNames.cs" />
     <Compile Include="Base\Common.cs" />
+    <Compile Include="IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_StatsTests.cs" />
     <Compile Include="IntegrationTests\TestAppInteraction\ProcessCreator.cs" />
     <Compile Include="IntegrationTests\StatsTests.cs" />
     <Compile Include="IntegrationTests\TestAppInteraction\TestAppProvider.cs" />
@@ -116,6 +117,10 @@
     <ProjectReference Include="..\AutomaticTestsClient\AutomaticTestsClient.csproj">
       <Project>{8C7395CF-1C86-4C66-BF55-B254AB1EA6F3}</Project>
       <Name>AutomaticTestsClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
+      <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
+      <Name>Telimena.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Telimena.WebApp\Telimena.WebApp.csproj">
       <Project>{EB646426-47C4-464A-ABB0-415CA73B432F}</Project>

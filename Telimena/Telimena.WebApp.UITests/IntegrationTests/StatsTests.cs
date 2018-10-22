@@ -23,9 +23,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests
     public partial class UiTests : PortalTestBase
     {
 
-        List<string> errors = new List<string>();
-        List<string> outputs = new List<string>();
-
+     
         [SetUp]
         public void ResetLists()
         {
@@ -37,12 +35,12 @@ namespace Telimena.WebApp.UITests.IntegrationTests
         {
 
           
-                this.LaunchTestsApp();
+                this.LaunchTestsApp(Actions.Initialize);
                 Task.Delay(1000).GetAwaiter().GetResult();
                 var previous = this.GetLatestUsageFromTable();
             Task.Delay(1000).GetAwaiter().GetResult();
 
-            this.LaunchTestsApp();
+            this.LaunchTestsApp(Actions.Initialize);
 
               var current = this.GetLatestUsageFromTable();
 
@@ -94,20 +92,6 @@ namespace Telimena.WebApp.UITests.IntegrationTests
             }
         }
 
-        private void LaunchTestsApp()
-        {
-            FileInfo exe = TestAppProvider.ExtractApp(TestAppProvider.FileNames.TestAppV1);
-
-            Arguments args = new Arguments() {ApiUrl = this.BaseUrl, Action = Actions.Initialize};
-
-       
-
-            Process process = ProcessCreator.Create(exe, args, outputs, errors);
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            process.WaitForExit();
-        }
+    
     }
 }

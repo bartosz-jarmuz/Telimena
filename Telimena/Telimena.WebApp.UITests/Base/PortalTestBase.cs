@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web.Configuration;
 using System.Xml.Linq;
+using AutomaticTestsClient;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -18,6 +19,9 @@ using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Telimena.WebApp.UITests.IntegrationTests.TestAppInteraction;
+using TelimenaClient;
 using TestContext = Microsoft.VisualStudio.TestTools.UnitTesting.TestContext;
 
 namespace Telimena.WebApp.UITests.Base
@@ -26,6 +30,59 @@ namespace Telimena.WebApp.UITests.Base
     public abstract class PortalTestBase
     {
 
+
+        protected List<string> errors = new List<string>();
+        protected List<string> outputs = new List<string>();
+
+        protected void LaunchTestsApp(Actions action, ProgramInfo pi = null, string functionName = null)
+        {
+            FileInfo exe = TestAppProvider.ExtractApp(TestAppProvider.FileNames.TestAppV1);
+
+            Arguments args = new Arguments() { ApiUrl = this.BaseUrl, Action = action };
+            args.ProgramInfo = pi;
+            args.FunctionName = functionName;
+
+
+            Process process = ProcessCreator.Create(exe, args, outputs, errors);
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            process.WaitForExit();
+        }
+
+        protected T LaunchTestsAppAndGetResult<T>(Actions action, ProgramInfo pi = null, string functionName = null) where T : class
+        {
+            this.LaunchTestsApp(action, pi, functionName);
+
+            T result = this.ParseOutput<T>();
+            this.outputs.Clear();
+            this.errors.Clear();
+            return result;
+        }
+
+        protected T ParseOutput<T>() where T : class
+        {
+            foreach (string output in this.outputs)
+            {
+                if (!string.IsNullOrWhiteSpace(output))
+                {
+                    try
+                    {
+                        T obj = JsonConvert.DeserializeObject<T>(output);
+                        if (obj != null)
+                        {
+                            return obj;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+            }
+
+            return null;
+        }
         protected static string GetSetting(string key)
         {
             if (NUnit.Framework.TestContext.Parameters.Count == 0)

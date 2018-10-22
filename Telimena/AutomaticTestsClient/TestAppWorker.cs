@@ -15,16 +15,18 @@ namespace AutomaticTestsClient
 
         public void Work()
         {
-            Telimena telimena = new Telimena(telemetryApiBaseUrl: new Uri(this.arguments.ApiUrl));
+            Telimena telimena = this.GetTelimena();
+
+
             try
             {
                 switch (this.arguments.Action)
                 {
                     case Actions.Initialize:
-                        HandleInitialize(telimena);
+                        this.HandleInitialize(telimena);
                         break;
                     case Actions.ReportFunctionUsage:
-                        telimena.ReportUsageBlocking();
+                        this.HandleReportFunctionUsage(telimena);
                         break;
                     case Actions.HandleUpdates:
                         telimena.HandleUpdatesBlocking(false);
@@ -39,10 +41,42 @@ namespace AutomaticTestsClient
             Console.WriteLine("Done");
         }
 
-        private static void HandleInitialize(Telimena telimena)
+        private Telimena GetTelimena()
+        {
+            Telimena telimena;
+            if (this.arguments.ProgramInfo != null)
+            {
+             
+                telimena = new Telimena(telemetryApiBaseUrl: new Uri(this.arguments.ApiUrl), programInfo: this.arguments.ProgramInfo);
+            }
+            else
+            {
+                telimena = new Telimena(telemetryApiBaseUrl: new Uri(this.arguments.ApiUrl));
+            }
+
+            return telimena;
+        }
+
+        private void HandleInitialize(Telimena telimena)
         {
 
-            var result = telimena.InitializeBlocking();
+            RegistrationResponse result = telimena.InitializeBlocking();
+
+            Console.WriteLine(JsonConvert.SerializeObject(result));
+        }
+
+        private void HandleReportFunctionUsage(Telimena telimena)
+        {
+            
+            StatisticsUpdateResponse result;
+            if (this.arguments.FunctionName != null)
+            {
+                result = telimena.ReportUsageBlocking(this.arguments.FunctionName);
+            }
+            else
+            {
+                result = telimena.ReportUsageBlocking();
+            }
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }

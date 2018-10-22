@@ -1,6 +1,7 @@
 ﻿@using DotNetLittleHelpers
 @using Telimena.WebApp.Core.Messages
 @using Telimena.WebApp.Core.Models
+@using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.ProgramDetails.ProgramManagementViewModel
 @{
     ViewBag.Title = "Index";
@@ -93,7 +94,7 @@
                         <b>Supported toolkit version</b> <a class="pull-right">@(Model.ProgramPackageInfo?.SupportedToolkitVersion)</a>
                     </li>
                     <li class="list-group-item">
-                        <b>Uploaded date</b> <a class="pull-right utcdate-tolocaldate">@(Model.ProgramPackageInfo?.UploadedDate)</a>
+                        <b>Uploaded date</b> <a class="pull-right utcdate-tolocaldate">@(Model.ProgramPackageInfo?.UploadedDate.ToString(Strings.DateTimeFormat))</a>
                     </li>
                 </ul>
             </div>
@@ -229,7 +230,7 @@
                             </td>
                             <td>@pkg.Version</td>
                             <td>@pkg.SupportedToolkitVersion</td>
-                            <td class="utcdate-tolocaldate">@pkg.UploadedDate</td>
+                            <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
                             <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
                         </tr>
                     }

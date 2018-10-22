@@ -1,4 +1,5 @@
 ﻿using System;
+using TelimenaClient;
 
 namespace AutomaticTestsClient
 {
@@ -7,6 +8,11 @@ namespace AutomaticTestsClient
         public string ApiUrl { get; set; }
 
         public Actions Action { get; set; }
+
+        public ProgramInfo ProgramInfo { get; set; }
+        public string UserName { get; set; }
+
+        public string FunctionName { get; set; }
 
     }
 }
