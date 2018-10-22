@@ -30,7 +30,7 @@ function toDdMmYyyy(date) {
     var timePart = date.split(" ")[1];
     var fromTime = timePart.split(":");
 
-    var fromDate = datePart.split(".");
+    var fromDate = datePart.split(/.|\//);
     return new Date(fromDate[2], fromDate[1] - 1, fromDate[0], fromTime[0], fromTime[1], fromTime[2]);
 }
 
