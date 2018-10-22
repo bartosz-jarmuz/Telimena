@@ -42,6 +42,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  true);
             fileStream.Position = 0;
+
+            if (actualVersion.IsNewerVersionThan(program.GetLatestVersion().Version))
+            {
+                program.PrimaryAssembly.SetLatestVersion(actualVersion);
+            }
+            
             string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, false);
             fileStream.Position = 0;
             fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream);
