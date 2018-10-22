@@ -97,6 +97,7 @@
     <Compile Include="Base\PortalTestBase.cs" />
     <Compile Include="Base\TestFileNames.cs" />
     <Compile Include="Base\Common.cs" />
+    <Compile Include="IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.cs" />
     <Compile Include="IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_StatsTests.cs" />
     <Compile Include="IntegrationTests\TestAppInteraction\ProcessCreator.cs" />
     <Compile Include="IntegrationTests\StatsTests.cs" />
