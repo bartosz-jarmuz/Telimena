@@ -59,18 +59,33 @@ namespace Telimena.WebApp.UITests.IntegrationTests
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
                 this.Driver.FindElement(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_menu")).Click();
-                var statLink = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_statsLink")));
+                IWebElement statLink = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_statsLink")));
 
                 statLink.Click();
 
-                var programsTable = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.ProgramUsageTable)));
+                IWebElement programsTable = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUsageTable)));
+                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.ProgramUsageTable)));
 
 
-                var latestRow = programsTable.FindElement(By.TagName("tbody")).FindElements(By.TagName("tr")).FirstOrDefault();
+                IWebElement latestRow = programsTable.FindElement(By.TagName("tbody")).FindElements(By.TagName("tr")).FirstOrDefault();
 
-                var dateTime = latestRow.FindElements(By.TagName("td")).FirstOrDefault()?.Text;
-                var parsed = DateTime.Parse(dateTime);
-                return parsed;
+                if (latestRow == null)
+                {
+                    throw new InvalidOperationException("Latest row is null");
+                }
+
+                string dateTime = "Not initialized";
+                try
+                {
+
+                    dateTime = latestRow.FindElements(By.TagName("td")).FirstOrDefault()?.Text;
+                    DateTime parsed = DateTime.Parse(dateTime);
+                    return parsed;
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Cannot parse [{dateTime}] as DateTime", ex);
+                }
             }
             catch (Exception ex)
             {
