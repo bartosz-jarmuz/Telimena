@@ -182,6 +182,7 @@ namespace Telimena.WebApp.UITests.Base
         {
             if (this.Driver.Url.Contains("Login") && this.Driver.FindElement(new ByIdOrName(Strings.Id.LoginForm)) != null)
             {
+                Debug.WriteLine("Trying to log in...");
                 IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
 
                 if (login != null)
@@ -191,9 +192,14 @@ namespace Telimena.WebApp.UITests.Base
                     pass.SendKeys(password);
                     IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
                     submit.Click();
+                    this.GoToAdminHomePage();
                     this.RecognizeAdminDashboardPage();
 
                 }
+            }
+            else
+            {
+                Debug.WriteLine("Skipping logging in");
             }
         }
     }
