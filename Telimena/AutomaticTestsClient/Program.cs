@@ -11,6 +11,14 @@ namespace AutomaticTestsClient
     {
         static void Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Console.WriteLine($"TestAppVersion: {typeof(Program).Assembly.GetName().Version}");
+                Console.WriteLine("This app requires arguments to run");
+                Console.ReadKey();
+                return;
+            }
+
             Arguments arguments;
             Console.WriteLine("Loading Arguments...");
             string decoded = "";
