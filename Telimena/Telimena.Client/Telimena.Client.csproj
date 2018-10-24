@@ -13,16 +13,16 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <ShouldCreateLogs>True</ShouldCreateLogs>
-    <AdvancedSettingsExpanded>False</AdvancedSettingsExpanded>
+    <AdvancedSettingsExpanded>True</AdvancedSettingsExpanded>
     <UpdateAssemblyVersion>True</UpdateAssemblyVersion>
     <UpdateAssemblyFileVersion>True</UpdateAssemblyFileVersion>
     <UpdateAssemblyInfoVersion>True</UpdateAssemblyInfoVersion>
-    <AssemblyVersionSettings>None.IncrementOnDemand.DateStamp.IncrementWithResetOnIncrease</AssemblyVersionSettings>
+    <AssemblyVersionSettings>None.IncrementOnDemand.None.None</AssemblyVersionSettings>
     <UpdatePackageVersion>False</UpdatePackageVersion>
     <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
     <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
-    <AssemblyFileVersionSettings>None.IncrementOnDemand.DateStamp.IncrementWithResetOnIncrease</AssemblyFileVersionSettings>
-    <AssemblyInfoVersionSettings>None.IncrementOnDemand.DateStamp.IncrementWithResetOnIncrease</AssemblyInfoVersionSettings>
+    <AssemblyFileVersionSettings>None.IncrementOnDemand.None.None</AssemblyFileVersionSettings>
+    <AssemblyInfoVersionSettings>None.IncrementOnDemand.None.None</AssemblyInfoVersionSettings>
     <AssemblyInfoVersionSemVerSettings>
     </AssemblyInfoVersionSemVerSettings>
   </PropertyGroup>
