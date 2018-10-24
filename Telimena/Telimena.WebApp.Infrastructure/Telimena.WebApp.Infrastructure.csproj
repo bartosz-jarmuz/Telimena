@@ -157,6 +157,7 @@
     <Compile Include="ApiRouter.cs" />
     <Compile Include="Audit\Audit.cs" />
     <Compile Include="Audit\AuditAttribute.cs" />
+    <Compile Include="Audit\ApiAuditFilter.cs" />
     <Compile Include="Audit\AuditFilter.cs" />
     <Compile Include="Audit\AuditingContext.cs" />
     <Compile Include="Audit\AuditingLevel.cs" />
@@ -166,7 +167,7 @@
     <Compile Include="Audit\IAuditLogger.cs" />
     <Compile Include="AutoMapperDomainProfile.cs" />
     <Compile Include="Database\TelimenaDbContext.cs" />
-    <Compile Include="Identity\Extensions.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
     <Compile Include="Migrations\201810032114071_addedIsPublic.cs" />
     <Compile Include="Migrations\201810032114071_addedIsPublic.Designer.cs">

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
+using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Security;
@@ -25,6 +26,7 @@ namespace Telimena.WebApp.Controllers.Api
         private IProgramsUnitOfWork Work { get; }
 
         [HttpDelete]
+        [Audit]
         public async Task<IHttpActionResult> Delete(int id)
         {
             var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
@@ -45,6 +47,7 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPut]
+        [Audit]
         public async Task<IHttpActionResult> SetUpdater(int programId, int updaterId)
         {
             var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == programId);

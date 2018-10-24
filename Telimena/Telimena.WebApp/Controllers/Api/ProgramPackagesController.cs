@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using MvcAuditLogger;
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
@@ -33,6 +34,7 @@ namespace Telimena.WebApp.Controllers.Api
         private IProgramsUnitOfWork Work { get; }
 
         [HttpPost]
+        [Audit]
         public async Task<IHttpActionResult> Upload(int id)
         {
             try
@@ -54,26 +56,38 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [AllowAnonymous]
+        [Audit]
         [HttpGet]
-        public async Task<IHttpActionResult> DownloadLatestProgramPackage(int programId)
+        public Task<IHttpActionResult> DownloadLatestProgramPackage(int programId)
+        {
+            return this.GetDownloadLatestProgramPackageResponse(programId);
+        }
+
+
+        private async Task<IHttpActionResult> GetDownloadLatestProgramPackageResponse(int programId)
         {
             ProgramPackageInfo packageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(programId);
 
             byte[] bytes = await this.Work.ProgramPackages.GetPackage(packageInfo.Id, this.fileRetriever);
-            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
-            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = packageInfo.FileName};
+            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) };
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = packageInfo.FileName };
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
             return this.ResponseMessage(result);
         }
 
         [AllowAnonymous]
+        [Audit]
         [HttpGet]
         [Route("download-app/{name}", Name = "DownloadAppRoute")]
         public async Task<IHttpActionResult> DownloadLatestProgramPackage(string name)
         {
             Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == name);
-            return await this.DownloadLatestProgramPackage(prg.Id);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program [{name}] does not exist");
+            }
+            return await this.GetDownloadLatestProgramPackageResponse(prg.Id);
         }
     }
 }

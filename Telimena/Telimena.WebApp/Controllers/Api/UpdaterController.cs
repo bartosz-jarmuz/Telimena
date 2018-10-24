@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using AutoMapper;
+using MvcAuditLogger;
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
@@ -56,6 +57,7 @@ namespace Telimena.WebApp.Controllers.Api
 
 
         [HttpGet]
+        [Audit]
         public async Task<IHttpActionResult> Get(int id)
         {
             UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetPackageInfo(id);
@@ -73,6 +75,7 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPut]
+        [Audit]
         public async Task<IHttpActionResult> SetIsPublic(int id, bool isPublic)
         {
             var updater = await this.work.UpdaterRepository.GetUpdater(id);
@@ -92,6 +95,7 @@ namespace Telimena.WebApp.Controllers.Api
 
         [AllowAnonymous]
         [HttpGet]
+        [Audit]
         public async Task<IHttpActionResult> Get(string internalName, string version)
         {
             if (!Version.TryParse(version, out _))
@@ -141,6 +145,7 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPost]
+        [Audit]
         public async Task<IHttpActionResult> Upload()
         {
             try

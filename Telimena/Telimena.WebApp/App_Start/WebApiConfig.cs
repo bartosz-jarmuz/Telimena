@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using MvcAuditLogger;
 using Newtonsoft.Json;
 
 namespace Telimena.WebApp
@@ -12,6 +13,8 @@ namespace Telimena.WebApp
             config.MapHttpAttributeRoutes();
             config.Formatters.JsonFormatter.SerializerSettings = new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore};
             config.Routes.MapHttpRoute(name: "DefaultApi", routeTemplate: "api/{controller}/{action}/{id}", defaults: new {id = RouteParameter.Optional});
+            config.Filters.Add(new ApiAuditFilter());
+
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Http;
 using AutoMapper;
 using DotNetLittleHelpers;
+using MvcAuditLogger;
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
@@ -20,7 +21,6 @@ using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using TelimenaClient;
 using TelimenaClient.Serializer;
-using WebGrease.Css.Extensions;
 
 namespace Telimena.WebApp.Controllers.Api
 {
@@ -31,8 +31,6 @@ namespace Telimena.WebApp.Controllers.Api
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramUpdatesController : ApiController
     {
-        private IFileRetriever FileRetriever { get; }
-
         public ProgramUpdatesController(IProgramsUnitOfWork work, ITelimenaSerializer serializer, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
             this.FileRetriever = fileRetriever;
@@ -44,9 +42,11 @@ namespace Telimena.WebApp.Controllers.Api
         private readonly IProgramsUnitOfWork work;
         private readonly ITelimenaSerializer serializer;
         private readonly IFileSaver fileSaver;
+        private IFileRetriever FileRetriever { get; }
 
         [AllowAnonymous]
         [HttpGet]
+        [Audit]
         public async Task<IHttpActionResult> Get(int id)
         {
             ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id);
@@ -57,48 +57,6 @@ namespace Telimena.WebApp.Controllers.Api
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
 
             return this.ResponseMessage(result);
-        }
-
-        private async Task<TelimenaPackageInfo> GetToolkitUpdateInfo(Program program, UpdateRequest request, string maximumSupportedToolkitVersion)
-        {
-            ObjectValidator.Validate(() => Version.TryParse(request.ToolkitVersion, out _)
-                , new ArgumentException($"[{request.ToolkitVersion}] is not a valid version string"));
-
-            List<TelimenaPackageInfo> packages = (await this.work.ToolkitData.GetPackagesNewerThan(request.ToolkitVersion))
-                .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
-
-            if (!request.AcceptBeta)
-            {
-                packages.RemoveAll(x => x.IsBeta);
-            }
-
-            if (packages.Any(x => x.IntroducesBreakingChanges))
-            {
-                packages.Reverse();
-                List<TelimenaPackageInfo> listOfCompatiblePackages = new List<TelimenaPackageInfo>();
-                foreach (TelimenaPackageInfo package in packages)
-                {
-                    if (!package.IntroducesBreakingChanges)
-                    {
-                        listOfCompatiblePackages.Add(package);
-                    }
-                    else
-                    {
-                        if (maximumSupportedToolkitVersion.IsNewerOrEqualVersion(package.Version))
-                        {
-                            listOfCompatiblePackages.Add(package);
-                        }
-                        else //at this point a breaking package is not supported by the program, so time to break the loop - no point checking even newer ones
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                return listOfCompatiblePackages.LastOrDefault();
-            }
-
-            return packages.FirstOrDefault();
         }
 
         [HttpGet]
@@ -125,13 +83,14 @@ namespace Telimena.WebApp.Controllers.Api
                 List<UpdatePackageData> packageDataSets = new List<UpdatePackageData>();
                 foreach (ProgramUpdatePackageInfo programUpdatePackageInfo in filteredPackages)
                 {
-                    packageDataSets.Add(Mapper.Map<ProgramUpdatePackageInfo, UpdatePackageData>(programUpdatePackageInfo,
-                        options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadProgramUpdate(info))));
+                    packageDataSets.Add(Mapper.Map<ProgramUpdatePackageInfo, UpdatePackageData>(programUpdatePackageInfo
+                        , options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadProgramUpdate(info))));
                 }
+
                 if (toolkitPackage != null)
                 {
-                    packageDataSets.Add(Mapper.Map<TelimenaPackageInfo,UpdatePackageData>(toolkitPackage,options => 
-                        options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadToolkitUpdate(info))));
+                    packageDataSets.Add(Mapper.Map<TelimenaPackageInfo, UpdatePackageData>(toolkitPackage
+                        , options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadToolkitUpdate(info))));
                 }
 
 
@@ -146,6 +105,7 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPost]
+        [Audit]
         public async Task<bool> ToggleBetaSetting(int updatePackageId, bool isBeta)
         {
             ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Id == updatePackageId);
@@ -155,6 +115,7 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpPost]
+        [Audit]
         public async Task<IHttpActionResult> Upload()
         {
             try
@@ -255,6 +216,48 @@ namespace Telimena.WebApp.Controllers.Api
             }
 
             return maxVersionInPackages;
+        }
+
+        private async Task<TelimenaPackageInfo> GetToolkitUpdateInfo(Program program, UpdateRequest request, string maximumSupportedToolkitVersion)
+        {
+            ObjectValidator.Validate(() => Version.TryParse(request.ToolkitVersion, out _)
+                , new ArgumentException($"[{request.ToolkitVersion}] is not a valid version string"));
+
+            List<TelimenaPackageInfo> packages = (await this.work.ToolkitData.GetPackagesNewerThan(request.ToolkitVersion))
+                .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+
+            if (!request.AcceptBeta)
+            {
+                packages.RemoveAll(x => x.IsBeta);
+            }
+
+            if (packages.Any(x => x.IntroducesBreakingChanges))
+            {
+                packages.Reverse();
+                List<TelimenaPackageInfo> listOfCompatiblePackages = new List<TelimenaPackageInfo>();
+                foreach (TelimenaPackageInfo package in packages)
+                {
+                    if (!package.IntroducesBreakingChanges)
+                    {
+                        listOfCompatiblePackages.Add(package);
+                    }
+                    else
+                    {
+                        if (maximumSupportedToolkitVersion.IsNewerOrEqualVersion(package.Version))
+                        {
+                            listOfCompatiblePackages.Add(package);
+                        }
+                        else //at this point a breaking package is not supported by the program, so time to break the loop - no point checking even newer ones
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                return listOfCompatiblePackages.LastOrDefault();
+            }
+
+            return packages.FirstOrDefault();
         }
     }
 }

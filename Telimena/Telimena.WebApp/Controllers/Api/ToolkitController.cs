@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using MvcAuditLogger;
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
@@ -44,6 +45,7 @@ namespace Telimena.WebApp.Controllers.Api
         private readonly IFileRetriever fileRetriever;
 
         [HttpGet]
+        [Audit]
         public async Task<IHttpActionResult> Get(int id)
         {
             TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Id == id);
@@ -61,7 +63,7 @@ namespace Telimena.WebApp.Controllers.Api
             return this.ResponseMessage(result);
         }
 
-      
+        [Audit]
         [HttpPost]
         public async Task<IHttpActionResult> Upload()
         {
