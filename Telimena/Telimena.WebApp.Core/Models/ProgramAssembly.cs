@@ -41,19 +41,10 @@ namespace Telimena.WebApp.Core.Models
             return this.Versions.FirstOrDefault(x => x.Version == version);
         }
 
-        public void SetLatestVersion(string version)
+        public AssemblyVersion GetLatestVersion()
         {
-            AssemblyVersion existingVersion = this.Versions.FirstOrDefault(x => x.Version == version);
-            if (existingVersion != null)
-            {
-                this.LatestVersion = existingVersion;
-            }
-            else
-            {
-                AssemblyVersion assVersion = new AssemblyVersion {Version = version};
-                ((Collection<AssemblyVersion>) this.Versions).Add(assVersion);
-                this.LatestVersion = assVersion;
-            }
+            return this.Versions?.OrderByDescending(x => x.Version, new VersionStringComparer())?.FirstOrDefault();
         }
+
     }
 }

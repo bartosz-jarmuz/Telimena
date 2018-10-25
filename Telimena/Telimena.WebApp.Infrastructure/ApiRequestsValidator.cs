@@ -18,11 +18,6 @@ namespace Telimena.WebApp.Infrastructure
             return request != null;
         }
 
-        public static bool IsRequestValid(SetLatestVersionRequest request)
-        {
-            return request != null;
-        }
-
         public static bool IsRequestValid(CreateUpdatePackageRequest request, out List<string> errorMessages)
         {
             bool valid = false;

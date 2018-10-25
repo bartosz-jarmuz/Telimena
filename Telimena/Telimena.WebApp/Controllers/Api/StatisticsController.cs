@@ -79,7 +79,7 @@ namespace Telimena.WebApp.Controllers.Api
                 }
 
                 UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser, updateRequest.FunctionName);
-                StatisticsHelperService.EnsureVersionIsRegistered(program.PrimaryAssembly, updateRequest.Version);
+                program.PrimaryAssembly.AddVersion(updateRequest.Version);
                 AssemblyVersion versionInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version);
 
                 var ip = this.Request.GetClientIp();

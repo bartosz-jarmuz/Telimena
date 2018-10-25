@@ -44,7 +44,7 @@ namespace Telimena.WebApp.Core.Models
 
         public AssemblyVersion GetLatestVersion()
         {
-            return this.PrimaryAssembly?.LatestVersion;
+            return this.PrimaryAssembly?.GetLatestVersion();
         }
 
         public ICollection<ProgramUsageDetail> GetProgramUsageDetails(int clientAppUserId)

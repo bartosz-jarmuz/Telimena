@@ -40,11 +40,11 @@ namespace Telimena.WebApp.Controllers.Api
 
                 LatestVersionResponse info = new LatestVersionResponse
                 {
-                    PrimaryAssemblyVersion = this.GetVersionInfo(program.PrimaryAssembly), HelperAssemblyVersions = new List<VersionInfo>()
+                    PrimaryAssemblyVersion = this.ConstructVersionInfo(program.PrimaryAssembly), HelperAssemblyVersions = new List<VersionInfo>()
                 };
                 foreach (ProgramAssembly programAssembly in program.ProgramAssemblies.Where(x => x.PrimaryOf != program))
                 {
-                    info.HelperAssemblyVersions.Add(this.GetVersionInfo(programAssembly));
+                    info.HelperAssemblyVersions.Add(this.ConstructVersionInfo(programAssembly));
                 }
 
                 return info;
@@ -67,38 +67,14 @@ namespace Telimena.WebApp.Controllers.Api
             return this.Ok(prg.PrimaryAssembly.Versions.Count);
         }
 
-        [HttpPost]
-        public async Task<IHttpActionResult> SetLatestVersion(SetLatestVersionRequest request)
-        {
-            if (!ApiRequestsValidator.IsRequestValid(request))
-            {
-                return this.BadRequest("SetLatestVersionRequest is invalid");
-            }
-
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
-            if (prg == null)
-            {
-                return this.BadRequest($"Program [{request.ProgramId}] not found");
-            }
-
-            if (!Version.TryParse(request.Version, out Version _))
-            {
-                return this.BadRequest($"Version [{request.Version}] is not in valid format. Expected e.g. 1.0.0.0");
-            }
-
-            prg.PrimaryAssembly.SetLatestVersion(request.Version);
-            await this.Work.CompleteAsync();
-            return this.Ok();
-        }
-
-        private VersionInfo GetVersionInfo(ProgramAssembly assemblyInfo)
+        private VersionInfo ConstructVersionInfo(ProgramAssembly assemblyInfo)
         {
             return new VersionInfo
             {
                 AssemblyId = assemblyInfo.Id
                 , AssemblyName = assemblyInfo.Name
-                , LatestVersion = assemblyInfo.LatestVersion?.Version
-                , LatestVersionId = assemblyInfo.LatestVersion?.Id ?? 0
+                , LatestVersion = assemblyInfo.GetLatestVersion()?.Version
+                , LatestVersionId = assemblyInfo.GetLatestVersion()?.Id ?? 0
             };
         }
     }

@@ -87,7 +87,6 @@
     <Compile Include="Messages\UploadUpdaterRequest.cs" />
     <Compile Include="Messages\CreateUpdatePackageRequest.cs" />
     <Compile Include="Messages\LatestVersionResponse.cs" />
-    <Compile Include="Messages\SetLatestVersionRequest.cs" />
     <Compile Include="DTO\VersionInfo.cs" />
     <Compile Include="Models\AssemblyVersion.cs" />
     <Compile Include="Models\Base\UsageDetail.cs" />

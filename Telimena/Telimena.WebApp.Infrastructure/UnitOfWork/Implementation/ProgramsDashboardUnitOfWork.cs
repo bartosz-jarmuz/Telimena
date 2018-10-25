@@ -45,8 +45,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 {
                     ProgramName = program.Name
                     , DeveloperName = program.DeveloperAccount?.Name ?? "N/A"
-                    , LatestVersion = program.PrimaryAssembly.LatestVersion.Version
-                    , AssociatedToolkitVersion = program.PrimaryAssembly.LatestVersion.ToolkitData?.Version
+                    , LatestVersion = program.PrimaryAssembly.GetLatestVersion().Version
+                    , AssociatedToolkitVersion = program.PrimaryAssembly.GetLatestVersion().ToolkitData?.Version
                     , ProgramId = program.Id
                     , RegisteredDate = program.RegisteredDate
                     , LastUsage = program.UsageSummaries.MaxOrNull(x => x.LastUsageDateTime)

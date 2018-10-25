@@ -18,24 +18,6 @@ namespace Telimena.WebApp.Controllers.Api
 
         private readonly IStatisticsUnitOfWork _work;
 
-        /// <summary>
-        ///     Verifies that the version of the program is added to the list of versions
-        /// </summary>
-        /// <param name="programAssembly"></param>
-        /// <param name="version"></param>
-        /// <returns></returns>
-        public static void EnsureVersionIsRegistered(ProgramAssembly programAssembly, string version)
-        {
-            if (programAssembly.Versions.AnyAndNotNull())
-            {
-                programAssembly.AddVersion(version);
-            }
-            else
-            {
-                programAssembly.SetLatestVersion(version);
-            }
-        }
-
         public async Task<Function> GetFunctionOrAddIfNotExists(string functionName, Program program)
         {
             Function func = await this._work.Functions.FirstOrDefaultAsync(x => x.Name == functionName && x.Program.Name == program.Name);
@@ -57,7 +39,7 @@ namespace Telimena.WebApp.Controllers.Api
                 this._work.Programs.Add(program);
             }
 
-            EnsureVersionIsRegistered(program.PrimaryAssembly, requestProgramInfo.ProgramInfo.PrimaryAssembly.Version);
+            program.PrimaryAssembly.AddVersion(requestProgramInfo.ProgramInfo.PrimaryAssembly.Version);
 
             if (requestProgramInfo.ProgramInfo.HelperAssemblies.AnyAndNotNull())
             {
@@ -70,7 +52,7 @@ namespace Telimena.WebApp.Controllers.Api
                         program.ProgramAssemblies.Add(existingAssembly);
                     }
 
-                    EnsureVersionIsRegistered(existingAssembly, helperAssembly.Version);
+                    existingAssembly.AddVersion(helperAssembly.Version);
                 }
             }
 
