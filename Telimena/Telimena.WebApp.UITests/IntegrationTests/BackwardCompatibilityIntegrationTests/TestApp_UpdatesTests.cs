@@ -24,7 +24,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
 
 
 
-    [TestFixture()]
+   // [TestFixture()]
     public partial class NonUiTests : PortalTestBase
     {
         public async Task<VersionTuple> GetVersionsFromApp(string appName)
@@ -44,7 +44,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
             return new VersionTuple() { AssemblyVersion = versions[0].Trim().Replace("AssemblyVersion: ",""), FileVersion = versions[1].Trim().Replace("FileVersion: ", "") };
         }
 
-        [Test]
+        // [Test]
         public async Task HandleUpdatesNonBetaTests()
         {
             VersionTuple initialVersions =await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1);
