@@ -34,26 +34,28 @@ namespace Telimena.WebApp.UITests.Base
         protected List<string> errors = new List<string>();
         protected List<string> outputs = new List<string>();
 
-        protected void LaunchTestsApp(Actions action, ProgramInfo pi = null, string functionName = null)
+        protected void LaunchTestsApp(Actions action, string appName, ProgramInfo pi = null, string functionName = null, bool waitForExit = true)
         {
-            FileInfo exe = TestAppProvider.ExtractApp(TestAppProvider.FileNames.TestAppV1);
+            FileInfo exe = TestAppProvider.ExtractApp(appName);
 
             Arguments args = new Arguments() { ApiUrl = this.BaseUrl, Action = action };
             args.ProgramInfo = pi;
             args.FunctionName = functionName;
 
 
-            Process process = ProcessCreator.Create(exe, args, outputs, errors);
+            Process process = ProcessCreator.Create(exe, args, this.outputs, this.errors);
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
-
-            process.WaitForExit();
+            if (waitForExit)
+            {
+                process.WaitForExit();
+            }
         }
 
-        protected T LaunchTestsAppAndGetResult<T>(Actions action, ProgramInfo pi = null, string functionName = null) where T : class
+        protected T LaunchTestsAppAndGetResult<T>(Actions action, string appName, ProgramInfo pi = null, string functionName = null, bool waitForExit = true) where T : class
         {
-            this.LaunchTestsApp(action, pi, functionName);
+            this.LaunchTestsApp(action,appName, pi, functionName,waitForExit);
 
             T result = this.ParseOutput<T>();
             this.outputs.Clear();

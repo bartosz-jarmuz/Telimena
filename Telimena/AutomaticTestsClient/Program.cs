@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 
 namespace AutomaticTestsClient
 {
     class Program
     {
+
+        public static string GetFileVersion(Type type)
+        {
+            return FileVersionInfo.GetVersionInfo(type.Assembly.Location).FileVersion;
+        }
+
         static void Main(string[] args)
         {
             if (args.Length == 0)
             {
-                Console.WriteLine($"TestAppVersion: {typeof(Program).Assembly.GetName().Version}");
-                Console.WriteLine("This app requires arguments to run");
-                Console.ReadKey();
+                MessageBox.Show($"AssemblyVersion: {typeof(Program).Assembly.GetName().Version}\r\nFileVersion: {GetFileVersion(typeof(Program))}", "AutomaticTestsClient - This app requires arguments to run");
                 return;
             }
 

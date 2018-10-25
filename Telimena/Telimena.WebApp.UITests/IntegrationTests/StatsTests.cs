@@ -35,12 +35,12 @@ namespace Telimena.WebApp.UITests.IntegrationTests
         {
 
           
-                this.LaunchTestsApp(Actions.Initialize);
+                this.LaunchTestsApp(Actions.Initialize, TestAppProvider.FileNames.TestAppV1);
                 Task.Delay(1000).GetAwaiter().GetResult();
                 var previous = this.GetLatestUsageFromTable();
             Task.Delay(1000).GetAwaiter().GetResult();
 
-            this.LaunchTestsApp(Actions.Initialize);
+            this.LaunchTestsApp(Actions.Initialize, TestAppProvider.FileNames.TestAppV1);
 
               var current = this.GetLatestUsageFromTable();
 
