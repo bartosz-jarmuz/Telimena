@@ -17,12 +17,12 @@
     <UpdateAssemblyVersion>True</UpdateAssemblyVersion>
     <UpdateAssemblyFileVersion>True</UpdateAssemblyFileVersion>
     <UpdateAssemblyInfoVersion>True</UpdateAssemblyInfoVersion>
-    <AssemblyVersionSettings>None.IncrementOnDemand.None.None</AssemblyVersionSettings>
+    <AssemblyVersionSettings>None.None.None.None</AssemblyVersionSettings>
     <UpdatePackageVersion>False</UpdatePackageVersion>
     <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
     <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
-    <AssemblyFileVersionSettings>None.IncrementOnDemand.None.None</AssemblyFileVersionSettings>
-    <AssemblyInfoVersionSettings>None.IncrementOnDemand.None.None</AssemblyInfoVersionSettings>
+    <AssemblyFileVersionSettings>None.None.None.None</AssemblyFileVersionSettings>
+    <AssemblyInfoVersionSettings>None.None.None.None</AssemblyInfoVersionSettings>
     <AssemblyInfoVersionSemVerSettings>
     </AssemblyInfoVersionSemVerSettings>
   </PropertyGroup>
