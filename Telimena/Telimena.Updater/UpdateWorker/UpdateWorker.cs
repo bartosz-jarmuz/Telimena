@@ -63,7 +63,7 @@ namespace Telimena.Updater
         {
             // TopInfoLabel = "Updater - unpacking...";
             // Thread.Sleep(700);
-            string updatePackageFolderPath = package.FullName.Replace(".zip", "");
+            string updatePackageFolderPath = Path.Combine(package.DirectoryName, Path.GetFileNameWithoutExtension(package.Name));
             DirectoryInfo programFolder = Directory.GetParent(updatePackageFolderPath).Parent.Parent;
             if (!PrepareAndValidatePackage(package, updatePackageFolderPath))
             {
