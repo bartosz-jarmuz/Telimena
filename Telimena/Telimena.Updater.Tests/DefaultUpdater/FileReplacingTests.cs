@@ -22,7 +22,7 @@ namespace TelimenaUpdaterTests.DefaultUpdater
     [DeploymentItem("MockDisk")]
     public class FileReplacingTests
     {
-        private DirectoryInfo MyAppFolder => new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MockDisk", "DefaultUpdater/MyAppFolder"));
+        private DirectoryInfo MyAppFolder => new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MockDisk", "DefaultUpdater/MyAppFolder.zip_Extracted"));
         private DirectoryInfo Update12Folder => this.MyAppFolder.CreateSubdirectory(Path.Combine("Updates", "1.2"));
 
         private void CreateBackup()

@@ -24,7 +24,7 @@ namespace TelimenaUpdaterTests
     public class PackageTriggerUpdaterTests
     {
 
-        private DirectoryInfo MyAppFolder => new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MockDisk", "PackageTriggerUpdater/MyPackageBasedAppFolder"));
+        private DirectoryInfo MyAppFolder => new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MockDisk", "PackageTriggerUpdater/MyPackageBasedAppFolder.zip_Extracted"));
         private DirectoryInfo Update12Folder => this.MyAppFolder.CreateSubdirectory(Path.Combine("Updates", "1.2"));
         private DirectoryInfo Update11Folder => this.MyAppFolder.CreateSubdirectory(Path.Combine("Updates", "1.1"));
 
@@ -66,7 +66,7 @@ namespace TelimenaUpdaterTests
             var sut = new PackageUpdaterWorker();
             var executablePackage = sut.GetExecutablePackage(new FileInfo(Path.Combine(this.Update12Folder.FullName, "MyPackageBasedApp Update v. 1.2.zip")));
             Assert.IsTrue(executablePackage.Exists);
-            Assert.IsTrue(executablePackage.FullName.EndsWith(@"\MyPackageBasedAppFolder\Updates\1.2 Extracted\UpdatePackage.pkg"));
+            Assert.IsTrue(executablePackage.FullName.EndsWith(@"\MyPackageBasedAppFolder.zip_Extracted\Updates\1.2 Extracted\UpdatePackage.pkg"));
         }
 
         [DeploymentItem("MockDisk")]
@@ -75,21 +75,9 @@ namespace TelimenaUpdaterTests
         {
             var sut = new PackageUpdaterWorker();
             var executablePackage = sut.GetExecutablePackage(new FileInfo(Path.Combine(this.Update11Folder.FullName, "MyPackageBasedApp Update v. 1.1.pkg")));
-            Assert.IsTrue(executablePackage.FullName.EndsWith(@"\MyPackageBasedAppFolder\Updates\1.1\MyPackageBasedApp Update v. 1.1.pkg"));
+            Assert.IsTrue(executablePackage.FullName.EndsWith(@"\MyPackageBasedAppFolder.zip_Extracted\Updates\1.1\MyPackageBasedApp Update v. 1.1.pkg"));
             Assert.IsTrue(executablePackage.Exists);
         }
 
-        [Test]
-        public void Test_StartInfoParsing()
-        {
-            FileInfo instructions = new FileInfo(@"C:\An app\Updates\3.2\Instructions.xml");
-            FileInfo updater = new FileInfo(@"C:\An app\Updates\Updater.exe");
-            ProcessStartInfo startInfo = StartInfoCreator.CreateStartInfo(instructions, updater);
-
-            Assert.AreEqual(@"C:\An app\Updates\Updater.exe", startInfo.FileName);
-            UpdaterStartupSettings settings = CommandLineArgumentParser.GetSettings(CommandLineToArgs(startInfo.Arguments));
-
-            Assert.AreEqual(@"C:\An app\Updates\3.2\Instructions.xml", settings.InstructionsFile.FullName);
-        }
     }
 }

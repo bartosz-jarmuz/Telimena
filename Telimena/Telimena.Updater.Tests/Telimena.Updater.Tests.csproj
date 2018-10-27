@@ -85,37 +85,37 @@
     <None Include="..\TelimenaKey.snk">
       <Link>Properties\TelimenaKey.snk</Link>
     </None>
-    <None Include="MockDisk\DefaultUpdater\MyAppFolder\Updates\1.2\MyApp Update v. 1.1.zip">
+    <None Include="MockDisk\DefaultUpdater\MyAppFolder.zip_Extracted\Updates\1.2\MyApp Update v. 1.1.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MockDisk\DefaultUpdater\MyAppFolder\Updates\1.2\MyApp Update v. 1.2.zip">
+    <None Include="MockDisk\DefaultUpdater\MyAppFolder.zip_Extracted\Updates\1.2\MyApp Update v. 1.2.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MockDisk\PackageTriggerUpdater\MyPackageBasedAppFolder\Updates\1.1\MyPackageBasedApp Update v. 1.1.pkg">
+    <None Include="MockDisk\PackageTriggerUpdater\MyPackageBasedAppFolder.zip_Extracted\Updates\1.1\MyPackageBasedApp Update v. 1.1.pkg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="MockDisk\PackageTriggerUpdater\MyPackageBasedAppFolder\Updates\1.2\MyPackageBasedApp Update v. 1.2.zip">
+    <None Include="MockDisk\PackageTriggerUpdater\MyPackageBasedAppFolder.zip_Extracted\Updates\1.2\MyPackageBasedApp Update v. 1.2.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\Libs\SomeLib3.dll">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder.zip_Extracted\Libs\SomeLib3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\MyApp.exe">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder.zip_Extracted\MyApp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\Libs\Some Nested Lib.dll">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder.zip_Extracted\Libs\Some Nested Lib.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\SomeLib1.dll">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder.zip_Extracted\SomeLib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MockDisk\DefaultUpdater\MyAppFolder\SomeLib3.dll">
+    <Content Include="MockDisk\DefaultUpdater\MyAppFolder.zip_Extracted\SomeLib3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MockDisk\PackageTriggerUpdater\MyPackageBasedAppFolder\MyPackageBasedApp.exe">
+    <Content Include="MockDisk\PackageTriggerUpdater\MyPackageBasedAppFolder.zip_Extracted\MyPackageBasedApp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
