@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
+using TestStack.White;
 
 namespace Telimena.WebApp.UITests.Base
 {
@@ -48,7 +49,7 @@ namespace Telimena.WebApp.UITests.Base
             this.TestEngine.BaseInitialize();
         }
 
-        protected void LaunchTestsApp(Actions action, string appName, string testSubfolderName, ProgramInfo pi = null, string functionName = null
+        protected Process LaunchTestsApp(Actions action, string appName, string testSubfolderName, ProgramInfo pi = null, string functionName = null
             , bool waitForExit = true)
         {
             FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName);
@@ -66,20 +67,22 @@ namespace Telimena.WebApp.UITests.Base
             if (waitForExit)
             {
                 process.WaitForExit();
+                Log($"Finished process: {exe.FullName}");
             }
 
-            Log($"Finished process: {exe.FullName}");
-
+            return process;
         }
 
-        protected T LaunchTestsAppAndGetResult<T>(Actions action, string appName, string testSubfolderName, ProgramInfo pi = null, string functionName = null
+        protected T LaunchTestsAppAndGetResult<T>(Actions action, string appName, string testSubfolderName, out Application app, ProgramInfo pi = null, string functionName = null
             , bool waitForExit = true) where T : class
         {
-            this.LaunchTestsApp(action, appName, testSubfolderName, pi, functionName, waitForExit);
+            var process = this.LaunchTestsApp(action, appName, testSubfolderName, pi, functionName, waitForExit);
 
             T result = this.ParseOutput<T>();
             this.outputs.Clear();
             this.errors.Clear();
+            app = TestStack.White.Application.Attach(process);
+
             return result;
         }
 

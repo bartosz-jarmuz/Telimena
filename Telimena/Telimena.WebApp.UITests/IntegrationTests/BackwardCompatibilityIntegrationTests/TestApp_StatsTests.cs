@@ -16,13 +16,13 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
         [Test]
         public void InitializeTest()
         {
-            RegistrationResponse response = this.LaunchTestsAppAndGetResult< RegistrationResponse>(Actions.Initialize, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
+            RegistrationResponse response = this.LaunchTestsAppAndGetResult< RegistrationResponse>(Actions.Initialize, TestAppProvider.FileNames.TestAppV1,  MethodBase.GetCurrentMethod().Name, out _);
 
             Assert.IsTrue(response.ProgramId > 0);
             Assert.IsTrue(response.UserId> 0);
             Assert.IsTrue(response.Count> 0);
 
-            RegistrationResponse responseNew = this.LaunchTestsAppAndGetResult<RegistrationResponse>(Actions.Initialize, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
+            RegistrationResponse responseNew = this.LaunchTestsAppAndGetResult<RegistrationResponse>(Actions.Initialize, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name, out _);
 
             Assert.AreEqual(responseNew.Count , response.Count +1);
         }
@@ -30,7 +30,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
         [Test]
         public void ReportFunction()
         {
-            StatisticsUpdateResponse response = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(Actions.ReportFunctionUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
+            StatisticsUpdateResponse response = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(Actions.ReportFunctionUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name, out _);
 
             Assert.IsTrue(response.ProgramId > 0);
             Assert.IsTrue(response.UserId > 0);
@@ -38,12 +38,12 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
             Assert.IsTrue(response.FunctionId > 0);
             Assert.AreEqual("HandleReportFunctionUsage", response.FunctionName);
 
-            StatisticsUpdateResponse responseNew = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(Actions.ReportFunctionUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
+            StatisticsUpdateResponse responseNew = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(Actions.ReportFunctionUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name, out _);
 
             Assert.AreEqual(responseNew.Count, response.Count + 1);
             Assert.AreEqual(responseNew.FunctionName, response.FunctionName);
 
-            StatisticsUpdateResponse customFunctionResponse = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(Actions.ReportFunctionUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name, functionName: "UnitTestFunction");
+            StatisticsUpdateResponse customFunctionResponse = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(Actions.ReportFunctionUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name, out _, functionName: "UnitTestFunction");
             Assert.IsTrue(response.FunctionId < customFunctionResponse.FunctionId);
             Assert.AreEqual("UnitTestFunction", customFunctionResponse.FunctionName);
             Assert.IsTrue(customFunctionResponse.Count > 0);

@@ -2,20 +2,38 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using TestStack.White;
+using TestStack.White.Factory;
 using TestStack.White.UIItems.WindowItems;
 
 namespace Telimena.WebApp.UITests.Base
 {
     public static class TestHelpers
     {
-        public static async Task<Window> WaitForWindowAsync(Predicate<Window> match, TimeSpan timeout, string errorMessage = "")
+
+        public static async Task<Window> WaitForWindowAsync(Predicate<string> match, TimeSpan timeout, string errorMessage = "")
         {
             Window win = null;
-            var timeoutWatch = Stopwatch.StartNew();
-            while (win == null)
+            Stopwatch timeoutWatch = Stopwatch.StartNew();
+            while (true)
             {
                 await Task.Delay(50);
-                win = Desktop.Instance.Windows().Find(match);
+
+                Process[] allProcesses = Process.GetProcesses();
+
+                foreach (Process allProcess in allProcesses)
+                {
+                    if (!match.Invoke(allProcess.MainWindowTitle))
+                    {
+                        continue;
+                    }
+
+                    Application app = TestStack.White.Application.Attach(allProcess);
+                    win = app.Find(match, InitializeOption.NoCache);
+                    if (win != null)
+                    {
+                        return win;
+                    }
+                }
 
                 if (timeoutWatch.Elapsed > timeout)
                 {
@@ -29,7 +47,7 @@ namespace Telimena.WebApp.UITests.Base
         public static async Task<Window> WaitForMessageBoxAsync(Window parent, string title, TimeSpan timeout, string errorMessage = "")
         {
             Window win = null;
-            var timeoutWatch = Stopwatch.StartNew();
+            Stopwatch timeoutWatch = Stopwatch.StartNew();
             while (win == null)
             {
                 await Task.Delay(50);
