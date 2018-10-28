@@ -32,7 +32,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
             FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName);
             Log($"Starting process [{exe.FullName}]");
             Process.Start(exe.FullName);
-
+            await Task.Delay(5000);
             var all = TestStack.White.Desktop.Instance.Windows();
             foreach (Window window in all)
             {
