@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -34,11 +35,24 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
         {
             var compressedFile = GetFile(fileName);
             var targetDir = new DirectoryInfo(Path.Combine(compressedFile.DirectoryName, testSubfolderName, compressedFile.Name + "_Extracted"));
-            if (targetDir.Exists)
+            try
             {
+                if (targetDir.Exists)
+                {
+                    targetDir.Delete(true);
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                var pcs = Process.GetProcessesByName("AutomaticTestsClient.exe");
+                foreach (Process process in pcs)
+                {
+                    process.Kill();
+                }
                 targetDir.Delete(true);
             }
             targetDir.Create();
+
             ZipFile.ExtractToDirectory(compressedFile.FullName, targetDir.FullName);
 
             return targetDir.GetFiles().FirstOrDefault(x => x.Name.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase));
