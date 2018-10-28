@@ -33,11 +33,15 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
             FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName);
             Log($"Starting process [{exe.FullName}]");
             var process = Process.Start(exe.FullName);
-            Log("Finished waiting 5 seconds, showing all windows");
+            Log("Showing all windows");
             Application app = TestStack.White.Application.Attach(process);
-            
-            
+            Log($"Attached to {process.MainWindowTitle}");
 
+            Log("app" + app?.Name);
+            foreach (Window window in app.GetWindows())
+            {
+                Log("Win" + window.Title);
+            }
             Window appWarning = await TestHelpers.WaitForWindowAsync( x => x.Equals("AutomaticTestsClient - This app requires arguments to run"), TimeSpan.FromMinutes(2));
             return await this.GetVersionFromMsgBox(appWarning);
         }
