@@ -49,7 +49,7 @@ namespace Telimena.WebApp.UITests.Base
 
         protected void Log(string info)
         {
-            Trace.WriteLine("UiTestsLogger:" + info);
+            Trace.TraceInformation("UiTestsLogger:" + info);
             Logger.LogMessage("UiTestsLogger:" + info);
             TestContext.Out.WriteLine("UiTestsLogger:" + info);
         }
