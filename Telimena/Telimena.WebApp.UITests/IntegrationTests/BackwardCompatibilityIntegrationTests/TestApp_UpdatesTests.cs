@@ -30,7 +30,14 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
         public async Task<VersionTuple> GetVersionsFromApp(string appName, string testSubfolderName)
         {
             FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName);
+            Log($"Starting process [{exe.FullName}]");
             Process.Start(exe.FullName);
+
+            var all = TestStack.White.Desktop.Instance.Windows();
+            foreach (Window window in all)
+            {
+                Log(window.Title);
+            }
             Window appWarning = await TestHelpers.WaitForWindowAsync(x => x.Title.Equals("AutomaticTestsClient - This app requires arguments to run"), TimeSpan.FromMinutes(2));
             return await this.GetVersionFromMsgBox(appWarning);
         }
