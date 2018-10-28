@@ -98,28 +98,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account\LoginTests.cs" />
+    <Compile Include="Ui\ToolkitManagementTests.cs" />
+    <Compile Include="Ui\LoginTests.cs" />
     <Compile Include="Base\ConfigKeys.cs" />
     <Compile Include="Base\DeployedTestEngine.cs" />
+    <Compile Include="Base\IntegrationTestBase.cs" />
     <Compile Include="Base\ITestEngine.cs" />
     <Compile Include="Base\LocalHostTestEngine.cs" />
-    <Compile Include="Base\PortalTestBase.cs" />
+    <Compile Include="Base\TestBase.cs" />
+    <Compile Include="Base\UiTestBase.cs" />
     <Compile Include="Base\TestFileNames.cs" />
     <Compile Include="Base\Common.cs" />
     <Compile Include="IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.cs" />
     <Compile Include="IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_StatsTests.cs" />
-    <Compile Include="IntegrationTests\BackwardCompatibilityIntegrationTests\TestHelpers.cs" />
-    <Compile Include="IntegrationTests\TestAppInteraction\ProcessCreator.cs" />
-    <Compile Include="IntegrationTests\StatsTests.cs" />
-    <Compile Include="IntegrationTests\TestAppInteraction\TestAppProvider.cs" />
-    <Compile Include="IntegrationTests\TestAppInteraction\UtilTest.cs" />
-    <Compile Include="Navigation\NavigationTests.cs" />
+    <Compile Include="Base\TestHelpers.cs" />
+    <Compile Include="Base\TestAppInteraction\ProcessCreator.cs" />
+    <Compile Include="Ui\StatsTests.cs" />
+    <Compile Include="Base\TestAppInteraction\TestAppProvider.cs" />
+    <Compile Include="Base\TestAppInteraction\UtilTest.cs" />
+    <Compile Include="Ui\NavigationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UITestsInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="IntegrationTests\Apps\TestApp v1.0.0.0.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="IntegrationTests\Apps\Updater.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -143,7 +149,14 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="IntegrationTests\Apps\PackageTriggerUpdater.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="IntegrationTests\Apps\Updater.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

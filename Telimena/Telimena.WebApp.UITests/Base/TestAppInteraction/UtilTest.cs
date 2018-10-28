@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using NUnit.Framework;
 
-namespace Telimena.WebApp.UITests.IntegrationTests
+namespace Telimena.WebApp.UITests.Base.TestAppInteraction
 {
     [TestFixture]
     public class UtilTest

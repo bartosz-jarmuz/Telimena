@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web.Configuration;
-using System.Xml.Linq;
-using AutomaticTestsClient;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -19,147 +14,45 @@ using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using Telimena.WebApp.UITests.IntegrationTests.TestAppInteraction;
-using TelimenaClient;
 using TestContext = Microsoft.VisualStudio.TestTools.UnitTesting.TestContext;
 
 namespace Telimena.WebApp.UITests.Base
 {
     [TestFixture]
-    public abstract class PortalTestBase
+    public abstract class UiTestBase : IntegrationTestBase
     {
-
-
-        protected List<string> errors = new List<string>();
-        protected List<string> outputs = new List<string>();
-
-        protected void LaunchTestsApp(Actions action, string appName, ProgramInfo pi = null, string functionName = null, bool waitForExit = true)
-        {
-            FileInfo exe = TestAppProvider.ExtractApp(appName);
-
-            Arguments args = new Arguments() { ApiUrl = this.BaseUrl, Action = action };
-            args.ProgramInfo = pi;
-            args.FunctionName = functionName;
-
-
-            Process process = ProcessCreator.Create(exe, args, this.outputs, this.errors);
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            if (waitForExit)
-            {
-                process.WaitForExit();
-            }
-        }
-
-        protected T LaunchTestsAppAndGetResult<T>(Actions action, string appName, ProgramInfo pi = null, string functionName = null, bool waitForExit = true) where T : class
-        {
-            this.LaunchTestsApp(action,appName, pi, functionName,waitForExit);
-
-            T result = this.ParseOutput<T>();
-            this.outputs.Clear();
-            this.errors.Clear();
-            return result;
-        }
-
-        protected T ParseOutput<T>() where T : class
-        {
-            foreach (string output in this.outputs)
-            {
-                if (!string.IsNullOrWhiteSpace(output))
-                {
-                    try
-                    {
-                        T obj = JsonConvert.DeserializeObject<T>(output);
-                        if (obj != null)
-                        {
-                            return obj;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-            }
-
-            return null;
-        }
-        protected static string GetSetting(string key)
-        {
-            if (NUnit.Framework.TestContext.Parameters.Count == 0)
-            {
-                return TryGetSettingFromXml(key);
-            }
-            var x =  NUnit.Framework.TestContext.Parameters[key];
-            return x;
-        }
-
-        private static string TryGetSettingFromXml(string key)
-        {
-            var dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-
-            var file = dir.GetFiles("*.runsettings", SearchOption.AllDirectories).FirstOrDefault();
-            if (file != null)
-            {
-                XDocument xDoc = XDocument.Load(file.FullName);
-                var ele = xDoc.Root.Element("TestRunParameters").Elements().FirstOrDefault(x => x.Attribute("name")?.Value == key);
-                return ele?.Attribute("value")?.Value;
-            }
-
-            return null;
-        }
-
-
-        protected static T GetSetting<T>(string key) 
-        {
-            string val = GetSetting(key);
-            if (val == null)
-            {
-                throw new ArgumentException($"Missing setting: {key}");
-            }
-            return (T)Convert.ChangeType(val, typeof(T));
-        }
-
+        
         public readonly string AdminName = GetSetting<string>(ConfigKeys.AdminName);
         public readonly string UserName = GetSetting(ConfigKeys.UserName);
         public readonly string AdminPassword = GetSetting(ConfigKeys.AdminPassword);
         public readonly string UserPassword = GetSetting(ConfigKeys.UserPassword);
 
-        private readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
+        internal static Lazy<RemoteWebDriver> RemoteDriver = new Lazy<RemoteWebDriver>(() => GetBrowser("Chrome"));
+
+        private static RemoteWebDriver GetBrowser(string browser)
+        {
+            switch (browser)
+            {
+                case "Chrome":
+                    var opt = new ChromeOptions();
+#if DEBUG
+
+#else
+                opt.AddArgument("--headless");
+#endif
+                    return new ChromeDriver(opt);
+                case "Firefox":
+                    return new FirefoxDriver();
+                case "IE":
+                    return new InternetExplorerDriver();
+                default:
+                    return new ChromeDriver();
+            }
+        }
 
 
-        internal static RemoteWebDriver RemoteDriver;
-        internal IWebDriver Driver => RemoteDriver;
+        internal IWebDriver Driver => RemoteDriver.Value;
         internal ITakesScreenshot Screenshooter => this.Driver as ITakesScreenshot;
-
-        protected ITestEngine TestEngine { get; set; }
-
-        protected string BaseUrl => this.TestEngine.BaseUrl;
-
-        [OneTimeTearDown]
-        public void TestCleanup()
-        {
-            this.TestEngine.BaseCleanup();
-
-        }
-
-        [OneTimeSetUp]
-        public void TestInitialize()
-        {
-            
-            if (this.isLocalTestSetting)
-            {
-                this.TestEngine = new LocalHostTestEngine();
-            }
-            else
-            {
-                this.TestEngine = new DeployedTestEngine(GetSetting<string>(ConfigKeys.PortalUrl));
-            }
-            this.TestEngine.BaseInitialize();
-        }
-
-      
 
         public void GoToAdminHomePage()
         {
@@ -174,7 +67,6 @@ namespace Telimena.WebApp.UITests.Base
                 throw new InvalidOperationException("Error while logging in admin", ex);
             }
         }
-
 
         public string GetAbsoluteUrl(string relativeUrl)
         {
@@ -261,11 +153,6 @@ namespace Telimena.WebApp.UITests.Base
             }
 
             return sb.ToString();
-        }
-
-        protected static void Log(string info)
-        {
-            Debug.WriteLine("UiTestsLogger:" + info);
         }
 
         public void LoginAdminIfNeeded()

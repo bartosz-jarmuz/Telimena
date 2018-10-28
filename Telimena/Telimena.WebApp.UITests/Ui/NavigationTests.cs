@@ -1,20 +1,16 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
-using SeleniumExtras.WaitHelpers;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
-namespace Telimena.WebApp.UITests.Navigation
+namespace Telimena.WebApp.UITests.Ui
 {
     [TestFixture]
-    public class NavigationTests : PortalTestBase
+    public partial class UiTests : UiTestBase
     {
         [Test]
         public void GoThroughAllPagesAsAdmin()

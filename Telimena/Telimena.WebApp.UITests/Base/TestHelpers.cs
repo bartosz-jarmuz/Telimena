@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using TestStack.White;
 using TestStack.White.UIItems.WindowItems;
 
-namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrationTests
+namespace Telimena.WebApp.UITests.Base
 {
     public static class TestHelpers
     {

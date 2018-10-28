@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography;
 using AutomaticTestsClient;
 using Newtonsoft.Json;
 
-namespace Telimena.WebApp.UITests.IntegrationTests.TestAppInteraction
+namespace Telimena.WebApp.UITests.Base.TestAppInteraction
 {
     internal static class ProcessCreator
     {

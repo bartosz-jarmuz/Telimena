@@ -7,7 +7,7 @@ using AutomaticTestsClient;
 using DotNetLittleHelpers;
 using NUnit.Framework;
 using Telimena.WebApp.UITests.Base;
-using Telimena.WebApp.UITests.IntegrationTests.TestAppInteraction;
+using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 using TestStack.White.UIItems;
 using TestStack.White.UIItems.Finders;
@@ -24,12 +24,12 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
 
 
 
-   // [TestFixture()]
-    public partial class NonUiTests : PortalTestBase
+    [TestFixture()]
+    public partial class _2_NonUiTests : IntegrationTestBase
     {
-        public async Task<VersionTuple> GetVersionsFromApp(string appName)
+        public async Task<VersionTuple> GetVersionsFromApp(string appName, string testSubfolderName)
         {
-            FileInfo exe = TestAppProvider.ExtractApp(appName);
+            FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName);
             Process.Start(exe.FullName);
             Window appWarning = await TestHelpers.WaitForWindowAsync(x => x.Title.Equals("AutomaticTestsClient - This app requires arguments to run"), TimeSpan.FromMinutes(2));
             return await this.GetVersionFromMsgBox(appWarning);
@@ -44,12 +44,12 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
             return new VersionTuple() { AssemblyVersion = versions[0].Trim().Replace("AssemblyVersion: ",""), FileVersion = versions[1].Trim().Replace("FileVersion: ", "") };
         }
 
-        // [Test]
+         [Test]
         public async Task HandleUpdatesNonBetaTests()
         {
-            VersionTuple initialVersions =await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1);
+            VersionTuple initialVersions =await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1, nameof(this.HandleUpdatesNonBetaTests));
             
-            this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Actions.HandleUpdates, TestAppProvider.FileNames.TestAppV1, waitForExit: false);
+            this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Actions.HandleUpdates, TestAppProvider.FileNames.TestAppV1,nameof(this.HandleUpdatesNonBetaTests), waitForExit: false);
             Window updateNowMsgBox = await TestHelpers.WaitForWindowAsync(x=>x.Title.Equals("AutomaticTestsClient update installation"), TimeSpan.FromMinutes(2));
             updateNowMsgBox.Get<Button>(SearchCriteria.ByText("Yes")).Click();
 

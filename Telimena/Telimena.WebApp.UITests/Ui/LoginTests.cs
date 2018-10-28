@@ -1,27 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
 using Assert = NUnit.Framework.Assert;
-using TestContext = Microsoft.VisualStudio.TestTools.UnitTesting.TestContext;
 
-namespace Telimena.WebApp.UITests.Account
+namespace Telimena.WebApp.UITests.Ui
 {
 
     [TestFixture]
-    public partial class LoginTests : PortalTestBase
+    public partial class _1_UiTests : UiTestBase
     {
 
-        [Test]
+        [Test, Order(1)]
         public void AdminLoginOk()
         {
             try
@@ -60,7 +53,7 @@ namespace Telimena.WebApp.UITests.Account
         }
 
 
-        [Test]
+        [Test, Order(0)]
         public void AdminLogin_Failed()
         {
             try

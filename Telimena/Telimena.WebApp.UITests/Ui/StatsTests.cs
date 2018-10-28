@@ -1,46 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutomaticTestsClient;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
-using Telimena.WebApp.UITests.IntegrationTests.TestAppInteraction;
+using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
-namespace Telimena.WebApp.UITests.IntegrationTests
+namespace Telimena.WebApp.UITests.Ui
 {
     [TestFixture()]
-    public partial class UiTests : PortalTestBase
+    public partial class UiTests : UiTestBase
     {
+        
 
-     
-        [SetUp]
-        public void ResetLists()
-        {
-            errors = new List<string>();
-            outputs = new List<string>();
-        }
         [Test]
         public void Test_AppUsageTable()
         {
 
           
-                this.LaunchTestsApp(Actions.Initialize, TestAppProvider.FileNames.TestAppV1);
+                this.LaunchTestsApp(Actions.Initialize, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable));
                 Task.Delay(1000).GetAwaiter().GetResult();
                 var previous = this.GetLatestUsageFromTable();
             Task.Delay(1000).GetAwaiter().GetResult();
 
-            this.LaunchTestsApp(Actions.Initialize, TestAppProvider.FileNames.TestAppV1);
+            this.LaunchTestsApp(Actions.Initialize, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable));
 
               var current = this.GetLatestUsageFromTable();
 

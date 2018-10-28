@@ -163,24 +163,24 @@
                             <h3 class="box-title">Upload new Updater Version</h3>
                         </div>
                         <div class="box-body">
-                            <label class="confirmation label label-md" style="display: none"></label>
+                            <label class="confirmation label label-md" id="@Strings.Id.UpdaterConfirmationBox" style="display: none"></label>
                             <div class="form-group">
                                 <label>Required toolkit version: </label>
                                 <input type="text" id="updaterToolkitVersionNeeded" value="0.0.0.0"/>
                             </div>
                             <div class="form-group">
                                 <label>Internal name: </label>
-                                <input type="text" id="updaterInternalName" value="@DefaultToolkitNames.UpdaterInternalName"/>
+                                <input type="text" id="@Strings.Id.UpdaterInternalName" value="@DefaultToolkitNames.UpdaterInternalName"/>
                             </div>
                             <div class="form-group">
                                 <span class="btn btn-success fileinput-button uploadedPackage">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <span>Add files...</span>
-                                    <input type="file"
+                                    <input type="file" id="@Strings.Id.UpdaterPackageUploader"
                                            name="uploadedPackage"/>
                                 </span>
                             </div>
-                            <div class="InfoContainer">
+                            <div class="InfoContainer" id="@Strings.Id.UpdaterUploadInfoBox">
                                 <div class="info fileName">
                                 </div>
                                 <div class="info fileType">
@@ -197,7 +197,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="">
-                                    <input type="submit" value="Submit" class="btn btn-lg btn-primary"/>
+                                    <input type="submit" value="Submit" id="@Strings.Id.SubmitUpdaterUpload"  class="btn btn-lg btn-primary"/>
                                 </div>
                             </div>
                         </div>
@@ -312,7 +312,7 @@
         function CreateUpdaterPackage() {
             var model = {
                 @nameof(UploadUpdaterRequest.MinimumCompatibleToolkitVersion): $('#updaterToolkitVersionNeeded').val(),
-                @nameof(UploadUpdaterRequest.UpdaterInternalName): $('#updaterInternalName').val(),
+                @nameof(UploadUpdaterRequest.UpdaterInternalName): $('#@Strings.Id.UpdaterInternalName').val(),
             };
             return JSON.stringify(model);
 

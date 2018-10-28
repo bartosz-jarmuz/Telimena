@@ -29,6 +29,11 @@
             public const string ProgramUsageTable = "ProgramUsageTable";
             public const string FunctionUsageTable = "FunctionUsageTable";
             public const string MainHeader = "MainHeader";
+            public const string UpdaterPackageUploader = "UpdaterPackageUploader";
+            public const string UpdaterInternalName = "UpdaterInternalName";
+            public const string SubmitUpdaterUpload = "SubmitUpdaterUpload";
+            public const string UpdaterUploadInfoBox = "UpdaterUploadInfoBox";
+            public const string UpdaterConfirmationBox = "UpdaterConfirmationBox";
         }
     }
 }
