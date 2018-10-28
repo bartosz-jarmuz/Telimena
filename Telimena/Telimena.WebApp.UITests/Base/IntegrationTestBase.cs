@@ -59,6 +59,7 @@ namespace Telimena.WebApp.UITests.Base
 
 
             Process process = ProcessCreator.Create(exe, args, this.outputs, this.errors);
+            Log($"Started process: {exe.FullName}");
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
@@ -66,6 +67,9 @@ namespace Telimena.WebApp.UITests.Base
             {
                 process.WaitForExit();
             }
+
+            Log($"Finished process: {exe.FullName}");
+
         }
 
         protected T LaunchTestsAppAndGetResult<T>(Actions action, string appName, string testSubfolderName, ProgramInfo pi = null, string functionName = null
@@ -85,6 +89,7 @@ namespace Telimena.WebApp.UITests.Base
             {
                 if (!string.IsNullOrWhiteSpace(output))
                 {
+                    Log(output);
                     try
                     {
                         T obj = JsonConvert.DeserializeObject<T>(output);
