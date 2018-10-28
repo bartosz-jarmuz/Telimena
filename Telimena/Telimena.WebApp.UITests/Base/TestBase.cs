@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 using NUnit.Framework;
 
 namespace Telimena.WebApp.UITests.Base
@@ -45,10 +46,11 @@ namespace Telimena.WebApp.UITests.Base
             return (T)Convert.ChangeType(val, typeof(T));
         }
 
+
         protected void Log(string info)
         {
             Trace.WriteLine("UiTestsLogger:" + info);
-            Console.WriteLine("UiTestsLogger:" + info);
+            Logger.LogMessage("UiTestsLogger:" + info);
             TestContext.Out.WriteLine("UiTestsLogger:" + info);
         }
 
