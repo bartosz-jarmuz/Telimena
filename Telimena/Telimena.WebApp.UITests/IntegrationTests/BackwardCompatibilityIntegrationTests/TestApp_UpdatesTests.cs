@@ -25,7 +25,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
 
 
 
-    [TestFixture()]
+    [TestFixture(), Timeout(3*60*1000)]
     public partial class _2_NonUiTests : IntegrationTestBase
     {
         public async Task<VersionTuple> GetVersionsFromApp(string appName, string testSubfolderName)
