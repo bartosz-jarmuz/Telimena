@@ -50,8 +50,11 @@ namespace Telimena.WebApp.UITests.Base
         protected void Log(string info)
         {
             Trace.TraceInformation("UiTestsLogger:" + info);
+            Trace.TraceError("UiTestsLogger:" + info);
+            Trace.TraceWarning("WrnUiTestsLogger:" + info);
             Logger.LogMessage("UiTestsLogger:" + info);
             TestContext.Out.WriteLine("UiTestsLogger:" + info);
+            Console.WriteLine("UiTestsLogger:" + info);
         }
 
     }

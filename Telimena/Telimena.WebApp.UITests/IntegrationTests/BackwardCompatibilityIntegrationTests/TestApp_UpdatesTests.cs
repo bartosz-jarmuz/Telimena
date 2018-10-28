@@ -47,6 +47,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
          [Test]
         public async Task HandleUpdatesNonBetaTests()
         {
+            Log("Startingggg");
             VersionTuple initialVersions =await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1, nameof(this.HandleUpdatesNonBetaTests));
             
             this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Actions.HandleUpdates, TestAppProvider.FileNames.TestAppV1,nameof(this.HandleUpdatesNonBetaTests), waitForExit: false);
