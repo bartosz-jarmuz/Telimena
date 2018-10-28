@@ -46,7 +46,7 @@ namespace Telimena.WebApp.UITests.Base
 
         protected static void Log(string info)
         {
-            Debug.WriteLine("UiTestsLogger:" + info);
+            Trace.WriteLine("UiTestsLogger:" + info);
             Console.WriteLine("UiTestsLogger:" + info);
         }
 
