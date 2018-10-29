@@ -312,6 +312,9 @@ namespace Telimena.Tests
 
             //ACTUALLY - CHANGE THE BEHAVIOUR AT LEAST FOR NOW
             // SEEMS THIS SCENARIO IS NOT DESIRED!
+            // the challenge is whether it makes sense to update the toolkit (where there are no breaking changes) to make use of new telemetry features
+            // versus
+            // do not change anything in the client app unless the developer has made an update (and that seems safer)
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>());
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
