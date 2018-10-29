@@ -309,21 +309,27 @@ namespace Telimena.Tests
         [Test]
         public void Test_OnlyToolkitUpdateAvailable()
         {
+
+            //ACTUALLY - CHANGE THE BEHAVIOUR AT LEAST FOR NOW
+            // SEEMS THIS SCENARIO IS NOT DESIRED!
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>());
 
             ProgramUpdatesController sut = new ProgramUpdatesController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(1, "1.2.0.0", 666, false, "0.9.0.0", "1.0.0.0");
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
-            Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single().Version);
-            Assert.AreEqual("Telimena.Client.zip", result.UpdatePackages.Single().FileName);
+            Assert.AreEqual(0, result.UpdatePackages.Count);
+            //Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single().Version);
+            //Assert.AreEqual("Telimena.Client.zip", result.UpdatePackages.Single().FileName);
             Assert.IsNull(result.Exception);
 
 
             request.AcceptBeta = true;
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
-            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single().Version);
-            Assert.AreEqual("Telimena.Client.zip", result.UpdatePackages.Single().FileName);
+            Assert.AreEqual(0, result.UpdatePackages.Count);
+
+            //Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single().Version);
+            //Assert.AreEqual("Telimena.Client.zip", result.UpdatePackages.Single().FileName);
 
             Assert.IsNull(result.Exception);
         }

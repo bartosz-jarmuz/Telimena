@@ -51,6 +51,11 @@ namespace Telimena.WebApp.Controllers.Api
         {
             ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id);
 
+            if (packageInfo == null)
+            {
+                return this.BadRequest($"Program Update Package [{id}] does not exist!");
+            }
+
             byte[] bytes = await this.work.UpdatePackages.GetPackage(packageInfo.Id, this.FileRetriever);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = packageInfo.FileName};
@@ -87,10 +92,13 @@ namespace Telimena.WebApp.Controllers.Api
                         , options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadProgramUpdate(info))));
                 }
 
-                if (toolkitPackage != null)
+                if (packageDataSets.Any())
                 {
-                    packageDataSets.Add(Mapper.Map<TelimenaPackageInfo, UpdatePackageData>(toolkitPackage
-                        , options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadToolkitUpdate(info))));
+                    if (toolkitPackage != null)
+                    {
+                        packageDataSets.Add(Mapper.Map<TelimenaPackageInfo, UpdatePackageData>(toolkitPackage
+                            , options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadToolkitUpdate(info))));
+                    }
                 }
 
 
