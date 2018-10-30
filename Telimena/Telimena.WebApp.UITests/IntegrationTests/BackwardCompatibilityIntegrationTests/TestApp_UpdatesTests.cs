@@ -52,8 +52,10 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
         public async Task HandleUpdatesNonBetaTests()
         {
             VersionTuple initialVersions =await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1, nameof(this.HandleUpdatesNonBetaTests));
+
+            FileInfo appFile;
             
-            this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Actions.HandleUpdates, TestAppProvider.FileNames.TestAppV1,nameof(this.HandleUpdatesNonBetaTests), out Application _, waitForExit: false);
+            this.LaunchTestsAppAndGetResult<UpdateCheckResult>(out appFile, Actions.HandleUpdates, TestAppProvider.FileNames.TestAppV1, nameof(this.HandleUpdatesNonBetaTests), waitForExit: false);
             Window updateNowMsgBox = await TestHelpers.WaitForWindowAsync( x => x.Equals("AutomaticTestsClient update installation"), TimeSpan.FromMinutes(2));
             updateNowMsgBox.Get<Button>(SearchCriteria.ByText("Yes")).Click();
 
@@ -68,6 +70,13 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
 
             Assert.IsTrue(newVersions.AssemblyVersion.IsNewerVersionThan(initialVersions.AssemblyVersion));
             Assert.IsTrue(newVersions.FileVersion.IsNewerVersionThan(initialVersions.FileVersion));
+
+
+            //now just assert that the update check result is empty next timee
+
+            //var result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.HandleUpdates);
+            //Assert.IsFalse(result.IsUpdateAvailable);
+            //Assert.IsNull(result.Exception);
 
         }
     }

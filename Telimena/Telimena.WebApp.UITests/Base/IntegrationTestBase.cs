@@ -49,42 +49,59 @@ namespace Telimena.WebApp.UITests.Base
             this.TestEngine.BaseInitialize();
         }
 
-        protected Process LaunchTestsApp(Actions action, string appName, string testSubfolderName, ProgramInfo pi = null, string functionName = null
-            , bool waitForExit = true)
+        protected FileInfo LaunchTestsAppNewInstance(out Process process, Actions action, string appName, string testSubfolderName, ProgramInfo pi = null
+            , string functionName = null, bool waitForExit = true)
         {
-            FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName);
+            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
 
-            Arguments args = new Arguments {ApiUrl = this.BaseUrl, Action = action};
+            process = this.LaunchTestsApp(appFile, action, pi, functionName, waitForExit);
+            return appFile;
+        }
+
+        protected Process LaunchTestsApp(FileInfo appFile, Actions action, ProgramInfo pi = null, string functionName = null, bool waitForExit = true)
+        {
+            Arguments args = new Arguments { ApiUrl = this.BaseUrl, Action = action };
             args.ProgramInfo = pi;
             args.FunctionName = functionName;
 
 
-            Process process = ProcessCreator.Create(exe, args, this.outputs, this.errors);
-            Log($"Started process: {exe.FullName}");
+            Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);
+            Log($"Started process: {appFile.FullName}");
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             if (waitForExit)
             {
                 process.WaitForExit();
-                Log($"Finished process: {exe.FullName}");
+                Log($"Finished process: {appFile.FullName}");
             }
 
             return process;
         }
 
-        protected T LaunchTestsAppAndGetResult<T>(Actions action, string appName, string testSubfolderName, out Application app, ProgramInfo pi = null, string functionName = null
-            , bool waitForExit = true) where T : class
+        protected T LaunchTestsAppAndGetResult<T>(out FileInfo appFile, Actions action, string appName, string testSubfolderName, ProgramInfo pi = null
+            , string functionName = null, bool waitForExit = true) where T : class
         {
-            var process = this.LaunchTestsApp(action, appName, testSubfolderName, pi, functionName, waitForExit);
+            appFile = this.LaunchTestsAppNewInstance(out _, action, appName, testSubfolderName, pi, functionName, waitForExit);
 
             T result = this.ParseOutput<T>();
             this.outputs.Clear();
             this.errors.Clear();
-            app = TestStack.White.Application.Attach(process);
 
             return result;
         }
+
+        protected T LaunchTestsAppAndGetResult<T>(FileInfo app, Actions action, ProgramInfo pi = null, string functionName = null, bool waitForExit = true) where T : class
+        {
+            this.LaunchTestsApp(app, action, pi, functionName, waitForExit);
+
+            T result = this.ParseOutput<T>();
+            this.outputs.Clear();
+            this.errors.Clear();
+
+            return result;
+        }
+
 
         protected T ParseOutput<T>() where T : class
         {

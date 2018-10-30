@@ -74,26 +74,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             ObjectValidator.Validate(() => Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
             ObjectValidator.Validate(() => Version.TryParse(toolkitVersion, out _), new ArgumentException($"[{toolkitVersion}] is not a valid version string"));
 
-            var updater = await this.GetUpdaterForProgram(program);
+            Updater updater = await this.GetUpdaterForProgram(program);
 
-            //UpdaterPackageInfo current = updater.Packages.FirstOrDefault(x => x.Version == version);
-            UpdaterPackageInfo current = updater.Packages.FirstOrDefault(x => x.Version == version);
-
-            List<UpdaterPackageInfo> newerOnes;
-            if (current != null)
-            {
-                newerOnes = updater.Packages.Where(x => x.Id > current.Id)
+            List<UpdaterPackageInfo> newerOnes = updater.Packages.Where(x => x.Version.IsNewerVersionThan(version))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
-            }
-            else
-            {
-                newerOnes = updater.Packages.Where(x => x.Version.IsNewerVersionThan(version))
-                    .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
-            }
+            
 
             if (newerOnes.Any())
             {
-                List<UpdaterPackageInfo> compatibleOnes = newerOnes.Where(x => toolkitVersion.IsNewerOrEqualVersion(x.MinimumRequiredToolkitVersion)).ToList();
+                List<UpdaterPackageInfo> compatibleOnes = newerOnes.Where(x => toolkitVersion.IsNewerOrEqualVersion(x.MinimumRequiredToolkitVersion))
+                    .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
                 if (includingBeta)
                 {
                     return compatibleOnes.FirstOrDefault();

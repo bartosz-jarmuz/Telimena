@@ -24,12 +24,12 @@ namespace Telimena.WebApp.UITests.Ui
         {
 
           
-                this.LaunchTestsApp(Actions.Initialize, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable));
+              var app = this.LaunchTestsAppNewInstance(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable));
                 Task.Delay(1000).GetAwaiter().GetResult();
                 var previous = this.GetLatestUsageFromTable();
             Task.Delay(1000).GetAwaiter().GetResult();
 
-            this.LaunchTestsApp(Actions.Initialize, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable));
+            this.LaunchTestsApp(app, Actions.Initialize);
 
               var current = this.GetLatestUsageFromTable();
 

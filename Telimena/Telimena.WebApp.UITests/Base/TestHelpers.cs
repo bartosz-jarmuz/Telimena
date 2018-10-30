@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TestStack.White;
@@ -19,7 +20,7 @@ namespace Telimena.WebApp.UITests.Base
             {
                 await Task.Delay(50);
 
-                Process[] allProcesses = Process.GetProcesses();
+                Process[] allProcesses = Process.GetProcesses().Where(x => !string.IsNullOrEmpty(x.MainWindowTitle)).ToArray();
                 var compiled = match.Compile();
 
                 foreach (Process allProcess in allProcesses)
@@ -43,8 +44,6 @@ namespace Telimena.WebApp.UITests.Base
                     throw new InvalidOperationException($"Failed to find window by expression on Title: {expBody}.{errorMessage}");
                 }
             }
-
-            return win;
         }
 
         public static async Task<Window> WaitForMessageBoxAsync(Window parent, string title, TimeSpan timeout, string errorMessage = "")

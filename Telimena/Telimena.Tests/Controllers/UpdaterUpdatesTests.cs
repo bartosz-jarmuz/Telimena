@@ -96,6 +96,8 @@ namespace Telimena.Tests
 
             unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.9.0.0", GenerateStream("1.5.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.9.0.0", GenerateStream("1.5.0"), this.saver).GetAwaiter().GetResult();
+            unit.CompleteAsync().GetAwaiter().GetResult();
 
             unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "1.3.0.0", GenerateStream("1.6.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
@@ -151,14 +153,14 @@ namespace Telimena.Tests
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
-            Assert.AreEqual("api/Updater/Get?id=7", result.UpdatePackages.Single().DownloadUrl);
+            Assert.AreEqual("api/Updater/Get?id=8", result.UpdatePackages.Single().DownloadUrl);
 
             request = new UpdateRequest(programId: this.programWithDifferentUpdater.Id, programVersion: "0.0", userId: 1, acceptBeta: false
                 , updaterVersion: "1.0", toolkitVersion: "1.3.0");
 
             result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.5", result.UpdatePackages.Single().Version);
-            Assert.AreEqual("api/Updater/Get?id=8", result.UpdatePackages[0].DownloadUrl);
+            Assert.AreEqual("api/Updater/Get?id=9", result.UpdatePackages[0].DownloadUrl);
         }
 
 
