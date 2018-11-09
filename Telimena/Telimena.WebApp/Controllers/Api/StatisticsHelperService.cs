@@ -85,13 +85,13 @@ namespace Telimena.WebApp.Controllers.Api
         private async Task AssignToolkitVersion(ProgramAssembly programAssembly, string programVersion, string fileVersion, string toolkitVersion)
         {
             TelimenaToolkitData toolkitData = await this.work.ToolkitData.FirstOrDefaultAsync(x => x.Version == toolkitVersion);
-            AssemblyVersion assemblyVersion = programAssembly.GetVersion(programVersion, fileVersion);
+            AssemblyVersionInfo assemblyVersionInfo = programAssembly.GetVersion(programVersion, fileVersion);
             if (toolkitData == null)
             {
                 toolkitData = new TelimenaToolkitData(toolkitVersion);
             }
 
-            assemblyVersion.ToolkitData = toolkitData;
+            assemblyVersionInfo.ToolkitData = toolkitData;
         }
 
         private async Task EnsureDeveloperSet(ProgramInfo info, Program program)

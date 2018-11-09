@@ -3,12 +3,12 @@ using Newtonsoft.Json;
 
 namespace Telimena.WebApp.Core.Models
 {
-    public class AssemblyVersion
+    public class AssemblyVersionInfo
     {
         [Obsolete("Constructor required by EF")]
-        protected AssemblyVersion() { }
+        protected AssemblyVersionInfo() { }
 
-        public AssemblyVersion(string version, string fileVersion)
+        public AssemblyVersionInfo(string version, string fileVersion)
         {
             this.Version = version;
             this.FileVersion = fileVersion;

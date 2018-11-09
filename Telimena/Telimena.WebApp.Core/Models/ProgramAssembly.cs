@@ -20,26 +20,26 @@ namespace Telimena.WebApp.Core.Models
         public string Title { get; set; }
         public string Company { get; set; }
         public string FullName { get; set; }
-        public virtual RestrictedAccessCollection<AssemblyVersion> Versions { get; set; } = new List<AssemblyVersion>();
+        public virtual RestrictedAccessCollection<AssemblyVersionInfo> Versions { get; set; } = new List<AssemblyVersionInfo>();
 
         public string GetFileName()
         {
             return this.Name + this.Extension;
         }
-        public virtual AssemblyVersion LatestVersion { get; private set; }
+        public virtual AssemblyVersionInfo LatestVersionInfo { get; private set; }
 
         public void AddVersion(string version, string fileVersion)
         {
             var existingOne = this.GetVersion(version, fileVersion);
             if (existingOne == null)
             {
-                ((Collection<AssemblyVersion>) this.Versions).Add(new AssemblyVersion(version, fileVersion));
+                ((Collection<AssemblyVersionInfo>) this.Versions).Add(new AssemblyVersionInfo(version, fileVersion));
             }
         }
 
-        public AssemblyVersion GetVersion(string version, string fileVersion)
+        public AssemblyVersionInfo GetVersion(string version, string fileVersion)
         {
-            IEnumerable<AssemblyVersion> matches = this.Versions.Where(x => x.Version == version);
+            IEnumerable<AssemblyVersionInfo> matches = this.Versions.Where(x => x.Version == version);
 
             if (!string.IsNullOrEmpty(fileVersion))
             {
@@ -48,7 +48,7 @@ namespace Telimena.WebApp.Core.Models
             return matches.FirstOrDefault();
         }
 
-        public AssemblyVersion GetLatestVersion()
+        public AssemblyVersionInfo GetLatestVersion()
         {
             return this.Versions?.OrderByDescending(x => x.Version, new VersionStringComparer())?.FirstOrDefault();
         }

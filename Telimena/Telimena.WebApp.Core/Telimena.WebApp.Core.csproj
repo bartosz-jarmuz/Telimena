@@ -88,7 +88,7 @@
     <Compile Include="Messages\CreateUpdatePackageRequest.cs" />
     <Compile Include="Messages\LatestVersionResponse.cs" />
     <Compile Include="DTO\VersionInfo.cs" />
-    <Compile Include="Models\AssemblyVersion.cs" />
+    <Compile Include="Models\AssemblyVersionInfo.cs" />
     <Compile Include="Models\Base\UsageDetail.cs" />
     <Compile Include="Models\FunctionCustomUsageData.cs" />
     <Compile Include="Models\DeveloperAccount.cs" />

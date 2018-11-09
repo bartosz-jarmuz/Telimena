@@ -42,7 +42,7 @@ namespace Telimena.WebApp.Core.Models
             return summary.UsageDetails.MaxFirstBy(x => x.Id);
         }
 
-        public AssemblyVersion GetLatestVersion()
+        public AssemblyVersionInfo GetLatestVersion()
         {
             return this.PrimaryAssembly?.GetLatestVersion();
         }

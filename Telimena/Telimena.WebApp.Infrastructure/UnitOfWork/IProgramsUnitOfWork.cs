@@ -7,7 +7,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
 {
     public interface IProgramsUnitOfWork
     {
-        IRepository<AssemblyVersion> Versions { get; }
+        IRepository<AssemblyVersionInfo> Versions { get; }
         IUserRepository Users { get; }
         ITelimenaUserManager TelimenaUserManager { get; set; }
 
