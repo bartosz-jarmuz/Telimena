@@ -149,7 +149,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 }
                 return await orderedQuery.Skip(skip).Take(take).ToListAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return await query.OrderByDescending(x=>x.Id).Skip(skip).Take(take).ToListAsync();
             }

@@ -291,7 +291,7 @@ namespace Telimena.Tests
             Helpers.AssertRegistrationResponse(response, prg, usr, 4);
             Assert.AreEqual(latestId, prg.PrimaryAssembly.GetLatestVersion().Id);
             Assert.AreEqual(latestId, prg.GetLatestVersion().Id);
-            Assert.AreEqual(firstVersionId, prg.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version).Id);
+            Assert.AreEqual(firstVersionId, prg.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version, null).Id);
 
             Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
         }
@@ -557,7 +557,7 @@ namespace Telimena.Tests
             ProgramUsageSummary summary = prg.UsageSummaries.SingleOrDefault(x => x.ClientAppUser.UserName == "TestUpdateAction_Jim Beam");
             Assert.AreEqual(2, summary.SummaryCount);
 
-            Assert.AreEqual(summary.UsageDetails.Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.Version).Id);
+            Assert.AreEqual(summary.UsageDetails.Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.Version, null).Id);
 
 
             //run again
@@ -571,7 +571,7 @@ namespace Telimena.Tests
 
             Assert.AreEqual(3, prg.GetProgramUsageDetails(response.UserId).Count);
             Assert.AreEqual(5, this.Context.ProgramUsageDetails.Count(x => x.UsageSummary.ProgramId == prg.Id));
-            Assert.AreEqual(summary.UsageDetails.Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.Version).Id);
+            Assert.AreEqual(summary.UsageDetails.Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.Version, null).Id);
         }
 
         [Test]

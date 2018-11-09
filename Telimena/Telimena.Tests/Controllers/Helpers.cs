@@ -24,7 +24,7 @@ namespace Telimena.Tests
                 ProgramAssembly ass = new ProgramAssembly {Name = assName};
                 prg.ProgramAssemblies.Add(ass);
 
-                ass.AddVersion("0.0.1.0");
+                ass.AddVersion("0.0.1.0", null);
             }
         }
 

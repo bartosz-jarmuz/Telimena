@@ -96,6 +96,7 @@
     <Compile Include="TelimenaClient\Updates\UpdateHandler.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateInstaller.cs" />
     <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\TelimenaVersionReader.cs" />
     <Compile Include="Utilities\TelimenaVersionStringComparer.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateInstructionCreator.cs" />
     <Compile Include="Messenger\ITelimenaHttpClient.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Messages\TelimenaMessageBase.cs" />
     <Compile Include="Model\UserInfo.cs" />
     <Compile Include="Serializer\TelimenaSerializer.cs" />
+    <Compile Include="Utilities\VersionTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\TelimenaKey.snk">

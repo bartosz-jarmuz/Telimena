@@ -10,10 +10,11 @@ using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
-using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
 namespace Telimena.WebApp.UITests.Ui
 {
+    using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
+
     [TestFixture()]
     public partial class UiTests : UiTestBase
     {

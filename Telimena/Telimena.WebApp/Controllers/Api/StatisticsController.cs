@@ -43,7 +43,7 @@ namespace Telimena.WebApp.Controllers.Api
                 UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser);
                 if (!request.SkipUsageIncrementation)
                 {
-                    AssemblyVersion version = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version);
+                    AssemblyVersion version = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version, request.ProgramInfo.PrimaryAssembly.FileVersion);
                     usageSummary.IncrementUsage(version, ip);
                 }
 
@@ -79,8 +79,8 @@ namespace Telimena.WebApp.Controllers.Api
                 }
 
                 UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser, updateRequest.FunctionName);
-                program.PrimaryAssembly.AddVersion(updateRequest.Version);
-                AssemblyVersion versionInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version);
+                program.PrimaryAssembly.AddVersion(updateRequest.Version, updateRequest.FileVersion);
+                AssemblyVersion versionInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version, updateRequest.FileVersion);
 
                 var ip = this.Request.GetClientIp();
                 usageSummary.IncrementUsage(versionInfo, ip, updateRequest.CustomData);

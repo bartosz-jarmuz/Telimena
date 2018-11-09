@@ -119,6 +119,7 @@ namespace TelimenaClient
                     , UserId = registrationResponse.UserId
                     , FunctionName = functionName
                     , Version = data.ProgramInfo.PrimaryAssembly.Version
+                    , FileVersion= data.ProgramInfo.PrimaryAssembly.FileVersion
                 };
                 responseContent = await messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, updateRequest).ConfigureAwait(false);
                 return serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
@@ -165,7 +166,7 @@ namespace TelimenaClient
 
             UserInfo userInfo = new UserInfo {UserName = Environment.UserName, MachineName = Environment.MachineName};
 
-            string telimenaVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            string telimenaVersion = TelimenaVersionReader.ReadToolkitVersion(Assembly.GetExecutingAssembly());
 
             return new StartupData(info, userInfo, telimenaVersion);
         }

@@ -39,7 +39,8 @@ namespace Telimena.WebApp.Controllers.Api
                 this._work.Programs.Add(program);
             }
 
-            program.PrimaryAssembly.AddVersion(requestProgramInfo.ProgramInfo.PrimaryAssembly.Version);
+            AssemblyInfo primaryAss = requestProgramInfo.ProgramInfo.PrimaryAssembly;
+            program.PrimaryAssembly.AddVersion(primaryAss.Version, primaryAss.FileVersion);
 
             if (requestProgramInfo.ProgramInfo.HelperAssemblies.AnyAndNotNull())
             {
@@ -52,12 +53,11 @@ namespace Telimena.WebApp.Controllers.Api
                         program.ProgramAssemblies.Add(existingAssembly);
                     }
 
-                    existingAssembly.AddVersion(helperAssembly.Version);
+                    existingAssembly.AddVersion(helperAssembly.Version, helperAssembly.FileVersion);
                 }
             }
 
-            await this.AssignToolkitVersion(program.PrimaryAssembly, requestProgramInfo.ProgramInfo.PrimaryAssembly.Version
-                , requestProgramInfo.TelimenaVersion);
+            await this.AssignToolkitVersion(program.PrimaryAssembly, primaryAss.Version, primaryAss.FileVersion, requestProgramInfo.TelimenaVersion);
             await this.EnsureDeveloperSet(requestProgramInfo.ProgramInfo, program);
             return program;
         }
@@ -82,10 +82,10 @@ namespace Telimena.WebApp.Controllers.Api
             return user;
         }
 
-        private async Task AssignToolkitVersion(ProgramAssembly programAssembly, string programVersion, string toolkitVersion)
+        private async Task AssignToolkitVersion(ProgramAssembly programAssembly, string programVersion, string fileVersion, string toolkitVersion)
         {
             TelimenaToolkitData toolkitData = await this._work.ToolkitData.FirstOrDefaultAsync(x => x.Version == toolkitVersion);
-            AssemblyVersion assemblyVersion = programAssembly.GetVersion(programVersion);
+            AssemblyVersion assemblyVersion = programAssembly.GetVersion(programVersion, fileVersion);
             if (toolkitData == null)
             {
                 toolkitData = new TelimenaToolkitData(toolkitVersion);

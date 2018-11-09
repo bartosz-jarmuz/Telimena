@@ -65,6 +65,7 @@ namespace TelimenaClient
                     , UserId = this.LiveProgramInfo.UserId
                     , FunctionName = functionName
                     , Version = this.StaticProgramInfo.PrimaryAssembly.Version
+                    , FileVersion = this.StaticProgramInfo.PrimaryAssembly.FileVersion
                     , CustomData = customData
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request).ConfigureAwait(false);

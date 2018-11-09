@@ -22,9 +22,17 @@
         public string FunctionName { get; set; }
         /// <summary>
         /// Gets or sets the version.
+        /// <para/><seealso href="https://stackoverflow.com/questions/64602/what-are-differences-between-assemblyversion-assemblyfileversion-and-assemblyin"/> 
         /// </summary>
         /// <value>The version.</value>
         public string Version { get; set; }
+
+        /// <summary>
+        /// The file version which is set by [assembly: AssemblyFileVersion("1.0.0.0")] attribute
+        /// <para/><seealso href="https://stackoverflow.com/questions/64602/what-are-differences-between-assemblyversion-assemblyfileversion-and-assemblyin"/> 
+        /// </summary>
+        public string FileVersion { get; set; }
+
         /// <summary>
         /// Gets or sets the custom data.
         /// </summary>

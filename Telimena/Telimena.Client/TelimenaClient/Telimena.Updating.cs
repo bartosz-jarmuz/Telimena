@@ -111,8 +111,8 @@ namespace TelimenaClient
             FileInfo updaterFile = this.Locator.GetUpdater();
             if (updaterFile.Exists)
             {
-                FileVersionInfo version = FileVersionInfo.GetVersionInfo(updaterFile.FullName);
-                return string.IsNullOrEmpty(version.FileVersion) ? "0.0.0.0" : version.FileVersion;
+                string version = TelimenaVersionReader.ReadToolkitVersion(updaterFile.FullName);
+                return string.IsNullOrEmpty(version) ? "0.0.0.0" : version;
             }
             else
             {

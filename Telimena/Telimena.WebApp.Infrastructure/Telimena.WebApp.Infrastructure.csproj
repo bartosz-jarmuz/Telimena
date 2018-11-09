@@ -189,6 +189,14 @@
     <Compile Include="Migrations\201810141356207_IPAddresses.Designer.cs">
       <DependentUpon>201810141356207_IPAddresses.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201810301809564_addedmoreversionproperties.cs" />
+    <Compile Include="Migrations\201810301809564_addedmoreversionproperties.Designer.cs">
+      <DependentUpon>201810301809564_addedmoreversionproperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810302252080_RemoveProductVersion.cs" />
+    <Compile Include="Migrations\201810302252080_RemoveProductVersion.Designer.cs">
+      <DependentUpon>201810302252080_RemoveProductVersion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
@@ -259,6 +267,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201810141356207_IPAddresses.resx">
       <DependentUpon>201810141356207_IPAddresses.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810301809564_addedmoreversionproperties.resx">
+      <DependentUpon>201810301809564_addedmoreversionproperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810302252080_RemoveProductVersion.resx">
+      <DependentUpon>201810302252080_RemoveProductVersion.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

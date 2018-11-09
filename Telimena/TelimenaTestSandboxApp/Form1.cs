@@ -14,7 +14,7 @@ namespace TelimenaTestSandboxApp
             this.InitializeComponent();
             this.apiUrlTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.baseUri) ? "http://localhost:7757/" : Properties.Settings.Default.baseUri;
             this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
-            this.Text = $"Sandbox v. {Assembly.GetExecutingAssembly().GetName().Version}";
+            this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
         }
 
         private string PresentResponse(TelimenaResponseBase response)

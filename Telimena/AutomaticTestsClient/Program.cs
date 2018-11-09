@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using TelimenaClient;
 
 namespace AutomaticTestsClient
 {
@@ -21,7 +22,10 @@ namespace AutomaticTestsClient
         {
             if (args.Length == 0)
             {
-                MessageBox.Show($"AssemblyVersion: {typeof(Program).Assembly.GetName().Version}\r\nFileVersion: {GetFileVersion(typeof(Program))}", "AutomaticTestsClient - This app requires arguments to run");
+                MessageBox.Show($"AssemblyVersion: {TelimenaVersionReader.Read(typeof(Program), VersionTypes.AssemblyVersion)}\r\n" + 
+                                $"FileVersion: {TelimenaVersionReader.Read(typeof(Program), VersionTypes.FileVersion)}\r\n" + 
+                                $"Telimena Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.AssemblyVersion)}\r\n" + 
+                                $"Telimena File Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.FileVersion)}", "AutomaticTestsClient - This app requires arguments to run");
                 return;
             }
 
