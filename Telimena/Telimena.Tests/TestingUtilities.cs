@@ -36,9 +36,9 @@ namespace Telimena.Tests
             controller.Request = httpRequest;
         }
 
-        public static Mock<IAssemblyVersionReader> GetMockVersionReader()
+        public static Mock<IAssemblyStreamVersionReader> GetMockVersionReader()
         {
-            Mock<IAssemblyVersionReader> reader = new Mock<IAssemblyVersionReader>();
+            Mock<IAssemblyStreamVersionReader> reader = new Mock<IAssemblyStreamVersionReader>();
             reader.Setup(x => x.GetFileVersion(It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<bool>())).Returns((Stream stream, string assName, bool singleFile) =>
             {
                 var str = TestingUtilities.ExtractString(stream);

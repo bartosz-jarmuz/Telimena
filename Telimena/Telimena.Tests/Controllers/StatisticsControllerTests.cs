@@ -40,7 +40,7 @@ namespace Telimena.Tests
         [Test]
         public void TestFunctionUsages()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             Helpers.SeedInitialPrograms(sut, 2, Helpers.GetName("TestApp"), Helpers.GetName("Billy Jean"));
             Helpers.SeedInitialPrograms(sut, 2, Helpers.GetName("TestApp"), Helpers.GetName("Jack Black"));
@@ -109,7 +109,7 @@ namespace Telimena.Tests
         {
             StatisticsUpdateRequest request = new StatisticsUpdateRequest {ProgramId = 123123, UserId = 23};
 
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
 
             StatisticsController sut = new StatisticsController(unit);
             StatisticsUpdateResponse response = sut.Update(request).GetAwaiter().GetResult();
@@ -119,7 +119,7 @@ namespace Telimena.Tests
         [Test]
         public void TestMissingUser()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
 
             unit.Programs.Add(new Program("SomeApp") {PrimaryAssembly = new ProgramAssembly {Name = "SomeApp.dll", Company = "SomeCompm"}});
 
@@ -137,7 +137,7 @@ namespace Telimena.Tests
         [Test]
         public void TestReferencedAssemblies_Add()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             Helpers.SeedInitialPrograms(sut, 4, Helpers.GetName("TestApp"), Helpers.GetName("Johny Walker"));
             Helpers.AddHelperAssemblies(this.Context, 2, Helpers.GetName("TestApp"));
@@ -153,7 +153,7 @@ namespace Telimena.Tests
         [Test]
         public void TestReferencedAssembliesAddRemove()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             RegistrationRequest request = new RegistrationRequest
             {
@@ -187,7 +187,7 @@ namespace Telimena.Tests
             this.Context.Users.Add(teliUser);
             this.Context.Developers.Add(new DeveloperAccount(teliUser));
             this.Context.SaveChanges();
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             int devId = unit.Developers.FirstOrDefault(x => x.MainEmail == teliUser.Email).Id;
             Assert.IsTrue(devId > 0);
 
@@ -210,7 +210,7 @@ namespace Telimena.Tests
         [Test]
         public void TestRegistration_DevIdProvided_DevNotFound()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
@@ -228,7 +228,7 @@ namespace Telimena.Tests
         [Test]
         public void TestRegistration_SameAppEachTime()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
@@ -299,7 +299,7 @@ namespace Telimena.Tests
         [Test]
         public void TestRegistration_SameAppEachTime_ValidateHelperAssemblies()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
@@ -382,7 +382,7 @@ namespace Telimena.Tests
         [Test]
         public void TestRegistration_SameAppTwoUsers_DifferentVersions()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             UserInfo oldGuyUserInfo = Helpers.GetUserInfo(Helpers.GetName("OldGuy"));
             UserInfo newGuyUserInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
@@ -441,7 +441,7 @@ namespace Telimena.Tests
             for (int i = 0; i <= 2; i++)
             {
 
-                unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+                unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
                  sut = new StatisticsController(unit);
 
                 SetIp(sut, "1.2.3.4");
@@ -459,7 +459,7 @@ namespace Telimena.Tests
 
             }
 
-            unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             sut = new StatisticsController(unit);
 
             SetIp(sut, "2.2.3.4");
@@ -477,7 +477,7 @@ namespace Telimena.Tests
         [Test]
         public void TestRegistration_SameUserTwoApps_HappyPath()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
@@ -517,7 +517,7 @@ namespace Telimena.Tests
         [Test]
         public void TestRegistration_SkipUsageIncremet()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
@@ -538,7 +538,7 @@ namespace Telimena.Tests
         [Test]
         public void TestUpdateAction()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             Helpers.SeedInitialPrograms(sut, 4, Helpers.GetName("TestApp"), Helpers.GetName("Johny Walker"));
             Helpers.SeedInitialPrograms(sut, 4, Helpers.GetName("TestApp"), Helpers.GetName("Jim Beam"));
@@ -577,7 +577,7 @@ namespace Telimena.Tests
         [Test]
         public void TestUsageDetailsAndVersions()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyVersionReader());
+            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             StatisticsController sut = new StatisticsController(unit);
             Helpers.SeedInitialPrograms(sut, 2, Helpers.GetName("TestApp"), Helpers.GetName("Billy Jean"));
             Helpers.SeedInitialPrograms(sut, 2, Helpers.GetName("TestApp"), Helpers.GetName("Jack Black"));

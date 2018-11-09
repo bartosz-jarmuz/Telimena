@@ -7,7 +7,7 @@ using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 {
-    public class AssemblyVersionReader : IAssemblyVersionReader
+    public class AssemblyStreamVersionReader : IAssemblyStreamVersionReader
     {
         public async Task<string> GetFileVersion(Stream stream, string expectedFileName, bool expectSingleFile)
         {

@@ -14,9 +14,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
     public class ProgramPackageRepository : Repository<ProgramPackageInfo>, IProgramPackageRepository
     {
-        private readonly IAssemblyVersionReader versionReader;
+        private readonly IAssemblyStreamVersionReader versionReader;
 
-        public ProgramPackageRepository(DbContext dbContext, IAssemblyVersionReader versionReader) : base(dbContext)
+        public ProgramPackageRepository(DbContext dbContext, IAssemblyStreamVersionReader versionReader) : base(dbContext)
         {
             this.versionReader = versionReader;
             this.telimenaContext = dbContext as TelimenaContext;

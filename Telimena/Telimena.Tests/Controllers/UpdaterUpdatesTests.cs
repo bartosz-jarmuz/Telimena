@@ -22,7 +22,7 @@ namespace Telimena.Tests
         private ITelimenaSerializer serializer = new TelimenaSerializer();
 
         private IFileSaver saver = new Mock<IFileSaver>().Object;
-        private IAssemblyVersionReader assemblyVersionReader;
+        private IAssemblyStreamVersionReader assemblyStreamVersionReader;
         private string otherUpdaterInternalName = "SomeUpdater";
         private Program programWhichChangesUpdater;
         private Program programWithDifferentUpdater;
@@ -59,8 +59,8 @@ namespace Telimena.Tests
 
         private IToolkitDataUnitOfWork Prepare()
         {
-            this.assemblyVersionReader = GetMockVersionReader().Object;
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyVersionReader);
+            this.assemblyStreamVersionReader = GetMockVersionReader().Object;
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
 
             var defaultUpdater = unit.UpdaterRepository.GetUpdater(DefaultToolkitNames.UpdaterInternalName).GetAwaiter().GetResult();
             var user = unit.Users.FirstOrDefault();
@@ -146,7 +146,7 @@ namespace Telimena.Tests
         [Test]
         public void Test_LatestUpdaterIsCompatible()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyVersionReader);
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
             UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             var request = new UpdateRequest(programId: this.testProgram.Id, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0"
                 , toolkitVersion: "1.3.0");
@@ -167,7 +167,7 @@ namespace Telimena.Tests
         [Test]
         public void Test_UpdaterChange()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyVersionReader);
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
             UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             var request = new UpdateRequest(programId: this.programWhichChangesUpdater.Id, programVersion: "0.0", userId: 1, acceptBeta: false
                 , updaterVersion: "1.0", toolkitVersion: "1.3.0");
@@ -186,7 +186,7 @@ namespace Telimena.Tests
         [Test]
         public void Test_LatestUpdaterIsNotCompatible_BreakingChanges()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context, versionReader: new AssemblyVersionReader());
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context, streamVersionReader: new AssemblyStreamVersionReader());
             UpdaterController controller = new UpdaterController(work: unit, serializer: this.serializer, fileSaver: new Mock<IFileSaver>().Object
                 , fileRetriever: new Mock<IFileRetriever>().Object);
             var request = new UpdateRequest(programId: this.testProgram.Id, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0"
@@ -209,7 +209,7 @@ namespace Telimena.Tests
         [Test]
         public void Test_LatestUpdaterIsUsed()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyVersionReader());
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             var request = new UpdateRequest(programId: this.testProgram.Id, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.1"
                 , toolkitVersion: "0.2.0");

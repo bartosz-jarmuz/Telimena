@@ -21,7 +21,7 @@ namespace Telimena.Tests
 
 
             var stream = File.OpenRead(zip.FullName);
-            var sut = new AssemblyVersionReader();
+            var sut = new AssemblyStreamVersionReader();
             Assert.AreEqual("1.5.0.0", sut.GetVersionFromPackage("TelimenaTestSandboxApp.exe", stream, true).GetAwaiter().GetResult());
             Assert.IsTrue(stream.CanRead);
             Assert.IsTrue(stream.CanSeek);
@@ -41,7 +41,7 @@ namespace Telimena.Tests
 
 
             var stream = File.OpenRead(zip.FullName);
-            var sut = new AssemblyVersionReader();
+            var sut = new AssemblyStreamVersionReader();
 
             Assert.That( () => sut.GetVersionFromPackage("TelimenaTestSandboxApp.exe", stream, true).GetAwaiter().GetResult(), 
                 Throws.Exception.With.Message.Contains($"Failed to find the required assembly in the uploaded package. [TelimenaTestSandboxApp.exe] should be present."));

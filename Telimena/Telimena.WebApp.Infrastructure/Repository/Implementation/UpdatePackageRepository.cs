@@ -26,11 +26,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
     internal class UpdatePackageRepository : Repository<ProgramUpdatePackageInfo>, IUpdatePackageRepository
     {
-        private readonly IAssemblyVersionReader versionReader;
+        private readonly IAssemblyStreamVersionReader streamVersionReader;
 
-        public UpdatePackageRepository(DbContext dbContext, IAssemblyVersionReader versionReader) : base(dbContext)
+        public UpdatePackageRepository(DbContext dbContext, IAssemblyStreamVersionReader streamVersionReader) : base(dbContext)
         {
-            this.versionReader = versionReader;
+            this.streamVersionReader = streamVersionReader;
             this.TelimenaContext = dbContext as TelimenaContext;
         }
 
@@ -40,10 +40,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string packageName, Stream fileStream, string supportedToolkitVersion, IFileSaver fileSaver)
         {
-            string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  true);
+            string actualVersion = await this.streamVersionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  true);
             fileStream.Position = 0;
 
-            string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, false);
+            string actualToolkitVersion = await this.streamVersionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, false);
             fileStream.Position = 0;
             fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream);
 

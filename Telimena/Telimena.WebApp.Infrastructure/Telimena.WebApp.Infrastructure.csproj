@@ -198,11 +198,11 @@
       <DependentUpon>201810302252080_RemoveProductVersion.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Repository\FileStorage\AssemblyVersionReader.cs" />
+    <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\AzureFileSaver.cs" />
     <Compile Include="Repository\FileStorage\AzureStorageConnectorBase.cs" />
-    <Compile Include="Repository\FileStorage\IAssemblyVersionReader.cs" />
+    <Compile Include="Repository\FileStorage\IAssemblyStreamVersionReader.cs" />
     <Compile Include="Repository\FileStorage\IFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\IFileSaver.cs" />
     <Compile Include="Repository\FileStorage\LocalFileRetriever.cs" />

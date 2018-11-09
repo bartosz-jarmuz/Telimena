@@ -10,7 +10,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
     public class StatisticsUnitOfWork : IStatisticsUnitOfWork
     {
       
-        public StatisticsUnitOfWork(TelimenaContext context, IAssemblyVersionReader versionReader)
+        public StatisticsUnitOfWork(TelimenaContext context, IAssemblyStreamVersionReader versionReader)
         {
             this.context = context;
             this.ClientAppUsers = new Repository<ClientAppUser>(context);

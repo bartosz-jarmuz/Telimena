@@ -10,7 +10,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 {
     public class ProgramsUnitOfWork : IProgramsUnitOfWork
     {
-        public ProgramsUnitOfWork(TelimenaContext context, ITelimenaUserManager userManager, IAssemblyVersionReader versionReader)
+        public ProgramsUnitOfWork(TelimenaContext context, ITelimenaUserManager userManager, IAssemblyStreamVersionReader versionReader)
         {
             this._context = context;
             this.Versions = new Repository<AssemblyVersion>(context);

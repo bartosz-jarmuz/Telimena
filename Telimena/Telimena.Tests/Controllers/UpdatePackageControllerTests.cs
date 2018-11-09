@@ -27,13 +27,13 @@ namespace Telimena.Tests
 
         private IProgramsUnitOfWork GetUnit(List<ProgramUpdatePackageInfo> list, List<TelimenaPackageInfo> toolkitPackages = null)
         {
-            UpdatePackageRepository pkgRepo = new UpdatePackageRepository(this.Context, new AssemblyVersionReader());
+            UpdatePackageRepository pkgRepo = new UpdatePackageRepository(this.Context, new AssemblyStreamVersionReader());
             ProgramRepository prgRepo = new ProgramRepository(this.Context);
-            ProgramPackageRepository prgPkgRepo = new ProgramPackageRepository(this.Context, new AssemblyVersionReader());
+            ProgramPackageRepository prgPkgRepo = new ProgramPackageRepository(this.Context, new AssemblyStreamVersionReader());
             prgPkgRepo.Add(new ProgramPackageInfo("Prg.zip", 1, 2222, "1.0.0.0"));
             prgRepo.Add(new Program("prg") {Id = 1});
 
-            Mock<IAssemblyVersionReader> reader = TestingUtilities.GetMockVersionReader();
+            Mock<IAssemblyStreamVersionReader> reader = TestingUtilities.GetMockVersionReader();
             this.AddToolkits(reader.Object, toolkitPackages);
 
             foreach (ProgramUpdatePackageInfo programUpdatePackageInfo in list)
@@ -52,7 +52,7 @@ namespace Telimena.Tests
 
         
 
-        private void AddToolkits(IAssemblyVersionReader reader, List<TelimenaPackageInfo> toolkitPackages = null)
+        private void AddToolkits(IAssemblyStreamVersionReader reader, List<TelimenaPackageInfo> toolkitPackages = null)
         {
           
             var toolkitRepo = new ToolkitDataRepository(this.Context, reader);

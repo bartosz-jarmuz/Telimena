@@ -16,9 +16,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
     internal sealed class ToolkitDataRepository : Repository<TelimenaToolkitData>, IToolkitDataRepository
     {
         private readonly string containerName = "toolkit-packages";
-        private readonly IAssemblyVersionReader versionReader;
+        private readonly IAssemblyStreamVersionReader versionReader;
 
-        public ToolkitDataRepository(DbContext dbContext, IAssemblyVersionReader versionReader) : base(dbContext)
+        public ToolkitDataRepository(DbContext dbContext, IAssemblyStreamVersionReader versionReader) : base(dbContext)
         {
             this.versionReader = versionReader;
             this.TelimenaContext = dbContext as TelimenaContext;
