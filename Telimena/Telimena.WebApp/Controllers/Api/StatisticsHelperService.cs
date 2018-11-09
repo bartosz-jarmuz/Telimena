@@ -13,18 +13,18 @@ namespace Telimena.WebApp.Controllers.Api
     {
         public StatisticsHelperService(IStatisticsUnitOfWork work)
         {
-            this._work = work;
+            this.work = work;
         }
 
-        private readonly IStatisticsUnitOfWork _work;
+        private readonly IStatisticsUnitOfWork work;
 
         public async Task<Function> GetFunctionOrAddIfNotExists(string functionName, Program program)
         {
-            Function func = await this._work.Functions.FirstOrDefaultAsync(x => x.Name == functionName && x.Program.Name == program.Name);
+            Function func = await this.work.Functions.FirstOrDefaultAsync(x => x.Name == functionName && x.Program.Name == program.Name);
             if (func == null)
             {
                 func = new Function {Name = functionName, Program = program, ProgramId = program.Id};
-                this._work.Functions.Add(func);
+                this.work.Functions.Add(func);
             }
 
             return func;
@@ -32,11 +32,11 @@ namespace Telimena.WebApp.Controllers.Api
 
         public async Task<Program> GetProgramOrAddIfNotExists(RegistrationRequest requestProgramInfo)
         {
-            Program program = await this._work.Programs.FirstOrDefaultAsync(x => x.Name == requestProgramInfo.ProgramInfo.Name);
+            Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Name == requestProgramInfo.ProgramInfo.Name);
             if (program == null)
             {
                 program = Mapper.Map<Program>(requestProgramInfo.ProgramInfo);
-                this._work.Programs.Add(program);
+                this.work.Programs.Add(program);
             }
 
             AssemblyInfo primaryAss = requestProgramInfo.ProgramInfo.PrimaryAssembly;
@@ -64,13 +64,13 @@ namespace Telimena.WebApp.Controllers.Api
 
         public async Task<ClientAppUser> GetUserInfoOrAddIfNotExists(UserInfo userDto, string ip)
         {
-            ClientAppUser user = await this._work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserName == userDto.UserName);
+            ClientAppUser user = await this.work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserName == userDto.UserName);
             if (user == null)
             {
                 user = Mapper.Map<ClientAppUser>(userDto);
                 user.RegisteredDate = DateTime.UtcNow;
                 user.IpAddresses.Add(ip);
-                this._work.ClientAppUsers.Add(user);
+                this.work.ClientAppUsers.Add(user);
             }
             else
             {
@@ -84,7 +84,7 @@ namespace Telimena.WebApp.Controllers.Api
 
         private async Task AssignToolkitVersion(ProgramAssembly programAssembly, string programVersion, string fileVersion, string toolkitVersion)
         {
-            TelimenaToolkitData toolkitData = await this._work.ToolkitData.FirstOrDefaultAsync(x => x.Version == toolkitVersion);
+            TelimenaToolkitData toolkitData = await this.work.ToolkitData.FirstOrDefaultAsync(x => x.Version == toolkitVersion);
             AssemblyVersion assemblyVersion = programAssembly.GetVersion(programVersion, fileVersion);
             if (toolkitData == null)
             {
@@ -98,7 +98,7 @@ namespace Telimena.WebApp.Controllers.Api
         {
             if (program.DeveloperAccount == null && info.DeveloperId != null)
             {
-                DeveloperAccount dev = await this._work.Developers.FirstOrDefaultAsync(x => x.Id == info.DeveloperId);
+                DeveloperAccount dev = await this.work.Developers.FirstOrDefaultAsync(x => x.Id == info.DeveloperId);
                 if (dev != null)
                 {
                     program.DeveloperAccount = dev;
