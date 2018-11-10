@@ -186,7 +186,7 @@ namespace Telimena.Tests
         [Test]
         public void Test_LatestUpdaterIsNotCompatible_BreakingChanges()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context, streamVersionReader: new AssemblyStreamVersionReader());
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context, versionReader: new AssemblyStreamVersionReader());
             UpdaterController controller = new UpdaterController(work: unit, serializer: this.serializer, fileSaver: new Mock<IFileSaver>().Object
                 , fileRetriever: new Mock<IFileRetriever>().Object);
             var request = new UpdateRequest(programId: this.testProgram.Id, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0"
