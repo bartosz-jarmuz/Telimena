@@ -89,9 +89,9 @@ namespace Telimena.Tests
         {
             var data = new List<FunctionUsageDetail>();
 
-            data.Add(new FunctionUsageDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"), AssemblyVersionInfo = new AssemblyVersionInfo("2.0", null ) });
-            data.Add(new FunctionUsageDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"), AssemblyVersionInfo = new AssemblyVersionInfo("6.0", null ) });
-            data.Add(new FunctionUsageDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"), AssemblyVersionInfo = new AssemblyVersionInfo("4.0", null ) });
+            data.Add(new FunctionUsageDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"), AssemblyVersion = new AssemblyVersion("2.0", null ) });
+            data.Add(new FunctionUsageDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"), AssemblyVersion = new AssemblyVersion("6.0", null ) });
+            data.Add(new FunctionUsageDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"), AssemblyVersion = new AssemblyVersion("4.0", null ) });
            
             var sorts = new List<Tuple<string, bool>>();
             sorts.Add(new Tuple<string, bool>("WrongKey", false));
@@ -109,14 +109,14 @@ namespace Telimena.Tests
         {
             var data = new List<FunctionUsageDetail>();
 
-            data.Add(new FunctionUsageDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"),AssemblyVersionInfo = new AssemblyVersionInfo("2.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"),AssemblyVersionInfo = new AssemblyVersionInfo("6.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersionInfo = new AssemblyVersionInfo("4.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersionInfo = new AssemblyVersionInfo("4.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 5, UsageSummary = this.GetSummary("AAA", "XXX"),AssemblyVersionInfo = new AssemblyVersionInfo("2.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 6, UsageSummary = this.GetSummary("AAA", "YYY"),AssemblyVersionInfo = new AssemblyVersionInfo("2.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 7, UsageSummary = this.GetSummary("BBB", "YYY"),AssemblyVersionInfo = new AssemblyVersionInfo("9.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 8, UsageSummary = this.GetSummary("BBB", "XXX"),AssemblyVersionInfo = new AssemblyVersionInfo("1.0", null)});
+            data.Add(new FunctionUsageDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"),AssemblyVersion = new AssemblyVersion("2.0", null)});
+            data.Add(new FunctionUsageDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"),AssemblyVersion = new AssemblyVersion("6.0", null)});
+            data.Add(new FunctionUsageDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersion("4.0", null)});
+            data.Add(new FunctionUsageDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersion("4.0", null)});
+            data.Add(new FunctionUsageDetail() { Id = 5, UsageSummary = this.GetSummary("AAA", "XXX"),AssemblyVersion = new AssemblyVersion("2.0", null)});
+            data.Add(new FunctionUsageDetail() { Id = 6, UsageSummary = this.GetSummary("AAA", "YYY"),AssemblyVersion = new AssemblyVersion("2.0", null)});
+            data.Add(new FunctionUsageDetail() { Id = 7, UsageSummary = this.GetSummary("BBB", "YYY"),AssemblyVersion = new AssemblyVersion("9.0", null)});
+            data.Add(new FunctionUsageDetail() { Id = 8, UsageSummary = this.GetSummary("BBB", "XXX"),AssemblyVersion = new AssemblyVersion("1.0", null)});
 
 
             var sorts = new List<Tuple<string, bool>>();

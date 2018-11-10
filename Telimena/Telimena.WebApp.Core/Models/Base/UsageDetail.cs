@@ -11,6 +11,6 @@ namespace Telimena.WebApp.Core.Models
         public int? AssemblyVersionId { get; set; }
         public string IpAddress { get; set; }
 
-        public virtual AssemblyVersionInfo AssemblyVersionInfo { get; set; }
+        public virtual AssemblyVersion AssemblyVersion { get; set; }
     }
 }

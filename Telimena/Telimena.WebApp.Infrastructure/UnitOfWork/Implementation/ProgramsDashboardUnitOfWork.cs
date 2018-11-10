@@ -112,7 +112,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     }
                     else if (rule.Item1 == nameof(UsageData.ProgramVersion))
                     {
-                        query = Order(query, x=>x.AssemblyVersionInfo.Version, rule.Item2, index);
+                        query = Order(query, x=>x.AssemblyVersion.Version, rule.Item2, index);
                     }
                     else if (rule.Item1 == nameof(UsageData.UserName))
                     {
@@ -245,7 +245,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     , DateTime = detail.DateTime
                     , UserName = detail.UsageSummary.ClientAppUser.UserName
                     , FunctionName = detail.UsageSummary.Function.Name
-                    , ProgramVersion = detail.AssemblyVersionInfo.Version
+                    , ProgramVersion = detail.AssemblyVersion.Version
                 };
                 result.Add(data);
             }
@@ -277,7 +277,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     ,
                     UserName = detail.UsageSummary.ClientAppUser.UserName
                     ,
-                    ProgramVersion = detail.AssemblyVersionInfo.Version
+                    ProgramVersion = detail.AssemblyVersion.Version
 
                 };
                 result.Add(data);
@@ -302,7 +302,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 obj.genericData = new ExpandoObject();
                 obj.genericData.DateTime = detail.DateTime;
                 obj.genericData.detailId = detail.Id;
-                obj.genericData.programVersion = detail.AssemblyVersionInfo.Version;
+                obj.genericData.programVersion = detail.AssemblyVersion.Version;
                 obj.genericData.functionName = detail.UsageSummary.Function.Name;
                 obj.genericData.userName = detail.UsageSummary.ClientAppUser.UserName;
                 obj.genericData.userId = detail.UsageSummary.ClientAppUserId;

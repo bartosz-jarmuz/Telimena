@@ -55,7 +55,7 @@ namespace Telimena.WebApp.Infrastructure.Database
         public DbSet<ClientAppUser> AppUsers { get; set; }
         public DbSet<DeveloperAccount> Developers { get; set; }
         public DbSet<ProgramAssembly> ProgramAssemblies { get; set; }
-        public DbSet<AssemblyVersionInfo> Versions { get; set; }
+        public DbSet<AssemblyVersion> Versions { get; set; }
         public DbSet<TelimenaToolkitData> TelimenaToolkitData { get; set; }
         public DbSet<TelimenaPackageInfo> ToolkitPackages { get; set; }
         public DbSet<ProgramUpdatePackageInfo> UpdatePackages { get; set; }
@@ -72,9 +72,9 @@ namespace Telimena.WebApp.Infrastructure.Database
 
             modelBuilder.Entity<Program>().HasOptional(a => a.PrimaryAssembly).WithOptionalPrincipal(u => u.PrimaryOf);
 
-            modelBuilder.Entity<AssemblyVersionInfo>().HasRequired(a => a.ProgramAssembly).WithMany(c => c.Versions).HasForeignKey(a => a.ProgramAssemblyId);
+            modelBuilder.Entity<AssemblyVersion>().HasRequired(a => a.ProgramAssembly).WithMany(c => c.Versions).HasForeignKey(a => a.ProgramAssemblyId);
 
-            modelBuilder.Entity<ProgramAssembly>().HasOptional(a => a.LatestVersionInfo).WithOptionalPrincipal(u => u.LatestVersionOf);
+            modelBuilder.Entity<ProgramAssembly>().HasOptional(a => a.LatestVersion).WithOptionalPrincipal(u => u.LatestVersionOf);
 
             modelBuilder.Entity<TelimenaUser>().HasMany(s => s.AssociatedDeveloperAccounts).WithMany(c => c.AssociatedUsers).Map(cs =>
             {

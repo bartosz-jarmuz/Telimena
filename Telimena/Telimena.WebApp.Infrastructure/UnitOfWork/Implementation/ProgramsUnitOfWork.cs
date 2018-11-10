@@ -13,7 +13,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         public ProgramsUnitOfWork(TelimenaContext context, ITelimenaUserManager userManager, IAssemblyStreamVersionReader versionReader)
         {
             this._context = context;
-            this.Versions = new Repository<AssemblyVersionInfo>(context);
+            this.Versions = new Repository<AssemblyVersion>(context);
             this.Users = new UserRepository(context);
             this.Functions = new FunctionRepository(context);
             this.Programs = new ProgramRepository(context);
@@ -32,7 +32,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         public IUpdatePackageRepository UpdatePackages { get; set; }
         public IUpdaterRepository UpdaterRepository { get; set; }
         public IProgramPackageRepository ProgramPackages { get; set; }
-        public IRepository<AssemblyVersionInfo> Versions { get; }
+        public IRepository<AssemblyVersion> Versions { get; }
         public IProgramRepository Programs { get; }
         public IFunctionRepository Functions { get; }
 

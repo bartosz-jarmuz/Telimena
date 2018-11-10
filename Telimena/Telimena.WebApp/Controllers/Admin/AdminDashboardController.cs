@@ -82,7 +82,7 @@ namespace Telimena.WebApp.Controllers.Admin
 
             foreach (Tuple<string, bool> rule in rules)
             {
-                if (rule.Item1 == nameof(Audit.Timestamp) || rule.Item1 == nameof(UsageDetail.DateTime) || rule.Item1 == nameof(UsageDetail.AssemblyVersionInfo))
+                if (rule.Item1 == nameof(Audit.Timestamp) || rule.Item1 == nameof(UsageDetail.DateTime) || rule.Item1 == nameof(UsageDetail.AssemblyVersion))
                 {
                     query = query.OrderBy(rule.Item1, rule.Item2);
                 }

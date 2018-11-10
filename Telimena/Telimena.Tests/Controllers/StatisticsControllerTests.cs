@@ -588,7 +588,7 @@ namespace Telimena.Tests
             ProgramUsageDetail detail = prg.GetLatestUsageDetail();
             Assert.AreEqual(usr2.Id, detail.UsageSummary.ClientAppUserId);
             Assert.AreEqual(null, detail.CustomUsageData);
-            Assert.AreEqual("1.2.3.4", detail.AssemblyVersionInfo.Version);
+            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.Version);
 
             StatisticsUpdateRequest request = new StatisticsUpdateRequest {ProgramId = prg.Id, UserId = usr.Id, Version = "1.2.3.4"};
 
@@ -598,14 +598,14 @@ namespace Telimena.Tests
             Assert.AreEqual(3, prg.UsageSummaries.Sum(x => x.UsageDetails.Count));
             Assert.AreEqual(2, prg.GetProgramUsageDetails(usr.Id).Count);
             Assert.AreEqual(1, prg.GetProgramUsageDetails(usr2.Id).Count);
-            Assert.IsTrue(prg.GetProgramUsageDetails(usr.Id).All(x => x.AssemblyVersionInfo.Version == "1.2.3.4"));
-            Assert.IsTrue(prg.GetProgramUsageDetails(usr2.Id).All(x => x.AssemblyVersionInfo.Version == "1.2.3.4"));
+            Assert.IsTrue(prg.GetProgramUsageDetails(usr.Id).All(x => x.AssemblyVersion.Version == "1.2.3.4"));
+            Assert.IsTrue(prg.GetProgramUsageDetails(usr2.Id).All(x => x.AssemblyVersion.Version == "1.2.3.4"));
 
             Assert.AreEqual(1, this.Context.Versions.Count(x => x.ProgramAssembly.ProgramId == prg.Id));
 
             detail = prg.GetLatestUsageDetail();
             Assert.AreEqual(usr.Id, detail.UsageSummary.ClientAppUserId);
-            Assert.AreEqual("1.2.3.4", detail.AssemblyVersionInfo.Version);
+            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.Version);
 
             request = new StatisticsUpdateRequest {ProgramId = prg.Id, UserId = usr.Id, Version = "2.0.0.0"};
             response = sut.Update(request).GetAwaiter().GetResult();
@@ -614,16 +614,16 @@ namespace Telimena.Tests
             Assert.AreEqual(4, prg.UsageSummaries.Sum(x => x.UsageDetails.Count));
             Assert.AreEqual(3, prg.GetProgramUsageDetails(usr.Id).Count);
             Assert.AreEqual(1, prg.GetProgramUsageDetails(usr2.Id).Count);
-            Assert.AreEqual(2, prg.GetProgramUsageDetails(usr.Id).Count(x => x.AssemblyVersionInfo.Version == "1.2.3.4"));
-            Assert.AreEqual(1, prg.GetProgramUsageDetails(usr.Id).Count(x => x.AssemblyVersionInfo.Version == "2.0.0.0"));
-            Assert.IsTrue(prg.GetProgramUsageDetails(usr2.Id).All(x => x.AssemblyVersionInfo.Version == "1.2.3.4"));
+            Assert.AreEqual(2, prg.GetProgramUsageDetails(usr.Id).Count(x => x.AssemblyVersion.Version == "1.2.3.4"));
+            Assert.AreEqual(1, prg.GetProgramUsageDetails(usr.Id).Count(x => x.AssemblyVersion.Version == "2.0.0.0"));
+            Assert.IsTrue(prg.GetProgramUsageDetails(usr2.Id).All(x => x.AssemblyVersion.Version == "1.2.3.4"));
 
             Assert.AreEqual(2, this.Context.Versions.Count(x => x.ProgramAssembly.ProgramId == prg.Id));
 
 
             detail = prg.GetLatestUsageDetail();
             Assert.AreEqual(usr.Id, detail.UsageSummary.ClientAppUserId);
-            Assert.AreEqual("2.0.0.0", detail.AssemblyVersionInfo.Version);
+            Assert.AreEqual("2.0.0.0", detail.AssemblyVersion.Version);
         }
     }
 }
