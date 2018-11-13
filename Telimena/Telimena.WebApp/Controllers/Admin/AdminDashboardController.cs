@@ -76,42 +76,16 @@ namespace Telimena.WebApp.Controllers.Admin
             {
                 rules = new List<Tuple<string, bool>>();
                 {
-                    new Tuple<string, bool>(nameof(UsageDetail.Id), true);
+                    new Tuple<string, bool>(nameof(TelemetryDetail.Id), true);
                 };
             }
 
             foreach (Tuple<string, bool> rule in rules)
             {
-                if (rule.Item1 == nameof(Audit.Timestamp) || rule.Item1 == nameof(UsageDetail.DateTime) || rule.Item1 == nameof(UsageDetail.AssemblyVersion))
+                if (rule.Item1 == nameof(Audit.Timestamp) || rule.Item1 == nameof(TelemetryDetail.DateTime) || rule.Item1 == nameof(TelemetryDetail.AssemblyVersion))
                 {
                     query = query.OrderBy(rule.Item1, rule.Item2);
                 }
-                //else if (rule.Item1 == nameof(UsageData.UserName))
-                //{
-                //    if (typeof(T) == typeof(ProgramUsageDetail))
-                //    {
-                //        query = query.OrderBy(x => (x as ProgramUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
-                //    }
-                //    else
-                //    {
-                //        query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
-                //    }
-                //}
-                //else if (rule.Item1 == nameof(UsageData.CustomData))
-                //{
-                //    if (typeof(T) == typeof(ProgramUsageDetail))
-                //    {
-                //        query = query.OrderBy(x => (x as ProgramUsageDetail).CustomUsageData.Data, rule.Item2);
-                //    }
-                //    else
-                //    {
-                //        query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
-                //    }
-                //}
-                //else if (rule.Item1 == nameof(UsageData.FunctionName) && typeof(T) == typeof(FunctionUsageDetail))
-                //{
-                //    query = query.OrderBy(x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2);
-                //}
             }
 
             var orderedQuery = query as IOrderedQueryable<Audit>;

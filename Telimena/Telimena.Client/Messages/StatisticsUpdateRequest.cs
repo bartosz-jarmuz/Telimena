@@ -16,10 +16,10 @@
         /// <value>The program identifier.</value>
         public int ProgramId { get; set; }
         /// <summary>
-        /// Gets or sets the name of the function.
+        /// Gets or sets the name of the view.
         /// </summary>
-        /// <value>The name of the function.</value>
-        public string FunctionName { get; set; }
+        /// <value>The name of the view.</value>
+        public string ViewName { get; set; }
         /// <summary>
         /// Gets or sets the version.
         /// <para/><seealso href="https://stackoverflow.com/questions/64602/what-are-differences-between-assemblyversion-assemblyfileversion-and-assemblyin"/> 

@@ -51,7 +51,7 @@ namespace Telimena.WebApp.Controllers
 
         [Audit]
         [HttpGet]
-        public async Task<ActionResult> ExportFunctionUsageCustomData(int programId, bool includeGenericData)
+        public async Task<ActionResult> ExportViewUsageCustomData(int programId, bool includeGenericData)
         {
             Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.Id == programId);
             if (program == null)
@@ -59,13 +59,13 @@ namespace Telimena.WebApp.Controllers
                 throw new BadRequestException($"Program {programId} does not exist");
             }
 
-            dynamic obj = await this.Work.ExportFunctionsUsageCustomData(programId, includeGenericData);
+            dynamic obj = await this.Work.ExportViewsUsageCustomData(programId, includeGenericData);
             //obj.programId = programId;
             //obj.programName = program.Name;
             string content = JsonConvert.SerializeObject(obj);
             byte[] bytes = Encoding.UTF8.GetBytes(content);
             FileContentResult result = new FileContentResult(bytes, "text/plain");
-            result.FileDownloadName = $"{DateTime.UtcNow:yyyy-MM-dd HH-mm-ss}_FunctionsCustomDataExport_{program.Name}.json";
+            result.FileDownloadName = $"{DateTime.UtcNow:yyyy-MM-dd HH-mm-ss}_ViewsCustomDataExport_{program.Name}.json";
             return result;
         }
 
@@ -83,11 +83,11 @@ namespace Telimena.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetProgramFunctionsUsageData(int programId, IDataTablesRequest request)
+        public async Task<JsonResult> GetProgramViewsUsageData(int programId, IDataTablesRequest request)
         {
             IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
 
-            UsageDataTableResult result = await this.Work.GetProgramFunctionsUsageData(programId, request.Start, request.Length, sorts);
+            UsageDataTableResult result = await this.Work.GetProgramViewsUsageData(programId, request.Start, request.Length, sorts);
 
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
 

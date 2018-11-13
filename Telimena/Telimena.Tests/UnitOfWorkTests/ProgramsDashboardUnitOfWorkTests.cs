@@ -22,21 +22,21 @@ namespace Telimena.Tests
         [Test]
         public void TestOrderingQuery_TwoProps()
         {
-            var data = new List<FunctionUsageDetail>();
+            var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new FunctionUsageDetail() {Id=1, UsageSummary = this.GetSummary("AAA", "ZZZ") });
-            data.Add(new FunctionUsageDetail() {Id=2, UsageSummary = this.GetSummary("BBB", "ZZZ") });
-            data.Add(new FunctionUsageDetail() {Id=3, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new FunctionUsageDetail() {Id=4, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new FunctionUsageDetail() {Id=5, UsageSummary = this.GetSummary("AAA", "XXX") });
-            data.Add(new FunctionUsageDetail() {Id=6, UsageSummary = this.GetSummary("AAA", "YYY") });
-            data.Add(new FunctionUsageDetail() {Id=7, UsageSummary = this.GetSummary("BBB", "YYY") });
-            data.Add(new FunctionUsageDetail() {Id=8, UsageSummary = this.GetSummary("BBB", "XXX") });
+            data.Add(new ViewTelemetryDetail() {Id=1, UsageSummary = this.GetSummary("AAA", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() {Id=2, UsageSummary = this.GetSummary("BBB", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() {Id=3, UsageSummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() {Id=4, UsageSummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() {Id=5, UsageSummary = this.GetSummary("AAA", "XXX") });
+            data.Add(new ViewTelemetryDetail() {Id=6, UsageSummary = this.GetSummary("AAA", "YYY") });
+            data.Add(new ViewTelemetryDetail() {Id=7, UsageSummary = this.GetSummary("BBB", "YYY") });
+            data.Add(new ViewTelemetryDetail() {Id=8, UsageSummary = this.GetSummary("BBB", "XXX") });
 
 
             var sorts = new List<Tuple<string, bool>>();
             sorts.Add(new Tuple<string, bool>(nameof(UsageData.UserName), false));
-            sorts.Add(new Tuple<string, bool>(nameof(UsageData.FunctionName), false));
+            sorts.Add(new Tuple<string, bool>(nameof(UsageData.ViewName), false));
 
             var ordered = ProgramsDashboardUnitOfWork.ApplyOrderingQuery(sorts, data.AsAsyncQueryable(),0,10).GetAwaiter().GetResult().ToList();
 
@@ -55,20 +55,20 @@ namespace Telimena.Tests
         [Test]
         public void TestOrderingQuery_OneProp()
         {
-            var data = new List<FunctionUsageDetail>();
+            var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new FunctionUsageDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ") });
-            data.Add(new FunctionUsageDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ") });
-            data.Add(new FunctionUsageDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new FunctionUsageDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new FunctionUsageDetail() { Id = 5, UsageSummary = this.GetSummary("AAA", "XXX") });
-            data.Add(new FunctionUsageDetail() { Id = 6, UsageSummary = this.GetSummary("AAA", "YYY") });
-            data.Add(new FunctionUsageDetail() { Id = 7, UsageSummary = this.GetSummary("BBB", "YYY") });
-            data.Add(new FunctionUsageDetail() { Id = 8, UsageSummary = this.GetSummary("BBB", "XXX") });
+            data.Add(new ViewTelemetryDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 5, UsageSummary = this.GetSummary("AAA", "XXX") });
+            data.Add(new ViewTelemetryDetail() { Id = 6, UsageSummary = this.GetSummary("AAA", "YYY") });
+            data.Add(new ViewTelemetryDetail() { Id = 7, UsageSummary = this.GetSummary("BBB", "YYY") });
+            data.Add(new ViewTelemetryDetail() { Id = 8, UsageSummary = this.GetSummary("BBB", "XXX") });
 
 
             var sorts = new List<Tuple<string, bool>>();
-            sorts.Add(new Tuple<string, bool>(nameof(UsageData.FunctionName), false));
+            sorts.Add(new Tuple<string, bool>(nameof(UsageData.ViewName), false));
 
             var ordered = ProgramsDashboardUnitOfWork.ApplyOrderingQuery(sorts, data.AsAsyncQueryable(), 0, 10).GetAwaiter().GetResult().ToList();
 
@@ -87,11 +87,11 @@ namespace Telimena.Tests
         [Test]
         public void TestOrderingQuery_FailSafe()
         {
-            var data = new List<FunctionUsageDetail>();
+            var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new FunctionUsageDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"), AssemblyVersion = new AssemblyVersion("2.0", null ) });
-            data.Add(new FunctionUsageDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"), AssemblyVersion = new AssemblyVersion("6.0", null ) });
-            data.Add(new FunctionUsageDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"), AssemblyVersion = new AssemblyVersion("4.0", null ) });
+            data.Add(new ViewTelemetryDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"), AssemblyVersion = new AssemblyVersionInfo("2.0", null ) });
+            data.Add(new ViewTelemetryDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"), AssemblyVersion = new AssemblyVersionInfo("6.0", null ) });
+            data.Add(new ViewTelemetryDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"), AssemblyVersion = new AssemblyVersionInfo("4.0", null ) });
            
             var sorts = new List<Tuple<string, bool>>();
             sorts.Add(new Tuple<string, bool>("WrongKey", false));
@@ -107,16 +107,16 @@ namespace Telimena.Tests
         [Test]
         public void TestOrderingQuery_Version()
         {
-            var data = new List<FunctionUsageDetail>();
+            var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new FunctionUsageDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"),AssemblyVersion = new AssemblyVersion("2.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"),AssemblyVersion = new AssemblyVersion("6.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersion("4.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersion("4.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 5, UsageSummary = this.GetSummary("AAA", "XXX"),AssemblyVersion = new AssemblyVersion("2.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 6, UsageSummary = this.GetSummary("AAA", "YYY"),AssemblyVersion = new AssemblyVersion("2.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 7, UsageSummary = this.GetSummary("BBB", "YYY"),AssemblyVersion = new AssemblyVersion("9.0", null)});
-            data.Add(new FunctionUsageDetail() { Id = 8, UsageSummary = this.GetSummary("BBB", "XXX"),AssemblyVersion = new AssemblyVersion("1.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("2.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("6.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("4.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("4.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 5, UsageSummary = this.GetSummary("AAA", "XXX"),AssemblyVersion = new AssemblyVersionInfo("2.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 6, UsageSummary = this.GetSummary("AAA", "YYY"),AssemblyVersion = new AssemblyVersionInfo("2.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 7, UsageSummary = this.GetSummary("BBB", "YYY"),AssemblyVersion = new AssemblyVersionInfo("9.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 8, UsageSummary = this.GetSummary("BBB", "XXX"),AssemblyVersion = new AssemblyVersionInfo("1.0", null)});
 
 
             var sorts = new List<Tuple<string, bool>>();
@@ -138,12 +138,12 @@ namespace Telimena.Tests
         [Test]
         public void TestOrderingQuery_NoSorts()
         {
-            var data = new List<FunctionUsageDetail>();
+            var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new FunctionUsageDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new FunctionUsageDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new FunctionUsageDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ") });
-            data.Add(new FunctionUsageDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ") });
 
 
             var sorts = new List<Tuple<string, bool>>();
@@ -161,13 +161,13 @@ namespace Telimena.Tests
 
 
 
-        private FunctionUsageSummary GetSummary(string userName, string functionName)
+        private ViewTelemetrySummary GetSummary(string userName, string viewName)
         {
-           return  new FunctionUsageSummary()
+           return  new ViewTelemetrySummary()
             {
                 ClientAppUser = new ClientAppUser() { UserName = userName }
                 ,
-                Function = new Function() { Name = functionName }
+                View = new View() { Name = viewName }
             };
         }
     }

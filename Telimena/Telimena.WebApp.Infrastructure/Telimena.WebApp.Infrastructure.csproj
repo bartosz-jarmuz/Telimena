@@ -169,35 +169,6 @@
     <Compile Include="Database\TelimenaDbContext.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
-    <Compile Include="Migrations\201810032114071_addedIsPublic.cs" />
-    <Compile Include="Migrations\201810032114071_addedIsPublic.Designer.cs">
-      <DependentUpon>201810032114071_addedIsPublic.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201810032119208_addedIsPublic2.cs" />
-    <Compile Include="Migrations\201810032119208_addedIsPublic2.Designer.cs">
-      <DependentUpon>201810032119208_addedIsPublic2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201810032120310_addedIsPublic3.cs" />
-    <Compile Include="Migrations\201810032120310_addedIsPublic3.Designer.cs">
-      <DependentUpon>201810032120310_addedIsPublic3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201810121605503_updaterRoundtripWip.cs" />
-    <Compile Include="Migrations\201810121605503_updaterRoundtripWip.Designer.cs">
-      <DependentUpon>201810121605503_updaterRoundtripWip.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201810141356207_IPAddresses.cs" />
-    <Compile Include="Migrations\201810141356207_IPAddresses.Designer.cs">
-      <DependentUpon>201810141356207_IPAddresses.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201810301809564_addedmoreversionproperties.cs" />
-    <Compile Include="Migrations\201810301809564_addedmoreversionproperties.Designer.cs">
-      <DependentUpon>201810301809564_addedmoreversionproperties.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201810302252080_RemoveProductVersion.cs" />
-    <Compile Include="Migrations\201810302252080_RemoveProductVersion.Designer.cs">
-      <DependentUpon>201810302252080_RemoveProductVersion.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\AzureFileSaver.cs" />
@@ -212,8 +183,8 @@
     <Compile Include="Repository\Implementation\UserRepository.cs" />
     <Compile Include="Repository\Implementation\UpdaterRepository.cs" />
     <Compile Include="Repository\Implementation\UpdatePackageRepository.cs" />
-    <Compile Include="Repository\Implementation\FunctionRepository.cs" />
-    <Compile Include="Repository\IFunctionRepository.cs" />
+    <Compile Include="Repository\Implementation\ViewRepository.cs" />
+    <Compile Include="Repository\IViewRepository.cs" />
     <Compile Include="Repository\Implementation\ToolkitDataRepository.cs" />
     <Compile Include="Repository\IProgramPackageRepository.cs" />
     <Compile Include="Repository\IProgramRepository.cs" />
@@ -251,29 +222,6 @@
       <Project>{ffd85253-874c-41cb-9242-9267bfa3647b}</Project>
       <Name>Telimena.WebApp.Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201810032114071_addedIsPublic.resx">
-      <DependentUpon>201810032114071_addedIsPublic.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201810032119208_addedIsPublic2.resx">
-      <DependentUpon>201810032119208_addedIsPublic2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201810032120310_addedIsPublic3.resx">
-      <DependentUpon>201810032120310_addedIsPublic3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201810121605503_updaterRoundtripWip.resx">
-      <DependentUpon>201810121605503_updaterRoundtripWip.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201810141356207_IPAddresses.resx">
-      <DependentUpon>201810141356207_IPAddresses.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201810301809564_addedmoreversionproperties.resx">
-      <DependentUpon>201810301809564_addedmoreversionproperties.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201810302252080_RemoveProductVersion.resx">
-      <DependentUpon>201810302252080_RemoveProductVersion.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />

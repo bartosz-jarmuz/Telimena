@@ -13,9 +13,9 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         public ProgramsUnitOfWork(TelimenaContext context, ITelimenaUserManager userManager, IAssemblyStreamVersionReader versionReader)
         {
             this._context = context;
-            this.Versions = new Repository<AssemblyVersion>(context);
+            this.Versions = new Repository<AssemblyVersionInfo>(context);
             this.Users = new UserRepository(context);
-            this.Functions = new FunctionRepository(context);
+            this.Views = new ViewRepository(context);
             this.Programs = new ProgramRepository(context);
             this.ToolkitData = new ToolkitDataRepository(context, versionReader);
             this.UpdatePackages = new UpdatePackageRepository(context, versionReader);
@@ -32,9 +32,9 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         public IUpdatePackageRepository UpdatePackages { get; set; }
         public IUpdaterRepository UpdaterRepository { get; set; }
         public IProgramPackageRepository ProgramPackages { get; set; }
-        public IRepository<AssemblyVersion> Versions { get; }
+        public IRepository<AssemblyVersionInfo> Versions { get; }
         public IProgramRepository Programs { get; }
-        public IFunctionRepository Functions { get; }
+        public IViewRepository Views { get; }
 
         public async Task CompleteAsync()
         {

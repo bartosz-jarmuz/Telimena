@@ -12,7 +12,7 @@ namespace AutomaticTestsClient
         public ProgramInfo ProgramInfo { get; set; }
         public string UserName { get; set; }
 
-        public string FunctionName { get; set; }
+        public string ViewName { get; set; }
 
     }
 }

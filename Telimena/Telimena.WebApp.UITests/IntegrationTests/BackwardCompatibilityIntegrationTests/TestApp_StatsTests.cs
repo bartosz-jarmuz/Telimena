@@ -29,26 +29,26 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
         }
 
         [Test]
-        public void ReportFunction()
+        public void ReportView()
         {
             FileInfo app;
-            StatisticsUpdateResponse response = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(out app, Actions.ReportFunctionUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
+            StatisticsUpdateResponse response = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(out app, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
 
             Assert.IsTrue(response.ProgramId > 0);
             Assert.IsTrue(response.UserId > 0);
             Assert.IsTrue(response.Count > 0);
-            Assert.IsTrue(response.FunctionId > 0);
-            Assert.AreEqual("HandleReportFunctionUsage", response.FunctionName);
+            Assert.IsTrue(response.ComponentId > 0);
+            Assert.AreEqual("ReportView", response.ComponentName);
 
-            StatisticsUpdateResponse responseNew = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(app, Actions.ReportFunctionUsage);
+            StatisticsUpdateResponse responseNew = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(app, Actions.ReportViewUsage);
 
             Assert.AreEqual(responseNew.Count, response.Count + 1);
-            Assert.AreEqual(responseNew.FunctionName, response.FunctionName);
+            Assert.AreEqual(responseNew.ComponentName, response.ComponentName);
 
-            StatisticsUpdateResponse customFunctionResponse = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(app, Actions.ReportFunctionUsage, functionName: "UnitTestFunction");
-            Assert.IsTrue(response.FunctionId < customFunctionResponse.FunctionId);
-            Assert.AreEqual("UnitTestFunction", customFunctionResponse.FunctionName);
-            Assert.IsTrue(customFunctionResponse.Count > 0);
+            StatisticsUpdateResponse customViewNameResponse = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(app, Actions.ReportViewUsage, viewName: "UnitTestView");
+            Assert.IsTrue(response.ComponentId < customViewNameResponse.ComponentId);
+            Assert.AreEqual("UnitTestView", customViewNameResponse.ComponentName);
+            Assert.IsTrue(customViewNameResponse.Count > 0);
 
         }
 

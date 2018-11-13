@@ -3,7 +3,7 @@
     public enum Actions
     {
         Initialize,
-        ReportFunctionUsage,
+        ReportViewUsage,
         HandleUpdates
     }
 }

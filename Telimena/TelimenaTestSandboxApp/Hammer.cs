@@ -110,7 +110,7 @@ namespace TelimenaTestSandboxApp
 
             for (int i = 0; i < this.numberOfFuncs; i++)
             {
-                this.funcs.Add(this.GetRandomName("Function", i));
+                this.funcs.Add(this.GetRandomName("View", i));
             }
         }
 

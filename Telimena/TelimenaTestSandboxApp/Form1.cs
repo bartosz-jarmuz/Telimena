@@ -50,9 +50,9 @@ namespace TelimenaTestSandboxApp
             StatisticsUpdateResponse result;
             Stopwatch sw = Stopwatch.StartNew();
 
-            if (!string.IsNullOrEmpty(this.functionNameTextBox.Text))
+            if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
-                result = await this.teli.ReportUsageAsync(string.IsNullOrEmpty(this.functionNameTextBox.Text) ? null : this.functionNameTextBox.Text);
+                result = await this.teli.ReportUsageAsync(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
                 sw.Stop();
             }
             else
@@ -77,9 +77,9 @@ namespace TelimenaTestSandboxApp
 
             StatisticsUpdateResponse result;
 
-            if (!string.IsNullOrEmpty(this.functionNameTextBox.Text))
+            if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
-                result = this.teli.ReportUsageBlocking(string.IsNullOrEmpty(this.functionNameTextBox.Text) ? null : this.functionNameTextBox.Text);
+                result = this.teli.ReportUsageBlocking(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
                 sw.Stop();
             }
             else
@@ -161,11 +161,11 @@ namespace TelimenaTestSandboxApp
             StatisticsUpdateResponse result;
             Stopwatch sw = Stopwatch.StartNew();
 
-            if (!string.IsNullOrEmpty(this.static_functionNameTextBox.Text))
+            if (!string.IsNullOrEmpty(this.static_viewNameTextBox.Text))
             {
-                result = await Telimena.ReportUsageStatic(string.IsNullOrEmpty(this.static_functionNameTextBox.Text)
+                result = await Telimena.ReportUsageStatic(string.IsNullOrEmpty(this.static_viewNameTextBox.Text)
                     ? null
-                    : this.static_functionNameTextBox.Text);
+                    : this.static_viewNameTextBox.Text);
                 sw.Stop();
             }
             else

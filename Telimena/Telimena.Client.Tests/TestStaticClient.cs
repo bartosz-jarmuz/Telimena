@@ -42,7 +42,7 @@ namespace TelimenaClient.Tests
         }
 
         [Test]
-        public void Test_StaticClient_IsProperFunctionRecorded()
+        public void Test_StaticClient_IsProperViewRecorded()
         {
             Mock<ITelimenaHttpClient> client = this.GetMockClientForStaticClient_FirstRequestPass();
             try
@@ -54,7 +54,7 @@ namespace TelimenaClient.Tests
             {
                 TelimenaException ex = e as TelimenaException;
                 StatisticsUpdateRequest jObj = ex.RequestObjects[1].Value as StatisticsUpdateRequest;
-                Assert.AreEqual("Test_StaticClient_IsProperFunctionRecorded", jObj.FunctionName);
+                Assert.AreEqual("Test_StaticClient_IsProperViewRecorded", jObj.ViewName);
             }
 
             try
@@ -66,13 +66,13 @@ namespace TelimenaClient.Tests
             {
                 TelimenaException ex = e as TelimenaException;
                 Assert.IsNotNull(ex, "Exception type: " + e.GetType());
-                Assert.IsTrue(ex.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
+                Assert.IsTrue(ex.Message.Contains("[Test_StaticClient_IsProperViewRecorded]"));
             }
 
 
             StatisticsUpdateResponse result = TelimenaClient.Telimena.ReportUsageStatic(telemetryApiBaseUrl: new Uri("http://localhost:666/")).GetAwaiter().GetResult();
             TelimenaException err = result.Exception as TelimenaException;
-            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
+            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperViewRecorded]"));
 
             result = TelimenaClient.Telimena.ReportUsageStatic("BOOO", telemetryApiBaseUrl: new Uri("http://localhost:666/")).GetAwaiter().GetResult();
             err = result.Exception as TelimenaException;
@@ -80,11 +80,11 @@ namespace TelimenaClient.Tests
 
             result = TelimenaClient.Telimena.ReportUsageStatic(new ProgramInfo(), telemetryApiBaseUrl: new Uri("http://localhost:666/")).GetAwaiter().GetResult();
             err = result.Exception as TelimenaException;
-            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
+            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperViewRecorded]"));
 
             result = TelimenaClient.Telimena.ReportUsageStatic(telemetryApiBaseUrl: new Uri("http://localhost:666")).GetAwaiter().GetResult();
             err = result.Exception as TelimenaException;
-            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperFunctionRecorded]"));
+            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperViewRecorded]"));
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace TelimenaClient.Tests
                 StatisticsUpdateRequest jObj = ex.RequestObjects[1].Value as StatisticsUpdateRequest;
                 Assert.AreEqual(1, jObj.ProgramId);
                 Assert.AreEqual(2, jObj.UserId);
-                Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.FunctionName);
+                Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.ViewName);
                 Assert.IsTrue(Version.TryParse(jObj.Version, out _));
             }
         }

@@ -6,16 +6,16 @@
     public class StatisticsUpdateResponse : TelimenaResponseBase
     {
         /// <summary>
-        /// Gets or sets the name of the function.
+        /// Gets or sets the name of the component.
         /// </summary>
-        /// <value>The name of the function.</value>
-        public string FunctionName { get; set; }
+        /// <value>The name of the component.</value>
+        public string ComponentName { get; set; }
 
         /// <summary>
-        /// Gets or sets the function identifier.
+        /// Gets or sets the component identifier.
         /// </summary>
-        /// <value>The function identifier.</value>
-        public int FunctionId{ get; set; }
+        /// <value>The component identifier.</value>
+        public int ComponentId{ get; set; }
         /// <summary>
         /// Gets or sets the program identifier.
         /// </summary>

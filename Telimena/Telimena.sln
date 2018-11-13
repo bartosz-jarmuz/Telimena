@@ -15,13 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp.Core", "Tel
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp.Infrastructure", "Telimena.WebApp.Infrastructure\Telimena.WebApp.Infrastructure.csproj", "{01707963-655B-4BDE-B32F-848DE2391383}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{49A0912D-B751-48F2-8477-AF7FE1CF9EB6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Web", "1. Web", "{49A0912D-B751-48F2-8477-AF7FE1CF9EB6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Desktop", "Desktop", "{5F78CFF4-E566-4E1F-BEA3-951C06C2093D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Desktop", "2. Desktop", "{5F78CFF4-E566-4E1F-BEA3-951C06C2093D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelimenaTestSandboxApp", "TelimenaTestSandboxApp\TelimenaTestSandboxApp.csproj", "{ACC4AFB3-4417-4736-BE49-37AEEF3EF458}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2387CFF9-603F-4C8E-A14D-64FF9603CE70}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Tests", "3. Tests", "{2387CFF9-603F-4C8E-A14D-64FF9603CE70}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Client.Tests", "Telimena.Client.Tests\Telimena.Client.Tests.csproj", "{69EA245A-0DBB-4697-9E0B-C89D8ECBFEFA}"
 EndProject

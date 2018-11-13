@@ -7,7 +7,7 @@
 
     @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-aqua", IconClass = "fa-object-group", Label = "All registered programs", Value = Model.TotalProgramsCount.ToString(), SecondaryLabel = "Usage count: " + Model.TotalProgramUsageCount})
 
-    @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-green", IconClass = "fa-magic", Label = "All registered functions", Value = Model.TotalFunctionsCount.ToString(), SecondaryLabel = "Usage count: " + Model.TotalFunctionsUsageCount})
+    @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-green", IconClass = "fa-magic", Label = "All registered views", Value = Model.TotalViewsCount.ToString(), SecondaryLabel = "Usage count: " + Model.TotalViewsUsageCount})
 
     @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-red", IconClass = "fa-star-o", Label = "Newest program", Value = Model.NewestProgram?.Name, SecondaryLabel = "Developer: " + Model.NewestProgram?.DeveloperAccount?.Name})
 

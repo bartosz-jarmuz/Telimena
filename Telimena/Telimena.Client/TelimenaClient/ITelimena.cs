@@ -79,57 +79,57 @@ namespace TelimenaClient
         void LoadHelperAssembliesByName(params string[] assemblyNames);
 
         /// <summary>
-        ///     Report the usage of the application function.
+        ///     Report the usage of the application view.
         /// <para>This is an ASYNC method which should be awaited</para>
         /// </summary>
-        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
+        /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <returns></returns>
-        Task<StatisticsUpdateResponse> ReportUsageAsync([CallerMemberName] string functionName = null);
+        Task<StatisticsUpdateResponse> ReportUsageAsync([CallerMemberName] string viewName = null);
 
         /// <summary>
-        ///     Report the usage of the application function.
+        ///     Report the usage of the application view.
         /// <para>This method is a synchronous wrapper over itsasync counterpart. It will block the thread. It is recommended to use async method and handle awaiting properly</para>
         /// </summary>
-        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
+        /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <returns></returns>
-        StatisticsUpdateResponse ReportUsageBlocking([CallerMemberName] string functionName = null);
+        StatisticsUpdateResponse ReportUsageBlocking([CallerMemberName] string viewName = null);
 
         /// <summary>
-        ///     Report the usage of the application function.
+        ///     Report the usage of the application view.
         /// <para>This is an ASYNC method which should be awaited</para>
         /// </summary>
         /// <param name="customData">A JSON serialized object which contains some program specific custom data</param>
-        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
+        /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <returns></returns>
-        Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync(string customData, [CallerMemberName] string functionName = null);
+        Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync(string customData, [CallerMemberName] string viewName = null);
 
 
         /// <summary>
-        ///     Report the usage of the application function.
+        ///     Report the usage of the application view.
         /// <para>This method is a synchronous wrapper over itsasync counterpart. It will block the thread. It is recommended to use async method and handle awaiting properly</para>
         /// </summary>
         /// <param name="customData">A JSON serialized object which contains some program specific custom data</param>
-        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
+        /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <returns></returns>
-        StatisticsUpdateResponse ReportUsageWithCustomDataBlocking(string customData, [CallerMemberName] string functionName = null);
+        StatisticsUpdateResponse ReportUsageWithCustomDataBlocking(string customData, [CallerMemberName] string viewName = null);
 
         /// <summary>
-        ///     Report the usage of the application function.
+        ///     Report the usage of the application view.
         /// <para>This is an ASYNC method which should be awaited</para>
         /// </summary>
         /// <param name="customDataObject">A simple data object to be serialized and sent to Telimena. MUST BE JSON SERIALIZABLE</param>
-        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
+        /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <returns></returns>
-        Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync<T>(T customDataObject, [CallerMemberName] string functionName = null);
+        Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync<T>(T customDataObject, [CallerMemberName] string viewName = null);
 
         /// <summary>
-        ///     Report the usage of the application function.
+        ///     Report the usage of the application view.
         /// <para>This method is a synchronous wrapper over itsasync counterpart. It will block the thread. It is recommended to use async method and handle awaiting properly</para>
         /// </summary>
         /// <param name="customDataObject">A simple data object to be serialized and sent to Telimena. MUST BE JSON SERIALIZABLE</param>
-        /// <param name="functionName">The name of the function. If left blank, it will report the name of the invoked method</param>
+        /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <returns></returns>
-        StatisticsUpdateResponse ReportUsageWithCustomDataBlocking<T>(T customDataObject, [CallerMemberName] string functionName = null);
+        StatisticsUpdateResponse ReportUsageWithCustomDataBlocking<T>(T customDataObject, [CallerMemberName] string viewName = null);
 
         /// <summary>
         /// If true, then Telimena will swallow any errors. Otherwise, it will rethrow

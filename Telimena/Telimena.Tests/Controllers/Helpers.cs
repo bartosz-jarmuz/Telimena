@@ -40,8 +40,8 @@ namespace Telimena.Tests
         {
             Assert.IsNull(response.Exception);
             Assert.AreEqual(expectedCount, response.Count);
-            Assert.AreEqual(funcName, response.FunctionName);
-            Assert.AreEqual(funcId, response.FunctionId);
+            Assert.AreEqual(funcName, response.ComponentName);
+            Assert.AreEqual(funcId, response.ComponentId);
 
             Assert.AreEqual(prg.Id, response.ProgramId);
             Assert.AreEqual(usr.Id, response.UserId);

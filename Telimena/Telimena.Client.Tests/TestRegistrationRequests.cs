@@ -17,11 +17,11 @@ namespace TelimenaClient.Tests
     [TestFixture]
     public class TestRegistrationRequests
     {
-        public void Test_RegistrationFunction(TelimenaClient.Telimena telimena, Func<RegistrationResponse> function, bool skipFlagExpectedValue)
+        public void Test_RegistrationFunc(TelimenaClient.Telimena telimena, Func<RegistrationResponse> func, bool skipFlagExpectedValue)
         {
             try
             {
-                RegistrationResponse result = function(); 
+                RegistrationResponse result = func(); 
                 Assert.Fail("Exception expected");
             }
             catch (Exception e)
@@ -42,8 +42,8 @@ namespace TelimenaClient.Tests
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
-            this.Test_RegistrationFunction(telimena, () => telimena.InitializeAsync().GetAwaiter().GetResult(), false);
-            this.Test_RegistrationFunction(telimena, () => telimena.InitializeBlocking(), false);
+            this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync().GetAwaiter().GetResult(), false);
+            this.Test_RegistrationFunc(telimena, () => telimena.InitializeBlocking(), false);
         }
 
         [Test]
@@ -53,8 +53,8 @@ namespace TelimenaClient.Tests
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
-            this.Test_RegistrationFunction(telimena, () => telimena.RegisterClient().GetAwaiter().GetResult(), false);
-            this.Test_RegistrationFunction(telimena, () => telimena.RegisterClient(true).GetAwaiter().GetResult(), true);
+            this.Test_RegistrationFunc(telimena, () => telimena.RegisterClient().GetAwaiter().GetResult(), false);
+            this.Test_RegistrationFunc(telimena, () => telimena.RegisterClient(true).GetAwaiter().GetResult(), true);
         }
     }
 }

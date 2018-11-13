@@ -88,7 +88,7 @@ namespace TelimenaClient.Tests
                     Assert.AreEqual("Updater.exe", telimena.LiveProgramInfo.UpdaterName);
                     TelimenaException ex = e as TelimenaException;
                     StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                    Assert.AreEqual("Test_NoCustomData", jObj.FunctionName);
+                    Assert.AreEqual("Test_NoCustomData", jObj.ViewName);
                     Assert.AreEqual(null, jObj.CustomData);
                 }
 
@@ -121,7 +121,7 @@ namespace TelimenaClient.Tests
                 {
                     TelimenaException ex = e as TelimenaException;
                     StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                    Assert.AreEqual("Test_NullCustomData", jObj.FunctionName);
+                    Assert.AreEqual("Test_NullCustomData", jObj.ViewName);
                     Assert.AreEqual(null, jObj.CustomData);
                 }
                 act = () => telimena.ReportUsageWithCustomDataBlocking(null);
@@ -151,7 +151,7 @@ namespace TelimenaClient.Tests
                     TelimenaException ex = e as TelimenaException;
                     StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
                     Assert.AreEqual("AAAAAA", jObj.CustomData);
-                    Assert.AreEqual("Test_CustomDataString", jObj.FunctionName);
+                    Assert.AreEqual("Test_CustomDataString", jObj.ViewName);
                 }
                 act = () => telimena.ReportUsageWithCustomDataBlocking("AAAAAA");
 
@@ -181,7 +181,7 @@ namespace TelimenaClient.Tests
                 {
                     TelimenaException ex = e as TelimenaException;
                     StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                    Assert.AreEqual("Test_CustomDataObject", jObj.FunctionName);
+                    Assert.AreEqual("Test_CustomDataObject", jObj.ViewName);
 
                     Assert.AreEqual("{\"SomeValue\":333,\"TrySerializingThisBadBoy\":null}", jObj.CustomData);
                 }

@@ -18,13 +18,13 @@ namespace Telimena.WebApp.Controllers.Api
 
         private readonly IStatisticsUnitOfWork work;
 
-        public async Task<Function> GetFunctionOrAddIfNotExists(string functionName, Program program)
+        public async Task<View> GetViewOrAddIfNotExists(string viewName, Program program)
         {
-            Function func = await this.work.Functions.FirstOrDefaultAsync(x => x.Name == functionName && x.Program.Name == program.Name);
+            View func = await this.work.Views.FirstOrDefaultAsync(x => x.Name == viewName && x.Program.Name == program.Name);
             if (func == null)
             {
-                func = new Function {Name = functionName, Program = program, ProgramId = program.Id};
-                this.work.Functions.Add(func);
+                func = new View {Name = viewName, Program = program, ProgramId = program.Id};
+                this.work.Views.Add(func);
             }
 
             return func;
@@ -85,7 +85,7 @@ namespace Telimena.WebApp.Controllers.Api
         private async Task AssignToolkitVersion(ProgramAssembly programAssembly, string programVersion, string fileVersion, string toolkitVersion)
         {
             TelimenaToolkitData toolkitData = await this.work.ToolkitData.FirstOrDefaultAsync(x => x.Version == toolkitVersion);
-            AssemblyVersion assemblyVersionInfo = programAssembly.GetVersion(programVersion, fileVersion);
+            AssemblyVersionInfo assemblyVersionInfo = programAssembly.GetVersion(programVersion, fileVersion);
             if (toolkitData == null)
             {
                 toolkitData = new TelimenaToolkitData(toolkitVersion);

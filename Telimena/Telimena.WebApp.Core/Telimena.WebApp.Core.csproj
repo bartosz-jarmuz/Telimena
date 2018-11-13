@@ -82,35 +82,40 @@
     <Compile Include="DTO\ProgramSummary.cs" />
     <Compile Include="DTO\UsageDataTableResult.cs" />
     <Compile Include="DTO\UsageViewModel.cs" />
-    <Compile Include="Interfaces\ITelimenaRepository.cs" />
     <Compile Include="Interfaces\Roles.cs" />
     <Compile Include="Messages\UploadUpdaterRequest.cs" />
     <Compile Include="Messages\CreateUpdatePackageRequest.cs" />
     <Compile Include="Messages\LatestVersionResponse.cs" />
     <Compile Include="DTO\VersionInfo.cs" />
-    <Compile Include="Models\AssemblyVersion.cs" />
-    <Compile Include="Models\Base\UsageDetail.cs" />
-    <Compile Include="Models\FunctionCustomUsageData.cs" />
-    <Compile Include="Models\DeveloperAccount.cs" />
-    <Compile Include="Models\Function.cs" />
-    <Compile Include="Models\FunctionUsageDetail.cs" />
-    <Compile Include="Models\FunctionUsageSummary.cs" />
-    <Compile Include="Models\Base\IRepositoryFile.cs" />
-    <Compile Include="Models\Program.cs" />
-    <Compile Include="Models\ProgramCustomUsageData.cs" />
-    <Compile Include="Models\ProgramPackageInfo.cs" />
-    <Compile Include="Models\ProgramUsageDetail.cs" />
-    <Compile Include="Models\ProgramUsageSummary.cs" />
-    <Compile Include="Models\ProgramAssembly.cs" />
-    <Compile Include="Models\Base\RepositoryFileBase.cs" />
-    <Compile Include="Models\TelimenaPackageInfo.cs" />
-    <Compile Include="Models\TelimenaToolkitData.cs" />
-    <Compile Include="Models\TelimenaUser.cs" />
-    <Compile Include="Models\Base\UsageSummary.cs" />
-    <Compile Include="Models\ClientAppUser.cs" />
-    <Compile Include="Models\Updater.cs" />
-    <Compile Include="Models\UpdaterPackageInfo.cs" />
-    <Compile Include="Models\ProgramUpdatePackageInfo.cs" />
+    <Compile Include="Models\Telemetry\ProgramTelemetryDetail.cs" />
+    <Compile Include="Models\Telemetry\ProgramTelemetrySummary.cs" />
+    <Compile Include="Models\Telemetry\ProgramTelemetryUnit.cs" />
+    <Compile Include="Models\Telemetry\ViewTelemetryUnit.cs" />
+    <Compile Include="Models\Telemetry\ViewTelemetryDetail.cs" />
+    <Compile Include="Models\Telemetry\ViewTelemetrySummary.cs" />
+    <Compile Include="Models\_Base\ProgramComponent.cs" />
+    <Compile Include="Models\Versioning\AssemblyVersionInfo.cs" />
+    <Compile Include="Models\_Base\TelemetryUnit.cs" />
+    <Compile Include="Models\Telemetry\EventTelemetryUnit.cs" />
+    <Compile Include="Models\Users\DeveloperAccount.cs" />
+    <Compile Include="Models\Telemetry\View.cs" />
+    <Compile Include="Models\_Base\IRepositoryFile.cs" />
+    <Compile Include="Models\Telemetry\Program.cs" />
+    <Compile Include="Models\Packages\ProgramPackageInfo.cs" />
+    <Compile Include="Models\Versioning\ProgramAssembly.cs" />
+    <Compile Include="Models\_Base\RepositoryFileBase.cs" />
+    <Compile Include="Models\Telemetry\EventTelemetryDetail.cs" />
+    <Compile Include="Models\Telemetry\EventTelemetrySummary.cs" />
+    <Compile Include="Models\_Base\TelemetryDetail.cs" />
+    <Compile Include="Models\_Base\TelemetrySummary.cs" />
+    <Compile Include="Models\Packages\TelimenaPackageInfo.cs" />
+    <Compile Include="Models\Versioning\TelimenaToolkitData.cs" />
+    <Compile Include="Models\Users\TelimenaUser.cs" />
+    <Compile Include="Models\Users\ClientAppUser.cs" />
+    <Compile Include="Models\Telemetry\Event.cs" />
+    <Compile Include="Models\Versioning\Updater.cs" />
+    <Compile Include="Models\Packages\UpdaterPackageInfo.cs" />
+    <Compile Include="Models\Packages\ProgramUpdatePackageInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -123,5 +128,6 @@
       <Name>Telimena.Client</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

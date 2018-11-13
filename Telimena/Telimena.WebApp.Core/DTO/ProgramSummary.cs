@@ -13,8 +13,8 @@ namespace Telimena.WebApp.Core.DTO
 
         public int UsersCount { get; set; }
 
-        public int FunctionsCount { get; set; }
-        public int TotalFunctionsUsageCount { get; set; }
+        public int ViewsCount { get; set; }
+        public int TotalViewsUsageCount { get; set; }
 
         public int TotalUsageCount { get; set; }
         public int TodayUsageCount { get; set; }
@@ -22,6 +22,6 @@ namespace Telimena.WebApp.Core.DTO
         public DateTime? LastUsage { get; set; }
 
         public DateTime RegisteredDate { get; set; }
-        public int TotalTodayFunctionsUsageCount { get; set; }
+        public int TotalTodayViewsUsageCount { get; set; }
     }
 }

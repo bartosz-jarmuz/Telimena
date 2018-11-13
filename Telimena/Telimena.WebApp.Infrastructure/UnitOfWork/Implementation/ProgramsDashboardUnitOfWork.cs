@@ -24,12 +24,12 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
             this.context = context;
             this.Programs = new ProgramRepository(this.context);
-            this.Functions = new FunctionRepository(this.context);
+            this.Views = new ViewRepository(this.context);
             this.Users = new Repository<TelimenaUser>(this.context);
         }
 
         private readonly TelimenaContext context;
-        public IFunctionRepository Functions { get; }
+        public IViewRepository Views { get; }
 
         public IRepository<TelimenaUser> Users { get; }
         public IProgramRepository Programs { get; }
@@ -40,7 +40,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             foreach (Program program in programs)
             {
-                List<Function> functions = await this.Functions.FindAsync(x => x.ProgramId == program.Id);
+                List<View> views = await this.Views.FindAsync(x => x.ProgramId == program.Id);
                 ProgramSummary summary = new ProgramSummary
                 {
                     ProgramName = program.Name
@@ -53,13 +53,13 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     , UsersCount = program.UsageSummaries.Count
                     , TodayUsageCount =
                         program.UsageSummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).TotalHours <= 24).Sum(smr =>
-                            smr.UsageDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24))
+                            smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24))
                     , TotalUsageCount = program.UsageSummaries.Sum(x => x.SummaryCount)
-                    , FunctionsCount = functions.Count
-                    , TotalFunctionsUsageCount = functions.Sum(f => f.UsageSummaries.Sum(s => s.SummaryCount))
-                    , TotalTodayFunctionsUsageCount = functions.Sum(f =>
+                    , ViewsCount = views.Count
+                    , TotalViewsUsageCount = views.Sum(f => f.UsageSummaries.Sum(s => s.SummaryCount))
+                    , TotalTodayViewsUsageCount = views.Sum(f =>
                         f.UsageSummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).TotalHours <= 24).Sum(smr =>
-                            smr.UsageDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)))
+                            smr.Details.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)))
                 };
                 returnData.Add(summary);
             }
@@ -67,7 +67,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return returnData;
         }
 
-        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, string key, bool desc, int index) where T: UsageDetail
+        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, string key, bool desc, int index) where T: TelemetryDetail
         {
             if (index == 0)
             {
@@ -79,7 +79,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
         }
 
-        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, Expression<Func<T,string>> key, bool desc, int index) where T : UsageDetail
+        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, Expression<Func<T,string>> key, bool desc, int index) where T : TelemetryDetail
         {
             if (index == 0)
             {
@@ -95,7 +95,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
         }
 
-        internal static async Task<List<T>> ApplyOrderingQuery<T>(IEnumerable<Tuple<string, bool>> sortBy, IQueryable<T> query, int skip, int take) where T: UsageDetail
+        internal static async Task<List<T>> ApplyOrderingQuery<T>
+            (IEnumerable<Tuple<string, bool>> sortBy, IQueryable<T> query, int skip, int take) where T: TelemetryDetail
         {
             List<Tuple<string, bool>> rules = sortBy.ToList();
 
@@ -116,29 +117,29 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     }
                     else if (rule.Item1 == nameof(UsageData.UserName))
                     {
-                        if (typeof(T) == typeof(ProgramUsageDetail))
+                        if (typeof(T) == typeof(ProgramTelemetryDetail))
                         {
-                            query = Order(query, x => (x as ProgramUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2, index);
+                            query = Order(query, x => (x as ProgramTelemetryDetail).UsageSummary.ClientAppUser.UserName, rule.Item2, index);
                         }
                         else
                         {
-                            query = Order(query, x => (x as FunctionUsageDetail).UsageSummary.ClientAppUser.UserName, rule.Item2, index);
+                            query = Order(query, x => (x as ViewTelemetryDetail).UsageSummary.ClientAppUser.UserName, rule.Item2, index);
                         }
                     }
-                    else if (rule.Item1 == nameof(UsageData.CustomData))
+                    //else if (rule.Item1 == nameof(UsageData.CustomData))
+                    //{
+                    //    if (typeof(T) == typeof(ProgramTelemetryDetail))
+                    //    {
+                    //        query = Order(query, x => (x as ProgramTelemetryDetail).CustomUsageData.Data, rule.Item2, index);
+                    //    }
+                    //    //else
+                    //    //{
+                    //    //    query = Order(query, x => (x as ViewTelemetryDetail).CustomUsageData.Data, rule.Item2, index);
+                    //    //}
+                    //}
+                    else if (rule.Item1 == nameof(UsageData.ViewName) && typeof(T) == typeof(ViewTelemetryDetail))
                     {
-                        if (typeof(T) == typeof(ProgramUsageDetail))
-                        {
-                            query = Order(query, x => (x as ProgramUsageDetail).CustomUsageData.Data, rule.Item2, index);
-                        }
-                        else
-                        {
-                            query = Order(query, x => (x as FunctionUsageDetail).CustomUsageData.Data, rule.Item2, index);
-                        }
-                    }
-                    else if (rule.Item1 == nameof(UsageData.FunctionName) && typeof(T) == typeof(FunctionUsageDetail))
-                    {
-                        query = Order(query, x => (x as FunctionUsageDetail).UsageSummary.Function.Name, rule.Item2, index);
+                        query = Order(query, x => (x as ViewTelemetryDetail).UsageSummary.View.Name, rule.Item2, index);
                     }
                 }
 
@@ -197,23 +198,23 @@ namespace Telimena.WebApp.Infrastructure.Repository
         public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)
         {
             IEnumerable<int> programIds = programs.Select(x => x.Id);
-            List<Function> functions = programs.SelectMany(x => x.Functions).ToList();
-            IEnumerable<int> functionIds = functions.Select(x => x.Id);
-            List<ProgramUsageSummary> programUsageSummaries = await this.context.ProgramUsages.Where(usg => programIds.Contains(usg.ProgramId)).ToListAsync();
-            List<FunctionUsageSummary> functionUsageSummaries =
-                await this.context.FunctionUsages.Where(usg => functionIds.Contains(usg.FunctionId)).ToListAsync();
+            List<View> views = programs.SelectMany(x => x.Views).ToList();
+            IEnumerable<int> viewIds = views.Select(x => x.Id);
+            List<ProgramTelemetrySummary> programUsageSummaries = await this.context.ProgramUsages.Where(usg => programIds.Contains(usg.ProgramId)).ToListAsync();
+            List<ViewTelemetrySummary> viewTelemetrySummaries =
+                await this.context.ViewUsages.Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync();
             List<ClientAppUser> users = programUsageSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
             AllProgramsSummaryData summary = new AllProgramsSummaryData
             {
                 TotalProgramsCount = programs.Count()
                 , TotalAppUsersCount = users.Count()
                 , AppUsersRegisteredLast7DaysCount = users.Count(x => (DateTime.UtcNow - x.RegisteredDate).TotalDays <= 7)
-                , TotalFunctionsCount = functions.Count()
+                , TotalViewsCount = views.Count()
             };
-            int? value = programUsageSummaries.Sum(x => (int?) x.UsageDetails.Count) ?? 0;
+            int? value = programUsageSummaries.Sum(x => (int?) x.TelemetryDetails.Count()) ?? 0;
             summary.TotalProgramUsageCount = value ?? 0;
-            value = functionUsageSummaries.Sum(x => (int?) x.UsageDetails.Count) ?? 0;
-            summary.TotalFunctionsUsageCount = value ?? 0;
+            value = viewTelemetrySummaries.Sum(x => (int?) x.Details.Count) ?? 0;
+            summary.TotalViewsUsageCount = value ?? 0;
 
             summary.NewestProgram = programs.OrderByDescending(x => x.Id) /*.Include(x=>x.Developer)*/.FirstOrDefault();
 
@@ -225,26 +226,26 @@ namespace Telimena.WebApp.Infrastructure.Repository
             await this.context.SaveChangesAsync();
         }
 
-        public async Task<UsageDataTableResult> GetProgramFunctionsUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
+        public async Task<UsageDataTableResult> GetProgramViewsUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
         {
-            IQueryable<FunctionUsageDetail> query = this.context.FunctionUsageDetails.Where(x => x.UsageSummary.Function.ProgramId == programId);
-            int totalCount = await this.context.FunctionUsageDetails.CountAsync(x => x.UsageSummary.Function.ProgramId == programId);
+            IQueryable<ViewTelemetryDetail> query = this.context.ViewUsageDetails.Where(x => x.UsageSummary.View.ProgramId == programId);
+            int totalCount = await this.context.ViewUsageDetails.CountAsync(x => x.UsageSummary.View.ProgramId == programId);
             if (take == -1)
             {
                 take = totalCount;
             }
 
-            List<FunctionUsageDetail> usages = await ApplyOrderingQuery(sortBy, query, skip, take);
+            List<ViewTelemetryDetail> usages = await ApplyOrderingQuery(sortBy, query, skip, take);
 
             List<UsageData> result = new List<UsageData>();
-            foreach (FunctionUsageDetail detail in usages)
+            foreach (ViewTelemetryDetail detail in usages)
             {
                 UsageData data = new UsageData
                 {
-                    CustomData = detail.CustomUsageData?.Data
-                    , DateTime = detail.DateTime
+                    //CustomData = detail.CustomUsageData?.Data
+                    DateTime = detail.DateTime
                     , UserName = detail.UsageSummary.ClientAppUser.UserName
-                    , FunctionName = detail.UsageSummary.Function.Name
+                    , ViewName = detail.UsageSummary.View.Name
                     , ProgramVersion = detail.AssemblyVersion.Version
                 };
                 result.Add(data);
@@ -256,7 +257,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
 
 
-            IQueryable<ProgramUsageDetail> query = this.context.ProgramUsageDetails.Where(x => x.UsageSummary.ProgramId == programId);
+            IQueryable<ProgramTelemetryDetail> query = this.context.ProgramUsageDetails.Where(x => x.UsageSummary.ProgramId == programId);
             int totalCount = await this.context.ProgramUsageDetails.CountAsync(x => x.UsageSummary.ProgramId == programId);
 
             if (take == -1)
@@ -264,15 +265,15 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 take = totalCount;
             }
 
-            List<ProgramUsageDetail> usages = await ApplyOrderingQuery(sortBy, query, skip, take);
+            var usages = await ApplyOrderingQuery(sortBy, query, skip, take);
 
             List<UsageData> result = new List<UsageData>();
-            foreach (ProgramUsageDetail detail in usages)
+            foreach (ProgramTelemetryDetail detail in usages)
             {
                 UsageData data = new UsageData
                 {
-                    CustomData = detail.CustomUsageData?.Data
-                    ,
+                    //CustomData = detail.CustomUsageData?.Data
+                    //,
                     DateTime = detail.DateTime
                     ,
                     UserName = detail.UsageSummary.ClientAppUser.UserName
@@ -286,12 +287,12 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return new UsageDataTableResult { TotalCount = totalCount, FilteredCount = totalCount, UsageData = result };
         }
 
-        private dynamic GetCustomUsageDataObject(FunctionUsageDetail detail, bool includeGenericData)
+        private dynamic GetCustomUsageDataObject(ViewTelemetryDetail detail, bool includeGenericData)
         {
             try
             {
 
-                var data = System.Web.Helpers.Json.Decode(detail.CustomUsageData.Data);
+                var data = System.Web.Helpers.Json.Decode("");
 
                 if (!includeGenericData)
                 {
@@ -303,7 +304,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 obj.genericData.DateTime = detail.DateTime;
                 obj.genericData.detailId = detail.Id;
                 obj.genericData.programVersion = detail.AssemblyVersion.Version;
-                obj.genericData.functionName = detail.UsageSummary.Function.Name;
+                obj.genericData.viewName = detail.UsageSummary.View.Name;
                 obj.genericData.userName = detail.UsageSummary.ClientAppUser.UserName;
                 obj.genericData.userId = detail.UsageSummary.ClientAppUserId;
                 return obj;
@@ -319,18 +320,18 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         }
 
-        public async Task<dynamic> ExportFunctionsUsageCustomData(int programId, bool includeGenericData)
+        public async Task<dynamic> ExportViewsUsageCustomData(int programId, bool includeGenericData)
         {
-            List<FunctionUsageDetail> usages = await this.context.FunctionUsageDetails.Where(x => x.UsageSummary.Function.ProgramId == programId).ToListAsync();
+            List<ViewTelemetryDetail> usages = await this.context.ViewUsageDetails.Where(x => x.UsageSummary.View.ProgramId == programId).ToListAsync();
 
 
-            dynamic root = new
-            {
-                data = usages.Where(x=>x.CustomUsageData?.Data != null).Select(x => this.GetCustomUsageDataObject(x, includeGenericData)).ToArray()
-            };
+            //dynamic root = new
+            //{
+            //    data = usages.Where(x=>x.CustomUsageData?.Data != null).Select(x => this.GetCustomUsageDataObject(x, includeGenericData)).ToArray()
+            //};
 
-            return root;
-
+            //return root;
+            return null;
 
         }
     }

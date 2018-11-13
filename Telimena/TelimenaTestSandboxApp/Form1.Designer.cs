@@ -32,7 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.functionNameTextBox = new System.Windows.Forms.TextBox();
+            this.viewNameTextBox = new System.Windows.Forms.TextBox();
             this.F = new System.Windows.Forms.Label();
             this.SendUpdateAppUsageButton = new System.Windows.Forms.Button();
             this.resultTextBox = new System.Windows.Forms.TextBox();
@@ -43,7 +43,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.setAppButton = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.static_functionNameTextBox = new System.Windows.Forms.TextBox();
+            this.static_viewNameTextBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.static_sendUsageReportButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -96,7 +96,7 @@
             // 
             this.groupBox1.Controls.Add(this.sendSync_button);
             this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.functionNameTextBox);
+            this.groupBox1.Controls.Add(this.viewNameTextBox);
             this.groupBox1.Controls.Add(this.F);
             this.groupBox1.Controls.Add(this.SendUpdateAppUsageButton);
             this.groupBox1.Location = new System.Drawing.Point(20, 46);
@@ -116,12 +116,12 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.InitializeButton_Click);
             // 
-            // functionNameTextBox
+            // viewNameTextBox
             // 
-            this.functionNameTextBox.Location = new System.Drawing.Point(100, 22);
-            this.functionNameTextBox.Name = "functionNameTextBox";
-            this.functionNameTextBox.Size = new System.Drawing.Size(212, 20);
-            this.functionNameTextBox.TabIndex = 2;
+            this.viewNameTextBox.Location = new System.Drawing.Point(100, 22);
+            this.viewNameTextBox.Name = "viewNameTextBox";
+            this.viewNameTextBox.Size = new System.Drawing.Size(212, 20);
+            this.viewNameTextBox.TabIndex = 2;
             // 
             // F
             // 
@@ -130,7 +130,7 @@
             this.F.Name = "F";
             this.F.Size = new System.Drawing.Size(77, 13);
             this.F.TabIndex = 1;
-            this.F.Text = "Function name";
+            this.F.Text = "View name";
             // 
             // SendUpdateAppUsageButton
             // 
@@ -211,7 +211,7 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.static_functionNameTextBox);
+            this.groupBox4.Controls.Add(this.static_viewNameTextBox);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.static_sendUsageReportButton);
             this.groupBox4.Location = new System.Drawing.Point(366, 46);
@@ -221,12 +221,12 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "STATIC CLIENT - Update app usage";
             // 
-            // static_functionNameTextBox
+            // static_viewNameTextBox
             // 
-            this.static_functionNameTextBox.Location = new System.Drawing.Point(100, 22);
-            this.static_functionNameTextBox.Name = "static_functionNameTextBox";
-            this.static_functionNameTextBox.Size = new System.Drawing.Size(212, 20);
-            this.static_functionNameTextBox.TabIndex = 2;
+            this.static_viewNameTextBox.Location = new System.Drawing.Point(100, 22);
+            this.static_viewNameTextBox.Name = "static_viewNameTextBox";
+            this.static_viewNameTextBox.Size = new System.Drawing.Size(212, 20);
+            this.static_viewNameTextBox.TabIndex = 2;
             // 
             // label4
             // 
@@ -235,7 +235,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(77, 13);
             this.label4.TabIndex = 1;
-            this.label4.Text = "Function name";
+            this.label4.Text = "View name";
             // 
             // static_sendUsageReportButton
             // 
@@ -518,7 +518,7 @@
         private System.Windows.Forms.Button SendUpdateAppUsageButton;
         private System.Windows.Forms.TextBox resultTextBox;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox functionNameTextBox;
+        private System.Windows.Forms.TextBox viewNameTextBox;
         private System.Windows.Forms.TextBox appNameTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button1;
@@ -526,7 +526,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button setAppButton;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox static_functionNameTextBox;
+        private System.Windows.Forms.TextBox static_viewNameTextBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button static_sendUsageReportButton;
         private System.Windows.Forms.GroupBox groupBox3;

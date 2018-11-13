@@ -22,12 +22,12 @@
     <div class="col-md-12">
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Function Usages</h3>
-                @Html.ActionLink("Export custom data", "ExportFunctionUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = false }, new {@class = "btn btn-primary"})
-                @Html.ActionLink("Export custom data with generic data", "ExportFunctionUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = true}, new {@class = "btn btn-primary"})
+                <h3 class="box-title">View Usages</h3>
+                @Html.ActionLink("Export custom data", "ExportViewUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = false }, new {@class = "btn btn-primary"})
+                @Html.ActionLink("Export custom data with generic data", "ExportViewUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = true}, new {@class = "btn btn-primary"})
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="@Strings.Id.FunctionUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;">
+                <table id="@Strings.Id.ViewUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;">
                 </table>
             </div>
         </div>
@@ -52,14 +52,14 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#@Strings.Id.FunctionUsageTable').DataTable({
+            $('#@Strings.Id.ViewUsageTable').DataTable({
                 serverSide: true,
                 searching: false,
                 processing: true,
                 lengthMenu: [[15, 30, 70, -1], [15, 30, 70, "All"]],
                 pageLength: 15,
                 order: [[ 0, 'desc' ]],
-                ajax:  "@Url.Action("GetProgramFunctionsUsageData")" + "?programId=" + @Model.ProgramId,
+                ajax:  "@Url.Action("GetProgramViewsUsageData")" + "?programId=" + @Model.ProgramId,
               
                 columns: [
                     {
@@ -72,9 +72,9 @@
                         searchable: false
                     },
                     {
-                        name:  "@nameof(UsageData.FunctionName)",
-                        data:  "@nameof(UsageData.FunctionName).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.FunctionName)",
+                        name:  "@nameof(UsageData.ViewName)",
+                        data:  "@nameof(UsageData.ViewName).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.ViewName)",
                         sortable: true,
                         searchable: true
                     },

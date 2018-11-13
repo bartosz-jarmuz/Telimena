@@ -16,13 +16,13 @@ namespace TelimenaClient
     public partial class Telimena : ITelimena
     {
         /// <inheritdoc />
-        public StatisticsUpdateResponse ReportUsageWithCustomDataBlocking(string customData, [CallerMemberName] string functionName = null)
+        public StatisticsUpdateResponse ReportUsageWithCustomDataBlocking(string customData, [CallerMemberName] string viewName = null)
         {
-            return Task.Run(() => this.ReportUsageWithCustomDataAsync(customData, functionName)).GetAwaiter().GetResult();
+            return Task.Run(() => this.ReportUsageWithCustomDataAsync(customData, viewName)).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
-        public Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync<T>(T customDataObject, [CallerMemberName] string functionName = null)
+        public Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync<T>(T customDataObject, [CallerMemberName] string viewName = null)
         {
             string serialized = null;
             if (customDataObject != null)
@@ -37,23 +37,23 @@ namespace TelimenaClient
                 }
             }
 
-            return this.ReportUsageWithCustomDataAsync(serialized, functionName);
+            return this.ReportUsageWithCustomDataAsync(serialized, viewName);
         }
 
         /// <inheritdoc />
-        public StatisticsUpdateResponse ReportUsageWithCustomDataBlocking<T>(T customDataObject, [CallerMemberName] string functionName = null)
+        public StatisticsUpdateResponse ReportUsageWithCustomDataBlocking<T>(T customDataObject, [CallerMemberName] string viewName = null)
         {
-            return Task.Run(() => this.ReportUsageWithCustomDataAsync(customDataObject, functionName)).GetAwaiter().GetResult();
+            return Task.Run(() => this.ReportUsageWithCustomDataAsync(customDataObject, viewName)).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
-        public StatisticsUpdateResponse ReportUsageBlocking([CallerMemberName] string functionName = null)
+        public StatisticsUpdateResponse ReportUsageBlocking([CallerMemberName] string viewName = null)
         {
-            return Task.Run(() => this.ReportUsageAsync(functionName)).GetAwaiter().GetResult();
+            return Task.Run(() => this.ReportUsageAsync(viewName)).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
-        public async Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync(string customData, [CallerMemberName] string functionName = null)
+        public async Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync(string customData, [CallerMemberName] string viewName = null)
         {
             StatisticsUpdateRequest request = null;
             try
@@ -63,7 +63,7 @@ namespace TelimenaClient
                 {
                     ProgramId = this.LiveProgramInfo.ProgramId
                     , UserId = this.LiveProgramInfo.UserId
-                    , FunctionName = functionName
+                    , ViewName = viewName
                     , Version = this.StaticProgramInfo.PrimaryAssembly.Version
                     , FileVersion = this.StaticProgramInfo.PrimaryAssembly.FileVersion
                     , CustomData = customData
@@ -73,7 +73,7 @@ namespace TelimenaClient
             }
             catch (Exception ex)
             {
-                TelimenaException exception = new TelimenaException($"Error occurred while sending update [{functionName}] statistics request", ex
+                TelimenaException exception = new TelimenaException($"Error occurred while sending update [{viewName}] statistics request", ex
                     , new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), request));
                 if (!this.SuppressAllErrors)
                 {
@@ -85,9 +85,9 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public Task<StatisticsUpdateResponse> ReportUsageAsync([CallerMemberName] string functionName = null)
+        public Task<StatisticsUpdateResponse> ReportUsageAsync([CallerMemberName] string viewName = null)
         {
-            return this.ReportUsageWithCustomDataAsync(null, functionName);
+            return this.ReportUsageWithCustomDataAsync(null, viewName);
         }
 
         /// <summary>

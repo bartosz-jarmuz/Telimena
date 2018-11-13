@@ -27,7 +27,7 @@
             public const string PasswordForm = "PasswordForm";
             public const string MyAppsList = "MyAppsList ";
             public const string ProgramUsageTable = "ProgramUsageTable";
-            public const string FunctionUsageTable = "FunctionUsageTable";
+            public const string ViewUsageTable = "ViewUsageTable";
             public const string MainHeader = "MainHeader";
             public const string UpdaterPackageUploader = "UpdaterPackageUploader";
             public const string UpdaterInternalName = "UpdaterInternalName";

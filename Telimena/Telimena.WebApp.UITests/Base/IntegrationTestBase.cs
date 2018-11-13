@@ -50,19 +50,19 @@ namespace Telimena.WebApp.UITests.Base
         }
 
         protected FileInfo LaunchTestsAppNewInstance(out Process process, Actions action, string appName, string testSubfolderName, ProgramInfo pi = null
-            , string functionName = null, bool waitForExit = true)
+            , string viewName = null, bool waitForExit = true)
         {
             var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
 
-            process = this.LaunchTestsApp(appFile, action, pi, functionName, waitForExit);
+            process = this.LaunchTestsApp(appFile, action, pi, viewName, waitForExit);
             return appFile;
         }
 
-        protected Process LaunchTestsApp(FileInfo appFile, Actions action, ProgramInfo pi = null, string functionName = null, bool waitForExit = true)
+        protected Process LaunchTestsApp(FileInfo appFile, Actions action, ProgramInfo pi = null, string viewName = null, bool waitForExit = true)
         {
             Arguments args = new Arguments { ApiUrl = this.BaseUrl, Action = action };
             args.ProgramInfo = pi;
-            args.FunctionName = functionName;
+            args.ViewName = viewName;
 
 
             Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);
@@ -80,9 +80,9 @@ namespace Telimena.WebApp.UITests.Base
         }
 
         protected T LaunchTestsAppAndGetResult<T>(out FileInfo appFile, Actions action, string appName, string testSubfolderName, ProgramInfo pi = null
-            , string functionName = null, bool waitForExit = true) where T : class
+            , string viewName = null, bool waitForExit = true) where T : class
         {
-            appFile = this.LaunchTestsAppNewInstance(out _, action, appName, testSubfolderName, pi, functionName, waitForExit);
+            appFile = this.LaunchTestsAppNewInstance(out _, action, appName, testSubfolderName, pi, viewName, waitForExit);
 
             T result = this.ParseOutput<T>();
             this.outputs.Clear();
@@ -91,9 +91,9 @@ namespace Telimena.WebApp.UITests.Base
             return result;
         }
 
-        protected T LaunchTestsAppAndGetResult<T>(FileInfo app, Actions action, ProgramInfo pi = null, string functionName = null, bool waitForExit = true) where T : class
+        protected T LaunchTestsAppAndGetResult<T>(FileInfo app, Actions action, ProgramInfo pi = null, string viewName = null, bool waitForExit = true) where T : class
         {
-            this.LaunchTestsApp(app, action, pi, functionName, waitForExit);
+            this.LaunchTestsApp(app, action, pi, viewName, waitForExit);
 
             T result = this.ParseOutput<T>();
             this.outputs.Clear();

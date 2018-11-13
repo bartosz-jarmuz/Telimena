@@ -17,7 +17,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<PortalSummaryData> GetPortalSummary();
         Task<IEnumerable<ProgramSummary>> GetProgramsSummary(List<Program> programs);
         Task<UsageDataTableResult> GetProgramUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null);
-        Task<UsageDataTableResult> GetProgramFunctionsUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null);
-        Task<dynamic> ExportFunctionsUsageCustomData(int programId, bool includeGenericData);
+        Task<UsageDataTableResult> GetProgramViewsUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null);
+        Task<dynamic> ExportViewsUsageCustomData(int programId, bool includeGenericData);
     }
 }

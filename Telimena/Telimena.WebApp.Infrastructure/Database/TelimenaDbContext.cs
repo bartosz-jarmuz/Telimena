@@ -46,16 +46,17 @@ namespace Telimena.WebApp.Infrastructure.Database
         private Type type = typeof(SqlProviderServices) ?? throw new Exception("Do not remove, ensures static reference to System.Data.Entity.SqlServer");
 
         public DbSet<Program> Programs { get; set; }
-        public DbSet<Function> Functions { get; set; }
-        public DbSet<ProgramUsageSummary> ProgramUsages { get; set; }
-        public DbSet<ProgramUsageDetail> ProgramUsageDetails { get; set; }
-
-        public DbSet<FunctionUsageSummary> FunctionUsages { get; set; }
-        public DbSet<FunctionUsageDetail> FunctionUsageDetails { get; set; }
+        public DbSet<View> Views { get; set; }
+        public DbSet<ProgramTelemetrySummary> ProgramUsages { get; set; }
+        public DbSet<ProgramTelemetryDetail> ProgramUsageDetails { get; set; }
+        public DbSet<ProgramTelemetryUnit> ProgramTelemetryUnits { get; set; }
+        public DbSet<ViewTelemetrySummary> ViewUsages { get; set; }
+        public DbSet<ViewTelemetryDetail> ViewUsageDetails { get; set; }
+        public DbSet<ViewTelemetryUnit> ViewTelemetryUnits { get; set; }
         public DbSet<ClientAppUser> AppUsers { get; set; }
         public DbSet<DeveloperAccount> Developers { get; set; }
         public DbSet<ProgramAssembly> ProgramAssemblies { get; set; }
-        public DbSet<AssemblyVersion> Versions { get; set; }
+        public DbSet<AssemblyVersionInfo> Versions { get; set; }
         public DbSet<TelimenaToolkitData> TelimenaToolkitData { get; set; }
         public DbSet<TelimenaPackageInfo> ToolkitPackages { get; set; }
         public DbSet<ProgramUpdatePackageInfo> UpdatePackages { get; set; }
@@ -72,7 +73,7 @@ namespace Telimena.WebApp.Infrastructure.Database
 
             modelBuilder.Entity<Program>().HasOptional(a => a.PrimaryAssembly).WithOptionalPrincipal(u => u.PrimaryOf);
 
-            modelBuilder.Entity<AssemblyVersion>().HasRequired(a => a.ProgramAssembly).WithMany(c => c.Versions).HasForeignKey(a => a.ProgramAssemblyId);
+            modelBuilder.Entity<AssemblyVersionInfo>().HasRequired(a => a.ProgramAssembly).WithMany(c => c.Versions).HasForeignKey(a => a.ProgramAssemblyId);
 
             modelBuilder.Entity<ProgramAssembly>().HasOptional(a => a.LatestVersion).WithOptionalPrincipal(u => u.LatestVersionOf);
 

@@ -40,10 +40,10 @@ namespace Telimena.WebApp.Controllers.Api
                 Program program = await this.helper.GetProgramOrAddIfNotExists(request);
                 var ip = this.Request.GetClientIp();
                 ClientAppUser clientAppUser = await this.helper.GetUserInfoOrAddIfNotExists(request.UserInfo, ip);
-                UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser);
+                TelemetrySummary usageSummary = await this.GetUsageData(program, clientAppUser);
                 if (!request.SkipUsageIncrementation)
                 {
-                    AssemblyVersion versionInfo = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version, request.ProgramInfo.PrimaryAssembly.FileVersion);
+                    AssemblyVersionInfo versionInfo = program.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.Version, request.ProgramInfo.PrimaryAssembly.FileVersion);
                     usageSummary.IncrementUsage(versionInfo, ip);
                 }
 
@@ -78,15 +78,15 @@ namespace Telimena.WebApp.Controllers.Api
                     return new StatisticsUpdateResponse {Exception = new InvalidOperationException($"User [{updateRequest.UserId}] is null")};
                 }
 
-                UsageSummary usageSummary = await this.GetUsageData(program, clientAppUser, updateRequest.FunctionName);
+                var usageSummary = await this.GetUsageData(program, clientAppUser, updateRequest.ViewName);
                 program.PrimaryAssembly.AddVersion(updateRequest.Version, updateRequest.FileVersion);
-                AssemblyVersion versionInfoInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version, updateRequest.FileVersion);
+                AssemblyVersionInfo versionInfoInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version, updateRequest.FileVersion);
 
                 var ip = this.Request.GetClientIp();
                 usageSummary.IncrementUsage(versionInfoInfo, ip, updateRequest.CustomData);
 
                 await this.work.CompleteAsync();
-                return PrepareResponse(updateRequest, usageSummary, program, clientAppUser);
+                return PrepareResponse(updateRequest, (usageSummary as TelemetrySummary), program, clientAppUser);
             }
             catch (Exception ex)
             {
@@ -94,57 +94,57 @@ namespace Telimena.WebApp.Controllers.Api
             }
         }
 
-        private static StatisticsUpdateResponse PrepareResponse(StatisticsUpdateRequest updateRequest, UsageSummary usageSummary, Program program
+        private static StatisticsUpdateResponse PrepareResponse(StatisticsUpdateRequest updateRequest, TelemetrySummary usageSummary, Program program
             , ClientAppUser clientAppUser)
         {
 
             StatisticsUpdateResponse response = new StatisticsUpdateResponse
             {
-                Count = usageSummary.SummaryCount, ProgramId = program.Id, UserId = clientAppUser.Id, FunctionName = updateRequest.FunctionName
+                Count = usageSummary.SummaryCount, ProgramId = program.Id, UserId = clientAppUser.Id, ComponentName = updateRequest.ViewName
             };
-            if (usageSummary is FunctionUsageSummary summary)
+            if (usageSummary is ViewTelemetrySummary summary)
             {
-                response.FunctionId = summary.FunctionId;
+                response.ComponentId = summary.ViewId;
             }
 
             return response;
         }
 
-        private async Task<UsageSummary> GetFunctionUsageData(Program program, ClientAppUser clientAppUser, string functionName)
+        private async Task<TelemetrySummary> GetViewUsageData(Program program, ClientAppUser clientAppUser, string viewName)
         {
-            Function func = await this.helper.GetFunctionOrAddIfNotExists(functionName, program);
-            UsageSummary usageSummary = func.GetFunctionUsageSummary(clientAppUser.Id);
+            View view = await this.helper.GetViewOrAddIfNotExists(viewName, program);
+            var  usageSummary = view.GetTelemetrySummary(clientAppUser.Id);
             if (usageSummary == null)
             {
-                usageSummary = new FunctionUsageSummary {Function = func, ClientAppUser = clientAppUser};
-                func.UsageSummaries.Add((FunctionUsageSummary) usageSummary);
+                usageSummary = new ViewTelemetrySummary() {View = view, ClientAppUser = clientAppUser};
+                view.UsageSummaries.Add((ViewTelemetrySummary) usageSummary);
             }
 
             return usageSummary;
         }
 
-        private UsageSummary GetProgramUsageData(Program program, ClientAppUser clientAppUser)
+        private TelemetrySummary GetProgramUsageData(Program program, ClientAppUser clientAppUser)
         {
-            UsageSummary usageSummary = program.UsageSummaries.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUser.Id);
+            var usageSummary = program.UsageSummaries.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUser.Id);
             if (usageSummary == null)
             {
-                usageSummary = new ProgramUsageSummary {Program = program, ClientAppUser = clientAppUser};
-                program.UsageSummaries.Add((ProgramUsageSummary) usageSummary);
+                usageSummary = new ProgramTelemetrySummary() {Program = program, ClientAppUser = clientAppUser};
+                program.UsageSummaries.Add((ProgramTelemetrySummary) usageSummary);
             }
 
-            return usageSummary;
+            return usageSummary ;
         }
 
-        private async Task<UsageSummary> GetUsageData(Program program, ClientAppUser clientAppUser, string functionName = null)
+        private async Task<TelemetrySummary> GetUsageData(Program program, ClientAppUser clientAppUser, string viewName = null)
         {
-            UsageSummary usageSummary;
-            if (!string.IsNullOrEmpty(functionName))
+            TelemetrySummary usageSummary;
+            if (!string.IsNullOrEmpty(viewName))
             {
-                usageSummary = await this.GetFunctionUsageData(program, clientAppUser, functionName);
+                usageSummary = await this.GetViewUsageData(program, clientAppUser, viewName);
             }
             else
             {
-                usageSummary = this.GetProgramUsageData(program, clientAppUser);
+                return this.GetProgramUsageData(program, clientAppUser);
             }
 
             return usageSummary;

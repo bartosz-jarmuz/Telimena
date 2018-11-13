@@ -5,13 +5,13 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
-using Telimena.WebApp.Infrastructure.Migrations;
 using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
     
-    public class TelimenaDbInitializer : MigrateDatabaseToLatestVersion<TelimenaContext, Configuration>
+    public class TelimenaDbInitializer : DropCreateDatabaseIfModelChanges<TelimenaContext>
+    //public class TelimenaDbInitializer : MigrateDatabaseToLatestVersion<TelimenaContext, Configuration>
     {
         public static void SeedUsers(TelimenaContext context)
         {
@@ -36,13 +36,13 @@ namespace Telimena.WebApp.Infrastructure.Database
        
         }
 
-        //protected override void Seed(TelimenaContext context)
-        //{
-        //    TelimenaDbInitializer.SeedUsers(context);
-        //    TelimenaDbInitializer.SeedToolkit(context);
-        //    context.SaveChanges();
+        protected override void Seed(TelimenaContext context)
+        {
+            TelimenaDbInitializer.SeedUsers(context);
+            TelimenaDbInitializer.SeedToolkit(context);
+            context.SaveChanges();
 
-        //}
+        }
 
         private static void CreateAdmin(TelimenaContext context)
         {

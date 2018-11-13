@@ -23,13 +23,13 @@ namespace TelimenaClient
         ///     <para />
         ///     Static method is approximately two times slower than instance based
         /// </summary>
-        /// <param name="functionName"></param>
+        /// <param name="viewName"></param>
         /// <param name="telemetryApiBaseUrl">Base url of the telemetry api</param>
         /// <param name="mainAssembly"></param>
         /// <param name="suppressAllErrors"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static Task<StatisticsUpdateResponse> ReportUsageStatic([CallerMemberName] string functionName = null, Uri telemetryApiBaseUrl = null
+        public static Task<StatisticsUpdateResponse> ReportUsageStatic([CallerMemberName] string viewName = null, Uri telemetryApiBaseUrl = null
             , Assembly mainAssembly = null, bool suppressAllErrors = true)
         {
             if (telemetryApiBaseUrl == null)
@@ -43,7 +43,7 @@ namespace TelimenaClient
             }
 
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
-            return ReportUsageStatic(httpClient, null, mainAssembly, suppressAllErrors, functionName);
+            return ReportUsageStatic(httpClient, null, mainAssembly, suppressAllErrors, viewName);
         }
 
         /// <summary>
@@ -56,11 +56,11 @@ namespace TelimenaClient
         /// <param name="telemetryApiBaseUrl"></param>
         /// <param name="mainAssembly"></param>
         /// <param name="suppressAllErrors"></param>
-        /// <param name="functionName"></param>
+        /// <param name="viewName"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static Task<StatisticsUpdateResponse> ReportUsageStatic(ProgramInfo programInfo, Uri telemetryApiBaseUrl = null, Assembly mainAssembly = null
-            , bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
+            , bool suppressAllErrors = true, [CallerMemberName] string viewName = null)
         {
             if (telemetryApiBaseUrl == null)
             {
@@ -72,7 +72,7 @@ namespace TelimenaClient
                 mainAssembly = GetProperCallingAssembly();
             }
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
-            return ReportUsageStatic(httpClient, programInfo, mainAssembly, suppressAllErrors, functionName);
+            return ReportUsageStatic(httpClient, programInfo, mainAssembly, suppressAllErrors, viewName);
         }
 
         /// <summary>
@@ -85,10 +85,10 @@ namespace TelimenaClient
         /// <param name="programInfo"></param>
         /// <param name="mainAssembly"></param>
         /// <param name="suppressAllErrors"></param>
-        /// <param name="functionName"></param>
+        /// <param name="viewName"></param>
         /// <returns></returns>
         internal static async Task<StatisticsUpdateResponse> ReportUsageStatic(ITelimenaHttpClient httpClient, ProgramInfo programInfo = null
-            , Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string functionName = null)
+            , Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string viewName = null)
         {
             RegistrationRequest registrationRequest = null;
             StatisticsUpdateRequest updateRequest = null;
@@ -117,7 +117,7 @@ namespace TelimenaClient
                 {
                     ProgramId = registrationResponse.ProgramId
                     , UserId = registrationResponse.UserId
-                    , FunctionName = functionName
+                    , ViewName = viewName
                     , Version = data.ProgramInfo.PrimaryAssembly.Version
                     , FileVersion= data.ProgramInfo.PrimaryAssembly.FileVersion
                 };
@@ -126,7 +126,7 @@ namespace TelimenaClient
             }
             catch (Exception ex)
             {
-                TelimenaException exception = new TelimenaException($"Error occurred while sending update [{functionName}] statistics request", ex
+                TelimenaException exception = new TelimenaException($"Error occurred while sending update [{viewName}] statistics request", ex
                     , new KeyValuePair<Type, object>(typeof(RegistrationRequest), registrationRequest)
                     , new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), updateRequest));
                 if (!suppressAllErrors)

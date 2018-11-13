@@ -25,8 +25,8 @@ namespace AutomaticTestsClient
                     case Actions.Initialize:
                         this.HandleInitialize(telimena);
                         break;
-                    case Actions.ReportFunctionUsage:
-                        this.HandleReportFunctionUsage(telimena);
+                    case Actions.ReportViewUsage:
+                        this.HandleReportViewUsage(telimena);
                         break;
                     case Actions.HandleUpdates:
                         telimena.HandleUpdatesBlocking(false);
@@ -65,13 +65,13 @@ namespace AutomaticTestsClient
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
 
-        private void HandleReportFunctionUsage(Telimena telimena)
+        private void HandleReportViewUsage(Telimena telimena)
         {
             
             StatisticsUpdateResponse result;
-            if (this.arguments.FunctionName != null)
+            if (this.arguments.ViewName != null)
             {
-                result = telimena.ReportUsageBlocking(this.arguments.FunctionName);
+                result = telimena.ReportUsageBlocking(this.arguments.ViewName);
             }
             else
             {
