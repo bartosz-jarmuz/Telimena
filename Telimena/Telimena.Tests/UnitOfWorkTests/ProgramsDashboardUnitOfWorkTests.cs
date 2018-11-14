@@ -24,14 +24,14 @@ namespace Telimena.Tests
         {
             var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail() {Id=1, UsageSummary = this.GetSummary("AAA", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() {Id=2, UsageSummary = this.GetSummary("BBB", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() {Id=3, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() {Id=4, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() {Id=5, UsageSummary = this.GetSummary("AAA", "XXX") });
-            data.Add(new ViewTelemetryDetail() {Id=6, UsageSummary = this.GetSummary("AAA", "YYY") });
-            data.Add(new ViewTelemetryDetail() {Id=7, UsageSummary = this.GetSummary("BBB", "YYY") });
-            data.Add(new ViewTelemetryDetail() {Id=8, UsageSummary = this.GetSummary("BBB", "XXX") });
+            data.Add(new ViewTelemetryDetail() {Id=1, TelemetrySummary = this.GetSummary("AAA", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() {Id=2, TelemetrySummary = this.GetSummary("BBB", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() {Id=3, TelemetrySummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() {Id=4, TelemetrySummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() {Id=5, TelemetrySummary = this.GetSummary("AAA", "XXX") });
+            data.Add(new ViewTelemetryDetail() {Id=6, TelemetrySummary = this.GetSummary("AAA", "YYY") });
+            data.Add(new ViewTelemetryDetail() {Id=7, TelemetrySummary = this.GetSummary("BBB", "YYY") });
+            data.Add(new ViewTelemetryDetail() {Id=8, TelemetrySummary = this.GetSummary("BBB", "XXX") });
 
 
             var sorts = new List<Tuple<string, bool>>();
@@ -57,14 +57,14 @@ namespace Telimena.Tests
         {
             var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() { Id = 5, UsageSummary = this.GetSummary("AAA", "XXX") });
-            data.Add(new ViewTelemetryDetail() { Id = 6, UsageSummary = this.GetSummary("AAA", "YYY") });
-            data.Add(new ViewTelemetryDetail() { Id = 7, UsageSummary = this.GetSummary("BBB", "YYY") });
-            data.Add(new ViewTelemetryDetail() { Id = 8, UsageSummary = this.GetSummary("BBB", "XXX") });
+            data.Add(new ViewTelemetryDetail() { Id = 1, TelemetrySummary = this.GetSummary("AAA", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 2, TelemetrySummary = this.GetSummary("BBB", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 3, TelemetrySummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 4, TelemetrySummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 5, TelemetrySummary = this.GetSummary("AAA", "XXX") });
+            data.Add(new ViewTelemetryDetail() { Id = 6, TelemetrySummary = this.GetSummary("AAA", "YYY") });
+            data.Add(new ViewTelemetryDetail() { Id = 7, TelemetrySummary = this.GetSummary("BBB", "YYY") });
+            data.Add(new ViewTelemetryDetail() { Id = 8, TelemetrySummary = this.GetSummary("BBB", "XXX") });
 
 
             var sorts = new List<Tuple<string, bool>>();
@@ -89,9 +89,9 @@ namespace Telimena.Tests
         {
             var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"), AssemblyVersion = new AssemblyVersionInfo("2.0", null ) });
-            data.Add(new ViewTelemetryDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"), AssemblyVersion = new AssemblyVersionInfo("6.0", null ) });
-            data.Add(new ViewTelemetryDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"), AssemblyVersion = new AssemblyVersionInfo("4.0", null ) });
+            data.Add(new ViewTelemetryDetail() { Id = 1, TelemetrySummary = this.GetSummary("AAA", "ZZZ"), AssemblyVersion = new AssemblyVersionInfo("2.0", null ) });
+            data.Add(new ViewTelemetryDetail() { Id = 2, TelemetrySummary = this.GetSummary("BBB", "ZZZ"), AssemblyVersion = new AssemblyVersionInfo("6.0", null ) });
+            data.Add(new ViewTelemetryDetail() { Id = 3, TelemetrySummary = this.GetSummary("CCC", "ZZZ"), AssemblyVersion = new AssemblyVersionInfo("4.0", null ) });
            
             var sorts = new List<Tuple<string, bool>>();
             sorts.Add(new Tuple<string, bool>("WrongKey", false));
@@ -109,14 +109,14 @@ namespace Telimena.Tests
         {
             var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("2.0", null)});
-            data.Add(new ViewTelemetryDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("6.0", null)});
-            data.Add(new ViewTelemetryDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("4.0", null)});
-            data.Add(new ViewTelemetryDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("4.0", null)});
-            data.Add(new ViewTelemetryDetail() { Id = 5, UsageSummary = this.GetSummary("AAA", "XXX"),AssemblyVersion = new AssemblyVersionInfo("2.0", null)});
-            data.Add(new ViewTelemetryDetail() { Id = 6, UsageSummary = this.GetSummary("AAA", "YYY"),AssemblyVersion = new AssemblyVersionInfo("2.0", null)});
-            data.Add(new ViewTelemetryDetail() { Id = 7, UsageSummary = this.GetSummary("BBB", "YYY"),AssemblyVersion = new AssemblyVersionInfo("9.0", null)});
-            data.Add(new ViewTelemetryDetail() { Id = 8, UsageSummary = this.GetSummary("BBB", "XXX"),AssemblyVersion = new AssemblyVersionInfo("1.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 1, TelemetrySummary = this.GetSummary("AAA", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("2.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 2, TelemetrySummary = this.GetSummary("BBB", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("6.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 3, TelemetrySummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("4.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 4, TelemetrySummary = this.GetSummary("CCC", "ZZZ"),AssemblyVersion = new AssemblyVersionInfo("4.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 5, TelemetrySummary = this.GetSummary("AAA", "XXX"),AssemblyVersion = new AssemblyVersionInfo("2.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 6, TelemetrySummary = this.GetSummary("AAA", "YYY"),AssemblyVersion = new AssemblyVersionInfo("2.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 7, TelemetrySummary = this.GetSummary("BBB", "YYY"),AssemblyVersion = new AssemblyVersionInfo("9.0", null)});
+            data.Add(new ViewTelemetryDetail() { Id = 8, TelemetrySummary = this.GetSummary("BBB", "XXX"),AssemblyVersion = new AssemblyVersionInfo("1.0", null)});
 
 
             var sorts = new List<Tuple<string, bool>>();
@@ -140,10 +140,10 @@ namespace Telimena.Tests
         {
             var data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail() { Id = 3, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() { Id = 4, UsageSummary = this.GetSummary("CCC", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() { Id = 1, UsageSummary = this.GetSummary("AAA", "ZZZ") });
-            data.Add(new ViewTelemetryDetail() { Id = 2, UsageSummary = this.GetSummary("BBB", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 3, TelemetrySummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 4, TelemetrySummary = this.GetSummary("CCC", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 1, TelemetrySummary = this.GetSummary("AAA", "ZZZ") });
+            data.Add(new ViewTelemetryDetail() { Id = 2, TelemetrySummary = this.GetSummary("BBB", "ZZZ") });
 
 
             var sorts = new List<Tuple<string, bool>>();

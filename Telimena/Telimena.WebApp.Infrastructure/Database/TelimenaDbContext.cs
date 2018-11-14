@@ -13,7 +13,6 @@ namespace Telimena.WebApp.Infrastructure.Database
 {
     public class TelimenaContext : IdentityDbContext<TelimenaUser>
     {
-
         public TelimenaContext(string nameOrConnectionString) : base(nameOrConnectionString)
         {
         }

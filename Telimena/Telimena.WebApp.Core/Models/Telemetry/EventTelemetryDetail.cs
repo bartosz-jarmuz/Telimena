@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using DotNetLittleHelpers;
 
 namespace Telimena.WebApp.Core.Models
 {
-    [Table("EventTelemetryDetails")]
-
     public class EventTelemetryDetail : TelemetryDetail
     {
         public virtual EventTelemetrySummary TelemetrySummary { get; set; }
-        public virtual IEnumerable<EventTelemetryUnit> Units { get; set; } = new List<EventTelemetryUnit>();
+        public virtual RestrictedAccessList<EventTelemetryUnit> TelemetryUnits { get; set; } = new RestrictedAccessList<EventTelemetryUnit>();
 
-        public override IEnumerable<TelemetryUnit> TelemetryUnits => this.Units;
+        public override TelemetrySummary GetTelemetrySummary() => this.TelemetrySummary;
+
+        public override IReadOnlyList<TelemetryUnit> GetTelemetryUnits() => this.TelemetryUnits.AsReadOnly();
     }
 }

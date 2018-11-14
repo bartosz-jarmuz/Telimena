@@ -33,13 +33,13 @@ namespace Telimena.WebApp.Core.Models
         /// <summary>
         ///     Returns developer accounts associated with this user (e.g. dev accounts which main user is set to this user)
         /// </summary>
-        public virtual RestrictedAccessCollection<DeveloperAccount> AssociatedDeveloperAccounts { get; set; } = new List<DeveloperAccount>();
+        public virtual RestrictedAccessList<DeveloperAccount> AssociatedDeveloperAccounts { get; set; } = new RestrictedAccessList<DeveloperAccount>();
 
         public void AssociateWithDeveloperAccount(DeveloperAccount developer)
         {
             if (!this.AssociatedDeveloperAccounts.Contains(developer))
             {
-                ((Collection<DeveloperAccount>) this.AssociatedDeveloperAccounts).Add(developer);
+                ((List<DeveloperAccount>) this.AssociatedDeveloperAccounts).Add(developer);
             }
         }
 

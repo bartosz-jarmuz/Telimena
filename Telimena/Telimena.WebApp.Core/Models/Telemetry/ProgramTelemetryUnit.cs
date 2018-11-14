@@ -5,6 +5,6 @@ namespace Telimena.WebApp.Core.Models
 
     public class ProgramTelemetryUnit : TelemetryUnit
     {
-        public virtual ProgramTelemetryDetail ViewTelemetryDetail { get; set; }
+        public virtual ProgramTelemetryDetail TelemetryDetail { get; set; }
     }
 }

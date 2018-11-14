@@ -63,10 +63,10 @@ namespace TelimenaClient
                 {
                     ProgramId = this.LiveProgramInfo.ProgramId
                     , UserId = this.LiveProgramInfo.UserId
-                    , ViewName = viewName
-                    , Version = this.StaticProgramInfo.PrimaryAssembly.Version
+                    , ComponentName = viewName
+                    , AssemblyVersion = this.StaticProgramInfo.PrimaryAssembly.Version
                     , FileVersion = this.StaticProgramInfo.PrimaryAssembly.FileVersion
-                    , CustomData = customData
+                    //, TelemetryData = customData
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request).ConfigureAwait(false);
                 return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
@@ -81,6 +81,37 @@ namespace TelimenaClient
                 }
 
                 return new StatisticsUpdateResponse {Exception = exception};
+            }
+        }
+
+        public async Task<StatisticsUpdateResponse> ReportEventAsync(string eventName, Dictionary<string, string> telemetryData = null)
+        {
+            StatisticsUpdateRequest request = null;
+            try
+            {
+                await this.InitializeIfNeeded().ConfigureAwait(false);
+                request = new StatisticsUpdateRequest
+                {
+                    ProgramId = this.LiveProgramInfo.ProgramId,
+                    UserId = this.LiveProgramInfo.UserId,
+                    ComponentName = eventName,
+                    AssemblyVersion = this.StaticProgramInfo.PrimaryAssembly.Version,
+                    FileVersion = this.StaticProgramInfo.PrimaryAssembly.FileVersion,
+                    TelemetryData = telemetryData
+                };
+                string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.ReportEvent, request).ConfigureAwait(false);
+                return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
+            }
+            catch (Exception ex)
+            {
+                TelimenaException exception = new TelimenaException($"Error occurred while sending update [{eventName}] statistics request", ex
+                    , new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), request));
+                if (!this.SuppressAllErrors)
+                {
+                    throw exception;
+                }
+
+                return new StatisticsUpdateResponse { Exception = exception };
             }
         }
 

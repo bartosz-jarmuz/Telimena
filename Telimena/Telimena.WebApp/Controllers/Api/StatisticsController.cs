@@ -16,16 +16,101 @@ namespace Telimena.WebApp.Controllers.Api
 
     #endregion
 
-    public class StatisticsController : ApiController
+
+    public class TelemetryController : ApiController
     {
-        public StatisticsController(IStatisticsUnitOfWork work)
+        public TelemetryController(ITelemetryUnitOfWork work)
         {
             this.work = work;
-            this.helper = new StatisticsHelperService(work);
+            this.helper = new TelemetryHelperService(work);
         }
 
-        private readonly IStatisticsUnitOfWork work;
-        private readonly StatisticsHelperService helper;
+        private readonly ITelemetryUnitOfWork work;
+        private readonly TelemetryHelperService helper;
+
+        [HttpPost]
+        public async Task<StatisticsUpdateResponse> Event(StatisticsUpdateRequest request)
+        {
+            if (!ApiRequestsValidator.IsRequestValid(request))
+            {
+                return new StatisticsUpdateResponse { Exception = new BadRequestException("Request is not valid") };
+            }
+
+            try
+            {
+                Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
+                if (program == null)
+                {
+                    return new StatisticsUpdateResponse {Exception = new InvalidOperationException($"Program [{request.ProgramId}] is null")};
+                }
+
+                ClientAppUser clientAppUser = this.work.ClientAppUsers.GetById(request.UserId);
+                if (clientAppUser == null)
+                {
+                    return new StatisticsUpdateResponse {Exception = new InvalidOperationException($"User [{request.UserId}] is null")};
+                }
+
+                Event trackedComponent = await this.helper.GetEventOrAddIfNotExists(request.ComponentName, program);
+
+                TelemetrySummary summary = this.GetTelemetry(clientAppUser, trackedComponent);
+
+                program.PrimaryAssembly.AddVersion(request.AssemblyVersion, request.FileVersion);
+                AssemblyVersionInfo versionInfoInfo = program.PrimaryAssembly.GetVersion(request.AssemblyVersion, request.FileVersion);
+
+                var ip = this.Request.GetClientIp();
+                summary.IncrementUsage(versionInfoInfo, ip, request.TelemetryData);
+
+                await this.work.CompleteAsync();
+                return PrepareResponse(request, summary, program, clientAppUser);
+            }
+            catch (Exception ex)
+            {
+                return new StatisticsUpdateResponse { Exception = new InvalidOperationException("Error while processing statistics update request", ex) };
+            }
+
+        }
+        private static StatisticsUpdateResponse PrepareResponse(StatisticsUpdateRequest updateRequest, TelemetrySummary usageSummary, Program program
+            , ClientAppUser clientAppUser)
+        {
+
+            StatisticsUpdateResponse response = new StatisticsUpdateResponse
+            {
+                Count = usageSummary.SummaryCount,
+                ProgramId = program.Id,
+                UserId = clientAppUser.Id,
+                ComponentName = updateRequest.ComponentName
+            };
+            if (usageSummary is ViewTelemetrySummary summary)
+            {
+                response.ComponentId = summary.ViewId;
+            }
+
+            return response;
+        }
+
+        private TelemetrySummary GetTelemetry(ClientAppUser clientAppUser, ProgramComponent component)
+        {
+            var usageSummary = component.GetTelemetrySummary(clientAppUser.Id);
+            if (usageSummary == null)
+            {
+                component.AddTelemetrySummary(clientAppUser.Id);
+            }
+
+            return usageSummary;
+        }
+
+    }
+
+    public class StatisticsController : ApiController
+    {
+        public StatisticsController(ITelemetryUnitOfWork work)
+        {
+            this.work = work;
+            this.helper = new TelemetryHelperService(work);
+        }
+
+        private readonly ITelemetryUnitOfWork work;
+        private readonly TelemetryHelperService helper;
 
         [HttpPost]
         public async Task<RegistrationResponse> RegisterClient(RegistrationRequest request)
@@ -78,18 +163,21 @@ namespace Telimena.WebApp.Controllers.Api
                     return new StatisticsUpdateResponse {Exception = new InvalidOperationException($"User [{updateRequest.UserId}] is null")};
                 }
 
-                var usageSummary = await this.GetUsageData(program, clientAppUser, updateRequest.ViewName);
-                program.PrimaryAssembly.AddVersion(updateRequest.Version, updateRequest.FileVersion);
-                AssemblyVersionInfo versionInfoInfo = program.PrimaryAssembly.GetVersion(updateRequest.Version, updateRequest.FileVersion);
+                var usageSummary = await this.GetUsageData(program, clientAppUser, updateRequest.ComponentName);
+                program.PrimaryAssembly.AddVersion(updateRequest.AssemblyVersion, updateRequest.FileVersion);
+                AssemblyVersionInfo versionInfoInfo = program.PrimaryAssembly.GetVersion(updateRequest.AssemblyVersion, updateRequest.FileVersion);
 
                 var ip = this.Request.GetClientIp();
-                usageSummary.IncrementUsage(versionInfoInfo, ip, updateRequest.CustomData);
+                usageSummary.IncrementUsage(versionInfoInfo, ip, updateRequest.TelemetryData);
 
                 await this.work.CompleteAsync();
                 return PrepareResponse(updateRequest, (usageSummary as TelemetrySummary), program, clientAppUser);
             }
             catch (Exception ex)
             {
+#if DEBUG
+                throw;
+#endif
                 return new StatisticsUpdateResponse {Exception = new InvalidOperationException("Error while processing statistics update request", ex)};
             }
         }
@@ -100,7 +188,7 @@ namespace Telimena.WebApp.Controllers.Api
 
             StatisticsUpdateResponse response = new StatisticsUpdateResponse
             {
-                Count = usageSummary.SummaryCount, ProgramId = program.Id, UserId = clientAppUser.Id, ComponentName = updateRequest.ViewName
+                Count = usageSummary.SummaryCount, ProgramId = program.Id, UserId = clientAppUser.Id, ComponentName = updateRequest.ComponentName
             };
             if (usageSummary is ViewTelemetrySummary summary)
             {
@@ -110,14 +198,15 @@ namespace Telimena.WebApp.Controllers.Api
             return response;
         }
 
+
+
         private async Task<TelemetrySummary> GetViewUsageData(Program program, ClientAppUser clientAppUser, string viewName)
         {
             View view = await this.helper.GetViewOrAddIfNotExists(viewName, program);
             var  usageSummary = view.GetTelemetrySummary(clientAppUser.Id);
             if (usageSummary == null)
             {
-                usageSummary = new ViewTelemetrySummary() {View = view, ClientAppUser = clientAppUser};
-                view.UsageSummaries.Add((ViewTelemetrySummary) usageSummary);
+                usageSummary = view.AddTelemetrySummary(clientAppUser.Id);
             }
 
             return usageSummary;

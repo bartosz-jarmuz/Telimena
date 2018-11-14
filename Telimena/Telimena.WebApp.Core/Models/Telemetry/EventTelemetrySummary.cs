@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DotNetLittleHelpers;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -8,11 +9,12 @@ namespace Telimena.WebApp.Core.Models
         public int EventId { get; set; }
         public virtual Event Event { get; set; }
 
-        public IEnumerable<EventTelemetryDetail> Details { get; set; } = new List<EventTelemetryDetail>();
+        public RestrictedAccessList<EventTelemetryDetail> TelemetryDetails { get; set; } = new RestrictedAccessList<EventTelemetryDetail>();
 
-        public override IEnumerable<TelemetryDetail> TelemetryDetails => this.Details;
+        public override IReadOnlyList<TelemetryDetail> GetTelemetryDetails() => this.TelemetryDetails.AsReadOnly();
 
-        public override void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo, string customData)
+        public override void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo
+            , Dictionary<string, string> telemetryUnits)
         {
             throw new NotImplementedException();
         }

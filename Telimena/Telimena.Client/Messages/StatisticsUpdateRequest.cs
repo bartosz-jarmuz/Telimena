@@ -1,4 +1,6 @@
-﻿namespace TelimenaClient
+﻿using System.Collections.Generic;
+
+namespace TelimenaClient
 {
     /// <summary>
     /// Class StatisticsUpdateRequest.
@@ -19,13 +21,14 @@
         /// Gets or sets the name of the view.
         /// </summary>
         /// <value>The name of the view.</value>
-        public string ViewName { get; set; }
+        public string ComponentName { get; set; }
+        
         /// <summary>
         /// Gets or sets the version.
         /// <para/><seealso href="https://stackoverflow.com/questions/64602/what-are-differences-between-assemblyversion-assemblyfileversion-and-assemblyin"/> 
         /// </summary>
         /// <value>The version.</value>
-        public string Version { get; set; }
+        public string AssemblyVersion { get; set; }
 
         /// <summary>
         /// The file version which is set by [assembly: AssemblyFileVersion("1.0.0.0")] attribute
@@ -37,6 +40,6 @@
         /// Gets or sets the custom data.
         /// </summary>
         /// <value>The custom data.</value>
-        public string CustomData { get; set; }
+        public Dictionary<string, string> TelemetryData { get; set; }
     }
 }

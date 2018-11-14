@@ -1,24 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DotNetLittleHelpers;
 
 namespace Telimena.WebApp.Core.Models
 {
     public class View : ProgramComponent
     {
-       // public virtual ICollection<ViewUsageSummary> UsageSummaries { get; set; } = new List<ViewUsageSummary>();
+        public virtual RestrictedAccessList<ViewTelemetrySummary> TelemetrySummaries { get; set; } = new RestrictedAccessList<ViewTelemetrySummary>();
 
-        public virtual ICollection<ViewTelemetrySummary> UsageSummaries { get; set; } = new List<ViewTelemetrySummary>();
+        public override IReadOnlyList<TelemetrySummary> GetTelemetrySummaries() => this.TelemetrySummaries.AsReadOnly();
 
-
-        public ICollection<ViewTelemetryDetail> GetTelemetryDetails(int clientAppUserId)
+        public override TelemetrySummary AddTelemetrySummary(int clientAppUserId)
         {
-            ViewTelemetrySummary usage = this.GetTelemetrySummary(clientAppUserId);
-            return usage.Details.Cast<ViewTelemetryDetail>().ToList();
-        }
-
-        public ViewTelemetrySummary GetTelemetrySummary(int clientAppUserId)
-        {
-            return this.UsageSummaries.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUserId);
+            ViewTelemetrySummary summary = new ViewTelemetrySummary()
+            {
+                ClientAppUserId = clientAppUserId,
+                View = this
+            };
+            ((List<ViewTelemetrySummary>)this.TelemetrySummaries).Add(summary);
+            return summary;
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Telimena.Tests
         [Test]
         public void TestToolkitDataAssignment()
         {
-            StatisticsUnitOfWork unit = new StatisticsUnitOfWork(this.Context, new AssemblyStreamVersionReader());
+            TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             Assert.AreEqual(0, unit.ToolkitData.Get().Count());
 
             StatisticsController sut = new StatisticsController(unit);

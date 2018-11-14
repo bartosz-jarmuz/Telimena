@@ -4,7 +4,7 @@ using Telimena.WebApp.Infrastructure.Repository;
 
 namespace Telimena.WebApp.Infrastructure.UnitOfWork
 {
-    public interface IStatisticsUnitOfWork
+    public interface ITelemetryUnitOfWork
     {
         IRepository<ClientAppUser> ClientAppUsers { get; }
         IRepository<AssemblyVersionInfo> Versions { get; }
@@ -13,7 +13,8 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
 
         IToolkitDataRepository ToolkitData { get; }
 
-        IViewRepository Views { get; }
+        IRepository<View> Views { get; }
+        IRepository<Event> Events{ get; }
         IRepository<DeveloperAccount> Developers { get; set; }
         Task CompleteAsync();
     }

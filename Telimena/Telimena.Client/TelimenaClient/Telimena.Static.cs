@@ -117,8 +117,8 @@ namespace TelimenaClient
                 {
                     ProgramId = registrationResponse.ProgramId
                     , UserId = registrationResponse.UserId
-                    , ViewName = viewName
-                    , Version = data.ProgramInfo.PrimaryAssembly.Version
+                    , ComponentName = viewName
+                    , AssemblyVersion = data.ProgramInfo.PrimaryAssembly.Version
                     , FileVersion= data.ProgramInfo.PrimaryAssembly.FileVersion
                 };
                 responseContent = await messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, updateRequest).ConfigureAwait(false);

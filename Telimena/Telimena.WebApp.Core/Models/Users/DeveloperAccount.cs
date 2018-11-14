@@ -30,16 +30,16 @@ namespace Telimena.WebApp.Core.Models
         [ForeignKey("MainUserId")]
         public virtual TelimenaUser MainUser { get; private set; }
 
-        public virtual RestrictedAccessCollection<TelimenaUser> AssociatedUsers { get; set; } = new List<TelimenaUser>();
+        public virtual RestrictedAccessList<TelimenaUser> AssociatedUsers { get; set; } = new RestrictedAccessList<TelimenaUser>();
 
-        public virtual RestrictedAccessCollection<Program> Programs { get; set; } = new List<Program>();
-        public virtual RestrictedAccessCollection<Updater> Updaters { get; set; } = new List<Updater>();
+        public virtual RestrictedAccessList<Program> Programs { get; set; } = new RestrictedAccessList<Program>();
+        public virtual RestrictedAccessList<Updater> Updaters { get; set; } = new RestrictedAccessList<Updater>();
 
         public void AddProgram(Program program)
         {
             if (this.Programs.All(x => x.Id != this.Id))
             {
-                ((Collection<Program>) this.Programs).Add(program);
+                ((List<Program>) this.Programs).Add(program);
             }
         }
 
@@ -47,7 +47,7 @@ namespace Telimena.WebApp.Core.Models
         {
             if (!this.AssociatedUsers.Contains(user))
             {
-                ((Collection<TelimenaUser>) this.AssociatedUsers).Add(user);
+                ((List<TelimenaUser>) this.AssociatedUsers).Add(user);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Telimena.WebApp.Core.Models
         {
             if (this.AssociatedUsers.Contains(user))
             {
-                ((Collection<TelimenaUser>) this.AssociatedUsers).Remove(user);
+                ((List<TelimenaUser>) this.AssociatedUsers).Remove(user);
             }
         }
 

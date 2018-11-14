@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using DotNetLittleHelpers;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -7,20 +9,29 @@ namespace Telimena.WebApp.Core.Models
     {
         public int ViewId { get; set; }
         public virtual View View { get; set; }
-        public ICollection<ViewTelemetryDetail> Details { get; set;  } = new List<ViewTelemetryDetail>();
+        public RestrictedAccessList<ViewTelemetryDetail> TelemetryDetails { get; set;  } = new RestrictedAccessList<ViewTelemetryDetail>();
 
-        public override IEnumerable<TelemetryDetail> TelemetryDetails => this.Details;
+        public override IReadOnlyList<TelemetryDetail> GetTelemetryDetails() => this.TelemetryDetails.AsReadOnly();
 
-        public override void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo, string customData)
+        public override void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo, Dictionary<string, string> telemetryUnits)
         {
-            ViewTelemetryDetail usage = new ViewTelemetryDetail
+            ViewTelemetryDetail detail = new ViewTelemetryDetail
             {
                 DateTime = lastUsageDateTime,
-                UsageSummary = this,
+                TelemetrySummary = this,
                 AssemblyVersion = versionInfo,
                 IpAddress = ipAddress
             };
-            this.Details.Add(usage);
+            if (telemetryUnits != null && telemetryUnits.Any())
+            {
+                foreach (KeyValuePair<string, string> unit in telemetryUnits)
+                {
+                    var telemetryUnit = new ViewTelemetryUnit() {Key = unit.Key, Value = unit.Value};
+                    ((List<ViewTelemetryUnit>)detail.TelemetryUnits).Add(telemetryUnit);
+                }
+            }
+
+            ((List<ViewTelemetryDetail>)this.TelemetryDetails).Add(detail);
         }
     }
 }

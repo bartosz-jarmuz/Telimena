@@ -40,7 +40,7 @@ namespace Telimena.WebApp.Core.Models
         public ProgramTelemetryDetail GetLatestUsageDetail()
         {
             var summary = this.UsageSummaries.MaxFirstBy(x => x.LastUsageDateTime);
-            return summary.TelemetryDetails.MaxFirstBy(x => x.Id) as ProgramTelemetryDetail;
+            return summary.GetTelemetryDetails().MaxFirstBy(x => x.Id) as ProgramTelemetryDetail;
         }
 
         public AssemblyVersionInfo GetLatestVersion()
@@ -51,7 +51,7 @@ namespace Telimena.WebApp.Core.Models
         public ICollection<ProgramTelemetryDetail> GetProgramUsageDetails(int clientAppUserId)
         {
             ProgramTelemetrySummary usage = this.GetProgramUsageSummary(clientAppUserId);
-            return usage.TelemetryDetails.Cast<ProgramTelemetryDetail>().ToList();
+            return usage.GetTelemetryDetails().Cast<ProgramTelemetryDetail>().ToList();
         }
 
         public ProgramTelemetrySummary GetProgramUsageSummary(int clientAppUserId)

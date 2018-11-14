@@ -11,7 +11,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
     #endregion
 
-    internal class ViewRepository : Repository<View>, IViewRepository
+    internal class ViewRepository : Repository<View>
     {
         public ViewRepository(DbContext dbContext) : base(dbContext)
         {

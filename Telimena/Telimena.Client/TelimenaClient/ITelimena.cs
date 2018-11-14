@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -77,6 +78,9 @@ namespace TelimenaClient
         /// </summary>
         /// <param name="assemblyNames"></param>
         void LoadHelperAssembliesByName(params string[] assemblyNames);
+
+        
+        Task<StatisticsUpdateResponse> ReportEventAsync(string eventName, Dictionary<string, string> telemetryData = null);
 
         /// <summary>
         ///     Report the usage of the application view.

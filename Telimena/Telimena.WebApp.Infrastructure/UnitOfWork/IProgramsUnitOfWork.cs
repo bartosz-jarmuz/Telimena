@@ -13,7 +13,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
 
         IProgramRepository Programs { get; }
 
-        IViewRepository Views { get; }
+        IRepository<View> Views { get; }
         IToolkitDataRepository ToolkitData { get; set; }
         IUpdatePackageRepository UpdatePackages { get; set; }
         IUpdaterRepository UpdaterRepository { get; set; }

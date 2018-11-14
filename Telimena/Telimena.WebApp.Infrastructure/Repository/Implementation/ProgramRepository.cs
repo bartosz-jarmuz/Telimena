@@ -79,11 +79,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         }
         public void Remove(Program program)
         {
-            this.telimenaContext.ViewUsageDetails.RemoveRange(this.telimenaContext.ViewUsageDetails.Where(x => x.UsageSummary.View.ProgramId == program.Id));
+            this.telimenaContext.ViewUsageDetails.RemoveRange(this.telimenaContext.ViewUsageDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id));
             this.telimenaContext.ViewUsages.RemoveRange(this.telimenaContext.ViewUsages.Where(x => x.View.ProgramId == program.Id));
             this.telimenaContext.Views.RemoveRange(this.telimenaContext.Views.Where(x => x.ProgramId == program.Id));
 
-            this.telimenaContext.ProgramUsageDetails.RemoveRange(this.telimenaContext.ProgramUsageDetails.Where(x => x.UsageSummary.ProgramId == program.Id));
+            this.telimenaContext.ProgramUsageDetails.RemoveRange(this.telimenaContext.ProgramUsageDetails.Where(x => x.TelemetrySummary.ProgramId == program.Id));
             this.telimenaContext.ProgramUsages.RemoveRange(this.telimenaContext.ProgramUsages.Where(x => x.ProgramId == program.Id));
 
             this.telimenaContext.Versions.RemoveRange(this.telimenaContext.Versions.Where(x => x.ProgramAssembly.ProgramId == program.Id));

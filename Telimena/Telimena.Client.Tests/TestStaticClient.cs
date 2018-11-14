@@ -54,7 +54,7 @@ namespace TelimenaClient.Tests
             {
                 TelimenaException ex = e as TelimenaException;
                 StatisticsUpdateRequest jObj = ex.RequestObjects[1].Value as StatisticsUpdateRequest;
-                Assert.AreEqual("Test_StaticClient_IsProperViewRecorded", jObj.ViewName);
+                Assert.AreEqual("Test_StaticClient_IsProperViewRecorded", jObj.ComponentName);
             }
 
             try
@@ -123,8 +123,8 @@ namespace TelimenaClient.Tests
                 StatisticsUpdateRequest jObj = ex.RequestObjects[1].Value as StatisticsUpdateRequest;
                 Assert.AreEqual(1, jObj.ProgramId);
                 Assert.AreEqual(2, jObj.UserId);
-                Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.ViewName);
-                Assert.IsTrue(Version.TryParse(jObj.Version, out _));
+                Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.ComponentName);
+                Assert.IsTrue(Version.TryParse(jObj.AssemblyVersion, out _));
             }
         }
 

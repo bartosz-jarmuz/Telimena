@@ -29,7 +29,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         }
 
         private readonly TelimenaContext context;
-        public IViewRepository Views { get; }
+        public IRepository<View> Views { get; }
 
         public IRepository<TelimenaUser> Users { get; }
         public IProgramRepository Programs { get; }
@@ -53,13 +53,13 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     , UsersCount = program.UsageSummaries.Count
                     , TodayUsageCount =
                         program.UsageSummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).TotalHours <= 24).Sum(smr =>
-                            smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24))
+                            smr.GetTelemetryDetails().Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24))
                     , TotalUsageCount = program.UsageSummaries.Sum(x => x.SummaryCount)
                     , ViewsCount = views.Count
-                    , TotalViewsUsageCount = views.Sum(f => f.UsageSummaries.Sum(s => s.SummaryCount))
+                    , TotalViewsUsageCount = views.Sum(f => f.TelemetrySummaries.Sum(s => s.SummaryCount))
                     , TotalTodayViewsUsageCount = views.Sum(f =>
-                        f.UsageSummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).TotalHours <= 24).Sum(smr =>
-                            smr.Details.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)))
+                        f.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).TotalHours <= 24).Sum(smr =>
+                            smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)))
                 };
                 returnData.Add(summary);
             }
@@ -119,11 +119,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     {
                         if (typeof(T) == typeof(ProgramTelemetryDetail))
                         {
-                            query = Order(query, x => (x as ProgramTelemetryDetail).UsageSummary.ClientAppUser.UserName, rule.Item2, index);
+                            query = Order(query, x => (x as ProgramTelemetryDetail).TelemetrySummary.ClientAppUser.UserName, rule.Item2, index);
                         }
                         else
                         {
-                            query = Order(query, x => (x as ViewTelemetryDetail).UsageSummary.ClientAppUser.UserName, rule.Item2, index);
+                            query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.ClientAppUser.UserName, rule.Item2, index);
                         }
                     }
                     //else if (rule.Item1 == nameof(UsageData.CustomData))
@@ -139,7 +139,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     //}
                     else if (rule.Item1 == nameof(UsageData.ViewName) && typeof(T) == typeof(ViewTelemetryDetail))
                     {
-                        query = Order(query, x => (x as ViewTelemetryDetail).UsageSummary.View.Name, rule.Item2, index);
+                        query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.View.Name, rule.Item2, index);
                     }
                 }
 
@@ -211,9 +211,9 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 , AppUsersRegisteredLast7DaysCount = users.Count(x => (DateTime.UtcNow - x.RegisteredDate).TotalDays <= 7)
                 , TotalViewsCount = views.Count()
             };
-            int? value = programUsageSummaries.Sum(x => (int?) x.TelemetryDetails.Count()) ?? 0;
+            int? value = programUsageSummaries.Sum(x => (int?) x.GetTelemetryDetails().Count()) ?? 0;
             summary.TotalProgramUsageCount = value ?? 0;
-            value = viewTelemetrySummaries.Sum(x => (int?) x.Details.Count) ?? 0;
+            value = viewTelemetrySummaries.Sum(x => (int?) x.TelemetryDetails.Count) ?? 0;
             summary.TotalViewsUsageCount = value ?? 0;
 
             summary.NewestProgram = programs.OrderByDescending(x => x.Id) /*.Include(x=>x.Developer)*/.FirstOrDefault();
@@ -228,8 +228,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<UsageDataTableResult> GetProgramViewsUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
         {
-            IQueryable<ViewTelemetryDetail> query = this.context.ViewUsageDetails.Where(x => x.UsageSummary.View.ProgramId == programId);
-            int totalCount = await this.context.ViewUsageDetails.CountAsync(x => x.UsageSummary.View.ProgramId == programId);
+            IQueryable<ViewTelemetryDetail> query = this.context.ViewUsageDetails.Where(x => x.TelemetrySummary.View.ProgramId == programId);
+            int totalCount = await this.context.ViewUsageDetails.CountAsync(x => x.TelemetrySummary.View.ProgramId == programId);
             if (take == -1)
             {
                 take = totalCount;
@@ -244,8 +244,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 {
                     //CustomData = detail.CustomUsageData?.Data
                     DateTime = detail.DateTime
-                    , UserName = detail.UsageSummary.ClientAppUser.UserName
-                    , ViewName = detail.UsageSummary.View.Name
+                    , UserName = detail.TelemetrySummary.ClientAppUser.UserName
+                    , ViewName = detail.TelemetrySummary.View.Name
                     , ProgramVersion = detail.AssemblyVersion.Version
                 };
                 result.Add(data);
@@ -257,8 +257,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
 
 
-            IQueryable<ProgramTelemetryDetail> query = this.context.ProgramUsageDetails.Where(x => x.UsageSummary.ProgramId == programId);
-            int totalCount = await this.context.ProgramUsageDetails.CountAsync(x => x.UsageSummary.ProgramId == programId);
+            IQueryable<ProgramTelemetryDetail> query = this.context.ProgramUsageDetails.Where(x => x.TelemetrySummary.ProgramId == programId);
+            int totalCount = await this.context.ProgramUsageDetails.CountAsync(x => x.TelemetrySummary.ProgramId == programId);
 
             if (take == -1)
             {
@@ -276,7 +276,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     //,
                     DateTime = detail.DateTime
                     ,
-                    UserName = detail.UsageSummary.ClientAppUser.UserName
+                    UserName = detail.TelemetrySummary.ClientAppUser.UserName
                     ,
                     ProgramVersion = detail.AssemblyVersion.Version
 
@@ -304,9 +304,9 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 obj.genericData.DateTime = detail.DateTime;
                 obj.genericData.detailId = detail.Id;
                 obj.genericData.programVersion = detail.AssemblyVersion.Version;
-                obj.genericData.viewName = detail.UsageSummary.View.Name;
-                obj.genericData.userName = detail.UsageSummary.ClientAppUser.UserName;
-                obj.genericData.userId = detail.UsageSummary.ClientAppUserId;
+                obj.genericData.viewName = detail.TelemetrySummary.View.Name;
+                obj.genericData.userName = detail.TelemetrySummary.ClientAppUser.UserName;
+                obj.genericData.userId = detail.TelemetrySummary.ClientAppUserId;
                 return obj;
             }
             catch (Exception ex)
@@ -322,7 +322,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<dynamic> ExportViewsUsageCustomData(int programId, bool includeGenericData)
         {
-            List<ViewTelemetryDetail> usages = await this.context.ViewUsageDetails.Where(x => x.UsageSummary.View.ProgramId == programId).ToListAsync();
+            List<ViewTelemetryDetail> usages = await this.context.ViewUsageDetails.Where(x => x.TelemetrySummary.View.ProgramId == programId).ToListAsync();
 
 
             //dynamic root = new

@@ -31,9 +31,9 @@ namespace Telimena.WebApp.Core.Models
         public string InternalName { get; set; }
 
         public int Id { get; set; }
-        public virtual RestrictedAccessCollection<UpdaterPackageInfo> Packages{ get; set; } = new List<UpdaterPackageInfo>();
+        public virtual RestrictedAccessList<UpdaterPackageInfo> Packages{ get; set; } = new RestrictedAccessList<UpdaterPackageInfo>();
 
-        public virtual RestrictedAccessCollection<Program> Programs { get; set; } = new List<Program>();
+        public virtual RestrictedAccessList<Program> Programs { get; set; } = new RestrictedAccessList<Program>();
 
         public virtual DeveloperAccount DeveloperAccount { get; set; }
 

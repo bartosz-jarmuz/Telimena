@@ -1,33 +1,49 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers.Api
 {
-    public class StatisticsHelperService
+
+    public class TelemetryHelperService
     {
-        public StatisticsHelperService(IStatisticsUnitOfWork work)
+        public TelemetryHelperService(ITelemetryUnitOfWork work)
         {
             this.work = work;
         }
 
-        private readonly IStatisticsUnitOfWork work;
+        private readonly ITelemetryUnitOfWork work;
+
+        public async Task<Event> GetEventOrAddIfNotExists(string componentName, Program program)
+        {
+            Event obj = await this.work.Events.FirstOrDefaultAsync(x => x.Name == componentName && x.Program.Name == program.Name);
+            if (obj == null)
+            {
+                obj = new Event() { Name = componentName, Program = program, ProgramId = program.Id };
+                this.work.Events.Add(obj);
+            }
+
+            return obj;
+        }
 
         public async Task<View> GetViewOrAddIfNotExists(string viewName, Program program)
         {
-            View func = await this.work.Views.FirstOrDefaultAsync(x => x.Name == viewName && x.Program.Name == program.Name);
-            if (func == null)
+            View view = await this.work.Views.FirstOrDefaultAsync(x => x.Name == viewName && x.Program.Name == program.Name);
+            if (view == null)
             {
-                func = new View {Name = viewName, Program = program, ProgramId = program.Id};
-                this.work.Views.Add(func);
+                view = new View {Name = viewName, Program = program, ProgramId = program.Id};
+                this.work.Views.Add(view);
             }
 
-            return func;
+            return view;
         }
 
         public async Task<Program> GetProgramOrAddIfNotExists(RegistrationRequest requestProgramInfo)

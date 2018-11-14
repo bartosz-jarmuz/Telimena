@@ -88,8 +88,8 @@ namespace TelimenaClient.Tests
                     Assert.AreEqual("Updater.exe", telimena.LiveProgramInfo.UpdaterName);
                     TelimenaException ex = e as TelimenaException;
                     StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                    Assert.AreEqual("Test_NoCustomData", jObj.ViewName);
-                    Assert.AreEqual(null, jObj.CustomData);
+                    Assert.AreEqual("Test_NoCustomData", jObj.ComponentName);
+                    Assert.AreEqual(null, jObj.TelemetryData);
                 }
 
                 act = () => telimena.ReportUsageBlocking();
@@ -121,8 +121,8 @@ namespace TelimenaClient.Tests
                 {
                     TelimenaException ex = e as TelimenaException;
                     StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                    Assert.AreEqual("Test_NullCustomData", jObj.ViewName);
-                    Assert.AreEqual(null, jObj.CustomData);
+                    Assert.AreEqual("Test_NullCustomData", jObj.ComponentName);
+                    Assert.AreEqual(null, jObj.TelemetryData);
                 }
                 act = () => telimena.ReportUsageWithCustomDataBlocking(null);
             }
@@ -150,8 +150,8 @@ namespace TelimenaClient.Tests
                 {
                     TelimenaException ex = e as TelimenaException;
                     StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                    Assert.AreEqual("AAAAAA", jObj.CustomData);
-                    Assert.AreEqual("Test_CustomDataString", jObj.ViewName);
+                    Assert.AreEqual("AAAAAA", jObj.TelemetryData);
+                    Assert.AreEqual("Test_CustomDataString", jObj.ComponentName);
                 }
                 act = () => telimena.ReportUsageWithCustomDataBlocking("AAAAAA");
 
@@ -181,9 +181,9 @@ namespace TelimenaClient.Tests
                 {
                     TelimenaException ex = e as TelimenaException;
                     StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
-                    Assert.AreEqual("Test_CustomDataObject", jObj.ViewName);
+                    Assert.AreEqual("Test_CustomDataObject", jObj.ComponentName);
 
-                    Assert.AreEqual("{\"SomeValue\":333,\"TrySerializingThisBadBoy\":null}", jObj.CustomData);
+                    Assert.AreEqual("{\"SomeValue\":333,\"TrySerializingThisBadBoy\":null}", jObj.TelemetryData);
                 }
                 act = () => telimena.ReportUsageWithCustomDataBlocking(obj);
 

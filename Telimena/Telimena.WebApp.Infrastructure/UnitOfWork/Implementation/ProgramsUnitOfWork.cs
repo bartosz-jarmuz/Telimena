@@ -34,7 +34,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         public IProgramPackageRepository ProgramPackages { get; set; }
         public IRepository<AssemblyVersionInfo> Versions { get; }
         public IProgramRepository Programs { get; }
-        public IViewRepository Views { get; }
+        public IRepository<View> Views { get; }
 
         public async Task CompleteAsync()
         {

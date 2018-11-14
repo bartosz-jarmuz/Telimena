@@ -4,7 +4,6 @@ namespace Telimena.WebApp.Core.Models
 {
     public class EventTelemetryUnit : TelemetryUnit
     {
-
-        public virtual  EventTelemetryDetail EventTelemetryDetail { get; set; }
+        public virtual  EventTelemetryDetail TelemetryDetail { get; set; }
     }
 }

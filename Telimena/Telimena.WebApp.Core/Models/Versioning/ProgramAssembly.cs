@@ -20,7 +20,7 @@ namespace Telimena.WebApp.Core.Models
         public string Title { get; set; }
         public string Company { get; set; }
         public string FullName { get; set; }
-        public virtual RestrictedAccessCollection<AssemblyVersionInfo> Versions { get; set; } = new List<AssemblyVersionInfo>();
+        public virtual RestrictedAccessList<AssemblyVersionInfo> Versions { get; set; } = new RestrictedAccessList<AssemblyVersionInfo>();
 
         public string GetFileName()
         {
@@ -33,7 +33,7 @@ namespace Telimena.WebApp.Core.Models
             var existingOne = this.GetVersion(version, fileVersion);
             if (existingOne == null)
             {
-                ((Collection<AssemblyVersionInfo>) this.Versions).Add(new AssemblyVersionInfo(version, fileVersion));
+                ((List<AssemblyVersionInfo>) this.Versions).Add(new AssemblyVersionInfo(version, fileVersion));
             }
         }
 

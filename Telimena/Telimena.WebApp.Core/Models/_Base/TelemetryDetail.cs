@@ -11,10 +11,9 @@ namespace Telimena.WebApp.Core.Models
         public virtual AssemblyVersionInfo AssemblyVersion { get; set; }
         public int? AssemblyVersionId { get; set; }
         public DateTime DateTime { get; set; } = DateTime.UtcNow;
-        public int UsageSummaryId { get; set; }
+        public int TelemetrySummaryId { get; set; }
 
-        [NotMapped]
-        public abstract IEnumerable<TelemetryUnit> TelemetryUnits { get;  }
-
+        public abstract TelemetrySummary GetTelemetrySummary();
+        public abstract IReadOnlyList<TelemetryUnit> GetTelemetryUnits();
     }
 }

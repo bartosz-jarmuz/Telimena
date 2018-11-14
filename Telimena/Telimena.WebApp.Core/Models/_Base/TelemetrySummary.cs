@@ -13,27 +13,26 @@ namespace Telimena.WebApp.Core.Models
         public virtual ClientAppUser ClientAppUser { get; set; }
         public int? ClientAppUserId { get; set; }
 
-        [NotMapped]
-        public abstract IEnumerable<TelemetryDetail> TelemetryDetails {  get; }
-
         private int summaryCount;
 
         public int SummaryCount
         {
             get
             {
-                this.summaryCount = this.TelemetryDetails?.Count() ?? 0;
+                this.summaryCount = this.GetTelemetryDetails()?.Count() ?? 0;
                 return this.summaryCount;
             }
             set => this.summaryCount = value;
         }
+        public abstract IReadOnlyList<TelemetryDetail> GetTelemetryDetails();
 
-        public abstract void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo, string customData);
+        public abstract void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo
+            , Dictionary<string, string> telemetryUnits);
 
-        public virtual void IncrementUsage(AssemblyVersionInfo versionInfo, string ipAddress, string customData = null)
+        public virtual void IncrementUsage(AssemblyVersionInfo versionInfo, string ipAddress, Dictionary<string, string> telemetryUnits = null)
         {
             this.LastUsageDateTime = DateTime.UtcNow;
-            this.UpdateUsageDetails(this.LastUsageDateTime, ipAddress, versionInfo, customData);
+            this.UpdateUsageDetails(this.LastUsageDateTime, ipAddress, versionInfo, telemetryUnits);
         }
     }
 }
