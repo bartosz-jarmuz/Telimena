@@ -31,6 +31,7 @@
             this.apiUrlTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.sendSync_button = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.viewNameTextBox = new System.Windows.Forms.TextBox();
             this.F = new System.Windows.Forms.Label();
@@ -68,7 +69,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.hammer_StartButton = new System.Windows.Forms.Button();
             this.useCurrentAppButton = new System.Windows.Forms.Button();
-            this.sendSync_button = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.apiKeyTextBox = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -80,7 +82,7 @@
             // 
             this.apiUrlTextBox.Location = new System.Drawing.Point(93, 9);
             this.apiUrlTextBox.Name = "apiUrlTextBox";
-            this.apiUrlTextBox.Size = new System.Drawing.Size(196, 20);
+            this.apiUrlTextBox.Size = new System.Drawing.Size(134, 20);
             this.apiUrlTextBox.TabIndex = 0;
             // 
             // label1
@@ -106,6 +108,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "INSTANCE CLIENT - Update app usage";
             // 
+            // sendSync_button
+            // 
+            this.sendSync_button.Location = new System.Drawing.Point(156, 48);
+            this.sendSync_button.Name = "sendSync_button";
+            this.sendSync_button.Size = new System.Drawing.Size(75, 23);
+            this.sendSync_button.TabIndex = 5;
+            this.sendSync_button.Text = "Send sync";
+            this.sendSync_button.UseVisualStyleBackColor = true;
+            this.sendSync_button.Click += new System.EventHandler(this.sendSync_button_Click);
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(14, 46);
@@ -128,7 +140,7 @@
             this.F.AutoSize = true;
             this.F.Location = new System.Drawing.Point(17, 25);
             this.F.Name = "F";
-            this.F.Size = new System.Drawing.Size(77, 13);
+            this.F.Size = new System.Drawing.Size(59, 13);
             this.F.TabIndex = 1;
             this.F.Text = "View name";
             // 
@@ -169,15 +181,15 @@
             // 
             // appNameTextBox
             // 
-            this.appNameTextBox.Location = new System.Drawing.Point(356, 9);
+            this.appNameTextBox.Location = new System.Drawing.Point(398, 9);
             this.appNameTextBox.Name = "appNameTextBox";
-            this.appNameTextBox.Size = new System.Drawing.Size(126, 20);
+            this.appNameTextBox.Size = new System.Drawing.Size(84, 20);
             this.appNameTextBox.TabIndex = 5;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(295, 12);
+            this.label2.Location = new System.Drawing.Point(337, 13);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(55, 13);
             this.label2.TabIndex = 4;
@@ -233,7 +245,7 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(17, 25);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(77, 13);
+            this.label4.Size = new System.Drawing.Size(59, 13);
             this.label4.TabIndex = 1;
             this.label4.Text = "View name";
             // 
@@ -465,21 +477,29 @@
             this.useCurrentAppButton.UseVisualStyleBackColor = true;
             this.useCurrentAppButton.Click += new System.EventHandler(this.useCurrentAppButton_Click);
             // 
-            // sendSync_button
+            // label13
             // 
-            this.sendSync_button.Location = new System.Drawing.Point(156, 48);
-            this.sendSync_button.Name = "sendSync_button";
-            this.sendSync_button.Size = new System.Drawing.Size(75, 23);
-            this.sendSync_button.TabIndex = 5;
-            this.sendSync_button.Text = "Send sync";
-            this.sendSync_button.UseVisualStyleBackColor = true;
-            this.sendSync_button.Click += new System.EventHandler(this.sendSync_button_Click);
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(233, 13);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(25, 13);
+            this.label13.TabIndex = 12;
+            this.label13.Text = "Key";
+            // 
+            // apiKeyTextBox
+            // 
+            this.apiKeyTextBox.Location = new System.Drawing.Point(264, 10);
+            this.apiKeyTextBox.Name = "apiKeyTextBox";
+            this.apiKeyTextBox.Size = new System.Drawing.Size(67, 20);
+            this.apiKeyTextBox.TabIndex = 11;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1056, 441);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.apiKeyTextBox);
             this.Controls.Add(this.useCurrentAppButton);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox3);
@@ -552,6 +572,8 @@
         private System.Windows.Forms.Button handleUpdatesButton;
         private System.Windows.Forms.Button useCurrentAppButton;
         private System.Windows.Forms.Button sendSync_button;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox apiKeyTextBox;
     }
 }
 

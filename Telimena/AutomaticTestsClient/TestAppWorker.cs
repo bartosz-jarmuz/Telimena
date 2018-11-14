@@ -51,7 +51,7 @@ namespace AutomaticTestsClient
             }
             else
             {
-                telimena = new Telimena(telemetryApiBaseUrl: new Uri(this.arguments.ApiUrl));
+                telimena = new Telimena(this.arguments.TelemetryKey, telemetryApiBaseUrl: new Uri(this.arguments.ApiUrl));
             }
 
             return telimena;
@@ -60,7 +60,7 @@ namespace AutomaticTestsClient
         private void HandleInitialize(Telimena telimena)
         {
 
-            RegistrationResponse result = telimena.InitializeBlocking();
+            TelemetryInitializeResponse result = telimena.InitializeBlocking();
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
@@ -68,7 +68,7 @@ namespace AutomaticTestsClient
         private void HandleReportViewUsage(Telimena telimena)
         {
             
-            StatisticsUpdateResponse result;
+            TelemetryUpdateResponse result;
             if (this.arguments.ViewName != null)
             {
                 result = telimena.ReportUsageBlocking(this.arguments.ViewName);

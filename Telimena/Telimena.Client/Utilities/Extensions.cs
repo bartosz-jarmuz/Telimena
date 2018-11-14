@@ -43,7 +43,7 @@ namespace TelimenaClient
         ///         The 'substituteForMissingParts' parameter determines whether string 1.0 should be treated as equivalent to
         ///         1.0.0.0
         ///     </para>
-        ///     <para>Default Version class parse returns -1 for each missing component (essentially 1.0 is like 1.0.-1.-1)</para>
+        ///     <para>Default AssemblyVersion class parse returns -1 for each missing component (essentially 1.0 is like 1.0.-1.-1)</para>
         ///     <para>So, consequently, 1.0.0 is larger than 1.0, which would be nonsense</para>
         /// </summary>
         /// <param name="currentVersionString"></param>
@@ -64,7 +64,7 @@ namespace TelimenaClient
             }
             catch (ArgumentException ex)
             {
-                throw new ArgumentException($"Error while parsing [{(object) currentVersionString}] as Version.", ex);
+                throw new ArgumentException($"Error while parsing [{(object) currentVersionString}] as AssemblyVersion.", ex);
             }
 
             try
@@ -77,7 +77,7 @@ namespace TelimenaClient
             }
             catch (ArgumentException ex)
             {
-                throw new ArgumentException($"Error while parsing [{(object) comparisonVersionString}] as Version.", ex);
+                throw new ArgumentException($"Error while parsing [{(object) comparisonVersionString}] as AssemblyVersion.", ex);
             }
 
             return version1.CompareTo(version2);
@@ -95,7 +95,7 @@ namespace TelimenaClient
         ///         The 'substituteForMissingParts' parameter determines whether string 1.0 should be treated as equivalent to
         ///         1.0.0.0
         ///     </para>
-        ///     <para>Default Version class parse returns -1 for each missing component (essentially 1.0 is like 1.0.-1.-1)</para>
+        ///     <para>Default AssemblyVersion class parse returns -1 for each missing component (essentially 1.0 is like 1.0.-1.-1)</para>
         ///     <para>So, consequently, 1.0.0 is larger than 1.0, which would be nonsense</para>
         /// </summary>
         /// <param name="currentVersionString"></param>

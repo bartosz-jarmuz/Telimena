@@ -23,13 +23,14 @@ namespace TelimenaClient
         ///     <para />
         ///     Static method is approximately two times slower than instance based
         /// </summary>
+        /// <param name="telemetryKey">The unique key for the telemetry service for this app</param>
         /// <param name="viewName"></param>
         /// <param name="telemetryApiBaseUrl">Base url of the telemetry api</param>
         /// <param name="mainAssembly"></param>
         /// <param name="suppressAllErrors"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static Task<StatisticsUpdateResponse> ReportUsageStatic([CallerMemberName] string viewName = null, Uri telemetryApiBaseUrl = null
+        public static Task<TelemetryUpdateResponse> ReportUsageStatic(Guid telemetryKey, [CallerMemberName] string viewName = null, Uri telemetryApiBaseUrl = null
             , Assembly mainAssembly = null, bool suppressAllErrors = true)
         {
             if (telemetryApiBaseUrl == null)
@@ -43,7 +44,7 @@ namespace TelimenaClient
             }
 
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
-            return ReportUsageStatic(httpClient, null, mainAssembly, suppressAllErrors, viewName);
+            return ReportUsageStatic(telemetryKey, httpClient, null, mainAssembly, suppressAllErrors, viewName);
         }
 
         /// <summary>
@@ -52,6 +53,7 @@ namespace TelimenaClient
         ///     <para />
         ///     Static method is approximately two times slower than instance based
         /// </summary>
+        /// <param name="telemetryKey">The unique key for the telemetry service for this app</param>
         /// <param name="programInfo"></param>
         /// <param name="telemetryApiBaseUrl"></param>
         /// <param name="mainAssembly"></param>
@@ -59,7 +61,7 @@ namespace TelimenaClient
         /// <param name="viewName"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static Task<StatisticsUpdateResponse> ReportUsageStatic(ProgramInfo programInfo, Uri telemetryApiBaseUrl = null, Assembly mainAssembly = null
+        public static Task<TelemetryUpdateResponse> ReportUsageStatic(Guid telemetryKey, ProgramInfo programInfo, Uri telemetryApiBaseUrl = null, Assembly mainAssembly = null
             , bool suppressAllErrors = true, [CallerMemberName] string viewName = null)
         {
             if (telemetryApiBaseUrl == null)
@@ -72,7 +74,7 @@ namespace TelimenaClient
                 mainAssembly = GetProperCallingAssembly();
             }
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
-            return ReportUsageStatic(httpClient, programInfo, mainAssembly, suppressAllErrors, viewName);
+            return ReportUsageStatic(telemetryKey, httpClient, programInfo, mainAssembly, suppressAllErrors, viewName);
         }
 
         /// <summary>
@@ -81,17 +83,18 @@ namespace TelimenaClient
         ///     <para />
         ///     Static method is approximately two times slower than instance based
         /// </summary>
+        /// <param name="telemetryKey"></param>
         /// <param name="httpClient"></param>
         /// <param name="programInfo"></param>
         /// <param name="mainAssembly"></param>
         /// <param name="suppressAllErrors"></param>
         /// <param name="viewName"></param>
         /// <returns></returns>
-        internal static async Task<StatisticsUpdateResponse> ReportUsageStatic(ITelimenaHttpClient httpClient, ProgramInfo programInfo = null
+        internal static async Task<TelemetryUpdateResponse> ReportUsageStatic(Guid telemetryKey, ITelimenaHttpClient httpClient, ProgramInfo programInfo = null
             , Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string viewName = null)
         {
-            RegistrationRequest registrationRequest = null;
-            StatisticsUpdateRequest updateRequest = null;
+            TelemetryInitializeRequest telemetryInitializeRequest = null;
+            TelemetryUpdateRequest updateRequest = null;
 
             if (mainAssembly == null)
             {
@@ -100,41 +103,41 @@ namespace TelimenaClient
 
             try
             {
-               var data = LoadProgramData(mainAssembly, programInfo);
+               var data = LoadProgramData(telemetryKey, mainAssembly, programInfo);
 
 
                 TelimenaSerializer serializer = new TelimenaSerializer();
                 Messenger messenger = new Messenger(serializer, httpClient);
 
-                registrationRequest = new RegistrationRequest
+                telemetryInitializeRequest = new TelemetryInitializeRequest(data.ProgramInfo.TelemetryKey)
                 {
                     ProgramInfo = data.ProgramInfo, TelimenaVersion = data.TelimenaVersion, UserInfo = data.UserInfo, SkipUsageIncrementation = true
                 };
-                string responseContent = await messenger.SendPostRequest(ApiRoutes.RegisterClient, registrationRequest).ConfigureAwait(false);
-                RegistrationResponse registrationResponse = serializer.Deserialize<RegistrationResponse>(responseContent);
+                string responseContent = await messenger.SendPostRequest(ApiRoutes.RegisterClient, telemetryInitializeRequest).ConfigureAwait(false);
+                TelemetryInitializeResponse telemetryInitializeResponse = serializer.Deserialize<TelemetryInitializeResponse>(responseContent);
 
-                updateRequest = new StatisticsUpdateRequest
+                updateRequest = new TelemetryUpdateRequest
                 {
-                    ProgramId = registrationResponse.ProgramId
-                    , UserId = registrationResponse.UserId
+                    TelemetryKey = programInfo.TelemetryKey
+                    , UserId = telemetryInitializeResponse.UserId
                     , ComponentName = viewName
-                    , AssemblyVersion = data.ProgramInfo.PrimaryAssembly.Version
+                    , AssemblyVersion = data.ProgramInfo.PrimaryAssembly.AssemblyVersion
                     , FileVersion= data.ProgramInfo.PrimaryAssembly.FileVersion
                 };
                 responseContent = await messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, updateRequest).ConfigureAwait(false);
-                return serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
+                return serializer.Deserialize<TelemetryUpdateResponse>(responseContent);
             }
             catch (Exception ex)
             {
                 TelimenaException exception = new TelimenaException($"Error occurred while sending update [{viewName}] statistics request", ex
-                    , new KeyValuePair<Type, object>(typeof(RegistrationRequest), registrationRequest)
-                    , new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), updateRequest));
+                    , new KeyValuePair<Type, object>(typeof(TelemetryInitializeRequest), telemetryInitializeRequest)
+                    , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), updateRequest));
                 if (!suppressAllErrors)
                 {
                     throw exception;
                 }
 
-                return new StatisticsUpdateResponse {Exception = exception};
+                return new TelemetryUpdateResponse {Exception = exception};
             }
         }
 
@@ -156,7 +159,7 @@ namespace TelimenaClient
                 index++;
             }
         }
-        private static StartupData LoadProgramData(Assembly assembly, ProgramInfo programInfo = null)
+        private static StartupData LoadProgramData(Guid telemetryKey, Assembly assembly, ProgramInfo programInfo = null)
         {
             ProgramInfo info = programInfo;
             if (info == null)
@@ -164,6 +167,7 @@ namespace TelimenaClient
                 info = new ProgramInfo {PrimaryAssembly = new AssemblyInfo(assembly), Name = assembly.GetName().Name};
             }
 
+            info.TelemetryKey = telemetryKey;
             UserInfo userInfo = new UserInfo {UserName = Environment.UserName, MachineName = Environment.MachineName};
 
             string telimenaVersion = TelimenaVersionReader.ReadToolkitVersion(Assembly.GetExecutingAssembly());

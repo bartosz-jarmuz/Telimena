@@ -17,7 +17,7 @@ namespace TelimenaClient
     public partial class Telimena : ITelimena
     {
         /// <inheritdoc />
-        public async Task<RegistrationResponse> InitializeAsync()
+        public async Task<TelemetryInitializeResponse> InitializeAsync()
         {
             var response = await this.RegisterClient().ConfigureAwait(false);
             
@@ -28,7 +28,7 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public RegistrationResponse InitializeBlocking()
+        public TelemetryInitializeResponse InitializeBlocking()
         {
             return Task.Run(this.InitializeAsync).GetAwaiter().GetResult();
         }
@@ -78,7 +78,7 @@ namespace TelimenaClient
             }
         }
 
-        private async Task LoadLiveData(RegistrationResponse response)
+        private async Task LoadLiveData(TelemetryInitializeResponse response)
         {
             try
             {

@@ -36,7 +36,7 @@ namespace TelimenaClient
             this.Name = assName.Name;
             this.Extension = Path.GetExtension(assembly.CodeBase);
             this.FullName = assName.FullName;
-            this.Version = TelimenaVersionReader.Read(assembly, VersionTypes.AssemblyVersion);
+            this.AssemblyVersion = TelimenaVersionReader.Read(assembly, VersionTypes.AssemblyVersion);
             this.FileVersion = TelimenaVersionReader.Read(assembly, VersionTypes.FileVersion);
             this.Company = assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company;
             this.Description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
@@ -116,6 +116,6 @@ namespace TelimenaClient
         /// Gets or sets the version related to the [assembly: AssemblyVersion("1.0")] attribute
         /// </summary>
         /// <value>The version.</value>
-        public string Version { get; set; }
+        public string AssemblyVersion { get; set; }
     }
 }

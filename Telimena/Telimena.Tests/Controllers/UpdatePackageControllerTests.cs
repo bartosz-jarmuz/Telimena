@@ -322,7 +322,7 @@ namespace Telimena.Tests
 
             UpdateResponse result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual(0, result.UpdatePackages.Count);
-            //Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single().Version);
+            //Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single().AssemblyVersion);
             //Assert.AreEqual("Telimena.Client.zip", result.UpdatePackages.Single().FileName);
             Assert.IsNull(result.Exception);
 
@@ -331,7 +331,7 @@ namespace Telimena.Tests
             result = sut.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual(0, result.UpdatePackages.Count);
 
-            //Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single().Version);
+            //Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single().AssemblyVersion);
             //Assert.AreEqual("Telimena.Client.zip", result.UpdatePackages.Single().FileName);
 
             Assert.IsNull(result.Exception);

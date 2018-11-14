@@ -13,7 +13,11 @@ namespace TelimenaTestSandboxApp
         {
             this.InitializeComponent();
             this.apiUrlTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.baseUri) ? "http://localhost:7757/" : Properties.Settings.Default.baseUri;
-            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            this.apiKeyTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.telemetryKey) ? "" : Properties.Settings.Default.telemetryKey;
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            }
             this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
         }
 
@@ -40,14 +44,14 @@ namespace TelimenaTestSandboxApp
 
         private async void InitializeButton_Click(object sender, EventArgs e)
         {
-            RegistrationResponse response = await this.teli.InitializeAsync();
+            TelemetryInitializeResponse response = await this.teli.InitializeAsync();
 
             this.resultTextBox.Text += this.teli.StaticProgramInfo.Name + " - " + this.PresentResponse(response) + Environment.NewLine;
         }
 
         private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
         {
-            StatisticsUpdateResponse result;
+            TelemetryUpdateResponse result;
             Stopwatch sw = Stopwatch.StartNew();
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
@@ -75,7 +79,7 @@ namespace TelimenaTestSandboxApp
         {
             Stopwatch sw = Stopwatch.StartNew();
 
-            StatisticsUpdateResponse result;
+            TelemetryUpdateResponse result;
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
@@ -129,13 +133,22 @@ namespace TelimenaTestSandboxApp
 
         private void setAppButton_Click(object sender, EventArgs e)
         {
-            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
+                Properties.Settings.Default.Save();
+                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            }
+            else
+            {
+                MessageBox.Show("Api key missing, cannot run teli");
+            }
             if (!string.IsNullOrEmpty(this.appNameTextBox.Text))
             {
                 this.teli.StaticProgramInfo = new ProgramInfo
                 {
                     Name = this.appNameTextBox.Text
-                    , PrimaryAssembly = new AssemblyInfo {Company = "Comp A Ny", Name = this.appNameTextBox.Text + ".dll", Version = "1.0.0.0"}
+                    , PrimaryAssembly = new AssemblyInfo {Company = "Comp A Ny", Name = this.appNameTextBox.Text + ".dll", AssemblyVersion = "1.0.0.0"}
                 };
             }
 
@@ -151,26 +164,46 @@ namespace TelimenaTestSandboxApp
 
         private void useCurrentAppButton_Click(object sender, EventArgs e)
         {
-            this.teli = new Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
+                Properties.Settings.Default.Save();
+                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            }
+            else
+            {
+                MessageBox.Show("Api key missing, cannot run teli");
+            }
             Properties.Settings.Default.baseUri = this.apiUrlTextBox.Text;
             Properties.Settings.Default.Save();
         }
 
         private async void static_sendUsageReportButton_Click(object sender, EventArgs e)
         {
-            StatisticsUpdateResponse result;
+            TelemetryUpdateResponse result;
             Stopwatch sw = Stopwatch.StartNew();
-
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
+                Properties.Settings.Default.Save();
+                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            }
+            else
+            {
+                MessageBox.Show("Api key missing, cannot run teli");
+                return;
+            }
             if (!string.IsNullOrEmpty(this.static_viewNameTextBox.Text))
             {
-                result = await Telimena.ReportUsageStatic(string.IsNullOrEmpty(this.static_viewNameTextBox.Text)
+                
+                result = await Telimena.ReportUsageStatic(key, string.IsNullOrEmpty(this.static_viewNameTextBox.Text)
                     ? null
                     : this.static_viewNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = await Telimena.ReportUsageStatic();
+                result = await Telimena.ReportUsageStatic(key);
                 sw.Stop();
             }
 

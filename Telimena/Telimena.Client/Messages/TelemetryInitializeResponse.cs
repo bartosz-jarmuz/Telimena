@@ -1,9 +1,9 @@
 ﻿namespace TelimenaClient
 {
     /// <summary>
-    /// Class RegistrationResponse.
+    /// Class TelemetryInitializeResponse.
     /// </summary>
-    public class RegistrationResponse : TelimenaResponseBase
+    public class TelemetryInitializeResponse : TelimenaResponseBase
     {
         /// <summary>
         /// Gets or sets the user identifier.

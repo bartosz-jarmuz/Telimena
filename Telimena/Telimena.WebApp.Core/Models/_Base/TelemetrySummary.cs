@@ -8,7 +8,7 @@ namespace Telimena.WebApp.Core.Models
     public abstract class TelemetrySummary
     {
         public int Id { get; set; }
-        public DateTime LastUsageDateTime { get; set; } = DateTime.UtcNow;
+        public DateTime LastReportedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual ClientAppUser ClientAppUser { get; set; }
         public int? ClientAppUserId { get; set; }
@@ -26,13 +26,13 @@ namespace Telimena.WebApp.Core.Models
         }
         public abstract IReadOnlyList<TelemetryDetail> GetTelemetryDetails();
 
-        public abstract void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo
+        public abstract void AddTelemetryDetail(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo
             , Dictionary<string, string> telemetryUnits);
 
-        public virtual void IncrementUsage(AssemblyVersionInfo versionInfo, string ipAddress, Dictionary<string, string> telemetryUnits = null)
+        public virtual void UpdateTelemetry(AssemblyVersionInfo versionInfo, string ipAddress, Dictionary<string, string> telemetryUnits = null)
         {
-            this.LastUsageDateTime = DateTime.UtcNow;
-            this.UpdateUsageDetails(this.LastUsageDateTime, ipAddress, versionInfo, telemetryUnits);
+            this.LastReportedDateTime = DateTime.UtcNow;
+            this.AddTelemetryDetail(this.LastReportedDateTime, ipAddress, versionInfo, telemetryUnits);
         }
     }
 }

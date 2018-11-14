@@ -3,7 +3,7 @@
     /// <summary>
     /// Class StatisticsUpdateResponse.
     /// </summary>
-    public class StatisticsUpdateResponse : TelimenaResponseBase
+    public class TelemetryUpdateResponse : TelimenaResponseBase
     {
         /// <summary>
         /// Gets or sets the name of the component.

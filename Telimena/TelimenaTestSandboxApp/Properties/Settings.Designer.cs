@@ -34,5 +34,17 @@ namespace TelimenaTestSandboxApp.Properties {
                 this["baseUri"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string telemetryKey {
+            get {
+                return ((string)(this["telemetryKey"]));
+            }
+            set {
+                this["telemetryKey"] = value;
+            }
+        }
     }
 }

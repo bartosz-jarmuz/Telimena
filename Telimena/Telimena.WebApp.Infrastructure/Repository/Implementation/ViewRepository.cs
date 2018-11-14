@@ -27,7 +27,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public void AddUsage(ViewTelemetrySummary objectToAdd)
         {
-            this.TelimenaContext.ViewUsages.Add(objectToAdd);
+            this.TelimenaContext.ViewTelemetrySummaries.Add(objectToAdd);
         }
 
         public View GetView(string viewName, Program program)
@@ -37,7 +37,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public ViewTelemetrySummary GetUsage(View view, ClientAppUser clientAppUser)
         {
-            return this.TelimenaContext.ViewUsages.FirstOrDefault(x => x.View.Id == view.Id && x.ClientAppUserId == clientAppUser.Id);
+            return this.TelimenaContext.ViewTelemetrySummaries.FirstOrDefault(x => x.View.Id == view.Id && x.ClientAppUserId == clientAppUser.Id);
         }
     }
 }

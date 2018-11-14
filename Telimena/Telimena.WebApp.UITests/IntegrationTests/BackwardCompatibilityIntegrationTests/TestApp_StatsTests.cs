@@ -17,13 +17,13 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
         [Test]
         public void InitializeTest()
         {
-            RegistrationResponse response = this.LaunchTestsAppAndGetResult< RegistrationResponse>(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
+            TelemetryInitializeResponse response = this.LaunchTestsAppAndGetResult< TelemetryInitializeResponse>(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
 
             Assert.IsTrue(response.ProgramId > 0);
             Assert.IsTrue(response.UserId> 0);
             Assert.IsTrue(response.Count> 0);
 
-            RegistrationResponse responseNew = this.LaunchTestsAppAndGetResult<RegistrationResponse>(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
+            TelemetryInitializeResponse responseNew = this.LaunchTestsAppAndGetResult<TelemetryInitializeResponse>(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
 
             Assert.AreEqual(responseNew.Count , response.Count +1);
         }
@@ -32,7 +32,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
         public void ReportView()
         {
             FileInfo app;
-            StatisticsUpdateResponse response = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(out app, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
+            TelemetryUpdateResponse response = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(out app, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
 
             Assert.IsTrue(response.ProgramId > 0);
             Assert.IsTrue(response.UserId > 0);
@@ -40,12 +40,12 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
             Assert.IsTrue(response.ComponentId > 0);
             Assert.AreEqual("ReportView", response.ComponentName);
 
-            StatisticsUpdateResponse responseNew = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(app, Actions.ReportViewUsage);
+            TelemetryUpdateResponse responseNew = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(app, Actions.ReportViewUsage);
 
             Assert.AreEqual(responseNew.Count, response.Count + 1);
             Assert.AreEqual(responseNew.ComponentName, response.ComponentName);
 
-            StatisticsUpdateResponse customViewNameResponse = this.LaunchTestsAppAndGetResult<StatisticsUpdateResponse>(app, Actions.ReportViewUsage, viewName: "UnitTestView");
+            TelemetryUpdateResponse customViewNameResponse = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(app, Actions.ReportViewUsage, viewName: "UnitTestView");
             Assert.IsTrue(response.ComponentId < customViewNameResponse.ComponentId);
             Assert.AreEqual("UnitTestView", customViewNameResponse.ComponentName);
             Assert.IsTrue(customViewNameResponse.Count > 0);

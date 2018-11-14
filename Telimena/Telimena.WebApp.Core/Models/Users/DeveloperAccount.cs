@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -37,9 +38,17 @@ namespace Telimena.WebApp.Core.Models
 
         public void AddProgram(Program program)
         {
-            if (this.Programs.All(x => x.Id != this.Id))
+            if (this.Programs.All(x => x.TelemetryKey != program.TelemetryKey))
             {
+                if (this.Programs.Any(x => x.Name == program.Name))
+                {
+                    throw new ArgumentException($"A program with name [{program.Name}] was already registered");
+                }
                 ((List<Program>) this.Programs).Add(program);
+            }
+            else
+            {
+                throw new ArgumentException($"A program with guid [{program.TelemetryKey}] was already registered");
             }
         }
 

@@ -9,9 +9,9 @@ namespace Telimena.WebApp.Core.Models
         [Obsolete("Constructor required by EF")]
         protected AssemblyVersionInfo() { }
 
-        public AssemblyVersionInfo(string version, string fileVersion)
+        public AssemblyVersionInfo(string assemblyVersion, string fileVersion)
         {
-            this.Version = version;
+            this.Version = assemblyVersion;
             this.FileVersion = fileVersion;
         }
 

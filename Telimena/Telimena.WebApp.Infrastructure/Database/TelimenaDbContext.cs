@@ -46,11 +46,11 @@ namespace Telimena.WebApp.Infrastructure.Database
 
         public DbSet<Program> Programs { get; set; }
         public DbSet<View> Views { get; set; }
-        public DbSet<ProgramTelemetrySummary> ProgramUsages { get; set; }
-        public DbSet<ProgramTelemetryDetail> ProgramUsageDetails { get; set; }
+        public DbSet<ProgramTelemetrySummary> ProgramTelemetrySummaries { get; set; }
+        public DbSet<ProgramTelemetryDetail> ProgramTelemetryDetails { get; set; }
         public DbSet<ProgramTelemetryUnit> ProgramTelemetryUnits { get; set; }
-        public DbSet<ViewTelemetrySummary> ViewUsages { get; set; }
-        public DbSet<ViewTelemetryDetail> ViewUsageDetails { get; set; }
+        public DbSet<ViewTelemetrySummary> ViewTelemetrySummaries { get; set; }
+        public DbSet<ViewTelemetryDetail> ViewTelemetryDetails { get; set; }
         public DbSet<ViewTelemetryUnit> ViewTelemetryUnits { get; set; }
         public DbSet<ClientAppUser> AppUsers { get; set; }
         public DbSet<DeveloperAccount> Developers { get; set; }

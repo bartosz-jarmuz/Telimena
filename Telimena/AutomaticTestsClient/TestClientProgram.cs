@@ -10,7 +10,7 @@ using TelimenaClient;
 
 namespace AutomaticTestsClient
 {
-    class Program
+    class TestClientProgram
     {
 
         public static string GetFileVersion(Type type)
@@ -22,8 +22,8 @@ namespace AutomaticTestsClient
         {
             if (args.Length == 0)
             {
-                MessageBox.Show($"AssemblyVersion: {TelimenaVersionReader.Read(typeof(Program), VersionTypes.AssemblyVersion)}\r\n" + 
-                                $"FileVersion: {TelimenaVersionReader.Read(typeof(Program), VersionTypes.FileVersion)}\r\n" + 
+                MessageBox.Show($"AssemblyVersion: {TelimenaVersionReader.Read(typeof(TestClientProgram), VersionTypes.AssemblyVersion)}\r\n" + 
+                                $"FileVersion: {TelimenaVersionReader.Read(typeof(TestClientProgram), VersionTypes.FileVersion)}\r\n" + 
                                 $"Telimena Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.AssemblyVersion)}\r\n" + 
                                 $"Telimena File Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.FileVersion)}", "AutomaticTestsClient - This app requires arguments to run");
                 return;

@@ -105,10 +105,10 @@
     <Compile Include="TelimenaClient\ITelimena.cs" />
     <Compile Include="Messenger\Messenger.cs" />
     <Compile Include="Serializer\ITelimenaSerializer.cs" />
-    <Compile Include="Messages\RegistrationRequest.cs" />
-    <Compile Include="Messages\RegistrationResponse.cs" />
-    <Compile Include="Messages\StatisticsUpdateRequest.cs" />
-    <Compile Include="Messages\StatisticsUpdateResponse.cs" />
+    <Compile Include="Messages\TelemetryInitializeRequest.cs" />
+    <Compile Include="Messages\TelemetryInitializeResponse.cs" />
+    <Compile Include="Messages\TelemetryUpdateRequest.cs" />
+    <Compile Include="Messages\TelemetryUpdateResponse.cs" />
     <Compile Include="Model\AssemblyInfo.cs" />
     <Compile Include="Serializer\NullPropertiesConverter.cs" />
     <Compile Include="TelimenaClient\Telimena.Static.cs" />

@@ -29,7 +29,7 @@ namespace Telimena.WebApp
                         //c.Schemes(new[] { "http", "https" });
 
                         // Use "SingleApiVersion" to describe a single version API. Swagger 2.0 includes an "Info" object to
-                        // hold additional metadata for an API. Version and title are required but you can also provide
+                        // hold additional metadata for an API. AssemblyVersion and title are required but you can also provide
                         // additional fields by chaining methods off SingleApiVersion.
                         //
                         c.SingleApiVersion("v1", "Telimena.WebApp");
@@ -40,15 +40,15 @@ namespace Telimena.WebApp
 
                         // If your API has multiple versions, use "MultipleApiVersions" instead of "SingleApiVersion".
                         // In this case, you must provide a lambda that tells Swashbuckle which actions should be
-                        // included in the docs for a given API version. Like "SingleApiVersion", each call to "Version"
+                        // included in the docs for a given API version. Like "SingleApiVersion", each call to "AssemblyVersion"
                         // returns an "Info" builder so you can provide additional metadata per API version.
                         //
                         //c.MultipleApiVersions(
                         //    (apiDesc, targetApiVersion) => ResolveVersionSupportByRouteConstraint(apiDesc, targetApiVersion),
                         //    (vc) =>
                         //    {
-                        //        vc.Version("v2", "Swashbuckle Dummy API V2");
-                        //        vc.Version("v1", "Swashbuckle Dummy API V1");
+                        //        vc.AssemblyVersion("v2", "Swashbuckle Dummy API V2");
+                        //        vc.AssemblyVersion("v1", "Swashbuckle Dummy API V1");
                         //    });
 
                         // You can use "BasicAuth", "ApiKey" or "OAuth2" options to describe security schemes for the API.

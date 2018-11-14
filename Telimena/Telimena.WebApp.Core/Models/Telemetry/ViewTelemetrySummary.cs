@@ -13,7 +13,7 @@ namespace Telimena.WebApp.Core.Models
 
         public override IReadOnlyList<TelemetryDetail> GetTelemetryDetails() => this.TelemetryDetails.AsReadOnly();
 
-        public override void UpdateUsageDetails(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo, Dictionary<string, string> telemetryUnits)
+        public override void AddTelemetryDetail(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo, Dictionary<string, string> telemetryUnits)
         {
             ViewTelemetryDetail detail = new ViewTelemetryDetail
             {

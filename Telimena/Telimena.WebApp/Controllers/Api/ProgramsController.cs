@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
 using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 
@@ -24,6 +28,44 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         private IProgramsUnitOfWork Work { get; }
+
+        [HttpPost]
+        [Audit]
+        public async Task<RegisterProgramResponse> Register(RegisterProgramRequest request)
+        {
+            if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
+            {
+                return new RegisterProgramResponse(new BadRequestException(string.Join(", ", errors)));
+            }
+
+            try
+            {
+                TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
+                DeveloperAccount developerAccount = user.GetDeveloperAccountsLedByUser().FirstOrDefault();
+                if (developerAccount == null)
+                {
+                    return new RegisterProgramResponse(new BadRequestException($"Cannot find developer account associated with user [{user.UserName}]"));
+                }
+
+                Program program = new Program(request.Name)
+                {
+                    Description = request.Description
+                };
+                Guid guid = program.TelemetryKey;
+                developerAccount.AddProgram(program);
+
+                this.Work.Programs.Add(program);
+
+                await this.Work.CompleteAsync();
+
+                program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == guid);
+                return new RegisterProgramResponse(program.Id, program.TelemetryKey, program.DeveloperAccount.Id);
+            }
+            catch (Exception ex)
+            {
+                return new RegisterProgramResponse(new InvalidOperationException("Failed to register program. ", ex));
+            }
+        }
 
         [HttpDelete]
         [Audit]

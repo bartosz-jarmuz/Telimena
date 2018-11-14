@@ -16,13 +16,13 @@ namespace TelimenaClient
     public partial class Telimena : ITelimena
     {
         /// <inheritdoc />
-        public StatisticsUpdateResponse ReportUsageWithCustomDataBlocking(string customData, [CallerMemberName] string viewName = null)
+        public TelemetryUpdateResponse ReportUsageWithCustomDataBlocking(string customData, [CallerMemberName] string viewName = null)
         {
             return Task.Run(() => this.ReportUsageWithCustomDataAsync(customData, viewName)).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
-        public Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync<T>(T customDataObject, [CallerMemberName] string viewName = null)
+        public Task<TelemetryUpdateResponse> ReportUsageWithCustomDataAsync<T>(T customDataObject, [CallerMemberName] string viewName = null)
         {
             string serialized = null;
             if (customDataObject != null)
@@ -41,82 +41,82 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public StatisticsUpdateResponse ReportUsageWithCustomDataBlocking<T>(T customDataObject, [CallerMemberName] string viewName = null)
+        public TelemetryUpdateResponse ReportUsageWithCustomDataBlocking<T>(T customDataObject, [CallerMemberName] string viewName = null)
         {
             return Task.Run(() => this.ReportUsageWithCustomDataAsync(customDataObject, viewName)).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
-        public StatisticsUpdateResponse ReportUsageBlocking([CallerMemberName] string viewName = null)
+        public TelemetryUpdateResponse ReportUsageBlocking([CallerMemberName] string viewName = null)
         {
             return Task.Run(() => this.ReportUsageAsync(viewName)).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
-        public async Task<StatisticsUpdateResponse> ReportUsageWithCustomDataAsync(string customData, [CallerMemberName] string viewName = null)
+        public async Task<TelemetryUpdateResponse> ReportUsageWithCustomDataAsync(string customData, [CallerMemberName] string viewName = null)
         {
-            StatisticsUpdateRequest request = null;
+            TelemetryUpdateRequest request = null;
             try
             {
                 await this.InitializeIfNeeded().ConfigureAwait(false);
-                request = new StatisticsUpdateRequest
+                request = new TelemetryUpdateRequest
                 {
-                    ProgramId = this.LiveProgramInfo.ProgramId
+                    TelemetryKey = this.LiveProgramInfo.Program.TelemetryKey
                     , UserId = this.LiveProgramInfo.UserId
                     , ComponentName = viewName
-                    , AssemblyVersion = this.StaticProgramInfo.PrimaryAssembly.Version
+                    , AssemblyVersion = this.StaticProgramInfo.PrimaryAssembly.AssemblyVersion
                     , FileVersion = this.StaticProgramInfo.PrimaryAssembly.FileVersion
                     //, TelemetryData = customData
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, request).ConfigureAwait(false);
-                return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
+                return this.Serializer.Deserialize<TelemetryUpdateResponse>(responseContent);
             }
             catch (Exception ex)
             {
                 TelimenaException exception = new TelimenaException($"Error occurred while sending update [{viewName}] statistics request", ex
-                    , new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), request));
+                    , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), request));
                 if (!this.SuppressAllErrors)
                 {
                     throw exception;
                 }
 
-                return new StatisticsUpdateResponse {Exception = exception};
+                return new TelemetryUpdateResponse {Exception = exception};
             }
         }
 
-        public async Task<StatisticsUpdateResponse> ReportEventAsync(string eventName, Dictionary<string, string> telemetryData = null)
+        public async Task<TelemetryUpdateResponse> ReportEventAsync(string eventName, Dictionary<string, string> telemetryData = null)
         {
-            StatisticsUpdateRequest request = null;
+            TelemetryUpdateRequest request = null;
             try
             {
                 await this.InitializeIfNeeded().ConfigureAwait(false);
-                request = new StatisticsUpdateRequest
+                request = new TelemetryUpdateRequest
                 {
-                    ProgramId = this.LiveProgramInfo.ProgramId,
+                    TelemetryKey = this.LiveProgramInfo.Program.TelemetryKey,
                     UserId = this.LiveProgramInfo.UserId,
                     ComponentName = eventName,
-                    AssemblyVersion = this.StaticProgramInfo.PrimaryAssembly.Version,
+                    AssemblyVersion = this.StaticProgramInfo.PrimaryAssembly.AssemblyVersion,
                     FileVersion = this.StaticProgramInfo.PrimaryAssembly.FileVersion,
                     TelemetryData = telemetryData
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.ReportEvent, request).ConfigureAwait(false);
-                return this.Serializer.Deserialize<StatisticsUpdateResponse>(responseContent);
+                return this.Serializer.Deserialize<TelemetryUpdateResponse>(responseContent);
             }
             catch (Exception ex)
             {
                 TelimenaException exception = new TelimenaException($"Error occurred while sending update [{eventName}] statistics request", ex
-                    , new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), request));
+                    , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), request));
                 if (!this.SuppressAllErrors)
                 {
                     throw exception;
                 }
 
-                return new StatisticsUpdateResponse { Exception = exception };
+                return new TelemetryUpdateResponse { Exception = exception };
             }
         }
 
         /// <inheritdoc />
-        public Task<StatisticsUpdateResponse> ReportUsageAsync([CallerMemberName] string viewName = null)
+        public Task<TelemetryUpdateResponse> ReportUsageAsync([CallerMemberName] string viewName = null)
         {
             return this.ReportUsageWithCustomDataAsync(null, viewName);
         }
@@ -125,12 +125,12 @@ namespace TelimenaClient
         ///     Sends the initial app usage info
         /// </summary>
         /// <returns></returns>
-        protected internal async Task<RegistrationResponse> RegisterClient(bool skipUsageIncrementation = false)
+        protected internal async Task<TelemetryInitializeResponse> RegisterClient(bool skipUsageIncrementation = false)
         {
-            RegistrationRequest request = null;
+            TelemetryInitializeRequest request = null;
             try
             {
-                request = new RegistrationRequest
+                request = new TelemetryInitializeRequest(this.StaticProgramInfo.TelemetryKey)
                 {
                     ProgramInfo = this.StaticProgramInfo
                     , TelimenaVersion = this.TelimenaVersion
@@ -138,20 +138,20 @@ namespace TelimenaClient
                     , SkipUsageIncrementation = skipUsageIncrementation
                 };
                 string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.RegisterClient, request).ConfigureAwait(false);
-                RegistrationResponse response = this.Serializer.Deserialize<RegistrationResponse>(responseContent);
+                TelemetryInitializeResponse response = this.Serializer.Deserialize<TelemetryInitializeResponse>(responseContent);
                 return response;
             }
 
             catch (Exception ex)
             {
                 TelimenaException exception = new TelimenaException("Error occurred while sending registration request", ex
-                    , new KeyValuePair<Type, object>(typeof(StatisticsUpdateRequest), request));
+                    , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), request));
                 if (!this.SuppressAllErrors)
                 {
                     throw exception;
                 }
 
-                return new RegistrationResponse {Exception = exception};
+                return new TelemetryInitializeResponse {Exception = exception};
             }
         }
     }

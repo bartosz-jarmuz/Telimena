@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Telimena.WebApp.Core.Models
 {
-    public abstract class ProgramComponent
+    public abstract class ProgramComponent : ITelemetryAware
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -49,16 +49,16 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     , AssociatedToolkitVersion = program.PrimaryAssembly.GetLatestVersion().ToolkitData?.Version
                     , ProgramId = program.Id
                     , RegisteredDate = program.RegisteredDate
-                    , LastUsage = program.UsageSummaries.MaxOrNull(x => x.LastUsageDateTime)
-                    , UsersCount = program.UsageSummaries.Count
+                    , LastUsage = program.TelemetrySummaries.MaxOrNull(x => x.LastReportedDateTime)
+                    , UsersCount = program.TelemetrySummaries.Count
                     , TodayUsageCount =
-                        program.UsageSummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).TotalHours <= 24).Sum(smr =>
+                        program.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastReportedDateTime).TotalHours <= 24).Sum(smr =>
                             smr.GetTelemetryDetails().Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24))
-                    , TotalUsageCount = program.UsageSummaries.Sum(x => x.SummaryCount)
+                    , TotalUsageCount = program.TelemetrySummaries.Sum(x => x.SummaryCount)
                     , ViewsCount = views.Count
                     , TotalViewsUsageCount = views.Sum(f => f.TelemetrySummaries.Sum(s => s.SummaryCount))
                     , TotalTodayViewsUsageCount = views.Sum(f =>
-                        f.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastUsageDateTime).TotalHours <= 24).Sum(smr =>
+                        f.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastReportedDateTime).TotalHours <= 24).Sum(smr =>
                             smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)))
                 };
                 returnData.Add(summary);
@@ -200,9 +200,9 @@ namespace Telimena.WebApp.Infrastructure.Repository
             IEnumerable<int> programIds = programs.Select(x => x.Id);
             List<View> views = programs.SelectMany(x => x.Views).ToList();
             IEnumerable<int> viewIds = views.Select(x => x.Id);
-            List<ProgramTelemetrySummary> programUsageSummaries = await this.context.ProgramUsages.Where(usg => programIds.Contains(usg.ProgramId)).ToListAsync();
+            List<ProgramTelemetrySummary> programUsageSummaries = await this.context.ProgramTelemetrySummaries.Where(usg => programIds.Contains(usg.ProgramId)).ToListAsync();
             List<ViewTelemetrySummary> viewTelemetrySummaries =
-                await this.context.ViewUsages.Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync();
+                await this.context.ViewTelemetrySummaries.Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync();
             List<ClientAppUser> users = programUsageSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
             AllProgramsSummaryData summary = new AllProgramsSummaryData
             {
@@ -228,8 +228,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<UsageDataTableResult> GetProgramViewsUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
         {
-            IQueryable<ViewTelemetryDetail> query = this.context.ViewUsageDetails.Where(x => x.TelemetrySummary.View.ProgramId == programId);
-            int totalCount = await this.context.ViewUsageDetails.CountAsync(x => x.TelemetrySummary.View.ProgramId == programId);
+            IQueryable<ViewTelemetryDetail> query = this.context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == programId);
+            int totalCount = await this.context.ViewTelemetryDetails.CountAsync(x => x.TelemetrySummary.View.ProgramId == programId);
             if (take == -1)
             {
                 take = totalCount;
@@ -257,8 +257,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
 
 
-            IQueryable<ProgramTelemetryDetail> query = this.context.ProgramUsageDetails.Where(x => x.TelemetrySummary.ProgramId == programId);
-            int totalCount = await this.context.ProgramUsageDetails.CountAsync(x => x.TelemetrySummary.ProgramId == programId);
+            IQueryable<ProgramTelemetryDetail> query = this.context.ProgramTelemetryDetails.Where(x => x.TelemetrySummary.ProgramId == programId);
+            int totalCount = await this.context.ProgramTelemetryDetails.CountAsync(x => x.TelemetrySummary.ProgramId == programId);
 
             if (take == -1)
             {
@@ -322,7 +322,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<dynamic> ExportViewsUsageCustomData(int programId, bool includeGenericData)
         {
-            List<ViewTelemetryDetail> usages = await this.context.ViewUsageDetails.Where(x => x.TelemetrySummary.View.ProgramId == programId).ToListAsync();
+            List<ViewTelemetryDetail> usages = await this.context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == programId).ToListAsync();
 
 
             //dynamic root = new

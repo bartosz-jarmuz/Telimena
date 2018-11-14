@@ -40,8 +40,8 @@ namespace TelimenaClient.Tests
             client.Setup(x => x.PostAsync("api/Statistics/RegisterClient", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
-                RegistrationResponse registrationResponse = new RegistrationResponse {Count = 0, ProgramId = 1, UserId = 2};
-                response.Content = new StringContent(JsonConvert.SerializeObject(registrationResponse));
+                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse {Count = 0, ProgramId = 1, UserId = 2};
+                response.Content = new StringContent(JsonConvert.SerializeObject(telemetryInitializeResponse));
                 return Task.FromResult(response);
             });
             client.Setup(x => x.GetAsync(It.IsRegex(".*" + Regex.Escape(ApiRoutes.GetProgramUpdateInfo)))).Returns((string uri) =>
@@ -64,7 +64,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_CheckForUpdates_OnlyProgram()
         {
-            TelimenaClient.Telimena sut = new TelimenaClient.Telimena {SuppressAllErrors = false};
+            TelimenaClient.Telimena sut = new TelimenaClient.Telimena(Guid.Empty) {SuppressAllErrors = false};
             Assert.AreEqual("Telimena.Client.Tests", sut.StaticProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
@@ -93,7 +93,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_CheckForUpdates_Program_AndUpdater()
         {
-            TelimenaClient.Telimena sut = new TelimenaClient.Telimena { SuppressAllErrors = false };
+            TelimenaClient.Telimena sut = new TelimenaClient.Telimena(Guid.Empty) { SuppressAllErrors = false };
             Assert.AreEqual("Telimena.Client.Tests", sut.StaticProgramInfo.PrimaryAssembly.Name);
 
             sut.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
@@ -125,7 +125,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_OnlyUpdaterUpdates()
         {
-            TelimenaClient.Telimena sut = new TelimenaClient.Telimena { SuppressAllErrors = false };
+            TelimenaClient.Telimena sut = new TelimenaClient.Telimena(Guid.Empty) { SuppressAllErrors = false };
 
             UpdateResponse latestVersionResponse = new UpdateResponse
             {
@@ -148,7 +148,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_NoUpdates()
         {
-            TelimenaClient.Telimena sut = new TelimenaClient.Telimena { SuppressAllErrors = false };
+            TelimenaClient.Telimena sut = new TelimenaClient.Telimena(Guid.Empty) { SuppressAllErrors = false };
 
           
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(),new UpdateResponse()));

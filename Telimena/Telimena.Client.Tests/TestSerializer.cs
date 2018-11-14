@@ -26,7 +26,7 @@ namespace TelimenaClient.Tests
             string stringified = sut.Serialize(model);
             string escaped = sut.UrlEncodeJson(stringified);
 
-            Assert.AreEqual("{\"ProgramId\":23,\"UserId\":99,\"ProgramVersion\":\"1.2.0\",\"ToolkitVersion\":\"3.2.1.3\",\"AcceptBeta\":true,\"UpdaterVersion\":\"1.0.0.0\"}", stringified);
+            Assert.AreEqual("{\"TelemetryKey\":23,\"UserId\":99,\"ProgramVersion\":\"1.2.0\",\"ToolkitVersion\":\"3.2.1.3\",\"AcceptBeta\":true,\"UpdaterVersion\":\"1.0.0.0\"}", stringified);
             Assert.AreEqual(
                 "%7B%22ProgramId%22%3A23%2C%22UserId%22%3A99%2C%22ProgramVersion%22%3A%221.2.0%22%2C%22ToolkitVersion%22%3A%223.2.1.3%22%2C%22AcceptBeta%22%3Atrue%2C%22UpdaterVersion%22%3A%221.0.0.0%22%7D"
                 , escaped);

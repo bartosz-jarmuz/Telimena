@@ -1,9 +1,18 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Threading.Tasks;
+using System.Web.Http.Controllers;
+using System.Web.Mvc;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Moq;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Core.Interfaces;
+using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Identity;
@@ -28,7 +37,7 @@ namespace Telimena.Tests
             }
         }
 
-        public static void AssertRegistrationResponse(RegistrationResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
+        public static void AssertRegistrationResponse(TelemetryInitializeResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
         {
             Assert.IsNull(response.Exception);
             Assert.AreEqual(expectedCount, response.Count);
@@ -36,7 +45,7 @@ namespace Telimena.Tests
             Assert.AreEqual(usr.Id, response.UserId);
         }
 
-        public static void AssertUpdateResponse(StatisticsUpdateResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null, int funcId = 0)
+        public static void AssertUpdateResponse(TelemetryUpdateResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null, int funcId = 0)
         {
             Assert.IsNull(response.Exception);
             Assert.AreEqual(expectedCount, response.Count);
@@ -55,7 +64,7 @@ namespace Telimena.Tests
 
 
             TelimenaUser user = new TelimenaUser(caller + "_" + email, caller + "_" + displayName ?? email.ToUpper());
-            unit.RegisterUserAsync(user, "P@ssword", TelimenaRoles.Developer).GetAwaiter().GetResult();
+            unit.RegisterUserAsync(user, "P@ssword", TelimenaRoles.Developer);
 
             unit.Complete();
             return user;
@@ -78,7 +87,7 @@ namespace Telimena.Tests
         {
             return new ProgramInfo
             {
-                Name = name, PrimaryAssembly = new AssemblyInfo {Company = company, Copyright = copyright, Name = name + ".dll", Version = version}
+                Name = name, PrimaryAssembly = new AssemblyInfo {Company = company, Copyright = copyright, Name = name + ".dll", AssemblyVersion = version}
             };
         }
 
@@ -93,29 +102,80 @@ namespace Telimena.Tests
             return new UserInfo {UserName = name, MachineName = machineName};
         }
 
-        public static void SeedInitialPrograms(TelimenaContext context, int progCount, string getName, string userName, [CallerMemberName] string caller = "")
+        public static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(TelimenaContext context, int prgCount, string getName, string[] userNames, string devName = "Some Developer", string devEmail = "some@dev.dev", [CallerMemberName] string caller = "")
         {
-            TelemetryUnitOfWork unit = new TelemetryUnitOfWork(context, new AssemblyStreamVersionReader());
-            StatisticsController controller = new StatisticsController(unit);
-            SeedInitialPrograms(controller, progCount, GetName(getName, caller), GetName(userName, caller));
+
+            Mock<HttpRequestContext> requestContext = SetupUserIntoRequestContext(context, devName, devEmail);
+
+
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(context, new TelimenaUserManager(new UserStore<TelimenaUser>(context)), new AssemblyStreamVersionReader());
+
+            ProgramsController programsController = new ProgramsController(unit) {RequestContext = requestContext.Object};
+            TelemetryController telemetryController = new TelemetryController(new TelemetryUnitOfWork(context, new AssemblyStreamVersionReader())) ;
+
+
+           return  await SeedInitialPrograms(programsController,telemetryController, prgCount, GetName(getName, caller), userNames.Select(x=> GetName(x, caller)));
         }
 
-        public static void SeedInitialPrograms(StatisticsController controller, int progCount, string prgName, string userName)
+        private static Mock<HttpRequestContext> SetupUserIntoRequestContext(TelimenaContext context, string devName, string devEmail)
         {
-            for (int i = 0; i < progCount; i++)
+            TelimenaUser teliUsr = context.Users.FirstOrDefault(x => x.Email == devEmail);
+            if (teliUsr == null)
+            {
+                teliUsr = Helpers.CreateTelimenaUser(context, devEmail, devName);
+            }
+
+            GenericIdentity identity = new GenericIdentity(teliUsr.UserName);
+            GenericPrincipal principal = new GenericPrincipal(identity, new[] {TelimenaRoles.Developer});
+            ClaimsPrincipal usr = new ClaimsPrincipal(principal);
+
+            Mock<HttpRequestContext> requestContext = new Mock<HttpRequestContext>();
+            requestContext.Setup(x => x.Principal).Returns(usr);
+            return requestContext;
+        }
+
+        private static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(ProgramsController programsController, TelemetryController telemetryController, int prgCount, string prgName, IEnumerable<string> userNames)
+        {
+            var list = new List<KeyValuePair<string, Guid>>();
+            for (int i = 0; i < prgCount; i++)
             {
                 string counter = i > 0 ? i.ToString() : "";
-                SeedProgram(controller, prgName + counter, userName);
+                var pair = await SeedProgramAsync(programsController, prgName + counter);
+
+                foreach (string userName in userNames)
+                {
+                    TelemetryInitializeRequest request = new TelemetryInitializeRequest(pair.Value)
+                    {
+                        UserInfo = GetUserInfo(userName)
+                    };
+
+                    TelemetryInitializeResponse response = await telemetryController.Initialize(request);
+                    if (response.Exception != null)
+                    {
+                        throw response.Exception;
+                    }
+                }
+                list.Add(pair);
             }
+
+            return list;
         }
 
-        public static void SeedProgram(StatisticsController controller, string programName, string userName)
+        public static async Task<KeyValuePair<string, Guid>> SeedProgramAsync(ProgramsController controller, string programName)
         {
-            RegistrationRequest register = new RegistrationRequest
+           
+
+            RegisterProgramRequest register = new RegisterProgramRequest
             {
-                ProgramInfo = GetProgramInfo(programName), TelimenaVersion = "1.0.0.0", UserInfo = GetUserInfo(userName)
+                Name = programName
             };
-            controller.RegisterClient(register).GetAwaiter().GetResult();
+        RegisterProgramResponse response =   await  controller.Register(register);
+            if (response.Exception != null)
+            {
+                throw response.Exception;
+            }
+
+            return new KeyValuePair<string, Guid>(programName, response.TelemetryKey);
         }
     }
 }

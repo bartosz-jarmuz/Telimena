@@ -49,7 +49,7 @@
   <ItemGroup>
     <Compile Include="Actions.cs" />
     <Compile Include="Arguments.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="TestClientProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestAppWorker.cs" />
   </ItemGroup>

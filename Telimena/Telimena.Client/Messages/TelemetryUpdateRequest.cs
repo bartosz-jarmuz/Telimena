@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TelimenaClient
 {
     /// <summary>
     /// Class StatisticsUpdateRequest.
     /// </summary>
-    public class StatisticsUpdateRequest
+    public class TelemetryUpdateRequest
     {
         /// <summary>
         /// Gets or sets the user identifier.
@@ -13,10 +14,10 @@ namespace TelimenaClient
         /// <value>The user identifier.</value>
         public int UserId { get; set; }
         /// <summary>
-        /// Gets or sets the program identifier.
+        /// Gets or sets the unique program's telemetry key
         /// </summary>
         /// <value>The program identifier.</value>
-        public int ProgramId { get; set; }
+        public Guid TelemetryKey { get; set; }
         /// <summary>
         /// Gets or sets the name of the view.
         /// </summary>

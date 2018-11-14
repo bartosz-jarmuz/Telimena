@@ -22,6 +22,8 @@ namespace TelimenaClient.Tests
     [TestFixture]
     public class TestReportUsageRequests
     {
+
+        private readonly Guid testTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
         private class CustomDataObject
         {
             public int SomeValue { get; set; }
@@ -51,8 +53,8 @@ namespace TelimenaClient.Tests
             client.Setup(x => x.PostAsync(ApiRoutes.RegisterClient, It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
-                RegistrationResponse registrationResponse = new RegistrationResponse { Count = 0, ProgramId = 1, UserId = 2 };
-                response.Content = new StringContent(JsonConvert.SerializeObject(registrationResponse));
+                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse { Count = 0, ProgramId = 1, UserId = 2 };
+                response.Content = new StringContent(JsonConvert.SerializeObject(telemetryInitializeResponse));
                 return Task.FromResult(response);
             });
             client.Setup(x => x.PostAsync(ApiRoutes.UpdateProgramStatistics, It.IsAny<HttpContent>())).Callback(
@@ -68,7 +70,7 @@ namespace TelimenaClient.Tests
         public void Test_NoCustomData()
         {
 
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey)
             {
                 SuppressAllErrors = false
             };
@@ -87,7 +89,7 @@ namespace TelimenaClient.Tests
                 {
                     Assert.AreEqual("Updater.exe", telimena.LiveProgramInfo.UpdaterName);
                     TelimenaException ex = e as TelimenaException;
-                    StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
+                    TelemetryUpdateRequest jObj = ex.RequestObjects[0].Value as TelemetryUpdateRequest;
                     Assert.AreEqual("Test_NoCustomData", jObj.ComponentName);
                     Assert.AreEqual(null, jObj.TelemetryData);
                 }
@@ -103,7 +105,7 @@ namespace TelimenaClient.Tests
         public void Test_NullCustomData()
         {
 
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey)
             {
                 SuppressAllErrors = false
             };
@@ -120,7 +122,7 @@ namespace TelimenaClient.Tests
                 catch (Exception e)
                 {
                     TelimenaException ex = e as TelimenaException;
-                    StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
+                    TelemetryUpdateRequest jObj = ex.RequestObjects[0].Value as TelemetryUpdateRequest;
                     Assert.AreEqual("Test_NullCustomData", jObj.ComponentName);
                     Assert.AreEqual(null, jObj.TelemetryData);
                 }
@@ -132,7 +134,7 @@ namespace TelimenaClient.Tests
         public void Test_CustomDataString()
         {
 
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey)
             {
                 SuppressAllErrors = false
             };
@@ -149,7 +151,7 @@ namespace TelimenaClient.Tests
                 catch (Exception e)
                 {
                     TelimenaException ex = e as TelimenaException;
-                    StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
+                    TelemetryUpdateRequest jObj = ex.RequestObjects[0].Value as TelemetryUpdateRequest;
                     Assert.AreEqual("AAAAAA", jObj.TelemetryData);
                     Assert.AreEqual("Test_CustomDataString", jObj.ComponentName);
                 }
@@ -162,7 +164,7 @@ namespace TelimenaClient.Tests
         public void Test_CustomDataObject()
         {
 
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey)
             {
                 SuppressAllErrors = false
             };
@@ -180,7 +182,7 @@ namespace TelimenaClient.Tests
                 catch (Exception e)
                 {
                     TelimenaException ex = e as TelimenaException;
-                    StatisticsUpdateRequest jObj = ex.RequestObjects[0].Value as StatisticsUpdateRequest;
+                    TelemetryUpdateRequest jObj = ex.RequestObjects[0].Value as TelemetryUpdateRequest;
                     Assert.AreEqual("Test_CustomDataObject", jObj.ComponentName);
 
                     Assert.AreEqual("{\"SomeValue\":333,\"TrySerializingThisBadBoy\":null}", jObj.TelemetryData);
@@ -195,7 +197,7 @@ namespace TelimenaClient.Tests
         public void Test_InvalidDataObject()
         {
 
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey)
             {
                 SuppressAllErrors = false
             };
