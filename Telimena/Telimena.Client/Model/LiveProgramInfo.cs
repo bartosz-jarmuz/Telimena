@@ -1,4 +1,6 @@
-﻿namespace TelimenaClient
+﻿using System;
+
+namespace TelimenaClient
 {
     /// <summary>
     /// Holds live &amp; static data about a program
@@ -28,14 +30,8 @@
         public string UpdaterName { get; set; }
 
         /// <summary>
-        /// ID of the program
-        /// </summary>
-        /// <value>The program identifier.</value>
-        public int ProgramId { get; set; }
-
-        /// <summary>
         /// ID of the current user of the app
         /// </summary>
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

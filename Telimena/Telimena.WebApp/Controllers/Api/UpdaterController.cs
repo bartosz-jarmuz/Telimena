@@ -123,12 +123,12 @@ namespace Telimena.WebApp.Controllers.Api
         public async Task<UpdateResponse> GetUpdateInfo(string request)
         {
             UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
-            var program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == requestModel.ProgramId);
+            var program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey);
             if (program == null)
             {
                 return new UpdateResponse()
                 {
-                    Exception = new BadRequestException($"Program with id [{requestModel.ProgramId}] does not exist")
+                    Exception = new BadRequestException($"Program with id [{requestModel.TelemetryKey}] does not exist")
                 };
             }
             UpdaterPackageInfo updaterInfo =

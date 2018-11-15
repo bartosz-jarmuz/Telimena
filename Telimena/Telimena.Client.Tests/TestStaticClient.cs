@@ -24,13 +24,16 @@ namespace TelimenaClient.Tests
     {
 
         private readonly Guid telemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
+        private readonly Guid returnedUserGuid = Guid.Parse("59154c52-b858-429e-8071-30763b2c8811");
+
+
         private Mock<ITelimenaHttpClient> GetMockClientForStaticClient_FirstRequestPass()
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
-            client.Setup(x => x.PostAsync(ApiRoutes.RegisterClient, It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
+            client.Setup(x => x.PostAsync(ApiRoutes.Initialize, It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
-                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse {Count = 0, ProgramId = 1, UserId = 2};
+                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse {Count = 0,  UserId = this.returnedUserGuid };
                 response.Content = new StringContent(JsonConvert.SerializeObject(telemetryInitializeResponse));
                 return Task.FromResult(response);
             });
@@ -123,8 +126,8 @@ namespace TelimenaClient.Tests
                 Assert.AreEqual(1, ex.InnerExceptions.Count);
                 Assert.AreEqual("An error occured while posting to [api/Statistics/Update]", ex.InnerExceptions[0].Message);
                 TelemetryUpdateRequest jObj = ex.RequestObjects[1].Value as TelemetryUpdateRequest;
-                Assert.AreEqual(1, jObj.TelemetryKey);
-                Assert.AreEqual(2, jObj.UserId);
+                Assert.AreEqual(this.telemetryKey, jObj.TelemetryKey);
+                Assert.AreEqual(this.returnedUserGuid, jObj.UserId);
                 Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.ComponentName);
                 Assert.IsTrue(Version.TryParse(jObj.AssemblyVersion, out _));
             }

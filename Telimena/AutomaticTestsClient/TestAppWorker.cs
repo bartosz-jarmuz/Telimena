@@ -60,7 +60,7 @@ namespace AutomaticTestsClient
         private void HandleInitialize(Telimena telimena)
         {
 
-            TelemetryInitializeResponse result = telimena.InitializeBlocking();
+            TelemetryInitializeResponse result = telimena.InitializeBlocking_toReDo();
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
@@ -71,11 +71,11 @@ namespace AutomaticTestsClient
             TelemetryUpdateResponse result;
             if (this.arguments.ViewName != null)
             {
-                result = telimena.ReportUsageBlocking(this.arguments.ViewName);
+                result = telimena.ReportViewAccessedBlocking(this.arguments.ViewName);
             }
             else
             {
-                result = telimena.ReportUsageBlocking();
+                result = telimena.ReportViewAccessedBlocking("DefaultView");
             }
 
             Console.WriteLine(JsonConvert.SerializeObject(result));

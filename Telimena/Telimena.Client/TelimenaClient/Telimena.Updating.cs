@@ -24,7 +24,7 @@ namespace TelimenaClient
             {
                 await this.InitializeIfNeeded().ConfigureAwait(false);
                 string updaterVersion = this.GetUpdaterVersion();
-                updateRequest = new UpdateRequest(this.LiveProgramInfo.ProgramId, this.ProgramVersion, this.LiveProgramInfo.UserId, acceptBeta, this.TelimenaVersion, updaterVersion);
+                updateRequest = new UpdateRequest(this.TelemetryKey, this.ProgramVersion, this.LiveProgramInfo.UserId, acceptBeta, this.TelimenaVersion, updaterVersion);
 
                 ConfiguredTaskAwaitable<UpdateResponse> programUpdateTask = this.GetUpdateResponse(this.GetUpdateRequestUrl(ApiRoutes.GetProgramUpdateInfo, updateRequest)).ConfigureAwait(false);
                 ConfiguredTaskAwaitable<UpdateResponse> updaterUpdateTask = this.GetUpdateResponse(this.GetUpdateRequestUrl(ApiRoutes.GetUpdaterUpdateInfo, updateRequest)).ConfigureAwait(false);

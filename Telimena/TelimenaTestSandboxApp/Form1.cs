@@ -44,7 +44,7 @@ namespace TelimenaTestSandboxApp
 
         private async void InitializeButton_Click(object sender, EventArgs e)
         {
-            TelemetryInitializeResponse response = await this.teli.InitializeAsync();
+            TelemetryInitializeResponse response = await this.teli.InitializeAsync_toReDo();
 
             this.resultTextBox.Text += this.teli.StaticProgramInfo.Name + " - " + this.PresentResponse(response) + Environment.NewLine;
         }
@@ -56,12 +56,12 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
-                result = await this.teli.ReportUsageAsync(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
+                result = await this.teli.ReportViewAccessedAsync(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = await this.teli.ReportUsageAsync();
+                result = await this.teli.ReportViewAccessedAsync("DefaultView");
                 sw.Stop();
             }
 
@@ -83,12 +83,12 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
-                result = this.teli.ReportUsageBlocking(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
+                result = this.teli.ReportViewAccessedBlocking(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = this.teli.ReportUsageBlocking();
+                result = this.teli.ReportViewAccessedBlocking("DefaultView");
                 sw.Stop();
             }
 

@@ -8,6 +8,8 @@ namespace Telimena.WebApp.Core.Models
 {
     public class ClientAppUser
     {
+        public Guid Guid { get; set; } = Guid.NewGuid();
+
         public DateTime RegisteredDate { get; set; }
         public int Id { get; set; }
         public string UserName { get; set; }

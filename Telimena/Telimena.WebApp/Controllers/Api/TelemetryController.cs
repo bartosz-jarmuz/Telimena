@@ -62,7 +62,8 @@ namespace Telimena.WebApp.Controllers.Api
                 await this.work.CompleteAsync();
                 var response = new TelemetryInitializeResponse()
                 {
-
+                    UserId = clientAppUser.Guid,
+                    Count = summary.SummaryCount
                 };
                 return response;
             }

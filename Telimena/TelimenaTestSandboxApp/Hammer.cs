@@ -47,12 +47,15 @@ namespace TelimenaTestSandboxApp
         private Stopwatch timeoutStopwatch;
         private List<string> funcs;
 
-        public CustomData GetRandomData()
+        public Dictionary<string, string> GetRandomData()
         {
             var random = new Random();
-            return new CustomData
+
+            return new Dictionary<string, string>()
             {
-                PageCount = random.Next(1, 100), WordCount = random.Next(1, 99999), TimeElapsed = TimeSpan.FromMilliseconds(random.Next(1, 99999999))
+                {"PageCount", random.Next(1,100).ToString() },
+                {"WordCount", random.Next(1,100).ToString() },
+                {"TimeElapsed", random.Next(1,100).ToString() },
             };
         }
 
@@ -103,8 +106,8 @@ namespace TelimenaTestSandboxApp
             {
                 ProgramInfo programInfo = new ProgramInfo {Name = "Program_" + i, PrimaryAssembly = new AssemblyInfo {Name = "PrimaryAssembly_Program_" + i, AssemblyVersion = $"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}" }};
                 this.apps.Add(programInfo);
-                Telimena teli = new Telimena(this.telemetryKey, programInfo, new Uri(this.url));
-                await teli.RegisterClient();
+                ITelimena teli = new Telimena(this.telemetryKey, programInfo, new Uri(this.url));
+                await teli.InitializeAsync();
 
             }
 
@@ -138,21 +141,21 @@ namespace TelimenaTestSandboxApp
                 var operation = random.Next(4);
                 if (operation == 1)
                 {
-                    result = await teli.ReportUsageAsync();
+                    result = await teli.ReportEventAsync("SomeEvent");
                 }
                 else if (operation == 2)
                 {
-                    result = await teli.InitializeAsync();
+                    result = await teli.InitializeAsync_toReDo();
                 }
                 else
                 {
                     if (random.Next(2) == 1)
                     {
-                        result = await teli.ReportUsageAsync(this.funcs[random.Next(0, this.funcs.Count)]);
+                        result = await teli.ReportViewAccessedAsync(this.funcs[random.Next(0, this.funcs.Count)]);
                     }
                     else
                     {
-                        result = await teli.ReportUsageWithCustomDataAsync(this.GetRandomData(), this.funcs[random.Next(0, this.funcs.Count)]);
+                        result = await teli.ReportViewAccessedAsync(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
                     }
                 }
 

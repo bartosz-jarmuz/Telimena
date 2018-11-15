@@ -141,7 +141,7 @@ namespace Telimena.WebApp.Controllers.Api
                 }
             }
 
-            ClientAppUser clientAppUser = work.ClientAppUsers.GetById(request.UserId);
+            ClientAppUser clientAppUser = await work.ClientAppUsers.FirstOrDefaultAsync(x=> x.Guid == request.UserId);
             if (clientAppUser == null)
             {
                 {

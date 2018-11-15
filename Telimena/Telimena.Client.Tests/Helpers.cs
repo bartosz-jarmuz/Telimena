@@ -17,9 +17,9 @@ namespace TelimenaClient.Tests
             return client;
         }
 
-        public static void SetupMockHttpClient(TelimenaClient.Telimena telimena, Mock<ITelimenaHttpClient> client)
+        public static void SetupMockHttpClient(ITelimena telimena, Mock<ITelimenaHttpClient> client)
         {
-            telimena.Messenger = new Messenger(telimena.Serializer, client.Object);
+            ((Telimena) telimena).Messenger = new Messenger(((Telimena) telimena)?.Serializer, client.Object);
         }
     }
 }

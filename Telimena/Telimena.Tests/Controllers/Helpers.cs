@@ -24,12 +24,13 @@ namespace Telimena.Tests
 {
     public static class Helpers
     {
-        public static void AddHelperAssemblies(TelimenaContext context, int assCount, string prgName)
+        public static void AddHelperAssemblies(TelimenaContext context, int assCount, string prgName, [CallerMemberName] string caller = "")
         {
             for (int i = 0; i < assCount; i++)
             {
-                string assName = $"HelperAss{i}_{prgName}.dll";
-                Program prg = context.Programs.First(x => x.Name == prgName);
+                var programName = GetName(prgName, caller);
+                string assName = $"HelperAss{i}_{programName}.dll";
+                Program prg = context.Programs.First(x => x.Name == programName);
                 ProgramAssembly ass = new ProgramAssembly {Name = assName};
                 prg.ProgramAssemblies.Add(ass);
 
@@ -41,7 +42,6 @@ namespace Telimena.Tests
         {
             Assert.IsNull(response.Exception);
             Assert.AreEqual(expectedCount, response.Count);
-            Assert.AreEqual(prg.Id, response.ProgramId);
             Assert.AreEqual(usr.Id, response.UserId);
         }
 

@@ -84,6 +84,8 @@
     <Compile Include="Model\LiveProgramInfo.cs" />
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
+    <Compile Include="TelimenaClient\Interface\ITelimena.Telemetry.cs" />
+    <Compile Include="TelimenaClient\Interface\ITelimena.Updating.cs" />
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
     <Compile Include="TelimenaClient\Telimena.StartupData.cs" />
     <Compile Include="TelimenaClient\Telimena.Updating.cs" />
@@ -102,7 +104,7 @@
     <Compile Include="Messenger\ITelimenaHttpClient.cs" />
     <Compile Include="Messenger\IMessenger.cs" />
     <Compile Include="Messenger\TelimenaHttpClient.cs" />
-    <Compile Include="TelimenaClient\ITelimena.cs" />
+    <Compile Include="TelimenaClient\Interface\ITelimena.cs" />
     <Compile Include="Messenger\Messenger.cs" />
     <Compile Include="Serializer\ITelimenaSerializer.cs" />
     <Compile Include="Messages\TelemetryInitializeRequest.cs" />

@@ -113,7 +113,7 @@ namespace TelimenaClient
                 {
                     ProgramInfo = data.ProgramInfo, TelimenaVersion = data.TelimenaVersion, UserInfo = data.UserInfo, SkipUsageIncrementation = true
                 };
-                string responseContent = await messenger.SendPostRequest(ApiRoutes.RegisterClient, telemetryInitializeRequest).ConfigureAwait(false);
+                string responseContent = await messenger.SendPostRequest(ApiRoutes.Initialize, telemetryInitializeRequest).ConfigureAwait(false);
                 TelemetryInitializeResponse telemetryInitializeResponse = serializer.Deserialize<TelemetryInitializeResponse>(responseContent);
 
                 updateRequest = new TelemetryUpdateRequest(telemetryKey)

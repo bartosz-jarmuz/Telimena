@@ -2,11 +2,12 @@
 {
     internal static class ApiRoutes
     {
-        public const string UpdateProgramStatistics = "api/Statistics/Update";
-        public const string ReportEvent = "api/Telemetry/Event";
-        public const string RegisterClient = "api/Statistics/RegisterClient";
-        public const string GetProgramUpdateInfo = "api/ProgramUpdates/GetUpdateInfo";
-        public const string GetUpdaterUpdateInfo = "api/Updater/GetUpdateInfo";
-        public const string GetProgramUpdaterName = "api/Updater/GetProgramUpdaterName";
+        public static string UpdateProgramStatistics => "api/Statistics/Update";
+        public static string ReportEvent => "api/Telemetry/Event";
+        public static string ReportView => "api/Telemetry/View";
+        public static string Initialize => "api/Telemetry/Initialize";
+        public static string GetProgramUpdateInfo => "api/ProgramUpdates/GetUpdateInfo";
+        public static string GetUpdaterUpdateInfo => "api/Updater/GetUpdateInfo";
+        public static string GetProgramUpdaterName => "api/Updater/GetProgramUpdaterName";
     }
 }

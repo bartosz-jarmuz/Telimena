@@ -1,4 +1,6 @@
-﻿namespace TelimenaClient
+﻿using System;
+
+namespace TelimenaClient
 {
     /// <summary>
     /// Class TelemetryInitializeResponse.
@@ -9,12 +11,8 @@
         /// Gets or sets the user identifier.
         /// </summary>
         /// <value>The user identifier.</value>
-        public int UserId { get; set; }
-        /// <summary>
-        /// Gets or sets the program identifier.
-        /// </summary>
-        /// <value>The program identifier.</value>
-        public int ProgramId { get; set; }
+        public Guid UserId { get; set; }
+      
         /// <summary>
         /// Gets or sets the count.
         /// </summary>

@@ -16,10 +16,49 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
+
         /// <inheritdoc />
-        public async Task<TelemetryInitializeResponse> InitializeAsync()
+        public async Task<TelemetryInitializeResponse> InitializeAsync(Dictionary<string, string> telemetryData = null)
         {
-            var response = await this.RegisterClient().ConfigureAwait(false);
+            TelemetryInitializeRequest request = null;
+            try
+            {
+                request = new TelemetryInitializeRequest(this.TelemetryKey)
+                {
+                    ProgramInfo = this.StaticProgramInfo
+                    ,TelimenaVersion = this.TelimenaVersion
+                    ,UserInfo = this.UserInfo
+                    ,SkipUsageIncrementation = false
+                };
+                string responseContent = await this.Messenger.SendPostRequest(ApiRoutes.Initialize, request).ConfigureAwait(false);
+                TelemetryInitializeResponse response = this.Serializer.Deserialize<TelemetryInitializeResponse>(responseContent);
+                return response;
+            }
+
+            catch (Exception ex)
+            {
+                TelimenaException exception = new TelimenaException("Error occurred while sending registration request", ex
+                    , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), request));
+                if (!this.SuppressAllErrors)
+                {
+                    throw exception;
+                }
+
+                return new TelemetryInitializeResponse { Exception = exception };
+            }
+        }
+
+        /// <inheritdoc />
+        public TelemetryInitializeResponse InitializeBlocking(Dictionary<string, string> telemetryData = null)
+        {
+            return Task.Run(() => this.InitializeAsync(telemetryData)).GetAwaiter().GetResult();
+        }
+
+
+        /// <inheritdoc />
+        public async Task<TelemetryInitializeResponse> InitializeAsync_toReDo()
+        {
+            var response = await this.InitializeAsync().ConfigureAwait(false);
             
             await this.LoadLiveData(response).ConfigureAwait(false);
 
@@ -28,9 +67,9 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public TelemetryInitializeResponse InitializeBlocking()
+        public TelemetryInitializeResponse InitializeBlocking_toReDo()
         {
-            return Task.Run(this.InitializeAsync).GetAwaiter().GetResult();
+            return Task.Run(this.InitializeAsync_toReDo).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
@@ -61,7 +100,7 @@ namespace TelimenaClient
         {
             if (!this.IsInitialized)
             {
-                var response = await this.InitializeAsync().ConfigureAwait(false);
+                var response = await this.InitializeAsync_toReDo().ConfigureAwait(false);
                 if (response.Exception == null)
                 {
                     this.IsInitialized = true;
@@ -84,11 +123,10 @@ namespace TelimenaClient
             {
                 this.LiveProgramInfo = new LiveProgramInfo(this.StaticProgramInfo)
                 {
-                    ProgramId = response.ProgramId,
                     UserId = response.UserId
                 };
 
-                Task<string> updaterNameTask = this.Messenger.SendGetRequest($"{ApiRoutes.GetProgramUpdaterName}?programId={this.LiveProgramInfo.ProgramId}");
+                Task<string> updaterNameTask = this.Messenger.SendGetRequest($"{ApiRoutes.GetProgramUpdaterName}?programId={this.TelemetryKey}");
 
                 await Task.WhenAll(updaterNameTask).ConfigureAwait(false);
 

@@ -19,15 +19,15 @@ namespace TelimenaClient
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdateRequest"/> class.
         /// </summary>
-        /// <param name="programId">The program identifier.</param>
+        /// <param name="telemetryKey">The program identifier.</param>
         /// <param name="programVersion">The program version.</param>
         /// <param name="userId">The user identifier.</param>
         /// <param name="acceptBeta">if set to <c>true</c> [accept beta].</param>
         /// <param name="toolkitVersion">The toolkit version.</param>
         /// <param name="updaterVersion">The updater version.</param>
-        public UpdateRequest(int programId, string programVersion, int userId, bool acceptBeta, string toolkitVersion, string updaterVersion)
+        public UpdateRequest(Guid telemetryKey, string programVersion, Guid userId, bool acceptBeta, string toolkitVersion, string updaterVersion)
         {
-            this.ProgramId = programId;
+            this.TelemetryKey = telemetryKey;
             this.UserId = userId;
             this.ProgramVersion = programVersion;
             this.ToolkitVersion = toolkitVersion;
@@ -39,13 +39,13 @@ namespace TelimenaClient
         /// Gets or sets the program identifier.
         /// </summary>
         /// <value>The program identifier.</value>
-        public int ProgramId { get; set; }
+        public Guid TelemetryKey { get; set; }
 
         /// <summary>
         /// Gets or sets the user identifier.
         /// </summary>
         /// <value>The user identifier.</value>
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the program version.

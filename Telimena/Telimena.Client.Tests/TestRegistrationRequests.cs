@@ -18,9 +18,9 @@ namespace TelimenaClient.Tests
     [TestFixture]
     public class TestRegistrationRequests
     {
-        private readonly Guid TestTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
+        private readonly Guid testTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
 
-        public void Test_RegistrationFunc(TelimenaClient.Telimena telimena, Func<TelemetryInitializeResponse> func, bool skipFlagExpectedValue)
+        public void Test_RegistrationFunc(ITelimena telimena, Func<TelemetryInitializeResponse> func, bool skipFlagExpectedValue)
         {
             try
             {
@@ -34,42 +34,42 @@ namespace TelimenaClient.Tests
                 Assert.AreEqual("An error occured while posting to [api/Statistics/RegisterClient]", ex.InnerExceptions[0].Message);
                 TelemetryInitializeRequest jObj = ex.RequestObjects[0].Value as TelemetryInitializeRequest;
                 Assert.AreEqual(skipFlagExpectedValue, jObj.SkipUsageIncrementation);
-                telimena.StaticProgramInfo.ThrowIfPublicPropertiesNotEqual(jObj.ProgramInfo, true);
+                ((Telimena)telimena).StaticProgramInfo.ThrowIfPublicPropertiesNotEqual(jObj.ProgramInfo, true);
             }
         }
 
         [Test]
         public void Test_InitializeRequestCreation()
         {
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.TestTelemetryKey);
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey);
             telimena.SuppressAllErrors = false;
-            Assert.AreEqual(this.TestTelemetryKey, telimena.TelemetryKey);
+            Assert.AreEqual(this.testTelemetryKey, telimena.TelemetryKey);
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
-            this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync().GetAwaiter().GetResult(), false);
-            this.Test_RegistrationFunc(telimena, () => telimena.InitializeBlocking(), false);
+            this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync_toReDo().GetAwaiter().GetResult(), false);
+            this.Test_RegistrationFunc(telimena, () => telimena.InitializeBlocking_toReDo(), false);
         }
 
         [Test]
         public void Test_RegisterRequestCreation_EmptyKey()
         {
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(Guid.Empty);
+            ITelimena telimena = new TelimenaClient.Telimena(Guid.Empty);
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
-            Assert.That(()=> this.Test_RegistrationFunc(telimena, () => telimena.RegisterClient().GetAwaiter().GetResult(), false)
+            Assert.That(()=> this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync().GetAwaiter().GetResult(), false)
             ,Throws.Exception.With.Message.Contains("Telemetry key is an empty guid."));
         }
 
         [Test]
         public void Test_RegisterRequestCreation()
         {
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.TestTelemetryKey);
+            ITelimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey);
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
-            this.Test_RegistrationFunc(telimena, () => telimena.RegisterClient().GetAwaiter().GetResult(), false);
-            this.Test_RegistrationFunc(telimena, () => telimena.RegisterClient(true).GetAwaiter().GetResult(), true);
+            this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync().GetAwaiter().GetResult(), false);
+        //todo    this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync(true).GetAwaiter().GetResult(), true);
         }
     }
 }

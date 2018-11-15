@@ -159,7 +159,7 @@
     <Compile Include="Controllers\UpdatePackageControllerTests.cs" />
     <Compile Include="MappingsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Controllers\StatisticsControllerTests.cs" />
+    <Compile Include="Controllers\TelemetryControllerTests.cs" />
     <Compile Include="TestingUtilities.cs" />
     <Compile Include="TestInitializerInNoNamespace.cs" />
   </ItemGroup>

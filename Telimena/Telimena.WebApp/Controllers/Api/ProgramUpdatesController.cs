@@ -71,10 +71,10 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
 
-                Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == requestModel.ProgramId);
+                Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey);
                 if (program == null)
                 {
-                    return new UpdateResponse {Exception = new BadRequestException($"Failed to find program by Id: [{requestModel.ProgramId}]")};
+                    return new UpdateResponse {Exception = new BadRequestException($"Failed to find program by Id: [{requestModel.TelemetryKey}]")};
                 }
 
                 List<ProgramUpdatePackageInfo> allUpdatePackages =
