@@ -24,7 +24,7 @@ namespace TelimenaClient.Tests
         public void TestInitialize_AssemblyParameter()
         {
             TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.TestTelemetryKey, this.GetType().Assembly);
-            Assert.AreEqual(this.TestTelemetryKey, telimena.StaticProgramInfo.TelemetryKey);
+            Assert.AreEqual(this.TestTelemetryKey, telimena.TelemetryKey);
             Assert.AreEqual("Telimena.Client.Tests", telimena.StaticProgramInfo.Name);
             Assert.AreEqual("Telimena.Client.Tests", telimena.StaticProgramInfo.PrimaryAssembly.Name);
             Assert.IsNotNull(telimena.StaticProgramInfo.PrimaryAssembly.AssemblyVersion);
@@ -37,7 +37,7 @@ namespace TelimenaClient.Tests
         public void TestInitialize_LoadHelperAssemblies_ByAssembly()
         {
             TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.TestTelemetryKey);
-            Assert.AreEqual(this.TestTelemetryKey, telimena.StaticProgramInfo.TelemetryKey);
+            Assert.AreEqual(this.TestTelemetryKey, telimena.TelemetryKey);
 
             telimena.LoadHelperAssemblies(this.GetType().Assembly, typeof(Capture).Assembly);
             Assert.AreEqual(2, telimena.StaticProgramInfo.HelperAssemblies.Count);
@@ -69,11 +69,12 @@ namespace TelimenaClient.Tests
             Assert.IsNotNull(telimena.UserInfo.MachineName);
         }
 
+
         [Test]
         public void TestInitialize_ProgramInfo()
         {
             ProgramInfo pi = new ProgramInfo {Name = "An App!", PrimaryAssembly = new AssemblyInfo(typeof(Mock).Assembly)};
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(pi);
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(Guid.Empty,pi);
             Assert.AreEqual("An App!", telimena.StaticProgramInfo.Name);
             Assert.AreEqual("Moq", telimena.StaticProgramInfo.PrimaryAssembly.Name);
             Assert.IsTrue(telimena.StaticProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Moq.dll"));

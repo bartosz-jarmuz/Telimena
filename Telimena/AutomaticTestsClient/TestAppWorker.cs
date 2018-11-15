@@ -15,7 +15,7 @@ namespace AutomaticTestsClient
 
         public void Work()
         {
-            Telimena telimena = this.GetTelimena();
+            Telimena telimena = this.GetTelimena(this.arguments.TelemetryKey);
 
 
             try
@@ -41,13 +41,13 @@ namespace AutomaticTestsClient
             Console.WriteLine("Done");
         }
 
-        private Telimena GetTelimena()
+        private Telimena GetTelimena(Guid argumentsTelemetryKey)
         {
             Telimena telimena;
             if (this.arguments.ProgramInfo != null)
             {
              
-                telimena = new Telimena(telemetryApiBaseUrl: new Uri(this.arguments.ApiUrl), programInfo: this.arguments.ProgramInfo);
+                telimena = new Telimena(argumentsTelemetryKey, telemetryApiBaseUrl: new Uri(this.arguments.ApiUrl), programInfo: this.arguments.ProgramInfo);
             }
             else
             {

@@ -9,6 +9,27 @@ namespace TelimenaClient
     public class TelemetryUpdateRequest
     {
         /// <summary>
+        /// For serialization
+        /// </summary>
+        protected TelemetryUpdateRequest()
+        {
+
+        }
+
+        /// <summary>
+        /// New instance of request
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        public TelemetryUpdateRequest(Guid telemetryKey)
+        {
+            if (telemetryKey == Guid.Empty)
+            {
+                throw new ArgumentException("Telemetry key is an empty guid.", nameof(this.TelemetryKey));
+            }
+
+            this.TelemetryKey = telemetryKey;
+        }
+        /// <summary>
         /// Gets or sets the user identifier.
         /// </summary>
         /// <value>The user identifier.</value>

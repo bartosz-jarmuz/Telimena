@@ -103,23 +103,22 @@ namespace TelimenaClient
 
             try
             {
-               var data = LoadProgramData(telemetryKey, mainAssembly, programInfo);
+               var data = LoadProgramData(mainAssembly, programInfo);
 
 
                 TelimenaSerializer serializer = new TelimenaSerializer();
                 Messenger messenger = new Messenger(serializer, httpClient);
 
-                telemetryInitializeRequest = new TelemetryInitializeRequest(data.ProgramInfo.TelemetryKey)
+                telemetryInitializeRequest = new TelemetryInitializeRequest(telemetryKey)
                 {
                     ProgramInfo = data.ProgramInfo, TelimenaVersion = data.TelimenaVersion, UserInfo = data.UserInfo, SkipUsageIncrementation = true
                 };
                 string responseContent = await messenger.SendPostRequest(ApiRoutes.RegisterClient, telemetryInitializeRequest).ConfigureAwait(false);
                 TelemetryInitializeResponse telemetryInitializeResponse = serializer.Deserialize<TelemetryInitializeResponse>(responseContent);
 
-                updateRequest = new TelemetryUpdateRequest
+                updateRequest = new TelemetryUpdateRequest(telemetryKey)
                 {
-                    TelemetryKey = programInfo.TelemetryKey
-                    , UserId = telemetryInitializeResponse.UserId
+                     UserId = telemetryInitializeResponse.UserId
                     , ComponentName = viewName
                     , AssemblyVersion = data.ProgramInfo.PrimaryAssembly.AssemblyVersion
                     , FileVersion= data.ProgramInfo.PrimaryAssembly.FileVersion
@@ -159,7 +158,7 @@ namespace TelimenaClient
                 index++;
             }
         }
-        private static StartupData LoadProgramData(Guid telemetryKey, Assembly assembly, ProgramInfo programInfo = null)
+        private static StartupData LoadProgramData(Assembly assembly, ProgramInfo programInfo = null)
         {
             ProgramInfo info = programInfo;
             if (info == null)
@@ -167,7 +166,6 @@ namespace TelimenaClient
                 info = new ProgramInfo {PrimaryAssembly = new AssemblyInfo(assembly), Name = assembly.GetName().Name};
             }
 
-            info.TelemetryKey = telemetryKey;
             UserInfo userInfo = new UserInfo {UserName = Environment.UserName, MachineName = Environment.MachineName};
 
             string telimenaVersion = TelimenaVersionReader.ReadToolkitVersion(Assembly.GetExecutingAssembly());

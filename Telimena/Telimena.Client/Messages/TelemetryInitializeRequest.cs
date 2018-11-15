@@ -22,6 +22,10 @@ namespace TelimenaClient
         /// <param name="telemetryKey"></param>
         public TelemetryInitializeRequest(Guid telemetryKey)
         {
+            if (telemetryKey == Guid.Empty)
+            {
+                throw new ArgumentException("Telemetry key is an empty guid.",nameof(this.TelemetryKey));
+            }
             this.TelemetryKey = telemetryKey;
         }
 

@@ -220,7 +220,18 @@ namespace TelimenaTestSandboxApp
         private async void hammer_StartButton_Click(object sender, EventArgs e)
         {
             this.hammer?.Stop();
-            this.hammer = new TelimenaHammer(this.apiUrlTextBox.Text,
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
+                Properties.Settings.Default.Save();
+                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            }
+            else
+            {
+                MessageBox.Show("Api key missing, cannot run hammer");
+                return;
+            }
+            this.hammer = new TelimenaHammer(key, this.apiUrlTextBox.Text,
                 Convert.ToInt32(this.hammer_AppNumberSeedBox.Text),
                 Convert.ToInt32(this.hammer_numberOfApps_TextBox.Text),
                  Convert.ToInt32(this.hammer_numberOfFuncs_TextBox.Text),

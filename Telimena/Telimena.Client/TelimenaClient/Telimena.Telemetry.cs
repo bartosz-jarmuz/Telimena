@@ -59,10 +59,9 @@ namespace TelimenaClient
             try
             {
                 await this.InitializeIfNeeded().ConfigureAwait(false);
-                request = new TelemetryUpdateRequest
+                request = new TelemetryUpdateRequest(this.TelemetryKey)
                 {
-                    TelemetryKey = this.LiveProgramInfo.Program.TelemetryKey
-                    , UserId = this.LiveProgramInfo.UserId
+                     UserId = this.LiveProgramInfo.UserId
                     , ComponentName = viewName
                     , AssemblyVersion = this.StaticProgramInfo.PrimaryAssembly.AssemblyVersion
                     , FileVersion = this.StaticProgramInfo.PrimaryAssembly.FileVersion
@@ -90,9 +89,8 @@ namespace TelimenaClient
             try
             {
                 await this.InitializeIfNeeded().ConfigureAwait(false);
-                request = new TelemetryUpdateRequest
+                request = new TelemetryUpdateRequest(this.TelemetryKey)
                 {
-                    TelemetryKey = this.LiveProgramInfo.Program.TelemetryKey,
                     UserId = this.LiveProgramInfo.UserId,
                     ComponentName = eventName,
                     AssemblyVersion = this.StaticProgramInfo.PrimaryAssembly.AssemblyVersion,
@@ -130,7 +128,7 @@ namespace TelimenaClient
             TelemetryInitializeRequest request = null;
             try
             {
-                request = new TelemetryInitializeRequest(this.StaticProgramInfo.TelemetryKey)
+                request = new TelemetryInitializeRequest(this.TelemetryKey)
                 {
                     ProgramInfo = this.StaticProgramInfo
                     , TelimenaVersion = this.TelimenaVersion

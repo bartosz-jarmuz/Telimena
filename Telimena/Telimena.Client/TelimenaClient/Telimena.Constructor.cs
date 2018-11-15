@@ -18,8 +18,8 @@ namespace TelimenaClient
         /// <summary>
         ///     Creates a new instance of Telimena Client
         /// </summary>
+        /// <param name="telemetryKey">The unique key for this program's telemetry service</param>
         /// <param name="telemetryApiBaseUrl">Leave default, unless you want to call different telemetry server</param>
-        /// <param name="telemetryKey"></param>
         /// <param name="mainAssembly">
         ///     Leave null, unless you want to use different assembly as the main one for program name,
         ///     version etc
@@ -37,11 +37,9 @@ namespace TelimenaClient
                 mainAssembly = GetProperCallingAssembly();
             }
 
-            StartupData data = LoadProgramData(telemetryKey, mainAssembly);
-            if (data.ProgramInfo.TelemetryKey == Guid.Empty)
-            {
-                throw new InvalidOperationException($"Empty Guid provided as {nameof(ProgramInfo.TelemetryKey)}");
-            }
+            StartupData data = LoadProgramData(mainAssembly);
+            this.TelemetryKey = telemetryKey;
+            
             this.StaticProgramInfo = data.ProgramInfo;
             this.UserInfo = data.UserInfo;
             this.TelimenaVersion = data.TelimenaVersion;
@@ -53,12 +51,13 @@ namespace TelimenaClient
         /// <summary>
         ///     Creates a new instance of Telimena Client
         /// </summary>
+        /// <param name="telemetryKey">The unique key for this program's telemetry service</param>
         /// <param name="telemetryApiBaseUrl">Leave default, unless you want to call different telemetry server</param>
         /// <param name="programInfo">
         ///   Send custom program info if you don't want assembly based approach (and if you know what you're doing) 
         /// </param>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public Telimena(ProgramInfo programInfo, Uri telemetryApiBaseUrl = null)
+        public Telimena(Guid telemetryKey, ProgramInfo programInfo, Uri telemetryApiBaseUrl = null)
         {
             if (telemetryApiBaseUrl == null)
             {
@@ -67,11 +66,9 @@ namespace TelimenaClient
 
             Assembly assembly = GetProperCallingAssembly();
 
-            StartupData data = LoadProgramData(programInfo.TelemetryKey, assembly, programInfo);
-            if (data.ProgramInfo.TelemetryKey == Guid.Empty)
-            {
-                throw new InvalidOperationException($"Empty Guid provided as {nameof(ProgramInfo.TelemetryKey)}");
-            }
+            StartupData data = LoadProgramData(assembly, programInfo);
+            this.TelemetryKey = telemetryKey;
+          
             this.StaticProgramInfo = data.ProgramInfo;
             this.UserInfo = data.UserInfo;
             this.TelimenaVersion = data.TelimenaVersion;

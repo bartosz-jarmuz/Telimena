@@ -47,7 +47,7 @@ namespace Telimena.Tests
 
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
 
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest {TelemetryKey = apps[0].Value, ComponentName = "Func1", UserId = usr.Id, AssemblyVersion = "1.2.3.4",
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = "Func1", UserId = usr.Id, AssemblyVersion = "1.2.3.4",
                 TelemetryData = new Dictionary<string, string>()
             {
                 { "AKey", "AValue"},
@@ -82,7 +82,7 @@ namespace Telimena.Tests
             ClientAppUser otherUser = Helpers.GetUser(this.Context, "Jack Black");
 
             //run again with different user
-            request = new TelemetryUpdateRequest {TelemetryKey = apps[0].Value, ComponentName = "Func1", UserId = otherUser.Id, AssemblyVersion = "1.2.3.4",
+            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = "Func1", UserId = otherUser.Id, AssemblyVersion = "1.2.3.4",
                 TelemetryData = new Dictionary<string, string>()
                 {
                     { "AKey3", "AValue3"},
@@ -112,7 +112,7 @@ namespace Telimena.Tests
             Assert.AreEqual("AKey4", otherUserDetail.GetTelemetryUnits().ElementAt(1).Key);
             Assert.AreEqual("AValue4", otherUserDetail.GetTelemetryUnits().ElementAt(1).Value);
 
-            request = new TelemetryUpdateRequest {TelemetryKey = apps[0].Value, ComponentName = "Func1", UserId = usr.Id, AssemblyVersion = "1.2.3.4"/*, TelemetryData = serialized*/};
+            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = "Func1", UserId = usr.Id, AssemblyVersion = "1.2.3.4"/*, TelemetryData = serialized*/};
             //run again with first user
             response = await sut.View(request);
             view = prg.Views.Single();

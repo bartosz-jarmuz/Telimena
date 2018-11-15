@@ -90,5 +90,10 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The helper assemblies.</value>
         private List<Assembly> HelperAssemblies { get; } = new List<Assembly>();
+
+        /// <summary>
+        /// The unique key for this program's telemetry service</param>
+        /// </summary>
+        public Guid TelemetryKey { get;  }
     }
 }

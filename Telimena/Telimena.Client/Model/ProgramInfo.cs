@@ -8,10 +8,6 @@ namespace TelimenaClient
     /// </summary>
     public class ProgramInfo
     {
-        /// <summary>
-        /// The unique key for this program's telemetry monitoring
-        /// </summary>
-        public Guid TelemetryKey { get; set; }
 
         /// <summary>
         ///     A typical program has a primary assembly or an 'entry point'.

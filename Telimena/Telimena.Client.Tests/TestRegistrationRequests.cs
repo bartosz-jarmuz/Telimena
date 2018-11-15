@@ -6,6 +6,7 @@
 
 using System;
 using DotNetLittleHelpers;
+using Moq;
 using NUnit.Framework;
 
 namespace TelimenaClient.Tests
@@ -42,11 +43,22 @@ namespace TelimenaClient.Tests
         {
             TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.TestTelemetryKey);
             telimena.SuppressAllErrors = false;
-            Assert.AreEqual(this.TestTelemetryKey, telimena.StaticProgramInfo.TelemetryKey);
+            Assert.AreEqual(this.TestTelemetryKey, telimena.TelemetryKey);
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
             this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync().GetAwaiter().GetResult(), false);
             this.Test_RegistrationFunc(telimena, () => telimena.InitializeBlocking(), false);
+        }
+
+        [Test]
+        public void Test_RegisterRequestCreation_EmptyKey()
+        {
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(Guid.Empty);
+            telimena.SuppressAllErrors = false;
+            telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
+            Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
+            Assert.That(()=> this.Test_RegistrationFunc(telimena, () => telimena.RegisterClient().GetAwaiter().GetResult(), false)
+            ,Throws.Exception.With.Message.Contains("Telemetry key is an empty guid."));
         }
 
         [Test]
