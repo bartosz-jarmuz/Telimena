@@ -39,11 +39,11 @@ namespace Telimena.Tests
 
    
         [Test]
-        public void TestViewUsages()
+        public async Task TestViewUsages()
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            List<KeyValuePair<string, Guid>> apps =  Helpers.SeedInitialPrograms(this.Context, 2, "TestApp", new []{"Billy Jean", "Jack Black"}).Result;
+            List<KeyValuePair<string, Guid>> apps = await  Helpers.SeedInitialPrograms(this.Context, 2, "TestApp", new []{"Billy Jean", "Jack Black"});
 
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
 
@@ -54,7 +54,7 @@ namespace Telimena.Tests
                 { "AKey2", "AValue2"},
             }};
 
-            TelemetryUpdateResponse response = sut.View(request).Result;
+            TelemetryUpdateResponse response = await sut.View(request);
 
             Helpers.AssertUpdateResponse(response, prg, usr, 1, "Func1",1);
 
@@ -91,9 +91,9 @@ namespace Telimena.Tests
                 }
             };
 
-            response = sut.View(request).Result;
+            response = await sut.View(request);
             Assert.AreEqual(1, response.Count);
-            prg =  unit.Programs.FirstOrDefaultAsync(x => x.Id == prg.Id).Result;
+            prg = await unit.Programs.FirstOrDefaultAsync(x => x.Id == prg.Id);
             Assert.AreEqual(1, prg.Views.Count);
             view = prg.Views.Single();
             Assert.AreEqual("Func1", view.Name);
@@ -114,7 +114,7 @@ namespace Telimena.Tests
 
             request = new TelemetryUpdateRequest {TelemetryKey = apps[0].Value, ComponentName = "Func1", UserId = usr.Id, AssemblyVersion = "1.2.3.4"/*, TelemetryData = serialized*/};
             //run again with first user
-            response = sut.View(request).Result;
+            response = await sut.View(request);
             view = prg.Views.Single();
             Assert.AreEqual(2, view.TelemetrySummaries.Count);
             Assert.AreEqual(2, view.GetTelemetrySummary(response.UserId).SummaryCount);

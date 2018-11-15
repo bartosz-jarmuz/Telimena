@@ -59,11 +59,6 @@ namespace Telimena.WebApp.Controllers.Api
             }
         }
 
-        //public static async Task<TelemetryInitializeResponse> Initialize(ITelemetryUnitOfWork work, TelemetryInitializeRequest request, Func<string> getClientIp)
-        //{
-      
-        //}
-
       
 
         public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, UserInfo userDto, string ip)
@@ -165,11 +160,11 @@ namespace Telimena.WebApp.Controllers.Api
                 return (false, new TelemetryInitializeResponse() { Exception = new BadRequestException("Request is not valid") }, null);
             }
 
-            Program program = await work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.ProgramInfo.TelemetryKey);
+            Program program = await work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey);
             if (program == null)
             {
                 {
-                    TelemetryInitializeResponse response = new TelemetryInitializeResponse { Exception = new InvalidOperationException($"Program [{request.ProgramInfo.TelemetryKey}] is null") };
+                    TelemetryInitializeResponse response = new TelemetryInitializeResponse { Exception = new InvalidOperationException($"Program [{request.TelemetryKey}] is null") };
                     return (false, response, null);
                 }
             }
@@ -216,5 +211,15 @@ namespace Telimena.WebApp.Controllers.Api
         {
             return await work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
         }
+
+        public static void SetPrimaryAssembly(Program program, TelemetryInitializeRequest request)
+        {
+            if (program.PrimaryAssembly == null)
+            {
+                program.PrimaryAssembly = Mapper.Map<ProgramAssembly>(request.ProgramInfo.PrimaryAssembly);
+                program.PrimaryAssembly.ProgramId = program.Id;
+            }
+        }
+
     }
 }

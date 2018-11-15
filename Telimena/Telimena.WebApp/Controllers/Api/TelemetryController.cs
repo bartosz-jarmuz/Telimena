@@ -50,12 +50,12 @@ namespace Telimena.WebApp.Controllers.Api
 
                 TelemetrySummary summary = TelemetryControllerHelpers.GetTelemetrySummary(clientAppUser, actionItems.program);
 
-                AssemblyVersionInfo versionInfoInfo = TelemetryControllerHelpers.GetAssemblyVersionInfoOrAddIfMissing(request.ProgramInfo.PrimaryAssembly.AssemblyVersion,
-                    request.ProgramInfo.PrimaryAssembly.FileVersion, actionItems.program);
-
-                summary.UpdateTelemetry(versionInfoInfo, ip, request.TelemetryData);
+                TelemetryControllerHelpers.SetPrimaryAssembly(actionItems.program, request);
 
                 await TelemetryControllerHelpers.RecordVersions(this.work, actionItems.program, request);
+
+                AssemblyVersionInfo versionInfoInfo = TelemetryControllerHelpers.GetAssemblyVersionInfoOrAddIfMissing(request.ProgramInfo.PrimaryAssembly.AssemblyVersion,
+                    request.ProgramInfo.PrimaryAssembly.FileVersion, actionItems.program);
 
                 summary.UpdateTelemetry(versionInfoInfo, ip, request.TelemetryData);
 
