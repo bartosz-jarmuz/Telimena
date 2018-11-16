@@ -20,13 +20,17 @@ namespace Telimena.WebApp.Controllers.Api
             TelemetryUpdateResponse response = new TelemetryUpdateResponse
             {
                 Count = usageSummary.SummaryCount,
-                ProgramId = program.Id,
-                UserId = clientAppUser.Id,
+                TelemetryKey = program.TelemetryKey,
+                UserId = clientAppUser.Guid,
                 ComponentName = updateRequest.ComponentName
             };
-            if (usageSummary is ViewTelemetrySummary summary)
+            if (usageSummary is ViewTelemetrySummary viewSummary)
             {
-                response.ComponentId = summary.ViewId;
+                response.ComponentId = viewSummary.ViewId;
+            }
+            if (usageSummary is EventTelemetrySummary eventSummary)
+            {
+                response.ComponentId = eventSummary.EventId;
             }
 
             return response;

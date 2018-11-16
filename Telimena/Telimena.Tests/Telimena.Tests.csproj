@@ -153,7 +153,6 @@
     <Compile Include="UnitOfWorkTests\DbAsyncQueryProvider.cs" />
     <Compile Include="UnitOfWorkTests\ProgramsDashboardUnitOfWorkTests.cs" />
     <Compile Include="Controllers\Helpers.cs" />
-    <Compile Include="Controllers\RegisterProgramController.cs" />
     <Compile Include="Controllers\ToolkitDataRegistrationTests.cs" />
     <Compile Include="Controllers\UpdaterUpdatesTests.cs" />
     <Compile Include="Controllers\UpdatePackageControllerTests.cs" />

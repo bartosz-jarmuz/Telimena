@@ -42,7 +42,7 @@ namespace Telimena.Tests
         {
             Assert.IsNull(response.Exception);
             Assert.AreEqual(expectedCount, response.Count);
-            Assert.AreEqual(usr.Id, response.UserId);
+            Assert.AreEqual(usr.Guid, response.UserId);
         }
 
         public static void AssertUpdateResponse(TelemetryUpdateResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null, int funcId = 0)
@@ -50,10 +50,13 @@ namespace Telimena.Tests
             Assert.IsNull(response.Exception);
             Assert.AreEqual(expectedCount, response.Count);
             Assert.AreEqual(funcName, response.ComponentName);
-            Assert.AreEqual(funcId, response.ComponentId);
+            if (funcId != 0)
+            {
+                Assert.AreEqual(funcId, response.ComponentId);
+            }
 
-            Assert.AreEqual(prg.Id, response.ProgramId);
-            Assert.AreEqual(usr.Id, response.UserId);
+            Assert.AreEqual(prg.TelemetryKey, response.TelemetryKey);
+            Assert.AreEqual(usr.Guid, response.UserId);
         }
 
         public static async Task<TelimenaUser> CreateTelimenaUser(TelimenaContext context, string email, string displayName = null, [CallerMemberName] string caller = "")

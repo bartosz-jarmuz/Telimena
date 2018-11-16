@@ -37,7 +37,7 @@ namespace TelimenaClient.Tests
                 response.Content = new StringContent("MyUpdater.exe");
                 return Task.FromResult(response);
             });
-            client.Setup(x => x.PostAsync("api/Statistics/RegisterClient", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
+            client.Setup(x => x.PostAsync("api/Telemetry/Initialize", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse {Count = 0, UserId = Guid.NewGuid()};

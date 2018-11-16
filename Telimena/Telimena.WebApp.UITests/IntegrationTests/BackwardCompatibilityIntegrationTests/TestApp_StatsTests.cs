@@ -34,8 +34,8 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
             FileInfo app;
             TelemetryUpdateResponse response = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(out app, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
 
-            Assert.IsTrue(response.ProgramId > 0);
-            Assert.IsTrue(response.UserId > 0);
+            Assert.IsTrue(response.TelemetryKey != Guid.Empty);
+            Assert.IsTrue(response.UserId != Guid.Empty);
             Assert.IsTrue(response.Count > 0);
             Assert.IsTrue(response.ComponentId > 0);
             Assert.AreEqual("ReportView", response.ComponentName);
