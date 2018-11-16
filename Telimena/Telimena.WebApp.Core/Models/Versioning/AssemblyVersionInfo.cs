@@ -11,7 +11,7 @@ namespace Telimena.WebApp.Core.Models
 
         public AssemblyVersionInfo(string assemblyVersion, string fileVersion)
         {
-            this.Version = assemblyVersion;
+            this.AssemblyVersion = assemblyVersion;
             this.FileVersion = fileVersion;
         }
 
@@ -22,7 +22,7 @@ namespace Telimena.WebApp.Core.Models
         /// <para/><seealso href="https://stackoverflow.com/questions/64602/what-are-differences-between-assemblyversion-assemblyfileversion-and-assemblyin"/> 
         /// </summary>
         /// <value>The version.</value>
-        public string Version { get; set; }
+        public string AssemblyVersion { get; set; }
 
         /// <summary>
         /// The file version which is set by [assembly: AssemblyFileVersion("1.0.0.0")] attribute

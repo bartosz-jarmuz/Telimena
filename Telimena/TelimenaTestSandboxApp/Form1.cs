@@ -44,6 +44,15 @@ namespace TelimenaTestSandboxApp
 
         private async void InitializeButton_Click(object sender, EventArgs e)
         {
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            }
+            else
+            {
+                this.resultTextBox.Text = "Cannot run without telemetry key";
+                return;
+            }
             TelemetryInitializeResponse response = await this.teli.InitializeAsync_toReDo();
 
             this.resultTextBox.Text += this.teli.StaticProgramInfo.Name + " - " + this.PresentResponse(response) + Environment.NewLine;

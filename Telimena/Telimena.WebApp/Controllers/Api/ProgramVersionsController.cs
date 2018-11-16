@@ -73,7 +73,7 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 AssemblyId = assemblyInfo.Id
                 , AssemblyName = assemblyInfo.Name
-                , LatestVersion = assemblyInfo.GetLatestVersion()?.Version
+                , LatestVersion = assemblyInfo.GetLatestVersion()?.AssemblyVersion
                 , LatestVersionId = assemblyInfo.GetLatestVersion()?.Id ?? 0
             };
         }

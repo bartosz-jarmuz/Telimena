@@ -31,9 +31,9 @@ namespace Telimena.WebApp.Controllers
 
         [Audit]
         [HttpGet]
-        public async Task<ActionResult> Index(string programName)
+        public async Task<ActionResult> Index(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.Name == programName);
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
 
             if (program == null)
             {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using Telimena.WebApp.Core.Models;
 
@@ -8,6 +9,7 @@ namespace Telimena.WebApp.Models.ProgramDetails
     {
         public string ProgramName { get; set; }
         public int ProgramId { get; set; }
+        public Guid TelemetryKey { get; set; }
 
         public ICollection<ProgramUpdatePackageInfo> UpdatePackages { get; set; } = new List<ProgramUpdatePackageInfo>(); //todo replace with VM
 
@@ -17,5 +19,6 @@ namespace Telimena.WebApp.Models.ProgramDetails
         public int SelectedUpdaterId { get;set; }
 
         public List<SelectListItem> UpdatersSelectList { get; set; }
+        public string ProgramDescription { get; set; }
     }
 }

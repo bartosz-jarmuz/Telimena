@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
@@ -39,9 +40,9 @@ namespace Telimena.WebApp.Controllers
             ProgramsListViewModel model = new ProgramsListViewModel();
             foreach (Program program in programs)
             {
-                if (!model.Programs.ContainsKey(program.Id))
+                if (!model.Programs.ContainsKey(program.TelemetryKey))
                 {
-                    model.Programs.Add(program.Id, program.Name);
+                    model.Programs.Add(program.TelemetryKey, new Tuple<string, string>(program.DeveloperAccount.Name, program.Name));
                 }
             }
 

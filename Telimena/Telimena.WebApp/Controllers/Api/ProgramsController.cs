@@ -59,11 +59,13 @@ namespace Telimena.WebApp.Controllers.Api
                 await this.Work.CompleteAsync();
 
                 program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == guid);
-                return new RegisterProgramResponse(program.Id, program.TelemetryKey, program.DeveloperAccount.Id);
+                var url = Url.Link("Default", new {Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey});
+                return new RegisterProgramResponse(program.Id, program.TelemetryKey, program.DeveloperAccount.Id, url);
             }
             catch (Exception ex)
             {
-                return new RegisterProgramResponse(new InvalidOperationException("Failed to register program. ", ex));
+
+                throw new InvalidOperationException("Failed to register program. ", ex);
             }
         }
 

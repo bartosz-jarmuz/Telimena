@@ -47,8 +47,12 @@
                     <span>@Model.ProgramName</span>
                 </div>
                 <div class="form-group">
-                    <label>Id: </label>
-                    <span>@Model.ProgramId</span>
+                    <label>Description: </label>
+                    <span>@Model.ProgramDescription</span>
+                </div>
+                <div class="form-group">
+                    <label>Telemetry Key: </label>
+                    <span>@Model.TelemetryKey</span>
                 </div>
                 <div class="form-group">
                     <label>Latest version: </label>
@@ -64,8 +68,8 @@
                 </div>
                 <div class="form-group">
                     <label>Updater: </label>
-                    @Html.DropDownList("Updaters", Model.UpdatersSelectList, new {id = "updaterSelectList"})
-                    <input type='submit' id="submitUpdaterChange" value='Submit'/>
+                    @Html.DropDownList("Updaters", Model.UpdatersSelectList, new { id = "updaterSelectList" })
+                    <input type='submit' id="submitUpdaterChange" value='Submit' />
                 </div>
                 <div class="form-group">
                     <input type="button" class="btn btn-danger" id="deleteProgramButton" value="Delete program" />
@@ -314,7 +318,7 @@
                     ShowConfirmationBox(input, "label-danger", xhr.responseJSON.Message);
                 }
             });
-        }
+        }x
 
         function TogglePackageBeta(input) {
             var id = $(input).data("pkg-id");

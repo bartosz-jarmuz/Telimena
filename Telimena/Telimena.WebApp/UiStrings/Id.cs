@@ -2,38 +2,40 @@
 {
     public static class Strings
     {
-        public const string DateTimeFormat = "dd.MM.yyyy HH:mm:ss";
-
         public static class Id
         {
-            public const string LoginForm = "LoginForm";
-            public const string Email = "Email";
-            public const string Password = "Password";
-            public const string SubmitLogin = "SubmitLogin";
-            public const string PortalSummary = "PortalSummary";
-            public const string PortalAdminDashboardLink = "PortalAdminDashboardLink";
-            public const string AppsAdminDashboardLink = "AppsAdminDashboardLink";
-            public const string LogsLink  = "LogsLink";
-            public const string PortalUsersLink  = "PortalUsersLink";
-            public const string ToolkitManagementLink = "ToolkitManagementLink";
-            public const string AppsSummary = "AppsSummary";
-            public const string ToolkitManagementForm = "ToolkitManagementForm";
-            public const string PortalUsersTable = "PortalUsersTable";
-            public const string DeveloperDashboardLink = "DeveloperDashboardLink";
-            public const string DeveloperDashboard  = "DeveloperDashboard";
-            public const string RegisterApplicationForm = "RegisterApplicationForm";
-            public const string RegisterApplicationLink = "RegisterApplicationLink";
-            public const string ApiDocsLink  = "ApiDocsLink";
-            public const string PasswordForm = "PasswordForm";
-            public const string MyAppsList = "MyAppsList ";
-            public const string ProgramUsageTable = "ProgramUsageTable";
-            public const string ViewUsageTable = "ViewUsageTable";
-            public const string MainHeader = "MainHeader";
-            public const string UpdaterPackageUploader = "UpdaterPackageUploader";
-            public const string UpdaterInternalName = "UpdaterInternalName";
-            public const string SubmitUpdaterUpload = "SubmitUpdaterUpload";
-            public const string UpdaterUploadInfoBox = "UpdaterUploadInfoBox";
-            public const string UpdaterConfirmationBox = "UpdaterConfirmationBox";
+            public static string LoginForm { get; } = "LoginForm";
+            public static string Email { get; } = "Email";
+            public static string Password { get; } = "Password";
+            public static string SubmitLogin { get; } = "SubmitLogin";
+            public static string PortalSummary { get; } = "PortalSummary";
+            public static string PortalAdminDashboardLink { get; } = "PortalAdminDashboardLink";
+            public static string AppsAdminDashboardLink { get; } = "AppsAdminDashboardLink";
+            public static string LogsLink { get; } = "LogsLink";
+            public static string PortalUsersLink { get; } = "PortalUsersLink";
+            public static string ToolkitManagementLink { get; } = "ToolkitManagementLink";
+            public static string AppsSummary { get; } = "AppsSummary";
+            public static string ToolkitManagementForm { get; } = "ToolkitManagementForm";
+            public static string PortalUsersTable { get; } = "PortalUsersTable";
+            public static string DeveloperDashboardLink { get; } = "DeveloperDashboardLink";
+            public static string DeveloperDashboard { get; } = "DeveloperDashboard";
+            public static string RegisterApplicationForm { get; } = "RegisterApplicationForm";
+            public static string RegisterApplicationLink { get; } = "RegisterApplicationLink";
+            public static string ApiDocsLink { get; } = "ApiDocsLink";
+            public static string PasswordForm { get; } = "PasswordForm";
+            public static string MyAppsList { get; } = "MyAppsList ";
+            public static string ProgramUsageTable { get; } = "ProgramUsageTable";
+            public static string ViewUsageTable { get; } = "ViewUsageTable";
+            public static string MainHeader { get; } = "MainHeader";
+            public static string UpdaterPackageUploader { get; } = "UpdaterPackageUploader";
+            public static string UpdaterInternalName { get; } = "UpdaterInternalName";
+            public static string SubmitUpdaterUpload { get; } = "SubmitUpdaterUpload";
+            public static string UpdaterUploadInfoBox { get; } = "UpdaterUploadInfoBox";
+            public static string UpdaterConfirmationBox { get; } = "UpdaterConfirmationBox";
+            public static string ProgramNameInputBox { get; } = "ProgramNameInputBox";
+            public static string ProgramDescriptionInputBox { get; } = "ProgramNameInputBox";
         }
+
+        public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";
     }
 }

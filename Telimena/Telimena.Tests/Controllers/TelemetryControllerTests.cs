@@ -235,11 +235,11 @@ namespace Telimena.Tests
             Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
             Assert.AreEqual(2, prg.ProgramAssemblies.Count);
             ProgramAssembly helper = prg.ProgramAssemblies.Single(x => x.Name == "Helper_" + Helpers.GetName("TestProg") + ".dll");
-            Assert.AreEqual("0.0.0.1", helper.GetLatestVersion().Version);
+            Assert.AreEqual("0.0.0.1", helper.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(1, helper.Versions.Count);
 
-            Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.GetLatestVersion().Version);
-            Assert.AreEqual("1.2.3.4", prg.GetLatestVersion().Version);
+            Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.GetLatestVersion().AssemblyVersion);
+            Assert.AreEqual("1.2.3.4", prg.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(unit.Versions.Single(x => x.ProgramAssemblyId == prg.PrimaryAssembly.Id).Id, prg.PrimaryAssembly.GetLatestVersion().Id);
             int firstVersionId = prg.PrimaryAssembly.GetLatestVersion().Id;
 
@@ -248,7 +248,7 @@ namespace Telimena.Tests
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 3);
             Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
-            Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.GetLatestVersion().Version);
+            Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(unit.Versions.Single(x => x.ProgramAssemblyId == prg.PrimaryAssembly.Id).Id, prg.PrimaryAssembly.GetLatestVersion().Id);
 
 
@@ -262,9 +262,9 @@ namespace Telimena.Tests
             response = await sut.Initialize(request);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 4);
-            Assert.AreEqual("2.0.0.0", prg.PrimaryAssembly.GetLatestVersion().Version);
+            Assert.AreEqual("2.0.0.0", prg.PrimaryAssembly.GetLatestVersion().AssemblyVersion);
             //Assert.AreEqual("1.2.3.4", prg.PrimaryAssembly.GetLatestVersion().Version);
-            Assert.AreEqual(unit.Versions.Single(x => x.ProgramAssemblyId == prg.PrimaryAssembly.Id && x.Version == "2.0.0.0").Id
+            Assert.AreEqual(unit.Versions.Single(x => x.ProgramAssemblyId == prg.PrimaryAssembly.Id && x.AssemblyVersion == "2.0.0.0").Id
                 , prg.PrimaryAssembly.GetLatestVersion().Id);
 
 
@@ -312,7 +312,7 @@ namespace Telimena.Tests
             Helpers.AssertRegistrationResponse(response, prg, usr, 1);
             Assert.AreEqual(2, prg.ProgramAssemblies.Count);
             ProgramAssembly helper = prg.ProgramAssemblies.Single(x => x.Name == "Helper_" + Helpers.GetName("TestProg") + ".dll");
-            Assert.AreEqual("0.0.0.1", helper.GetLatestVersion().Version);
+            Assert.AreEqual("0.0.0.1", helper.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(1, helper.Versions.Count);
 
 
@@ -327,9 +327,9 @@ namespace Telimena.Tests
             Assert.AreEqual(3, prg.ProgramAssemblies.Count);
             helper = prg.ProgramAssemblies.Single(x => x.Name == "Helper_" + Helpers.GetName("TestProg") + ".dll");
             ProgramAssembly helper2 = prg.ProgramAssemblies.Single(x => x.Name == "Helper2_" + Helpers.GetName("TestProg") + ".dll");
-            Assert.AreEqual("0.0.0.1", helper.GetLatestVersion().Version);
+            Assert.AreEqual("0.0.0.1", helper.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(1, helper.Versions.Count);
-            Assert.AreEqual("0.0.2.2", helper2.GetLatestVersion().Version);
+            Assert.AreEqual("0.0.2.2", helper2.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(1, helper2.Versions.Count);
 
 
@@ -351,11 +351,11 @@ namespace Telimena.Tests
             Assert.AreEqual(3, prg.ProgramAssemblies.Count);
             helper = prg.ProgramAssemblies.Single(x => x.Name == "Helper_" + Helpers.GetName("TestProg") + ".dll");
             helper2 = prg.ProgramAssemblies.Single(x => x.Name == "Helper2_" + Helpers.GetName("TestProg") + ".dll");
-            Assert.AreEqual("0.3.0.1", helper.GetLatestVersion().Version);
+            Assert.AreEqual("0.3.0.1", helper.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(2, helper.Versions.Count);
-            Assert.AreEqual("0.0.2.2", helper2.GetLatestVersion().Version);
+            Assert.AreEqual("0.0.2.2", helper2.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(1, helper2.Versions.Count);
-            Assert.AreEqual("2.0.0.0", prg.GetLatestVersion().Version);
+            Assert.AreEqual("2.0.0.0", prg.GetLatestVersion().AssemblyVersion);
 
 
             //fourth time - do not register helpers anymore
@@ -372,11 +372,11 @@ namespace Telimena.Tests
 
             helper = prg.ProgramAssemblies.Single(x => x.Name == "Helper_" + Helpers.GetName("TestProg") + ".dll");
             helper2 = prg.ProgramAssemblies.Single(x => x.Name == "Helper2_" + Helpers.GetName("TestProg") + ".dll");
-            Assert.AreEqual("0.3.0.1", helper.GetLatestVersion().Version);
+            Assert.AreEqual("0.3.0.1", helper.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(2, helper.Versions.Count);
-            Assert.AreEqual("0.0.2.2", helper2.GetLatestVersion().Version);
+            Assert.AreEqual("0.0.2.2", helper2.GetLatestVersion().AssemblyVersion);
             Assert.AreEqual(1, helper2.Versions.Count);
-            Assert.AreEqual("2.0.0.0", prg.GetLatestVersion().Version);
+            Assert.AreEqual("2.0.0.0", prg.GetLatestVersion().AssemblyVersion);
         }
 
         [Test]
@@ -411,8 +411,8 @@ namespace Telimena.Tests
 
             Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
             Assert.AreEqual(1, prg.ProgramAssemblies.Count);
-            Assert.IsTrue(prg.PrimaryAssembly.Versions.Any(x => x.Version == "1.2.3.4"));
-            Assert.IsTrue(prg.PrimaryAssembly.Versions.Any(x => x.Version == "6.0"));
+            Assert.IsTrue(prg.PrimaryAssembly.Versions.Any(x => x.AssemblyVersion == "1.2.3.4"));
+            Assert.IsTrue(prg.PrimaryAssembly.Versions.Any(x => x.AssemblyVersion == "6.0"));
             Assert.AreEqual(5, prg.TelemetrySummaries.Sum(x => x.SummaryCount));
             Assert.AreEqual(2, prg.TelemetrySummaries.Count);
             Assert.AreEqual(5, prg.TelemetrySummaries.Sum(x => x.GetTelemetryDetails().Count()));
@@ -617,7 +617,7 @@ namespace Telimena.Tests
             ProgramTelemetryDetail detail = prg.GetLatestTelemetryDetail();
             Assert.AreEqual(usr2.Id, detail.TelemetrySummary.ClientAppUserId);
             Assert.AreEqual(0, detail.TelemetryUnits.Count);
-            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.Version);
+            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.AssemblyVersion);
 
             TelemetryInitializeRequest request = new TelemetryInitializeRequest(prg.TelemetryKey) { UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")), ProgramInfo = Helpers.GetProgramInfo("TestApp",version: "1.2.3.4") };
 
@@ -627,14 +627,14 @@ namespace Telimena.Tests
             Assert.AreEqual(3, prg.TelemetrySummaries.Sum(x => x.GetTelemetryDetails().Count()));
             Assert.AreEqual(2, prg.GetTelemetryDetails(usr.Id).Count);
             Assert.AreEqual(1, prg.GetTelemetryDetails(usr2.Id).Count);
-            Assert.IsTrue(prg.GetTelemetryDetails(usr.Id).All(x => x.AssemblyVersion.Version == "1.2.3.4"));
-            Assert.IsTrue(prg.GetTelemetryDetails(usr2.Id).All(x => x.AssemblyVersion.Version == "1.2.3.4"));
+            Assert.IsTrue(prg.GetTelemetryDetails(usr.Id).All(x => x.AssemblyVersion.AssemblyVersion == "1.2.3.4"));
+            Assert.IsTrue(prg.GetTelemetryDetails(usr2.Id).All(x => x.AssemblyVersion.AssemblyVersion == "1.2.3.4"));
 
             Assert.AreEqual(1, this.Context.Versions.Count(x => x.ProgramAssembly.ProgramId == prg.Id));
 
             detail = prg.GetLatestTelemetryDetail();
             Assert.AreEqual(usr.Id, detail.TelemetrySummary.ClientAppUserId);
-            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.Version);
+            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.AssemblyVersion);
 
             request = new TelemetryInitializeRequest(prg.TelemetryKey) { UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")), ProgramInfo = Helpers.GetProgramInfo("TestApp", version: "2.0.0.0") };
 
@@ -644,16 +644,16 @@ namespace Telimena.Tests
             Assert.AreEqual(4, prg.TelemetrySummaries.Sum(x => x.GetTelemetryDetails().Count()));
             Assert.AreEqual(3, prg.GetTelemetryDetails(usr.Id).Count);
             Assert.AreEqual(1, prg.GetTelemetryDetails(usr2.Id).Count);
-            Assert.AreEqual(2, prg.GetTelemetryDetails(usr.Id).Count(x => x.AssemblyVersion.Version == "1.2.3.4"));
-            Assert.AreEqual(1, prg.GetTelemetryDetails(usr.Id).Count(x => x.AssemblyVersion.Version == "2.0.0.0"));
-            Assert.IsTrue(prg.GetTelemetryDetails(usr2.Id).All(x => x.AssemblyVersion.Version == "1.2.3.4"));
+            Assert.AreEqual(2, prg.GetTelemetryDetails(usr.Id).Count(x => x.AssemblyVersion.AssemblyVersion == "1.2.3.4"));
+            Assert.AreEqual(1, prg.GetTelemetryDetails(usr.Id).Count(x => x.AssemblyVersion.AssemblyVersion == "2.0.0.0"));
+            Assert.IsTrue(prg.GetTelemetryDetails(usr2.Id).All(x => x.AssemblyVersion.AssemblyVersion == "1.2.3.4"));
 
             Assert.AreEqual(2, this.Context.Versions.Count(x => x.ProgramAssembly.ProgramId == prg.Id));
 
 
             detail = prg.GetLatestTelemetryDetail();
             Assert.AreEqual(usr.Id, detail.TelemetrySummary.ClientAppUserId);
-            Assert.AreEqual("2.0.0.0", detail.AssemblyVersion.Version);
+            Assert.AreEqual("2.0.0.0", detail.AssemblyVersion.AssemblyVersion);
         }
 
     }

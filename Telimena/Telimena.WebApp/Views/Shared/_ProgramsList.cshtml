@@ -8,20 +8,20 @@
         </span>
     </a>
     <ul class="treeview-menu" style="display: block;">
-        @foreach (KeyValuePair<int, string> app in Model.Programs)
+        @foreach (KeyValuePair<Guid, Tuple<string, string>> app in Model.Programs)
         {
             <li class="treeview">
-                <a href="#" id="@(app.Value)_menu">
-                    <i class="fa fa-codepen"></i> <span>@app.Value</span>
+                <a href="#" id="@(app.Value.Item2)_menu">
+                    <i class="fa fa-codepen"></i> <span>@app.Value.Item2</span>
                     <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
                 <ul class="treeview-menu" >
-                    <li><a href="@Url.Action("Index", "ProgramManagement", new {programName = app.Value})" id="@(app.Value)_manageLink">
+                    <li><a href="@Url.Action("Index", "ProgramManagement", new {developerName = app.Value.Item1, programName = app.Value.Item2})" id="@(app.Value.Item2)_manageLink">
                         <i class="fa fa-cog"></i> <span>Manage</span>
                     </a></li>
-                    <li><a href="@Url.Action("Index", "ProgramStatistics", new {programName = app.Value})" id="@(app.Value)_statsLink">
+                    <li><a href="@Url.Action("Index", "ProgramStatistics", new {developerName = app.Value.Item1, programName = app.Value.Item2})" id="@(app.Value.Item2)_statsLink">
                         <i class="fa fa-bar-chart"></i> <span>View Statistics</span>
                     </a></li>
                 </ul>

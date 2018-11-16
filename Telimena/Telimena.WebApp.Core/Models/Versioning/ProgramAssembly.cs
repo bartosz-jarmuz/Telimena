@@ -39,7 +39,7 @@ namespace Telimena.WebApp.Core.Models
 
         public AssemblyVersionInfo GetVersion(string version, string fileVersion)
         {
-            IEnumerable<AssemblyVersionInfo> matches = this.Versions.Where(x => x.Version == version);
+            IEnumerable<AssemblyVersionInfo> matches = this.Versions.Where(x => x.AssemblyVersion == version);
 
             if (!string.IsNullOrEmpty(fileVersion))
             {
@@ -50,7 +50,7 @@ namespace Telimena.WebApp.Core.Models
 
         public AssemblyVersionInfo GetLatestVersion()
         {
-            return this.Versions?.OrderByDescending(x => x.Version, new VersionStringComparer())?.FirstOrDefault();
+            return this.Versions?.OrderByDescending(x => x.AssemblyVersion, new VersionStringComparer())?.FirstOrDefault();
         }
 
     }

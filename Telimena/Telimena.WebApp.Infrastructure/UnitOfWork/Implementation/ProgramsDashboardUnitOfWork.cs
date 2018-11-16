@@ -45,7 +45,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 {
                     ProgramName = program.Name
                     , DeveloperName = program.DeveloperAccount?.Name ?? "N/A"
-                    , LatestVersion = program.PrimaryAssembly.GetLatestVersion().Version
+                    , LatestVersion = program.PrimaryAssembly.GetLatestVersion().AssemblyVersion
                     , AssociatedToolkitVersion = program.PrimaryAssembly.GetLatestVersion().ToolkitData?.Version
                     , ProgramId = program.Id
                     , RegisteredDate = program.RegisteredDate
@@ -113,7 +113,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     }
                     else if (rule.Item1 == nameof(UsageData.ProgramVersion))
                     {
-                        query = Order(query, x=>x.AssemblyVersion.Version, rule.Item2, index);
+                        query = Order(query, x=>x.AssemblyVersion.AssemblyVersion, rule.Item2, index);
                     }
                     else if (rule.Item1 == nameof(UsageData.UserName))
                     {
@@ -246,7 +246,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     DateTime = detail.DateTime
                     , UserName = detail.TelemetrySummary.ClientAppUser.UserName
                     , ViewName = detail.TelemetrySummary.View.Name
-                    , ProgramVersion = detail.AssemblyVersion.Version
+                    , ProgramVersion = detail.AssemblyVersion.AssemblyVersion
                 };
                 result.Add(data);
             }
@@ -278,7 +278,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     ,
                     UserName = detail.TelemetrySummary.ClientAppUser.UserName
                     ,
-                    ProgramVersion = detail.AssemblyVersion.Version
+                    ProgramVersion = detail.AssemblyVersion.AssemblyVersion
 
                 };
                 result.Add(data);
@@ -303,7 +303,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 obj.genericData = new ExpandoObject();
                 obj.genericData.DateTime = detail.DateTime;
                 obj.genericData.detailId = detail.Id;
-                obj.genericData.programVersion = detail.AssemblyVersion.Version;
+                obj.genericData.programVersion = detail.AssemblyVersion.AssemblyVersion;
                 obj.genericData.viewName = detail.TelemetrySummary.View.Name;
                 obj.genericData.userName = detail.TelemetrySummary.ClientAppUser.UserName;
                 obj.genericData.userId = detail.TelemetrySummary.ClientAppUserId;

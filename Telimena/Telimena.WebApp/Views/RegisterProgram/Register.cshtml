@@ -1,8 +1,6 @@
-﻿@using Telimena.WebApp.UiStrings
-@model Telimena.WebApp.Models.Developer.RegisterProgramViewModel
-@{
-    ViewBag.Title = "Claim App";
-}
+﻿@using Telimena.WebApp.Core.Messages
+@using Telimena.WebApp.UiStrings
+
 
 <div id="@Strings.Id.RegisterApplicationForm"  class="row">
 
@@ -12,27 +10,54 @@
                 <h3 class="box-title">Register application</h3>
             </div>
             <div class="box-body">
-                @if (Model != null && Model.IsSuccess)
-                {
-                    <label class="label label-success">Ownership claimed successfully!</label>
-                }
-                <section>
-                    @using (Html.BeginForm("Register", "RegisterProgram", FormMethod.Post, new {role = "form"}))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.ValidationSummary(true, "", new {@class = "text-danger"})
-                        <div class="form-group">
-                            @Html.LabelFor(m => m.ProgramName, new {@class = "control-label"})
-                            @Html.TextBoxFor(m => m.ProgramName, new {@class = "form-control"})
-                        </div>
-                        <div class="form-group">
-                            <div class="">
-                                <input type="submit" value="Submit request" class="btn btn-primary"/>
+                    <section>
+                        <form id="@Strings.Id.RegisterApplicationForm">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label>Program Name: </label>
+                                <input type="text" id="@Strings.Id.ProgramNameInputBox"/>
                             </div>
-                        </div>
-                    }
-                </section>
+                            <div class="form-group">
+                                <label>Program description: </label>
+                                <input type="text" id="@Strings.Id.ProgramDescriptionInputBox"/>
+                            </div>
+                            <div class="form-group">
+                                <div class="">
+                                    <input type="submit" value="Register" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </form>
+                    </section>
             </div>
         </div>
     </div>
 </div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#@Strings.Id.RegisterApplicationForm').submit(function (e) {
+                    e.preventDefault();
+                var model = {
+                    @nameof(RegisterProgramRequest.Name): $('#@Strings.Id.ProgramNameInputBox').val(),
+                    @nameof(RegisterProgramRequest.Description): $('#@Strings.Id.ProgramDescriptionInputBox').val(),
+                };
+
+                $.ajax({
+                        type: 'POST',
+                        url: '/api' + '@Url.Action("Register", "Programs")',
+                        contentType: "application/json; charset=utf-8",
+                        datatype: 'Json',
+                        data: JSON.stringify(model)
+                    })
+                    .done(function (xhr) {
+                        window.location.href = xhr.ProgramPageUrl;
+                    })
+                    .fail(function(xhr) {
+                        alert(xhr.responseJSON.InnerException.ExceptionMessage);
+                    });
+            });
+        });
+    </script>
+}
