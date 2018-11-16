@@ -56,14 +56,16 @@ namespace Telimena.Tests
             }};
 
             TelemetryUpdateResponse response = await sut.View(request);
-
-            Helpers.AssertUpdateResponse(response, prg, usr, 1, Helpers.GetName("Func1"), 1);
-
             View view = prg.Views.Single();
+
+            var viewId = this.Context.Views.FirstOrDefault(x => x.Name == view.Name).Id;
+
+            Helpers.AssertUpdateResponse(response, prg, usr, 1, Helpers.GetName("Func1"), viewId);
+
 
             Assert.AreEqual(1, prg.Views.Count);
             Assert.AreEqual(Helpers.GetName("Func1"), view.Name);
-            Assert.AreEqual(1, view.Id);
+            Assert.AreEqual(response.ComponentId, view.Id);
             Assert.AreEqual(1, view.TelemetrySummaries.Count);
             Assert.AreEqual(prg.Id, view.ProgramId);
 
@@ -130,7 +132,7 @@ namespace Telimena.Tests
             Assert.IsTrue(details.All(x => x.TelemetrySummary.ClientAppUserId == this.GetUserByGuid(response.UserId).Id));
             Assert.IsTrue(details.First().DateTime < details.Last().DateTime);
 
-            Assert.AreEqual(3, this.Context.ViewTelemetryDetails.ToList().Count);
+            Assert.AreEqual(3, this.Context.ViewTelemetryDetails.Count(x=>x.TelemetrySummary.View.Name == request.ComponentName));
             Assert.AreEqual(2, this.Context.ViewTelemetryDetails.Count(x => x.TelemetrySummaryId == summary.Id));
         }
 

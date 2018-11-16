@@ -25,6 +25,7 @@ namespace Telimena.WebApp.Infrastructure
 
             this.CreateMap<UserInfo, ClientAppUser>()
                 .ForMember(x => x.Id, o => o.Ignore())
+                .ForMember(x => x.Guid, o => o.Ignore())
                 .ForMember(x => x.IpAddresses, o => o.Ignore())
                 .ForMember(x => x.IpAddressesString, o => o.Ignore())
                 .ForMember(x => x.RegisteredDate, o => o.Ignore());
@@ -35,6 +36,7 @@ namespace Telimena.WebApp.Infrastructure
 
             this.CreateMap<ProgramInfo, Program>().ForMember(x => x.ProgramAssemblies, o => o.Ignore())
                 .ForMember(x => x.DeveloperAccount, o => o.Ignore())
+                .ForMember(x => x.TelemetryKey, o => o.Ignore())
                 .ForMember(x => x.RegisteredDate, o => o.Ignore())
                 .ForMember(x => x.Views, o => o.Ignore())
                 .ForMember(x => x.TelemetrySummaries, o => o.Ignore())
