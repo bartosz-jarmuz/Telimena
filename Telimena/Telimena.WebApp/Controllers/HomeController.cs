@@ -42,7 +42,7 @@ namespace Telimena.WebApp.Controllers
             {
                 if (!model.Programs.ContainsKey(program.TelemetryKey))
                 {
-                    model.Programs.Add(program.TelemetryKey, new Tuple<string, string>(program.DeveloperAccount.Name, program.Name));
+                    model.Programs.Add(program.TelemetryKey, program.Name);
                 }
             }
 

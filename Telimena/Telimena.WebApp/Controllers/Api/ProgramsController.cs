@@ -59,7 +59,7 @@ namespace Telimena.WebApp.Controllers.Api
                 await this.Work.CompleteAsync();
 
                 program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == guid);
-                var url = Url.Link("Default", new {Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey});
+                var url = Url?.Link("Default", new {Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey});
                 return new RegisterProgramResponse(program.Id, program.TelemetryKey, program.DeveloperAccount.Id, url);
             }
             catch (Exception ex)

@@ -13,7 +13,6 @@ using Telimena.WebApp.Models.ProgramDetails;
 namespace Telimena.WebApp.Controllers
 {
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
-    [RoutePrefix("ProgramManagement")]
     public class ProgramManagementController : Controller
     {
         public ProgramManagementController(IProgramsUnitOfWork work)
@@ -25,10 +24,9 @@ namespace Telimena.WebApp.Controllers
 
         [Audit]
         [HttpGet]
-        [Route("{developerName}/{programName}")]
-        public async Task<ActionResult> Index(string developerName, string programName)
+        public async Task<ActionResult> Index(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.DeveloperAccount.Name == developerName && x.Name == programName);
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
 
             if (program == null)
             {

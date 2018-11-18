@@ -5,6 +5,6 @@ namespace Telimena.WebApp.Models.Shared
 {
     public class ProgramsListViewModel
     {
-        public Dictionary<Guid, Tuple<string, string>> Programs { get; set; } = new Dictionary<Guid, Tuple<string, string>>();
+        public Dictionary<Guid, string> Programs { get; set; } = new Dictionary<Guid,string>();
     }
 }
