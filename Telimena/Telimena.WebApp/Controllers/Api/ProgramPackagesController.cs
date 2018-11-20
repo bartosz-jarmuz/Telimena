@@ -18,7 +18,7 @@ using Telimena.WebApp.Infrastructure.UnitOfWork;
 
 namespace Telimena.WebApp.Controllers.Api
 {
-    [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
+    [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramPackagesController : ApiController
     {
         private readonly IFileSaver fileSaver;

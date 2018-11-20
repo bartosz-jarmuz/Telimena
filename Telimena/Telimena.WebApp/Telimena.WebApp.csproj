@@ -267,7 +267,6 @@
     <Compile Include="Controllers\Api\ProgramsController.cs" />
     <Compile Include="Controllers\Api\TelemetryController.cs" />
     <Compile Include="Controllers\Api\TelemetryControllerHelpers.cs" />
-    <Compile Include="Controllers\Api\TelemetryHelperService.cs" />
     <Compile Include="Controllers\Api\ToolkitController.cs" />
     <Compile Include="Controllers\Api\UpdaterController.cs" />
     <Compile Include="Controllers\Developer\ProgramsDashboardBase.cs" />
@@ -276,7 +275,6 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\Admin\PortalUsersController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\Api\StatisticsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProgramStatisticsController.cs" />
     <Compile Include="Controllers\ProgramManagementController.cs" />

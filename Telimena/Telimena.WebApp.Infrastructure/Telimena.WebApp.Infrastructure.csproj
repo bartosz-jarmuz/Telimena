@@ -196,6 +196,7 @@
     <Compile Include="Repository\IToolkitDataRepository.cs" />
     <Compile Include="Repository\IUpdaterRepository.cs" />
     <Compile Include="Repository\IUpdatePackageRepository.cs" />
+    <Compile Include="Security\TelimenaApiAuthorizeAttribute.cs" />
     <Compile Include="UnitOfWork\IProgramsDashboardUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\AccountUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\ProgramsDashboardUnitOfWork.cs" />

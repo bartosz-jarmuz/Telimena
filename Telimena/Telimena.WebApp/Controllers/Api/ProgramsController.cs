@@ -20,7 +20,7 @@ namespace Telimena.WebApp.Controllers.Api
 
     #endregion
 
-    [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
+    [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramsController : ApiController
     {
         public ProgramsController(IProgramsUnitOfWork work)

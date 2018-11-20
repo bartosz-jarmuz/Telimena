@@ -29,7 +29,7 @@ namespace Telimena.WebApp.Controllers.Api
 
     #endregion
 
-    [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
+    [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramUpdatesController : ApiController
     {
         public ProgramUpdatesController(IProgramsUnitOfWork work, ITelimenaSerializer serializer, IFileSaver fileSaver, IFileRetriever fileRetriever)

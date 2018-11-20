@@ -18,7 +18,7 @@ using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers.Api
 {
-    [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
+    [TelimenaApiAuthorize(Roles = TelimenaRoles.Admin)]
     public class ToolkitController : ApiController
     {
         //The toolkit can evolve independently of the client app - some changes might be breaking the contracts, but most - should not

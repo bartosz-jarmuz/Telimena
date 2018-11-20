@@ -17,7 +17,7 @@ namespace Telimena.WebApp.Controllers.Api
 
     #endregion
 
-    [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
+    [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramVersionsController : ApiController
     {
         public ProgramVersionsController(IProgramsUnitOfWork work)

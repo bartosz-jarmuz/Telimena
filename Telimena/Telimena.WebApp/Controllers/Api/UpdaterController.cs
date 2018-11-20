@@ -23,7 +23,7 @@ using TelimenaClient.Serializer;
 
 namespace Telimena.WebApp.Controllers.Api
 {
-    [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
+    [TelimenaApiAuthorize(Roles = TelimenaRoles.Admin)]
     public class UpdaterController : ApiController
     {
         public UpdaterController(IToolkitDataUnitOfWork work, ITelimenaSerializer serializer, IFileSaver fileSaver, IFileRetriever fileRetriever)

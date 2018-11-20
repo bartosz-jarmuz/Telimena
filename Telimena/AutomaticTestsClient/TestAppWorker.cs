@@ -30,7 +30,7 @@ namespace AutomaticTestsClient
                         this.HandleReportViewUsage(telimena);
                         break;
                     case Actions.HandleUpdates:
-                        telimena.HandleUpdatesBlocking(false);
+                        HandleUpdates(telimena);
                         break;
                 }
             }
@@ -40,6 +40,11 @@ namespace AutomaticTestsClient
             }
 
             Console.WriteLine("Done");
+        }
+
+        private void HandleUpdates(Telimena telimena)
+        {
+            telimena.HandleUpdatesBlocking(false);
         }
 
         private Telimena GetTelimena(Guid argumentsTelemetryKey)
@@ -65,7 +70,7 @@ namespace AutomaticTestsClient
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
-
+        
         private void HandleReportViewUsage(Telimena telimena)
         {
             

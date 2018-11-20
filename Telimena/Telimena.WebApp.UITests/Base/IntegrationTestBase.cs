@@ -55,11 +55,11 @@ namespace Telimena.WebApp.UITests.Base
         {
             var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
 
-            process = this.LaunchTestsApp(appFile, action, pi, viewName, waitForExit);
+            process = this.LaunchTestsApp(appFile, action, pi, waitForExit, viewName);
             return appFile;
         }
 
-        protected Process LaunchTestsApp(FileInfo appFile, Actions action, ProgramInfo pi = null, string viewName = null, bool waitForExit = true)
+        protected Process LaunchTestsApp(FileInfo appFile, Actions action, ProgramInfo pi = null, bool waitForExit = true, string viewName = null)
         {
             Arguments args = new Arguments { ApiUrl = this.BaseUrl, Action = action };
             args.ProgramInfo = pi;
@@ -95,7 +95,7 @@ namespace Telimena.WebApp.UITests.Base
 
         protected T LaunchTestsAppAndGetResult<T>(FileInfo app, Actions action, ProgramInfo pi = null, string viewName = null, bool waitForExit = true) where T : class
         {
-            this.LaunchTestsApp(app, action, pi, viewName, waitForExit);
+            this.LaunchTestsApp(app, action, pi, waitForExit, viewName);
 
             T result = this.ParseOutput<T>();
             this.outputs.Clear();
