@@ -42,6 +42,7 @@ namespace AutomaticTestsClient
                 throw new ArgumentException($"Error while deserializing [{args[0]}], decoded: {decoded}", ex);
             }
 
+            Console.WriteLine($"Args: {decoded}");
             Console.WriteLine("Arguments loaded OK");
 #if DEBUG
             if (arguments.ApiUrl == null)
