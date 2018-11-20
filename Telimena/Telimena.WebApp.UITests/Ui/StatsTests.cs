@@ -16,7 +16,7 @@ namespace Telimena.WebApp.UITests.Ui
     using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
     [TestFixture()]
-    public partial class UiTests : UiTestBase
+    public partial class _1_UiTests : UiTestBase
     {
         
 

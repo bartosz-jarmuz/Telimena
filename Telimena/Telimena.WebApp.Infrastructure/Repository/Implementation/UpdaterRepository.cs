@@ -29,9 +29,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         protected TelimenaContext TelimenaContext { get; }
         private readonly string containerName = "toolkit-packages";
 
-        public Task<Updater> GetUpdater(int id)
+        public Task<Updater> GetUpdater(Guid id)
         {
-            return this.TelimenaContext.Updaters.FirstOrDefaultAsync(x => x.Id == id);
+            return this.TelimenaContext.Updaters.FirstOrDefaultAsync(x => x.Guid == id);
         }
 
         public Updater Add(string fileName, string internalName, TelimenaUser user)
@@ -48,9 +48,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return updater.Packages.FirstOrDefault(x => x.Version == version);
         }
 
-        public Task<UpdaterPackageInfo> GetPackageInfo(int packageId)
+        public Task<UpdaterPackageInfo> GetPackageInfo(Guid packageGuid)
         {
-            return this.TelimenaContext.UpdaterPackages.FirstOrDefaultAsync(x => x.Id == packageId);
+            return this.TelimenaContext.UpdaterPackages.FirstOrDefaultAsync(x => x.Guid == packageGuid);
         }
 
         public async Task<IEnumerable<UpdaterPackageInfo>> GetPackages(string updaterInternalName)

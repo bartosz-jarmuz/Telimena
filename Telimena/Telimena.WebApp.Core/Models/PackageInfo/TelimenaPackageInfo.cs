@@ -18,6 +18,7 @@ namespace Telimena.WebApp.Core.Models
         
         [ForeignKey(nameof(TelimenaToolkitData))]
         public int Id { get; set; }
+        public Guid Guid { get; set; } = Guid.NewGuid();
 
         public string Version { get; set; }
         public bool IsBeta { get; set; }

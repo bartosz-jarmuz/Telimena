@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.Messages;
@@ -23,7 +24,7 @@ namespace Telimena.WebApp.Infrastructure
         {
             bool valid = false;
             errorMessages = new List<string>();
-            if (request != null && request.ProgramId > 0)
+            if (request != null && request.TelemetryKey != Guid.Empty)
             {
                 return true;
             }
@@ -47,6 +48,21 @@ namespace Telimena.WebApp.Infrastructure
                 if (string.IsNullOrWhiteSpace(request.Name))
                 {
                     errorMessages.Add("Program name is missing!");
+                }
+                if (request.TelemetryKey == Guid.Empty)
+                {
+                    errorMessages.Add("Invalid telemetry key!");
+                }
+                if (string.IsNullOrWhiteSpace(request.PrimaryAssemblyFileName))
+                {
+                    errorMessages.Add("Primary assembly name is empty!");
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(Path.GetExtension(request.PrimaryAssemblyFileName)))
+                    {
+                        errorMessages.Add("Primary assembly name is missing extension!");
+                    }
                 }
             }
 

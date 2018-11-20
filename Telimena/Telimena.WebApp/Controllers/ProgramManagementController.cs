@@ -35,9 +35,9 @@ namespace Telimena.WebApp.Controllers
 
             ProgramManagementViewModel model = new ProgramManagementViewModel
             {
-                ProgramId = program.Id,
                 TelemetryKey = program.TelemetryKey,
                 ProgramName = program.Name,
+                PrimaryAssemblyName = program.PrimaryAssembly.Name + program.PrimaryAssembly.Extension,
                 ProgramDescription = program.Description,
             };
 
@@ -45,10 +45,10 @@ namespace Telimena.WebApp.Controllers
             model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) +
                                        this.Url.HttpRouteUrl("DownloadAppRoute", new {name = model.ProgramName});
 
-            List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(model.ProgramId);
+            List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(program.Id);
             model.UpdatePackages = packages;
 
-            model.ProgramPackageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(model.ProgramId);
+            model.ProgramPackageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(program.Id);
 
             var publicUpdaters = await this.Work.UpdaterRepository.GetPublicUpdaters();
             model.UpdatersSelectList = new List<SelectListItem>();

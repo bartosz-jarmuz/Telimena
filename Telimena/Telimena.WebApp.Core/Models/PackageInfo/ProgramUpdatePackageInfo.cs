@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using TelimenaClient;
 
 namespace Telimena.WebApp.Core.Models
@@ -16,8 +17,9 @@ namespace Telimena.WebApp.Core.Models
             this.Version = version;
             this.SupportedToolkitVersion = supportedToolkitVersion;
         }
-
+        [Obsolete("Int ID is internal only. Use GUID property")]
         public int Id { get; set; }
+        public Guid Guid { get; set; } = Guid.NewGuid();
         public int ProgramId { get; set; }
         public string Version { get; set; }
         public string SupportedToolkitVersion { get; set; }

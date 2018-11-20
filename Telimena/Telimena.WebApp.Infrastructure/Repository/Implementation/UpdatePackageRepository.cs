@@ -60,7 +60,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return pkg;
         }
 
-        public async Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever)
+        public async Task<byte[]> GetPackage(Guid packageId, IFileRetriever fileRetriever)
         {
             ProgramUpdatePackageInfo pkg = await this.GetUpdatePackageInfo(packageId);
 
@@ -84,9 +84,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return packages.Where(x => x.Version.IsNewerVersionThan(currentVersion)).OrderByDescending(x => x.Version, new VersionStringComparer()).ToList();
         }
 
-        public Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(int id)
+        public Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(Guid id)
         {
-            return this.TelimenaContext.UpdatePackages.FirstOrDefaultAsync(x => x.Id == id);
+            return this.TelimenaContext.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == id);
         }
     }
 }

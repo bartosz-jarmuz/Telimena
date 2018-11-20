@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using TelimenaClient;
 
 namespace Telimena.WebApp.Core.Models
@@ -15,6 +16,7 @@ namespace Telimena.WebApp.Core.Models
             this.MinimumRequiredToolkitVersion = minimumRequiredToolkitVersion;
         }
         public int Id { get; set; }
+        public Guid Guid { get; set; } = Guid.NewGuid();
         public string Version { get; set; }
 
         public string MinimumRequiredToolkitVersion { get; set; }

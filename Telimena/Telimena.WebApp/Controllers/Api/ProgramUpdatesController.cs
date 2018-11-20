@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using AutoMapper;
+using Castle.Components.DictionaryAdapter;
 using DotNetLittleHelpers;
 using MvcAuditLogger;
 using Newtonsoft.Json;
@@ -47,7 +48,7 @@ namespace Telimena.WebApp.Controllers.Api
         [AllowAnonymous]
         [HttpGet]
         [Audit]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IHttpActionResult> Get(Guid id)
         {
             ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id);
 
@@ -56,7 +57,7 @@ namespace Telimena.WebApp.Controllers.Api
                 return this.BadRequest($"Program Update Package [{id}] does not exist!");
             }
 
-            byte[] bytes = await this.work.UpdatePackages.GetPackage(packageInfo.Id, this.FileRetriever);
+            byte[] bytes = await this.work.UpdatePackages.GetPackage(id, this.FileRetriever);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = packageInfo.FileName};
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
@@ -114,9 +115,9 @@ namespace Telimena.WebApp.Controllers.Api
 
         [HttpPost]
         [Audit]
-        public async Task<bool> ToggleBetaSetting(int updatePackageId, bool isBeta)
+        public async Task<bool> ToggleBetaSetting(Guid updatePackageGuidId, bool isBeta)
         {
-            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Id == updatePackageId);
+            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == updatePackageGuidId);
             pkg.IsBeta = isBeta;
             await this.work.CompleteAsync();
             return pkg.IsBeta;
@@ -133,7 +134,7 @@ namespace Telimena.WebApp.Controllers.Api
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.Id == request.ProgramId);
+                    Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey== request.TelemetryKey);
                     ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, uploadedFile.FileName, uploadedFile.InputStream
                         , request.ToolkitVersionUsed, this.fileSaver);
                     await this.work.CompleteAsync();

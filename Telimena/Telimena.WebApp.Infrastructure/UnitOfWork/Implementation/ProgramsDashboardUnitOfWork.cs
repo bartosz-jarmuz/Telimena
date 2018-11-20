@@ -41,26 +41,38 @@ namespace Telimena.WebApp.Infrastructure.Repository
             foreach (Program program in programs)
             {
                 List<View> views = await this.Views.FindAsync(x => x.ProgramId == program.Id);
-                ProgramSummary summary = new ProgramSummary
+                ProgramSummary summary;
+                try
                 {
-                    ProgramName = program.Name
-                    , DeveloperName = program.DeveloperAccount?.Name ?? "N/A"
-                    , LatestVersion = program.PrimaryAssembly.GetLatestVersion().AssemblyVersion
-                    , AssociatedToolkitVersion = program.PrimaryAssembly.GetLatestVersion().ToolkitData?.Version
-                    , ProgramId = program.Id
-                    , RegisteredDate = program.RegisteredDate
-                    , LastUsage = program.TelemetrySummaries.MaxOrNull(x => x.LastReportedDateTime)
-                    , UsersCount = program.TelemetrySummaries.Count
-                    , TodayUsageCount =
-                        program.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastReportedDateTime).TotalHours <= 24).Sum(smr =>
-                            smr.GetTelemetryDetails().Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24))
-                    , TotalUsageCount = program.TelemetrySummaries.Sum(x => x.SummaryCount)
-                    , ViewsCount = views.Count
-                    , TotalViewsUsageCount = views.Sum(f => f.TelemetrySummaries.Sum(s => s.SummaryCount))
-                    , TotalTodayViewsUsageCount = views.Sum(f =>
-                        f.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastReportedDateTime).TotalHours <= 24).Sum(smr =>
-                            smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)))
-                };
+
+                    summary = new ProgramSummary
+                    {
+                        ProgramName = program.Name
+                        , DeveloperName = program.DeveloperAccount?.Name ?? "N/A"
+                        , LatestVersion = program.PrimaryAssembly?.GetLatestVersion()?.AssemblyVersion
+                        , AssociatedToolkitVersion = program.PrimaryAssembly?.GetLatestVersion()?.ToolkitData?.Version
+                        , TelemetryKey = program.TelemetryKey
+                        , RegisteredDate = program.RegisteredDate
+                        , LastUsage = program.TelemetrySummaries.MaxOrNull(x => x.LastReportedDateTime)
+                        , UsersCount = program.TelemetrySummaries.Count
+                        , TodayUsageCount =
+                            program.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastReportedDateTime).TotalHours <= 24).Sum(smr =>
+                                smr.GetTelemetryDetails().Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24))
+                        , TotalUsageCount = program.TelemetrySummaries.Sum(x => x.SummaryCount)
+                        , ViewsCount = views.Count
+                        , TotalViewsUsageCount = views.Sum(f => f.TelemetrySummaries.Sum(s => s.SummaryCount))
+                        , TotalTodayViewsUsageCount = views.Sum(f =>
+                            f.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastReportedDateTime).TotalHours <= 24).Sum(smr =>
+                                smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)))
+                    };
+                }
+                catch (Exception)
+                {
+                    summary = new ProgramSummary();
+                    summary.ProgramName = program?.Name ?? "Error while loading summary";
+                    summary.DeveloperName =  "Error while loading summary";
+                }
+
                 returnData.Add(summary);
             }
 
@@ -226,10 +238,17 @@ namespace Telimena.WebApp.Infrastructure.Repository
             await this.context.SaveChangesAsync();
         }
 
-        public async Task<UsageDataTableResult> GetProgramViewsUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
+        public async Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
         {
-            IQueryable<ViewTelemetryDetail> query = this.context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == programId);
-            int totalCount = await this.context.ViewTelemetryDetails.CountAsync(x => x.TelemetrySummary.View.ProgramId == programId);
+            var program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+
+            if (program == null)
+            {
+                throw new ArgumentException($"Program with key {telemetryKey} does not exist");
+            }
+
+            IQueryable<ViewTelemetryDetail> query = this.context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id);
+            int totalCount = await this.context.ViewTelemetryDetails.CountAsync(x => x.TelemetrySummary.View.ProgramId == program.Id);
             if (take == -1)
             {
                 take = totalCount;
@@ -253,12 +272,17 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             return new UsageDataTableResult {TotalCount = totalCount, FilteredCount = totalCount, UsageData = result};
         }
-        public async Task<UsageDataTableResult> GetProgramUsageData(int programId, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
+        public async Task<UsageDataTableResult> GetProgramUsageData(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
         {
+            var program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
 
+            if (program == null)
+            {
+                throw new ArgumentException($"Program with key {telemetryKey} does not exist");
+            }
 
-            IQueryable<ProgramTelemetryDetail> query = this.context.ProgramTelemetryDetails.Where(x => x.TelemetrySummary.ProgramId == programId);
-            int totalCount = await this.context.ProgramTelemetryDetails.CountAsync(x => x.TelemetrySummary.ProgramId == programId);
+            IQueryable<ProgramTelemetryDetail> query = this.context.ProgramTelemetryDetails.Where(x => x.TelemetrySummary.ProgramId == program.Id);
+            int totalCount = await this.context.ProgramTelemetryDetails.CountAsync(x => x.TelemetrySummary.ProgramId == program.Id);
 
             if (take == -1)
             {
@@ -272,13 +296,9 @@ namespace Telimena.WebApp.Infrastructure.Repository
             {
                 UsageData data = new UsageData
                 {
-                    //CustomData = detail.CustomUsageData?.Data
-                    //,
                     DateTime = detail.DateTime
-                    ,
-                    UserName = detail.TelemetrySummary.ClientAppUser.UserName
-                    ,
-                    ProgramVersion = detail.AssemblyVersion.AssemblyVersion
+                    ,UserName = detail.TelemetrySummary.ClientAppUser.UserName
+                    ,ProgramVersion = detail.AssemblyVersion.AssemblyVersion
 
                 };
                 result.Add(data);

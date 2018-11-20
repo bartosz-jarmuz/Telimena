@@ -9,5 +9,11 @@
         public static string GetProgramUpdateInfo => "api/ProgramUpdates/GetUpdateInfo";
         public static string GetUpdaterUpdateInfo => "api/Updater/GetUpdateInfo";
         public static string GetProgramUpdaterName => "api/Updater/GetProgramUpdaterName";
+
+        public static class QueryParams
+        {
+            public static string TelemetryKey => "telemetryKey";
+
+        }
     }
 }

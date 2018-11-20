@@ -40,10 +40,7 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-
-
-
-            ProgramStatisticsViewModel model = new ProgramStatisticsViewModel() {ProgramId = program.Id, ProgramName = program.Name};
+            ProgramStatisticsViewModel model = new ProgramStatisticsViewModel() {TelemetryKey = program.TelemetryKey, ProgramName = program.Name};
 
             return this.View("Index", model);
         }
@@ -51,17 +48,15 @@ namespace Telimena.WebApp.Controllers
 
         [Audit]
         [HttpGet]
-        public async Task<ActionResult> ExportViewUsageCustomData(int programId, bool includeGenericData)
+        public async Task<ActionResult> ExportViewUsageCustomData(Guid telemetryKey, bool includeGenericData)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.Id == programId);
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
             if (program == null)
             {
-                throw new BadRequestException($"Program {programId} does not exist");
+                throw new BadRequestException($"Program with key {telemetryKey} does not exist");
             }
 
-            dynamic obj = await this.Work.ExportViewsUsageCustomData(programId, includeGenericData);
-            //obj.programId = programId;
-            //obj.programName = program.Name;
+            dynamic obj = await this.Work.ExportViewsUsageCustomData(program.Id, includeGenericData);
             string content = JsonConvert.SerializeObject(obj);
             byte[] bytes = Encoding.UTF8.GetBytes(content);
             FileContentResult result = new FileContentResult(bytes, "text/plain");
@@ -71,11 +66,11 @@ namespace Telimena.WebApp.Controllers
 
 
         [HttpGet]
-        public async Task<JsonResult> GetProgramUsageData(int programId, IDataTablesRequest request)
+        public async Task<JsonResult> GetProgramUsageData(Guid telemetryKey, IDataTablesRequest request)
         {
             IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x=>x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
                 
-            UsageDataTableResult result = await this.Work.GetProgramUsageData(programId, request.Start, request.Length, sorts);
+            UsageDataTableResult result = await this.Work.GetProgramUsageData(telemetryKey, request.Start, request.Length, sorts);
 
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
 
@@ -83,11 +78,11 @@ namespace Telimena.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetProgramViewsUsageData(int programId, IDataTablesRequest request)
+        public async Task<JsonResult> GetProgramViewsUsageData(Guid telemetryKey, IDataTablesRequest request)
         {
             IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
 
-            UsageDataTableResult result = await this.Work.GetProgramViewsUsageData(programId, request.Start, request.Length, sorts);
+            UsageDataTableResult result = await this.Work.GetProgramViewsUsageData(telemetryKey, request.Start, request.Length, sorts);
 
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
 

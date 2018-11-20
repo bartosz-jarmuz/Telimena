@@ -17,6 +17,7 @@ namespace Telimena.WebApp.UITests.Base
         protected List<string> errors = new List<string>();
         protected List<string> outputs = new List<string>();
         private readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
+        public const string AutomaticTestsClientTelemetryKey = "efacd375-d746-48de-9882-b7ca4426d1e2";
         protected ITestEngine TestEngine { get; set; }
 
         protected string BaseUrl => this.TestEngine.BaseUrl;
@@ -63,6 +64,7 @@ namespace Telimena.WebApp.UITests.Base
             Arguments args = new Arguments { ApiUrl = this.BaseUrl, Action = action };
             args.ProgramInfo = pi;
             args.ViewName = viewName;
+            args.TelemetryKey = Guid.Parse(AutomaticTestsClientTelemetryKey);
 
 
             Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);

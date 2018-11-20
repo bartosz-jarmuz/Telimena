@@ -50,12 +50,12 @@
                                 <h3 class="box-title">Upload new Toolkit Version</h3>
                             </div>
                             <div class="box-body">
-                                <label class="confirmation label label-md" style="display: none"></label>
+                                <label class="confirmation label label-md" id="@Strings.Id.ToolkitConfirmationBox" style="display: none"></label>
                                 <div class="form-group">
                                     <span class="btn btn-success fileinput-button uploadedPackage">
                                         <i class="glyphicon glyphicon-plus"></i>
                                         <span>Add files...</span>
-                                        <input type="file"
+                                        <input type="file" id="@Strings.Id.ToolkitPackageUploader"
                                                name="uploadedPackage"/>
                                     </span>
                                     @*<button class="btn btn-warning cancel"
@@ -64,7 +64,7 @@
                                 <span>Cancel</span>
                             </button>*@
                                 </div>
-                                <div class="InfoContainer">
+                                <div class="InfoContainer" id="@Strings.Id.ToolkitUploadInfoBox">
                                     <div class="info fileName">
                                     </div>
                                     <div class="info fileType">
@@ -80,9 +80,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <div class="">
-                                        <input type="submit" value="Submit" class="btn btn-lg btn-primary"/>
-                                    </div>
+                                        <input type="submit" value="Submit" class="btn btn-lg btn-primary" id="@Strings.Id.SubmitToolkitUpload"/>
                                 </div>
                             </div>
                         </div>
@@ -114,11 +112,11 @@
                                 @foreach (TelimenaToolkitData toolkitData in Model.ToolkitPackages)
                                 {
                                     <tr>
-                                        <td>@(toolkitData.Id)</td>
-                                        <td>@(toolkitData.TelimenaPackageInfo?.Id)</td>
+                                        <td>@(toolkitData.Guid)</td>
+                                        <td>@(toolkitData.TelimenaPackageInfo?.Guid)</td>
 
                                         <td>
-                                            <a href="/api@(Url.Action("Get", "Toolkit") + "?id=" + toolkitData.TelimenaPackageInfo?.Id)">@toolkitData.Version</a>
+                                            <a href="/api@(Url.Action("Get", "Toolkit") + "?id=" + toolkitData.TelimenaPackageInfo?.Guid)">@toolkitData.Version</a>
                                         </td>
                                         @if (toolkitData.TelimenaPackageInfo != null)
                                         {
@@ -166,11 +164,11 @@
                             <label class="confirmation label label-md" id="@Strings.Id.UpdaterConfirmationBox" style="display: none"></label>
                             <div class="form-group">
                                 <label>Required toolkit version: </label>
-                                <input type="text" id="updaterToolkitVersionNeeded" value="0.0.0.0"/>
+                                <input class="form-control" type="text" id="updaterToolkitVersionNeeded" value="0.0.0.0"/>
                             </div>
                             <div class="form-group">
                                 <label>Internal name: </label>
-                                <input type="text" id="@Strings.Id.UpdaterInternalName" value="@DefaultToolkitNames.UpdaterInternalName"/>
+                                <input class="form-control" type="text" id="@Strings.Id.UpdaterInternalName" value="@DefaultToolkitNames.UpdaterInternalName"/>
                             </div>
                             <div class="form-group">
                                 <span class="btn btn-success fileinput-button uploadedPackage">
@@ -234,10 +232,10 @@
                             @foreach (UpdaterPackageInfo pkg in Model.UpdaterPackages)
                             {
                                 <tr>
-                                    <td>@pkg.Id</td>
+                                    <td>@pkg.Guid</td>
                                     <td>@pkg.Updater.InternalName</td>
                                     <td style="text-align: center">
-                                        <input type="checkbox" data-pkg-id="@pkg.Updater.Id" onchange="ToggleIsPublic(this)" @(pkg.Updater.IsPublic ? "checked" : "")/>
+                                        <input type="checkbox" data-pkg-id="@pkg.Updater.Guid" onchange="ToggleIsPublic(this)" @(pkg.Updater.IsPublic ? "checked" : "")/>
                                     </td>
                                     <td>@pkg.Updater.DeveloperAccount.Name</td>
                                     <td>@pkg.Updater.FileName</td>

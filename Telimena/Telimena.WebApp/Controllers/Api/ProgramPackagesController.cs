@@ -35,14 +35,21 @@ namespace Telimena.WebApp.Controllers.Api
 
         [HttpPost]
         [Audit]
-        public async Task<IHttpActionResult> Upload(int id)
+        public async Task<IHttpActionResult> Upload(Guid id)
         {
             try
             {
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(id, uploadedFile.InputStream, uploadedFile.FileName, this.fileSaver);
+                    var program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == id);
+
+                    if (program == null)
+                    {
+                        return this.BadRequest("Failed to find corresponding program");
+                    }
+
+                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(program.Id, uploadedFile.InputStream, uploadedFile.FileName, this.fileSaver);
                     await this.Work.CompleteAsync();
                     return this.Ok(pkg.Id);
                 }
@@ -58,9 +65,14 @@ namespace Telimena.WebApp.Controllers.Api
         [AllowAnonymous]
         [Audit]
         [HttpGet]
-        public Task<IHttpActionResult> DownloadLatestProgramPackage(int programId)
+        public async Task<IHttpActionResult> DownloadLatestProgramPackage(Guid telemetryKey)
         {
-            return this.GetDownloadLatestProgramPackageResponse(programId);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program with key [{telemetryKey}] does not exist");
+            }
+            return await this.GetDownloadLatestProgramPackageResponse(prg.Id);
         }
 
 

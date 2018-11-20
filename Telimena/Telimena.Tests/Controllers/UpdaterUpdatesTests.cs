@@ -129,23 +129,14 @@ namespace Telimena.Tests
 
         private void InsertPrograms(ToolkitDataUnitOfWork unit, WebApp.Core.Models.Updater updaterOther)
         {
-            this.testProgram = new Program("Test Program")
-            {
-                TelemetryKey = this.TestProgramTelemetryKey
-            };
+            this.testProgram = new Program("Test Program", this.TestProgramTelemetryKey);
             unit.Programs.Add(this.testProgram);
 
-            this.programWithDifferentUpdater = new Program("Program with different updater")
-            {
-                TelemetryKey = this.TestProgramWithDifferentUpdaterTelemetryKey  
-            };
+            this.programWithDifferentUpdater = new Program("Program with different updater", this.TestProgramWithDifferentUpdaterTelemetryKey);
             this.programWithDifferentUpdater.Updater = updaterOther;
             unit.Programs.Add(this.programWithDifferentUpdater);
 
-            this.programWhichChangesUpdater = new Program("Program which changes updater")
-            {
-                TelemetryKey = this.ProgramWhichChangesUpdaterTelemetryKey
-            };
+            this.programWhichChangesUpdater = new Program("Program which changes updater", this.ProgramWhichChangesUpdaterTelemetryKey);
             unit.Programs.Add(this.programWhichChangesUpdater);
 
             unit.CompleteAsync().GetAwaiter().GetResult();
@@ -166,14 +157,15 @@ namespace Telimena.Tests
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
-            Assert.AreEqual("api/Updater/Get?id=8", result.UpdatePackages.Single().DownloadUrl);
+            Assert.AreEqual($"api/Updater/Get?id={result.UpdatePackages.Single().Guid}", result.UpdatePackages.Single().DownloadUrl);
 
             request = new UpdateRequest(telemetryKey: this.TestProgramWithDifferentUpdaterTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false
                 , updaterVersion: "1.0", toolkitVersion: "1.3.0");
 
             result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.5", result.UpdatePackages.Single().Version);
-            Assert.AreEqual("api/Updater/Get?id=9", result.UpdatePackages[0].DownloadUrl);
+            Assert.AreNotEqual(Guid.Empty, result.UpdatePackages[0].Guid);
+            Assert.AreEqual($"api/Updater/Get?id={result.UpdatePackages[0].Guid}", result.UpdatePackages[0].DownloadUrl);
         }
 
 

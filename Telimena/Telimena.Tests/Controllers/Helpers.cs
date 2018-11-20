@@ -28,10 +28,10 @@ namespace Telimena.Tests
         {
             for (int i = 0; i < assCount; i++)
             {
-                var programName = GetName(prgName, caller);
-                string assName = $"HelperAss{i}_{programName}.dll";
+                string programName = GetName(prgName, caller);
+                string assName = $"HelperAss{i}_{programName}";
                 Program prg = context.Programs.First(x => x.Name == programName);
-                ProgramAssembly ass = new ProgramAssembly {Name = assName};
+                ProgramAssembly ass = new ProgramAssembly {Name = assName, Extension = ".dll"};
                 prg.ProgramAssemblies.Add(ass);
 
                 ass.AddVersion("0.0.1.0", null);
@@ -90,7 +90,7 @@ namespace Telimena.Tests
         {
             return new ProgramInfo
             {
-                Name = name, PrimaryAssembly = new AssemblyInfo {Company = company, Copyright = copyright, Name = name + ".dll", AssemblyVersion = version}
+                Name = name, PrimaryAssembly = new AssemblyInfo {Company = company, Copyright = copyright, Name = name, Extension = ".dll", AssemblyVersion = version}
             };
         }
 
@@ -117,7 +117,7 @@ namespace Telimena.Tests
             TelemetryController telemetryController = new TelemetryController(new TelemetryUnitOfWork(context, new AssemblyStreamVersionReader())) ;
 
 
-           var list =  await SeedInitialPrograms(programsController,telemetryController, prgCount, GetName(getName, caller), userNames.Select(x=> GetName(x, caller)).ToList());
+           List<KeyValuePair<string, Guid>> list =  await SeedInitialPrograms(programsController,telemetryController, prgCount, GetName(getName, caller), userNames.Select(x=> GetName(x, caller)).ToList());
             await unit.CompleteAsync();
             return list;
         }
@@ -141,12 +141,12 @@ namespace Telimena.Tests
 
         private static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(ProgramsController programsController, TelemetryController telemetryController, int prgCount, string prgName, IEnumerable<string> userNames)
         {
-            var list = new List<KeyValuePair<string, Guid>>();
+            List<KeyValuePair<string, Guid>> list = new List<KeyValuePair<string, Guid>>();
             IEnumerable<string> enumerable = userNames as string[] ?? userNames.ToArray();
             for (int i = 0; i < prgCount; i++)
             {
                 string counter = i > 0 ? i.ToString() : "";
-                var pair = await SeedProgramAsync(programsController, prgName + counter);
+                KeyValuePair<string, Guid> pair = await SeedProgramAsync(programsController, prgName + counter);
 
                 foreach (string userName in enumerable)
                 {
@@ -175,7 +175,9 @@ namespace Telimena.Tests
 
             RegisterProgramRequest register = new RegisterProgramRequest
             {
-                Name = programName
+                Name = programName,
+                TelemetryKey = Guid.NewGuid(),
+                PrimaryAssemblyFileName = programName + ".dll"
             };
         RegisterProgramResponse response =   await  controller.Register(register);
             if (response.Exception != null)

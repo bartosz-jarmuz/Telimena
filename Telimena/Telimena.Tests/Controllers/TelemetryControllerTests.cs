@@ -153,7 +153,7 @@ namespace Telimena.Tests
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
 
-            unit.Programs.Add(new Program("SomeApp") { PrimaryAssembly = new ProgramAssembly { Name = "SomeApp.dll", Company = "SomeCompm" } });
+            unit.Programs.Add(new Program("SomeApp", Guid.NewGuid()) { PrimaryAssembly = new ProgramAssembly { Name = "SomeApp.dll", Company = "SomeCompm" } });
 
             await unit.CompleteAsync();
             Program prg = (await unit.Programs.GetAsync(x => x.Name == "SomeApp")).FirstOrDefault();
@@ -176,10 +176,10 @@ namespace Telimena.Tests
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Johnny Walker", out Program prg, out ClientAppUser usr);
 
             Assert.AreEqual(3, prg.ProgramAssemblies.Count);
-            Assert.AreEqual(Helpers.GetName("TestApp") + ".dll", prg.PrimaryAssembly.Name);
-            Assert.IsNotNull(prg.ProgramAssemblies.Single(x => x.Name == Helpers.GetName("TestApp") + ".dll"));
-            Assert.IsNotNull(prg.ProgramAssemblies.Single(x => x.Name == "HelperAss0_" + Helpers.GetName("TestApp") + ".dll"));
-            Assert.IsNotNull(prg.ProgramAssemblies.Single(x => x.Name == "HelperAss1_" + Helpers.GetName("TestApp") + ".dll"));
+            Assert.AreEqual(Helpers.GetName("TestApp") + ".dll", prg.PrimaryAssembly.Name + prg.PrimaryAssembly.Extension);
+            Assert.IsNotNull(prg.ProgramAssemblies.Single(x => x.Name == Helpers.GetName("TestApp")));
+            Assert.IsNotNull(prg.ProgramAssemblies.Single(x => x.Name == "HelperAss0_" + Helpers.GetName("TestApp")));
+            Assert.IsNotNull(prg.ProgramAssemblies.Single(x => x.Name == "HelperAss1_" + Helpers.GetName("TestApp")));
         }
 
         [Test]
@@ -529,30 +529,27 @@ namespace Telimena.Tests
             Assert.AreEqual(usr.Id, prg2.TelemetrySummaries.Single().ClientAppUserId);
         }
 
-        [Test]
-        public async Task TestRegistration_SkipUsageIncremet()
-        {
-            TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
-            TelemetryController sut = new TelemetryController(unit);
-            UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
-            var apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
+        //[Test]
+        //public async Task TestRegistration_SkipUsageIncremet()
+        //{
+        //    TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
+        //    TelemetryController sut = new TelemetryController(unit);
+        //    UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
+        //    var apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
 
-            TelemetryInitializeRequest request = new TelemetryInitializeRequest(apps[0].Value)
-            {
-                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"))
-                ,
-                TelimenaVersion = "1.0.0.0"
-                ,
-                UserInfo = userInfo
-                ,
-                SkipUsageIncrementation = true
-            };
-            TelemetryInitializeResponse response = await sut.Initialize(request);
-            Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
-            Helpers.AssertRegistrationResponse(response, prg, usr, 1);
-            Assert.AreEqual(1, prg.TelemetrySummaries.Count);
-            Assert.AreEqual(1, prg.TelemetrySummaries.Sum(x => x.GetTelemetryDetails().Count()));
-        }
+        //    TelemetryInitializeRequest request = new TelemetryInitializeRequest(apps[0].Value)
+        //    {
+        //        ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"))
+        //        ,TelimenaVersion = "1.0.0.0"
+        //        ,UserInfo = userInfo
+        //        ,SkipUsageIncrementation = true
+        //    };
+        //    TelemetryInitializeResponse response = await sut.Initialize(request);
+        //    Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
+        //    Helpers.AssertRegistrationResponse(response, prg, usr, 1);
+        //    Assert.AreEqual(1, prg.TelemetrySummaries.Count);
+        //    Assert.AreEqual(1, prg.TelemetrySummaries.Sum(x => x.GetTelemetryDetails().Count()));
+        //}
 
         [Test]
         public async Task TestUpdateAction()
@@ -599,9 +596,9 @@ namespace Telimena.Tests
             Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.AssemblyVersion, null).Id);
         }
 
-        private ClientAppUser GetUserByGuid(Guid guid)
+        private ClientAppUser GetUserByGuid(Guid id)
         {
-            return this.Context.AppUsers.FirstOrDefault(x => x.Guid == guid);
+            return this.Context.AppUsers.FirstOrDefault(x => x.Guid == id);
         }
 
         [Test]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using TelimenaClient;
 
@@ -69,13 +70,16 @@ namespace AutomaticTestsClient
         {
             
             TelemetryUpdateResponse result;
+            var customData = new Dictionary<string, string>();
+            customData.Add("Time", DateTime.Now.ToShortTimeString());
+            customData.Add("RandomNumber", new Random().Next(0,10).ToString());
             if (this.arguments.ViewName != null)
             {
-                result = telimena.ReportViewAccessedBlocking(this.arguments.ViewName);
+                result = telimena.ReportViewAccessedBlocking(this.arguments.ViewName,customData);
             }
             else
             {
-                result = telimena.ReportViewAccessedBlocking("DefaultView");
+                result = telimena.ReportViewAccessedBlocking("DefaultView", customData);
             }
 
             Console.WriteLine(JsonConvert.SerializeObject(result));

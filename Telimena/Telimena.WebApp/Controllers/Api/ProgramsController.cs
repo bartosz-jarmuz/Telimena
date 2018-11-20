@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -33,13 +34,18 @@ namespace Telimena.WebApp.Controllers.Api
         [Audit]
         public async Task<RegisterProgramResponse> Register(RegisterProgramRequest request)
         {
-            if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
-            {
-                return new RegisterProgramResponse(new BadRequestException(string.Join(", ", errors)));
-            }
-
             try
             {
+                if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
+                {
+                    throw new BadRequestException(string.Join(", ", errors));
+                }
+
+                if (await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey) != null)
+                {
+                    throw new BadRequestException($"Use different telemetry key");
+                }
+
                 TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
                 DeveloperAccount developerAccount = user.GetDeveloperAccountsLedByUser().FirstOrDefault();
                 if (developerAccount == null)
@@ -47,20 +53,25 @@ namespace Telimena.WebApp.Controllers.Api
                     return new RegisterProgramResponse(new BadRequestException($"Cannot find developer account associated with user [{user.UserName}]"));
                 }
 
-                Program program = new Program(request.Name)
+                Program program = new Program(request.Name, request.TelemetryKey)
                 {
                     Description = request.Description
                 };
-                Guid guid = program.TelemetryKey;
                 developerAccount.AddProgram(program);
+
+                var primaryAss = new ProgramAssembly()
+                {
+                    Name = Path.GetFileNameWithoutExtension(request.PrimaryAssemblyFileName), Extension = Path.GetExtension(request.PrimaryAssemblyFileName)
+                };
+                program.PrimaryAssembly = primaryAss;
 
                 this.Work.Programs.Add(program);
 
                 await this.Work.CompleteAsync();
 
-                program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == guid);
+                program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey);
                 var url = Url?.Link("Default", new {Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey});
-                return new RegisterProgramResponse(program.Id, program.TelemetryKey, program.DeveloperAccount.Id, url);
+                return new RegisterProgramResponse(program.TelemetryKey, program.DeveloperAccount.Id, url);
             }
             catch (Exception ex)
             {
@@ -71,12 +82,12 @@ namespace Telimena.WebApp.Controllers.Api
 
         [HttpDelete]
         [Audit]
-        public async Task<IHttpActionResult> Delete(int id)
+        public async Task<IHttpActionResult> Delete(Guid telemetryKey)
         {
-            var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
+            var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
             if (prg == null)
             {
-                return this.BadRequest($"Program with Id {id} does not exist");
+                return this.BadRequest($"Program with key {telemetryKey} does not exist");
             }
             try
             {
@@ -85,25 +96,25 @@ namespace Telimena.WebApp.Controllers.Api
             }
             catch (Exception ex)
             {
-                return this.InternalServerError(new InvalidOperationException($"Error while deleting program {prg.Name} (ID: {id})", ex));
+                return this.InternalServerError(new InvalidOperationException($"Error while deleting program {prg.Name} (Key: {telemetryKey})", ex));
             }
-            return this.Ok($"Program {prg.Name} (ID: {id}) deleted successfully");
+            return this.Ok($"Program {prg.Name} (Key: {telemetryKey}) deleted successfully");
         }
 
         [HttpPut]
         [Audit]
-        public async Task<IHttpActionResult> SetUpdater(int programId, int updaterId)
+        public async Task<IHttpActionResult> SetUpdater(Guid telemetryKey, Guid updaterGuid)
         {
-            var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == programId);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
             if (prg == null)
             {
-                return this.BadRequest($"Program with Id {programId} does not exist");
+                return this.BadRequest($"Program with Key {telemetryKey} does not exist");
             }
 
-            var updater = await this.Work.UpdaterRepository.GetUpdater(updaterId);
+            var updater = await this.Work.UpdaterRepository.GetUpdater(updaterGuid);
             if (updater == null)
             {
-                return this.BadRequest($"Updater with Id {updaterId} does not exist");
+                return this.BadRequest($"Updater with Unique Id {updaterGuid} does not exist");
             }
 
             prg.Updater = updater;
@@ -112,9 +123,10 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Program>> GetPrograms(int developerId)
+        public async Task<IEnumerable<Program>> GetPrograms(Guid developerGuid)
         {
-            return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Id == developerId);
+
+            return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Guid  == developerGuid);
         }
     }
 }

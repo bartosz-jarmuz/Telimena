@@ -13,17 +13,16 @@ namespace Telimena.WebApp.Core.Models
         {
         }
 
-        public Program(string name)
+        public Program(string name, Guid telemetryKey)
         {
             this.Name = name;
-            this.TelemetryKey = Guid.NewGuid();
+            this.TelemetryKey = telemetryKey;
             this.RegisteredDate = DateTime.UtcNow;
         }
 
         [Key]
         public int Id { get; set; }
-
-        public Guid TelemetryKey { get; set; }
+        public Guid TelemetryKey { get; set; } = Guid.NewGuid();
 
         public ICollection<ProgramAssembly> ProgramAssemblies { get; set; } = new List<ProgramAssembly>();
         public virtual ProgramAssembly PrimaryAssembly { get; set; }

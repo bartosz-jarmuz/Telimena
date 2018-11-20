@@ -17,17 +17,17 @@ namespace Telimena.WebApp.Infrastructure
 
             public static string DownloadProgramUpdate(ProgramUpdatePackageInfo pkg)
             {
-                return $"{DownloadProgramUpdatePackage}?id={pkg.Id}";
+                return $"{DownloadProgramUpdatePackage}?id={pkg.Guid}";
             }
 
             public static string DownloadUpdaterUpdate(UpdaterPackageInfo pkg)
             {
-                return $"{DownloadUpdaterUpdatePackage}?id={pkg.Id}";
+                return $"{DownloadUpdaterUpdatePackage}?id={pkg.Guid}";
             }
 
             public static string DownloadToolkitUpdate(TelimenaPackageInfo pkg)
             {
-                return $"{DownloadToolkitUpdatePackage}?id={pkg.Id}";
+                return $"{DownloadToolkitUpdatePackage}?id={pkg.Guid}";
             }
         }
     }

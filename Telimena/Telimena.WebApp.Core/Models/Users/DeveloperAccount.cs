@@ -26,6 +26,7 @@ namespace Telimena.WebApp.Core.Models
         public string Name { get; set; }
         public string MainEmail { get; set; }
         public int Id { get; set; }
+        public Guid  Guid { get; set; } = Guid.NewGuid();
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local - EF required
         public string MainUserId { get; private set; }
         [ForeignKey("MainUserId")]

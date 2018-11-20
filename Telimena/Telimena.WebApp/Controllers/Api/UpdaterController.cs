@@ -40,12 +40,12 @@ namespace Telimena.WebApp.Controllers.Api
         private readonly IFileRetriever fileRetriever;
 
         [HttpGet]
-        public async Task<HttpResponseMessage> GetProgramUpdaterName(int programId)
+        public async Task<HttpResponseMessage> GetProgramUpdaterName(Guid telemetryKey)
         {
-            Program program = await this.work.Programs.FirstOrDefaultAsync(x=>x.Id == programId);
+            Program program = await this.work.Programs.FirstOrDefaultAsync(x=>x.TelemetryKey == telemetryKey);
             if (program == null)
             {
-                throw new BadRequestException($"Program with id [{programId}] does not exist");
+                throw new BadRequestException($"Program with Key [{telemetryKey}] does not exist");
             }
 
             var name = program.Updater?.FileName ?? DefaultToolkitNames.UpdaterFileName;
@@ -55,10 +55,12 @@ namespace Telimena.WebApp.Controllers.Api
             return resp;
         }
 
+      
 
+        [AllowAnonymous]
         [HttpGet]
         [Audit]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IHttpActionResult> Get(Guid id)
         {
             UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetPackageInfo(id);
             if (updaterInfo == null)
@@ -66,7 +68,7 @@ namespace Telimena.WebApp.Controllers.Api
                 return this.BadRequest($"Updater id [{id}] does not exist");
             }
 
-            byte[] bytes = await this.work.UpdaterRepository.GetPackage(id, this.fileRetriever);
+            byte[] bytes = await this.work.UpdaterRepository.GetPackage(updaterInfo.Id, this.fileRetriever);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = updaterInfo.ZippedFileName };
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
@@ -76,7 +78,7 @@ namespace Telimena.WebApp.Controllers.Api
 
         [HttpPut]
         [Audit]
-        public async Task<IHttpActionResult> SetIsPublic(int id, bool isPublic)
+        public async Task<IHttpActionResult> SetIsPublic(Guid id, bool isPublic)
         {
             var updater = await this.work.UpdaterRepository.GetUpdater(id);
             if (updater == null)
@@ -93,30 +95,7 @@ namespace Telimena.WebApp.Controllers.Api
             return this.Ok($"Set package with ID: {id} public flag to: {isPublic}");
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        [Audit]
-        public async Task<IHttpActionResult> Get(string internalName, string version)
-        {
-            if (!Version.TryParse(version, out _))
-            {
-                return this.BadRequest($"[{version}] is not a valid version string");
-            }
-
-            var updater = await this.work.UpdaterRepository.GetUpdater(internalName);
-            if (updater == null)
-            {
-                return this.BadRequest($"Updater [{internalName}] does not exist");
-            }
-
-            UpdaterPackageInfo updaterInfo = this.work.UpdaterRepository.GetPackageForVersion(updater, version);
-            if (updaterInfo == null)
-            {
-                return this.BadRequest($"Updater version [{version}] does not exist");
-            }
-
-            return await this.Get(updaterInfo.Id);
-        }
+        
 
         [AllowAnonymous]
         [HttpGet]

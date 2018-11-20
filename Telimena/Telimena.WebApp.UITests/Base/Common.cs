@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
+using SeleniumExtras.WaitHelpers;
 
 namespace Telimena.WebApp.UITests.Base
 {
@@ -28,5 +30,37 @@ namespace Telimena.WebApp.UITests.Base
                 throw new AssertFailedException($"Failed to find element by name or id [{nameOrId}]", ex);
             }
         }
+
+        public static IAlert WaitForAlert(this IWebDriver driver, int timeout, bool obligatory = false)
+        {
+
+            var sw = Stopwatch.StartNew();
+            while (true)
+            {
+
+                try
+                {
+                    var alert = driver.SwitchTo().Alert();
+                    return alert;
+                }
+                catch (NoAlertPresentException )
+                {
+                    if (sw.ElapsedMilliseconds < timeout)
+                    {
+                        continue;
+                    }
+
+                    if (obligatory)
+                    {
+                        throw;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
     }
 }

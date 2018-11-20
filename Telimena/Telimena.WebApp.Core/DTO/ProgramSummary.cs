@@ -6,7 +6,7 @@ namespace Telimena.WebApp.Core.DTO
     {
         public string ProgramName { get; set; }
         public string DeveloperName { get; set; }
-        public int ProgramId { get; set; }
+        public Guid TelemetryKey { get; set; }
 
         public string LatestVersion { get; set; }
         public string AssociatedToolkitVersion { get; set; }

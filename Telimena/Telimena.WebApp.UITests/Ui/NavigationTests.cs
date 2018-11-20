@@ -10,7 +10,7 @@ using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 namespace Telimena.WebApp.UITests.Ui
 {
     [TestFixture]
-    public partial class UiTests : UiTestBase
+    public partial class _1_UiTests : UiTestBase
     {
         [Test]
         public void GoThroughAllPagesAsAdmin()

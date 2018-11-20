@@ -35,7 +35,7 @@
 
 <div class="row">
     <div class="col-md-4">
-        <div class="box box-primary">
+        <div class="box box-primary" id="@Strings.Id.ProgramSummaryBox">
             <div class="box-header">
                 <h3 class="box-title">Program summary</h3>
             </div>
@@ -44,15 +44,19 @@
 
                 <div class="form-group">
                     <label>Name: </label>
-                    <span>@Model.ProgramName</span>
+                    <span class="@Strings.Css.ProgramInfoElement">@Model.ProgramName</span>
                 </div>
                 <div class="form-group">
                     <label>Description: </label>
-                    <span>@Model.ProgramDescription</span>
+                    <span class="@Strings.Css.ProgramInfoElement">@Model.ProgramDescription</span>
                 </div>
                 <div class="form-group">
                     <label>Telemetry Key: </label>
-                    <span>@Model.TelemetryKey</span>
+                    <span class="@Strings.Css.ProgramInfoElement">@Model.TelemetryKey</span>
+                </div>
+                <div class="form-group">
+                    <label>Primary assembly name: </label>
+                    <span class="@Strings.Css.ProgramInfoElement">@Model.PrimaryAssemblyName</span>
                 </div>
                 <div class="form-group">
                     <label>Latest version: </label>
@@ -72,7 +76,7 @@
                     <input type='submit' id="submitUpdaterChange" value='Submit' />
                 </div>
                 <div class="form-group">
-                    <input type="button" class="btn btn-danger" id="deleteProgramButton" value="Delete program" />
+                    <input type="button" class="btn btn-danger" id="@Strings.Id.DeleteProgramButton" value="Delete program" />
                 </div>
             </div>
         </div>
@@ -121,7 +125,7 @@
                         <span class="btn btn-success fileinput-button uploadedPackage">
                             <i class="glyphicon glyphicon-plus"></i>
                             <span>Select file</span>
-                            <input type="file"
+                            <input  type="file"
                                    name="uploadedPackage"/>
                         </span>
                     </div>
@@ -163,7 +167,7 @@
                     <label class="confirmation label label-md" style="display: none"></label>
                     <div class="form-group">
                         <label>Toolkit version used: </label>
-                        <input type="text" id="updatePackageToolkitVersion"/>
+                        <input class="form-control" type="text" id="updatePackageToolkitVersion"/>
                     </div>
                     <div class="form-group">
                         <span class="btn btn-success fileinput-button uploadedPackage">
@@ -256,7 +260,7 @@
             $('.dataTable').DataTable();
             globalUtcConversion();
             LoadCurrentVersion();
-            $('#deleteProgramButton').click(function () {
+            $('#@Strings.Id.DeleteProgramButton').click(function() {
                 DeleteProgram(this);
             });
             $('#submitUpdaterChange').click(function() {
@@ -268,7 +272,8 @@
                 e.preventDefault();
                 var form = $('#uploadProgramPackageForm')[0];
                 var formData = new FormData(form);
-                UploadFile(formData, '@Url.Action("Upload", "ProgramPackages")/' + @Model.ProgramId, $(this).find('input'));
+                UploadFile(formData, '@Url.Action("Upload", "ProgramPackages")/@Model.TelemetryKey',
+                    $(this).find('input'));
             });
         });
 
@@ -284,30 +289,31 @@
 
                 $.ajax({
                     type: 'DELETE',
-                    url: '/api' + '@Url.Action("Delete", "Programs", new {id = @Model.ProgramId})',
-                    success: function (result) {
+                    url: '/api' + '@Url.Action("Delete", "Programs", new { telemetryKey = @Model.TelemetryKey })',
+                    success: function(result) {
                         ShowConfirmationBox(input,
                             "label-success",
                             result);
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         ShowConfirmationBox(input, "label-danger", xhr.responseJSON.Message);
                     }
                 });
             } else {
                 // Do nothing!
             }
-           
+
         }
 
-        
+
         function SetUpdater(input) {
             var id = $('#updaterSelectList').val();
 
             $.ajax({
                 type: 'PUT',
                 url: '/api' +
-                    '@Url.Action("SetUpdater", "Programs")?programId=' + @Model.ProgramId+ '&updaterId=' + id,
+                    '@Url.Action("SetUpdater", "Programs")?telemetryKey=@Model.TelemetryKey&updaterGuid=' +
+                    id,
                 success: function(result) {
                     ShowConfirmationBox(input,
                         "label-success",
@@ -318,7 +324,7 @@
                     ShowConfirmationBox(input, "label-danger", xhr.responseJSON.Message);
                 }
             });
-        }x
+        }
 
         function TogglePackageBeta(input) {
             var id = $(input).data("pkg-id");
@@ -327,7 +333,7 @@
                 type: 'POST',
                 url: '/api' +
                     '@Url.Action("ToggleBetaSetting", "ProgramUpdates")' +
-                    "?updatePackageId=" +
+                    "?updatePackageGuid=" +
                     id +
                     "&isBeta=" +
                     input.checked,
@@ -396,7 +402,7 @@
         function CreateUpdatePackage(e) {
             e.preventDefault();
             var model = {
-                @nameof(CreateUpdatePackageRequest.ProgramId): @Model.ProgramId,
+                @nameof(CreateUpdatePackageRequest.TelemetryKey): '@Model.TelemetryKey',
                 @nameof(CreateUpdatePackageRequest.PackageVersion): $('#updatePackageVersion').val(),
                 @nameof(CreateUpdatePackageRequest.ToolkitVersionUsed): $('#updatePackageToolkitVersion').val(),
             };
@@ -447,30 +453,31 @@
                 });
         }
 
-       
 
         function LoadCurrentVersion() {
             $('#latestVersion').html('...');
             $.ajax({
                 type: 'GET',
                 url: '/api' + '@Url.Action("GetLatestVersionInfo", "ProgramVersions")',
-                data: { id: @Model.ProgramId },
+                data: { id: '@Model.TelemetryKey' },
                 success: function(response) {
-                    $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
+                    if (response.PrimaryAssemblyVersion !== undefined) {
+                        $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
+                    }
                 }
             });
             $('#versionsCount').html('...');
             $.ajax({
                 type: 'GET',
                 url: '/api' + '@Url.Action("GetVersionsCount", "ProgramVersions")',
-                data: { id: @Model.ProgramId },
+                data: { id: '@Model.TelemetryKey' },
                 success: function(response) {
                     $('#versionsCount').html(response);
                 }
             });
         }
 
-     
+
     </script>
 
 }

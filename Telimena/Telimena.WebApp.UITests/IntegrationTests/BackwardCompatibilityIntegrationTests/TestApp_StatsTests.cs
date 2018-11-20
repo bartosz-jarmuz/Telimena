@@ -20,6 +20,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
         {
             TelemetryInitializeResponse response = this.LaunchTestsAppAndGetResult< TelemetryInitializeResponse>(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
 
+            Assert.IsNull(response.Exception);
             Assert.IsTrue(response.UserId != Guid.Empty);
             Assert.IsTrue(response.Count> 0);
 
@@ -34,6 +35,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
             FileInfo app;
             TelemetryUpdateResponse response = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(out app, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
 
+            Assert.IsNull(response.Exception);
             Assert.IsTrue(response.TelemetryKey != Guid.Empty);
             Assert.IsTrue(response.UserId != Guid.Empty);
             Assert.IsTrue(response.Count > 0);

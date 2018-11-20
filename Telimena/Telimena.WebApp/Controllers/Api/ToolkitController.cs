@@ -46,9 +46,9 @@ namespace Telimena.WebApp.Controllers.Api
 
         [HttpGet]
         [Audit]
-        public async Task<IHttpActionResult> Get(int id)
+        public async Task<IHttpActionResult> Get(Guid id)
         {
-            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Id == id);
+            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Guid == id);
             if (toolkitData == null)
             {
                 return this.BadRequest($"Toolkit id [{id}] does not exist");

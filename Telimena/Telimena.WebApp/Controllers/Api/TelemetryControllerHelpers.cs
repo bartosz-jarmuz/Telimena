@@ -85,6 +85,18 @@ namespace Telimena.WebApp.Controllers.Api
             return user;
         }
 
+        private static void UpdateAssemblyInfo(ProgramAssembly existing, AssemblyInfo assemblyInfo)
+        {
+            existing.Company = assemblyInfo.Company;
+            existing.Copyright = assemblyInfo.Copyright;
+            existing.Description = assemblyInfo.Description;
+            existing.FullName = assemblyInfo.FullName;
+            existing.Product = assemblyInfo.Product;
+            existing.Title= assemblyInfo.Title;
+            existing.Trademark= assemblyInfo.Trademark;
+
+        }
+
         public static async Task<ITelemetryAware> RecordVersions(ITelemetryUnitOfWork work, Program program, TelemetryInitializeRequest request)
         {
             AssemblyInfo primaryAss = request.ProgramInfo.PrimaryAssembly;
@@ -99,6 +111,10 @@ namespace Telimena.WebApp.Controllers.Api
                     {
                         existingAssembly = Mapper.Map<ProgramAssembly>(helperAssembly);
                         program.ProgramAssemblies.Add(existingAssembly);
+                    }
+                    else
+                    {
+                        UpdateAssemblyInfo(existingAssembly, helperAssembly);
                     }
 
                     existingAssembly.AddVersion(helperAssembly.AssemblyVersion, helperAssembly.FileVersion);
@@ -222,6 +238,10 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 program.PrimaryAssembly = Mapper.Map<ProgramAssembly>(request.ProgramInfo.PrimaryAssembly);
                 program.PrimaryAssembly.ProgramId = program.Id;
+            }
+            else
+            {
+                UpdateAssemblyInfo(program.PrimaryAssembly, request.ProgramInfo.PrimaryAssembly);
             }
         }
 

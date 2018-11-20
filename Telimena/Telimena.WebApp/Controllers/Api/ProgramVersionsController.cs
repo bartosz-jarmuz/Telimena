@@ -28,14 +28,14 @@ namespace Telimena.WebApp.Controllers.Api
         private IProgramsUnitOfWork Work { get; }
 
         [HttpGet]
-        public async Task<LatestVersionResponse> GetLatestVersionInfo(int id)
+        public async Task<LatestVersionResponse> GetLatestVersionInfo(Guid id)
         {
             try
             {
-                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
+                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == id);
                 if (program == null)
                 {
-                    return new LatestVersionResponse {Error = new InvalidOperationException($"Failed to find program by Id: [{id}]")};
+                    return new LatestVersionResponse {Error = new InvalidOperationException($"Failed to find program by Key: [{id}]")};
                 }
 
                 LatestVersionResponse info = new LatestVersionResponse
@@ -56,15 +56,15 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<IHttpActionResult> GetVersionsCount(int id)
+        public async Task<IHttpActionResult> GetVersionsCount(Guid id)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Id == id);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == id);
             if (prg == null)
             {
-                return this.BadRequest($"Program [{id}] not found");
+                return this.BadRequest($"Program key [{id}] not found");
             }
 
-            return this.Ok(prg.PrimaryAssembly.Versions.Count);
+            return this.Ok(prg.PrimaryAssembly?.Versions.Count);
         }
 
         private VersionInfo ConstructVersionInfo(ProgramAssembly assemblyInfo)

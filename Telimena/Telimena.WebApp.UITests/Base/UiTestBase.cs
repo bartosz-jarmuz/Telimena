@@ -136,7 +136,8 @@ namespace Telimena.WebApp.UITests.Base
             {
                 normalOutputs = String.Join("\r\n", outputs);
             }
-
+            var alert = this.Driver.WaitForAlert(500);
+            alert?.Dismiss();
             throw new AssertFailedException($"{ex}\r\n\r\n{this.PresentParams()}\r\n\r\n{errorOutputs}\r\n\r\n{normalOutputs}\r\n\r\n{page}", ex);
 
             //this.TestContext.AddResultFile(path);

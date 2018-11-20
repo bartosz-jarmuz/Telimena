@@ -10,24 +10,31 @@
                 <h3 class="box-title">Register application</h3>
             </div>
             <div class="box-body">
-                    <section>
-                        <form id="@Strings.Id.RegisterApplicationForm">
+                        <form id="@Strings.Id.RegisterApplicationForm" role="form" class="form">
                             @Html.AntiForgeryToken()
                             <div class="form-group">
+                                <label>Telemetry key: </label>
+                                <input class="form-control" type="text" id="@Strings.Id.TelemetryKeyInputBox" value="@Guid.NewGuid()"/>
+                            </div>
+                            <div class="form-group">
                                 <label>Program Name: </label>
-                                <input type="text" id="@Strings.Id.ProgramNameInputBox"/>
+                                <input class="form-control" placeholder="Display name of the program." type="text" id="@Strings.Id.ProgramNameInputBox"/>
                             </div>
                             <div class="form-group">
                                 <label>Program description: </label>
-                                <input type="text" id="@Strings.Id.ProgramDescriptionInputBox"/>
+                                <input class="form-control" placeholder="Description of the program."  type="text" id="@Strings.Id.ProgramDescriptionInputBox"/>
                             </div>
                             <div class="form-group">
+                                <label>Primary assembly file name: </label>
+                                <input class="form-control"  placeholder="Filename (and extension) of the main assembly of your program, e.g. 'MyStandaloneApp.exe' or 'MyPlugin.dll'"  type="text" id="@Strings.Id.PrimaryAssemblyNameInputBox"/>
+                            </div>
+                           
+                            <div class="form-group">
                                 <div class="">
-                                    <input type="submit" value="Register" class="btn btn-primary" />
+                                    <input type="submit" value="Register" class="btn btn-primary"  id="@Strings.Id.SubmitAppRegistration" />
                                 </div>
                             </div>
                         </form>
-                    </section>
             </div>
         </div>
     </div>
@@ -42,6 +49,8 @@
                 var model = {
                     @nameof(RegisterProgramRequest.Name): $('#@Strings.Id.ProgramNameInputBox').val(),
                     @nameof(RegisterProgramRequest.Description): $('#@Strings.Id.ProgramDescriptionInputBox').val(),
+                    @nameof(RegisterProgramRequest.TelemetryKey): $('#@Strings.Id.TelemetryKeyInputBox').val(),
+                    @nameof(RegisterProgramRequest.PrimaryAssemblyFileName): $('#@Strings.Id.PrimaryAssemblyNameInputBox').val(),
                 };
 
                 $.ajax({

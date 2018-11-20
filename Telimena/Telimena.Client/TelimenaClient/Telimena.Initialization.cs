@@ -126,7 +126,7 @@ namespace TelimenaClient
                     UserId = response.UserId
                 };
 
-                Task<string> updaterNameTask = this.Messenger.SendGetRequest($"{ApiRoutes.GetProgramUpdaterName}?programId={this.TelemetryKey}");
+                Task<string> updaterNameTask = this.Messenger.SendGetRequest($"{ApiRoutes.GetProgramUpdaterName}?{ApiRoutes.QueryParams.TelemetryKey}={this.TelemetryKey}");
 
                 await Task.WhenAll(updaterNameTask).ConfigureAwait(false);
 
