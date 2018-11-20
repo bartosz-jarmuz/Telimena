@@ -59,7 +59,7 @@
                 lengthMenu: [[15, 30, 70, -1], [15, 30, 70, "All"]],
                 pageLength: 15,
                 order: [[ 0, 'desc' ]],
-                ajax: "@Url.Action("GetProgramViewsUsageData")" + "?telemetryKey=" + @Model.TelemetryKey,
+                ajax: "@Url.Action("GetProgramViewsUsageData")" + "?telemetryKey=@Model.TelemetryKey",
               
                 columns: [
                     {
@@ -111,7 +111,7 @@
                 order: [[0, 'desc']],
                 lengthMenu: [[15, 30, 70, -1], [15, 30, 70, "All"]],
                 pageLength: 15,
-                ajax: "@Url.Action("GetProgramUsageData")" + "?telemetryKey=" + @Model.TelemetryKey,
+                ajax: "@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey",
               
                 columns: [
                     {
