@@ -9,7 +9,7 @@ namespace Telimena.WebApp.Core.Models
         public int ProgramId { get; set; }
         public virtual Program Program{ get; set; }
 
-        public RestrictedAccessList<ProgramTelemetryDetail> TelemetryDetails { get; set; } = new RestrictedAccessList<ProgramTelemetryDetail>();
+        public virtual RestrictedAccessList<ProgramTelemetryDetail> TelemetryDetails { get; set; } = new RestrictedAccessList<ProgramTelemetryDetail>();
 
         public override IReadOnlyList<TelemetryDetail> GetTelemetryDetails() => this.TelemetryDetails.AsReadOnly();
 
