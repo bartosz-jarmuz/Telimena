@@ -40,6 +40,7 @@ namespace Telimena.WebApp.Controllers.Api
         private readonly IFileRetriever fileRetriever;
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<HttpResponseMessage> GetProgramUpdaterName(Guid telemetryKey)
         {
             Program program = await this.work.Programs.FirstOrDefaultAsync(x=>x.TelemetryKey == telemetryKey);

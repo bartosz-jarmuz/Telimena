@@ -66,6 +66,7 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<UpdateResponse> GetUpdateInfo(string request)
         {
             try
