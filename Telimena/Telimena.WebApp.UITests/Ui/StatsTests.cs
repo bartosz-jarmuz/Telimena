@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace Telimena.WebApp.UITests.Ui
     using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
     [TestFixture()]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_UiTests : UiTestBase
     {
         

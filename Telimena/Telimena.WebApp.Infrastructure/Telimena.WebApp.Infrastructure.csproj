@@ -170,6 +170,7 @@
     <Compile Include="Audit\IAuditLogger.cs" />
     <Compile Include="AutoMapperDomainProfile.cs" />
     <Compile Include="Database\TelimenaDbContext.cs" />
+    <Compile Include="EntityExtensions.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />

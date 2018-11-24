@@ -25,6 +25,7 @@ namespace Telimena.WebApp.Core.Models
             set => this.summaryCount = value;
         }
         public abstract IReadOnlyList<TelemetryDetail> GetTelemetryDetails();
+        public abstract ITelemetryAware GetComponent();
 
         public abstract void AddTelemetryDetail(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo
             , Dictionary<string, string> telemetryUnits);

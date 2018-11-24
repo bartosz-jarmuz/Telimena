@@ -213,7 +213,7 @@
                     </div>
                     <div class="box-body">
                         <label class="confirmation label label-md" style="display: none"></label>
-                        <table class="table table-bordered table-hover dataTable">
+                        <table class="table table-bordered table-hover dataTable" id="@Strings.Id.UpdaterPackagesTable">
                             <thead>
                             <tr>
                                 <th >Id</th>
@@ -235,12 +235,12 @@
                                     <td>@pkg.Guid</td>
                                     <td>@pkg.Updater.InternalName</td>
                                     <td style="text-align: center">
-                                        <input type="checkbox" data-pkg-id="@pkg.Updater.Guid" onchange="ToggleIsPublic(this)" @(pkg.Updater.IsPublic ? "checked" : "")/>
+                                        <input type="checkbox" name="@Strings.Name.ToggleIsPublic" data-updater-id="@pkg.Updater.Guid" onchange="ToggleIsPublic(this)" @(pkg.Updater.IsPublic ? "checked" : "")/>
                                     </td>
                                     <td>@pkg.Updater.DeveloperAccount.Name</td>
                                     <td>@pkg.Updater.FileName</td>
                                     <td>
-                                        <a href="/api@(Url.Action("Get", "Updater") + "?id=" + pkg.Id)">@pkg.Version</a>
+                                        <a href="/api@(Url.Action("Get", "Updater") + "?id=" + pkg.Guid)">@pkg.Version</a>
                                     </td>
                                     <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
                                     <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
@@ -317,7 +317,7 @@
         }
 
         function ToggleIsPublic(input) {
-            var id = $(input).data("pkg-id");
+            var id = $(input).data("updater-id");
 
             $.ajax({
                 type: 'PUT',

@@ -1,4 +1,5 @@
 ﻿@using DotNetLittleHelpers
+@using Telimena.WebApp.Core
 @using Telimena.WebApp.Core.DTO
 @using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
@@ -16,21 +17,51 @@
 <section class="content-header">
     <h1>
         @Model.ProgramName
-        <small>Program statistics</small>
+        <small>Create your own pivot table reports</small>
     </h1>
 </section>
 <br />
 
 <div class="row">
     <div class="col-md-12">
-        <div class="box box-primary" id="@Strings.Id.PivotTableBox">
+        <div class="box box-primary" >
             <div class="box-header">
-                <h3 class="box-title">Create your own pivot table report</h3>
+                <h3 class="box-title">Event telemetry data</h3>
             </div>
             <div class="box-body">
-                <div id="wdr-component"></div>
+                <div id="@Strings.Id.EventTelemetryPivotTable"></div>
             </div>
             <div class="overlay" >
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">View access telemetry data</h3>
+            </div>
+            <div class="box-body">
+                <div id="@Strings.Id.ViewTelemetryPivotTable"></div>
+            </div>
+            <div class="overlay">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Program launch telemetry data</h3>
+            </div>
+            <div class="box-body">
+                <div id="@Strings.Id.ProgramTelemetryPivotTable"></div>
+            </div>
+            <div class="overlay">
                 <i class="fa fa-refresh fa-spin"></i>
             </div>
         </div>
@@ -45,16 +76,16 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            loadPivotTableData();
+            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryTypes.Event&telemetryKey=@Model.TelemetryKey", @Strings.Id.EventTelemetryPivotTable);
+            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryTypes.View&telemetryKey=@Model.TelemetryKey", @Strings.Id.ViewTelemetryPivotTable);
+            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryTypes.Program&telemetryKey=@Model.TelemetryKey", @Strings.Id.ProgramTelemetryPivotTable);
 
-
-            function loadPivotTableData() {
-
-                $.get("@Url.Action("GetData")" + "?telemetryKey=@Model.TelemetryKey",
+            function loadPivotTableData(url, table) {
+                $.get(url,
                     function(data) {
                         data.Rows.unshift(data.Header);
                         var pivot = new WebDataRocks({
-                            container: "#wdr-component",
+                            container: table,
                             toolbar: true,
                             report: {
                                 dataSource: {
@@ -67,8 +98,7 @@
                                 }
                             }
                         });
-                        $('#@Strings.Id.PivotTableBox').find('.overlay').hide();
-
+                        $(table).closest('.box').find('.overlay').hide();
                     });
             }
 

@@ -11,6 +11,7 @@ using DataTables.AspNet.Mvc5;
 using MvcAuditLogger;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
@@ -62,28 +63,11 @@ namespace Telimena.WebApp.Controllers
             return this.View("PivotTable", model);
         }
 
-        [Audit]
+     
         [HttpGet]
-        public async Task<ActionResult> ExportViewUsageCustomData(Guid telemetryKey, bool includeGenericData)
+        public async Task<JsonResult> GetPivotTableData(TelemetryTypes type, Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
-            if (program == null)
-            {
-                throw new BadRequestException($"Program with key {telemetryKey} does not exist");
-            }
-
-            dynamic obj = await this.Work.ExportViewsUsageCustomData(program.Id, includeGenericData);
-            string content = JsonConvert.SerializeObject(obj);
-            byte[] bytes = Encoding.UTF8.GetBytes(content);
-            FileContentResult result = new FileContentResult(bytes, "text/plain");
-            result.FileDownloadName = $"{DateTime.UtcNow:yyyy-MM-dd HH-mm-ss}_ViewsCustomDataExport_{program.Name}.json";
-            return result;
-        }
-
-        [HttpGet]
-        public async Task<JsonResult> GetData(Guid telemetryKey)
-        {
-            var result = await this.Work.GetPivotTableData(telemetryKey);
+            var result = await this.Work.GetPivotTableData(type, telemetryKey);
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 

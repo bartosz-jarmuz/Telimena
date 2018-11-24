@@ -158,13 +158,13 @@
 <div class="row">
 
     <div class="col-md-6">
-        <form id="uploadUpdatePackageForm" enctype="multipart/form-data" method="post">
+        <form id="@Strings.Id.UploadProgramUpdateForm" enctype="multipart/form-data" method="post">
             <div class="box box-primary">
                 <div class="box-header">
                     <h3 class="box-title">Create Update Package</h3>
                 </div>
                 <div class="box-body">
-                    <label class="confirmation label label-md" style="display: none"></label>
+                    <label class="confirmation label label-md" style="display: none" Id="@Strings.Id.UploadProgramUpdateConfirmationLabel"></label>
                     <div class="form-group">
                         <label>Toolkit version used: </label>
                         <input class="form-control" type="text" id="updatePackageToolkitVersion"/>
@@ -267,7 +267,7 @@
                 SetUpdater(this);
             });
             $('.uploadedPackage').change(function(e) { SingleFileSelected(e, $(this).find('input')) });
-            $('#uploadUpdatePackageForm').submit(CreateUpdatePackage);
+            $('#@Strings.Id.UploadProgramUpdateForm').submit(CreateUpdatePackage);
             $('#uploadProgramPackageForm').submit(function(e) {
                 e.preventDefault();
                 var form = $('#uploadProgramPackageForm')[0];
@@ -443,7 +443,7 @@
                     data: modelString
                 })
                 .done(function() {
-                    var form = $('#uploadUpdatePackageForm')[0];
+                    var form = $('#@Strings.Id.UploadProgramUpdateForm')[0];
                     var formData = new FormData(form);
                     formData.append('Model', modelString);
                     successCallback(formData, '@Url.Action("Upload", "ProgramUpdates")', button);

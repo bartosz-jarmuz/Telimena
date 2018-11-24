@@ -11,7 +11,7 @@ namespace Telimena.Tests
         public void ValidateExpandoObject()
         {
             TelemetryInfoTableHeader header = new TelemetryInfoTableHeader();
-            header.DateTime = new TelemetryInfoHeaderItem() { type = "datetime" };
+            header.Date = new TelemetryInfoHeaderItem() { type = "datetime" };
             header.ComponentName = new TelemetryInfoHeaderItem();
 
 

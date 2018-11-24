@@ -7,6 +7,7 @@ namespace Telimena.WebApp.Core.Models
     public abstract class TelemetryDetail
     {
         public int Id { get; set; }
+        public Guid Guid { get; set; } = Guid.NewGuid();
         public string IpAddress { get; set; }
         public virtual AssemblyVersionInfo AssemblyVersion { get; set; }
         public int? AssemblyVersionId { get; set; }

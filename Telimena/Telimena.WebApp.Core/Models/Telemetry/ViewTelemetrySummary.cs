@@ -12,6 +12,7 @@ namespace Telimena.WebApp.Core.Models
         public virtual RestrictedAccessList<ViewTelemetryDetail> TelemetryDetails { get; set;  } = new RestrictedAccessList<ViewTelemetryDetail>();
 
         public override IReadOnlyList<TelemetryDetail> GetTelemetryDetails() => this.TelemetryDetails.AsReadOnly();
+        public override ITelemetryAware GetComponent() => this.View;
 
         public override void AddTelemetryDetail(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo, Dictionary<string, string> telemetryUnits)
         {

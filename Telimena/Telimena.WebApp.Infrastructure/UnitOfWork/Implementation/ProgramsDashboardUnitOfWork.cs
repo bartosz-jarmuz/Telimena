@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Newtonsoft.Json.Linq;
+using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
@@ -308,55 +309,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return new UsageDataTableResult { TotalCount = totalCount, FilteredCount = totalCount, UsageData = result };
         }
 
-        private dynamic GetCustomUsageDataObject(ViewTelemetryDetail detail, bool includeGenericData)
-        {
-            try
-            {
-
-                var data = System.Web.Helpers.Json.Decode("");
-
-                if (!includeGenericData)
-                {
-                    return data;
-                }
-                dynamic obj = new ExpandoObject();
-                obj.customData = data;
-                obj.genericData = new ExpandoObject();
-                obj.genericData.DateTime = detail.DateTime;
-                obj.genericData.detailId = detail.Id;
-                obj.genericData.programVersion = detail.AssemblyVersion.AssemblyVersion;
-                obj.genericData.viewName = detail.TelemetrySummary.View.Name;
-                obj.genericData.userName = detail.TelemetrySummary.ClientAppUser.UserName;
-                obj.genericData.userId = detail.TelemetrySummary.ClientAppUserId;
-                return obj;
-            }
-            catch (Exception ex)
-            {
-                dynamic obj = new ExpandoObject();
-                obj.Status = "Invalid CustomUsageData";
-                obj.Exception = ex.Message;
-                obj.UsageDetailId = detail.Id;
-                return obj;
-            }
-
-        }
-
-        public async Task<dynamic> ExportViewsUsageCustomData(int programId, bool includeGenericData)
-        {
-            List<ViewTelemetryDetail> usages = await this.context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == programId).ToListAsync();
-
-
-            //dynamic root = new
-            //{
-            //    data = usages.Where(x=>x.CustomUsageData?.Data != null).Select(x => this.GetCustomUsageDataObject(x, includeGenericData)).ToArray()
-            //};
-
-            //return root;
-            return null;
-
-        }
-
-        public async Task<TelemetryInfoTable> GetPivotTableData(Guid telemetryKey)
+        public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryTypes type, Guid telemetryKey)
         {
             var program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
 
@@ -364,37 +317,34 @@ namespace Telimena.WebApp.Infrastructure.Repository
             {
                 throw new ArgumentException($"Program with key {telemetryKey} does not exist");
             }
-             var usages = this.context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id).ToList();
 
+            List<TelemetryDetail> details = program.GetTelemetryDetails(this.context, type).ToList();
 
+            List<TelemetryPivotTableRow>rows = new List<TelemetryPivotTableRow>();
 
-            List<TelemetryTableRow>rows = new List<TelemetryTableRow>();
-
-            foreach (ViewTelemetryDetail detail in usages)
+            foreach (TelemetryDetail detail in details)
             {
-
-                foreach (ViewTelemetryUnit detailTelemetryUnit in detail.TelemetryUnits)
+                foreach (TelemetryUnit detailTelemetryUnit in detail.GetTelemetryUnits())
                 {
-                    var row = new TelemetryTableRow()
+                    TelemetryPivotTableRow row = new TelemetryPivotTableRow()
                     {
-                        ComponentName = detail.TelemetrySummary.View.Name
-                        , DateTime = detail.DateTime.ToString("O")
+                        ComponentName = detail.GetTelemetrySummary().GetComponent().Name
+                        , Date = detail.DateTime.Date.ToString("yyyy-MM-dd")
+                        , Time = detail.DateTime.TimeOfDay.TotalSeconds
                         , Value = detailTelemetryUnit.Value
                         , Key = detailTelemetryUnit.Key
-                        , UserName = detail.TelemetrySummary.ClientAppUser.UserName
+                        , TelemetryDetailId = detail.Guid
+                        , UserName = detail.GetTelemetrySummary().ClientAppUser.UserName
                     };
                     rows.Add(row);
                 }
-
             }
 
             TelemetryInfoTableHeader header = new TelemetryInfoTableHeader();
-            header.DateTime = new TelemetryInfoHeaderItem(){type="datetime"};
 
             return new TelemetryInfoTable() {Header = header, Rows = rows};
-
-
-
         }
+
+       
     }
 }

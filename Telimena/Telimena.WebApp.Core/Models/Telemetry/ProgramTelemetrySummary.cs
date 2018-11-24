@@ -8,6 +8,7 @@ namespace Telimena.WebApp.Core.Models
     {
         public int ProgramId { get; set; }
         public virtual Program Program{ get; set; }
+        public override ITelemetryAware GetComponent() => this.Program;
 
         public virtual RestrictedAccessList<ProgramTelemetryDetail> TelemetryDetails { get; set; } = new RestrictedAccessList<ProgramTelemetryDetail>();
 

@@ -8,6 +8,7 @@ namespace Telimena.WebApp.Core.Models
     {
         public int EventId { get; set; }
         public virtual Event Event { get; set; }
+        public override ITelemetryAware GetComponent() => this.Event;
 
         public virtual RestrictedAccessList<EventTelemetryDetail> TelemetryDetails { get; set; } = new RestrictedAccessList<EventTelemetryDetail>();
 

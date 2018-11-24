@@ -44,7 +44,12 @@
             public static string SubmitAppRegistration { get; } = "SubmitAppRegistration";
             public static string ProgramSummaryBox { get; } = "ProgramSummaryBox";
             public static string DeleteProgramButton { get; } = "DeleteProgramButton";
-            public static string PivotTableBox { get; } = "PivotTableBox";
+            public static string EventTelemetryPivotTable { get; } = "EventTelemetryPivotTable";
+            public static string ViewTelemetryPivotTable { get; } = "ViewTelemetryPivotTable";
+            public static string ProgramTelemetryPivotTable { get; } = "ProgramTelemetryPivotTable";
+            public static string UpdaterPackagesTable { get; } = "UpdaterPackagesTable";
+            public static string UploadProgramUpdateForm { get; } = "UploadProgramUpdateForm";
+            public static string UploadProgramUpdateConfirmationLabel { get; } = "UploadProgramUpdateConfirmationLabel";
         }
 
         public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";
