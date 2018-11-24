@@ -147,6 +147,8 @@
   <ItemGroup>
     <Compile Include="AssemblyVersionReader\AssemblyVersionReaderTests.cs" />
     <Compile Include="Controllers\AccountControllerTests.cs" />
+    <Compile Include="EntitiesTests.cs" />
+    <Compile Include="MiscTests.cs" />
     <Compile Include="UnitOfWorkTests\AsyncQueryableExtensions.cs" />
     <Compile Include="UnitOfWorkTests\DbAsyncEnumerable.cs" />
     <Compile Include="UnitOfWorkTests\DbAsyncEnumerator.cs" />

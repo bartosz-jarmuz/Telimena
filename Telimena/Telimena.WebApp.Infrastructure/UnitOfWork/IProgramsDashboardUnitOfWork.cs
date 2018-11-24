@@ -19,5 +19,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<UsageDataTableResult> GetProgramUsageData(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null);
         Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null);
         Task<dynamic> ExportViewsUsageCustomData(int programId, bool includeGenericData);
+        Task<TelemetryInfoTable> GetPivotTableData(Guid telemetryKey);
     }
 }

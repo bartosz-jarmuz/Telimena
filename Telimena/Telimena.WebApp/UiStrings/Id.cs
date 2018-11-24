@@ -44,6 +44,7 @@
             public static string SubmitAppRegistration { get; } = "SubmitAppRegistration";
             public static string ProgramSummaryBox { get; } = "ProgramSummaryBox";
             public static string DeleteProgramButton { get; } = "DeleteProgramButton";
+            public static string PivotTableBox { get; } = "PivotTableBox";
         }
 
         public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";

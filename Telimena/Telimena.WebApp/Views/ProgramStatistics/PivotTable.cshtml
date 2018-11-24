@@ -1,0 +1,78 @@
+﻿@using DotNetLittleHelpers
+@using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.UiStrings
+@model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
+@{
+    ViewBag.Title = "Admin Dashboard";
+}
+
+@section styles{
+    @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
+    <link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet" />
+
+}
+
+
+<section class="content-header">
+    <h1>
+        @Model.ProgramName
+        <small>Program statistics</small>
+    </h1>
+</section>
+<br />
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary" id="@Strings.Id.PivotTableBox">
+            <div class="box-header">
+                <h3 class="box-title">Create your own pivot table report</h3>
+            </div>
+            <div class="box-body">
+                <div id="wdr-component"></div>
+            </div>
+            <div class="overlay" >
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            loadPivotTableData();
+
+
+            function loadPivotTableData() {
+
+                $.get("@Url.Action("GetData")" + "?telemetryKey=@Model.TelemetryKey",
+                    function(data) {
+                        data.Rows.unshift(data.Header);
+                        var pivot = new WebDataRocks({
+                            container: "#wdr-component",
+                            toolbar: true,
+                            report: {
+                                dataSource: {
+                                    data: data.Rows
+                                },
+                                "options": {
+                                    "grid": {
+                                        "type": "flat"
+                                    }
+                                }
+                            }
+                        });
+                        $('#@Strings.Id.PivotTableBox').find('.overlay').hide();
+
+                    });
+            }
+
+        });
+    </script>
+
+}

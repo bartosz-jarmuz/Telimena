@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
+using Newtonsoft.Json.Linq;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
@@ -352,6 +353,47 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             //return root;
             return null;
+
+        }
+
+        public async Task<TelemetryInfoTable> GetPivotTableData(Guid telemetryKey)
+        {
+            var program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+
+            if (program == null)
+            {
+                throw new ArgumentException($"Program with key {telemetryKey} does not exist");
+            }
+             var usages = this.context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id).ToList();
+
+
+
+            List<TelemetryTableRow>rows = new List<TelemetryTableRow>();
+
+            foreach (ViewTelemetryDetail detail in usages)
+            {
+
+                foreach (ViewTelemetryUnit detailTelemetryUnit in detail.TelemetryUnits)
+                {
+                    var row = new TelemetryTableRow()
+                    {
+                        ComponentName = detail.TelemetrySummary.View.Name
+                        , DateTime = detail.DateTime.ToString("O")
+                        , Value = detailTelemetryUnit.Value
+                        , Key = detailTelemetryUnit.Key
+                        , UserName = detail.TelemetrySummary.ClientAppUser.UserName
+                    };
+                    rows.Add(row);
+                }
+
+            }
+
+            TelemetryInfoTableHeader header = new TelemetryInfoTableHeader();
+            header.DateTime = new TelemetryInfoHeaderItem(){type="datetime"};
+
+            return new TelemetryInfoTable() {Header = header, Rows = rows};
+
+
 
         }
     }

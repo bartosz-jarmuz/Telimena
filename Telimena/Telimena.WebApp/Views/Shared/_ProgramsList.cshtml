@@ -17,13 +17,22 @@
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
                 </a>
-                <ul class="treeview-menu" >
-                    <li><a href="@Url.Action("Index", "ProgramManagement", new {telemetryKey = app.Key})" id="@(app.Value)_manageLink">
-                        <i class="fa fa-cog"></i> <span>Manage</span>
-                    </a></li>
-                    <li><a href="@Url.Action("Index", "ProgramStatistics", new {telemetryKey = app.Key})" id="@(app.Value)_statsLink">
-                        <i class="fa fa-bar-chart"></i> <span>View Statistics</span>
-                    </a></li>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="@Url.Action("Index", "ProgramManagement", new {telemetryKey = app.Key})" id="@(app.Value)_manageLink">
+                            <i class="fa fa-cog"></i> <span>Manage</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "ProgramStatistics", new {telemetryKey = app.Key})" id="@(app.Value)_statsLink">
+                            <i class="fa fa-bar-chart"></i> <span>View Statistics</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("PivotTable", "ProgramStatistics", new {telemetryKey = app.Key})" id="@(app.Value)_pivotTableLink">
+                            <i class="fa fa-bar-chart"></i> <span>Pivot table report</span>
+                        </a>
+                    </li>
                 </ul>
                 
                 

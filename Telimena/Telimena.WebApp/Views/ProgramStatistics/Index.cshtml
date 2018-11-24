@@ -8,7 +8,10 @@
 
 @section styles{
     @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
+    <link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet" />
+
 }
+
 
 <section class="content-header">
     <h1>
@@ -23,12 +26,11 @@
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">View Usages</h3>
-                @Html.ActionLink("Export custom data", "ExportViewUsageCustomData", "ProgramStatistics", new { telemetryKey = @Model.TelemetryKey, includeGenericData = false }, new {@class = "btn btn-primary"})
-                @Html.ActionLink("Export custom data with generic data", "ExportViewUsageCustomData", "ProgramStatistics", new { telemetryKey = @Model.TelemetryKey, includeGenericData = true}, new {@class = "btn btn-primary"})
+                @Html.ActionLink("Export custom data", "ExportViewUsageCustomData", "ProgramStatistics", new { telemetryKey = @Model.TelemetryKey, includeGenericData = false }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("Export custom data with generic data", "ExportViewUsageCustomData", "ProgramStatistics", new { telemetryKey = @Model.TelemetryKey, includeGenericData = true }, new { @class = "btn btn-primary" })
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="@Strings.Id.ViewUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;">
-                </table>
+                <table id="@Strings.Id.ViewUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -38,8 +40,7 @@
                 <h3 class="box-title">Program Usages</h3>
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="@Strings.Id.ProgramUsageTable" class="table table-bordered table-hover table-condensed"  style="width: 100%;">
-                </table>
+                <table id="@Strings.Id.ProgramUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -49,9 +50,12 @@
 @section scripts
 {
     @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
+
             $('#@Strings.Id.ViewUsageTable').DataTable({
                 serverSide: true,
                 searching: false,
@@ -60,7 +64,7 @@
                 pageLength: 15,
                 order: [[ 0, 'desc' ]],
                 ajax: "@Url.Action("GetProgramViewsUsageData")" + "?telemetryKey=@Model.TelemetryKey",
-              
+
                 columns: [
                     {
                         name: "@nameof(UsageData.DateTime)",
@@ -99,9 +103,9 @@
                         sortable: true,
                         searchable: false
                     },
-                  
+
                 ]
-             
+
             });
 
             $('#@Strings.Id.ProgramUsageTable').DataTable({
@@ -112,7 +116,7 @@
                 lengthMenu: [[15, 30, 70, -1], [15, 30, 70, "All"]],
                 pageLength: 15,
                 ajax: "@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey",
-              
+
                 columns: [
                     {
                         name: "@nameof(UsageData.DateTime)",
@@ -138,9 +142,9 @@
                         sortable: true,
                         searchable: true
                     },
-                  
+
                 ]
-             
+
             });
         });
     </script>

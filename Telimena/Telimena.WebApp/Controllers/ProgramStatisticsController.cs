@@ -10,6 +10,7 @@ using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
 using MvcAuditLogger;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
@@ -45,6 +46,21 @@ namespace Telimena.WebApp.Controllers
             return this.View("Index", model);
         }
 
+        [Audit]
+        [HttpGet]
+        public async Task<ActionResult> PivotTable(Guid telemetryKey)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            ProgramStatisticsViewModel model = new ProgramStatisticsViewModel() { TelemetryKey = program.TelemetryKey, ProgramName = program.Name };
+
+            return this.View("PivotTable", model);
+        }
 
         [Audit]
         [HttpGet]
@@ -64,6 +80,12 @@ namespace Telimena.WebApp.Controllers
             return result;
         }
 
+        [HttpGet]
+        public async Task<JsonResult> GetData(Guid telemetryKey)
+        {
+            var result = await this.Work.GetPivotTableData(telemetryKey);
+            return this.Json(result, JsonRequestBehavior.AllowGet);
+        }
 
         [HttpGet]
         public async Task<JsonResult> GetProgramUsageData(Guid telemetryKey, IDataTablesRequest request)

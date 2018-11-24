@@ -1994,6 +1994,7 @@
     <Content Include="Views\Shared\_ProgramsList.cshtml" />
     <Content Include="Views\ToolkitManagement\Index.cshtml" />
     <Content Include="Views\ProgramStatistics\Index.cshtml" />
+    <Content Include="Views\ProgramStatistics\PivotTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
