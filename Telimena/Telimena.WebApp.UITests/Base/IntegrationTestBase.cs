@@ -18,6 +18,7 @@ namespace Telimena.WebApp.UITests.Base
         protected List<string> outputs = new List<string>();
         private readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
         public const string AutomaticTestsClientTelemetryKey = "efacd375-d746-48de-9882-b7ca4426d1e2";
+        public const string PackageUpdaterClientTelemetryKey = "43808405-afca-4abb-a92a-519489d62290";
         protected ITestEngine TestEngine { get; set; }
 
         protected string BaseUrl => this.TestEngine.BaseUrl;

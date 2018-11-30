@@ -12,6 +12,7 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
     {
 
         public const string AutomaticTestsClientAppName = "AutomaticTestsClient";
+        public const string PackageUpdaterTestAppName = "PackageTriggerUpdaterTestApp";
 
         public static class FileNames
         {

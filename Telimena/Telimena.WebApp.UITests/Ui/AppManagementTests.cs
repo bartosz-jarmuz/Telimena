@@ -24,13 +24,26 @@ namespace Telimena.WebApp.UITests.Ui
         {
             try
             {
-                this.RegisterApp("AutomaticTestsClient", AutomaticTestsClientTelemetryKey, "Telimena system tests app", "AutomaticTestsClient.exe", true, false);
+                this.RegisterApp(TestAppProvider.AutomaticTestsClientAppName, AutomaticTestsClientTelemetryKey, "Telimena system tests app", "AutomaticTestsClient.exe", true, false);
             }
             catch (Exception ex)
             {
                 this.HandlerError(ex);
             }
-              
+        }
+
+        [Test]
+        public void _04b_RegisterAutomaticTestsClient_PackageUpdaterTest()
+        {
+            try
+            {
+                this.RegisterApp(TestAppProvider.PackageUpdaterTestAppName, PackageUpdaterClientTelemetryKey, 
+                    "Telimena package updater test app (for apps where update package is an actual installer)", "PackageTriggerUpdaterTestApp.exe", true, false);
+            }
+            catch (Exception ex)
+            {
+                this.HandlerError(ex);
+            }
         }
 
         [Test]
@@ -152,16 +165,23 @@ namespace Telimena.WebApp.UITests.Ui
         [Test]
         public void _05_UploadTestAppUpdate()
         {
+
+            this.UploadUpdatePackage(TestAppProvider.AutomaticTestsClientAppName, "AutomaticTestsClientv2.zip");
+
+        }
+
+        public void UploadUpdatePackage(string appName, string packageFileName)
+        {
             this.LoginAdminIfNeeded();
 
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-            this.Driver.FindElement(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_menu")).Click();
-            IWebElement link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_manageLink")));
+            this.Driver.FindElement(By.Id(appName + "_menu")).Click();
+            IWebElement link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(appName + "_manageLink")));
             link.Click();
-           IWebElement form =  wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateForm)));
+            IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateForm)));
 
-            FileInfo file = TestAppProvider.GetFile("AutomaticTestsClientv2.zip");
+            FileInfo file = TestAppProvider.GetFile(packageFileName);
 
             IWebElement input = form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "file");
             if (input == null)
@@ -169,11 +189,11 @@ namespace Telimena.WebApp.UITests.Ui
                 Assert.Fail("Input box not found");
             }
             input.SendKeys(file.FullName);
-        
+
             wait.Until(x => form.FindElements(By.ClassName("info")).FirstOrDefault(e => e.Text.Contains(file.Name)));
 
             // ReSharper disable once PossibleNullReferenceException
-            form.FindElements(By.TagName("input")).FirstOrDefault(x=>x.GetAttribute("type") == "submit").Click();
+            form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "submit").Click();
 
             IWebElement confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateConfirmationLabel)));
 
@@ -181,6 +201,12 @@ namespace Telimena.WebApp.UITests.Ui
 
             Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package with ID"));
 
+        }
+
+        [Test]
+        public void _05b_UploadPackageUpdateTestAppUpdate()
+        {
+            this.UploadUpdatePackage(TestAppProvider.PackageUpdaterTestAppName, "PackageTriggerUpdaterTestApp v.2.0.0.0.zip");
         }
     }
 
