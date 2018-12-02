@@ -56,7 +56,7 @@ namespace Telimena.WebApp.Controllers
             {
                 var item = new SelectListItem() {
                     Text = publicUpdater.InternalName,
-                    Value = publicUpdater.Id.ToString()
+                    Value = publicUpdater.Guid.ToString()
                 };
                 if (publicUpdater.Id == program.Updater.Id)
                 {

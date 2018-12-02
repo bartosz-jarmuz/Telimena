@@ -214,54 +214,57 @@ namespace TelimenaClient.Tests
         }
 
         [Test]
-        public void Test_UpdaterPathFinder()
+        public void Test_UpdaterPathFinder_CannotAccessAppData()
         {
             List<UpdatePackageData> packages = new List<UpdatePackageData>
             {
-                new UpdatePackageData {Guid =   this.PrgPkg_4, Version = "3.5"}
+                new UpdatePackageData   {Guid = this.PrgPkg_4, Version = "3.5"}
                 , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0"}
                 , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0"}
                 , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0"}
             };
             var temp = Path.GetTempPath();
+
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine(appData, "Telimena", "Test_UpdaterPathFinder_CannotAccessAppData"));
+            dirInfo.Create(); DirectorySecurity securityRules = new DirectorySecurity();
+            securityRules.AddAccessRule(new FileSystemAccessRule("Users", FileSystemRights.Write, AccessControlType.Deny));
+
+            dirInfo.SetAccessControl(securityRules);
             var locator = new Locator(new LiveProgramInfo(new ProgramInfo()
             {
-                Name = "MyApp"
+                Name = "Test_UpdaterPathFinder_CannotAccessAppData"
             })
             {
                 UpdaterName = "MyUpdater.exe"
             }, temp);
 
             DirectoryInfo parentFolder = locator.GetUpdatesParentFolder();
-            Assert.AreEqual($@"{temp}MyApp Updates", parentFolder.FullName);
+            Assert.AreEqual($@"{temp}Test_UpdaterPathFinder_CannotAccessAppData Updates", parentFolder.FullName);
 
             FileInfo updater = locator.GetUpdater();
-            Assert.AreEqual($@"{temp}MyApp Updates\MyUpdater.exe", updater.FullName);
+            Assert.AreEqual($@"{temp}Test_UpdaterPathFinder_CannotAccessAppData Updates\MyUpdater.exe", updater.FullName);
 
             DirectoryInfo subFolder = locator.GetCurrentUpdateSubfolder(packages);
-            Assert.AreEqual($@"{temp}MyApp Updates\3.5", subFolder.FullName);
+            Assert.AreEqual($@"{temp}Test_UpdaterPathFinder_CannotAccessAppData Updates\3.5", subFolder.FullName);
         }
 
         [Test]
-        public void Test_UpdaterPathFinder_NonWritable()
+        public void Test_UpdaterPathFinder()
         {
-            var temp = Path.GetTempPath() + "Locked";
-            DirectorySecurity securityRules = new DirectorySecurity();
-            securityRules.AddAccessRule(new FileSystemAccessRule("Users", FileSystemRights.Write, AccessControlType.Deny));
+            var temp = Path.GetTempPath();
 
-            Directory.CreateDirectory(temp, securityRules);
-
-            var myDocs = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var locator = new Locator(new LiveProgramInfo(new ProgramInfo() {Name = "MyApp" })
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var locator = new Locator(new LiveProgramInfo(new ProgramInfo() {Name = "Test_UpdaterPathFinder" })
             {
                 UpdaterName = "MyUpdater.exe"
             }, temp);
 
             DirectoryInfo parentFolder = locator.GetUpdatesParentFolder();
-            Assert.AreEqual($@"{myDocs}\Telimena\MyApp\MyApp Updates", parentFolder.FullName);
+            Assert.AreEqual($@"{appData}\Telimena\Test_UpdaterPathFinder\Test_UpdaterPathFinder Updates", parentFolder.FullName);
 
             FileInfo updater = locator.GetUpdater();
-            Assert.AreEqual($@"{myDocs}\Telimena\MyApp\MyApp Updates\MyUpdater.exe", updater.FullName);
+            Assert.AreEqual($@"{appData}\Telimena\Test_UpdaterPathFinder\Test_UpdaterPathFinder Updates\MyUpdater.exe", updater.FullName);
         }
     }
 }

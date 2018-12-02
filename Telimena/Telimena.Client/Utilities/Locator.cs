@@ -22,19 +22,36 @@ namespace TelimenaClient
             this.updatesFolderName = this.programInfo.Program.Name + " Updates";
             this.telimenaWorkingDirectory = new Lazy<DirectoryInfo>(() =>
             {
-                if (!basePath.IsDirectoryWritable())
-                {
-                    var dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                    var dirInfo = new DirectoryInfo(Path.Combine(dir, "Telimena", this.programInfo.Program.Name));
-                    dirInfo.Create();
-                    return dirInfo;
-                }
-                else
+                var folderInAppData = this.CreateAppFolderInAppData();
+
+                if (folderInAppData == null || !folderInAppData.FullName.IsDirectoryWritable())
                 {
                     return new DirectoryInfo(basePath);
                 }
+                else
+                {
+                    return folderInAppData;
+                }
             });
         }
+
+        private DirectoryInfo CreateAppFolderInAppData()
+        {
+            try
+            {
+                string dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine(dir, "Telimena", this.programInfo.Program.Name));
+                dirInfo.Create();
+                return dirInfo;
+            }
+            catch (Exception)
+            {
+                //well, apparently we cannot write there
+            }
+
+            return null;
+        }
+
 
 
         /// <summary>

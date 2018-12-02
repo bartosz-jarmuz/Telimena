@@ -86,6 +86,12 @@
     <None Include="..\TelimenaKey.snk">
       <Link>Properties\TelimenaKey.snk</Link>
     </None>
+    <None Include="MockDisk\DefaultUpdater\AppData\Telimena\MyApp\Updates\1.2\MyApp Update v. 1.1.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MockDisk\DefaultUpdater\AppData\Telimena\MyApp\Updates\1.2\MyApp Update v. 1.2.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="MockDisk\DefaultUpdater\MyAppFolder.zip_Extracted\Updates\1.2\MyApp Update v. 1.1.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

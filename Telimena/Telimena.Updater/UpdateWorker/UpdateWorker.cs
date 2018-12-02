@@ -12,7 +12,7 @@ namespace Telimena.Updater
         {
             foreach (string packagePath in instructions.PackagePaths)
             {
-                this.ProcessPackage(new FileInfo(packagePath));
+                this.ProcessPackage(instructions.ProgramExecutableLocation, new FileInfo(packagePath));
             }
         }
 
@@ -59,12 +59,12 @@ namespace Telimena.Updater
             return true;
         }
 
-        private void ProcessPackage(FileInfo package)
+        private void ProcessPackage(string programExecutableLocation, FileInfo package)
         {
             // TopInfoLabel = "Updater - unpacking...";
             // Thread.Sleep(700);
             string updatePackageFolderPath = Path.Combine(package.DirectoryName, Path.GetFileNameWithoutExtension(package.Name));
-            DirectoryInfo programFolder = Directory.GetParent(updatePackageFolderPath).Parent.Parent;
+            DirectoryInfo programFolder = new DirectoryInfo(Path.GetDirectoryName(programExecutableLocation));
             if (!PrepareAndValidatePackage(package, updatePackageFolderPath))
             {
                 return;

@@ -50,6 +50,10 @@
             public static string UpdaterPackagesTable { get; } = "UpdaterPackagesTable";
             public static string UploadProgramUpdateForm { get; } = "UploadProgramUpdateForm";
             public static string UploadProgramUpdateConfirmationLabel { get; } = "UploadProgramUpdateConfirmationLabel";
+            public static string UpdaterSelectList { get; } = "UpdaterSelectList";
+            public static string SubmitUpdaterChange { get; } = "SubmitUpdaterChange";
+            public static string ProgramSummaryBoxConfirmationLabel { get; } = "ProgramSummaryBoxConfirmationLabel";
+            public static string UpdaterExecutableName { get; } = "UpdaterExecutableName";
         }
 
         public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";

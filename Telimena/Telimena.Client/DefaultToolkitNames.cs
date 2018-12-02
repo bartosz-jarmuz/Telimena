@@ -6,31 +6,37 @@
     public static class DefaultToolkitNames
     {
         /// <summary>
-        /// The updater package name
-        /// </summary>
-        public const string UpdaterZippedPackageName = "Updater.zip";
-        /// <summary>
         /// The updater file name
         /// </summary>
-        public const string UpdaterFileName = "Updater.exe";
+        public static string UpdaterFileName {get;} =  "Updater.exe";
+
+        /// <summary>
+        /// The file name of the package trigger updater
+        /// </summary>
+        public static string PackageTriggerUpdaterFileName {get;} =  "PackageTriggerUpdater.exe";
         /// <summary>
         /// The zipped package file name
         /// </summary>
-        public const string ZippedPackageName = "Telimena.Client.zip";
+        public static string ZippedPackageName {get;} =  "Telimena.Client.zip";
         /// <summary>
         /// The telimena assembly name
         /// </summary>
-        public const string TelimenaAssemblyName = "Telimena.Client.dll";
+        public static string TelimenaAssemblyName {get;} =  "Telimena.Client.dll";
 
         /// <summary>
         /// The default updater internal name
         /// </summary>
-        public const string UpdaterInternalName = "DefaultTelimenaStandaloneUpdater";
+        public static string UpdaterInternalName {get;} =  "TelimenaStandaloneUpdater";
+
+        /// <summary>
+        /// The default package trigger updater name
+        /// </summary>
+        public static string PackageTriggerUpdaterInternalName {get;} =  "TelimenaPackageUpdater";
 
         /// <summary>
         /// The telimena system dev team
         /// </summary>
-        public const string TelimenaSystemDevTeam = "TelimenaSystemDevTeam";
+        public static string TelimenaSystemDevTeam {get;} =  "TelimenaSystemDevTeam";
 
     }
 }

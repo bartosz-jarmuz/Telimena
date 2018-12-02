@@ -28,7 +28,7 @@ namespace Telimena.WebApp.UITests.Ui
             }
             catch (Exception ex)
             {
-                this.HandlerError(ex);
+                this.HandleError(ex);
             }
         }
 
@@ -42,7 +42,7 @@ namespace Telimena.WebApp.UITests.Ui
             }
             catch (Exception ex)
             {
-                this.HandlerError(ex);
+                this.HandleError(ex);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Telimena.WebApp.UITests.Ui
             }
             catch (Exception ex)
             {
-                this.HandlerError(ex);
+                this.HandleError(ex);
             }
             finally
             {
@@ -172,41 +172,138 @@ namespace Telimena.WebApp.UITests.Ui
 
         public void UploadUpdatePackage(string appName, string packageFileName)
         {
-            this.LoginAdminIfNeeded();
-
-            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
-
-            this.Driver.FindElement(By.Id(appName + "_menu")).Click();
-            IWebElement link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(appName + "_manageLink")));
-            link.Click();
-            IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateForm)));
-
-            FileInfo file = TestAppProvider.GetFile(packageFileName);
-
-            IWebElement input = form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "file");
-            if (input == null)
+            try
             {
-                Assert.Fail("Input box not found");
+
+                this.LoginAdminIfNeeded();
+
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+
+                this.Driver.FindElement(By.Id(appName + "_menu")).Click();
+                IWebElement link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(appName + "_manageLink")));
+                link.Click();
+                IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateForm)));
+
+                FileInfo file = TestAppProvider.GetFile(packageFileName);
+
+                IWebElement input = form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "file");
+                if (input == null)
+                {
+                    Assert.Fail("Input box not found");
+                }
+
+                input.SendKeys(file.FullName);
+
+                wait.Until(x => form.FindElements(By.ClassName("info")).FirstOrDefault(e => e.Text.Contains(file.Name)));
+
+                // ReSharper disable once PossibleNullReferenceException
+                form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "submit").Click();
+
+                IWebElement confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateConfirmationLabel)));
+
+                Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
+
+                Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package with ID"));
             }
-            input.SendKeys(file.FullName);
-
-            wait.Until(x => form.FindElements(By.ClassName("info")).FirstOrDefault(e => e.Text.Contains(file.Name)));
-
-            // ReSharper disable once PossibleNullReferenceException
-            form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "submit").Click();
-
-            IWebElement confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateConfirmationLabel)));
-
-            Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
-
-            Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package with ID"));
-
+            catch (Exception ex)
+            {
+                this.HandleError(ex);
+            }
         }
 
         [Test]
         public void _05b_UploadPackageUpdateTestAppUpdate()
         {
             this.UploadUpdatePackage(TestAppProvider.PackageUpdaterTestAppName, "PackageTriggerUpdaterTestApp v.2.0.0.0.zip");
+        }
+
+
+        [Test]
+        public void _06_SetUpdaterForPackageTriggerApp()
+        {
+
+            var app = TestAppProvider.PackageUpdaterTestAppName;
+            var currentUpdater = this.GetUpdaterForApp(app);
+
+            if (currentUpdater == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
+            {
+                this.SetUpdaterForApp(app, DefaultToolkitNames.UpdaterInternalName);
+                Assert.AreEqual(DefaultToolkitNames.UpdaterInternalName, this.GetUpdaterForApp(app));
+
+                this.SetUpdaterForApp(app, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
+                Assert.AreEqual(DefaultToolkitNames.PackageTriggerUpdaterInternalName, this.GetUpdaterForApp(app));
+            }
+            else
+            {
+                this.SetUpdaterForApp(app, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
+                Assert.AreEqual(DefaultToolkitNames.PackageTriggerUpdaterInternalName, this.GetUpdaterForApp(app));
+            }
+        }
+
+        private string GetUpdaterForApp(string appName)
+        {
+            try
+            {
+                this.LoginAdminIfNeeded();
+
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+
+                this.Driver.FindElement(By.Id(appName+ "_menu")).Click();
+                IWebElement link =
+                    wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(appName+ "_manageLink")));
+                link.Click();
+                IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
+
+                IWebElement input = form.FindElement(By.Id(Strings.Id.UpdaterSelectList));
+                if (input == null)
+                {
+                    Assert.Fail("Select list box not found");
+                }
+
+                return new SelectElement(input).SelectedOption.Text;
+
+            }
+            catch (Exception ex)
+            {
+                this.HandleError(ex);
+                throw;
+
+            }
+        }
+
+        private void SetUpdaterForApp(string appName, string updaterName)
+        {
+            try
+            {
+                this.LoginAdminIfNeeded();
+
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+
+                this.Driver.FindElement(By.Id(appName+ "_menu")).Click();
+                IWebElement link =
+                    wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(appName+ "_manageLink")));
+                link.Click();
+                IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
+
+                IWebElement input = form.FindElement(By.Id(Strings.Id.UpdaterSelectList));
+                if (input == null)
+                {
+                    Assert.Fail("Select list box not found");
+                }
+
+                new SelectElement(input).SelectByText(updaterName);
+                form.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).Click();
+
+                IWebElement confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBoxConfirmationLabel)));
+
+                Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
+
+                Assert.IsTrue(confirmationBox.Text.Contains("Updater set to "+ updaterName));
+            }
+            catch (Exception ex)
+            {
+                this.HandleError(ex);
+            }
         }
     }
 

@@ -38,14 +38,14 @@
 
 
     <div class="col-md-12 " id="@Strings.Id.ToolkitManagementForm">
-        <div class="box box-warning box-solid box-solid">
+        <div class="box box-primary box-solid box-solid">
             <div class="box-header">
                 <h3 class="box-title">Telimena Toolkit</h3>
             </div>
             <div class="box-body">
                 <div class="col-md-4">
                     <form id="uploadToolkitUpdatePackageForm" enctype="multipart/form-data" method="post">
-                        <div class="box box-warning box-solid">
+                        <div class="box box-primary box-solid">
                             <div class="box-header">
                                 <h3 class="box-title">Upload new Toolkit Version</h3>
                             </div>
@@ -91,7 +91,7 @@
                 <div class="col-md-8">
 
 
-                    <div class="box box-warning box-solid">
+                    <div class="box box-primary box-solid">
                         <div class="box-header">
                             <h3 class="box-title">Toolkit Packages</h3>
                         </div>
@@ -149,14 +149,14 @@
 <div class="row">
 
 <div class="col-md-12 ">
-    <div class="box box-success box-solid box-solid">
+    <div class="box box-primary box-solid">
         <div class="box-header">
             <h3 class="box-title">Updaters</h3>
         </div>
         <div class="box-body">
             <div class="col-md-4">
                 <form id="uploadUpdaterUpdatePackageForm" enctype="multipart/form-data" method="post">
-                    <div class="box box-success  box-solid">
+                    <div class="box box-primary  box-solid">
                         <div class="box-header">
                             <h3 class="box-title">Upload new Updater Version</h3>
                         </div>
@@ -164,18 +164,22 @@
                             <label class="confirmation label label-md" id="@Strings.Id.UpdaterConfirmationBox" style="display: none"></label>
                             <div class="form-group">
                                 <label>Required toolkit version: </label>
-                                <input class="form-control" type="text" id="updaterToolkitVersionNeeded" value="0.0.0.0"/>
+                                <input class="form-control" type="text" id="updaterToolkitVersionNeeded" value="0.0.0.0" />
                             </div>
                             <div class="form-group">
                                 <label>Internal name: </label>
-                                <input class="form-control" type="text" id="@Strings.Id.UpdaterInternalName" value="@DefaultToolkitNames.UpdaterInternalName"/>
+                                <input class="form-control" type="text" id="@Strings.Id.UpdaterInternalName" value="@DefaultToolkitNames.UpdaterInternalName" />
+                            </div>
+                            <div class="form-group">
+                                <label>Updater executable name: </label>
+                                <input class="form-control" type="text" id="@Strings.Id.UpdaterExecutableName" value="@DefaultToolkitNames.UpdaterFileName" />
                             </div>
                             <div class="form-group">
                                 <span class="btn btn-success fileinput-button uploadedPackage">
                                     <i class="glyphicon glyphicon-plus"></i>
                                     <span>Add files...</span>
                                     <input type="file" id="@Strings.Id.UpdaterPackageUploader"
-                                           name="uploadedPackage"/>
+                                           name="uploadedPackage" />
                                 </span>
                             </div>
                             <div class="InfoContainer" id="@Strings.Id.UpdaterUploadInfoBox">
@@ -195,7 +199,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="">
-                                    <input type="submit" value="Submit" id="@Strings.Id.SubmitUpdaterUpload"  class="btn btn-lg btn-primary"/>
+                                    <input type="submit" value="Submit" id="@Strings.Id.SubmitUpdaterUpload" class="btn btn-lg btn-primary" />
                                 </div>
                             </div>
                         </div>
@@ -207,7 +211,7 @@
             <div class="col-md-8">
 
 
-                <div class="box box-success box-solid">
+                <div class="box box-primary box-solid">
                     <div class="box-header">
                         <h3 class="box-title">Updater Packages</h3>
                     </div>
@@ -311,6 +315,7 @@
             var model = {
                 @nameof(UploadUpdaterRequest.MinimumCompatibleToolkitVersion): $('#updaterToolkitVersionNeeded').val(),
                 @nameof(UploadUpdaterRequest.UpdaterInternalName): $('#@Strings.Id.UpdaterInternalName').val(),
+                @nameof(UploadUpdaterRequest.UpdaterExecutableName): $('#@Strings.Id.UpdaterExecutableName').val(),
             };
             return JSON.stringify(model);
 

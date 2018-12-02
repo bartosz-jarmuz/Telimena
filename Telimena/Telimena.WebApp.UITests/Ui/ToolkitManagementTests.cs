@@ -17,7 +17,7 @@ namespace Telimena.WebApp.UITests.Ui
     public partial class _1_UiTests : UiTestBase
     {
 
-        private void UploadUpdater(string fileName)
+        private void UploadUpdater(string fileName, string internalName, string exeName)
         {
             this.GoToAdminHomePage();
 
@@ -27,13 +27,18 @@ namespace Telimena.WebApp.UITests.Ui
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ToolkitManagementForm)));
 
             var updater = TestAppProvider.GetFile(fileName);
+            this.Driver.FindElement(By.Id(Strings.Id.UpdaterInternalName)).Clear();
+            this.Driver.FindElement(By.Id(Strings.Id.UpdaterInternalName)).SendKeys(internalName);
 
+            if (exeName != null)
+            {
+                this.Driver.FindElement(By.Id(Strings.Id.UpdaterExecutableName)).Clear();
+                this.Driver.FindElement(By.Id(Strings.Id.UpdaterExecutableName)).SendKeys(exeName);
+            }
 
             this.Driver.FindElement(By.Id(Strings.Id.UpdaterPackageUploader)).SendKeys(updater.FullName);
 
-
             wait.Until(x => x.FindElements(By.Id(Strings.Id.UpdaterUploadInfoBox)).FirstOrDefault(e => e.Text.Contains(updater.Name)));
-
 
             this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterUpload)).Click();
 
@@ -41,7 +46,7 @@ namespace Telimena.WebApp.UITests.Ui
 
             Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
 
-            Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package 1.8.0.0 with ID "));
+            Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package "));
 
         }
 
@@ -74,7 +79,7 @@ namespace Telimena.WebApp.UITests.Ui
 
             Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
 
-            Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package 2.0.0.0 with ID "));
+            Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package 2.1.0.0 with ID "));
 
         }
 
@@ -83,11 +88,11 @@ namespace Telimena.WebApp.UITests.Ui
         {
             try
             {
-                UploadUpdater("Updater.exe");
+                UploadUpdater("Updater.exe", DefaultToolkitNames.UpdaterInternalName, null);
             }
             catch (Exception ex)
             {
-                this.HandlerError(ex);
+                this.HandleError(ex);
             }
         }
 
@@ -97,16 +102,40 @@ namespace Telimena.WebApp.UITests.Ui
         {
             try
             {
-                UploadUpdater("Updater.zip");
+                UploadUpdater("Updater.zip", DefaultToolkitNames.UpdaterInternalName, null);
             }
             catch (Exception ex)
             {
-                this.HandlerError(ex);
+                this.HandleError(ex);
             }
         }
 
         [Test]
-        public void _03a_SetDefaultUpdaterPublic()
+        public void _03b_UploadPackageUpdaterZipTest()
+        {
+            try
+            {
+                UploadUpdater("PackageTriggerUpdater.zip", DefaultToolkitNames.PackageTriggerUpdaterInternalName, DefaultToolkitNames.PackageTriggerUpdaterFileName);
+            }
+            catch (Exception ex)
+            {
+                this.HandleError(ex);
+            }
+        }
+
+        [Test]
+        public void _04a_SetDefaultUpdaterPublic()
+        {
+            this.SetUpdaterPublic(DefaultToolkitNames.UpdaterInternalName);
+        }
+
+        [Test]
+        public void _04b_SetPackageTriggerUpdaterPublic()
+        {
+            this.SetUpdaterPublic(DefaultToolkitNames.PackageTriggerUpdaterInternalName);
+        }
+
+        private void SetUpdaterPublic(string internalName)
         {
             try
             {
@@ -114,7 +143,7 @@ namespace Telimena.WebApp.UITests.Ui
                 this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).Click();
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                var checkBox = this.GetIsPublicCheckbox();
+                var checkBox = this.GetIsPublicCheckbox(internalName);
                 var isChecked = checkBox.GetAttribute("checked");
 
                 if (isChecked == "true")
@@ -126,8 +155,6 @@ namespace Telimena.WebApp.UITests.Ui
                     var label = table.FindElement(By.XPath("../../label"));
                     Assert.AreEqual(true, label.Displayed);
                     Assert.AreEqual("Cannot change default updater", label.Text);
-                   
-
                 }
                 else
                 {
@@ -135,30 +162,27 @@ namespace Telimena.WebApp.UITests.Ui
                     Thread.Sleep(1000);
                     this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).Click();
 
-                    checkBox = this.GetIsPublicCheckbox();
+                    checkBox = this.GetIsPublicCheckbox(internalName);
                     isChecked = checkBox.GetAttribute("checked");
 
                     Assert.AreEqual("true", isChecked);
-
                 }
-
-
             }
             catch (Exception ex)
             {
-                this.HandlerError(ex);
+                this.HandleError(ex);
             }
         }
 
-        private IWebElement GetIsPublicCheckbox()
+        private IWebElement GetIsPublicCheckbox(string internalName)
         {
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UpdaterPackagesTable)));
 
-            var row = table.FindElements(By.TagName("tr")).FirstOrDefault(x => x.Text.Contains(DefaultToolkitNames.UpdaterInternalName));
+            var row = table.FindElements(By.TagName("tr")).FirstOrDefault(x => x.Text.Contains(internalName));
             if (row == null)
             {
-                Assert.Fail("There is no row for the default updater in the system. Cannot set public");
+                Assert.Fail($"There is no row for the {internalName} updater in the system. Cannot set public");
             }
 
             var checkBox = row.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("name") == @Strings.Name.ToggleIsPublic);

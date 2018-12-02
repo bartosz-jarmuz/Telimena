@@ -20,7 +20,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             var unzippedPath = this.GetUnzippedPath(tempFilePath, expectedFileName, expectSingleFile);
 
 
-            var version = TelimenaVersionReader.Read(unzippedPath, VersionTypes.AssemblyVersion);
+            var version = TelimenaVersionReader.Read(unzippedPath, VersionTypes.FileVersion);
             if (string.IsNullOrEmpty(version))
             {
                 throw new InvalidOperationException("Cannot extract version info from uploaded file");
@@ -46,7 +46,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             {
                 if (Path.GetFileName(file).Equals(nameOfFileToCheck, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return TelimenaVersionReader.Read(file, VersionTypes.AssemblyVersion);
+                    return TelimenaVersionReader.Read(file, VersionTypes.FileVersion);
                 }
             }
 

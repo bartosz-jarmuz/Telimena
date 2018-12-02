@@ -119,7 +119,7 @@ namespace Telimena.WebApp.UITests.Base
         }
 
 
-        protected void HandlerError(Exception ex, List<string> outputs = null, List<string> errors = null, [CallerMemberName] string memberName = "")
+        protected void HandleError(Exception ex, List<string> outputs = null, List<string> errors = null, [CallerMemberName] string memberName = "")
         {
             Screenshot screen = this.Screenshooter.GetScreenshot();
             var path = Common.CreatePngPath(memberName);

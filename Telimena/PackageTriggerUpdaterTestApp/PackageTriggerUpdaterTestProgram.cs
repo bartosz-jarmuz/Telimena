@@ -21,7 +21,7 @@ namespace PackageTriggerUpdaterTestApp
             //we only really care whether the updater has launched the update package - it's up to the package to perform the update.
             //use case - SDL Trados Studio (and similar software) which has plugins. The plugin is compiled to an .sdlplugin file which after executing
             //will present an installation wizard - it will guide the user through the update process, so the only thing that Telimena needs to do is to download this update package and execute it.
-            MessageBox.Show("Updater executed");
+            MessageBox.Show("Updater executed", "Updater executed");
             Console.WriteLine("Finding and killing the other instance of this app");
 
             var currentProcess = Process.GetCurrentProcess();
@@ -36,7 +36,7 @@ namespace PackageTriggerUpdaterTestApp
                 }
             }
 
-            MessageBox.Show($"Killed other processes: {killed}");
+            MessageBox.Show($"Killed other processes: {killed}", "Updater finished");
         }
 
         static void Main(string[] args)
@@ -77,13 +77,27 @@ namespace PackageTriggerUpdaterTestApp
             }
 #endif
             Work(arguments);
+
+            int key = Console.Read();
+            while (key != 1)
+            {
+                key = Console.Read();
+            }
         }
 
         public static void Work(PackageUpdateTesterArguments arguments)
         {
-            var teli = new Telimena(arguments.TelemetryKey);
+            Console.WriteLine("Starting update handling...");
 
-            teli.HandleUpdatesBlocking(false);
+            var teli = new Telimena(arguments.TelemetryKey);
+            Console.WriteLine("Telimena created... Handling updates");
+
+            var result = teli.HandleUpdatesBlocking(false);
+            Console.WriteLine("Finished update handling");
+
+            Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            Console.WriteLine("All done");
         }
 
         public static string Base64Decode(string base64EncodedData)

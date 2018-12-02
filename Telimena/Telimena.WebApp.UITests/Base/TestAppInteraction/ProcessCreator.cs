@@ -8,7 +8,7 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
 {
     internal static class ProcessCreator
     {
-        private static ProcessStartInfo CreateStartInfo(FileInfo testAppFile, Arguments arguments)
+        private static ProcessStartInfo CreateStartInfo(FileInfo testAppFile, object arguments)
         {
             var serialized = JsonConvert.SerializeObject(arguments);
             var encoded = Base64Encode(serialized);
@@ -37,7 +37,7 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             return System.Convert.ToBase64String(plainTextBytes);
         }
 
-        public static Process Create(FileInfo testAppFile, Arguments arguments, List<string> outputs, List<string> errors)
+        public static Process Create(FileInfo testAppFile, object arguments, List<string> outputs, List<string> errors)
         {
             var si = CreateStartInfo(testAppFile, arguments);
             Process process = new Process();

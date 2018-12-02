@@ -79,5 +79,16 @@ namespace TelimenaUpdaterTests
             Assert.IsTrue(executablePackage.Exists);
         }
 
+
+        [Test]
+        public void Test()
+        {
+            var fi = new FileInfo(
+                @"C:\Users\bjarmuz\AppData\Roaming\Telimena\PackageTriggerUpdaterTestApp\Usdfsdf\asdfasdfasd\asdfasdfasdf\asdfasdfasdf\asdfasdfasd\fasdfasdfasd.exe");
+
+            Assert.IsFalse(fi.Exists);
+        }
     }
+
+
 }

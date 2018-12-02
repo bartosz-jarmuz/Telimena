@@ -79,7 +79,7 @@ namespace Telimena.WebApp.UITests.Ui
             }
             catch (Exception ex)
             {
-                this.HandlerError(ex, this.outputs,this.errors);
+                this.HandleError(ex, this.outputs,this.errors);
                 return default(DateTime);
             }
         }

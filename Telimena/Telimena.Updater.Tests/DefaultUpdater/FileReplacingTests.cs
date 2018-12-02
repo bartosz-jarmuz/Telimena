@@ -22,8 +22,12 @@ namespace TelimenaUpdaterTests.DefaultUpdater
     [DeploymentItem("MockDisk")]
     public class FileReplacingTests
     {
+        private FileInfo MyAppExePath => new FileInfo(Path.Combine(this.MyAppFolder.FullName, "MyApp.exe"));
         private DirectoryInfo MyAppFolder => new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MockDisk", "DefaultUpdater/MyAppFolder.zip_Extracted"));
         private DirectoryInfo Update12Folder => this.MyAppFolder.CreateSubdirectory(Path.Combine("Updates", "1.2"));
+        private DirectoryInfo AppDataFolder => new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MockDisk", "DefaultUpdater/AppData"));
+        private DirectoryInfo Update12FolderAppData => this.AppDataFolder.CreateSubdirectory(Path.Combine("Telimena", "MyApp", "Updates", "1.2"));
+
 
         private void CreateBackup()
         {
@@ -88,7 +92,35 @@ namespace TelimenaUpdaterTests.DefaultUpdater
                     {
                         Path.Combine(this.Update12Folder.FullName, "MyApp Update v. 1.1.zip")
                         , Path.Combine(this.Update12Folder.FullName, "MyApp Update v. 1.2.zip")
-                    }
+                    },
+                    ProgramExecutableLocation = this.MyAppExePath.FullName
+                });
+                this.PostTestAsserts();
+            }
+
+            finally
+            {
+                this.Cleanup();
+            }
+        }
+
+        [Test]
+        public void Test_Worker_AppData()
+        {
+            this.CreateBackup();
+            try
+            {
+                this.PreTestAsserts();
+
+                UpdateWorker worker = new UpdateWorker();
+                worker.PerformUpdate(new UpdateInstructions
+                {
+                    PackagePaths = new List<string>
+                    {
+                        Path.Combine(this.Update12FolderAppData.FullName, "MyApp Update v. 1.1.zip")
+                        , Path.Combine(this.Update12FolderAppData.FullName, "MyApp Update v. 1.2.zip")
+                    },
+                    ProgramExecutableLocation = this.MyAppExePath.FullName
                 });
                 this.PostTestAsserts();
             }

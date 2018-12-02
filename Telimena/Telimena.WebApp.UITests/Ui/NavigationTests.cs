@@ -47,7 +47,7 @@ namespace Telimena.WebApp.UITests.Ui
             }
             catch (Exception ex)
             {
-                this.HandlerError(ex);
+                this.HandleError(ex);
             }
         }
 

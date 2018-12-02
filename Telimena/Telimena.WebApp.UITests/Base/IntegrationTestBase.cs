@@ -5,6 +5,7 @@ using System.IO;
 using AutomaticTestsClient;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using PackageTriggerUpdaterTestApp;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 using TestStack.White;
@@ -22,6 +23,12 @@ namespace Telimena.WebApp.UITests.Base
         protected ITestEngine TestEngine { get; set; }
 
         protected string BaseUrl => this.TestEngine.BaseUrl;
+
+        protected Exception Rethrow(Exception ex)
+        {
+            string msg = "Error when executing test:\r\nOutputs:\r\n" + String.Join("\r\n", this.outputs) + "\r\n\r\nErrors:\r\n" + string.Join("\r\n", this.errors) +"\r\n. See inner exception.";
+            return new InvalidOperationException(msg, ex);
+        }
 
         [SetUp]
         public void ResetLists()
@@ -81,6 +88,81 @@ namespace Telimena.WebApp.UITests.Base
 
             return process;
         }
+
+        protected Process LaunchPackageUpdaterTestsAppWithArgs(string appName, string testSubfolderName, bool waitForExit)
+        {
+            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
+            PackageUpdateTesterArguments args = new PackageUpdateTesterArguments { ApiUrl = this.BaseUrl };
+            args.TelemetryKey = Guid.Parse(PackageUpdaterClientTelemetryKey);
+
+
+            Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);
+            Log($"Started process: {appFile.FullName}");
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            if (waitForExit)
+            {
+                process.WaitForExit();
+                Log($"Finished process: {appFile.FullName}");
+            }
+
+            return process;
+        }
+
+        protected T LaunchPackageUpdaterTestsAppAndGetResult<T>(string appName, string testSubfolderName, bool waitForExit) where T : class
+        {
+            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
+            PackageUpdateTesterArguments args = new PackageUpdateTesterArguments { ApiUrl = this.BaseUrl };
+            args.TelemetryKey = Guid.Parse(PackageUpdaterClientTelemetryKey);
+
+
+            Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);
+            Log($"Started process: {appFile.FullName}");
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            if (waitForExit)
+            {
+                process.WaitForExit();
+                Log($"Finished process: {appFile.FullName}");
+            }
+
+            T result = this.ParseOutput<T>();
+            this.outputs.Clear();
+            this.errors.Clear();
+
+            return result;
+        }
+
+        protected Process LaunchPackageUpdaterTestsAppNoArgs(string appName, string testSubfolderName, bool waitForExit)
+        {
+            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
+
+            Process process = new Process();
+            process.EnableRaisingEvents = true;
+            process.OutputDataReceived += (sender, args) => this.outputs.Add(args.Data);
+            process.ErrorDataReceived += (sender, args) => this.errors.Add(args.Data);
+            process.StartInfo = new ProcessStartInfo
+            {
+                FileName = appFile.FullName,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            };
+            Log($"Started process with no args: {appFile.FullName}");
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            if (waitForExit)
+            {
+                process.WaitForExit();
+                Log($"Finished process: {appFile.FullName}");
+            }
+
+            return process;
+        }
+
 
         protected T LaunchTestsAppAndGetResult<T>(out FileInfo appFile, Actions action, string appName, string testSubfolderName, ProgramInfo pi = null
             , string viewName = null, bool waitForExit = true) where T : class

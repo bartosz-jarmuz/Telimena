@@ -17,6 +17,7 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
         public static class FileNames
         {
             public const string TestAppV1 = "TestApp v1.0.0.0.zip";
+            public const string PackageUpdaterTestAppV1 = "PackageTriggerUpdaterTestApp v.1.0.0.0.zip";
         }
 
         private static readonly DirectoryInfo AppsFolder = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "IntegrationTests", "Apps"));

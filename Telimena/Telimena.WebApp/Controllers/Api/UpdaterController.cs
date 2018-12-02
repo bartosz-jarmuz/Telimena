@@ -87,7 +87,7 @@ namespace Telimena.WebApp.Controllers.Api
                 return this.BadRequest($"Updater id [{id}] does not exist");
             }
 
-            if (!isPublic && updater.InternalName == DefaultToolkitNames.UpdaterInternalName)
+            if (!isPublic && (updater.InternalName == DefaultToolkitNames.UpdaterInternalName || updater.InternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName))
             {
                 return this.BadRequest($"Cannot change default updater");
             }

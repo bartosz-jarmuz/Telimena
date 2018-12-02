@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -11,8 +12,9 @@ namespace Telimena.PackageTriggerUpdater
     
         public class PackageUpdaterWorker
         {
+            private readonly string[] nonExecutableExtensions = new[] { ".dll", ".txt", ".xml", ".docx" };
 
-            public void TriggerUpdate(UpdaterStartupSettings settings, UpdateInstructions instructions)
+        public void TriggerUpdate(UpdaterStartupSettings settings, UpdateInstructions instructions)
             {
                 string packagePath = instructions.PackagePaths.FirstOrDefault();
 
@@ -32,13 +34,15 @@ namespace Telimena.PackageTriggerUpdater
                 }
             }
 
+
+
             internal FileInfo GetExecutablePackage(FileInfo packagePath)
             {
                 if (packagePath.FullName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var updDirPath = packagePath.DirectoryName + " Extracted";
                     PrepareAndValidatePackage(packagePath, updDirPath);
-                    var executablePackagePath = Directory.GetFiles(updDirPath).FirstOrDefault();
+                    var executablePackagePath = Directory.GetFiles(updDirPath).FirstOrDefault(x=> !this.nonExecutableExtensions.Contains(Path.GetExtension(x), StringComparer.InvariantCultureIgnoreCase));
                     if (executablePackagePath == null)
                     {
                         Console.WriteLine($"Failed to find executable package in {updDirPath}");

@@ -102,6 +102,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
                 updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
             }
+            else if (updater == null && updaterInternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName) //create the default package  updater
+            {
+                updater = new Updater(DefaultToolkitNames.PackageTriggerUpdaterFileName, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
+                updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
+            }
+
             if (updater != null && updater.DeveloperAccount == null)
             {
                 updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
@@ -139,7 +145,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             UpdaterPackageInfo pkg = new UpdaterPackageInfo(actualVersion, updater.FileName, fileStream.Length, minimumRequiredToolkitVersion);
 
             this.TelimenaContext.UpdaterPackages.Add(pkg);
-            pkg.UpdaterId = updater.Id;
+            pkg.Updater = updater;
             await fileSaver.SaveFile(pkg, fileStream, this.containerName);
 
             return pkg;

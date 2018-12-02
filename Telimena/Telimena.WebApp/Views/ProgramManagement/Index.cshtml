@@ -40,7 +40,7 @@
                 <h3 class="box-title">Program summary</h3>
             </div>
             <div class="box-body">
-                <label class="confirmation label label-md" style="display: none"></label>
+                <label class="confirmation label label-md" id="@Strings.Id.ProgramSummaryBoxConfirmationLabel" style="display: none"></label>
 
                 <div class="form-group">
                     <label>Name: </label>
@@ -72,8 +72,8 @@
                 </div>
                 <div class="form-group">
                     <label>Updater: </label>
-                    @Html.DropDownList("Updaters", Model.UpdatersSelectList, new { id = "updaterSelectList" })
-                    <input type='submit' id="submitUpdaterChange" value='Submit' />
+                    @Html.DropDownList("Updaters", Model.UpdatersSelectList, new { id = @Strings.Id.UpdaterSelectList })
+                    <input type='submit' id="@Strings.Id.SubmitUpdaterChange" value='Submit' />
                 </div>
                 <div class="form-group">
                     <input type="button" class="btn btn-danger" id="@Strings.Id.DeleteProgramButton" value="Delete program" />
@@ -263,7 +263,7 @@
             $('#@Strings.Id.DeleteProgramButton').click(function() {
                 DeleteProgram(this);
             });
-            $('#submitUpdaterChange').click(function() {
+            $('#@Strings.Id.SubmitUpdaterChange').click(function() {
                 SetUpdater(this);
             });
             $('.uploadedPackage').change(function(e) { SingleFileSelected(e, $(this).find('input')) });
@@ -307,7 +307,7 @@
 
 
         function SetUpdater(input) {
-            var id = $('#updaterSelectList').val();
+            var id = $('#@Strings.Id.UpdaterSelectList').val();
 
             $.ajax({
                 type: 'PUT',
