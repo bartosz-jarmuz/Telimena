@@ -45,12 +45,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public UpdaterPackageInfo GetPackageForVersion(Updater updater, string version)
         {
             ObjectValidator.Validate(() => Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
-            return updater.Packages.FirstOrDefault(x => x.Version == version);
+            return updater.Packages.Where(x => x.Version == version).OrderByDescending(x => x.Id).FirstOrDefault(); ;
         }
 
         public Task<UpdaterPackageInfo> GetPackageInfo(Guid packageGuid)
         {
-            return this.TelimenaContext.UpdaterPackages.FirstOrDefaultAsync(x => x.Guid == packageGuid);
+            return this.TelimenaContext.UpdaterPackages.SingleOrDefaultAsync(x => x.Guid == packageGuid);
         }
 
         public async Task<IEnumerable<UpdaterPackageInfo>> GetPackages(string updaterInternalName)
@@ -71,13 +71,13 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             Updater updater = await this.GetUpdaterForProgram(program);
 
             List<UpdaterPackageInfo> newerOnes = updater.Packages.Where(x => x.Version.IsNewerVersionThan(version))
-                    .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+                    .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x=>x.Id).ToList();
             
 
             if (newerOnes.Any())
             {
                 List<UpdaterPackageInfo> compatibleOnes = newerOnes.Where(x => toolkitVersion.IsNewerOrEqualVersion(x.MinimumRequiredToolkitVersion))
-                    .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+                    .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x => x.Id).ToList();
                 if (includingBeta)
                 {
                     return compatibleOnes.FirstOrDefault();
@@ -142,10 +142,17 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             fileStream.Position = 0;
             fileStream = await Utilities.EnsureStreamIsZipped(updater.FileName, fileStream);
 
-            UpdaterPackageInfo pkg = new UpdaterPackageInfo(actualVersion, updater.FileName, fileStream.Length, minimumRequiredToolkitVersion);
+            //UpdaterPackageInfo pkg = await this.TelimenaContext.UpdaterPackages.Where(x =>
+            //    x.FileName == updater.FileName && x.Version == actualVersion && x.MinimumRequiredToolkitVersion == minimumRequiredToolkitVersion &&
+            //    x.Updater.InternalName == updater.InternalName).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
 
-            this.TelimenaContext.UpdaterPackages.Add(pkg);
-            pkg.Updater = updater;
+            //if (pkg == null)
+            //{
+               var pkg = new UpdaterPackageInfo(actualVersion, updater.FileName, fileStream.Length, minimumRequiredToolkitVersion);
+                this.TelimenaContext.UpdaterPackages.Add(pkg);
+                pkg.Updater = updater;
+            //}
+
             await fileSaver.SaveFile(pkg, fileStream, this.containerName);
 
             return pkg;

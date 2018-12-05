@@ -25,11 +25,11 @@ namespace TelimenaClient
         /// <param name="acceptBeta">if set to <c>true</c> [accept beta].</param>
         /// <param name="toolkitVersion">The toolkit version.</param>
         /// <param name="updaterVersion">The updater version.</param>
-        public UpdateRequest(Guid telemetryKey, string programVersion, Guid userId, bool acceptBeta, string toolkitVersion, string updaterVersion)
+        public UpdateRequest(Guid telemetryKey, VersionData programVersion, Guid userId, bool acceptBeta, string toolkitVersion, string updaterVersion)
         {
             this.TelemetryKey = telemetryKey;
             this.UserId = userId;
-            this.ProgramVersion = programVersion;
+            this.VersionData = programVersion;
             this.ToolkitVersion = toolkitVersion;
             this.UpdaterVersion = updaterVersion;
             this.AcceptBeta = acceptBeta;
@@ -51,7 +51,7 @@ namespace TelimenaClient
         /// Gets or sets the program version.
         /// </summary>
         /// <value>The program version.</value>
-        public string ProgramVersion { get; set; }
+        public VersionData VersionData { get; set; }
 
         /// <summary>
         /// Gets or sets the toolkit version.

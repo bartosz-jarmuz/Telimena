@@ -104,7 +104,8 @@ namespace TelimenaTestSandboxApp
             this.apps = new List<ProgramInfo>();
             for (int i = this.appIndexSeed; i < this.numberOfApps + this.appIndexSeed; i++)
             {
-                ProgramInfo programInfo = new ProgramInfo {Name = "Program_" + i, PrimaryAssembly = new AssemblyInfo {Name = "PrimaryAssembly_Program_" + i, AssemblyVersion = $"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}" }};
+                ProgramInfo programInfo = new ProgramInfo {Name = "Program_" + i, PrimaryAssembly = new AssemblyInfo {Name = "PrimaryAssembly_Program_" + i,
+                    VersionData = new VersionData($"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}", $"{ 1 +1 }.{ DateTime.UtcNow.Month }.{ DateTime.UtcNow.Day }.{ rnd.Next(10)}")}};
                 this.apps.Add(programInfo);
                 ITelimena teli = new Telimena(this.telemetryKey, programInfo, new Uri(this.url));
                 await teli.InitializeAsync();

@@ -157,7 +157,7 @@ namespace TelimenaTestSandboxApp
                 this.teli.StaticProgramInfo = new ProgramInfo
                 {
                     Name = this.appNameTextBox.Text
-                    , PrimaryAssembly = new AssemblyInfo {Company = "Comp A Ny", Name = this.appNameTextBox.Text + ".dll", AssemblyVersion = "1.0.0.0"}
+                    , PrimaryAssembly = new AssemblyInfo {Company = "Comp A Ny", Name = this.appNameTextBox.Text + ".dll", VersionData = new VersionData("1.0.0.0", "2.0.0.0")}
                 };
             }
 

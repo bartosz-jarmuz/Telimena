@@ -46,17 +46,9 @@ namespace TelimenaClient
         public string ComponentName { get; set; }
         
         /// <summary>
-        /// Gets or sets the version.
-        /// <para/><seealso href="https://stackoverflow.com/questions/64602/what-are-differences-between-assemblyversion-assemblyfileversion-and-assemblyin"/> 
+        /// Holds info about the version components (file, assembly)
         /// </summary>
-        /// <value>The version.</value>
-        public string AssemblyVersion { get; set; }
-
-        /// <summary>
-        /// The file version which is set by [assembly: AssemblyFileVersion("1.0.0.0")] attribute
-        /// <para/><seealso href="https://stackoverflow.com/questions/64602/what-are-differences-between-assemblyversion-assemblyfileversion-and-assemblyin"/> 
-        /// </summary>
-        public string FileVersion { get; set; }
+        public VersionData VersionData { get; set; }
 
         /// <summary>
         /// Gets or sets the custom data.

@@ -89,9 +89,9 @@ namespace Telimena.WebApp.UITests.Base
             return process;
         }
 
-        protected Process LaunchPackageUpdaterTestsAppWithArgs(string appName, string testSubfolderName, bool waitForExit)
+        protected Process LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, string appName, string testSubfolderName, bool waitForExit)
         {
-            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
+             appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
             PackageUpdateTesterArguments args = new PackageUpdateTesterArguments { ApiUrl = this.BaseUrl };
             args.TelemetryKey = Guid.Parse(PackageUpdaterClientTelemetryKey);
 
@@ -137,6 +137,9 @@ namespace Telimena.WebApp.UITests.Base
 
         protected Process LaunchPackageUpdaterTestsAppNoArgs(string appName, string testSubfolderName, bool waitForExit)
         {
+            this.outputs.Clear();
+            this.errors.Clear();
+
             var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
 
             Process process = new Process();
@@ -167,6 +170,9 @@ namespace Telimena.WebApp.UITests.Base
         protected T LaunchTestsAppAndGetResult<T>(out FileInfo appFile, Actions action, string appName, string testSubfolderName, ProgramInfo pi = null
             , string viewName = null, bool waitForExit = true) where T : class
         {
+            this.outputs.Clear();
+            this.errors.Clear();
+
             appFile = this.LaunchTestsAppNewInstance(out _, action, appName, testSubfolderName, pi, viewName, waitForExit);
 
             T result = this.ParseOutput<T>();
@@ -178,6 +184,9 @@ namespace Telimena.WebApp.UITests.Base
 
         protected T LaunchTestsAppAndGetResult<T>(FileInfo app, Actions action, ProgramInfo pi = null, string viewName = null, bool waitForExit = true) where T : class
         {
+            this.outputs.Clear();
+            this.errors.Clear();
+
             this.LaunchTestsApp(app, action, pi, waitForExit, viewName);
 
             T result = this.ParseOutput<T>();

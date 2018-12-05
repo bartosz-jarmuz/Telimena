@@ -51,7 +51,7 @@ namespace TelimenaClient
         /// Gets the program version.
         /// </summary>
         /// <value>The program version.</value>
-        public string ProgramVersion => this.StaticProgramInfo?.PrimaryAssembly?.AssemblyVersion;
+        public VersionData ProgramVersion => this.StaticProgramInfo?.PrimaryAssembly?.VersionData;
        
         /// <summary>
         /// Gets the telimena version.

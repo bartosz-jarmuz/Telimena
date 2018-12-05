@@ -53,7 +53,21 @@ namespace TelimenaClient
         {
             FileDownloadResult result = await this.messenger.DownloadFile(pkgData.DownloadUrl).ConfigureAwait(false);
             FileInfo pkgFile = new FileInfo(Path.Combine(updatesFolder.FullName, result.FileName));
+            Trace.WriteLine($"{result.FileName} to be stored into {pkgFile.FullName}");
+
+            // this.DeleteFileIfExists(pkgFile);
+
             await SaveStreamToPath(pkgData, pkgFile, result.Stream).ConfigureAwait(false);
+        }
+
+        private void DeleteFileIfExists(FileInfo pkgFile)
+        {
+            try
+            {
+                pkgFile.Delete();
+            }
+            catch (Exception) { //
+                                }
         }
 
         private static async Task SaveStreamToPath(UpdatePackageData pkgData, FileInfo pkgFile, Stream stream)
@@ -62,15 +76,30 @@ namespace TelimenaClient
             try
             {
                 pkgFile.Directory?.Create();
-                fileStream = new FileStream(pkgFile.FullName, FileMode.Create, FileAccess.Write, FileShare.None);
-                await stream.CopyToAsync(fileStream).ContinueWith(copyTask => { fileStream.Close(); }).ConfigureAwait(false);
-                pkgData.StoredFilePath = pkgFile.FullName;
+                using (fileStream = new FileStream(pkgFile.FullName, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    await stream.CopyToAsync(fileStream).ContinueWith(copyTask => {
+                        fileStream.Close();
+                        stream.Close(); }
+                    ).ConfigureAwait(false);
+                    pkgData.StoredFilePath = pkgFile.FullName;
+                }
             }
-            catch
+            catch (Exception ex)
             {
                 fileStream?.Close();
-
-                throw;
+                using (fileStream = new FileStream(pkgFile.FullName + 2, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    await stream.CopyToAsync(fileStream).ContinueWith(copyTask => {
+                        fileStream.Close();
+                        stream.Close();
+                    }
+                    ).ConfigureAwait(false);
+                    pkgData.StoredFilePath = pkgFile.FullName;
+                }
+                throw new IOException("Error while saving stream to file", ex);
             }
         }
 
@@ -81,9 +110,10 @@ namespace TelimenaClient
                 List<Task> downloadTasks = new List<Task>();
                 DirectoryInfo updatesFolder = this.locator.GetCurrentUpdateSubfolder(packagesToDownload);
                 Directory.CreateDirectory(updatesFolder.FullName);
-
                 foreach (UpdatePackageData updatePackageData in packagesToDownload)
                 {
+                    Trace.WriteLine($"Tr: {updatePackageData.DownloadUrl}" + updatePackageData.DownloadUrl);
+
                     downloadTasks.Add(this.StoreUpdatePackage(updatePackageData, updatesFolder));
                 }
 

@@ -152,14 +152,14 @@ namespace Telimena.Tests
         {
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
             UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.0"
+            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.0"
                 , toolkitVersion: "1.3.0");
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
             Assert.AreEqual($"api/Updater/Get?id={result.UpdatePackages.Single().Guid}", result.UpdatePackages.Single().DownloadUrl);
 
-            request = new UpdateRequest(telemetryKey: this.TestProgramWithDifferentUpdaterTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false
+            request = new UpdateRequest(telemetryKey: this.TestProgramWithDifferentUpdaterTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false
                 , updaterVersion: "1.0", toolkitVersion: "1.3.0");
 
             result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -174,14 +174,14 @@ namespace Telimena.Tests
         {
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
             UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            var request = new UpdateRequest(telemetryKey: this.ProgramWhichChangesUpdaterTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false
+            var request = new UpdateRequest(telemetryKey: this.ProgramWhichChangesUpdaterTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false
                 , updaterVersion: "1.0", toolkitVersion: "1.3.0");
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
             this.programWhichChangesUpdater.Updater = unit.UpdaterRepository.GetUpdater("UltraNewest").GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
-            request = new UpdateRequest(telemetryKey: this.ProgramWhichChangesUpdaterTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false
+            request = new UpdateRequest(telemetryKey: this.ProgramWhichChangesUpdaterTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false
                 , updaterVersion: "1.0", toolkitVersion: "1.3.0");
 
             result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -194,13 +194,13 @@ namespace Telimena.Tests
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context, versionReader: new AssemblyStreamVersionReader());
             UpdaterController controller = new UpdaterController(work: unit, serializer: this.serializer, fileSaver: new Mock<IFileSaver>().Object
                 , fileRetriever: new Mock<IFileRetriever>().Object);
-            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.0"
+            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.0"
                 , toolkitVersion: "0.2.0");
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
             Assert.AreEqual(expected: 0, actual: result.UpdatePackages.Count);
-            request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.1.0"
+            request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.1.0"
                 , toolkitVersion: "0.9.0");
 
             result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
@@ -216,21 +216,21 @@ namespace Telimena.Tests
         {
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.1"
+            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.1"
                 , toolkitVersion: "0.2.0");
 
             UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
 
             Assert.AreEqual(0, result.UpdatePackages.Count);
             Assert.IsNull(result.Exception);
-            request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.5"
+            request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.5"
                 , toolkitVersion: "1.0");
 
             result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
             Assert.AreEqual(0, result.UpdatePackages.Count);
             Assert.IsNull(result.Exception);
 
-            request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: "0.0", userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.7"
+            request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.7"
                 , toolkitVersion: "2.0");
 
             result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();

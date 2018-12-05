@@ -80,7 +80,7 @@ namespace Telimena.WebApp.Controllers.Api
                 }
 
                 List<ProgramUpdatePackageInfo> allUpdatePackages =
-                    (await this.work.UpdatePackages.GetAllPackagesNewerThan(requestModel.ProgramVersion, program.Id))
+                    (await this.work.UpdatePackages.GetAllPackagesNewerThan(requestModel.VersionData.Map(), program.Id))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
 
                 List<ProgramUpdatePackageInfo> filteredPackages = this.FilterPackagesSet(allUpdatePackages, requestModel);
@@ -208,8 +208,9 @@ namespace Telimena.WebApp.Controllers.Api
             else
             {
                 //no updates now, so figure out what version is supported by the client already
+                var version = program.DetermineProgramVersion(updateRequest.VersionData.Map());
                 ProgramUpdatePackageInfo previousPackage =
-                    await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == updateRequest.ProgramVersion);
+                    await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == version);
                 if (previousPackage != null)
                 {
                     maxVersionInPackages = previousPackage.SupportedToolkitVersion;

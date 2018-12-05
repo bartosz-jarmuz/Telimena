@@ -19,6 +19,7 @@ using Moq;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
@@ -48,7 +49,7 @@ namespace Telimena.Tests
 
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
 
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, AssemblyVersion = "1.2.3.4",
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
                 TelemetryData = new Dictionary<string, string>()
             {
                 { "AKey", "AValue"},
@@ -85,7 +86,8 @@ namespace Telimena.Tests
             ClientAppUser otherUser = Helpers.GetUser(this.Context, "Jack Black");
 
             //run again with different user
-            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = otherUser.Guid, AssemblyVersion = "1.2.3.4",
+            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = otherUser.Guid,
+                VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
                 TelemetryData = new Dictionary<string, string>()
                 {
                     { "AKey3", "AValue3"},
@@ -118,7 +120,7 @@ namespace Telimena.Tests
             Assert.AreEqual("AValue4", otherUserDetail.GetTelemetryUnits().ElementAt(1).Value);
             
 
-            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, AssemblyVersion = "1.2.3.4"/*, TelemetryData = serialized*/};
+            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0")/*, TelemetryData = serialized*/};
             //run again with first user
             response = await sut.View(request);
             view = prg.Views.Single();
@@ -226,7 +228,7 @@ namespace Telimena.Tests
             };
             request.ProgramInfo.HelperAssemblies = new List<AssemblyInfo>
             {
-                new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", AssemblyVersion = "0.0.0.1"}
+                new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.0.0.1", "2.0.0.0")}
             };
 
             TelemetryInitializeResponse response = await sut.Initialize(request);
@@ -255,7 +257,7 @@ namespace Telimena.Tests
             //third time - different version
             request = new TelemetryInitializeRequest(apps[0].Value)
             {
-                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: "2.0.0.0"),
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: new VersionData("2.0.0.0", "3.0.0.0")),
                 TelimenaVersion = "1.0.0.0",
                 UserInfo = userInfo
             };
@@ -284,7 +286,7 @@ namespace Telimena.Tests
             Helpers.AssertRegistrationResponse(response, prg, usr, 5);
             Assert.AreEqual(latestId, prg.PrimaryAssembly.GetLatestVersion().Id);
             Assert.AreEqual(latestId, prg.GetLatestVersion().Id);
-            Assert.AreEqual(firstVersionId, prg.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.AssemblyVersion, null).Id);
+            Assert.AreEqual(firstVersionId, prg.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.VersionData.Map()).Id);
 
             Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
         }
@@ -305,7 +307,7 @@ namespace Telimena.Tests
             };
             request.ProgramInfo.HelperAssemblies = new List<AssemblyInfo>
             {
-                new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", AssemblyVersion = "0.0.0.1"}
+                new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.0.0.1", "2.0.0.0")}
             };
             TelemetryInitializeResponse response = await sut.Initialize(request);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
@@ -319,7 +321,7 @@ namespace Telimena.Tests
             //second time
             request.ProgramInfo.HelperAssemblies = new List<AssemblyInfo>
             {
-                new AssemblyInfo {Name = "Helper2_" + Helpers.GetName("TestProg") + ".dll", AssemblyVersion =  "0.0.2.2"}
+                new AssemblyInfo {Name = "Helper2_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.0.2.2", "2.0.0.0")}
             };
             response = await sut.Initialize(request);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
@@ -336,13 +338,13 @@ namespace Telimena.Tests
             //third time - different version
             request = new TelemetryInitializeRequest(apps[0].Value)
             {
-                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: "2.0.0.0"),
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: new VersionData("2.0.0.0", "3.0.0.0")),
                 TelimenaVersion = "1.0.0.0",
                 UserInfo = userInfo
             };
             request.ProgramInfo.HelperAssemblies = new List<AssemblyInfo>
             {
-                new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", AssemblyVersion =  "0.3.0.1"} //newer version of helper!
+                new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.3.0.1", "2.0.0.0")} //newer version of helper!
             };
             response = await sut.Initialize(request);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
@@ -397,7 +399,7 @@ namespace Telimena.Tests
             };
             TelemetryInitializeRequest newGuyRequest = new TelemetryInitializeRequest(apps[0].Value)
             {
-                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: "6.0"),
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("TestProg"), version: new VersionData("6.0", "7.0")),
                 TelimenaVersion = "1.0.0.0",
                 UserInfo = newGuyUserInfo
             };
@@ -561,7 +563,7 @@ namespace Telimena.Tests
             Helpers.AddHelperAssemblies(this.Context, 2, "TestApp");
 
             Helpers.GetProgramAndUser(this.Context, "TestApp3", "Jim Beam", out Program prg, out ClientAppUser usr);
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) { UserId = usr.Guid, AssemblyVersion = "1.2.3.4" , ComponentName = "SomeView"};
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) { UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0") , ComponentName = "SomeView"};
 
             TelemetryUpdateResponse response = await sut.View(request);
 
@@ -576,7 +578,7 @@ namespace Telimena.Tests
             var summary = view.TelemetrySummaries.SingleOrDefault(x => x.ClientAppUser.UserName == "TestUpdateAction_Jim Beam");
             Assert.AreEqual(1, summary.SummaryCount);
 
-            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.AssemblyVersion, null).Id);
+            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.VersionData.Map()).Id);
 
 
             //run again
@@ -593,7 +595,7 @@ namespace Telimena.Tests
 
             Assert.AreEqual(2, view.GetTelemetryDetails(this.GetUserByGuid(response.UserId).Id).Count);
             Assert.AreEqual(3, this.Context.ProgramTelemetryDetails.Count(x => x.TelemetrySummary.ProgramId == prg.Id));
-            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.AssemblyVersion, null).Id);
+            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.VersionData.Map()).Id);
         }
 
         private ClientAppUser GetUserByGuid(Guid id)
@@ -616,7 +618,8 @@ namespace Telimena.Tests
             Assert.AreEqual(0, detail.TelemetryUnits.Count);
             Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.AssemblyVersion);
 
-            TelemetryInitializeRequest request = new TelemetryInitializeRequest(prg.TelemetryKey) { UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")), ProgramInfo = Helpers.GetProgramInfo("TestApp",version: "1.2.3.4") };
+            TelemetryInitializeRequest request = new TelemetryInitializeRequest(prg.TelemetryKey) {
+                UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")), ProgramInfo = Helpers.GetProgramInfo("TestApp",version: new VersionData("1.2.3.4", "2.2.3.4")) };
 
             TelemetryInitializeResponse response = await sut.Initialize(request);
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);
@@ -633,7 +636,7 @@ namespace Telimena.Tests
             Assert.AreEqual(usr.Id, detail.TelemetrySummary.ClientAppUserId);
             Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.AssemblyVersion);
 
-            request = new TelemetryInitializeRequest(prg.TelemetryKey) { UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")), ProgramInfo = Helpers.GetProgramInfo("TestApp", version: "2.0.0.0") };
+            request = new TelemetryInitializeRequest(prg.TelemetryKey) { UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")), ProgramInfo = Helpers.GetProgramInfo("TestApp", version: new VersionData("2.0.0.0", "3.0.0.0")) };
 
             response = await sut.Initialize(request);
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);

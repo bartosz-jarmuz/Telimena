@@ -28,22 +28,22 @@ namespace Telimena.WebApp.Core.Models
         }
         public virtual AssemblyVersionInfo LatestVersion { get; private set; }
 
-        public void AddVersion(string version, string fileVersion)
+        public void AddVersion(VersionData version)
         {
-            var existingOne = this.GetVersion(version, fileVersion);
+            var existingOne = this.GetVersion(version);
             if (existingOne == null)
             {
-                ((List<AssemblyVersionInfo>) this.Versions).Add(new AssemblyVersionInfo(version, fileVersion));
+                ((List<AssemblyVersionInfo>) this.Versions).Add(new AssemblyVersionInfo(version));
             }
         }
 
-        public AssemblyVersionInfo GetVersion(string version, string fileVersion)
+        public AssemblyVersionInfo GetVersion(VersionData version)
         {
-            IEnumerable<AssemblyVersionInfo> matches = this.Versions.Where(x => x.AssemblyVersion == version);
+            IEnumerable<AssemblyVersionInfo> matches = this.Versions.Where(x => x.AssemblyVersion == version.AssemblyVersion);
 
-            if (!string.IsNullOrEmpty(fileVersion))
+            if (!string.IsNullOrEmpty(version.FileVersion))
             {
-                matches = matches.Where(x => x.FileVersion == fileVersion);
+                matches = matches.Where(x => x.FileVersion == version.FileVersion);
             }
             return matches.FirstOrDefault();
         }

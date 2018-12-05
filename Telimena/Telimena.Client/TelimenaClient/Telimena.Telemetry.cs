@@ -56,8 +56,7 @@ namespace TelimenaClient
                 {
                      UserId = this.LiveProgramInfo.UserId
                     , ComponentName = componentName
-                    , AssemblyVersion = this.StaticProgramInfo.PrimaryAssembly.AssemblyVersion
-                    , FileVersion = this.StaticProgramInfo.PrimaryAssembly.FileVersion
+                    , VersionData = this.StaticProgramInfo.PrimaryAssembly.VersionData
                     , TelemetryData = telemetryData
                 };
                 string responseContent = await this.Messenger.SendPostRequest(apiRoute, request).ConfigureAwait(false);

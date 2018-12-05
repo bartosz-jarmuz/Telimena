@@ -44,7 +44,13 @@ namespace AutomaticTestsClient
 
         private void HandleUpdates(Telimena telimena)
         {
-            telimena.HandleUpdatesBlocking(false);
+            Console.WriteLine("Starting update handling...");
+            var result = telimena.HandleUpdatesBlocking(false);
+            Console.WriteLine("Finished update handling");
+
+            Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            Console.WriteLine("Updating done");
         }
 
         private Telimena GetTelimena(Guid argumentsTelemetryKey)

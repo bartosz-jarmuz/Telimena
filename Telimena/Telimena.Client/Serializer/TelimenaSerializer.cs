@@ -39,8 +39,16 @@ namespace TelimenaClient.Serializer
         /// <returns></returns>
         public T Deserialize<T>(string stringContent)
         {
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            return serializer.Deserialize<T>(stringContent);
+            try
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                return serializer.Deserialize<T>(stringContent);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error while deserializing string as {typeof(T).Name}", ex); 
+            }
+            
         }
 
         /// <summary>

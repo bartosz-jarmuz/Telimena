@@ -70,16 +70,33 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             ObjectValidator.Validate(() => Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
 
-            TelimenaPackageInfo current = await this.TelimenaContext.ToolkitPackages.FirstOrDefaultAsync(x => x.Version == version);
-
+            TelimenaPackageInfo current = await this.TelimenaContext.ToolkitPackages.Where(x => x.Version == version).OrderByDescending(x => x.Id).FirstOrDefaultAsync() ;
+            List<TelimenaPackageInfo> packages;
             if (current != null)
             {
-                return (await this.TelimenaContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync())
-                    .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+                packages = (await this.TelimenaContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync())
+                    .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x=>x.Id).ToList();
+            }
+            else
+            {
+                packages = (await this.TelimenaContext.ToolkitPackages.ToListAsync()).Where(x => x.Version.IsNewerVersionThan(version))
+                .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x => x.Id).ToList();
             }
 
-            return (await this.TelimenaContext.ToolkitPackages.ToListAsync()).Where(x => x.Version.IsNewerVersionThan(version))
-                .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+            return this.GetUniquePackages(packages);
+        }
+
+        private List<TelimenaPackageInfo> GetUniquePackages(IEnumerable<TelimenaPackageInfo> newerOnes)
+        {
+            var uniquePackages = new List<TelimenaPackageInfo>();
+            foreach (var package in newerOnes)
+            {
+                if (uniquePackages.All(x => x.Version != package.Version))
+                {
+                    uniquePackages.Add(package);
+                }
+            }
+            return uniquePackages;
         }
     }
 }

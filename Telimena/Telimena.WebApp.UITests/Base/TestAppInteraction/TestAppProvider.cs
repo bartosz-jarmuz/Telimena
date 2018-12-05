@@ -46,7 +46,12 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             }
             catch (UnauthorizedAccessException)
             {
-                var pcs = Process.GetProcessesByName("AutomaticTestsClient.exe");
+                var pcs = Process.GetProcessesByName("AutomaticTestsClient.exe" );
+                foreach (Process process in pcs)
+                {
+                    process.Kill();
+                }
+                pcs = Process.GetProcessesByName("PackageTriggerUpdaterTestApp");
                 foreach (Process process in pcs)
                 {
                     process.Kill();

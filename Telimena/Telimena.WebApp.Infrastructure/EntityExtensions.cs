@@ -23,5 +23,14 @@ namespace Telimena.WebApp.Infrastructure
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
+
+        public static VersionData Map(this TelimenaClient.VersionData clientVersionData)
+        {
+            if (clientVersionData == null)
+            {
+                return null;
+            }
+            return AutoMapper.Mapper.Map<VersionData>(clientVersionData);
+        }
     }
 }

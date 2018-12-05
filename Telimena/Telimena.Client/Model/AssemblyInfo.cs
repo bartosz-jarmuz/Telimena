@@ -36,8 +36,12 @@ namespace TelimenaClient
             this.Name = assName.Name;
             this.Extension = Path.GetExtension(assembly.CodeBase);
             this.FullName = assName.FullName;
-            this.AssemblyVersion = TelimenaVersionReader.Read(assembly, VersionTypes.AssemblyVersion);
-            this.FileVersion = TelimenaVersionReader.Read(assembly, VersionTypes.FileVersion);
+
+            this.VersionData = new VersionData(
+                assemblyVersion : TelimenaVersionReader.Read(assembly, VersionTypes.AssemblyVersion),
+                fileVersion: TelimenaVersionReader.Read(assembly, VersionTypes.FileVersion)
+            );
+
             this.Company = assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company;
             this.Description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
             this.Copyright = assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright;
@@ -47,12 +51,7 @@ namespace TelimenaClient
             this.Location = assembly.Location;
         }
 
-        /// <summary>
-        /// The file version which is set by [assembly: AssemblyFileVersion("1.0.0.0")] attribute
-        /// <para/><seealso href="https://stackoverflow.com/questions/64602/what-are-differences-between-assemblyversion-assemblyfileversion-and-assemblyin"/> 
-        /// </summary>
-        public string FileVersion { get; set; }
-
+       
         /// <summary>
         /// Gets or sets the extension.
         /// </summary>
@@ -112,10 +111,10 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The name.</value>
         public string Name { get; set; }
+      
         /// <summary>
-        /// Gets or sets the version related to the [assembly: AssemblyVersion("1.0")] attribute
+        /// Holds the version data
         /// </summary>
-        /// <value>The version.</value>
-        public string AssemblyVersion { get; set; }
+        public VersionData VersionData { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using DotNetLittleHelpers;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -73,6 +74,26 @@ namespace Telimena.WebApp.Core.Models
         public AssemblyVersionInfo GetLatestVersion()
         {
             return this.PrimaryAssembly?.GetLatestVersion();
+        }
+
+        internal bool UseAssemblyVersionAsProgramVersion = false;
+
+        /// <summary>
+        /// At some point we *might* implement a mechanism where program version is determined either by assembly version or file version depending on settings in the cloud 
+        /// but for now, hardcode it to FileVersion
+        /// </summary>
+        /// <param name="versionData"></param>
+        /// <returns></returns>
+        public string DetermineProgramVersion(VersionData versionData)
+        {
+            if (this.UseAssemblyVersionAsProgramVersion)
+            {
+               return versionData.AssemblyVersion;
+            }
+            else
+            {
+                return versionData.FileVersion;
+            }
         }
     }
 }

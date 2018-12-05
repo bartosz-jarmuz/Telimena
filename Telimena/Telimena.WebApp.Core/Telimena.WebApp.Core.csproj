@@ -89,6 +89,7 @@
     <Compile Include="DTO\TelemetryPivotTableRow.cs" />
     <Compile Include="DTO\UsageDataTableResult.cs" />
     <Compile Include="DTO\UsageViewModel.cs" />
+    <Compile Include="DTO\VersionData.cs" />
     <Compile Include="Interfaces\Roles.cs" />
     <Compile Include="Messages\RegisterProgramRequest.cs" />
     <Compile Include="Messages\RegisterProgramResponse.cs" />

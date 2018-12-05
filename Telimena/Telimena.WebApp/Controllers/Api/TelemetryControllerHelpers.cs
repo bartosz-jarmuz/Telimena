@@ -50,7 +50,7 @@ namespace Telimena.WebApp.Controllers.Api
 
                 TelemetrySummary summary = GetTelemetrySummary(actionItems.clientAppUser, trackedComponent);
 
-                AssemblyVersionInfo versionInfoInfo = GetAssemblyVersionInfoOrAddIfMissing(request.AssemblyVersion, request.FileVersion, actionItems.program);
+                AssemblyVersionInfo versionInfoInfo = GetAssemblyVersionInfoOrAddIfMissing(request.VersionData, actionItems.program);
 
                 summary.UpdateTelemetry(versionInfoInfo, getClientIp(), request.TelemetryData);
 
@@ -100,7 +100,7 @@ namespace Telimena.WebApp.Controllers.Api
         public static async Task<ITelemetryAware> RecordVersions(ITelemetryUnitOfWork work, Program program, TelemetryInitializeRequest request)
         {
             AssemblyInfo primaryAss = request.ProgramInfo.PrimaryAssembly;
-            program.PrimaryAssembly.AddVersion(primaryAss.AssemblyVersion, primaryAss.FileVersion);
+            program.PrimaryAssembly.AddVersion(primaryAss.VersionData.Map());
 
             if (request.ProgramInfo.HelperAssemblies.AnyAndNotNull())
             {
@@ -117,18 +117,19 @@ namespace Telimena.WebApp.Controllers.Api
                         UpdateAssemblyInfo(existingAssembly, helperAssembly);
                     }
 
-                    existingAssembly.AddVersion(helperAssembly.AssemblyVersion, helperAssembly.FileVersion);
+                    existingAssembly.AddVersion(helperAssembly.VersionData.Map());
                 }
             }
 
-            await AssignToolkitVersion(work, program.PrimaryAssembly, primaryAss.AssemblyVersion, primaryAss.FileVersion, request.TelimenaVersion);
+            await AssignToolkitVersion(work, program.PrimaryAssembly, primaryAss.VersionData , request.TelimenaVersion);
             return program;
         }
 
-        private static  async Task AssignToolkitVersion(ITelemetryUnitOfWork work, ProgramAssembly programAssembly, string programVersion, string fileVersion, string toolkitVersion)
+        private static  async Task AssignToolkitVersion(ITelemetryUnitOfWork work, ProgramAssembly programAssembly, VersionData versionData, string toolkitVersion)
         {
             TelimenaToolkitData toolkitData = await work.ToolkitData.FirstOrDefaultAsync(x => x.Version == toolkitVersion);
-            AssemblyVersionInfo assemblyVersionInfo = programAssembly.GetVersion(programVersion, fileVersion);
+
+            AssemblyVersionInfo assemblyVersionInfo = programAssembly.GetVersion(versionData.Map());
             if (toolkitData == null)
             {
                 toolkitData = new TelimenaToolkitData(toolkitVersion);
@@ -138,10 +139,11 @@ namespace Telimena.WebApp.Controllers.Api
         }
 
 
-        public static AssemblyVersionInfo GetAssemblyVersionInfoOrAddIfMissing(string assemblyVersion, string fileVersion, Program program)
+        public static AssemblyVersionInfo GetAssemblyVersionInfoOrAddIfMissing(VersionData versionData, Program program)
         {
-            program.PrimaryAssembly.AddVersion(assemblyVersion, fileVersion);
-            AssemblyVersionInfo versionInfo = program.PrimaryAssembly.GetVersion(assemblyVersion, fileVersion);
+            var mappedData = Mapper.Map<Core.VersionData>(versionData);
+            program.PrimaryAssembly.AddVersion(mappedData);
+            AssemblyVersionInfo versionInfo = program.PrimaryAssembly.GetVersion(mappedData);
             return versionInfo;
         }
 

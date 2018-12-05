@@ -129,7 +129,7 @@ namespace TelimenaClient.Tests
                 Assert.AreEqual(this.telemetryKey, jObj.TelemetryKey);
                 Assert.AreEqual(this.returnedUserGuid, jObj.UserId);
                 Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.ComponentName);
-                Assert.IsTrue(Version.TryParse(jObj.AssemblyVersion, out _));
+                Assert.IsTrue(Version.TryParse(jObj.VersionData.AssemblyVersion, out _));
             }
         }
 

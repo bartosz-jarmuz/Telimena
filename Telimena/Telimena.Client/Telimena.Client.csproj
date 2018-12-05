@@ -84,6 +84,7 @@
     <Compile Include="Model\LiveProgramInfo.cs" />
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
+    <Compile Include="Model\VersionData.cs" />
     <Compile Include="TelimenaClient\Interface\ITelimena.Telemetry.cs" />
     <Compile Include="TelimenaClient\Interface\ITelimena.Updating.cs" />
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />

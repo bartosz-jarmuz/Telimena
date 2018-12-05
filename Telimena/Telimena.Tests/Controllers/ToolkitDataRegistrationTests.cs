@@ -44,7 +44,7 @@ namespace Telimena.Tests
 
             request.ProgramInfo.HelperAssemblies = new List<AssemblyInfo>
             {
-                new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", AssemblyVersion = "0.0.0.1"}
+                new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.0.0.1", "3.0.0")}
             };
 
             await sut.Initialize(request);
@@ -61,7 +61,7 @@ namespace Telimena.Tests
             request = new TelemetryInitializeRequest(apps2[0].Value)
 
             {
-                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: "2.0.0"),
+                ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: new VersionData("2.0.0", "3.0.0")),
             TelimenaVersion = "1.3.0.0",
                 UserInfo = userInfo
             };
@@ -77,7 +77,7 @@ namespace Telimena.Tests
             Assert.AreEqual("1.3.0.0", prg.PrimaryAssembly.GetLatestVersion().ToolkitData.Version);
 
             //now a new version of an assembly will use the same toolkit version
-            request.ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: "3.0.0");
+            request.ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: new VersionData("3.0.0", "4.0.0"));
 
             await sut.Initialize(request);
 
@@ -90,7 +90,7 @@ namespace Telimena.Tests
 
 
             //now an even newer version of an assembly will use a new toolkit version
-            request.ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: "4.0.0");
+            request.ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: new VersionData("4.0.0", "5.0.0"));
             request.TelimenaVersion = "4.5.0.0";
 
             await sut.Initialize(request);

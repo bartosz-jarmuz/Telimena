@@ -120,8 +120,7 @@ namespace TelimenaClient
                 {
                      UserId = telemetryInitializeResponse.UserId
                     , ComponentName = viewName
-                    , AssemblyVersion = data.ProgramInfo.PrimaryAssembly.AssemblyVersion
-                    , FileVersion= data.ProgramInfo.PrimaryAssembly.FileVersion
+                    , VersionData = data.ProgramInfo.PrimaryAssembly.VersionData
                 };
                 responseContent = await messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, updateRequest).ConfigureAwait(false);
                 return serializer.Deserialize<TelemetryUpdateResponse>(responseContent);

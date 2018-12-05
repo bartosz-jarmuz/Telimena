@@ -34,7 +34,7 @@ namespace Telimena.Tests
                 ProgramAssembly ass = new ProgramAssembly {Name = assName, Extension = ".dll"};
                 prg.ProgramAssemblies.Add(ass);
 
-                ass.AddVersion("0.0.1.0", null);
+                ass.AddVersion(new WebApp.Core.VersionData("0.0.1.0", "2.0.1.0"));
             }
         }
 
@@ -86,11 +86,15 @@ namespace Telimena.Tests
             usr = GetUser(context, userName, methodIdentifier);
         }
 
-        public static ProgramInfo GetProgramInfo(string name, string company = "xyz", string copyright = "Reserved", string version = "1.2.3.4")
+        public static ProgramInfo GetProgramInfo(string name, string company = "xyz", string copyright = "Reserved", VersionData version = null)
         {
+            if (version == null)
+            {
+                version = new VersionData("1.2.3.4", "2.2.3.4");
+            }
             return new ProgramInfo
             {
-                Name = name, PrimaryAssembly = new AssemblyInfo {Company = company, Copyright = copyright, Name = name, Extension = ".dll", AssemblyVersion = version}
+                Name = name, PrimaryAssembly = new AssemblyInfo {Company = company, Copyright = copyright, Name = name, Extension = ".dll", VersionData = version}
             };
         }
 

@@ -15,7 +15,7 @@ namespace Telimena.Updater
                 this.ProcessPackage(instructions.ProgramExecutableLocation, new FileInfo(packagePath));
             }
         }
-
+        
         private static bool PrepareAndValidatePackage(FileInfo package, string updDirPath)
         {
             for (int i = 0; i < 4; i++)
