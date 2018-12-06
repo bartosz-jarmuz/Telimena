@@ -132,6 +132,11 @@ namespace TelimenaClient
 
                 this.LiveProgramInfo.UpdaterName = updaterNameTask.Result;
 
+                if (string.IsNullOrEmpty(this.LiveProgramInfo.UpdaterName))
+                {
+                    throw new InvalidOperationException($"Updater name is null or empty. Task result: {updaterNameTask.Status}");
+                }
+
             }
             catch (Exception ex)
             {

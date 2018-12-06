@@ -142,16 +142,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             fileStream.Position = 0;
             fileStream = await Utilities.EnsureStreamIsZipped(updater.FileName, fileStream);
 
-            //UpdaterPackageInfo pkg = await this.TelimenaContext.UpdaterPackages.Where(x =>
-            //    x.FileName == updater.FileName && x.Version == actualVersion && x.MinimumRequiredToolkitVersion == minimumRequiredToolkitVersion &&
-            //    x.Updater.InternalName == updater.InternalName).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
+            UpdaterPackageInfo pkg = await this.TelimenaContext.UpdaterPackages.Where(x =>
+                x.FileName == updater.FileName && x.Version == actualVersion && x.MinimumRequiredToolkitVersion == minimumRequiredToolkitVersion &&
+                x.Updater.InternalName == updater.InternalName).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
 
-            //if (pkg == null)
-            //{
-               var pkg = new UpdaterPackageInfo(actualVersion, updater.FileName, fileStream.Length, minimumRequiredToolkitVersion);
+            if (pkg == null)
+            {
+                pkg = new UpdaterPackageInfo(actualVersion, updater.FileName, fileStream.Length, minimumRequiredToolkitVersion);
                 this.TelimenaContext.UpdaterPackages.Add(pkg);
                 pkg.Updater = updater;
-            //}
+            }
 
             await fileSaver.SaveFile(pkg, fileStream, this.containerName);
 

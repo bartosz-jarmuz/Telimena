@@ -46,16 +46,11 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             }
             catch (UnauthorizedAccessException)
             {
-                var pcs = Process.GetProcessesByName("AutomaticTestsClient.exe" );
-                foreach (Process process in pcs)
-                {
-                    process.Kill();
-                }
-                pcs = Process.GetProcessesByName("PackageTriggerUpdaterTestApp");
-                foreach (Process process in pcs)
-                {
-                    process.Kill();
-                }
+                KillProcessesByName("AutomaticTestsClient.exe");
+                KillProcessesByName("AutomaticTestsClient");
+                KillProcessesByName("PackageTriggerUpdaterTestApp");
+                KillProcessesByName("PackageTriggerUpdaterTestApp.exe");
+                
                 targetDir.Delete(true);
             }
             targetDir.Create();
@@ -63,6 +58,15 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             ZipFile.ExtractToDirectory(compressedFile.FullName, targetDir.FullName);
 
             return targetDir.GetFiles().FirstOrDefault(x => x.Name.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        private static void KillProcessesByName(string name)
+        {
+            var pcs = Process.GetProcessesByName(name);
+            foreach (Process process in pcs)
+            {
+                process.Kill();
+            }
         }
     }
 }

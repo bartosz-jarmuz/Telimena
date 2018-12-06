@@ -78,9 +78,9 @@ namespace Telimena.Tests
             Assert.AreEqual(usr.Id, detail.GetTelemetrySummary().ClientAppUserId);
             Assert.AreEqual(2, detail.GetTelemetryUnits().Count());
             Assert.AreEqual("AKey", detail.GetTelemetryUnits().ElementAt(0).Key);
-            Assert.AreEqual("AValue", detail.GetTelemetryUnits().ElementAt(0).Value);
+            Assert.AreEqual("AValue", detail.GetTelemetryUnits().ElementAt(0).ValueString);
             Assert.AreEqual("AKey2", detail.GetTelemetryUnits().ElementAt(1).Key);
-            Assert.AreEqual("AValue2", detail.GetTelemetryUnits().ElementAt(1).Value);
+            Assert.AreEqual("AValue2", detail.GetTelemetryUnits().ElementAt(1).ValueString);
           
 
             ClientAppUser otherUser = Helpers.GetUser(this.Context, "Jack Black");
@@ -115,9 +115,9 @@ namespace Telimena.Tests
             Assert.AreEqual(otherUser.Id, otherUserDetail.GetTelemetrySummary().ClientAppUserId);
             Assert.AreEqual(3, otherUserDetail.GetTelemetryUnits().Count());
             Assert.AreEqual("AKey3", otherUserDetail.GetTelemetryUnits().ElementAt(0).Key);
-            Assert.AreEqual("AValue3", otherUserDetail.GetTelemetryUnits().ElementAt(0).Value);
+            Assert.AreEqual("AValue3", otherUserDetail.GetTelemetryUnits().ElementAt(0).ValueString);
             Assert.AreEqual("AKey4", otherUserDetail.GetTelemetryUnits().ElementAt(1).Key);
-            Assert.AreEqual("AValue4", otherUserDetail.GetTelemetryUnits().ElementAt(1).Value);
+            Assert.AreEqual("AValue4", otherUserDetail.GetTelemetryUnits().ElementAt(1).ValueString);
             
 
             request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0")/*, TelemetryData = serialized*/};

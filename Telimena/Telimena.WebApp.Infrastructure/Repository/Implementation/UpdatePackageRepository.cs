@@ -52,14 +52,14 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             ObjectValidator.Validate(() => this.TelimenaContext.ToolkitPackages.Any(x => x.Version == supportedToolkitVersion)
                 , new ArgumentException($"There is no toolkit package with version [{supportedToolkitVersion}]"));
 
-            //ProgramUpdatePackageInfo pkg = await this.TelimenaContext.UpdatePackages.Where(x=>x.ProgramId == program.Id
-            //                                                                                                && x.Version == actualVersion
-            //                                                                                                && x.SupportedToolkitVersion == supportedToolkitVersion).OrderByDescending(x=>x.Id).FirstOrDefaultAsync();
-            //if (pkg == null)
-            //{
-               var pkg = new ProgramUpdatePackageInfo(packageName, program.Id, actualVersion, fileStream.Length, supportedToolkitVersion);
+            ProgramUpdatePackageInfo pkg = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == program.Id
+                                                                                                            && x.Version == actualVersion
+                                                                                                            && x.SupportedToolkitVersion == supportedToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+            if (pkg == null)
+            {
+                pkg = new ProgramUpdatePackageInfo(packageName, program.Id, actualVersion, fileStream.Length, supportedToolkitVersion);
                 this.TelimenaContext.UpdatePackages.Add(pkg);
-            //}
+            }
 
             await fileSaver.SaveFile(pkg, fileStream, this.containerName);
 

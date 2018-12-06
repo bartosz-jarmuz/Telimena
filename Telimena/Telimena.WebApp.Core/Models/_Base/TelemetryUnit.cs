@@ -10,6 +10,6 @@ namespace Telimena.WebApp.Core.Models
         [MaxLength(50)]
         public string Key { get; set; }
 
-        public string Value { get; set; }
+        public string ValueString { get; set; }
     }
 }

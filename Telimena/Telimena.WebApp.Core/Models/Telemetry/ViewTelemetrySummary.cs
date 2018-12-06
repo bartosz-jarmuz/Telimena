@@ -27,7 +27,7 @@ namespace Telimena.WebApp.Core.Models
             {
                 foreach (KeyValuePair<string, string> unit in telemetryUnits)
                 {
-                    var telemetryUnit = new ViewTelemetryUnit() {Key = unit.Key, Value = unit.Value};
+                    var telemetryUnit = new ViewTelemetryUnit() {Key = unit.Key, ValueString = unit.Value};
                     ((List<ViewTelemetryUnit>)detail.TelemetryUnits).Add(telemetryUnit);
                 }
             }

@@ -331,7 +331,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                         ComponentName = detail.GetTelemetrySummary().GetComponent().Name
                         , Date = detail.DateTime.Date.ToString("yyyy-MM-dd")
                         , Time = detail.DateTime.TimeOfDay.TotalSeconds
-                        , Value = detailTelemetryUnit.Value
+                        , Value = detailTelemetryUnit.ValueString
                         , Key = detailTelemetryUnit.Key
                         , TelemetryDetailId = detail.Guid
                         , UserName = detail.GetTelemetrySummary().ClientAppUser.UserName
