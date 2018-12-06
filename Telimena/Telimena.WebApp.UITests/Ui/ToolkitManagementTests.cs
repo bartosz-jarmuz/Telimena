@@ -79,7 +79,8 @@ namespace Telimena.WebApp.UITests.Ui
 
             Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
 
-            Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package 2.1.0.0 with ID "));
+            Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package "));
+            Assert.IsTrue(confirmationBox.Text.Contains(" with ID "));
 
         }
 
