@@ -100,9 +100,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ui\AppManagementTests.cs" />
-    <Compile Include="Ui\ToolkitManagementTests.cs" />
-    <Compile Include="Ui\LoginTests.cs" />
+    <Compile Include="01. Ui\AppManagementTests.cs" />
+    <Compile Include="01. Ui\ToolkitManagementTests.cs" />
+    <Compile Include="01. Ui\LoginTests.cs" />
     <Compile Include="Base\ConfigKeys.cs" />
     <Compile Include="Base\DeployedTestEngine.cs" />
     <Compile Include="Base\IntegrationTestBase.cs" />
@@ -112,35 +112,35 @@
     <Compile Include="Base\UiTestBase.cs" />
     <Compile Include="Base\TestFileNames.cs" />
     <Compile Include="Base\Common.cs" />
-    <Compile Include="IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.cs" />
-    <Compile Include="IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_StatsTests.cs" />
+    <Compile Include="02. IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.cs" />
+    <Compile Include="02. IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_StatsTests.cs" />
     <Compile Include="Base\TestHelpers.cs" />
     <Compile Include="Base\TestAppInteraction\ProcessCreator.cs" />
-    <Compile Include="Ui\StatsTests.cs" />
+    <Compile Include="01. Ui\StatsTests.cs" />
     <Compile Include="Base\TestAppInteraction\TestAppProvider.cs" />
     <Compile Include="Base\TestAppInteraction\UtilTest.cs" />
-    <Compile Include="Ui\NavigationTests.cs" />
+    <Compile Include="01. Ui\NavigationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UITestsInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="IntegrationTests\Apps\AutomaticTestsClientv2.zip">
+    <None Include="02. IntegrationTests\Apps\AutomaticTestsClientv2.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="IntegrationTests\Apps\PackageTriggerUpdater.zip">
+    <None Include="02. IntegrationTests\Apps\PackageTriggerUpdater.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="IntegrationTests\Apps\PackageTriggerUpdaterTestApp v.1.0.0.0.zip">
+    <None Include="02. IntegrationTests\Apps\PackageTriggerUpdaterTestApp v.1.0.0.0.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="IntegrationTests\Apps\PackageTriggerUpdaterTestApp v.2.0.0.0.zip">
+    <None Include="02. IntegrationTests\Apps\PackageTriggerUpdaterTestApp v.2.0.0.0.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="IntegrationTests\Apps\TestApp v1.0.0.0.zip">
+    <None Include="02. IntegrationTests\Apps\TestApp v1.0.0.0.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="IntegrationTests\Apps\Updater.zip">
+    <None Include="02. IntegrationTests\Apps\Updater.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -169,10 +169,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="IntegrationTests\Apps\Telimena.Client.dll">
+    <Content Include="02. IntegrationTests\Apps\Telimena.Client.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="IntegrationTests\Apps\Updater.exe">
+    <Content Include="02. IntegrationTests\Apps\Updater.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

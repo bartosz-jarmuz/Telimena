@@ -12,7 +12,7 @@ using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace Telimena.WebApp.UITests.Ui
+namespace Telimena.WebApp.UITests._01._Ui
 {
     using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 

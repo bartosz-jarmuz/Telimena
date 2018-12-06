@@ -7,7 +7,7 @@ using Telimena.WebApp.UITests.Base;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
-namespace Telimena.WebApp.UITests.Ui
+namespace Telimena.WebApp.UITests._01._Ui
 {
     [TestFixture]
     public partial class _1_UiTests : UiTestBase

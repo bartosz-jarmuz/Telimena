@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using AutomaticTestsClient;
 using DotNetLittleHelpers;
@@ -17,7 +14,7 @@ using TestStack.White.UIItems.Finders;
 using TestStack.White.UIItems.WindowItems;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrationTests
+namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityIntegrationTests
 {
     public class VersionTuple
     {
@@ -37,7 +34,7 @@ namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrat
         }
         public async Task<VersionTuple> GetVersionsFromApp(FileInfo exe)
         {
-            Log($"Starting process [{exe.FullName}]");
+            this.Log($"Starting process [{exe.FullName}]");
             var process = Process.Start(exe.FullName);
             Application app = TestStack.White.Application.Attach(process);
 

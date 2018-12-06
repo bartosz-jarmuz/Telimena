@@ -11,11 +11,11 @@ using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 
-namespace Telimena.WebApp.UITests.Ui
+namespace Telimena.WebApp.UITests._01._Ui
 {
     using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
-    [TestFixture]
+    [TestFixture, Order(1)]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_UiTests : UiTestBase
     {

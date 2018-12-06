@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using AutomaticTestsClient;
 using NUnit.Framework;
 using Telimena.WebApp.UITests.Base;
@@ -10,9 +8,9 @@ using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace Telimena.WebApp.UITests.IntegrationTests.BackwardCompatibilityIntegrationTests
+namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityIntegrationTests
 {
-    [TestFixture]
+    [TestFixture, Order(2)]
     public partial class _2_NonUiTests : IntegrationTestBase
     {
         [Test]

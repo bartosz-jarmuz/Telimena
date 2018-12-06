@@ -7,7 +7,7 @@ using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
 using Assert = NUnit.Framework.Assert;
 
-namespace Telimena.WebApp.UITests.Ui
+namespace Telimena.WebApp.UITests._01._Ui
 {
 
     [TestFixture]

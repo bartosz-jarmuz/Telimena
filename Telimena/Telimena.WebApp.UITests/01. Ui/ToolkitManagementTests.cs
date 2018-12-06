@@ -9,11 +9,12 @@ using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 
-namespace Telimena.WebApp.UITests.Ui
+namespace Telimena.WebApp.UITests._01._Ui
 {
     using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
     [TestFixture]
+    [TestFixture(), Timeout(3 * 60 * 1000)]
     public partial class _1_UiTests : UiTestBase
     {
 
@@ -51,9 +52,6 @@ namespace Telimena.WebApp.UITests.Ui
         }
 
         
-
-
-
         [Test]
         public void _01_UploadToolkit()
         {
@@ -89,7 +87,7 @@ namespace Telimena.WebApp.UITests.Ui
         {
             try
             {
-                UploadUpdater("Updater.exe", DefaultToolkitNames.UpdaterInternalName, null);
+                this.UploadUpdater("Updater.exe", DefaultToolkitNames.UpdaterInternalName, null);
             }
             catch (Exception ex)
             {
@@ -103,7 +101,7 @@ namespace Telimena.WebApp.UITests.Ui
         {
             try
             {
-                UploadUpdater("Updater.zip", DefaultToolkitNames.UpdaterInternalName, null);
+                this.UploadUpdater("Updater.zip", DefaultToolkitNames.UpdaterInternalName, null);
             }
             catch (Exception ex)
             {
@@ -116,7 +114,7 @@ namespace Telimena.WebApp.UITests.Ui
         {
             try
             {
-                UploadUpdater("PackageTriggerUpdater.zip", DefaultToolkitNames.PackageTriggerUpdaterInternalName, DefaultToolkitNames.PackageTriggerUpdaterFileName);
+                this.UploadUpdater("PackageTriggerUpdater.zip", DefaultToolkitNames.PackageTriggerUpdaterInternalName, DefaultToolkitNames.PackageTriggerUpdaterFileName);
             }
             catch (Exception ex)
             {
