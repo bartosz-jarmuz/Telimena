@@ -11,5 +11,7 @@ namespace Telimena.WebApp.Core.Models
         public string Key { get; set; }
 
         public string ValueString { get; set; }
+
+        public bool ValueBoolean { get; set; }
     }
 }
