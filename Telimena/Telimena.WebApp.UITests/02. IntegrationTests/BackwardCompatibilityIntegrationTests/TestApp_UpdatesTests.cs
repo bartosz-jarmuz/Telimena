@@ -52,17 +52,17 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         }
 
          [Test]
-        public async Task HandleUpdatesNonBetaTests()
+        public async Task _02_HandleUpdatesNonBetaTests()
         {
             try
             {
 
-                VersionTuple initialVersions = await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1, nameof(this.HandleUpdatesNonBetaTests));
+                VersionTuple initialVersions = await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1, nameof(this._02_HandleUpdatesNonBetaTests));
 
                 FileInfo appFile;
 
                 this.LaunchTestsAppAndGetResult<UpdateCheckResult>(out appFile, Actions.HandleUpdates, TestAppProvider.FileNames.TestAppV1
-                    , nameof(this.HandleUpdatesNonBetaTests), waitForExit: false);
+                    , nameof(this._02_HandleUpdatesNonBetaTests), waitForExit: false);
                 Window updateNowMsgBox =
                     await TestHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient update installation"), TimeSpan.FromMinutes(1));
                 updateNowMsgBox.Get<Button>(SearchCriteria.ByText("Yes")).Click();
@@ -97,11 +97,11 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
 
 
         [Test]
-        public async Task HandlePackageUpdatesNonBetaTests()
+        public async Task _01_HandlePackageUpdatesNonBetaTests()
         {
             try
             {
-                this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, TestAppProvider.FileNames.PackageUpdaterTestAppV1, nameof(this.HandlePackageUpdatesNonBetaTests), waitForExit: false);
+                this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, TestAppProvider.FileNames.PackageUpdaterTestAppV1, nameof(this._01_HandlePackageUpdatesNonBetaTests), waitForExit: false);
 
                 Window updateNowMsgBox =
                     await TestHelpers.WaitForWindowAsync(x => x.Equals("PackageTriggerUpdaterTestApp update installation"), TimeSpan.FromMinutes(2));
