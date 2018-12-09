@@ -38,12 +38,12 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
                 {
-                    return new RegisterProgramResponse(new BadRequestException(string.Join(", ", errors)));
+                    throw new BadRequestException(string.Join(", ", errors));
                 }
 
                 if (await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey) != null)
                 {
-                    return new RegisterProgramResponse(new BadRequestException($"Use different telemetry key"));
+                    throw new BadRequestException($"Use different telemetry key");
                 }
 
                 TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
@@ -61,7 +61,8 @@ namespace Telimena.WebApp.Controllers.Api
 
                 var primaryAss = new ProgramAssembly()
                 {
-                    Name = Path.GetFileNameWithoutExtension(request.PrimaryAssemblyFileName), Extension = Path.GetExtension(request.PrimaryAssemblyFileName)
+                    Name = Path.GetFileNameWithoutExtension(request.PrimaryAssemblyFileName),
+                    Extension = Path.GetExtension(request.PrimaryAssemblyFileName)
                 };
                 program.PrimaryAssembly = primaryAss;
 
@@ -70,12 +71,13 @@ namespace Telimena.WebApp.Controllers.Api
                 await this.Work.CompleteAsync();
 
                 program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey);
-                var url = Url?.Link("Default", new {Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey});
+                var url = Url?.Link("Default", new { Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey });
                 return new RegisterProgramResponse(program.TelemetryKey, program.DeveloperAccount.Id, url);
             }
             catch (Exception ex)
             {
-                return new RegisterProgramResponse(ex);
+
+                throw new InvalidOperationException("Failed to register program. ", ex);
             }
         }
 
@@ -125,7 +127,7 @@ namespace Telimena.WebApp.Controllers.Api
         public async Task<IEnumerable<Program>> GetPrograms(Guid developerGuid)
         {
 
-            return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Guid  == developerGuid);
+            return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Guid == developerGuid);
         }
     }
 }
