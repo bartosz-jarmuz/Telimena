@@ -51,11 +51,14 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
+                this.DeleteApp("Unit test app", true);
+
+
                 this.RegisterApp("Unit test app", null, "To be deleted", "Auto test TestPlugin.dll", true, false);
 
                 this.RegisterApp("Unit test app", null, "To be deleted", "Auto test TestPlugin.dll", true, true);
 
-                this.DeleteApp("Unit test app");
+                this.DeleteApp("Unit test app", false);
             }
             catch (Exception ex)
             {
@@ -68,11 +71,27 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        private void DeleteApp(string appName)
+        private void DeleteApp(string appName, bool maybeNotExists)
         {
-            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+            this.GoToAdminHomePage();
 
-            this.Driver.FindElement(By.Id($"{appName}_menu")).Click();
+            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+            
+            IWebElement element = this.TryFind(By.Id($"{appName}_menu"));
+            if (element == null )
+            {
+                if (maybeNotExists)
+                {
+                    return;
+
+                }
+                else
+                {
+                    Assert.Fail("Failed to find app button");
+                }
+            }
+            
+            element.Click();
             IWebElement link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id($"{appName}_manageLink")));
 
             link.Click();
@@ -127,7 +146,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 {
                     if (alert.Text != "Use different telemetry key")
                     {
-                        Assert.AreEqual($"A program with name [{name}] was already registered", alert.Text);
+                        Assert.AreEqual($"A program with name [{name}] was already registered by TelimenaSystemDevTeam", alert.Text);
                     }
                     alert.Accept();
                     return;

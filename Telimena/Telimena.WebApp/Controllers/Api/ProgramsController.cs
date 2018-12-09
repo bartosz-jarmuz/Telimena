@@ -38,12 +38,12 @@ namespace Telimena.WebApp.Controllers.Api
             {
                 if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
                 {
-                    throw new BadRequestException(string.Join(", ", errors));
+                    return new RegisterProgramResponse(new BadRequestException(string.Join(", ", errors)));
                 }
 
                 if (await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey) != null)
                 {
-                    throw new BadRequestException($"Use different telemetry key");
+                    return new RegisterProgramResponse(new BadRequestException($"Use different telemetry key"));
                 }
 
                 TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
@@ -75,8 +75,7 @@ namespace Telimena.WebApp.Controllers.Api
             }
             catch (Exception ex)
             {
-
-                throw new InvalidOperationException("Failed to register program. ", ex);
+                return new RegisterProgramResponse(ex);
             }
         }
 

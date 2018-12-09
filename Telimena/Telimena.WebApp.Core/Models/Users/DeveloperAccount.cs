@@ -43,7 +43,7 @@ namespace Telimena.WebApp.Core.Models
             {
                 if (this.Programs.Any(x => x.Name == program.Name))
                 {
-                    throw new ArgumentException($"A program with name [{program.Name}] was already registered");
+                    throw new ArgumentException($"A program with name [{program.Name}] was already registered by {this.Name}");
                 }
                 ((List<Program>) this.Programs).Add(program);
             }

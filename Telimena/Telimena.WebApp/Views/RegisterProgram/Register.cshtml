@@ -61,7 +61,11 @@
                         data: JSON.stringify(model)
                     })
                     .done(function (xhr) {
-                        window.location.href = xhr.ProgramPageUrl;
+                        if (xhr.Exception === undefined) {
+                            window.location.href = xhr.ProgramPageUrl;
+                        } else {
+                            alert(xhr.Exception.Message);
+                        }
                     })
                     .fail(function(xhr) {
                         alert(xhr.responseJSON.InnerException.ExceptionMessage);
