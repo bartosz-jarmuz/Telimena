@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using TelimenaClient;
 
 namespace AutomaticTestsClient
@@ -45,8 +46,13 @@ namespace AutomaticTestsClient
         private void HandleUpdates(Telimena telimena)
         {
             Console.WriteLine("Starting update handling...");
+
             var result = telimena.HandleUpdatesBlocking(false);
             Console.WriteLine("Finished update handling");
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                ContractResolver = new MyJsonContractResolver(),
+            };
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
 
@@ -94,6 +100,20 @@ namespace AutomaticTestsClient
             }
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
+        }
+    }
+    class MyJsonContractResolver : DefaultContractResolver
+    {
+        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        {
+            var list = base.CreateProperties(type, memberSerialization);
+
+            foreach (var prop in list)
+            {
+                prop.Ignored = false; // Don't ignore any property
+            }
+
+            return list;
         }
     }
 }

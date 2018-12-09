@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using TelimenaClient;
 
 namespace TelimenaTestSandboxApp
@@ -23,20 +26,20 @@ namespace TelimenaTestSandboxApp
 
         private string PresentResponse(TelimenaResponseBase response)
         {
-            if (response.Exception != null)
+            JsonSerializerSettings settings = new JsonSerializerSettings
             {
-                return response.Exception.ToString();
-            }
-            return new JavaScriptSerializer().Serialize(response);
+                ContractResolver = new MyContractResolver(),
+            };
+            return JsonConvert.SerializeObject(response, settings);
         }
 
         private string PresentResponse(UpdateCheckResult response)
         {
-            if (response.Exception != null)
+            JsonSerializerSettings settings = new JsonSerializerSettings
             {
-                return response.Exception.ToString();
-            }
-            return new JavaScriptSerializer().Serialize(response);
+                ContractResolver = new MyContractResolver(),
+            };
+            return JsonConvert.SerializeObject(response, settings);
         }
 
         private Telimena teli;
@@ -260,5 +263,20 @@ namespace TelimenaTestSandboxApp
         }
 
        
+    }
+
+    class MyContractResolver : DefaultContractResolver
+    {
+        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        {
+            var list = base.CreateProperties(type, memberSerialization);
+
+            foreach (var prop in list)
+            {
+                prop.Ignored = false; // Don't ignore any property
+            }
+
+            return list;
+        }
     }
 }

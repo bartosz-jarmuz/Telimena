@@ -18,7 +18,7 @@ namespace TelimenaClient
         /// Gets or sets the exception.
         /// </summary>
         /// <value>The exception.</value>
-        public Exception Exception { get; set; }
+        public TelimenaException Exception { get; set; }
 
         /// <summary>
         /// Gets or sets the program updates to install.

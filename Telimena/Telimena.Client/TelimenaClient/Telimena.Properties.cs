@@ -95,5 +95,7 @@ namespace TelimenaClient
         /// The unique key for this program's telemetry service
         /// </summary>
         public Guid TelemetryKey { get;  }
+
+        private TelemetryInitializeResponse initializationResponse;
     }
 }

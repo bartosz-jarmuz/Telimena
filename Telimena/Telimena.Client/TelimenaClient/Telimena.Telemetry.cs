@@ -51,7 +51,11 @@ namespace TelimenaClient
             TelemetryUpdateRequest request = null;
             try
             {
-                await this.InitializeIfNeeded().ConfigureAwait(false);
+               TelemetryInitializeResponse result = await this.InitializeIfNeeded().ConfigureAwait(false);
+                if (result.Exception != null)
+                {
+                    throw result.Exception;
+                }
                 request = new TelemetryUpdateRequest(this.TelemetryKey)
                 {
                      UserId = this.LiveProgramInfo.UserId
@@ -64,7 +68,7 @@ namespace TelimenaClient
             }
             catch (Exception ex)
             {
-                TelimenaException exception = new TelimenaException($"Error occurred while sending update [{componentName}] statistics request", ex
+                TelimenaException exception = new TelimenaException($"Error occurred while sending update [{componentName}] telemetry request", ex
                     , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), request));
                 if (!this.SuppressAllErrors)
                 {

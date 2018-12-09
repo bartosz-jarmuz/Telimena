@@ -96,15 +96,21 @@ namespace TelimenaClient
             this.LoadAssemblyInfos(this.HelperAssemblies);
         }
 
-        private async Task InitializeIfNeeded()
+        private async Task<TelemetryInitializeResponse> InitializeIfNeeded()
         {
             if (!this.IsInitialized)
             {
                 var response = await this.InitializeAsync_toReDo().ConfigureAwait(false);
-                if (response.Exception == null)
+                if (response == null)
                 {
                     this.IsInitialized = true;
                 }
+                this.initializationResponse = response;
+                return this.initializationResponse;
+            }
+            else
+            {
+                return this.initializationResponse;
             }
         }
 

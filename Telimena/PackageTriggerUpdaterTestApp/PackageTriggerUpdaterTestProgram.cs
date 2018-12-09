@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using TelimenaClient;
 
 namespace PackageTriggerUpdaterTestApp
@@ -94,8 +96,11 @@ namespace PackageTriggerUpdaterTestApp
 
             var result = teli.HandleUpdatesBlocking(false);
             Console.WriteLine("Finished update handling");
-
-            Console.WriteLine(JsonConvert.SerializeObject(result));
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                ContractResolver = new MyJsonContractResolver(),
+            };
+            Console.WriteLine(JsonConvert.SerializeObject(result, settings));
 
             Console.WriteLine("All done");
         }
@@ -106,7 +111,20 @@ namespace PackageTriggerUpdaterTestApp
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
+        class MyJsonContractResolver : DefaultContractResolver
+        {
+            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+            {
+                var list = base.CreateProperties(type, memberSerialization);
 
+                foreach (var prop in list)
+                {
+                    prop.Ignored = false; // Don't ignore any property
+                }
+
+                return list;
+            }
+        }
 
     }
 }

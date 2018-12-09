@@ -108,6 +108,7 @@
     <Compile Include="Base\IntegrationTestBase.cs" />
     <Compile Include="Base\ITestEngine.cs" />
     <Compile Include="Base\LocalHostTestEngine.cs" />
+    <Compile Include="Base\MyJsonContractResolver.cs" />
     <Compile Include="Base\TestBase.cs" />
     <Compile Include="Base\UiTestBase.cs" />
     <Compile Include="Base\TestFileNames.cs" />

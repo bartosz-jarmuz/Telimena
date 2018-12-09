@@ -22,7 +22,11 @@ namespace TelimenaClient
             
             try
             {
-                await this.InitializeIfNeeded().ConfigureAwait(false);
+                TelemetryInitializeResponse result = await this.InitializeIfNeeded().ConfigureAwait(false);
+                if (result.Exception != null)
+                {
+                    throw result.Exception;
+                }
                 string updaterVersion = this.GetUpdaterVersion();
                 updateRequest = new UpdateRequest(this.TelemetryKey, this.ProgramVersion, this.LiveProgramInfo.UserId, acceptBeta, this.TelimenaVersion, updaterVersion);
 
@@ -86,7 +90,7 @@ namespace TelimenaClient
                     throw exception;
                 }
 
-                return new UpdateCheckResult() {Exception = ex};
+                return new UpdateCheckResult() {Exception = exception };
             }
         }
 

@@ -5,13 +5,22 @@ using System.Collections.ObjectModel;
 namespace TelimenaClient
 {
     /// <summary>
-    /// Class TelimenaException.
+    ///     Class TelimenaException.
     /// </summary>
     /// <seealso cref="System.Exception" />
     public class TelimenaException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TelimenaException"/> class.
+        ///     Initializes a new instance of the <see cref="TelimenaException" /> class.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        public TelimenaException(string message) : base(message)
+        {
+        }
+
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TelimenaException" /> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
@@ -30,13 +39,13 @@ namespace TelimenaClient
         }
 
         /// <summary>
-        /// Gets the request objects.
+        ///     Gets the request objects.
         /// </summary>
         /// <value>The request objects.</value>
         public KeyValuePair<Type, object>[] RequestObjects { get; }
 
         /// <summary>
-        /// Gets the inner exceptions.
+        ///     Gets the inner exceptions.
         /// </summary>
         /// <value>The inner exceptions.</value>
         public ReadOnlyCollection<Exception> InnerExceptions { get; }
