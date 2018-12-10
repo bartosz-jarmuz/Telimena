@@ -94,6 +94,7 @@
     <Compile Include="TestSandboxAppBuilding.cs" />
     <Compile Include="TestSerializer.cs" />
     <Compile Include="TestStaticClient.cs" />
+    <Compile Include="UtilitiesTests.cs" />
     <Compile Include="UpdateCheckTests.cs" />
     <Compile Include="TestRegistrationRequests.cs" />
     <Compile Include="Helpers.cs" />

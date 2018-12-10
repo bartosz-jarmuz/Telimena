@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using TelimenaClient.Serializer;
@@ -26,8 +27,16 @@ namespace TelimenaClient
                 string jsonObject = this.Serializer.Serialize(objectToPost);
                 StringContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await this.HttpClient.PostAsync(requestUri, content).ConfigureAwait(false);
-                string responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return responseContent;
+
+                var retryIntervals = new List<TimeSpan>() {TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(500)};
+                var retryExceptionFilters = new Retry.ExceptionFilterSet(new List<Retry.ExceptionFilter>()
+                {
+                    new Retry.ExceptionFilter(typeof(SocketException))
+                }, null);
+
+
+                string responseContent = await Retry.DoAsync( ()=> response.Content.ReadAsStringAsync(), retryIntervals, retryExceptionFilters);
+                return responseContent; 
             }
             catch (Exception ex)
             {
