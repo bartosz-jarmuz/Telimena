@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using AutomaticTestsClient;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -24,9 +25,13 @@ namespace Telimena.WebApp.UITests.Base
 
         protected string BaseUrl => this.TestEngine.BaseUrl;
 
-        protected Exception Rethrow(Exception ex)
+        protected Exception CleanupAndRethrow(Exception ex, [CallerMemberName] string caller = "")
         {
-            string msg = "Error when executing test:\r\nOutputs:\r\n" + String.Join("\r\n", this.outputs) + "\r\n\r\nErrors:\r\n" + string.Join("\r\n", this.errors) +"\r\n. See inner exception.";
+            string msg =
+                $"Error when executing test: {caller}" + 
+                $"\r\nOutputs:\r\n{String.Join("\r\n", this.outputs)}" + 
+                $"\r\n\r\nErrors:\r\n{string.Join("\r\n", this.errors)}\r\n. See inner exception.";
+            TestAppProvider.KillTestApps();
             return new InvalidOperationException(msg, ex);
         }
 
@@ -94,7 +99,6 @@ namespace Telimena.WebApp.UITests.Base
              appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
             PackageUpdateTesterArguments args = new PackageUpdateTesterArguments { ApiUrl = this.BaseUrl };
             args.TelemetryKey = Guid.Parse(PackageUpdaterClientTelemetryKey);
-
 
             Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);
             Log($"Started process: {appFile.FullName}");

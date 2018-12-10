@@ -33,6 +33,8 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             return compressedFile;
         }
 
+
+
         public static FileInfo ExtractApp(string fileName, string testSubfolderName)
         {
             var compressedFile = GetFile(fileName);
@@ -46,11 +48,9 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             }
             catch (UnauthorizedAccessException)
             {
-                KillProcessesByName("AutomaticTestsClient.exe");
-                KillProcessesByName("AutomaticTestsClient");
-                KillProcessesByName("PackageTriggerUpdaterTestApp");
-                KillProcessesByName("PackageTriggerUpdaterTestApp.exe");
-                
+                KillTestApps();
+
+
                 targetDir.Delete(true);
             }
             targetDir.Create();
@@ -58,6 +58,14 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             ZipFile.ExtractToDirectory(compressedFile.FullName, targetDir.FullName);
 
             return targetDir.GetFiles().FirstOrDefault(x => x.Name.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        public static void KillTestApps()
+        {
+            KillProcessesByName("AutomaticTestsClient.exe");
+            KillProcessesByName("AutomaticTestsClient");
+            KillProcessesByName("PackageTriggerUpdaterTestApp");
+            KillProcessesByName("PackageTriggerUpdaterTestApp.exe");
         }
 
         private static void KillProcessesByName(string name)

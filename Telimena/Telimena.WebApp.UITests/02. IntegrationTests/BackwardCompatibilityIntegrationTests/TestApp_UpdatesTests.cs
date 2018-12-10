@@ -91,7 +91,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             }
             catch (Exception ex)
             {
-                throw this.Rethrow(ex);
+                throw this.CleanupAndRethrow(ex);
             }
         }
 
@@ -120,7 +120,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             }
             catch (Exception ex)
             {
-                throw this.Rethrow(ex);
+                throw this.CleanupAndRethrow(ex);
             }
             
         }
