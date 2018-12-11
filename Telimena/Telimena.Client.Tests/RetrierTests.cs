@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Security.AccessControl;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace TelimenaClient.Tests
     #endregion
 
     [TestFixture]
-    public class UtilitiesTests
+    public class RetrierTests
     {
         public class ErrorThrower
         {
@@ -88,31 +89,56 @@ namespace TelimenaClient.Tests
 
         }
 
+      
+
         [Test]
         public async Task Test_AllOk()
         {
             var thrower = new ErrorThrower(3, ()=> throw new InvalidOperationException("Boo"));
-            var value = await Retry.DoAsync(() => thrower.Work(), TimeSpan.FromMilliseconds(10));
+            var value = await Retrier.RetryAsync(() => thrower.Work(), TimeSpan.FromMilliseconds(10));
             Assert.AreEqual("ok", value);
 
             thrower = new ErrorThrower(3, () => throw new InvalidOperationException("Boo"));
             Assert.AreEqual(0, thrower.AttemptNumber);
-            await Retry.DoAsync(() => thrower.WorkVoid(), TimeSpan.FromMilliseconds(10));
+            await Retrier.RetryAsync(() => thrower.WorkVoid(), TimeSpan.FromMilliseconds(10));
+            Assert.AreEqual(3, thrower.AttemptNumber);
+
+
+            thrower = new ErrorThrower(3, () => throw new InvalidOperationException("Boo"));
+            Assert.AreEqual(0, thrower.AttemptNumber);
+            await Retrier.RetryAsync(() => thrower.WorkVoid(), ex=> ex.Message == "Boo",  TimeSpan.FromMilliseconds(10));
             Assert.AreEqual(3, thrower.AttemptNumber);
         }
 
 
+        [Test]
+        public async Task Test_ExceptionNotAllowedOk()
+        {
+            var thrower = new ErrorThrower(3, () => throw new InvalidOperationException("Boo"));
+            Assert.AreEqual(0, thrower.AttemptNumber);
+            try
+            {
+                await Retrier.RetryAsync(() => thrower.WorkVoid(), ex => ex.Message != "Boo", TimeSpan.FromMilliseconds(10));
+            }
+            catch (Exception ex)
+            {
+                Assert.AreEqual(ex.GetType(), typeof(InvalidOperationException));
+                Assert.IsTrue(ex.Message == "Boo");
+                Assert.AreEqual(1, thrower.AttemptNumber);
+
+            }
+        }
 
         [Test]
         public async Task Test_AllOkAsync()
         {
             var thrower = new ErrorThrower(3, () => throw new InvalidOperationException("Boo"));
-            string value = await Retry.DoAsync(() => thrower.WorkAsync(), TimeSpan.FromMilliseconds(10));
+            string value = await Retrier.RetryTaskAsync(() => thrower.WorkAsync(), TimeSpan.FromMilliseconds(10));
             Assert.AreEqual("ok", value);
 
             thrower = new ErrorThrower(3, () => throw new InvalidOperationException("Boo"));
             Assert.AreEqual(0, thrower.AttemptNumber);
-            await Retry.DoAsync(() => thrower.WorkVoidAsync(), TimeSpan.FromMilliseconds(10));
+            await Retrier.RetryTaskAsync(() => thrower.WorkVoidAsync(), TimeSpan.FromMilliseconds(10));
             Assert.AreEqual(3, thrower.AttemptNumber);
         }
 
@@ -124,13 +150,14 @@ namespace TelimenaClient.Tests
 
             try
             {
-                await Retry.DoAsync(() => thrower.WorkAsync(), TimeSpan.FromMilliseconds(10));
+                await Retrier.RetryTaskAsync(() => thrower.WorkAsync(), TimeSpan.FromMilliseconds(10));
                 Assert.Fail("Error expected");
             }
-            catch (AggregateException ex)
+            catch (Exception ex)
             {
-                Assert.AreEqual(3, ex.InnerExceptions.Count);
-                Assert.IsTrue(ex.InnerExceptions.All(x => x.Message == "Boo"));
+                Assert.AreEqual(ex.GetType(), typeof(AggregateException));
+                Assert.AreEqual(3, ((AggregateException) ex).InnerExceptions.Count);
+                Assert.IsTrue(((AggregateException)ex).InnerExceptions.All(x => x.Message == "Boo"));
 
             }
 
@@ -139,14 +166,15 @@ namespace TelimenaClient.Tests
                 thrower = new ErrorThrower(4, () => throw new InvalidOperationException("Boo"));
                 Assert.AreEqual(0, thrower.AttemptNumber);
 
-                await Retry.DoAsync(() => thrower.WorkVoidAsync(), TimeSpan.FromMilliseconds(10));
+                await Retrier.RetryTaskAsync(() => thrower.WorkVoidAsync(), TimeSpan.FromMilliseconds(10));
                 Assert.Fail("Error expected");
             }
-            catch (AggregateException ex)
+            catch (Exception ex)
             {
-                Assert.AreEqual(3, ex.InnerExceptions.Count);
-                Assert.IsTrue(ex.InnerExceptions.All(x => x.Message == "Boo"));
-                Assert.AreEqual(3, thrower.AttemptNumber);
+                Assert.AreEqual(ex.GetType(), typeof(AggregateException));
+                Assert.AreEqual(3, ((AggregateException)ex).InnerExceptions.Count);
+                Assert.IsTrue(((AggregateException)ex).InnerExceptions.All(x => x.Message == "Boo"));
+
             }
 
         }
@@ -158,13 +186,14 @@ namespace TelimenaClient.Tests
 
             try
             {
-                await Retry.DoAsync(() => thrower.Work(), TimeSpan.FromMilliseconds(10));
+                await Retrier.RetryAsync(() => thrower.Work(), TimeSpan.FromMilliseconds(10));
                 Assert.Fail("Error expected");
             }
-            catch (AggregateException ex)
+            catch (Exception ex)
             {
-                Assert.AreEqual(3, ex.InnerExceptions.Count);
-                Assert.IsTrue(ex.InnerExceptions.All(x=>x.Message == "Boo"));
+                Assert.AreEqual(ex.GetType(), typeof(AggregateException));
+                Assert.AreEqual(3, ((AggregateException)ex).InnerExceptions.Count);
+                Assert.IsTrue(((AggregateException)ex).InnerExceptions.All(x => x.Message == "Boo"));
 
             }
 
@@ -173,14 +202,15 @@ namespace TelimenaClient.Tests
                 thrower = new ErrorThrower(4, () => throw new InvalidOperationException("Boo"));
                 Assert.AreEqual(0, thrower.AttemptNumber);
 
-                await Retry.DoAsync(() => thrower.WorkVoid(), TimeSpan.FromMilliseconds(10));
+                await Retrier.RetryAsync(() => thrower.WorkVoid(), TimeSpan.FromMilliseconds(10));
                 Assert.Fail("Error expected");
             }
-            catch (AggregateException ex)
+            catch (Exception ex)
             {
-                Assert.AreEqual(3, ex.InnerExceptions.Count);
-                Assert.IsTrue(ex.InnerExceptions.All(x => x.Message == "Boo"));
-                Assert.AreEqual(3, thrower.AttemptNumber);
+                Assert.AreEqual(ex.GetType(), typeof(AggregateException));
+                Assert.AreEqual(3, ((AggregateException)ex).InnerExceptions.Count);
+                Assert.IsTrue(((AggregateException)ex).InnerExceptions.All(x => x.Message == "Boo"));
+
             }
 
         }

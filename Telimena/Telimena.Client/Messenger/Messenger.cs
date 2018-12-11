@@ -28,14 +28,8 @@ namespace TelimenaClient
                 StringContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await this.HttpClient.PostAsync(requestUri, content).ConfigureAwait(false);
 
-                var retryIntervals = new List<TimeSpan>() {TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(500)};
-                var retryExceptionFilters = new Retry.ExceptionFilterSet(new List<Retry.ExceptionFilter>()
-                {
-                    new Retry.ExceptionFilter(typeof(SocketException))
-                }, null);
-
-
-                string responseContent = await Retry.DoAsync( ()=> response.Content.ReadAsStringAsync(), retryIntervals, retryExceptionFilters);
+                List<TimeSpan> retryIntervals = new List<TimeSpan>() {TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(500)};
+                string responseContent = await Retrier.RetryTaskAsync( ()=> response.Content.ReadAsStringAsync(), (Exception ex) => ex.GetType()==typeof(SocketException), retryIntervals);
                 return responseContent; 
             }
             catch (Exception ex)

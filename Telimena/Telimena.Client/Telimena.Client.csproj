@@ -99,7 +99,7 @@
     <Compile Include="TelimenaClient\Updates\UpdateHandler.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateInstaller.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\Retry.cs" />
+    <Compile Include="Utilities\Retry\Retrier.cs" />
     <Compile Include="Utilities\TelimenaVersionReader.cs" />
     <Compile Include="Utilities\TelimenaVersionStringComparer.cs" />
     <Compile Include="TelimenaClient\Updates\UpdateInstructionCreator.cs" />
