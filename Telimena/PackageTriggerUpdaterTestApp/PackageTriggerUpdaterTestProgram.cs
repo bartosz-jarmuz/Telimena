@@ -47,7 +47,7 @@ namespace PackageTriggerUpdaterTestApp
 
             var msg = $"AssemblyVersion: {TelimenaVersionReader.Read(typeof(PackageTriggerUpdaterTestProgram), VersionTypes.AssemblyVersion)}\r\n" +
                       $"FileVersion: {TelimenaVersionReader.Read(typeof(PackageTriggerUpdaterTestProgram), VersionTypes.FileVersion)}\r\n" +
-                      $"Telimena Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.AssemblyVersion)}\r\n" +
+                      $"Telimena Assembly Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.AssemblyVersion)}\r\n" +
                       $"Telimena File Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.FileVersion)}";
             Console.WriteLine(msg);
 
@@ -72,12 +72,7 @@ namespace PackageTriggerUpdaterTestApp
 
             Console.WriteLine($"Args: {decoded}");
             Console.WriteLine("Arguments loaded OK");
-#if DEBUG
-            if (arguments.ApiUrl == null)
-            {
-                arguments.ApiUrl = "http://localhost:7757";
-            }
-#endif
+
             Work(arguments);
 
             int key = Console.Read();
