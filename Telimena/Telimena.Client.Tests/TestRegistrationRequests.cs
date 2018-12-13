@@ -31,6 +31,7 @@ namespace TelimenaClient.Tests
             {
                 TelimenaException ex = e as TelimenaException;
                 Assert.AreEqual(1, ex.InnerExceptions.Count);
+
                 Assert.IsTrue(ex.InnerExceptions[0].Message.Contains("An error occured while posting to [api/Telemetry/Initialize]"));
                 TelemetryInitializeRequest jObj = ex.RequestObjects[0].Value as TelemetryInitializeRequest;
                 Assert.AreEqual(skipFlagExpectedValue, jObj.SkipUsageIncrementation);
@@ -57,8 +58,16 @@ namespace TelimenaClient.Tests
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
-            Assert.That(()=> this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync().GetAwaiter().GetResult(), false)
-            ,Throws.Exception.With.Message.Contains("Telemetry key is an empty guid."));
+
+            try
+            {
+                telimena.InitializeAsync().GetAwaiter().GetResult();
+                Assert.Fail("Error expected");
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(ex.InnerException.Message.Contains("Telemetry key is an empty guid."));
+            }
         }
 
         [Test]
