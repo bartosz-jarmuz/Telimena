@@ -34,7 +34,7 @@ namespace TelimenaClient
             }
             catch (Exception ex)
             {
-               throw new InvalidOperationException($"An error occured while posting to [{requestUri}]",ex);
+               throw new InvalidOperationException($"An error occured while posting to [{requestUri}]. Base URL [{this.HttpClient.BaseUri}]",ex);
             }
         }
 

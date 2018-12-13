@@ -16,7 +16,6 @@ namespace TelimenaClient
         /// <summary>
         ///     Performs the action trying several times and awaiting between the calls
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="action"></param>
         /// <param name="retryInterval"></param>
         /// <param name="maxAttemptCount"></param>
@@ -31,7 +30,6 @@ namespace TelimenaClient
         /// <summary>
         /// Performs the action trying several times and awaiting between the calls
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="action"></param>
         /// <param name="retryInterval"></param>
         /// <param name="maxAttemptCount"></param>
@@ -174,7 +172,6 @@ namespace TelimenaClient
         /// <summary>
         ///     Performs the action trying several times and awaiting between the calls
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="action"></param>
         /// <param name="retryInterval"></param>
         /// <param name="maxAttemptCount"></param>
@@ -189,7 +186,6 @@ namespace TelimenaClient
         /// <summary>
         /// Performs the action trying several times and awaiting between the calls
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="action"></param>
         /// <param name="retryInterval"></param>
         /// <param name="maxAttemptCount"></param>

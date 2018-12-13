@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -10,6 +11,8 @@ namespace TelimenaClient
         {
             this.client = client;
         }
+
+        public Uri BaseUri => this.client.BaseAddress;
 
         private readonly HttpClient client; 
 
