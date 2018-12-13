@@ -106,7 +106,7 @@ namespace TelimenaClient.Tests
                 TelimenaException ex = e as TelimenaException;
 
                 Assert.AreEqual(1, ex.InnerExceptions.Count);
-                Assert.AreEqual("An error occured while posting to [api/Telemetry/Initialize]", ex.InnerExceptions[0].Message);
+                Assert.IsTrue(ex.InnerExceptions[0].Message.Contains("An error occured while posting to [api/Telemetry/Initialize]"));
                 TelemetryInitializeRequest jObj = ex.RequestObjects[0].Value as TelemetryInitializeRequest;
                 Assert.AreEqual(true, jObj.SkipUsageIncrementation);
                 Assert.AreEqual(Assembly.GetExecutingAssembly().GetName().Name, jObj.ProgramInfo.Name);
@@ -124,7 +124,7 @@ namespace TelimenaClient.Tests
                 TelimenaException ex = e as TelimenaException;
 
                 Assert.AreEqual(1, ex.InnerExceptions.Count);
-                Assert.AreEqual("An error occured while posting to [api/Statistics/Update]", ex.InnerExceptions[0].Message);
+                Assert.IsTrue(ex.InnerExceptions[0].Message.Contains("An error occured while posting to [api/Statistics/Update]"));
                 TelemetryUpdateRequest jObj = ex.RequestObjects[1].Value as TelemetryUpdateRequest;
                 Assert.AreEqual(this.telemetryKey, jObj.TelemetryKey);
                 Assert.AreEqual(this.returnedUserGuid, jObj.UserId);
@@ -148,7 +148,8 @@ namespace TelimenaClient.Tests
                 TelimenaException ex = e as TelimenaException;
 
                 Assert.AreEqual(1, ex.InnerExceptions.Count);
-                Assert.AreEqual("An error occured while posting to [api/Telemetry/Initialize]", ex.InnerExceptions[0].Message);
+                Assert.AreEqual("An error occured while posting to [api/Telemetry/Initialize]. Base URL []", ex.InnerExceptions[0].Message);
+
                 TelemetryInitializeRequest jObj = ex.RequestObjects[0].Value as TelemetryInitializeRequest;
                 Assert.AreEqual(true, jObj.SkipUsageIncrementation);
 
