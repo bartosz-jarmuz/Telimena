@@ -85,9 +85,13 @@
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
     <Compile Include="Model\VersionData.cs" />
-    <Compile Include="TelimenaClient\Interface\ITelimena.Telemetry.cs" />
-    <Compile Include="TelimenaClient\Interface\ITelimena.Updating.cs" />
+    <Compile Include="TelimenaClient\Interface\IAsyncTelimenaHandler.Updates.cs" />
+    <Compile Include="TelimenaClient\Interface\IBlockingTelimenaHandler.Telemetry.cs" />
+    <Compile Include="TelimenaClient\Interface\IAsyncTelimenaHandler.Telemetry.cs" />
+    <Compile Include="TelimenaClient\Interface\IBlockingTelimenaHandler.Updates.cs" />
     <Compile Include="TelimenaClient\ITelimenaStartupInfo.cs" />
+    <Compile Include="TelimenaClient\Telimena.AsyncTelimenaHandler.cs" />
+    <Compile Include="TelimenaClient\Telimena.BlockingTelimenaHandler.cs" />
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
     <Compile Include="TelimenaClient\Telimena.StartupData.cs" />
     <Compile Include="TelimenaClient\Telimena.Updating.cs" />

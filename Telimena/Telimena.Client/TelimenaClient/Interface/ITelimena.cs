@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace TelimenaClient
 {
@@ -13,8 +10,23 @@ namespace TelimenaClient
     ///     Telemetry and Lifecycle Management Engine App
     ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
     /// </summary>
-    public partial interface ITelimena
+    public interface ITelimena
     {
+        /// <summary>
+        ///     Asynchronous Telimena methods
+        /// </summary>
+        IAsyncTelimenaHandler Async { get; }
+
+        /// <summary>
+        ///     Synchronous Telimena methods
+        /// </summary>
+        IBlockingTelimenaHandler Blocking { get; }
+
+        /// <summary>
+        ///     If true, then Telimena will swallow any errors. Otherwise, it will rethrow
+        /// </summary>
+        bool SuppressAllErrors { get; set; }
+
         /// <summary>
         ///     Loads the referenced helper assemblies, e.g. for the purpose of updating
         /// </summary>
@@ -26,10 +38,5 @@ namespace TelimenaClient
         /// </summary>
         /// <param name="assemblyNames"></param>
         void LoadHelperAssembliesByName(params string[] assemblyNames);
-
-        /// <summary>
-        /// If true, then Telimena will swallow any errors. Otherwise, it will rethrow
-        /// </summary>
-        bool SuppressAllErrors { get; set; }
     }
 }

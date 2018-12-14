@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -10,7 +9,6 @@ using TelimenaClient.Serializer;
 
 namespace TelimenaClient
 {
-
     /// <summary>
     ///     Telemetry and Lifecycle Management Engine App
     ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
@@ -30,14 +28,14 @@ namespace TelimenaClient
         /// <param name="suppressAllErrors"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static Task<TelemetryUpdateResponse> ReportUsageStatic(Guid telemetryKey, [CallerMemberName] string viewName = null, Uri telemetryApiBaseUrl = null
-            , Assembly mainAssembly = null, bool suppressAllErrors = true)
+        public static Task<TelemetryUpdateResponse> ReportUsageStatic(Guid telemetryKey, [CallerMemberName] string viewName = null
+            , Uri telemetryApiBaseUrl = null, Assembly mainAssembly = null, bool suppressAllErrors = true)
         {
             if (telemetryApiBaseUrl == null)
             {
                 telemetryApiBaseUrl = DefaultApiUri;
             }
-              
+
             if (mainAssembly == null)
             {
                 mainAssembly = GetProperCallingAssembly();
@@ -61,8 +59,8 @@ namespace TelimenaClient
         /// <param name="viewName"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static Task<TelemetryUpdateResponse> ReportUsageStatic(Guid telemetryKey, ProgramInfo programInfo, Uri telemetryApiBaseUrl = null, Assembly mainAssembly = null
-            , bool suppressAllErrors = true, [CallerMemberName] string viewName = null)
+        public static Task<TelemetryUpdateResponse> ReportUsageStatic(Guid telemetryKey, ProgramInfo programInfo, Uri telemetryApiBaseUrl = null
+            , Assembly mainAssembly = null, bool suppressAllErrors = true, [CallerMemberName] string viewName = null)
         {
             if (telemetryApiBaseUrl == null)
             {
@@ -73,6 +71,7 @@ namespace TelimenaClient
             {
                 mainAssembly = GetProperCallingAssembly();
             }
+
             TelimenaHttpClient httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = telemetryApiBaseUrl});
             return ReportUsageStatic(telemetryKey, httpClient, programInfo, mainAssembly, suppressAllErrors, viewName);
         }
@@ -103,7 +102,7 @@ namespace TelimenaClient
 
             try
             {
-               var data = LoadProgramData(mainAssembly, programInfo);
+                InternalStartupData data = LoadProgramData(mainAssembly, programInfo);
 
 
                 TelimenaSerializer serializer = new TelimenaSerializer();
@@ -118,9 +117,7 @@ namespace TelimenaClient
 
                 updateRequest = new TelemetryUpdateRequest(telemetryKey)
                 {
-                     UserId = telemetryInitializeResponse.UserId
-                    , ComponentName = viewName
-                    , VersionData = data.ProgramInfo.PrimaryAssembly.VersionData
+                    UserId = telemetryInitializeResponse.UserId, ComponentName = viewName, VersionData = data.ProgramInfo.PrimaryAssembly.VersionData
                 };
                 responseContent = await messenger.SendPostRequest(ApiRoutes.UpdateProgramStatistics, updateRequest).ConfigureAwait(false);
                 return serializer.Deserialize<TelemetryUpdateResponse>(responseContent);
@@ -154,9 +151,11 @@ namespace TelimenaClient
                         return method.DeclaringType.Assembly;
                     }
                 }
+
                 index++;
             }
         }
+
         private static InternalStartupData LoadProgramData(Assembly assembly, ProgramInfo programInfo = null)
         {
             ProgramInfo info = programInfo;
@@ -171,6 +170,5 @@ namespace TelimenaClient
 
             return new InternalStartupData(info, userInfo, telimenaVersion);
         }
-      
     }
 }

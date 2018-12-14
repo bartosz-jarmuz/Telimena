@@ -23,14 +23,12 @@ namespace TelimenaClient.Tests
     [TestFixture]
     public class TestReportUsageRequests
     {
-
         private readonly Guid testTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
-       
 
         private IMessenger GetMessenger_FirstRequestPass()
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
-            client.Setup(x => x.GetAsync(It.IsRegex("^"+Regex.Escape(ApiRoutes.GetProgramUpdaterName)))).Returns((string uri) =>
+            client.Setup(x => x.GetAsync(It.IsRegex("^" + Regex.Escape(ApiRoutes.GetProgramUpdaterName)))).Returns((string uri) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 response.Content = new StringContent("Updater.exe");
@@ -39,7 +37,7 @@ namespace TelimenaClient.Tests
             client.Setup(x => x.PostAsync(ApiRoutes.Initialize, It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
-                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse { Count = 0, UserId = Guid.NewGuid() };
+                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse {Count = 0, UserId = Guid.NewGuid()};
                 response.Content = new StringContent(JsonConvert.SerializeObject(telemetryInitializeResponse));
                 return Task.FromResult(response);
             });
@@ -49,21 +47,68 @@ namespace TelimenaClient.Tests
                     throw new AggregateException(new AssertionException(uri)
                         , new AssertionException(requestContent.ReadAsStringAsync().GetAwaiter().GetResult()));
                 });
-            return new Messenger(new TelimenaSerializer(), client.Object); ;
+            return new Messenger(new TelimenaSerializer(), client.Object);
+            ;
+        }
+
+        [Test]
+        public void Test_CustomDataObject()
+        {
+            Telimena telimena = new Telimena(new TelimenaStartupInfo(this.testTelemetryKey)) {SuppressAllErrors = false};
+            telimena.Messenger = this.GetMessenger_FirstRequestPass();
+            Dictionary<string, string> data = new Dictionary<string, string> {{"AKey", "AValue"}};
+            Action act = () => telimena.Async.ReportViewAccessed("SomeView", data).GetAwaiter().GetResult();
+            for (int i = 0; i < 2; i++)
+            {
+                try
+                {
+                    act();
+                    Assert.Fail("Error expected");
+                }
+                catch (Exception e)
+                {
+                    TelimenaException ex = e as TelimenaException;
+                    TelemetryUpdateRequest jObj = ex.RequestObjects[0].Value as TelemetryUpdateRequest;
+                    Assert.AreEqual("SomeView", jObj.ComponentName);
+
+                    Assert.AreEqual(data, jObj.TelemetryData);
+                }
+
+                act = () => telimena.Blocking.ReportViewAccessed("SomeView", new Dictionary<string, string> {{"AKey", "AValue"}});
+            }
+        }
+
+        [Test]
+        public void Test_EmptyGuid()
+        {
+            Telimena telimena = new Telimena(new TelimenaStartupInfo(Guid.Empty)) {SuppressAllErrors = false};
+            telimena.Messenger = this.GetMessenger_FirstRequestPass();
+            Action act = () => telimena.Async.ReportViewAccessed("SomeView").GetAwaiter().GetResult();
+            for (int i = 0; i < 2; i++)
+            {
+                try
+                {
+                    act();
+                    Assert.Fail("Error expected");
+                }
+                catch (Exception e)
+                {
+                    ArgumentException ex = e.InnerException.InnerException as ArgumentException;
+                    Assert.AreEqual("Telemetry key is an empty guid.\r\nParameter name: TelemetryKey", ex.Message);
+                }
+
+                act = () => telimena.Blocking.ReportEvent("SomeView");
+            }
         }
 
         [Test]
         public void Test_NoCustomData()
         {
-
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(new TelimenaStartupInfo(this.testTelemetryKey))
-            {
-                SuppressAllErrors = false
-            };
+            Telimena telimena = new Telimena(new TelimenaStartupInfo(this.testTelemetryKey)) {SuppressAllErrors = false};
             telimena.Messenger = this.GetMessenger_FirstRequestPass();
 
-                
-            Action act = () => telimena.ReportViewAccessedAsync("SomeView").GetAwaiter().GetResult();
+
+            Action act = () => telimena.Async.ReportViewAccessed("SomeView").GetAwaiter().GetResult();
             for (int i = 0; i < 2; i++)
             {
                 try
@@ -80,73 +125,7 @@ namespace TelimenaClient.Tests
                     Assert.AreEqual(null, jObj.TelemetryData);
                 }
 
-                act = () => telimena.ReportViewAccessedBlocking("SomeView");
-            }
-
-            
-
-        }
-
-        
-        
-
-        [Test]
-        public void Test_CustomDataObject()
-        {
-
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(new TelimenaStartupInfo(this.testTelemetryKey))
-            {
-                SuppressAllErrors = false
-            };
-            telimena.Messenger = this.GetMessenger_FirstRequestPass();
-            var data = new Dictionary<string, string>() {{"AKey", "AValue"}};
-            Action act = () => telimena.ReportViewAccessedAsync("SomeView",data).GetAwaiter().GetResult();
-            for (int i = 0; i < 2; i++)
-            {
-                try
-                {
-                    act();
-                    Assert.Fail("Error expected");
-                }
-                catch (Exception e)
-                {
-                    TelimenaException ex = e as TelimenaException;
-                    TelemetryUpdateRequest jObj = ex.RequestObjects[0].Value as TelemetryUpdateRequest;
-                    Assert.AreEqual("SomeView", jObj.ComponentName);
-
-                    Assert.AreEqual(data, jObj.TelemetryData);
-                }
-                act = () => telimena.ReportViewAccessedBlocking("SomeView", new Dictionary<string, string>() { { "AKey", "AValue" } });
-
-            }
-        }
-
-
-
-        [Test]
-        public void Test_EmptyGuid()
-        {
-
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(new TelimenaStartupInfo(Guid.Empty))
-            {
-                SuppressAllErrors = false
-            };
-            telimena.Messenger = this.GetMessenger_FirstRequestPass();
-            Action act = () => telimena.ReportViewAccessedAsync("SomeView").GetAwaiter().GetResult();
-            for (int i = 0; i < 2; i++)
-            {
-                try
-                {
-                    act();
-                    Assert.Fail("Error expected");
-                }
-                catch (Exception e)
-                {
-                    ArgumentException ex = e.InnerException.InnerException as ArgumentException;
-                    Assert.AreEqual("Telemetry key is an empty guid.\r\nParameter name: TelemetryKey", ex.Message);
-                }
-
-                act = () => telimena.ReportEventBlocking("SomeView");
+                act = () => telimena.Blocking.ReportViewAccessed("SomeView");
             }
         }
     }

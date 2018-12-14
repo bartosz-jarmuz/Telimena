@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace TelimenaClient
@@ -15,32 +14,8 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        /// <inheritdoc />
-        public Task<TelemetryUpdateResponse> ReportViewAccessedAsync(string viewName, Dictionary<string, string> telemetryData = null)
-        {
-            return this.Report(ApiRoutes.ReportView, viewName, telemetryData);
-        }
-
-        /// <inheritdoc />
-        public TelemetryUpdateResponse ReportViewAccessedBlocking(string viewName, Dictionary<string, string> telemetryData = null)
-        {
-            return Task.Run(() => this.ReportViewAccessedAsync(viewName,telemetryData)).GetAwaiter().GetResult();
-        }
-
-        /// <inheritdoc />
-        public Task<TelemetryUpdateResponse> ReportEventAsync(string eventName, Dictionary<string, string> telemetryData = null)
-        {
-            return this.Report(ApiRoutes.ReportEvent, eventName, telemetryData);
-        }
-
-        /// <inheritdoc />
-        public TelemetryUpdateResponse ReportEventBlocking(string eventName, Dictionary<string, string> telemetryData = null)
-        {
-            return Task.Run(() => this.ReportEventAsync(eventName, telemetryData)).GetAwaiter().GetResult();
-        }
-
         /// <summary>
-        /// Where the telemetry begins...
+        ///     Where the telemetry begins...
         /// </summary>
         /// <param name="apiRoute"></param>
         /// <param name="componentName"></param>
@@ -51,14 +26,15 @@ namespace TelimenaClient
             TelemetryUpdateRequest request = null;
             try
             {
-               TelemetryInitializeResponse result = await this.InitializeIfNeeded().ConfigureAwait(false);
+                TelemetryInitializeResponse result = await this.InitializeIfNeeded().ConfigureAwait(false);
                 if (result.Exception != null)
                 {
                     throw result.Exception;
                 }
+
                 request = new TelemetryUpdateRequest(this.TelemetryKey)
                 {
-                     UserId = this.LiveProgramInfo.UserId
+                    UserId = this.LiveProgramInfo.UserId
                     , ComponentName = componentName
                     , VersionData = this.StaticProgramInfo.PrimaryAssembly.VersionData
                     , TelemetryData = telemetryData
@@ -78,6 +54,5 @@ namespace TelimenaClient
                 return new TelemetryUpdateResponse {Exception = exception};
             }
         }
-
     }
 }

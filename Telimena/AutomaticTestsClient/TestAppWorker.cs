@@ -8,12 +8,12 @@ namespace AutomaticTestsClient
 {
     public class TestAppWorker
     {
-        private readonly Arguments arguments;
-
         public TestAppWorker(Arguments arguments)
         {
             this.arguments = arguments;
         }
+
+        private readonly Arguments arguments;
 
         public void Work()
         {
@@ -31,7 +31,7 @@ namespace AutomaticTestsClient
                         this.HandleReportViewUsage(telimena);
                         break;
                     case Actions.HandleUpdates:
-                        HandleUpdates(telimena);
+                        this.HandleUpdates(telimena);
                         break;
                 }
             }
@@ -43,33 +43,17 @@ namespace AutomaticTestsClient
             Console.WriteLine("Done");
         }
 
-        private void HandleUpdates(Telimena telimena)
-        {
-            Console.WriteLine("Starting update handling...");
-
-            var result = telimena.HandleUpdatesBlocking(false);
-            Console.WriteLine("Finished update handling");
-            JsonSerializerSettings settings = new JsonSerializerSettings
-            {
-                ContractResolver = new MyJsonContractResolver(),
-            };
-
-            Console.WriteLine(JsonConvert.SerializeObject(result));
-
-            Console.WriteLine("Updating done");
-        }
-
         private Telimena GetTelimena(Guid argumentsTelemetryKey)
         {
             Telimena telimena;
 
             if (this.arguments.ProgramInfo != null)
             {
-             TelimenaStartupInfo si = new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl))
-             {
-                 ProgramInfo = this.arguments.ProgramInfo
-             };
-             telimena = new Telimena(si);
+                TelimenaStartupInfo si = new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl))
+                {
+                    ProgramInfo = this.arguments.ProgramInfo
+                };
+                telimena = new Telimena(si);
             }
             else
             {
@@ -81,38 +65,50 @@ namespace AutomaticTestsClient
 
         private void HandleInitialize(Telimena telimena)
         {
-
-            TelemetryInitializeResponse result = telimena.InitializeBlocking_toReDo();
+            TelemetryInitializeResponse result = telimena.Blocking.Initialize();
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
-        
+
         private void HandleReportViewUsage(Telimena telimena)
         {
-            
             TelemetryUpdateResponse result;
-            var customData = new Dictionary<string, string>();
+            Dictionary<string, string> customData = new Dictionary<string, string>();
             customData.Add("Time", DateTime.Now.ToShortTimeString());
-            customData.Add("RandomNumber", new Random().Next(0,10).ToString());
+            customData.Add("RandomNumber", new Random().Next(0, 10).ToString());
             if (this.arguments.ViewName != null)
             {
-                result = telimena.ReportViewAccessedBlocking(this.arguments.ViewName,customData);
+                result = telimena.Blocking.ReportViewAccessed(this.arguments.ViewName, customData);
             }
             else
             {
-                result = telimena.ReportViewAccessedBlocking("DefaultView", customData);
+                result = telimena.Blocking.ReportViewAccessed("DefaultView", customData);
             }
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
+
+        private void HandleUpdates(Telimena telimena)
+        {
+            Console.WriteLine("Starting update handling...");
+
+            UpdateCheckResult result = telimena.Blocking.HandleUpdates(false);
+            Console.WriteLine("Finished update handling");
+            JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver()};
+
+            Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            Console.WriteLine("Updating done");
+        }
     }
-    class MyJsonContractResolver : DefaultContractResolver
+
+    internal class MyJsonContractResolver : DefaultContractResolver
     {
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
-            var list = base.CreateProperties(type, memberSerialization);
+            IList<JsonProperty> list = base.CreateProperties(type, memberSerialization);
 
-            foreach (var prop in list)
+            foreach (JsonProperty prop in list)
             {
                 prop.Ignored = false; // Don't ignore any property
             }

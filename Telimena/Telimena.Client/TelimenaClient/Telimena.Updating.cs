@@ -1,131 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace TelimenaClient
 {
     /// <summary>
-    /// Telemetry and Lifecycle Management Engine App
-    /// <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
+    ///     Telemetry and Lifecycle Management Engine App
+    ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        /// <param name="acceptBeta"></param>
-        /// <inheritdoc />
-        public async Task<UpdateCheckResult> CheckForUpdatesAsync(bool acceptBeta = true)
-        {
-            UpdateRequest updateRequest = null;
-            
-            try
-            {
-                TelemetryInitializeResponse result = await this.InitializeIfNeeded().ConfigureAwait(false);
-                if (result.Exception != null)
-                {
-                    throw result.Exception;
-                }
-                string updaterVersion = this.GetUpdaterVersion();
-                updateRequest = new UpdateRequest(this.TelemetryKey, this.ProgramVersion, this.LiveProgramInfo.UserId, acceptBeta, this.TelimenaVersion, updaterVersion);
-
-                ConfiguredTaskAwaitable<UpdateResponse> programUpdateTask = this.GetUpdateResponse(this.GetUpdateRequestUrl(ApiRoutes.GetProgramUpdateInfo, updateRequest)).ConfigureAwait(false);
-                ConfiguredTaskAwaitable<UpdateResponse> updaterUpdateTask = this.GetUpdateResponse(this.GetUpdateRequestUrl(ApiRoutes.GetUpdaterUpdateInfo, updateRequest)).ConfigureAwait(false);
-
-                UpdateResponse programUpdateResponse = await programUpdateTask;
-                UpdateResponse updaterUpdateResponse = await updaterUpdateTask;
-
-                return new UpdateCheckResult
-                {
-                    ProgramUpdatesToInstall = programUpdateResponse.UpdatePackages, UpdaterUpdate = updaterUpdateResponse?.UpdatePackages?.FirstOrDefault()
-                };
-            }
-            catch (Exception ex)
-            {
-                TelimenaException exception = new TelimenaException("Error occurred while sending check for updates request", ex
-                    , new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(ApiRoutes.GetProgramUpdateInfo, updateRequest))
-                    , new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(ApiRoutes.GetUpdaterUpdateInfo, updateRequest))
-                    
-                    );
-                if (!this.SuppressAllErrors)
-                {
-                    throw exception;
-                }
-
-                return new UpdateCheckResult {Exception = exception};
-            }
-        }
-
-        /// <inheritdoc />
-        public UpdateCheckResult CheckForUpdatesBlocking()
-        {
-            return Task.Run(() => this.CheckForUpdatesAsync()).GetAwaiter().GetResult();
-        }
-
-        /// <inheritdoc />
-        public async Task<UpdateCheckResult> HandleUpdatesAsync(bool acceptBeta)
-        {
-            try
-            {
-                UpdateCheckResult checkResult = await this.CheckForUpdatesAsync(acceptBeta);
-                if (checkResult.Exception == null)
-                {
-                    UpdateHandler handler = new UpdateHandler(this.Messenger, this.LiveProgramInfo, new DefaultWpfInputReceiver()
-                        , new UpdateInstaller(), this.Locator);
-                    await handler.HandleUpdates(checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate).ConfigureAwait(false);
-                }
-                else
-                {
-                    throw checkResult.Exception;
-                }
-
-                return checkResult;
-            }
-            catch (Exception ex)
-            {
-                TelimenaException exception = new TelimenaException("Error occurred while handling updates", ex);
-                if (!this.SuppressAllErrors)
-                {
-                    throw exception;
-                }
-
-                return new UpdateCheckResult() {Exception = exception };
-            }
-        }
-
-        /// <inheritdoc />
-        public UpdateCheckResult HandleUpdatesBlocking(bool acceptBeta)
-        {
-            return Task.Run(()=> this.HandleUpdatesAsync(acceptBeta)).GetAwaiter().GetResult();
-        }
-
         /// <summary>
-        /// Gets the updater update response.
-        /// </summary>
-        /// <returns>Task&lt;UpdateResponse&gt;.</returns>
-        protected async Task<UpdateResponse> GetUpdateResponse(string requestUri)
-        {
-            string responseContent = await this.Messenger.SendGetRequest(requestUri).ConfigureAwait(false);
-            return this.Serializer.Deserialize<UpdateResponse>(responseContent);
-        }
-
-        private string GetUpdaterVersion()
-        {
-            FileInfo updaterFile = this.Locator.GetUpdater();
-            if (updaterFile.Exists)
-            {
-                string version = TelimenaVersionReader.ReadToolkitVersion(updaterFile.FullName);
-                return string.IsNullOrEmpty(version) ? "0.0.0.0" : version;
-            }
-            else
-            {
-                return "0.0.0.0";
-            }
-        }
-
-        /// <summary>
-        /// Gets the update request URL.
+        ///     Gets the update request URL.
         /// </summary>
         /// <returns>System.String.</returns>
         private string GetUpdateRequestUrl(string baseUri, UpdateRequest model)
@@ -140,6 +26,28 @@ namespace TelimenaClient
             {
                 return $"Failed to get update request URL because of {ex.Message}";
             }
+        }
+
+        /// <summary>
+        ///     Gets the updater update response.
+        /// </summary>
+        /// <returns>Task&lt;UpdateResponse&gt;.</returns>
+        private async Task<UpdateResponse> GetUpdateResponse(string requestUri)
+        {
+            string responseContent = await this.Messenger.SendGetRequest(requestUri).ConfigureAwait(false);
+            return this.Serializer.Deserialize<UpdateResponse>(responseContent);
+        }
+
+        private string GetUpdaterVersion()
+        {
+            FileInfo updaterFile = this.Locator.GetUpdater();
+            if (updaterFile.Exists)
+            {
+                string version = TelimenaVersionReader.ReadToolkitVersion(updaterFile.FullName);
+                return string.IsNullOrEmpty(version) ? "0.0.0.0" : version;
+            }
+
+            return "0.0.0.0";
         }
     }
 }

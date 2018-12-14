@@ -27,16 +27,18 @@ namespace TelimenaClient
                 this.startupInfo.MainAssembly = GetProperCallingAssembly();
             }
 
+            this.Async = new AsyncTelimenaHandler(this);
+            this.Blocking = new BlockingTelimenaHandler(this);
             InternalStartupData data = LoadProgramData(this.startupInfo.MainAssembly, startupInfo.ProgramInfo);
 
             this.TelemetryKey = this.startupInfo.TelemetryKey;
-            
+
             this.StaticProgramInfo = data.ProgramInfo;
             this.UserInfo = data.UserInfo;
             this.TelimenaVersion = data.TelimenaVersion;
 
-            this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.startupInfo.TelemetryApiBaseUrl });
+            this.HttpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.startupInfo.TelemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.HttpClient);
         }
     }
-} 
+}

@@ -56,7 +56,7 @@ namespace TelimenaTestSandboxApp
                 this.resultTextBox.Text = "Cannot run without telemetry key";
                 return;
             }
-            TelemetryInitializeResponse response = await this.teli.InitializeAsync_toReDo();
+            TelemetryInitializeResponse response = await this.teli.Async.Initialize();
 
             this.resultTextBox.Text += this.teli.StaticProgramInfo.Name + " - " + this.PresentResponse(response) + Environment.NewLine;
         }
@@ -68,12 +68,12 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
-                result = await this.teli.ReportViewAccessedAsync(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
+                result = await this.teli.Async.ReportViewAccessed(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = await this.teli.ReportViewAccessedAsync("DefaultView");
+                result = await this.teli.Async.ReportViewAccessed("DefaultView");
                 sw.Stop();
             }
 
@@ -95,12 +95,12 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
-                result = this.teli.ReportViewAccessedBlocking(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
+                result = this.teli.Blocking.ReportViewAccessed(string.IsNullOrEmpty(this.viewNameTextBox.Text) ? null : this.viewNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = this.teli.ReportViewAccessedBlocking("DefaultView");
+                result = this.teli.Blocking.ReportViewAccessed("DefaultView");
                 sw.Stop();
             }
 
@@ -121,7 +121,7 @@ namespace TelimenaTestSandboxApp
 
         private async void checkForUpdateButton_Click(object sender, EventArgs e)
         {
-            var response = await this.teli.CheckForUpdatesAsync();
+            var response = await this.teli.Async.CheckForUpdates();
             this.UpdateText(this.PresentResponse(response));
         }
 
@@ -132,7 +132,7 @@ namespace TelimenaTestSandboxApp
             this.teli.SuppressAllErrors = false;
             try
             {
-                await this.teli.HandleUpdatesAsync(false);
+                await this.teli.Async.HandleUpdates(false);
             }
             catch (Exception ex)
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -9,8 +10,28 @@ using TelimenaClient;
 
 namespace PackageTriggerUpdaterTestApp
 {
-    class PackageTriggerUpdaterTestProgram
+    internal class PackageTriggerUpdaterTestProgram
     {
+        private class MyJsonContractResolver : DefaultContractResolver
+        {
+            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+            {
+                IList<JsonProperty> list = base.CreateProperties(type, memberSerialization);
+
+                foreach (JsonProperty prop in list)
+                {
+                    prop.Ignored = false; // Don't ignore any property
+                }
+
+                return list;
+            }
+        }
+
+        public static string Base64Decode(string base64EncodedData)
+        {
+            byte[] base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
+        }
 
         public static string GetFileVersion(Type type)
         {
@@ -26,9 +47,10 @@ namespace PackageTriggerUpdaterTestApp
             MessageBox.Show("Updater executed", "Updater executed");
             Console.WriteLine("Finding and killing the other instance of this app");
 
-            var currentProcess = Process.GetCurrentProcess();
+            Process currentProcess = Process.GetCurrentProcess();
             bool killed = false;
-            var otherProcesses = Process.GetProcesses().Where(x => x.ProcessName == typeof(PackageTriggerUpdaterTestProgram).Assembly.GetName().Name);
+            IEnumerable<Process> otherProcesses =
+                Process.GetProcesses().Where(x => x.ProcessName == typeof(PackageTriggerUpdaterTestProgram).Assembly.GetName().Name);
             foreach (Process otherProcess in otherProcesses)
             {
                 if (otherProcess.Id != currentProcess.Id)
@@ -41,14 +63,28 @@ namespace PackageTriggerUpdaterTestApp
             MessageBox.Show($"Killed other processes: {killed}", "Updater finished");
         }
 
-        static void Main(string[] args)
+        public static void Work(PackageUpdateTesterArguments arguments)
+        {
+            Console.WriteLine("Starting update handling...");
+
+            Telimena teli = new Telimena(new TelimenaStartupInfo(arguments.TelemetryKey, new Uri(arguments.ApiUrl)));
+            Console.WriteLine("Telimena created... Handling updates");
+            UpdateCheckResult result = teli.Blocking.HandleUpdates(false);
+            Console.WriteLine("Finished update handling");
+            JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver()};
+            Console.WriteLine(JsonConvert.SerializeObject(result, settings));
+
+            Console.WriteLine("All done");
+        }
+
+        private static void Main(string[] args)
         {
             Console.WriteLine($"Starting {typeof(PackageTriggerUpdaterTestProgram).Assembly.GetName().Name}");
 
-            var msg = $"AssemblyVersion: {TelimenaVersionReader.Read(typeof(PackageTriggerUpdaterTestProgram), VersionTypes.AssemblyVersion)}\r\n" +
-                      $"FileVersion: {TelimenaVersionReader.Read(typeof(PackageTriggerUpdaterTestProgram), VersionTypes.FileVersion)}\r\n" +
-                      $"Telimena Assembly Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.AssemblyVersion)}\r\n" +
-                      $"Telimena File Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.FileVersion)}";
+            string msg = $"AssemblyVersion: {TelimenaVersionReader.Read(typeof(PackageTriggerUpdaterTestProgram), VersionTypes.AssemblyVersion)}\r\n" +
+                         $"FileVersion: {TelimenaVersionReader.Read(typeof(PackageTriggerUpdaterTestProgram), VersionTypes.FileVersion)}\r\n" +
+                         $"Telimena Assembly Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.AssemblyVersion)}\r\n" +
+                         $"Telimena File Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.FileVersion)}";
             Console.WriteLine(msg);
 
             if (args.Length == 0)
@@ -81,45 +117,5 @@ namespace PackageTriggerUpdaterTestApp
                 key = Console.Read();
             }
         }
-
-        public static void Work(PackageUpdateTesterArguments arguments)
-        {
-            Console.WriteLine("Starting update handling...");
-
-            var teli = new Telimena(new TelimenaStartupInfo(arguments.TelemetryKey, new Uri(arguments.ApiUrl)));
-            Console.WriteLine("Telimena created... Handling updates");
-
-            var result = teli.HandleUpdatesBlocking(false);
-            Console.WriteLine("Finished update handling");
-            JsonSerializerSettings settings = new JsonSerializerSettings
-            {
-                ContractResolver = new MyJsonContractResolver(),
-            };
-            Console.WriteLine(JsonConvert.SerializeObject(result, settings));
-
-            Console.WriteLine("All done");
-        }
-
-        public static string Base64Decode(string base64EncodedData)
-        {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
-            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-        }
-
-        class MyJsonContractResolver : DefaultContractResolver
-        {
-            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-            {
-                var list = base.CreateProperties(type, memberSerialization);
-
-                foreach (var prop in list)
-                {
-                    prop.Ignored = false; // Don't ignore any property
-                }
-
-                return list;
-            }
-        }
-
     }
 }
