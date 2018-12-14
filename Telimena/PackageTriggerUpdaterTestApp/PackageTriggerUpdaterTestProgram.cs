@@ -86,7 +86,7 @@ namespace PackageTriggerUpdaterTestApp
         {
             Console.WriteLine("Starting update handling...");
 
-            var teli = new Telimena(arguments.TelemetryKey);
+            var teli = new Telimena(arguments.TelemetryKey, telemetryApiBaseUrl: new Uri(arguments.ApiUrl));
             Console.WriteLine("Telimena created... Handling updates");
 
             var result = teli.HandleUpdatesBlocking(false);
