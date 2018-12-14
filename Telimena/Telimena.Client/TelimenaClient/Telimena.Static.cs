@@ -157,7 +157,7 @@ namespace TelimenaClient
                 index++;
             }
         }
-        private static StartupData LoadProgramData(Assembly assembly, ProgramInfo programInfo = null)
+        private static InternalStartupData LoadProgramData(Assembly assembly, ProgramInfo programInfo = null)
         {
             ProgramInfo info = programInfo;
             if (info == null)
@@ -169,7 +169,7 @@ namespace TelimenaClient
 
             string telimenaVersion = TelimenaVersionReader.ReadToolkitVersion(Assembly.GetExecutingAssembly());
 
-            return new StartupData(info, userInfo, telimenaVersion);
+            return new InternalStartupData(info, userInfo, telimenaVersion);
         }
       
     }

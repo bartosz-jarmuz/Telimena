@@ -6,9 +6,9 @@
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        private class StartupData
+        private class InternalStartupData
         {
-            public StartupData(ProgramInfo programInfo, UserInfo userInfo, string telimenaVersion)
+            public InternalStartupData(ProgramInfo programInfo, UserInfo userInfo, string telimenaVersion)
             {
                 this.ProgramInfo = programInfo;
                 this.UserInfo = userInfo;

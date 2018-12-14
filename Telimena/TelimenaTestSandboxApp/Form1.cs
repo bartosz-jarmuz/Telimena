@@ -19,7 +19,7 @@ namespace TelimenaTestSandboxApp
             this.apiKeyTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.telemetryKey) ? "" : Properties.Settings.Default.telemetryKey;
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
-                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+                this.teli = new Telimena(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text)));
             }
             this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
         }
@@ -49,7 +49,7 @@ namespace TelimenaTestSandboxApp
         {
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
-                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+                this.teli = new Telimena(new TelimenaStartupInfo( key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text)));
             }
             else
             {
@@ -149,7 +149,7 @@ namespace TelimenaTestSandboxApp
             {
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
                 Properties.Settings.Default.Save();
-                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+                this.teli = new Telimena(new TelimenaStartupInfo( key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text)));
             }
             else
             {
@@ -180,7 +180,7 @@ namespace TelimenaTestSandboxApp
             {
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
                 Properties.Settings.Default.Save();
-                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+                this.teli = new Telimena(new TelimenaStartupInfo(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text)));
             }
             else
             {
@@ -198,7 +198,7 @@ namespace TelimenaTestSandboxApp
             {
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
                 Properties.Settings.Default.Save();
-                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+                this.teli = new Telimena(new TelimenaStartupInfo(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text)));
             }
             else
             {
@@ -236,7 +236,7 @@ namespace TelimenaTestSandboxApp
             {
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
                 Properties.Settings.Default.Save();
-                this.teli = new Telimena(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+                this.teli = new Telimena(new TelimenaStartupInfo(key, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text)));
             }
             else
             {

@@ -56,7 +56,7 @@ namespace TelimenaClient.Tests
         public void Test_NoCustomData()
         {
 
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey)
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(new TelimenaStartupInfo(this.testTelemetryKey))
             {
                 SuppressAllErrors = false
             };
@@ -94,7 +94,7 @@ namespace TelimenaClient.Tests
         public void Test_CustomDataObject()
         {
 
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey)
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(new TelimenaStartupInfo(this.testTelemetryKey))
             {
                 SuppressAllErrors = false
             };
@@ -127,7 +127,7 @@ namespace TelimenaClient.Tests
         public void Test_EmptyGuid()
         {
 
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(Guid.Empty)
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(new TelimenaStartupInfo(Guid.Empty))
             {
                 SuppressAllErrors = false
             };

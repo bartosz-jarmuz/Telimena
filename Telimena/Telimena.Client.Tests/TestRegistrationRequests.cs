@@ -42,7 +42,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_InitializeRequestCreation()
         {
-            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey);
+            TelimenaClient.Telimena telimena = new TelimenaClient.Telimena(new TelimenaStartupInfo(this.testTelemetryKey));
             telimena.SuppressAllErrors = false;
             Assert.AreEqual(this.testTelemetryKey, telimena.TelemetryKey);
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
@@ -54,7 +54,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_RegisterRequestCreation_EmptyKey()
         {
-            ITelimena telimena = new TelimenaClient.Telimena(Guid.Empty);
+            ITelimena telimena = new TelimenaClient.Telimena(new TelimenaStartupInfo(Guid.Empty));
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
@@ -73,7 +73,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_RegisterRequestCreation()
         {
-            ITelimena telimena = new TelimenaClient.Telimena(this.testTelemetryKey);
+            ITelimena telimena = new TelimenaClient.Telimena(new TelimenaStartupInfo(this.testTelemetryKey));
             telimena.SuppressAllErrors = false;
             telimena.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());

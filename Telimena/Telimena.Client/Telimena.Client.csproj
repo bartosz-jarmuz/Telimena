@@ -87,9 +87,11 @@
     <Compile Include="Model\VersionData.cs" />
     <Compile Include="TelimenaClient\Interface\ITelimena.Telemetry.cs" />
     <Compile Include="TelimenaClient\Interface\ITelimena.Updating.cs" />
+    <Compile Include="TelimenaClient\ITelimenaStartupInfo.cs" />
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
     <Compile Include="TelimenaClient\Telimena.StartupData.cs" />
     <Compile Include="TelimenaClient\Telimena.Updating.cs" />
+    <Compile Include="TelimenaClient\TelimenaStartupInfo.cs" />
     <Compile Include="Utilities\Locator.cs" />
     <Compile Include="TelimenaException.cs" />
     <Compile Include="TelimenaClient\Updates\DefaultWpfInputReceiver.cs" />

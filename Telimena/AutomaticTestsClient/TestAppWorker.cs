@@ -62,14 +62,18 @@ namespace AutomaticTestsClient
         private Telimena GetTelimena(Guid argumentsTelemetryKey)
         {
             Telimena telimena;
+
             if (this.arguments.ProgramInfo != null)
             {
-             
-                telimena = new Telimena(argumentsTelemetryKey, telemetryApiBaseUrl: new Uri(this.arguments.ApiUrl), programInfo: this.arguments.ProgramInfo);
+             TelimenaStartupInfo si = new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl))
+             {
+                 ProgramInfo = this.arguments.ProgramInfo
+             };
+             telimena = new Telimena(si);
             }
             else
             {
-                telimena = new Telimena(this.arguments.TelemetryKey, telemetryApiBaseUrl: new Uri(this.arguments.ApiUrl));
+                telimena = new Telimena(new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl)));
             }
 
             return telimena;

@@ -107,7 +107,11 @@ namespace TelimenaTestSandboxApp
                 ProgramInfo programInfo = new ProgramInfo {Name = "Program_" + i, PrimaryAssembly = new AssemblyInfo {Name = "PrimaryAssembly_Program_" + i,
                     VersionData = new VersionData($"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}", $"{ 1 +1 }.{ DateTime.UtcNow.Month }.{ DateTime.UtcNow.Day }.{ rnd.Next(10)}")}};
                 this.apps.Add(programInfo);
-                ITelimena teli = new Telimena(this.telemetryKey, programInfo, new Uri(this.url));
+                var teli = new Telimena(new TelimenaStartupInfo(this.telemetryKey, telemetryApiBaseUrl: new Uri(this.url))
+                {
+                    ProgramInfo = programInfo
+                });
+
                 await teli.InitializeAsync();
 
             }
@@ -136,7 +140,10 @@ namespace TelimenaTestSandboxApp
             while (this.timeoutStopwatch.IsRunning && this.timeoutStopwatch.ElapsedMilliseconds < this.duration.TotalMilliseconds)
             {
                 ProgramInfo prg = this.apps[random.Next(0, this.apps.Count)];
-                Telimena teli = new Telimena(this.telemetryKey, prg, new Uri(this.url));
+                Telimena teli = new Telimena(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url))
+                {
+                    ProgramInfo = prg
+                });
 
                 TelimenaResponseBase result;
                 var operation = random.Next(4);

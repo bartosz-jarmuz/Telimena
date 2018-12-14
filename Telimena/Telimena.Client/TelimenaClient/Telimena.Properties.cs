@@ -99,5 +99,6 @@ namespace TelimenaClient
         public Guid TelemetryKey { get;  }
 
         private TelemetryInitializeResponse initializationResponse;
+        private readonly ITelimenaStartupInfo startupInfo;
     }
 }
