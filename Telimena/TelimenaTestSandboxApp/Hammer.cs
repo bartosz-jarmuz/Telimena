@@ -115,9 +115,9 @@ namespace TelimenaTestSandboxApp
                     }
                 };
                 this.apps.Add(programInfo);
-                Telimena teli = new Telimena(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = programInfo});
+                ITelimena teli = Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = programInfo});
 
-                await teli.Async.Initialize();
+                await teli.Telemetry.Async.Initialize();
             }
 
             this.funcs = new List<string>();
@@ -144,27 +144,26 @@ namespace TelimenaTestSandboxApp
             while (this.timeoutStopwatch.IsRunning && this.timeoutStopwatch.ElapsedMilliseconds < this.duration.TotalMilliseconds)
             {
                 ProgramInfo prg = this.apps[random.Next(0, this.apps.Count)];
-                Telimena teli = new Telimena(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = prg});
-
+                ITelimena teli = Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = prg});
                 TelimenaResponseBase result;
                 int operation = random.Next(4);
                 if (operation == 1)
                 {
-                    result = await teli.Async.ReportEvent("SomeEvent");
+                    result = await teli.Telemetry.Async.Event("SomeEvent");
                 }
                 else if (operation == 2)
                 {
-                    result = await teli.Async.Initialize();
+                    result = await teli.Telemetry.Async.Initialize();
                 }
                 else
                 {
                     if (random.Next(2) == 1)
                     {
-                        result = await teli.Async.ReportViewAccessed(this.funcs[random.Next(0, this.funcs.Count)]);
+                        result = await teli.Telemetry.Async.View(this.funcs[random.Next(0, this.funcs.Count)]);
                     }
                     else
                     {
-                        result = await teli.Async.ReportViewAccessed(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
+                        result = await teli.Telemetry.Async.View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
                     }
                 }
 

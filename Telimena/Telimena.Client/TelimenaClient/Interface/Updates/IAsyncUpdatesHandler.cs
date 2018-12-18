@@ -2,7 +2,10 @@
 
 namespace TelimenaClient
 {
-    public partial interface IAsyncTelimenaHandler
+    /// <summary>
+    /// A set of methods for asynchronous app update handling
+    /// </summary>
+    public interface IAsyncUpdatesHandler : IFluentInterface
     {
         /// <summary>
         ///     Performs an update check and returns the result which allows custom handling of the update process.

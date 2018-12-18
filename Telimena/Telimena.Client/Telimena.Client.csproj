@@ -85,30 +85,40 @@
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
     <Compile Include="Model\VersionData.cs" />
-    <Compile Include="TelimenaClient\Interface\IAsyncTelimenaHandler.Updates.cs" />
-    <Compile Include="TelimenaClient\Interface\IBlockingTelimenaHandler.Telemetry.cs" />
-    <Compile Include="TelimenaClient\Interface\IAsyncTelimenaHandler.Telemetry.cs" />
-    <Compile Include="TelimenaClient\Interface\IBlockingTelimenaHandler.Updates.cs" />
-    <Compile Include="TelimenaClient\ITelimenaStartupInfo.cs" />
-    <Compile Include="TelimenaClient\Telimena.AsyncTelimenaHandler.cs" />
-    <Compile Include="TelimenaClient\Telimena.BlockingTelimenaHandler.cs" />
+    <Compile Include="TelimenaClient\Interface\ITelimenaProperties.cs" />
+    <Compile Include="TelimenaClient\Interface\Updates\IAsyncUpdatesHandler.cs" />
+    <Compile Include="TelimenaClient\Interface\Telemetry\IAsyncTelemetryHandler.cs" />
+    <Compile Include="TelimenaClient\Interface\Telemetry\IBlockingTelemetryHandler.cs" />
+    <Compile Include="TelimenaClient\Interface\Updates\IBlockingUpdatesHandler.cs" />
+    <Compile Include="TelimenaClient\Interface\IFluentInterface.cs" />
+    <Compile Include="TelimenaClient\Interface\Telemetry\ITelemetryModule.cs" />
+    <Compile Include="TelimenaClient\Interface\Updates\IUpdatesModule.cs" />
+    <Compile Include="TelimenaClient\Interface\ITelimenaStartupInfo.cs" />
+    <Compile Include="TelimenaClient\Static\Telemetry\Telimena.Static.Telemetry.cs" />
+    <Compile Include="TelimenaClient\Static\Telimena.Static.cs" />
+    <Compile Include="TelimenaClient\Static\Updates\Telimena.Static.Updates.cs" />
+    <Compile Include="TelimenaClient\Telemetry\TelemetryModule.cs" />
+    <Compile Include="TelimenaClient\Telemetry\Telimena.AsyncTelemetryHandler.cs" />
+    <Compile Include="TelimenaClient\TelimenaProperties.cs" />
+    <Compile Include="TelimenaClient\Updates\Telimena.AsyncUpdatesHandler.cs" />
+    <Compile Include="TelimenaClient\Telemetry\Telimena.BlockingTelemetryHandler.cs" />
+    <Compile Include="TelimenaClient\Updates\Telimena.BlockingUpdatesHandler.cs" />
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
-    <Compile Include="TelimenaClient\Telimena.StartupData.cs" />
-    <Compile Include="TelimenaClient\Telimena.Updating.cs" />
     <Compile Include="TelimenaClient\TelimenaStartupInfo.cs" />
+    <Compile Include="TelimenaClient\Updates\UpdatesModule.cs" />
     <Compile Include="Utilities\Locator.cs" />
     <Compile Include="TelimenaException.cs" />
-    <Compile Include="TelimenaClient\Updates\DefaultWpfInputReceiver.cs" />
-    <Compile Include="TelimenaClient\Updates\IInstallUpdates.cs" />
-    <Compile Include="TelimenaClient\Updates\IReceiveUserInput.cs" />
-    <Compile Include="TelimenaClient\Updates\StartInfoCreator.cs" />
-    <Compile Include="TelimenaClient\Updates\UpdateHandler.cs" />
-    <Compile Include="TelimenaClient\Updates\UpdateInstaller.cs" />
+    <Compile Include="UpdateInstallation\DefaultWpfInputReceiver.cs" />
+    <Compile Include="UpdateInstallation\IInstallUpdates.cs" />
+    <Compile Include="UpdateInstallation\IReceiveUserInput.cs" />
+    <Compile Include="UpdateInstallation\StartInfoCreator.cs" />
+    <Compile Include="UpdateInstallation\UpdateHandler.cs" />
+    <Compile Include="UpdateInstallation\UpdateInstaller.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\Retry\Retrier.cs" />
     <Compile Include="Utilities\TelimenaVersionReader.cs" />
     <Compile Include="Utilities\TelimenaVersionStringComparer.cs" />
-    <Compile Include="TelimenaClient\Updates\UpdateInstructionCreator.cs" />
+    <Compile Include="UpdateInstallation\UpdateInstructionCreator.cs" />
     <Compile Include="Messenger\ITelimenaHttpClient.cs" />
     <Compile Include="Messenger\IMessenger.cs" />
     <Compile Include="Messenger\TelimenaHttpClient.cs" />
@@ -121,10 +131,8 @@
     <Compile Include="Messages\TelemetryUpdateResponse.cs" />
     <Compile Include="Model\AssemblyInfo.cs" />
     <Compile Include="Serializer\NullPropertiesConverter.cs" />
-    <Compile Include="TelimenaClient\Telimena.Static.cs" />
-    <Compile Include="TelimenaClient\Telimena.Constructor.cs" />
-    <Compile Include="TelimenaClient\Telimena.Properties.cs" />
-    <Compile Include="TelimenaClient\Telimena.Telemetry.cs" />
+    <Compile Include="TelimenaClient\Telimena.cs" />
+    <Compile Include="TelimenaClient\Telimena.InternalMembers.cs" />
     <Compile Include="Model\ProgramInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Messages\TelimenaMessageBase.cs" />
@@ -138,5 +146,6 @@
     </None>
     <None Include="Properties\Telimena.Client.nuspec" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

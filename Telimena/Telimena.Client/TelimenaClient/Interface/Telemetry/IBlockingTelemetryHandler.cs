@@ -2,11 +2,10 @@
 
 namespace TelimenaClient
 {
-    /// <summary>
-    ///     Telemetry and Lifecycle Management Engine App
-    ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
-    /// </summary>
-    public partial interface IBlockingTelimenaHandler
+   /// <summary>
+   /// Synchronous Telemetry methods
+   /// </summary>
+    public interface IBlockingTelemetryHandler : IFluentInterface
     {
         /// <summary>
         ///     Initializes the Telimena client.
@@ -31,7 +30,7 @@ namespace TelimenaClient
         /// <param name="eventName">Name of the event</param>
         /// <param name="telemetryData">Custom telemetry data</param>
         /// <returns></returns>
-        TelemetryUpdateResponse ReportEvent(string eventName, Dictionary<string, string> telemetryData = null);
+        TelemetryUpdateResponse Event(string eventName, Dictionary<string, string> telemetryData = null);
 
         /// <summary>
         ///     Report the usage of the application view.
@@ -43,6 +42,6 @@ namespace TelimenaClient
         /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <param name="telemetryData"></param>
         /// <returns></returns>
-        TelemetryUpdateResponse ReportViewAccessed(string viewName, Dictionary<string, string> telemetryData = null);
+        TelemetryUpdateResponse View(string viewName, Dictionary<string, string> telemetryData = null);
     }
 }

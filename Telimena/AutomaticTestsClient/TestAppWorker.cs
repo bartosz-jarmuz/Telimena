@@ -17,7 +17,7 @@ namespace AutomaticTestsClient
 
         public void Work()
         {
-            Telimena telimena = this.GetTelimena(this.arguments.TelemetryKey);
+            ITelimena telimena = this.GetTelimena(this.arguments.TelemetryKey);
 
 
             try
@@ -43,9 +43,9 @@ namespace AutomaticTestsClient
             Console.WriteLine("Done");
         }
 
-        private Telimena GetTelimena(Guid argumentsTelemetryKey)
+        private ITelimena GetTelimena(Guid argumentsTelemetryKey)
         {
-            Telimena telimena;
+            ITelimena telimena;
 
             if (this.arguments.ProgramInfo != null)
             {
@@ -53,24 +53,24 @@ namespace AutomaticTestsClient
                 {
                     ProgramInfo = this.arguments.ProgramInfo
                 };
-                telimena = new Telimena(si);
+                telimena = Telimena.Construct(si);
             }
             else
             {
-                telimena = new Telimena(new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl)));
+                telimena = Telimena.Construct(new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl)));
             }
 
             return telimena;
         }
 
-        private void HandleInitialize(Telimena telimena)
+        private void HandleInitialize(ITelimena telimena)
         {
             TelemetryInitializeResponse result = telimena.Blocking.Initialize();
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
 
-        private void HandleReportViewUsage(Telimena telimena)
+        private void HandleReportViewUsage(ITelimena telimena)
         {
             TelemetryUpdateResponse result;
             Dictionary<string, string> customData = new Dictionary<string, string>();
@@ -88,7 +88,7 @@ namespace AutomaticTestsClient
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
 
-        private void HandleUpdates(Telimena telimena)
+        private void HandleUpdates(ITelimena telimena)
         {
             Console.WriteLine("Starting update handling...");
 

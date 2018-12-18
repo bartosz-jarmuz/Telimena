@@ -1,42 +1,24 @@
-﻿using System.Reflection;
-
-namespace TelimenaClient
+﻿namespace TelimenaClient
 {
-    #region Using
-
-    #endregion
-
     /// <summary>
     ///     Telemetry and Lifecycle Management Engine App
     ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
     /// </summary>
-    public interface ITelimena
+    public interface ITelimena : IFluentInterface
     {
         /// <summary>
-        ///     Asynchronous Telimena methods
+        /// Application updating related methods
         /// </summary>
-        IAsyncTelimenaHandler Async { get; }
+        IUpdatesModule Updates { get; }
 
         /// <summary>
-        ///     Synchronous Telimena methods
+        /// Telemetry related methods
         /// </summary>
-        IBlockingTelimenaHandler Blocking { get; }
-
+        ITelemetryModule Telemetry { get; }
+       
         /// <summary>
-        ///     If true, then Telimena will swallow any errors. Otherwise, it will rethrow
+        /// Telimena Client properties
         /// </summary>
-        bool SuppressAllErrors { get; set; }
-
-        /// <summary>
-        ///     Loads the referenced helper assemblies, e.g. for the purpose of updating
-        /// </summary>
-        /// <param name="assemblies"></param>
-        void LoadHelperAssemblies(params Assembly[] assemblies);
-
-        /// <summary>
-        ///     Loads the referenced helper assemblies, e.g. for the purpose of updating
-        /// </summary>
-        /// <param name="assemblyNames"></param>
-        void LoadHelperAssembliesByName(params string[] assemblyNames);
+        ITelimenaProperties Properties { get; }
     }
 }

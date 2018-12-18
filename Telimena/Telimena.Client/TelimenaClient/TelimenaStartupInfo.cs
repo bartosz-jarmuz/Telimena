@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 namespace TelimenaClient
@@ -18,28 +20,62 @@ namespace TelimenaClient
             this.TelemetryKey = telemetryKey;
             this.TelemetryApiBaseUrl = telemetryApiBaseUrl;
         }
-        /// <summary>
-        /// The telemetry key for the app
-        /// </summary>
+
+        /// <inheritdoc />
         public Guid TelemetryKey { get; set; }
 
-        /// <summary>
-        /// OPTIONAL <para/>
-        /// URL to the telemetry API. If not provided, default URI is used
-        /// </summary>
+        /// <inheritdoc />
         public Uri TelemetryApiBaseUrl { get; set; }
 
-
-        /// <summary>
-        /// OPTIONAL <para/>
-        /// The assembly which should be treated as primary program assembly. If not provided, Telimena client will determine the assembly.
-        /// </summary>
+        /// <inheritdoc />
         public Assembly MainAssembly { get; set; }
 
-        /// <summary>
-        /// OPTIONAL <para/>
-        /// Provide Program information. If not provided, Telimena client will create instance.
-        /// </summary>
+        /// <inheritdoc />
         public ProgramInfo ProgramInfo { get; set; }
+
+        /// <inheritdoc />
+        public UserInfo UserInfo { get; set; }
+
+        /// <inheritdoc />
+        public bool SuppressAllErrors { get; set; } = true;
+
+        /// <summary>
+        /// Loads the helper assembly infos
+        /// </summary>
+        /// <param name="assemblies"></param>
+        public void LoadHelperAssemblies(params Assembly[] assemblies)
+        {
+            this.LoadAssemblyInfos(assemblies);
+        }
+
+        /// <summary>
+        ///     Gets the helper assemblies infos.
+        /// </summary>
+        /// <value>The helper assemblies.</value>
+        public List<AssemblyInfo> HelperAssemblies { get; private set; } = new List<AssemblyInfo>();
+
+        /// <summary>
+        /// Loads the helper assemblies based on Assembly Name
+        /// </summary>
+        /// <param name="assemblyNames"></param>
+        public void LoadHelperAssembliesByName(params string[] assemblyNames)
+        {
+            string path = AppDomain.CurrentDomain.BaseDirectory;
+            var assemblies = new List<Assembly>();
+            foreach (string assemblyName in assemblyNames)
+            {
+                assemblies.Add(Assembly.LoadFrom(Path.Combine(path, assemblyName)));
+            }
+            this.LoadAssemblyInfos(assemblies);
+        }
+
+        private void LoadAssemblyInfos(IEnumerable<Assembly> assemblies)
+        {
+            this.HelperAssemblies = new List<AssemblyInfo>();
+            foreach (Assembly assembly in assemblies)
+            {
+                this.HelperAssemblies.Add(new AssemblyInfo(assembly));
+            }
+        }
     }
 }

@@ -30,5 +30,17 @@ namespace TelimenaClient
         /// Provide Program information. If not provided, Telimena client will create instance.
         /// </summary>
         ProgramInfo ProgramInfo { get; set; }
+
+        /// <summary>
+        /// OPTIONAL <para/>
+        /// Provide application user information. If not provided, Telimena client will create instance.
+        /// </summary>
+        UserInfo UserInfo { get; set; }
+
+        /// <summary>
+        /// Default: TRUE <para/>
+        /// If set to true Telimena will not throw any unhandled exceptions. Otherwise, errors will be thrown (for debug purpose)
+        /// </summary>
+        bool SuppressAllErrors { get; set; }
     }
 }

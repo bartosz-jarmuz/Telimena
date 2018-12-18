@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 namespace TelimenaClient
 {
     /// <summary>
-    ///     Asynchronous Telimena methods
+    ///     Asynchronous Telemetry methods
     /// </summary>
-    public partial interface IAsyncTelimenaHandler
+    public interface IAsyncTelemetryHandler : IFluentInterface
     {
         /// <summary>
         ///     Initializes the Telimena client.
@@ -25,7 +25,7 @@ namespace TelimenaClient
         /// <param name="eventName">Name of the event</param>
         /// <param name="telemetryData">Custom telemetry data</param>
         /// <returns></returns>
-        Task<TelemetryUpdateResponse> ReportEvent(string eventName, Dictionary<string, string> telemetryData = null);
+        Task<TelemetryUpdateResponse> Event(string eventName, Dictionary<string, string> telemetryData = null);
 
         /// <summary>
         ///     Report the usage of the application view.
@@ -34,6 +34,6 @@ namespace TelimenaClient
         /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <param name="telemetryData"></param>
         /// <returns></returns>
-        Task<TelemetryUpdateResponse> ReportViewAccessed(string viewName, Dictionary<string, string> telemetryData = null);
+        Task<TelemetryUpdateResponse> View(string viewName, Dictionary<string, string> telemetryData = null);
     }
 }

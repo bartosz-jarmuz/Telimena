@@ -46,51 +46,7 @@ namespace TelimenaClient.Tests
             return client;
         }
 
-        [Test]
-        public void Test_StaticClient_IsProperViewRecorded()
-        {
-            Mock<ITelimenaHttpClient> client = this.GetMockClientForStaticClient_FirstRequestPass();
-            try
-            {
-                TelimenaClient.Telimena.ReportUsageStatic( this.telemetryKey , client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
-                Assert.Fail("Error expected");
-            }
-            catch (Exception e)
-            {
-                TelimenaException ex = e as TelimenaException;
-                TelemetryUpdateRequest jObj = ex.RequestObjects[1].Value as TelemetryUpdateRequest;
-                Assert.AreEqual("Test_StaticClient_IsProperViewRecorded", jObj.ComponentName);
-            }
-
-            try
-            {
-                TelimenaClient.Telimena.ReportUsageStatic(this.telemetryKey, suppressAllErrors: false, telemetryApiBaseUrl:new Uri("http://localhost:666/")).GetAwaiter().GetResult();
-                Assert.Fail("Error expected..");
-            }
-            catch (Exception e)
-            {
-                TelimenaException ex = e as TelimenaException;
-                Assert.IsNotNull(ex, "Exception type: " + e.GetType());
-                Assert.IsTrue(ex.Message.Contains("[Test_StaticClient_IsProperViewRecorded]"));
-            }
-
-
-            TelemetryUpdateResponse result = TelimenaClient.Telimena.ReportUsageStatic(this.telemetryKey, telemetryApiBaseUrl: new Uri("http://localhost:666/")).GetAwaiter().GetResult();
-            TelimenaException err = result.Exception as TelimenaException;
-            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperViewRecorded]"));
-
-            result = TelimenaClient.Telimena.ReportUsageStatic(this.telemetryKey, "BOOO", telemetryApiBaseUrl: new Uri("http://localhost:666/")).GetAwaiter().GetResult();
-            err = result.Exception as TelimenaException;
-            Assert.IsTrue(err.Message.Contains("[BOOO]"));
-
-            result = TelimenaClient.Telimena.ReportUsageStatic(this.telemetryKey, new ProgramInfo(), telemetryApiBaseUrl: new Uri("http://localhost:666/")).GetAwaiter().GetResult();
-            err = result.Exception as TelimenaException;
-            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperViewRecorded]"));
-
-            result = TelimenaClient.Telimena.ReportUsageStatic(this.telemetryKey, telemetryApiBaseUrl: new Uri("http://localhost:666")).GetAwaiter().GetResult();
-            err = result.Exception as TelimenaException;
-            Assert.IsTrue(err.Message.Contains("[Test_StaticClient_IsProperViewRecorded]"));
-        }
+    
 
         [Test]
         public void Test_StaticClient_RegisterRequest()
@@ -98,7 +54,7 @@ namespace TelimenaClient.Tests
             Mock<ITelimenaHttpClient> client = Helpers.GetMockClient();
             try
             {
-                TelemetryUpdateResponse result = TelimenaClient.Telimena.ReportUsageStatic(this.telemetryKey, client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
+                TelemetryUpdateResponse result = TelimenaClient.Telimena.Telemetry.Async.Event(new TelimenaStartupInfo(this.telemetryKey), "Boo").GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
             catch (Exception e)
@@ -113,24 +69,24 @@ namespace TelimenaClient.Tests
                 Assert.AreEqual("Telimena.Client.Tests", jObj.ProgramInfo.PrimaryAssembly.Name);
             }
 
-            client = this.GetMockClientForStaticClient_FirstRequestPass();
-            try
-            {
-                TelemetryUpdateResponse result = TelimenaClient.Telimena.ReportUsageStatic(this.telemetryKey, client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
-                Assert.Fail("Error expected");
-            }
-            catch (Exception e)
-            {
-                TelimenaException ex = e as TelimenaException;
+            //client = this.GetMockClientForStaticClient_FirstRequestPass();
+            //try
+            //{
+            //    TelemetryUpdateResponse result = TelimenaClient.Telimena.ReportUsageStatic(this.telemetryKey, client.Object, suppressAllErrors: false).GetAwaiter().GetResult();
+            //    Assert.Fail("Error expected");
+            //}
+            //catch (Exception e)
+            //{
+            //    TelimenaException ex = e as TelimenaException;
 
-                Assert.AreEqual(1, ex.InnerExceptions.Count);
-                Assert.IsTrue(ex.InnerExceptions[0].Message.Contains("An error occured while posting to [api/Statistics/Update]"));
-                TelemetryUpdateRequest jObj = ex.RequestObjects[1].Value as TelemetryUpdateRequest;
-                Assert.AreEqual(this.telemetryKey, jObj.TelemetryKey);
-                Assert.AreEqual(this.returnedUserGuid, jObj.UserId);
-                Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.ComponentName);
-                Assert.IsTrue(Version.TryParse(jObj.VersionData.AssemblyVersion, out _));
-            }
+            //    Assert.AreEqual(1, ex.InnerExceptions.Count);
+            //    Assert.IsTrue(ex.InnerExceptions[0].Message.Contains("An error occured while posting to [api/Statistics/Update]"));
+            //    TelemetryUpdateRequest jObj = ex.RequestObjects[1].Value as TelemetryUpdateRequest;
+            //    Assert.AreEqual(this.telemetryKey, jObj.TelemetryKey);
+            //    Assert.AreEqual(this.returnedUserGuid, jObj.UserId);
+            //    Assert.AreEqual("Test_StaticClient_RegisterRequest", jObj.ComponentName);
+            //    Assert.IsTrue(Version.TryParse(jObj.VersionData.AssemblyVersion, out _));
+            //}
         }
 
         [Test]
@@ -138,9 +94,11 @@ namespace TelimenaClient.Tests
         {
             Mock<ITelimenaHttpClient> client = Helpers.GetMockClient();
             ProgramInfo pi = new ProgramInfo {Name = "An App!", PrimaryAssembly = new AssemblyInfo(this.GetType().Assembly)};
+            var si = new TelimenaStartupInfo(this.telemetryKey);
+            si.ProgramInfo = pi;
             try
             {
-                TelemetryUpdateResponse result = TelimenaClient.Telimena.ReportUsageStatic(this.telemetryKey, client.Object, pi, suppressAllErrors: false).GetAwaiter().GetResult();
+                TelemetryUpdateResponse result = TelimenaClient.Telimena.Telemetry.Async.Event(si, "Booo").GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
             catch (Exception e)
