@@ -27,8 +27,10 @@ namespace TelimenaClient
             {
                 this.StartupInfo.MainAssembly = GetProperCallingAssembly();
             }
-
+            
             this.StaticProgramInfo = info.ProgramInfo ?? new ProgramInfo { PrimaryAssembly = new AssemblyInfo(this.StartupInfo.MainAssembly), Name = this.StartupInfo.MainAssembly.GetName().Name };
+            this.StaticProgramInfo.HelperAssemblies = info.HelperAssemblies;
+            this.SuppressAllErrors = info.SuppressAllErrors;
 
             this.UserInfo = new UserInfo { UserName = Environment.UserName, MachineName = Environment.MachineName };
 

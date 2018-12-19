@@ -56,7 +56,7 @@ namespace TelimenaClient
             }
             catch (Exception ex)
             {
-                TelimenaException exception = new TelimenaException("Error occurred while loading live program info", ex);
+                TelimenaException exception = new TelimenaException("Error occurred while loading live program info", this.Properties, ex);
                 if (!this.Properties.SuppressAllErrors)
                 {
                     throw exception;

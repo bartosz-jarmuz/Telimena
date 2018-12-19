@@ -18,15 +18,16 @@ namespace TelimenaClient
         {
         }
 
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="TelimenaException" /> class.
         /// </summary>
         /// <param name="message">The message.</param>
+        /// <param name="telimenaProperties"></param>
         /// <param name="innerException">The inner exception.</param>
         /// <param name="requestObjects">The request objects.</param>
-        public TelimenaException(string message, Exception innerException, params KeyValuePair<Type, object>[] requestObjects) : base(message, innerException)
+        public TelimenaException(string message, ITelimenaProperties telimenaProperties, Exception innerException, params KeyValuePair<Type, object>[] requestObjects) : base(message, innerException)
         {
+            this.TelimenaProperties = telimenaProperties;
             this.RequestObjects = requestObjects;
             if (innerException is AggregateException exception)
             {
@@ -37,6 +38,11 @@ namespace TelimenaClient
                 this.InnerExceptions = new ReadOnlyCollection<Exception>(new[] {innerException});
             }
         }
+
+        /// <summary>
+        /// Telimena Client data
+        /// </summary>
+        public ITelimenaProperties TelimenaProperties { get; }
 
         /// <summary>
         ///     Gets the request objects.

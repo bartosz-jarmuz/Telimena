@@ -63,7 +63,7 @@ namespace TelimenaClient
 
                 catch (Exception ex)
                 {
-                    TelimenaException exception = new TelimenaException("Error occurred while sending registration request", ex
+                    TelimenaException exception = new TelimenaException("Error occurred while sending registration request", this.telimena.Properties, ex
                         , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), request));
                     if (!this.telimena.Properties.SuppressAllErrors)
                     {
@@ -104,7 +104,7 @@ namespace TelimenaClient
                 }
                 catch (Exception ex)
                 {
-                    TelimenaException exception = new TelimenaException($"Error occurred while sending update [{componentName}] telemetry request", ex
+                    TelimenaException exception = new TelimenaException($"Error occurred while sending update [{componentName}] telemetry request to [{apiRoute}]", this.telimena.Properties, ex
                         , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), request));
                     if (!this.telimena.Properties.SuppressAllErrors)
                     {

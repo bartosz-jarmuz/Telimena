@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace TelimenaClient
@@ -42,5 +43,11 @@ namespace TelimenaClient
         /// If set to true Telimena will not throw any unhandled exceptions. Otherwise, errors will be thrown (for debug purpose)
         /// </summary>
         bool SuppressAllErrors { get; set; }
+
+        /// <summary>
+        ///     Gets the helper assemblies infos.
+        /// </summary>
+        /// <value>The helper assemblies.</value>
+        List<AssemblyInfo> HelperAssemblies { get; }
     }
 }
