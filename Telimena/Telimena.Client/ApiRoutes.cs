@@ -2,7 +2,6 @@
 {
     internal static class ApiRoutes
     {
-        public static string UpdateProgramStatistics => "api/Statistics/Update";
         public static string ReportEvent => "api/Telemetry/Event";
         public static string ReportView => "api/Telemetry/View";
         public static string Initialize => "api/Telemetry/Initialize";

@@ -37,7 +37,7 @@ namespace TelimenaClient.Tests
                 response.Content = new StringContent(JsonConvert.SerializeObject(telemetryInitializeResponse));
                 return Task.FromResult(response);
             });
-            client.Setup(x => x.PostAsync(ApiRoutes.UpdateProgramStatistics, It.IsAny<HttpContent>())).Callback(
+            client.Setup(x => x.PostAsync("TODO", It.IsAny<HttpContent>())).Callback(
                 (string uri, HttpContent requestContent) =>
                 {
                     throw new AggregateException(new AssertionException(uri)
