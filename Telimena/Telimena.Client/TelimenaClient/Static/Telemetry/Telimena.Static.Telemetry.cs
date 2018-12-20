@@ -26,7 +26,7 @@ namespace TelimenaClient
                 /// <param name="telemetryData">Custom telemetry data</param>
                 /// <returns></returns>
                 [MethodImpl(MethodImplOptions.NoInlining)]
-                public static Task<TelemetryUpdateResponse> Event(ITelimenaStartupInfo startupInfo, string eventName, Dictionary<string, string> telemetryData = null)
+                public static Task<TelemetryUpdateResponse> Event(ITelimenaStartupInfo startupInfo, string eventName, Dictionary<string, object> telemetryData = null)
                 {
                     ITelimena teli = Telimena.Construct(startupInfo);
                     return teli.Telemetry.Async.Event(eventName, telemetryData);
@@ -41,7 +41,7 @@ namespace TelimenaClient
                 /// <param name="telemetryData"></param>
                 /// <returns></returns>
                 [MethodImpl(MethodImplOptions.NoInlining)]
-                public static Task<TelemetryUpdateResponse> View(ITelimenaStartupInfo startupInfo, string viewName, Dictionary<string, string> telemetryData = null)
+                public static Task<TelemetryUpdateResponse> View(ITelimenaStartupInfo startupInfo, string viewName, Dictionary<string, object> telemetryData = null)
                 {
                     ITelimena teli = Telimena.Construct(startupInfo);
                     return teli.Telemetry.Async.View(viewName, telemetryData);

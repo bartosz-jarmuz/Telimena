@@ -65,7 +65,7 @@ namespace AutomaticTestsClient
 
         private void HandleInitialize(ITelimena telimena)
         {
-            TelemetryInitializeResponse result = telimena.Blocking.Initialize();
+            TelemetryInitializeResponse result = telimena.Telemetry.Blocking.Initialize();
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
@@ -73,16 +73,16 @@ namespace AutomaticTestsClient
         private void HandleReportViewUsage(ITelimena telimena)
         {
             TelemetryUpdateResponse result;
-            Dictionary<string, string> customData = new Dictionary<string, string>();
+            Dictionary<string, object> customData = new Dictionary<string, object>();
             customData.Add("Time", DateTime.Now.ToShortTimeString());
             customData.Add("RandomNumber", new Random().Next(0, 10).ToString());
             if (this.arguments.ViewName != null)
             {
-                result = telimena.Blocking.ReportViewAccessed(this.arguments.ViewName, customData);
+                result = telimena.Telemetry.Blocking.View(this.arguments.ViewName, customData);
             }
             else
             {
-                result = telimena.Blocking.ReportViewAccessed("DefaultView", customData);
+                result = telimena.Telemetry.Blocking.View("DefaultView", customData);
             }
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
@@ -92,7 +92,7 @@ namespace AutomaticTestsClient
         {
             Console.WriteLine("Starting update handling...");
 
-            UpdateCheckResult result = telimena.Blocking.HandleUpdates(false);
+            UpdateCheckResult result = telimena.Updates.Blocking.HandleUpdates(false);
             Console.WriteLine("Finished update handling");
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver()};
 

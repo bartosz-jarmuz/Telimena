@@ -47,11 +47,11 @@ namespace TelimenaTestSandboxApp
         private Stopwatch timeoutStopwatch;
         private List<string> funcs;
 
-        public Dictionary<string, string> GetRandomData()
+        public Dictionary<string, object> GetRandomData()
         {
             Random random = new Random();
 
-            return new Dictionary<string, string>
+            return new Dictionary<string, object>
             {
                 {"PageCount", random.Next(1, 100).ToString()}
                 , {"WordCount", random.Next(1, 100).ToString()}

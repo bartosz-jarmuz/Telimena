@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace TelimenaClient
@@ -26,19 +27,19 @@ namespace TelimenaClient
             private readonly Telimena telimena;
 
             /// <inheritdoc />
-            public Task<TelemetryUpdateResponse> View(string viewName, Dictionary<string, string> telemetryData = null)
+            public Task<TelemetryUpdateResponse> View(string viewName, Dictionary<string, object> telemetryData = null)
             {
                 return this.Report(ApiRoutes.ReportView, viewName, telemetryData);
             }
 
             /// <inheritdoc />
-            public Task<TelemetryUpdateResponse> Event(string eventName, Dictionary<string, string> telemetryData = null)
+            public Task<TelemetryUpdateResponse> Event(string eventName, Dictionary<string, object> telemetryData = null)
             {
                 return this.Report(ApiRoutes.ReportEvent, eventName, telemetryData);
             }
 
             /// <inheritdoc />
-            public async Task<TelemetryInitializeResponse> Initialize(Dictionary<string, string> telemetryData = null)
+            public async Task<TelemetryInitializeResponse> Initialize(Dictionary<string, object> telemetryData = null)
             {
                 TelemetryInitializeRequest request = null;
                 try
@@ -81,7 +82,7 @@ namespace TelimenaClient
             /// <param name="componentName"></param>
             /// <param name="telemetryData"></param>
             /// <returns></returns>
-            private async Task<TelemetryUpdateResponse> Report(string apiRoute, string componentName, Dictionary<string, string> telemetryData = null)
+            private async Task<TelemetryUpdateResponse> Report(string apiRoute, string componentName, Dictionary<string, object> telemetryData = null)
             {
                 TelemetryUpdateRequest request = null;
                 try
@@ -97,7 +98,7 @@ namespace TelimenaClient
                         UserId = this.telimena.Properties.LiveProgramInfo.UserId,
                         ComponentName = componentName,
                         VersionData = this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData,
-                        TelemetryData = telemetryData
+                        TelemetryData = telemetryData?.ToDictionary(x=>x.Key, y=>y.Value.ToString())
                     };
                     string responseContent = await this.telimena.Messenger.SendPostRequest(apiRoute, request).ConfigureAwait(false);
                     return this.telimena.Serializer.Deserialize<TelemetryUpdateResponse>(responseContent);

@@ -18,7 +18,7 @@ namespace TelimenaClient
         ///     </para>
         /// </summary>
         /// <returns></returns>
-        TelemetryInitializeResponse Initialize(Dictionary<string, string> telemetryData = null);
+        TelemetryInitializeResponse Initialize(Dictionary<string, object> telemetryData = null);
 
         /// <summary>
         ///     Reports an occurence of an event
@@ -30,7 +30,7 @@ namespace TelimenaClient
         /// <param name="eventName">Name of the event</param>
         /// <param name="telemetryData">Custom telemetry data</param>
         /// <returns></returns>
-        TelemetryUpdateResponse Event(string eventName, Dictionary<string, string> telemetryData = null);
+        TelemetryUpdateResponse Event(string eventName, Dictionary<string, object> telemetryData = null);
 
         /// <summary>
         ///     Report the usage of the application view.
@@ -42,6 +42,6 @@ namespace TelimenaClient
         /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <param name="telemetryData"></param>
         /// <returns></returns>
-        TelemetryUpdateResponse View(string viewName, Dictionary<string, string> telemetryData = null);
+        TelemetryUpdateResponse View(string viewName, Dictionary<string, object> telemetryData = null);
     }
 }

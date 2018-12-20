@@ -56,7 +56,7 @@ namespace TelimenaClient.Tests
         {
             ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(this.testTelemetryKey) {SuppressAllErrors = false});
             ((Telimena) telimena).Messenger = this.GetMessenger_FirstRequestPass();
-            Dictionary<string, string> data = new Dictionary<string, string> {{"AKey", "AValue"}};
+            Dictionary<string, object> data = new Dictionary<string, object> {{"AKey", "AValue"}};
             Action act = () => telimena.Telemetry.Async.View("SomeView", data).GetAwaiter().GetResult();
             for (int i = 0; i < 2; i++)
             {
@@ -74,7 +74,7 @@ namespace TelimenaClient.Tests
                     Assert.AreEqual(data, jObj.TelemetryData);
                 }
 
-                act = () => telimena.Telemetry.Blocking.View("SomeView", new Dictionary<string, string> {{"AKey", "AValue"}});
+                act = () => telimena.Telemetry.Blocking.View("SomeView", new Dictionary<string, object> {{"AKey", "AValue"}});
             }
         }
 
