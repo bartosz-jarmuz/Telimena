@@ -109,6 +109,10 @@
       <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
       <Name>Telimena.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Telimena.PackageTriggerUpdater\Telimena.PackageTriggerUpdater.csproj">
+      <Project>{06fed956-f08f-497f-8cbd-87afaa312ad7}</Project>
+      <Name>Telimena.PackageTriggerUpdater</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Telimena.Updater\Telimena.Updater.csproj">
       <Project>{6DEE078F-92BD-4F45-A876-BC4446217D83}</Project>
       <Name>Telimena.Updater</Name>

@@ -17,6 +17,7 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Telimena.Updater;
+using Telimena.PackageTriggerUpdater;
 
 namespace TelimenaClient.Tests
 {
@@ -201,20 +202,36 @@ namespace TelimenaClient.Tests
             FileInfo file = tuple.Item2;
             Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\UpdateInstructions.xml", file.FullName);
 
-            global::Telimena.Updater.UpdateInstructions instructions = UpdateInstructionsReader.DeserializeDocument(xDoc);
+            global::Telimena.Updater.UpdateInstructions updaterInstructions = global::Telimena.Updater.UpdateInstructionsReader.DeserializeDocument(xDoc);
 
-            Assert.AreEqual(@"3.5", instructions.LatestVersion);
-            Assert.AreEqual(@"C:\AppFolder\MyApp.exe", instructions.ProgramExecutableLocation);
+            Assert.AreEqual(@"3.5", updaterInstructions.LatestVersion);
+            Assert.AreEqual(@"C:\AppFolder\MyApp.exe", updaterInstructions.ProgramExecutableLocation);
 
-            Assert.That(()=>instructions.Packages[0].Version, Is.EqualTo("1.0"));      
-            Assert.That(()=>instructions.Packages[1].Version, Is.EqualTo("2.0"));      
-            Assert.That(()=>instructions.Packages[2].Version, Is.EqualTo("3.0"));      
-            Assert.That(()=>instructions.Packages[3].Version, Is.EqualTo("3.5"));      
+            Assert.That(()=>updaterInstructions.Packages[0].Version, Is.EqualTo("1.0"));      
+            Assert.That(()=>updaterInstructions.Packages[1].Version, Is.EqualTo("2.0"));      
+            Assert.That(()=>updaterInstructions.Packages[2].Version, Is.EqualTo("3.0"));      
+            Assert.That(()=>updaterInstructions.Packages[3].Version, Is.EqualTo("3.5"));      
             
-            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\1.0\Update v 1.0.zip", instructions.Packages[0].Path);
-            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\2.0\Update v 2.0.zip", instructions.Packages[1].Path);
-            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\3.0\Update v 3.0.zip", instructions.Packages[2].Path);
-            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\3.5\Update v 3.5.zip", instructions.Packages[3].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\1.0\Update v 1.0.zip", updaterInstructions.Packages[0].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\2.0\Update v 2.0.zip", updaterInstructions.Packages[1].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\3.0\Update v 3.0.zip", updaterInstructions.Packages[2].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\3.5\Update v 3.5.zip", updaterInstructions.Packages[3].Path);
+            updaterInstructions = null;
+
+            global::Telimena.PackageTriggerUpdater.UpdateInstructions packageUpdaterInstructions = global::Telimena.PackageTriggerUpdater.UpdateInstructionsReader.DeserializeDocument(xDoc);
+            Assert.AreEqual(@"3.5", packageUpdaterInstructions.LatestVersion);
+            Assert.AreEqual(@"C:\AppFolder\MyApp.exe", packageUpdaterInstructions.ProgramExecutableLocation);
+
+            Assert.That(() => packageUpdaterInstructions.Packages[0].Version, Is.EqualTo("1.0"));
+            Assert.That(() => packageUpdaterInstructions.Packages[1].Version, Is.EqualTo("2.0"));
+            Assert.That(() => packageUpdaterInstructions.Packages[2].Version, Is.EqualTo("3.0"));
+            Assert.That(() => packageUpdaterInstructions.Packages[3].Version, Is.EqualTo("3.5"));
+
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\1.0\Update v 1.0.zip", packageUpdaterInstructions.Packages[0].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\2.0\Update v 2.0.zip", packageUpdaterInstructions.Packages[1].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\3.0\Update v 3.0.zip", packageUpdaterInstructions.Packages[2].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\3.5\Update v 3.5.zip", packageUpdaterInstructions.Packages[3].Path);
+
         }
 
 
