@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace TelimenaClient
 {
@@ -22,13 +24,28 @@ namespace TelimenaClient
         internal static Tuple<XDocument, FileInfo> CreateXDoc(IEnumerable<UpdatePackageData> packages, ProgramInfo programInfo)
         {
             List<UpdatePackageData> sorted = Sort(packages);
-            DirectoryInfo updatesFolder = new FileInfo(sorted.First().StoredFilePath).Directory;
+            DirectoryInfo updatesFolder = new FileInfo(sorted.First().StoredFilePath).Directory.Parent;
             FileInfo instructionsFile = new FileInfo(Path.Combine(updatesFolder.FullName, "UpdateInstructions.xml"));
-            XDocument xDoc = new XDocument();
-            xDoc.Add(new XElement("UpdateInstructions"));
-            InsertPackagesData(xDoc, sorted);
-            InsertMetadata(xDoc, sorted, programInfo);
-            return new Tuple<XDocument, FileInfo>(xDoc, instructionsFile);
+
+            UpdateInstructions instructions = new UpdateInstructions()
+            {
+                LatestVersion = sorted.Last().Version,
+                ProgramExecutableLocation = programInfo.PrimaryAssemblyPath,
+                Packages = new List<UpdateInstructions.PackageData>(sorted.Select(data => new UpdateInstructions.PackageData()
+                {
+                    Version = data.Version,
+                    Path = data.StoredFilePath
+                }))
+            };
+
+            XDocument doc = new XDocument();
+            using (XmlWriter writer = doc.CreateWriter())
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(UpdateInstructions));
+                serializer.Serialize(writer, instructions);
+            }
+
+            return new Tuple<XDocument, FileInfo>(doc, instructionsFile);
         }
 
         internal static List<UpdatePackageData> Sort(IEnumerable<UpdatePackageData> packages)
@@ -36,24 +53,5 @@ namespace TelimenaClient
             return packages.OrderBy(x => x.Version, new TelimenaVersionStringComparer()).ToList();
         }
 
-        private static void InsertMetadata(XDocument xDoc, List<UpdatePackageData> sorted, ProgramInfo programInfo)
-        {
-            XElement metadata = new XElement("Metadata");
-            xDoc.Root.Add(metadata);
-            UpdatePackageData newest = sorted.Last();
-            metadata.Add(new XElement("LatestVersion", newest.Version));
-            metadata.Add(new XElement("ProgramExecutableLocation", programInfo.PrimaryAssemblyPath));
-        }
-
-        private static void InsertPackagesData(XDocument xDoc, List<UpdatePackageData> sorted)
-        {
-            XElement packagesToInstall = new XElement("PackagesToInstall");
-            xDoc.Root.Add(packagesToInstall);
-            foreach (UpdatePackageData updatePackageData in sorted)
-            {
-                // ReSharper disable once PossibleNullReferenceException
-                packagesToInstall.Add(new XElement("File", updatePackageData.StoredFilePath));
-            }
-        }
     }
 }

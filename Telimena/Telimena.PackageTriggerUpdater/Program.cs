@@ -19,10 +19,19 @@ namespace Telimena.PackageTriggerUpdater
             }
             UpdaterStartupSettings settings = CommandLineArgumentParser.GetSettings(args);
             UpdateInstructions instructions = UpdateInstructionsReader.Read(settings.InstructionsFile);
-            Console.WriteLine($"Read update instructions from {settings.InstructionsFile}");
-          
-                        var worker = new PackageUpdaterWorker();
-            worker.TriggerUpdate(settings, instructions);
+            if (instructions != null)
+            {
+                Console.WriteLine($"Read update instructions from {settings.InstructionsFile}");
+
+                var worker = new PackageUpdaterWorker();
+                worker.TriggerUpdate(settings, instructions);
+
+            }
+            else
+            {
+                Console.WriteLine($"Failed to perform update based on instructions: {settings.InstructionsFile}");
+
+            }
         }
     }
 }

@@ -52,9 +52,9 @@ namespace TelimenaClient
         protected async Task StoreUpdatePackage(UpdatePackageData pkgData, DirectoryInfo updatesFolder)
         {
             FileDownloadResult result = await this.messenger.DownloadFile(pkgData.DownloadUrl).ConfigureAwait(false);
-            FileInfo pkgFile = new FileInfo(Path.Combine(updatesFolder.FullName, result.FileName));
+            FileInfo pkgFile = this.locator.BuildUpdatePackagePath(updatesFolder, pkgData);
             Trace.WriteLine($"{result.FileName} to be stored into {pkgFile.FullName}");
-
+            
             // this.DeleteFileIfExists(pkgFile);
 
             await SaveStreamToPath(pkgData, pkgFile, result.Stream).ConfigureAwait(false);
@@ -108,13 +108,13 @@ namespace TelimenaClient
             try
             {
                 List<Task> downloadTasks = new List<Task>();
-                DirectoryInfo updatesFolder = this.locator.GetCurrentUpdateSubfolder(packagesToDownload);
-                Directory.CreateDirectory(updatesFolder.FullName);
+                DirectoryInfo currentUpdateSubfolder = this.locator.GetCurrentUpdateSubfolder(packagesToDownload);
+                Directory.CreateDirectory(currentUpdateSubfolder.FullName);
                 foreach (UpdatePackageData updatePackageData in packagesToDownload)
                 {
                     Trace.WriteLine($"Tr: {updatePackageData.DownloadUrl}" + updatePackageData.DownloadUrl);
 
-                    downloadTasks.Add(this.StoreUpdatePackage(updatePackageData, updatesFolder));
+                    downloadTasks.Add(this.StoreUpdatePackage(updatePackageData, currentUpdateSubfolder));
                 }
 
                 await Task.WhenAll(downloadTasks).ConfigureAwait(false);
@@ -133,8 +133,8 @@ namespace TelimenaClient
                 return updaterExecutable;
             }
 
-            var result = await this.messenger.DownloadFile(pkgData.DownloadUrl).ConfigureAwait(false);
-            FileInfo pkgFile = new FileInfo(Path.Combine(this.locator.GetUpdatesParentFolder().FullName, result.FileName));
+            FileDownloadResult result = await this.messenger.DownloadFile(pkgData.DownloadUrl).ConfigureAwait(false);
+            FileInfo pkgFile = this.locator.GetInstallerPackagePath(result);
             if (pkgFile.Exists)
             {
                 pkgFile.Delete();

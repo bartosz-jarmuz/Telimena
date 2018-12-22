@@ -7,10 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using NUnit.Framework;
 using Telimena.Updater;
+using TelimenaClient;
 using Assert = NUnit.Framework.Assert;
+using UpdateInstructions = Telimena.Updater.UpdateInstructions;
 
 namespace TelimenaUpdaterTests.DefaultUpdater
 {
@@ -88,10 +92,10 @@ namespace TelimenaUpdaterTests.DefaultUpdater
                 UpdateWorker worker = new UpdateWorker();
                 worker.PerformUpdate(new UpdateInstructions
                 {
-                    PackagePaths = new List<string>
+                    Packages = new List<UpdateInstructions.PackageData>()
                     {
-                        Path.Combine(this.Update12Folder.FullName, "MyApp Update v. 1.1.zip")
-                        , Path.Combine(this.Update12Folder.FullName, "MyApp Update v. 1.2.zip")
+                        new UpdateInstructions.PackageData(){Version = "1.1", Path = Path.Combine(this.Update12Folder.FullName, "MyApp Update v. 1.1.zip")},
+                        new UpdateInstructions.PackageData(){Version = "1.2", Path = Path.Combine(this.Update12Folder.FullName, "MyApp Update v. 1.2.zip")},
                     },
                     ProgramExecutableLocation = this.MyAppExePath.FullName
                 });
@@ -104,6 +108,9 @@ namespace TelimenaUpdaterTests.DefaultUpdater
             }
         }
 
+       
+
+
         [Test]
         public void Test_Worker_AppData()
         {
@@ -112,13 +119,15 @@ namespace TelimenaUpdaterTests.DefaultUpdater
             {
                 this.PreTestAsserts();
 
+            
+
                 UpdateWorker worker = new UpdateWorker();
                 worker.PerformUpdate(new UpdateInstructions
                 {
-                    PackagePaths = new List<string>
+                    Packages = new List<UpdateInstructions.PackageData>()
                     {
-                        Path.Combine(this.Update12FolderAppData.FullName, "MyApp Update v. 1.1.zip")
-                        , Path.Combine(this.Update12FolderAppData.FullName, "MyApp Update v. 1.2.zip")
+                        new UpdateInstructions.PackageData(){Version = "1.1", Path = Path.Combine(this.Update12FolderAppData.FullName, "MyApp Update v. 1.1.zip")},
+                        new UpdateInstructions.PackageData(){Version = "1.2", Path = Path.Combine(this.Update12FolderAppData.FullName, "MyApp Update v. 1.2.zip")},
                     },
                     ProgramExecutableLocation = this.MyAppExePath.FullName
                 });

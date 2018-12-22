@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -9,98 +8,92 @@ using Telimena.PackageTriggerUpdater.CommandLineArguments;
 
 namespace Telimena.PackageTriggerUpdater
 {
-    
-        public class PackageUpdaterWorker
-        {
-            private readonly string[] nonExecutableExtensions = new[] { ".dll", ".txt", ".xml", ".docx" };
+    public class PackageUpdaterWorker
+    {
+        private readonly string[] nonExecutableExtensions = {".dll", ".txt", ".xml", ".docx"};
 
         public void TriggerUpdate(UpdaterStartupSettings settings, UpdateInstructions instructions)
-            {
-                string packagePath = instructions.PackagePaths.FirstOrDefault();
+        {
+            string packagePath = this.GetProperPackagePath(instructions);
 
             if (packagePath != null && File.Exists(packagePath))
-                {
-                    var package = new FileInfo(packagePath);
+            {
+                FileInfo package = new FileInfo(packagePath);
 
-                    var executable = this.GetExecutablePackage(package);
+                FileInfo executable = this.GetExecutablePackage(package);
 
-                    Console.WriteLine($"Launching package {executable.FullName}.");
-                    Process.Start(executable.FullName);
-                }
-                else
+                Console.WriteLine($"Launching package {executable.FullName}.");
+                Process.Start(executable.FullName);
+            }
+            else
+            {
+                Console.WriteLine($"Failed to find package from {settings.InstructionsFile}");
+                Console.ReadKey();
+            }
+        }
+
+        internal FileInfo GetExecutablePackage(FileInfo packagePath)
+        {
+            if (packagePath.FullName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+            {
+                string updDirPath = packagePath.DirectoryName + " Extracted";
+                PrepareAndValidatePackage(packagePath, updDirPath);
+                string executablePackagePath = Directory.GetFiles(updDirPath).FirstOrDefault(x =>
+                    !this.nonExecutableExtensions.Contains(Path.GetExtension(x), StringComparer.InvariantCultureIgnoreCase));
+                if (executablePackagePath == null)
                 {
-                    Console.WriteLine($"Failed to find package from {settings.InstructionsFile}"); 
+                    Console.WriteLine($"Failed to find executable package in {updDirPath}");
                     Console.ReadKey();
+                    return null;
                 }
+
+                return new FileInfo(executablePackagePath);
             }
 
+            return packagePath;
+        }
 
+        internal string GetProperPackagePath(UpdateInstructions instructions)
+        {
+            string packagePath = instructions.Packages.OrderByDescending(x=>x.Version, new TelimenaVersionStringComparer()).FirstOrDefault()?.Path;
+            return packagePath;
+        }
 
-            internal FileInfo GetExecutablePackage(FileInfo packagePath)
+        private static void PrepareAndValidatePackage(FileInfo package, string updDirPath)
+        {
+            for (int i = 0; i < 4; i++)
             {
-                if (packagePath.FullName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+                if (Directory.Exists(updDirPath))
                 {
-                    var updDirPath = packagePath.DirectoryName + " Extracted";
-                    PrepareAndValidatePackage(packagePath, updDirPath);
-                    var executablePackagePath = Directory.GetFiles(updDirPath).FirstOrDefault(x=> !this.nonExecutableExtensions.Contains(Path.GetExtension(x), StringComparer.InvariantCultureIgnoreCase));
-                    if (executablePackagePath == null)
-                    {
-                        Console.WriteLine($"Failed to find executable package in {updDirPath}");
-                        Console.ReadKey();
-                        return null;
-                    }
-                    else
-                    {
-                        return new FileInfo(executablePackagePath);
-                    }
-                }
-                else
-                {
-                    return packagePath;
+                    Directory.Delete(updDirPath, true);
                 }
 
-            }
-
-            private static void PrepareAndValidatePackage(FileInfo package, string updDirPath)
-            {
-                for (int i = 0; i < 4; i++)
+                try
                 {
-                    if (Directory.Exists(updDirPath))
-                    {
-                        Directory.Delete(updDirPath, true);
-                    }
+                    ZipFile.ExtractToDirectory(package.FullName, updDirPath);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Thread.Sleep(500);
 
-                    try
+                    if (i >= 4)
                     {
-                        ZipFile.ExtractToDirectory(package.FullName, updDirPath);
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        Thread.Sleep(500);
-
-                        if (i >= 4)
+                        Console.WriteLine(
+                            "Error occurred while unpacking update package. Exception:\n" + ex.Message + "\nUpdate package will be removed and re-downloaded."
+                            , "Update problem");
+                        try
                         {
-                            Console.WriteLine(
-                                "Error occurred while unpacking update package. Exception:\n" + ex.Message + "\nUpdate package will be removed and re-downloaded."
-                                , "Update problem");
-                            try
-                            {
-                                File.Delete(package.FullName);
-                            }
-                            catch (Exception ex2)
-                            {
-                                Console.WriteLine("Error occurred while deleting update package. Exception:\n" + ex2.Message);
-                                Console.ReadKey();
-                            }
-
+                            File.Delete(package.FullName);
                         }
-
-
+                        catch (Exception ex2)
+                        {
+                            Console.WriteLine("Error occurred while deleting update package. Exception:\n" + ex2.Message);
+                            Console.ReadKey();
+                        }
                     }
                 }
-
-                return ;
             }
         }
     }
+}

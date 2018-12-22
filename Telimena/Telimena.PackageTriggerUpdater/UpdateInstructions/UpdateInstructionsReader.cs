@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace Telimena.PackageTriggerUpdater
 {
@@ -12,45 +14,25 @@ namespace Telimena.PackageTriggerUpdater
             try
             {
                 XDocument xDoc = XDocument.Load(instructionFile.FullName);
-                return ParseDocument(xDoc);
+                return DeserializeDocument(xDoc);
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error occurred while reading update instructions.\r\nDetails:\r\n" + ex);
                 Console.ReadKey();
-                throw;
+                return null;
             }
         }
 
-        internal static UpdateInstructions ParseDocument(XDocument xDoc)
+        internal static UpdateInstructions DeserializeDocument(XDocument xDoc)
         {
-            UpdateInstructions instructions = new UpdateInstructions();
-            ProcessPackagesSection(xDoc, instructions);
-            ProcessMetadataSection(xDoc, instructions);
-            return instructions;
-        }
-
-        private static void ProcessMetadataSection(XDocument xDoc, UpdateInstructions instructions)
-        {
-            XElement section = xDoc.Root.Element("Metadata");
-            if (section != null)
+            using (XmlReader reader = xDoc.CreateReader())
             {
-                instructions.LatestVersion = section.Element("LatestVersion")?.Value;
-                instructions.ProgramExecutableLocation = section.Element("ProgramExecutableLocation")?.Value;
+                XmlSerializer serializer = new XmlSerializer(typeof(UpdateInstructions));
+                return (UpdateInstructions)serializer.Deserialize(reader);
             }
         }
 
-        private static void ProcessPackagesSection(XDocument xDoc, UpdateInstructions instructions)
-        {
-            XElement packagesSection = xDoc.Root.Element("PackagesToInstall");
-            if (packagesSection != null)
-            {
-                instructions.PackagePaths = new List<string>();
-                foreach (XElement xElement in packagesSection.Elements())
-                {
-                    instructions.PackagePaths.Add(xElement.Value);
-                }
-            }
-        }
     }
+    
 }

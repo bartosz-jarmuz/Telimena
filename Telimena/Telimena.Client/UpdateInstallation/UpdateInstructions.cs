@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Telimena.Updater
+namespace TelimenaClient
 {
     /// <summary>
     /// Instructions for update

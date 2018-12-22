@@ -132,8 +132,6 @@ namespace TelimenaClient.Tests
         {
             ITelimena sut = Telimena.Construct(new TelimenaStartupInfo(Guid.NewGuid()) { SuppressAllErrors = false });
 
-
-
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(), new UpdateResponse()));
 
             UpdateCheckResult response = sut.Updates.Async.CheckForUpdates().GetAwaiter().GetResult();
@@ -183,29 +181,43 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_UpdateInstructionCreator()
         {
+            var locator = new Locator(new LiveProgramInfo(new ProgramInfo { Name = "App.exe" }) { UpdaterName = "MyUpdater.exe" }, @"C:\AppFolder\");
+
             List<UpdatePackageData> packages = new List<UpdatePackageData>
             {
-                new UpdatePackageData {Guid = this.PrgPkg_4, Version = "3.5", StoredFilePath = @"C:\AppFolder\Updates\Update v 3.5\Update v 3.5.zip"}
-                , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0", StoredFilePath = @"C:\AppFolder\Updates\Update v 3.5\Update v 2.0.zip"}
-                , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0", StoredFilePath = @"C:\AppFolder\Updates\Update v 3.5\Update v 1.0.zip"}
-                , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0", StoredFilePath = @"C:\AppFolder\Updates\Update v 3.5\Update v 3.0.zip"}
+                new UpdatePackageData   {Guid =   this.PrgPkg_4, Version = "3.5", FileName="Update v 3.5.zip"  }
+                , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0",   FileName="Update v 2.0.zip"  }
+                , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0",   FileName="Update v 1.0.zip"  }
+                , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0",   FileName="Update v 3.0.zip"  }
             };
+            DirectoryInfo currentUpdateSubfolder = locator.GetCurrentUpdateSubfolder(packages);
+
+
+            packages.ForEach(x=>x.StoredFilePath = Locator.Static.BuildUpdatePackagePath(currentUpdateSubfolder, x).FullName);
 
             Tuple<XDocument, FileInfo> tuple = UpdateInstructionCreator.CreateXDoc(packages
                 , new ProgramInfo {PrimaryAssembly = new AssemblyInfo {Location = @"C:\AppFolder\MyApp.exe"}});
             XDocument xDoc = tuple.Item1;
             FileInfo file = tuple.Item2;
-            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\UpdateInstructions.xml", file.FullName);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\UpdateInstructions.xml", file.FullName);
 
-            UpdateInstructions instructions = UpdateInstructionsReader.ParseDocument(xDoc);
+            global::Telimena.Updater.UpdateInstructions instructions = UpdateInstructionsReader.DeserializeDocument(xDoc);
 
             Assert.AreEqual(@"3.5", instructions.LatestVersion);
             Assert.AreEqual(@"C:\AppFolder\MyApp.exe", instructions.ProgramExecutableLocation);
-            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 1.0.zip", instructions.PackagePaths[0]);
-            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 2.0.zip", instructions.PackagePaths[1]);
-            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.0.zip", instructions.PackagePaths[2]);
-            Assert.AreEqual(@"C:\AppFolder\Updates\Update v 3.5\Update v 3.5.zip", instructions.PackagePaths[3]);
+
+            Assert.That(()=>instructions.Packages[0].Version, Is.EqualTo("1.0"));      
+            Assert.That(()=>instructions.Packages[1].Version, Is.EqualTo("2.0"));      
+            Assert.That(()=>instructions.Packages[2].Version, Is.EqualTo("3.0"));      
+            Assert.That(()=>instructions.Packages[3].Version, Is.EqualTo("3.5"));      
+            
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\1.0\Update v 1.0.zip", instructions.Packages[0].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\2.0\Update v 2.0.zip", instructions.Packages[1].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\3.0\Update v 3.0.zip", instructions.Packages[2].Path);
+            Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\3.5\Update v 3.5.zip", instructions.Packages[3].Path);
         }
+
+
 
         [Test]
         public void Test_UpdaterPathFinder()
@@ -213,13 +225,11 @@ namespace TelimenaClient.Tests
             string temp = Path.GetTempPath();
 
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            
             Locator locator = new Locator(new LiveProgramInfo(new ProgramInfo {Name = "Test_UpdaterPathFinder"}) {UpdaterName = "MyUpdater.exe"}, temp);
 
-            DirectoryInfo parentFolder = locator.GetUpdatesParentFolder();
-            Assert.AreEqual($@"{appData}\Telimena\Test_UpdaterPathFinder\Test_UpdaterPathFinder Updates", parentFolder.FullName);
-
             FileInfo updater = locator.GetUpdater();
-            Assert.AreEqual($@"{appData}\Telimena\Test_UpdaterPathFinder\Test_UpdaterPathFinder Updates\MyUpdater.exe", updater.FullName);
+            Assert.AreEqual($@"{appData}\Telimena\Test_UpdaterPathFinder\Updates\MyUpdater.exe", updater.FullName);
         }
 
         [Test]
@@ -227,10 +237,10 @@ namespace TelimenaClient.Tests
         {
             List<UpdatePackageData> packages = new List<UpdatePackageData>
             {
-                new UpdatePackageData {Guid = this.PrgPkg_4, Version = "3.5"}
-                , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0"}
-                , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0"}
-                , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0"}
+                new UpdatePackageData   {Guid = this.PrgPkg_4, Version = "3.5", FileName = "Update.zip"}
+                , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0", FileName = "Update.zip"}
+                , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0", FileName = "Update.zip"}
+                , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0", FileName = "Update.zip"}
             };
             string temp = Path.GetTempPath();
 
@@ -244,14 +254,33 @@ namespace TelimenaClient.Tests
             Locator locator =
                 new Locator(new LiveProgramInfo(new ProgramInfo {Name = "Test_UpdaterPathFinder_CannotAccessAppData"}) {UpdaterName = "MyUpdater.exe"}, temp);
 
-            DirectoryInfo parentFolder = locator.GetUpdatesParentFolder();
-            Assert.AreEqual($@"{temp}Test_UpdaterPathFinder_CannotAccessAppData Updates", parentFolder.FullName);
-
             FileInfo updater = locator.GetUpdater();
             Assert.AreEqual($@"{temp}Test_UpdaterPathFinder_CannotAccessAppData Updates\MyUpdater.exe", updater.FullName);
 
             DirectoryInfo subFolder = locator.GetCurrentUpdateSubfolder(packages);
             Assert.AreEqual($@"{temp}Test_UpdaterPathFinder_CannotAccessAppData Updates\3.5", subFolder.FullName);
+
+            Assert.AreEqual($@"{temp}Test_UpdaterPathFinder_CannotAccessAppData Updates\3.5\3.5\Update.zip", locator.BuildUpdatePackagePath(subFolder, packages[0]).FullName);
+            Assert.AreEqual($@"{temp}Test_UpdaterPathFinder_CannotAccessAppData Updates\3.5\2.0\Update.zip", locator.BuildUpdatePackagePath(subFolder, packages[1]).FullName);
         }
+
+
+        [Test]
+        public void TestLocator()
+        {
+            Locator locator =
+                new Locator(new LiveProgramInfo(new ProgramInfo { Name = "TestApp" }) { UpdaterName = "MyUpdater.exe" });
+            var pkg = new UpdatePackageData() { FileName = "Update.zip", Version = "1.2.0" };
+
+            var parent = locator.GetCurrentUpdateSubfolder(new[] {pkg});
+
+
+            var updatePackage = locator.BuildUpdatePackagePath(parent, pkg);
+            Assert.AreEqual($@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\Telimena\TestApp\Updates\1.2.0\1.2.0\Update.zip", updatePackage.FullName);
+
+        }
+
     }
+
+
 }

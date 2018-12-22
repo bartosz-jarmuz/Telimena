@@ -73,6 +73,7 @@
     <Compile Include="PackageUpdaterWorker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TelimenaVersionStringComparer.cs" />
     <Compile Include="UpdateInstructions\UpdateInstructions.cs" />
     <Compile Include="UpdateInstructions\UpdateInstructionsReader.cs" />
   </ItemGroup>

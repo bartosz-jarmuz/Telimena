@@ -106,6 +106,7 @@
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
     <Compile Include="TelimenaClient\TelimenaStartupInfo.cs" />
     <Compile Include="TelimenaClient\Updates\UpdatesModule.cs" />
+    <Compile Include="UpdateInstallation\UpdateInstructions.cs" />
     <Compile Include="Utilities\Locator.cs" />
     <Compile Include="TelimenaException.cs" />
     <Compile Include="UpdateInstallation\DefaultWpfInputReceiver.cs" />
