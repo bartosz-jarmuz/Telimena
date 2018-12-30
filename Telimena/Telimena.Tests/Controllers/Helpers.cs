@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Moq;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
+using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -19,6 +20,7 @@ using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 using TelimenaClient;
+using TelimenaClient.Serializer;
 
 namespace Telimena.Tests
 {
@@ -117,7 +119,7 @@ namespace Telimena.Tests
 
             ProgramsUnitOfWork unit = new ProgramsUnitOfWork(context, new TelimenaUserManager(new UserStore<TelimenaUser>(context)), new AssemblyStreamVersionReader());
 
-            ProgramsController programsController = new ProgramsController(unit) {RequestContext = requestContext.Object};
+            ProgramsController programsController = new ProgramsController(unit, new TelimenaSerializer(), new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object) {RequestContext = requestContext.Object};
             TelemetryController telemetryController = new TelemetryController(new TelemetryUnitOfWork(context, new AssemblyStreamVersionReader())) ;
 
 

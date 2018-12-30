@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Telimena.WebApp.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -110,6 +111,12 @@
     </Reference>
     <Reference Include="Microsoft.AspNet.TelemetryCorrelation, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.TelemetryCorrelation.1.0.3\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.WebApi.Versioning, Version=3.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Versioning.3.0.0\lib\net45\Microsoft.AspNet.WebApi.Versioning.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.WebApi.Versioning.ApiExplorer, Version=3.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Versioning.ApiExplorer.3.0.1\lib\net45\Microsoft.AspNet.WebApi.Versioning.ApiExplorer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Azure.Services.AppAuthentication, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\lib\net452\Microsoft.Azure.Services.AppAuthentication.dll</HintPath>
@@ -264,14 +271,14 @@
     <Compile Include="AutoMapperWebProfile.cs" />
     <Compile Include="Controllers\Admin\AdminDashboardController.cs" />
     <Compile Include="Controllers\Admin\ToolkitManagementController.cs" />
-    <Compile Include="Controllers\Api\ProgramPackagesController.cs" />
-    <Compile Include="Controllers\Api\ProgramVersionsController.cs" />
-    <Compile Include="Controllers\Api\ProgramUpdatesController.cs" />
-    <Compile Include="Controllers\Api\ProgramsController.cs" />
-    <Compile Include="Controllers\Api\TelemetryController.cs" />
-    <Compile Include="Controllers\Api\TelemetryControllerHelpers.cs" />
-    <Compile Include="Controllers\Api\ToolkitController.cs" />
-    <Compile Include="Controllers\Api\UpdaterController.cs" />
+    <Compile Include="Controllers\Api\V1\DevelopersController.cs" />
+    <Compile Include="Controllers\Api\V1\Helpers\ProgramsControllerHelpers.cs" />
+    <Compile Include="Controllers\Api\V1\UpdatePackagesController.cs" />
+    <Compile Include="Controllers\Api\V1\ProgramsController.cs" />
+    <Compile Include="Controllers\Api\V1\TelemetryController.cs" />
+    <Compile Include="Controllers\Api\V1\Helpers\TelemetryControllerHelpers.cs" />
+    <Compile Include="Controllers\Api\V1\ToolkitController.cs" />
+    <Compile Include="Controllers\Api\V1\UpdatersController.cs" />
     <Compile Include="Controllers\Developer\ProgramsDashboardBase.cs" />
     <Compile Include="Controllers\Developer\RegisterProgramController.cs" />
     <Compile Include="Controllers\Developer\DeveloperDashboardController.cs" />

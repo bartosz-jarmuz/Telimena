@@ -244,7 +244,7 @@
                                     <td>@pkg.Updater.DeveloperAccount.Name</td>
                                     <td>@pkg.Updater.FileName</td>
                                     <td>
-                                        <a href="/api@(Url.Action("Get", "Updater") + "?id=" + pkg.Guid)">@pkg.Version</a>
+                                        <a href="/api@(Url.Action("Get", "Updaters") + "?id=" + pkg.Guid)">@pkg.Version</a>
                                     </td>
                                     <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
                                     <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
@@ -282,13 +282,13 @@
                 var formData = new FormData(form);
                 var modelString = CreateUpdaterPackage();
                 formData.append('Model', modelString);
-                UploadFile(formData, '@Url.Action("Upload", "Updater")', $(this).find(':submit'));
+                UploadFile(formData, '@Url.Action("Post", "Updaters")', $(this).find(':submit'));
             });
             $('#uploadToolkitUpdatePackageForm').submit(function(e) {
                 e.preventDefault();
                 var form = $('#uploadToolkitUpdatePackageForm')[0];
                 var formData = new FormData(form);
-                UploadFile(formData, '@Url.Action("Upload", "Toolkit")', $(this).find(':submit'));
+                UploadFile(formData, '@Url.Action("Post", "Toolkit")', $(this).find(':submit'));
             });
         });
 
@@ -327,7 +327,7 @@
             $.ajax({
                 type: 'PUT',
                 url: '/api' +
-                    '@Url.Action("SetIsPublic", "Updater")?id=' +
+                    '@Url.Action("SetIsPublic", "Updaters")?id=' +
                     id +
                     '&isPublic=' +
                     input.checked,

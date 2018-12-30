@@ -1,15 +1,27 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Telimena.WebApp.Controllers.Api.V1.Helpers;
+using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
+using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using TelimenaClient;
 
-namespace Telimena.WebApp.Controllers.Api
+namespace Telimena.WebApp.Controllers.Api.V1
 {
+    /// <summary>
+    /// Controls the telemetry process
+    /// </summary>
+    [TelimenaApiAuthorize(Roles = TelimenaRoles.Viewer)]
+    [RoutePrefix("api/v{version:apiVersion}/telemetry")]
     public class TelemetryController : ApiController
     {
+        /// <summary>
+        /// New instance
+        /// </summary>
+        /// <param name="work"></param>
         public TelemetryController(ITelemetryUnitOfWork work)
         {
             this.work = work;
@@ -17,24 +29,45 @@ namespace Telimena.WebApp.Controllers.Api
 
         private readonly ITelemetryUnitOfWork work;
 
+        /// <summary>
+        /// Report new event occurrence
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
+        [AllowAnonymous]
+        [Route("event")]
         public Task<TelemetryUpdateResponse> Event(TelemetryUpdateRequest request)
         {
-            return TelemetryControllerHelpers.PerformUpdate(this.work, request,
+            return TelemetryControllerHelpers.InsertData(this.work, request,
                 () => this.Request.GetClientIp(),
                 (name, prg) => TelemetryControllerHelpers.GetEventOrAddIfMissing(this.work, name, prg));
 
         }
 
+        /// <summary>
+        /// Report a program view access
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
+        [Route("view")]
         public Task<TelemetryUpdateResponse> View(TelemetryUpdateRequest request)
         {
-            return TelemetryControllerHelpers.PerformUpdate(this.work, request, 
+            return TelemetryControllerHelpers.InsertData(this.work, request, 
                 ()=> this.Request.GetClientIp(),  
                 (name, prg) => TelemetryControllerHelpers.GetViewOrAddIfMissing(this.work, name, prg));
         }
 
+        /// <summary>
+        /// Initialization of telemetry
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
+        [ Route("initialize")]
         public async Task<TelemetryInitializeResponse> Initialize(TelemetryInitializeRequest request)
         {
             try

@@ -234,7 +234,7 @@
                                 <input type="checkbox" data-pkg-id="@pkg.Id" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "")/>
                             </td>
                             <td>
-                                <a href="/api@(Url.Action("Get", "ProgramUpdates") + "?id=" + pkg.Id)">@pkg.FileName</a>
+                                <a href="/api@(Url.Action("Get", "UpdatePackages") + "?id=" + pkg.Id)">@pkg.FileName</a>
                             </td>
                             <td>@pkg.Version</td>
                             <td>@pkg.SupportedToolkitVersion</td>
@@ -332,7 +332,7 @@
             $.ajax({
                 type: 'POST',
                 url: '/api' +
-                    '@Url.Action("ToggleBetaSetting", "ProgramUpdates")' +
+                    '@Url.Action("ToggleBetaSetting", "UpdatePackages")' +
                     "?updatePackageGuid=" +
                     id +
                     "&isBeta=" +
@@ -437,7 +437,7 @@
 
             $.ajax({
                     type: 'POST',
-                    url: '/api' + '@Url.Action("ValidatePackageVersion", "ProgramUpdates")',
+                    url: '/api' + '@Url.Action("ValidateRequest", "UpdatePackages")',
                     contentType: "application/json; charset=utf-8",
                     datatype: 'Json',
                     data: modelString
@@ -446,7 +446,7 @@
                     var form = $('#@Strings.Id.UploadProgramUpdateForm')[0];
                     var formData = new FormData(form);
                     formData.append('Model', modelString);
-                    successCallback(formData, '@Url.Action("Upload", "ProgramUpdates")', button);
+                    successCallback(formData, '@Url.Action("Upload", "UpdatePackages")', button);
                 })
                 .fail(function(xhr) {
                     ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);

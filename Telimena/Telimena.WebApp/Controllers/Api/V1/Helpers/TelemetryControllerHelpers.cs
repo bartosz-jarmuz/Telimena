@@ -9,9 +9,9 @@ using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using TelimenaClient;
 
-namespace Telimena.WebApp.Controllers.Api
+namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 {
-    public static class TelemetryControllerHelpers
+    internal static class TelemetryControllerHelpers
     {
         public static TelemetryUpdateResponse PrepareUpdateResponse(TelemetryUpdateRequest updateRequest, TelemetrySummary usageSummary, Program program
             , ClientAppUser clientAppUser)
@@ -36,7 +36,7 @@ namespace Telimena.WebApp.Controllers.Api
             return response;
         }
 
-        public static async Task<TelemetryUpdateResponse> PerformUpdate(ITelemetryUnitOfWork work, TelemetryUpdateRequest request, Func<string> getClientIp, Func<string, Program, Task<ITelemetryAware>> getTrackedComponent)
+        public static async Task<TelemetryUpdateResponse> InsertData(ITelemetryUnitOfWork work, TelemetryUpdateRequest request, Func<string> getClientIp, Func<string, Program, Task<ITelemetryAware>> getTrackedComponent)
         {
             try
             {
@@ -62,8 +62,6 @@ namespace Telimena.WebApp.Controllers.Api
                 return new TelemetryUpdateResponse { Exception = new InvalidOperationException("Error while processing statistics update request", ex) };
             }
         }
-
-      
 
         public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, UserInfo userDto, string ip)
         {

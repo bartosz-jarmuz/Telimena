@@ -1,4 +1,5 @@
-﻿namespace Telimena.WebApp.UiStrings
+﻿#pragma warning disable 1591
+namespace Telimena.WebApp.UiStrings
 {
     public static partial class Strings
     {

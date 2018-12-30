@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DbIntegrationTestHelpers;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
+using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
