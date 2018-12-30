@@ -50,104 +50,104 @@ namespace Telimena.WebApp.Controllers.Api.V1
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
 
-        ///// <summary>
-        ///// Downloads the updater with specified ID
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <returns></returns> 
-        //[AllowAnonymous]
-        //[Audit]
-        //[HttpGet, Route("{id}")]
-        //public async Task<IHttpActionResult> Get(Guid id)
-        //{
-        //    UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetPackageInfo(id);
-        //    if (updaterInfo == null)
-        //    {
-        //        return this.BadRequest($"Updater id [{id}] does not exist");
-        //    }
+        /// <summary>
+        /// Downloads the updater with specified ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns> 
+        [AllowAnonymous]
+        [Audit]
+        [HttpGet, Route("{id}")]
+        public async Task<IHttpActionResult> Get(Guid id)
+        {
+            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetPackageInfo(id);
+            if (updaterInfo == null)
+            {
+                return this.BadRequest($"Updater id [{id}] does not exist");
+            }
 
-        //    byte[] bytes = await this.work.UpdaterRepository.GetPackage(updaterInfo.Id, this.fileRetriever);
-        //    HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
-        //    result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = updaterInfo.ZippedFileName };
-        //    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
+            byte[] bytes = await this.work.UpdaterRepository.GetPackage(updaterInfo.Id, this.fileRetriever);
+            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) };
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = updaterInfo.ZippedFileName };
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
 
-        //    return this.ResponseMessage(result);
-        //}
+            return this.ResponseMessage(result);
+        }
 
-        ///// <summary>
-        ///// Uploads an updater package
-        ///// </summary>
-        ///// <returns></returns>
-        //[Audit]
-        //[HttpPost, Route("")]
-        //public async Task<IHttpActionResult> Post()
-        //{
-        //    try
-        //    {
-        //        string reqString = HttpContext.Current.Request.Form["Model"];
-        //        UploadUpdaterRequest request = JsonConvert.DeserializeObject<UploadUpdaterRequest>(reqString);
+        /// <summary>
+        /// Uploads an updater package
+        /// </summary>
+        /// <returns></returns>
+        [Audit]
+        [HttpPost, Route("")]
+        public async Task<IHttpActionResult> Post()
+        {
+            try
+            {
+                string reqString = HttpContext.Current.Request.Form["Model"];
+                UploadUpdaterRequest request = JsonConvert.DeserializeObject<UploadUpdaterRequest>(reqString);
 
-        //        HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
-        //        if (uploadedFile != null && uploadedFile.ContentLength > 0)
-        //        {
-        //            TelimenaUser user = await this.work.Users.GetByPrincipalAsync(this.User);
-        //            Updater updater = await this.work.UpdaterRepository.GetUpdater(request.UpdaterInternalName);
+                HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
+                if (uploadedFile != null && uploadedFile.ContentLength > 0)
+                {
+                    TelimenaUser user = await this.work.Users.GetByPrincipalAsync(this.User);
+                    Updater updater = await this.work.UpdaterRepository.GetUpdater(request.UpdaterInternalName);
 
-        //            if (updater == null)
-        //            {
-        //                updater = this.work.UpdaterRepository.Add(uploadedFile.FileName, request.UpdaterInternalName, user);
-        //            }
+                    if (updater == null)
+                    {
+                        updater = this.work.UpdaterRepository.Add(uploadedFile.FileName, request.UpdaterInternalName, user);
+                    }
 
-        //            if (user.AssociatedDeveloperAccounts.All(x => x.Id != updater.DeveloperAccount.Id))
-        //            {
-        //                return this.BadRequest(
-        //                    $"Updater '{updater.InternalName}' is managed by a team that you don't belong to - '{updater.DeveloperAccount.Name}'");
-        //            }
+                    if (user.AssociatedDeveloperAccounts.All(x => x.Id != updater.DeveloperAccount.Id))
+                    {
+                        return this.BadRequest(
+                            $"Updater '{updater.InternalName}' is managed by a team that you don't belong to - '{updater.DeveloperAccount.Name}'");
+                    }
 
-        //            if (uploadedFile.FileName != updater.FileName && !uploadedFile.FileName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
-        //            {
-        //                return this.BadRequest(
-        //                    $"Incorrect file. Expected {updater.FileName} or a zip package with it");
-        //            }
+                    if (uploadedFile.FileName != updater.FileName && !uploadedFile.FileName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return this.BadRequest(
+                            $"Incorrect file. Expected {updater.FileName} or a zip package with it");
+                    }
 
-        //            UpdaterPackageInfo pkg =
-        //                await this.work.UpdaterRepository.StorePackageAsync(updater, request.MinimumCompatibleToolkitVersion, uploadedFile.InputStream, this.fileSaver);
-        //            await this.work.CompleteAsync();
-        //            return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
-        //        }
+                    UpdaterPackageInfo pkg =
+                        await this.work.UpdaterRepository.StorePackageAsync(updater, request.MinimumCompatibleToolkitVersion, uploadedFile.InputStream, this.fileSaver);
+                    await this.work.CompleteAsync();
+                    return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
+                }
 
-        //        return this.BadRequest("Empty attachment");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return this.BadRequest(ex.Message);
-        //    }
-        //}
+                return this.BadRequest("Empty attachment");
+            }
+            catch (Exception ex)
+            {
+                return this.BadRequest(ex.Message);
+            }
+        }
 
-        ///// <summary>
-        ///// Sets the value of the 'is public' property on the specified updater  
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <param name="isPublic"></param>
-        ///// <returns></returns>
-        //[Audit]
-        //[HttpPut, Route("{id}/is-public/{isPublic}")]
-        //public async Task<IHttpActionResult> SetIsPublic(Guid id, bool isPublic)
-        //{
-        //    var updater = await this.work.UpdaterRepository.GetUpdater(id);
-        //    if (updater == null)
-        //    {
-        //        return this.BadRequest($"Updater id [{id}] does not exist");
-        //    }
+        /// <summary>
+        /// Sets the value of the 'is public' property on the specified updater  
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="isPublic"></param>
+        /// <returns></returns>
+        [Audit]
+        [HttpPut, Route("{id}/is-public/{isPublic}")]
+        public async Task<IHttpActionResult> SetIsPublic(Guid id, bool isPublic)
+        {
+            var updater = await this.work.UpdaterRepository.GetUpdater(id);
+            if (updater == null)
+            {
+                return this.BadRequest($"Updater id [{id}] does not exist");
+            }
 
-        //    if (!isPublic && (updater.InternalName == DefaultToolkitNames.UpdaterInternalName || updater.InternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName))
-        //    {
-        //        return this.BadRequest($"Cannot change default updater");
-        //    }
-        //    updater.IsPublic = isPublic;
-        //    await this.work.CompleteAsync();
-        //    return this.Ok($"Set package with ID: {id} public flag to: {isPublic}");
-        //}
+            if (!isPublic && (updater.InternalName == DefaultToolkitNames.UpdaterInternalName || updater.InternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName))
+            {
+                return this.BadRequest($"Cannot change default updater");
+            }
+            updater.IsPublic = isPublic;
+            await this.work.CompleteAsync();
+            return this.Ok($"Set package with ID: {id} public flag to: {isPublic}");
+        }
 
 
         /// <summary>

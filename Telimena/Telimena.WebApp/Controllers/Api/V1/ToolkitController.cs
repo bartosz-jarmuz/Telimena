@@ -51,60 +51,60 @@ namespace Telimena.WebApp.Controllers.Api.V1
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
 
-        ///// <summary>
-        ///// Download the Telimena toolkit assembly by specified ID
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <returns></returns>
-        //[Audit]
-        //[HttpGet, Route("{id}")]
-        //public async Task<IHttpActionResult> Get(Guid id)
-        //{
-        //    TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Guid == id);
-        //    if (toolkitData == null)
-        //    {
-        //        return this.BadRequest($"Toolkit id [{id}] does not exist");
-        //    }
+        /// <summary>
+        /// Download the Telimena toolkit assembly by specified ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Audit]
+        [HttpGet, Route("{id}")]
+        public async Task<IHttpActionResult> Get(Guid id)
+        {
+            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Guid == id);
+            if (toolkitData == null)
+            {
+                return this.BadRequest($"Toolkit id [{id}] does not exist");
+            }
 
-        //    byte[] bytes = await this.work.ToolkitDataRepository.GetPackage(toolkitData.Id, this.fileRetriever);
-        //    HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
+            byte[] bytes = await this.work.ToolkitDataRepository.GetPackage(toolkitData.Id, this.fileRetriever);
+            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) };
 
-        //    result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") {FileName = toolkitData.TelimenaPackageInfo.ZippedFileName };
-        //    result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = toolkitData.TelimenaPackageInfo.ZippedFileName };
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
 
-        //    return this.ResponseMessage(result);
-        //}
+            return this.ResponseMessage(result);
+        }
 
-        ///// <summary>
-        ///// Upload a new Telimena toolkit assembly file
-        ///// </summary>
-        ///// <returns></returns>
-        //[Audit]
-        //[HttpPost, Route("")]
-        //public async Task<IHttpActionResult> Post()
-        //{
-        //    try
-        //    {
-        //        HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
-        //        if (uploadedFile != null && uploadedFile.ContentLength > 0)
-        //        {
-        //            if (uploadedFile.FileName != DefaultToolkitNames.TelimenaAssemblyName &&!uploadedFile.FileName.EndsWith(".zip",StringComparison.InvariantCultureIgnoreCase))
-        //            {
-        //                return this.BadRequest(
-        //                    $"Incorrect file. Expected {DefaultToolkitNames.TelimenaAssemblyName} or {DefaultToolkitNames.ZippedPackageName}");
-        //            }
-        //            TelimenaToolkitData pkg =
-        //                await this.work.ToolkitDataRepository.StorePackageAsync(false, false, uploadedFile.InputStream, this.fileSaver);
-        //            await this.work.CompleteAsync();
-        //            return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
-        //        }
+        /// <summary>
+        /// Upload a new Telimena toolkit assembly file
+        /// </summary>
+        /// <returns></returns>
+        [Audit]
+        [HttpPost, Route("")]
+        public async Task<IHttpActionResult> Post()
+        {
+            try
+            {
+                HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
+                if (uploadedFile != null && uploadedFile.ContentLength > 0)
+                {
+                    if (uploadedFile.FileName != DefaultToolkitNames.TelimenaAssemblyName && !uploadedFile.FileName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return this.BadRequest(
+                            $"Incorrect file. Expected {DefaultToolkitNames.TelimenaAssemblyName} or {DefaultToolkitNames.ZippedPackageName}");
+                    }
+                    TelimenaToolkitData pkg =
+                        await this.work.ToolkitDataRepository.StorePackageAsync(false, false, uploadedFile.InputStream, this.fileSaver);
+                    await this.work.CompleteAsync();
+                    return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
+                }
 
-        //        return this.BadRequest("Empty attachment");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return this.BadRequest(ex.Message);
-        //    }
-        //}
+                return this.BadRequest("Empty attachment");
+            }
+            catch (Exception ex)
+            {
+                return this.BadRequest(ex.Message);
+            }
+        }
     }
 }

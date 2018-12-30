@@ -175,23 +175,23 @@ namespace Telimena.Tests
             return list;
         }
 
-        public static async Task<KeyValuePair<string, Guid>> SeedProgramAsync(ProgramsController controller, string programName)
-        {
+        //public static async Task<KeyValuePair<string, Guid>> SeedProgramAsync(ProgramsController controller, string programName)
+        //{
            
 
-            RegisterProgramRequest register = new RegisterProgramRequest
-            {
-                Name = programName,
-                TelemetryKey = Guid.NewGuid(),
-                PrimaryAssemblyFileName = programName + ".dll"
-            };
-        RegisterProgramResponse response =   await  controller.Register(register);
-            if (response.Exception != null)
-            {
-                throw response.Exception;
-            }
+        //    RegisterProgramRequest register = new RegisterProgramRequest
+        //    {
+        //        Name = programName,
+        //        TelemetryKey = Guid.NewGuid(),
+        //        PrimaryAssemblyFileName = programName + ".dll"
+        //    };
+        //RegisterProgramResponse response =   await  controller.Register(register);
+        //    if (response.Exception != null)
+        //    {
+        //        throw response.Exception;
+        //    }
 
-            return new KeyValuePair<string, Guid>(programName, response.TelemetryKey);
-        }
+        //    return new KeyValuePair<string, Guid>(programName, response.TelemetryKey);
+        //}
     }
 }

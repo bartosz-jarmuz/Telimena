@@ -34,16 +34,16 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
         private IProgramsUnitOfWork Work { get; }
 
-        ///// <summary>
-        ///// Gets all programs for this developer team
-        ///// </summary>
-        ///// <param name="developerId"></param>
-        ///// <returns></returns>
-        //[HttpGet, Route("{developerId}/programs")]
-        //public async Task<IEnumerable<Program>> GetPrograms(Guid developerId)
-        //{
-        //    return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Guid == developerId);
-        //}
+        /// <summary>
+        /// Gets all programs for this developer team
+        /// </summary>
+        /// <param name="developerId"></param>
+        /// <returns></returns>
+        [HttpGet, Route("{developerId}/programs")]
+        public async Task<IEnumerable<Program>> GetPrograms(Guid developerId)
+        {
+            return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Guid == developerId);
+        }
 
     }
 }

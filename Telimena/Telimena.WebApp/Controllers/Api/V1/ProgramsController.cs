@@ -56,61 +56,61 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
         private IProgramsUnitOfWork Work { get; }
 
-        /// <summary>
-        /// Register a new program in Telimena
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [Audit]
-        [HttpPost]
-        [Route("{request}")]
-        public async Task<RegisterProgramResponse> Register(RegisterProgramRequest request)
-        {
-            try
-            {
-                if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
-                {
-                    return new RegisterProgramResponse(new BadRequestException(string.Join(", ", errors)));
-                }
+        ///// <summary>
+        ///// Register a new program in Telimena
+        ///// </summary>
+        ///// <param name="request"></param>
+        ///// <returns></returns>
+        //[Audit]
+        //[HttpPost]
+        //[Route("{request}")]
+        //public async Task<RegisterProgramResponse> Register(RegisterProgramRequest request)
+        //{
+        //    try
+        //    {
+        //        if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
+        //        {
+        //            return new RegisterProgramResponse(new BadRequestException(string.Join(", ", errors)));
+        //        }
 
-                if (await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey) != null)
-                {
-                    return new RegisterProgramResponse(new BadRequestException($"Use different telemetry key"));
-                }
+        //        if (await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey) != null)
+        //        {
+        //            return new RegisterProgramResponse(new BadRequestException($"Use different telemetry key"));
+        //        }
 
-                TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
-                DeveloperAccount developerAccount = user.GetDeveloperAccountsLedByUser().FirstOrDefault();
-                if (developerAccount == null)
-                {
-                    return new RegisterProgramResponse(new BadRequestException($"Cannot find developer account associated with user [{user.UserName}]"));
-                }
+        //        TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
+        //        DeveloperAccount developerAccount = user.GetDeveloperAccountsLedByUser().FirstOrDefault();
+        //        if (developerAccount == null)
+        //        {
+        //            return new RegisterProgramResponse(new BadRequestException($"Cannot find developer account associated with user [{user.UserName}]"));
+        //        }
 
-                Program program = new Program(request.Name, request.TelemetryKey)
-                {
-                    Description = request.Description
-                };
-                developerAccount.AddProgram(program);
+        //        Program program = new Program(request.Name, request.TelemetryKey)
+        //        {
+        //            Description = request.Description
+        //        };
+        //        developerAccount.AddProgram(program);
 
-                var primaryAss = new ProgramAssembly()
-                {
-                    Name = Path.GetFileNameWithoutExtension(request.PrimaryAssemblyFileName),
-                    Extension = Path.GetExtension(request.PrimaryAssemblyFileName)
-                };
-                program.PrimaryAssembly = primaryAss;
+        //        var primaryAss = new ProgramAssembly()
+        //        {
+        //            Name = Path.GetFileNameWithoutExtension(request.PrimaryAssemblyFileName),
+        //            Extension = Path.GetExtension(request.PrimaryAssemblyFileName)
+        //        };
+        //        program.PrimaryAssembly = primaryAss;
 
-                this.Work.Programs.Add(program);
+        //        this.Work.Programs.Add(program);
 
-                await this.Work.CompleteAsync();
+        //        await this.Work.CompleteAsync();
 
-                program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey);
-                var url = this.Url?.Link("Default", new { Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey });
-                return new RegisterProgramResponse(program.TelemetryKey, program.DeveloperAccount.Id, url);
-            }
-            catch (Exception ex)
-            {
-                return new RegisterProgramResponse(ex);
-            }
-        }
+        //        program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey);
+        //        var url = this.Url?.Link("Default", new { Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey });
+        //        return new RegisterProgramResponse(program.TelemetryKey, program.DeveloperAccount.Id, url);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new RegisterProgramResponse(ex);
+        //    }
+        //}
 
 
         ///// <summary>
