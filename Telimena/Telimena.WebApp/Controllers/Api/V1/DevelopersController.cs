@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Telimena.WebApp.Core.DTO;
@@ -20,8 +21,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Developer (team) related controller
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
-    [RoutePrefix("api/v{version:apiVersion}/developers")]
-    public class DevelopersController : ApiController
+    [RoutePrefix("api/v1/developers")]
+    public partial class DevelopersController : ApiController
     {
         /// <summary>
         /// New instance
@@ -39,11 +40,10 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="developerId"></param>
         /// <returns></returns>
-        [HttpGet, Route("{developerId}/programs")]
+        [HttpGet, Route("{developerId}/programs", Name = Routes.GetPrograms)]
         public async Task<IEnumerable<Program>> GetPrograms(Guid developerId)
         {
             return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Guid == developerId);
         }
-
     }
 }

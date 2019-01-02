@@ -19,8 +19,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls the Telimena toolkit operations
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Admin)]
-    [RoutePrefix("api/v{version:apiVersion}/toolkit")]
-    public class ToolkitController : ApiController
+    [RoutePrefix("api/v1/toolkit")]
+    public partial class ToolkitController : ApiController
     {
         //The toolkit can evolve independently of the client app - some changes might be breaking the contracts, but most - should not
         //a non-breaking change example - add new features or overloads, pull more client data or handle changes in the web api
@@ -57,7 +57,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="id"></param>
         /// <returns></returns>
         [Audit]
-        [HttpGet, Route("{id}")]
+        [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
             TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Guid == id);
@@ -80,8 +80,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <returns></returns>
         [Audit]
-        [HttpPost, Route("")]
-        public async Task<IHttpActionResult> Post()
+        [HttpPost, Route("", Name = Routes.Upload)]
+        public async Task<IHttpActionResult> Upload()
         {
             try
             {
@@ -106,5 +106,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 return this.BadRequest(ex.Message);
             }
         }
+#pragma warning restore 1591
+
     }
 }

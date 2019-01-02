@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using AutoMapper;
+using Microsoft.Web.Http;
 using MvcAuditLogger;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.DTO;
@@ -32,8 +33,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls program management related endpoints
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
-    [RoutePrefix("api/v{version:apiVersion}/programs")]
-    public class ProgramsController : ApiController
+    [RoutePrefix("api/v1/programs")]
+    public partial class ProgramsController : ApiController
     {
         private readonly ITelimenaSerializer serializer;
         private readonly IFileSaver fileSaver;
@@ -62,8 +63,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name = "request" ></param>
         /// <returns></returns>
         [Audit]
-        [HttpPost]
-        [Route("")]
+        [HttpPost, Route("", Name = Routes.Register)]
         public async Task<RegisterProgramResponse> Register(RegisterProgramRequest request)
         {
             try
@@ -119,7 +119,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
         [Audit]
-        [HttpDelete, Route("{telemetryKey}")]
+        [HttpDelete, Route("{telemetryKey}", Name = Routes.Delete)]
         public async Task<IHttpActionResult> Delete(Guid telemetryKey)
         {
             var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
@@ -145,7 +145,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
         [Audit]
-        [HttpPost, Route("{telemetryKey}/packages")]
+        [HttpPost, Route("{telemetryKey}/packages", Name = Routes.Upload)]
         public async Task<IHttpActionResult> Upload(Guid telemetryKey)
         {
             try
@@ -180,7 +180,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [Audit]
-        [HttpGet, Route("{telemetryKey}/packages/latest")]
+        [HttpGet, Route("{telemetryKey}/packages/latest", Name = Routes.DownloadLatestProgramPackage)]
         public async Task<IHttpActionResult> DownloadLatestProgramPackage(Guid telemetryKey)
         {
             Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
@@ -199,8 +199,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [Audit]
-        [HttpGet, Route("{developerName}/download/{programName}", Name = "DownloadAppRoute")]
-        public async Task<IHttpActionResult> DownloadLatestProgramPackage(string developerName, string programName)
+        [HttpGet, Route("{developerName}/download/{programName}", Name =  Routes.DownloadApp)]
+        public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
         {
             Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
             if (prg == null)
@@ -215,7 +215,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
-        [HttpGet, Route("{telemetryKey}/versions/latest")]
+        [HttpGet, Route("{telemetryKey}/versions/latest", Name = Routes.GetLatestVersionInfo)]
         public async Task<LatestVersionResponse> GetLatestVersionInfo(Guid telemetryKey)
         {
             try
@@ -249,7 +249,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet, Route("{telemetryKey}/versions/count")]
+        [HttpGet, Route("{telemetryKey}/versions/count", Name = Routes.GetVersionsCount)]
         public async Task<IHttpActionResult> GetVersionsCount(Guid id)
         {
             Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == id);
@@ -267,7 +267,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet, Route("{telemetryKey}/updater/name")]
+        [HttpGet, Route("{telemetryKey}/updater/name", Name= Routes.GetProgramUpdaterName)]
         public async Task<HttpResponseMessage> GetProgramUpdaterName(Guid telemetryKey)
         {
             Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
@@ -290,7 +290,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="updaterId"></param>
         /// <returns></returns>
         [Audit]
-        [HttpPut, Route("{telemetryKey}/updater/set-updater/{updaterId}")]
+        [HttpPut, Route("{telemetryKey}/updater/set-updater/{updaterId}", Name = Routes.SetUpdater)]
         public async Task<IHttpActionResult> SetUpdater(Guid telemetryKey, Guid updaterId)
         {
             Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
@@ -316,8 +316,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost]
-        [Route("update-check/{request}")]
+        [HttpPost, Route("update-check/{request}", Name = Routes.GetUpdateInfo)]
         public async Task<UpdateResponse> GetUpdateInfo(string request)
         {
             try

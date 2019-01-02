@@ -27,8 +27,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls the updaters
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Admin)]
-    [RoutePrefix("api/v{version:apiVersion}/updaters")]
-    public class UpdatersController : ApiController
+    [RoutePrefix("api/v1/updaters")]
+    public partial class UpdatersController : ApiController
     {
         /// <summary>
         /// New instance
@@ -49,6 +49,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         private readonly ITelimenaSerializer serializer;
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
+#pragma warning restore 1591
 
         /// <summary>
         /// Downloads the updater with specified ID
@@ -57,7 +58,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns> 
         [AllowAnonymous]
         [Audit]
-        [HttpGet, Route("{id}")]
+        [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
             UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetPackageInfo(id);
@@ -79,8 +80,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <returns></returns>
         [Audit]
-        [HttpPost, Route("")]
-        public async Task<IHttpActionResult> Post()
+        [HttpPost, Route("", Name = Routes.Upload)]
+        public async Task<IHttpActionResult> Upload()
         {
             try
             {
@@ -131,7 +132,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="isPublic"></param>
         /// <returns></returns>
         [Audit]
-        [HttpPut, Route("{id}/is-public/{isPublic}")]
+        [HttpPut, Route("{id}/is-public/{isPublic}", Name=Routes.SetIsPublic)]
         public async Task<IHttpActionResult> SetIsPublic(Guid id, bool isPublic)
         {
             var updater = await this.work.UpdaterRepository.GetUpdater(id);
@@ -157,7 +158,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
-        [ Route("update-info/{request}")]
+        [ Route("update-info/{request}", Name = Routes.GetUpdateInfo)]
         public async Task<UpdateResponse> GetUpdateInfo(string request)
         {
             UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);

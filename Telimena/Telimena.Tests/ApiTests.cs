@@ -13,8 +13,9 @@ using Telimena.WebApp.Infrastructure.Security;
 
 namespace Telimena.Tests
 {
+ 
     [TestFixture]
-    public class ApitTests
+    public class ApiTests
     {
         [Test]
         public void ValidateControllers()
@@ -24,6 +25,7 @@ namespace Telimena.Tests
             foreach (Type controllerType in apiControllers)
             {
                 ValidateControllerRouteAttribute(controllerType, errors);
+                ValidateRouteHelpers(controllerType, errors);
                 ValidateActionAttributes(controllerType, errors);
                 ValidateControllerAuthorizeAttribute(controllerType, errors);
             }
@@ -31,6 +33,34 @@ namespace Telimena.Tests
             if (errors.Any())
             {
                 Assert.Fail($"{errors.Count} errors:\r\n" + String.Join("\r\n", errors));
+            }
+        }
+
+        private static void ValidateRouteHelpers(Type controllerType, List<string> errors)
+        {
+            var helpersType = controllerType.GetNestedType("Routes");
+            if (helpersType != null)
+            {
+                foreach (FieldInfo field in helpersType.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).Where(fi => fi.IsLiteral && !fi.IsInitOnly))
+                {
+                    var actions = controllerType.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                        .Where(x => x.MemberType == MemberTypes.Method && x.Name == field.Name).ToList();
+                    if (actions.Count == 0)
+                    {
+                        errors.Add($"[{controllerType.Name}] contains a route for [{field.Name}], but does not contain a corresponding action");
+                    }
+                    else if (actions.Count > 1)
+                    {
+                        errors.Add($"[{controllerType.Name}] contains a route for [{field.Name}], but contains more than 1 action with this name");
+                    }
+                    else
+                    {
+                        if ((string) field.GetValue(null) != controllerType.Name + "." + actions[0].Name)
+                        {
+                            errors.Add($"[{controllerType.Name}] contains a route for [{field.Name}], but contains more than 1 action with this name");
+                        }
+                    }
+                }
             }
         }
 
@@ -43,9 +73,11 @@ namespace Telimena.Tests
             }
             else
             {
-                if (!attribute.Prefix.Contains("/v{version:apiVersion}/"))
+                //if (!attribute.Prefix.Contains("/v{version:apiVersion}/"))
+                if (!attribute.Prefix.Contains("/v1/"))
                 {
-                    errors.Add($"[{controllerType.Name}] missing [/v{{version:apiVersion}}/] part of {nameof(RoutePrefixAttribute)}");
+                    //errors.Add($"[{controllerType.Name}] missing [/v{{version:apiVersion}}/] part of {nameof(RoutePrefixAttribute)}");
+                    errors.Add($"[{controllerType.Name}] missing [/v1/] part of {nameof(RoutePrefixAttribute)}");
                 }
             }
         }
@@ -85,8 +117,24 @@ namespace Telimena.Tests
                 {
                     errors.Add($"Action [{action.Name}] on [{controllerType.Name}] missing [{nameof(RouteAttribute)}]. Explicit routes are required for all actions.");
                 }
+                else
+                {
+                    VerifyRouteName(routeAttribute, controllerType, action, errors);
+                }
             }
-        
+        }
+
+        private static void VerifyRouteName(RouteAttribute routeAttribute, Type controllerType, MemberInfo action, List<string> errors)
+        {
+            if (string.IsNullOrWhiteSpace(routeAttribute.Name))
+            {
+                errors.Add($"Action [{action.Name}] on [{controllerType.Name}] has empty name on [{nameof(RouteAttribute)}] with route [{routeAttribute.Template}]");
+            }
+            else if (routeAttribute.Name != controllerType.Name + "." + action.Name)
+            {
+                errors.Add($"Action [{action.Name}] on [{controllerType.Name}] has incorrect name on [{nameof(RouteAttribute)}] with route [{routeAttribute.Template}]. " +
+                           $"Expected name = [{controllerType.Name + "." + action.Name}]. Actual name: [{routeAttribute.Name}]");
+            }
         }
     }
 }

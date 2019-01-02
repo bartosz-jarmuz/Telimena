@@ -15,8 +15,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls the telemetry process
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Viewer)]
-    [RoutePrefix("api/v{version:apiVersion}/telemetry")]
-    public class TelemetryController : ApiController
+    [RoutePrefix("api/v1/telemetry")]
+    public partial class TelemetryController : ApiController
     {
         /// <summary>
         /// New instance
@@ -28,15 +28,15 @@ namespace Telimena.WebApp.Controllers.Api.V1
         }
 
         private readonly ITelemetryUnitOfWork work;
+#pragma warning restore 1591
 
         /// <summary>
         /// Report new event occurrence
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost]
         [AllowAnonymous]
-        [Route("event")]
+        [HttpPost, Route("event", Name = Routes.Event)]
         public Task<TelemetryUpdateResponse> Event(TelemetryUpdateRequest request)
         {
             return TelemetryControllerHelpers.InsertData(this.work, request,
@@ -51,8 +51,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost]
-        [Route("view")]
+        [HttpPost, Route("view", Name = Routes.View)]
         public Task<TelemetryUpdateResponse> View(TelemetryUpdateRequest request)
         {
             return TelemetryControllerHelpers.InsertData(this.work, request, 
@@ -66,8 +65,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost]
-        [ Route("initialize")]
+        [HttpPost, Route("initialize", Name = Routes.Initialize)]
         public async Task<TelemetryInitializeResponse> Initialize(TelemetryInitializeRequest request)
         {
             try

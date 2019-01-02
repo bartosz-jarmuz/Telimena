@@ -1,6 +1,7 @@
 ﻿@using Telimena.WebApp.Core.Messages
 @using Telimena.WebApp.UiStrings
-
+@using System.Web.Http.Routing
+@using Telimena.WebApp.Controllers.Api.V1
 
 <div id="@Strings.Id.RegisterApplicationForm"  class="row">
 
@@ -42,7 +43,7 @@
 
 @section scripts
 {
-    <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function() {
             $('#@Strings.Id.RegisterApplicationForm').submit(function (e) {
                     e.preventDefault();
@@ -55,7 +56,7 @@
 
                 $.ajax({
                         type: 'POST',
-                        url: '/api' + '@Url.Action("Register", "Programs")',
+                        url:  '@Url.HttpRouteUrl(ProgramsController.Routes.Register, new { telemetryKey = Guid.NewGuid()})',
                         contentType: "application/json; charset=utf-8",
                         datatype: 'Json',
                         data: JSON.stringify(model)
@@ -72,5 +73,5 @@
                     });
             });
         });
-    </script>
+</script>
 }

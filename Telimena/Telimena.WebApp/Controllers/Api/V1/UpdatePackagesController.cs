@@ -31,8 +31,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls the update packages
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
-    [RoutePrefix("api/v{version:apiVersion}/update-packages")]
-    public class UpdatePackagesController : ApiController
+    [RoutePrefix("api/v1/update-packages")]
+    public partial class UpdatePackagesController : ApiController
     {
         /// <summary>
         /// New instance
@@ -58,7 +58,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [Audit]
-        [HttpGet, Route("{id}")]
+        [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
             ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id);
@@ -81,7 +81,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <returns></returns>
         [Audit]
-        [HttpPost, Route("")]
+        [HttpPost, Route("", Name = Routes.Upload)]
         public async Task<IHttpActionResult> Upload()
         {
             try
@@ -113,7 +113,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="isBeta"></param>
         /// <returns></returns>
         [Audit]
-        [HttpPut, Route("{packageId}/is-beta/{isBeta}")]
+        [HttpPut, Route("{packageId}/is-beta/{isBeta}", Name = Routes.ToggleBetaSetting)]
         public async Task<bool> ToggleBetaSetting(Guid packageId, bool isBeta)
         {
             ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == packageId);
@@ -127,7 +127,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost, Route("validate-request")]
+        [HttpPost, Route("validate-request", Name = Routes.ValidateRequest)]
         public IHttpActionResult ValidateRequest(CreateUpdatePackageRequest request)
         {
             if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))

@@ -28,11 +28,11 @@ namespace Telimena.WebApp
                     ["apiVersion"] = typeof( ApiVersionRouteConstraint )
                 }
             };
-            config.MapHttpAttributeRoutes(constraintResolver);
             config.AddApiVersioning(opt =>
             {
                 opt.Conventions.Add(new VersionByNamespaceConvention());
             });
+            config.MapHttpAttributeRoutes(constraintResolver);
 
             var apiExplorer = config.AddVersionedApiExplorer(
          options =>
@@ -77,7 +77,8 @@ namespace Telimena.WebApp
                          .EnableSwaggerUi(swagger => swagger.EnableDiscoveryUrlSelector());
 
 
-            config.Routes.MapHttpRoute(name: "DefaultApi", routeTemplate: "api/v{version:apiVersion}/{controller}/{action}/{id}", defaults: new {id = RouteParameter.Optional});
+            config.Routes.MapHttpRoute(name: "DefaultApi", routeTemplate: "api/v{version:apiVersion}/{controller}/{id}", defaults: new { id = RouteParameter.Optional });
+            config.Routes.MapHttpRoute(name: "Api2", routeTemplate: "api/{controller}");
             config.Filters.Add(new ApiAuditFilter());
           
 

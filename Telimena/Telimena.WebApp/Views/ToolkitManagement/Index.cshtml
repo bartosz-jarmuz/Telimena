@@ -282,13 +282,13 @@
                 var formData = new FormData(form);
                 var modelString = CreateUpdaterPackage();
                 formData.append('Model', modelString);
-                UploadFile(formData, '@Url.Action("Post", "Updaters")', $(this).find(':submit'));
+                UploadFile(formData, '@Url.Action("Upload", "Updaters")', $(this).find(':submit'));
             });
             $('#uploadToolkitUpdatePackageForm').submit(function(e) {
                 e.preventDefault();
                 var form = $('#uploadToolkitUpdatePackageForm')[0];
                 var formData = new FormData(form);
-                UploadFile(formData, '@Url.Action("Post", "Toolkit")', $(this).find(':submit'));
+                UploadFile(formData, '@Url.Action("Upload", "Toolkit")', $(this).find(':submit'));
             });
         });
 
