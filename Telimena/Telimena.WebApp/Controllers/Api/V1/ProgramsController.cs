@@ -316,7 +316,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost, Route("update-check/{request}", Name = Routes.UpdateCheck)]
+        [HttpPost, Route("update-check", Name = Routes.UpdateCheck)]
         public async Task<UpdateResponse> UpdateCheck(string request)
         {
             try

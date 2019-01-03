@@ -145,8 +145,12 @@
     <None Include="..\TelimenaKey.snk">
       <Link>Properties\TelimenaKey.snk</Link>
     </None>
+    <None Include="addToZip.ps1" />
     <None Include="Properties\Telimena.Client.nuspec" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>powershell -NoProfile -ExecutionPolicy RemoteSigned -file $(ProjectDir)\addToZip.ps1 -SolutionDir $(SolutionDir) -TargetPath $(TargetPath)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
