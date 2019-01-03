@@ -10,7 +10,7 @@ namespace Telimena.Updater
     {
         public void PerformUpdate(UpdateInstructions instructions)
         {
-            foreach (var packageData in instructions.Packages)
+            foreach (UpdateInstructions.PackageData packageData in instructions.Packages)
             {
                 this.ProcessPackage(instructions.ProgramExecutableLocation, new FileInfo(packageData.Path));
             }

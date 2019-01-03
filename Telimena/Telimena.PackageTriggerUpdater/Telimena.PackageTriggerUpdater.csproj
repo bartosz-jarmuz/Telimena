@@ -82,6 +82,10 @@
       <Link>Properties\TelimenaKey.snk</Link>
     </None>
     <None Include="App.config" />
+    <None Include="copyTask.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>powershell -NoProfile -ExecutionPolicy RemoteSigned -file $(ProjectDir)\copyTask.ps1 -SolutionDir $(SolutionDir) -TargetPath $(TargetPath)</PostBuildEvent>
+  </PropertyGroup>
 </Project>

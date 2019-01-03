@@ -79,18 +79,25 @@ namespace Telimena.Updater
             UpdateWorker worker = new UpdateWorker();
             try
             {
-                ProcessKiller.Kill(this.Instructions.ProgramExecutableLocation);
-
-                worker.PerformUpdate(this.Instructions);
-                if (MessageBox.Show("Update complete. Would you like to run the app now?", "Update complete", MessageBoxButton.YesNo
-                        , MessageBoxImage.Information) == MessageBoxResult.Yes)
+                if (this.Instructions == null)
                 {
-                    Process.Start(this.Instructions.ProgramExecutableLocation);
+                    MessageBox.Show($"Cannot perform update. Problem with instructions.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    ProcessKiller.Kill(this.Instructions.ProgramExecutableLocation);
+
+                    worker.PerformUpdate(this.Instructions);
+                    if (MessageBox.Show("Update complete. Would you like to run the app now?", "Update complete", MessageBoxButton.YesNo
+                            , MessageBoxImage.Information) == MessageBoxResult.Yes)
+                    {
+                        Process.Start(this.Instructions.ProgramExecutableLocation);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while updating the program.\r\n{ex}");
+                MessageBox.Show($"An error occurred while updating the program.\r\n{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             Environment.Exit(0);
 
