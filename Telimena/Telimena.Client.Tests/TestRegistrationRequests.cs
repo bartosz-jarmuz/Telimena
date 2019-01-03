@@ -31,7 +31,7 @@ namespace TelimenaClient.Tests
                 TelimenaException ex = e as TelimenaException;
                 Assert.AreEqual(1, ex.InnerExceptions.Count);
 
-                Assert.IsTrue(ex.InnerExceptions[0].Message.Contains("An error occured while posting to [api/Telemetry/Initialize]"));
+                StringAssert.Contains("An error occured while posting to [api/v1/Telemetry/Initialize]", ex.InnerExceptions[0].Message);
                 TelemetryInitializeRequest jObj = ex.RequestObjects[0].Value as TelemetryInitializeRequest;
                 Assert.AreEqual(skipFlagExpectedValue, jObj.SkipUsageIncrementation);
                 ((Telimena) telimena).Properties.StaticProgramInfo.ThrowIfPublicPropertiesNotEqual(jObj.ProgramInfo, true);

@@ -42,7 +42,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.FindElement(By.Id(Strings.Id.ApiDocsLink)).Click();
                var apiInfo =  wait.Until(ExpectedConditions.ElementIsVisible(By.Id("api_info")));
 
-                Assert.AreEqual("Telimena.WebApp", apiInfo.Text);
+                Assert.IsTrue(apiInfo.Text.Contains("Telimena API"));
 
             }
             catch (Exception ex)

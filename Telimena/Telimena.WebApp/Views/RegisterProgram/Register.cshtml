@@ -1,6 +1,7 @@
 ﻿@using Telimena.WebApp.Core.Messages
 @using Telimena.WebApp.UiStrings
 @using System.Web.Http.Routing
+@using Telimena.WebApp
 @using Telimena.WebApp.Controllers.Api.V1
 
 <div id="@Strings.Id.RegisterApplicationForm"  class="row">
@@ -56,7 +57,7 @@
 
                 $.ajax({
                         type: 'POST',
-                        url:  '@Url.HttpRouteUrl(ProgramsController.Routes.Register, new { telemetryKey = Guid.NewGuid()})',
+                        url:  '@Url.LatestApiUrl(ProgramsController.Routes.Register)' ,
                         contentType: "application/json; charset=utf-8",
                         datatype: 'Json',
                         data: JSON.stringify(model)

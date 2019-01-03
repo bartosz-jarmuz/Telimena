@@ -1,4 +1,6 @@
 ﻿@using DotNetLittleHelpers
+@using Telimena.WebApp
+@using Telimena.WebApp.Controllers.Api.V1
 @using Telimena.WebApp.Core.Messages
 @using Telimena.WebApp.Core.Models
 @using Telimena.WebApp.UiStrings
@@ -234,7 +236,7 @@
                                 <input type="checkbox" data-pkg-id="@pkg.Id" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "")/>
                             </td>
                             <td>
-                                <a href="/api@(Url.Action("Get", "UpdatePackages") + "?id=" + pkg.Id)">@pkg.FileName</a>
+                                <a href="@Url.LatestApiUrl(UpdatePackagesController.Routes.Get, new { id = pkg.Guid })">@pkg.FileName</a>
                             </td>
                             <td>@pkg.Version</td>
                             <td>@pkg.SupportedToolkitVersion</td>
@@ -272,7 +274,7 @@
                 e.preventDefault();
                 var form = $('#uploadProgramPackageForm')[0];
                 var formData = new FormData(form);
-                UploadFile(formData, '@Url.Action("Upload", "ProgramPackages")/@Model.TelemetryKey',
+                UploadFile(formData, '@Url.LatestApiUrl(ProgramsController.Routes.Upload, new {telemetryKey = @Model.TelemetryKey})',
                     $(this).find('input'));
             });
         });
@@ -289,7 +291,7 @@
 
                 $.ajax({
                     type: 'DELETE',
-                    url: '/api' + '@Url.Action("Delete", "Programs", new { telemetryKey = @Model.TelemetryKey })',
+                    url: '@Url.LatestApiUrl(ProgramsController.Routes.Delete, new {telemetryKey = @Model.TelemetryKey})',
                     success: function(result) {
                         ShowConfirmationBox(input,
                             "label-success",
@@ -308,12 +310,14 @@
 
         function SetUpdater(input) {
             var id = $('#@Strings.Id.UpdaterSelectList').val();
+            var url =
+                '@Url.LatestApiUrl(ProgramsController.Routes.SetUpdater, new { telemetryKey = Model.TelemetryKey, updaterId = "__updaterId__" })';
+            url = url
+                .replace("__updaterId__", id);
 
             $.ajax({
                 type: 'PUT',
-                url: '/api' +
-                    '@Url.Action("SetUpdater", "Programs")?telemetryKey=@Model.TelemetryKey&updaterGuid=' +
-                    id,
+                url: url,
                 success: function(result) {
                     ShowConfirmationBox(input,
                         "label-success",
@@ -328,15 +332,14 @@
 
         function TogglePackageBeta(input) {
             var id = $(input).data("pkg-id");
+            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.ToggleBetaSetting, new { isBeta = "__isBeta__", packageId = "__packageId__" })';
+            url = url
+                .replace("__isBeta__", input.checked)
+                .replace("__packageId__", id);
 
             $.ajax({
                 type: 'POST',
-                url: '/api' +
-                    '@Url.Action("ToggleBetaSetting", "UpdatePackages")' +
-                    "?updatePackageGuid=" +
-                    id +
-                    "&isBeta=" +
-                    input.checked,
+                url: url,
                 success: function(result) {
                     ShowConfirmationBox(input,
                         "label-success",
@@ -369,7 +372,7 @@
         function UploadFile(formData, url, button) {
 
             $.ajax({
-                url: '/api' + url,
+                url:  url,
                 type: 'POST',
                 data: formData,
                 cache: false,
@@ -437,7 +440,7 @@
 
             $.ajax({
                     type: 'POST',
-                    url: '/api' + '@Url.Action("ValidateRequest", "UpdatePackages")',
+                    url:  '@Url.LatestApiUrl(UpdatePackagesController.Routes.ValidateRequest)',
                     contentType: "application/json; charset=utf-8",
                     datatype: 'Json',
                     data: modelString
@@ -446,7 +449,8 @@
                     var form = $('#@Strings.Id.UploadProgramUpdateForm')[0];
                     var formData = new FormData(form);
                     formData.append('Model', modelString);
-                    successCallback(formData, '@Url.Action("Upload", "UpdatePackages")', button);
+                    successCallback(formData, '@Url.LatestApiUrl(UpdatePackagesController.Routes.Upload)',
+                        button);
                 })
                 .fail(function(xhr) {
                     ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
@@ -458,8 +462,7 @@
             $('#latestVersion').html('...');
             $.ajax({
                 type: 'GET',
-                url: '/api' + '@Url.Action("GetLatestVersionInfo", "ProgramVersions")',
-                data: { id: '@Model.TelemetryKey' },
+                url: '@Url.LatestApiUrl(ProgramsController.Routes.GetLatestVersionInfo, new {telemetryKey = @Model.TelemetryKey})',
                 success: function(response) {
                     if (response.PrimaryAssemblyVersion !== undefined) {
                         $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
@@ -469,8 +472,7 @@
             $('#versionsCount').html('...');
             $.ajax({
                 type: 'GET',
-                url: '/api' + '@Url.Action("GetVersionsCount", "ProgramVersions")',
-                data: { id: '@Model.TelemetryKey' },
+                url:  '@Url.LatestApiUrl(ProgramsController.Routes.GetVersionsCount, new {telemetryKey = @Model.TelemetryKey})',
                 success: function(response) {
                     $('#versionsCount').html(response);
                 }

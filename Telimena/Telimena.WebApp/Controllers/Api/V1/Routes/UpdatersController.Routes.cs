@@ -7,7 +7,7 @@
         {
             public const string Get = nameof(UpdatersController) + "." + nameof(UpdatersController.Get);
             public const string Upload = nameof(UpdatersController) + "." + nameof(UpdatersController.Upload);
-            public const string GetUpdateInfo = nameof(UpdatersController) + "." + nameof(UpdatersController.GetUpdateInfo);
+            public const string UpdateCheck = nameof(UpdatersController) + "." + nameof(UpdatersController.UpdateCheck);
             public const string SetIsPublic = nameof(UpdatersController) + "." + nameof(UpdatersController.SetIsPublic);
         }
 

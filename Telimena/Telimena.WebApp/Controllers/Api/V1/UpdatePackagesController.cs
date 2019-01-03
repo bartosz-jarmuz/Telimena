@@ -31,7 +31,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls the update packages
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
-    [RoutePrefix("api/v1/update-packages")]
+    [RoutePrefix("api/v{version:apiVersion}/update-packages")]
     public partial class UpdatePackagesController : ApiController
     {
         /// <summary>

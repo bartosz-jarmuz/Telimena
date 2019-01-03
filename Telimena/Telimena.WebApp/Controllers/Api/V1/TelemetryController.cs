@@ -15,7 +15,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls the telemetry process
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Viewer)]
-    [RoutePrefix("api/v1/telemetry")]
+    [RoutePrefix("api/v{version:apiVersion}/telemetry")]
     public partial class TelemetryController : ApiController
     {
         /// <summary>
@@ -28,7 +28,6 @@ namespace Telimena.WebApp.Controllers.Api.V1
         }
 
         private readonly ITelemetryUnitOfWork work;
-#pragma warning restore 1591
 
         /// <summary>
         /// Report new event occurrence

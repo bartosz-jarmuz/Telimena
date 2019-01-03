@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using MvcAuditLogger;
+using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Security;
@@ -41,9 +42,8 @@ namespace Telimena.WebApp.Controllers
                 ProgramDescription = program.Description,
             };
 
-
             model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) +
-                                       this.Url.HttpRouteUrl("DownloadAppRoute", new {name = model.ProgramName});
+                                       this.Url.LatestApiUrl(ProgramsController.Routes.DownloadApp, new {developerName = program.DeveloperAccount.Name, programName = model.ProgramName});
 
             List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(program.Id);
             model.UpdatePackages = packages;

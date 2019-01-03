@@ -35,8 +35,12 @@
 //                        // hold additional metadata for an API. AssemblyVersion and title are required but you can also provide
 //                        // additional fields by chaining methods off SingleApiVersion.
 //                        //
-//                        //c.SingleApiVersion("v1", "Telimena.WebApp");
+//                        c.SingleApiVersion("v1", "Telimena.WebApp")
+//                            .Description("Telimena's (almost) RESTful API. " +
+//                                         "Majority of the endpoints try to adhere to the REST design principles, with the exception of the API version in the URL. " +
+//                                          "There are also some RPC-style calls where more natural than REST.");
 
+                       
 //                        // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
 //                        //
 //                        c.PrettyPrint();
@@ -104,11 +108,11 @@
 //                        // those comments into the generated docs and UI. You can enable this by providing the path to one or
 //                        // more Xml comment files.
 //                        //
-//                        //var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-//                        //var commentsFileName = Assembly.GetExecutingAssembly().GetName().Name + ".XML";
-//                        //var commentsFile = Path.Combine(baseDirectory, "bin", commentsFileName);
+//                        var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+//                        var commentsFileName = Assembly.GetExecutingAssembly().GetName().Name + ".XML";
+//                        var commentsFile = Path.Combine(baseDirectory, "bin", commentsFileName);
 
-//                        //c.IncludeXmlComments(commentsFile);
+//                        c.IncludeXmlComments(commentsFile);
 //                        // Swashbuckle makes a best attempt at generating Swagger compliant JSON schemas for the various types
 //                        // exposed in your API. However, there may be occasions when more control of the output is needed.
 //                        // This is supported through the "MapType" and "SchemaFilter" options:

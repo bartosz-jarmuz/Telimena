@@ -25,10 +25,10 @@ namespace TelimenaClient.Tests
     {
         private readonly Guid testTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
 
-        private IMessenger GetMessenger_FirstRequestPass()
+        private IMessenger GetMessenger_FirstRequestPass(Guid key)
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
-            client.Setup(x => x.GetAsync(It.IsRegex("^" + Regex.Escape(ApiRoutes.GetProgramUpdaterName)))).Returns((string uri) =>
+            client.Setup(x => x.GetAsync(It.IsRegex("^" + Regex.Escape(ApiRoutes.GetProgramUpdaterName(key))))).Returns((string uri) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 response.Content = new StringContent("Updater.exe");
@@ -55,7 +55,7 @@ namespace TelimenaClient.Tests
         public void Test_CustomDataObject()
         {
             ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(this.testTelemetryKey) {SuppressAllErrors = false});
-            ((Telimena) telimena).Messenger = this.GetMessenger_FirstRequestPass();
+            ((Telimena) telimena).Messenger = this.GetMessenger_FirstRequestPass(telimena.Properties.TelemetryKey);
             Dictionary<string, object> data = new Dictionary<string, object> {{"AKey", "AValue"}};
             Action act = () => telimena.Telemetry.Async.View("SomeView", data).GetAwaiter().GetResult();
             for (int i = 0; i < 2; i++)
@@ -82,7 +82,7 @@ namespace TelimenaClient.Tests
         public void Test_EmptyGuid()
         {
             ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(Guid.Empty) {SuppressAllErrors = false});
-            ((Telimena)telimena).Messenger = this.GetMessenger_FirstRequestPass();
+            ((Telimena)telimena).Messenger = this.GetMessenger_FirstRequestPass(telimena.Properties.TelemetryKey);
             Action act = () => telimena.Telemetry.Async.View("SomeView").GetAwaiter().GetResult();
             for (int i = 0; i < 2; i++)
             {
@@ -105,7 +105,7 @@ namespace TelimenaClient.Tests
         public void Test_NoCustomData()
         {
             ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(this.testTelemetryKey) {SuppressAllErrors = false});
-            ((Telimena)telimena).Messenger = this.GetMessenger_FirstRequestPass();
+            ((Telimena)telimena).Messenger = this.GetMessenger_FirstRequestPass(telimena.Properties.TelemetryKey);
 
 
             Action act = () => telimena.Telemetry.Async.View("SomeView").GetAwaiter().GetResult();

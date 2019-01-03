@@ -21,7 +21,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Developer (team) related controller
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
-    [RoutePrefix("api/v1/developers")]
+    [RoutePrefix("api/v{version:apiVersion}/developers")]
     public partial class DevelopersController : ApiController
     {
         /// <summary>

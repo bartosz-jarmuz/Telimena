@@ -1,4 +1,6 @@
 ﻿@using DotNetLittleHelpers
+@using Telimena.WebApp
+@using Telimena.WebApp.Controllers.Api.V1
 @using Telimena.WebApp.Core.Messages
 @using Telimena.WebApp.Core.Models
 @using Telimena.WebApp.UiStrings
@@ -116,7 +118,7 @@
                                         <td>@(toolkitData.TelimenaPackageInfo?.Guid)</td>
 
                                         <td>
-                                            <a href="/api@(Url.Action("Get", "Toolkit") + "?id=" + toolkitData.TelimenaPackageInfo?.Guid)">@toolkitData.Version</a>
+                                            <a href="@(Url.LatestApiUrl(ToolkitController.Routes.Get, new {id =  toolkitData?.TelimenaPackageInfo?.Guid}))">@toolkitData.Version</a>
                                         </td>
                                         @if (toolkitData.TelimenaPackageInfo != null)
                                         {
@@ -236,7 +238,7 @@
                             @foreach (UpdaterPackageInfo pkg in Model.UpdaterPackages)
                             {
                                 <tr>
-                                    <td>@pkg.Guid</td>
+                                    <td>@pkg.Updater.Guid</td>
                                     <td>@pkg.Updater.InternalName</td>
                                     <td style="text-align: center">
                                         <input type="checkbox" name="@Strings.Name.ToggleIsPublic" data-updater-id="@pkg.Updater.Guid" onchange="ToggleIsPublic(this)" @(pkg.Updater.IsPublic ? "checked" : "")/>
@@ -244,7 +246,7 @@
                                     <td>@pkg.Updater.DeveloperAccount.Name</td>
                                     <td>@pkg.Updater.FileName</td>
                                     <td>
-                                        <a href="/api@(Url.Action("Get", "Updaters") + "?id=" + pkg.Guid)">@pkg.Version</a>
+                                        <a href="@(Url.LatestApiUrl(UpdatersController.Routes.Get, new {id = pkg.Guid}))">@pkg.Version</a>
                                     </td>
                                     <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
                                     <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
@@ -282,13 +284,13 @@
                 var formData = new FormData(form);
                 var modelString = CreateUpdaterPackage();
                 formData.append('Model', modelString);
-                UploadFile(formData, '@Url.Action("Upload", "Updaters")', $(this).find(':submit'));
+                UploadFile(formData, '@Url.LatestApiUrl(UpdatersController.Routes.Upload)', $(this).find(':submit'));
             });
             $('#uploadToolkitUpdatePackageForm').submit(function(e) {
                 e.preventDefault();
                 var form = $('#uploadToolkitUpdatePackageForm')[0];
                 var formData = new FormData(form);
-                UploadFile(formData, '@Url.Action("Upload", "Toolkit")', $(this).find(':submit'));
+                UploadFile(formData, '@Url.LatestApiUrl(ToolkitController.Routes.Upload)', $(this).find(':submit'));
             });
         });
 
@@ -321,16 +323,17 @@
 
         }
 
+
         function ToggleIsPublic(input) {
             var id = $(input).data("updater-id");
+            var url = '@Url.LatestApiUrl(UpdatersController.Routes.SetIsPublic, new { id = "__id__", isPublic = "__isPublic__" })';
+            url = url
+                .replace("__id__", id)
+                .replace("__isPublic__", input.checked);
 
             $.ajax({
                 type: 'PUT',
-                url: '/api' +
-                    '@Url.Action("SetIsPublic", "Updaters")?id=' +
-                    id +
-                    '&isPublic=' +
-                    input.checked,
+                url: url,
                 success: function(result) {
                     ShowConfirmationBox(input,
                         "label-success",
@@ -347,7 +350,7 @@
         function UploadFile(formData, url, button) {
 
             $.ajax({
-                url: '/api' + url,
+                url:  url,
                 type: 'POST',
                 data: formData,
                 cache: false,

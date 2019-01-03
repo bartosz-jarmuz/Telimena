@@ -43,9 +43,9 @@ namespace TelimenaClient
                         , this.telimena.Properties.TelimenaVersion, updaterVersion);
 
                     ConfiguredTaskAwaitable<UpdateResponse> programUpdateTask = this
-                        .GetUpdateResponse(this.GetUpdateRequestUrl(ApiRoutes.GetProgramUpdateInfo, updateRequest)).ConfigureAwait(false);
+                        .GetUpdateResponse(ApiRoutes.ProgramUpdateCheck, updateRequest).ConfigureAwait(false);
                     ConfiguredTaskAwaitable<UpdateResponse> updaterUpdateTask = this
-                        .GetUpdateResponse(this.GetUpdateRequestUrl(ApiRoutes.GetUpdaterUpdateInfo, updateRequest)).ConfigureAwait(false);
+                        .GetUpdateResponse(ApiRoutes.UpdaterUpdateCheck, updateRequest).ConfigureAwait(false);
 
                     UpdateResponse programUpdateResponse = await programUpdateTask;
                     UpdateResponse updaterUpdateResponse = await updaterUpdateTask;
@@ -60,8 +60,8 @@ namespace TelimenaClient
                 catch (Exception ex)
                 {
                     TelimenaException exception = new TelimenaException("Error occurred while sending check for updates request", this.telimena.Properties, ex
-                        , new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(ApiRoutes.GetProgramUpdateInfo, updateRequest))
-                        , new KeyValuePair<Type, object>(typeof(string), this.GetUpdateRequestUrl(ApiRoutes.GetUpdaterUpdateInfo, updateRequest)));
+                        , new KeyValuePair<Type, object>(typeof(UpdateRequest), updateRequest)
+                        , new KeyValuePair<Type, object>(typeof(UpdateRequest), updateRequest));
                     if (!this.telimena.Properties.SuppressAllErrors)
                     {
                         throw exception;
@@ -103,30 +103,12 @@ namespace TelimenaClient
             }
 
             /// <summary>
-            ///     Gets the update request URL.
-            /// </summary>
-            /// <returns>System.String.</returns>
-            private string GetUpdateRequestUrl(string baseUri, UpdateRequest model)
-            {
-                try
-                {
-                    string stringifier = this.telimena.Serializer.Serialize(model);
-                    string escaped = this.telimena.Serializer.UrlEncodeJson(stringifier);
-                    return baseUri + "?request=" + escaped;
-                }
-                catch (Exception ex)
-                {
-                    return $"Failed to get update request URL because of {ex.Message}";
-                }
-            }
-
-            /// <summary>
-            ///     Gets the updater update response.
+            ///     Gets the update response.
             /// </summary>
             /// <returns>Task&lt;UpdateResponse&gt;.</returns>
-            private async Task<UpdateResponse> GetUpdateResponse(string requestUri)
+            private async Task<UpdateResponse> GetUpdateResponse(string requestUri, UpdateRequest request)
             {
-                string responseContent = await this.telimena.Messenger.SendGetRequest(requestUri).ConfigureAwait(false);
+                string responseContent = await this.telimena.Messenger.SendPostRequest(requestUri, request).ConfigureAwait(false);
                 return this.telimena.Serializer.Deserialize<UpdateResponse>(responseContent);
             }
 

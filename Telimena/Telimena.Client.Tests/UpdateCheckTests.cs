@@ -35,30 +35,30 @@ namespace TelimenaClient.Tests
         protected internal Guid PrgPkg_5 = Guid.Parse("3fb61c5b-ece2-4b60-b659-85d94bfb39c0");
         protected internal Guid PrgPkg_6 = Guid.Parse("871ae68f-63d2-4105-b2bb-9d2c28cf6523");
 
-        private Mock<ITelimenaHttpClient> GetMockClientForCheckForUpdates(object programUpdatesResponse, object updaterResponse)
+        private Mock<ITelimenaHttpClient> GetMockClientForCheckForUpdates(Guid propertiesTelemetryKey, object programUpdatesResponse, object updaterResponse)
         {
             Mock<ITelimenaHttpClient> client = new Mock<ITelimenaHttpClient>();
-            client.Setup(x => x.GetAsync(It.IsRegex("^" + Regex.Escape(ApiRoutes.GetProgramUpdaterName)))).Returns((string uri) =>
+            client.Setup(x => x.GetAsync(It.IsRegex("^" + Regex.Escape(ApiRoutes.GetProgramUpdaterName(propertiesTelemetryKey))))).Returns((string uri) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 response.Content = new StringContent("MyUpdater.exe");
                 return Task.FromResult(response);
             });
-            client.Setup(x => x.PostAsync("api/Telemetry/Initialize", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
+            client.Setup(x => x.PostAsync("api/v1/Telemetry/Initialize", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse {Count = 0, UserId = Guid.NewGuid()};
                 response.Content = new StringContent(JsonConvert.SerializeObject(telemetryInitializeResponse));
                 return Task.FromResult(response);
             });
-            client.Setup(x => x.GetAsync(It.IsRegex(".*" + Regex.Escape(ApiRoutes.GetProgramUpdateInfo)))).Returns((string uri) =>
+            client.Setup(x => x.PostAsync(It.IsRegex(".*" + Regex.Escape(ApiRoutes.ProgramUpdateCheck)), It.IsAny<HttpContent>())).Returns((string uri, HttpContent cnt) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
 
                 response.Content = new StringContent(JsonConvert.SerializeObject(programUpdatesResponse));
                 return Task.FromResult(response);
             });
-            client.Setup(x => x.GetAsync(It.IsRegex(".*" + Regex.Escape(ApiRoutes.GetUpdaterUpdateInfo)))).Returns((string uri) =>
+            client.Setup(x => x.PostAsync(It.IsRegex(".*" + Regex.Escape(ApiRoutes.UpdaterUpdateCheck)), It.IsAny<HttpContent>())).Returns((string uri, HttpContent cnt) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
 
@@ -71,6 +71,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_CheckForUpdates_OnlyProgram()
         {
+
             var si = new TelimenaStartupInfo(Guid.NewGuid()) {SuppressAllErrors = false};
             si.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
@@ -86,7 +87,7 @@ namespace TelimenaClient.Tests
                     , new UpdatePackageData {FileSizeBytes = 666, Guid = Guid.NewGuid(), Version = "3.0.0.0"}
                 }
             };
-            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse, new UpdateResponse()));
+            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, latestVersionResponse, new UpdateResponse()));
 
             UpdateCheckResult response = sut.Updates.Async.CheckForUpdates().GetAwaiter().GetResult();
             Assert.IsTrue(response.IsUpdateAvailable);
@@ -118,7 +119,7 @@ namespace TelimenaClient.Tests
             {
                 UpdatePackages = new List<UpdatePackageData> {new UpdatePackageData {FileName = DefaultToolkitNames.UpdaterFileName, Version = "1.2"}}
             };
-            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(latestVersionResponse, updaterResponse));
+            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, latestVersionResponse, updaterResponse));
 
             UpdateCheckResult response = sut.Updates.Async.CheckForUpdates().GetAwaiter().GetResult();
             Assert.IsTrue(response.IsUpdateAvailable);
@@ -133,7 +134,7 @@ namespace TelimenaClient.Tests
         {
             ITelimena sut = Telimena.Construct(new TelimenaStartupInfo(Guid.NewGuid()) { SuppressAllErrors = false });
 
-            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(), new UpdateResponse()));
+            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, new UpdateResponse(), new UpdateResponse()));
 
             UpdateCheckResult response = sut.Updates.Async.CheckForUpdates().GetAwaiter().GetResult();
             Assert.IsFalse(response.IsUpdateAvailable);
@@ -152,7 +153,7 @@ namespace TelimenaClient.Tests
             {
                 UpdatePackages = new List<UpdatePackageData> {new UpdatePackageData {FileName = DefaultToolkitNames.UpdaterFileName, Version = "1.2"}}
             };
-            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(new UpdateResponse(), latestVersionResponse));
+            Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, new UpdateResponse(), latestVersionResponse));
 
             UpdateCheckResult response = sut.Updates.Async.CheckForUpdates().GetAwaiter().GetResult();
             Assert.IsFalse(response.IsUpdateAvailable);

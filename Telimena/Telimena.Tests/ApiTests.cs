@@ -73,11 +73,9 @@ namespace Telimena.Tests
             }
             else
             {
-                //if (!attribute.Prefix.Contains("/v{version:apiVersion}/"))
-                if (!attribute.Prefix.Contains("/v1/"))
+                if (!attribute.Prefix.Contains("/v{version:apiVersion}/"))
                 {
-                    //errors.Add($"[{controllerType.Name}] missing [/v{{version:apiVersion}}/] part of {nameof(RoutePrefixAttribute)}");
-                    errors.Add($"[{controllerType.Name}] missing [/v1/] part of {nameof(RoutePrefixAttribute)}");
+                    errors.Add($"[{controllerType.Name}] missing [/v{{version:apiVersion}}/] part of {nameof(RoutePrefixAttribute)}");
                 }
             }
         }

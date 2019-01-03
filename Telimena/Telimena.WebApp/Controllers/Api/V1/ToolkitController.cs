@@ -19,7 +19,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls the Telimena toolkit operations
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Admin)]
-    [RoutePrefix("api/v1/toolkit")]
+    [RoutePrefix("api/v{version:apiVersion}/toolkit")]
     public partial class ToolkitController : ApiController
     {
         //The toolkit can evolve independently of the client app - some changes might be breaking the contracts, but most - should not

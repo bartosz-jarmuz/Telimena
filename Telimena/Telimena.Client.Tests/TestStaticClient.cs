@@ -54,7 +54,7 @@ namespace TelimenaClient.Tests
             //try
             //{
                 TelemetryUpdateResponse result = TelimenaClient.Telimena.Telemetry.Async.Event(new TelimenaStartupInfo(this.telemetryKey), "Boo").GetAwaiter().GetResult();
-                Assert.AreEqual("Error occurred while sending update [Boo] telemetry request to [api/Telemetry/Event]", result.Exception.Message);
+                Assert.AreEqual("Error occurred while sending update [Boo] telemetry request to [api/v1/Telemetry/Event]", result.Exception.Message);
                 
           //      Assert.Fail("Error expected");
      //       }
@@ -100,7 +100,7 @@ namespace TelimenaClient.Tests
             //try
             //{
                 TelemetryUpdateResponse result = TelimenaClient.Telimena.Telemetry.Async.View(si, "Booo").GetAwaiter().GetResult();
-            Assert.AreEqual("Error occurred while sending update [Booo] telemetry request to [api/Telemetry/View]", result.Exception.Message);
+            Assert.AreEqual("Error occurred while sending update [Booo] telemetry request to [api/v1/Telemetry/View]", result.Exception.Message);
             Assert.AreEqual("An App!", (result.Exception as TelimenaException).TelimenaProperties.StaticProgramInfo.Name);
 
             //   Assert.Fail("Error expected");

@@ -13,6 +13,7 @@ namespace Telimena.WebApp.Infrastructure
 {
     public static class Utilities
     {
+
         public static UpdateRequest ReadRequest(string escapedJsonString, ITelimenaSerializer serializer)
         {
             string json = serializer.UrlDecodeJson(escapedJsonString);

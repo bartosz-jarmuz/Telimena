@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using DotNetLittleHelpers;
@@ -23,6 +24,8 @@ namespace Telimena.WebApp.Core.Models
             user.AssociateWithDeveloperAccount(this);
         }
 
+        [StringLength(75)]
+        [Index(IsUnique = true)]
         public string Name { get; set; }
         public string MainEmail { get; set; }
         public int Id { get; set; }

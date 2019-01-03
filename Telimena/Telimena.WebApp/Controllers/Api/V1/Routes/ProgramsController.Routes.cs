@@ -1,4 +1,8 @@
-﻿namespace Telimena.WebApp.Controllers.Api.V1
+﻿using System;
+using System.Web.Mvc;
+using System.Web.Routing;
+
+namespace Telimena.WebApp.Controllers.Api.V1
 {
     #region Using
 
@@ -9,7 +13,7 @@
 #pragma warning disable 1591
         public static class Routes
         {
-            public const string GetUpdateInfo = nameof(ProgramsController) + "." + nameof(ProgramsController.GetUpdateInfo);
+            public const string UpdateCheck = nameof(ProgramsController) + "." + nameof(ProgramsController.UpdateCheck);
             public const string GetLatestVersionInfo = nameof(ProgramsController) + "." + nameof(ProgramsController.GetLatestVersionInfo);
             public const string SetUpdater = nameof(ProgramsController) + "." + nameof(ProgramsController.SetUpdater);
             public const string GetProgramUpdaterName = nameof(ProgramsController) + "." + nameof(ProgramsController.GetProgramUpdaterName);

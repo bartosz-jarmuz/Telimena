@@ -33,7 +33,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls program management related endpoints
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
-    [RoutePrefix("api/v1/programs")]
+    [RoutePrefix("api/v{version:apiVersion}/programs")]
     public partial class ProgramsController : ApiController
     {
         private readonly ITelimenaSerializer serializer;
@@ -247,15 +247,15 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <summary>
         /// Gets the total number of versions of this program
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="telemetryKey"></param>
         /// <returns></returns>
         [HttpGet, Route("{telemetryKey}/versions/count", Name = Routes.GetVersionsCount)]
-        public async Task<IHttpActionResult> GetVersionsCount(Guid id)
+        public async Task<IHttpActionResult> GetVersionsCount(Guid telemetryKey)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == id);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
             if (prg == null)
             {
-                return this.BadRequest($"Program key [{id}] not found");
+                return this.BadRequest($"Program key [{telemetryKey}] not found");
             }
 
             return this.Ok(prg.PrimaryAssembly?.Versions.Count);
@@ -316,8 +316,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost, Route("update-check/{request}", Name = Routes.GetUpdateInfo)]
-        public async Task<UpdateResponse> GetUpdateInfo(string request)
+        [HttpPost, Route("update-check/{request}", Name = Routes.UpdateCheck)]
+        public async Task<UpdateResponse> UpdateCheck(string request)
         {
             try
             {

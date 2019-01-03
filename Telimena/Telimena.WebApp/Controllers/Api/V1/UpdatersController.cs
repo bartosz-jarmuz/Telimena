@@ -27,7 +27,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// Controls the updaters
     /// </summary>
     [TelimenaApiAuthorize(Roles = TelimenaRoles.Admin)]
-    [RoutePrefix("api/v1/updaters")]
+    [RoutePrefix("api/v{version:apiVersion}/updaters")]
     public partial class UpdatersController : ApiController
     {
         /// <summary>
@@ -49,7 +49,6 @@ namespace Telimena.WebApp.Controllers.Api.V1
         private readonly ITelimenaSerializer serializer;
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
-#pragma warning restore 1591
 
         /// <summary>
         /// Downloads the updater with specified ID
@@ -157,9 +156,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet]
-        [ Route("update-info/{request}", Name = Routes.GetUpdateInfo)]
-        public async Task<UpdateResponse> GetUpdateInfo(string request)
+        [HttpPost, Route("update-check/{request}", Name = Routes.UpdateCheck)]
+        public async Task<UpdateResponse> UpdateCheck(string request)
         {
             UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
             var program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey);
