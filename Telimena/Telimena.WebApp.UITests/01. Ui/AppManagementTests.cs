@@ -236,7 +236,6 @@ namespace Telimena.WebApp.UITests._01._Ui
             this.UploadUpdatePackage(TestAppProvider.PackageUpdaterTestAppName, "PackageTriggerUpdaterTestApp v.2.0.0.0.zip");
         }
 
-
         [Test]
         public void _06_SetUpdaterForPackageTriggerApp()
         {

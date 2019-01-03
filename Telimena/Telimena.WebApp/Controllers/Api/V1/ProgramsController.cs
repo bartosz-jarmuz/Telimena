@@ -313,15 +313,15 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <summary>
         /// Gets the info about whether an update is available for the specified request
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="requestModel"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost, Route("update-check", Name = Routes.UpdateCheck)]
-        public async Task<UpdateResponse> UpdateCheck(string request)
+        public async Task<UpdateResponse> UpdateCheck(UpdateRequest requestModel)
         {
             try
             {
-                UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
+                //UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
 
                 Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey);
                 if (program == null)

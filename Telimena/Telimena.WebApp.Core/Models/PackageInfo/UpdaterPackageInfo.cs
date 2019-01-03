@@ -26,5 +26,11 @@ namespace Telimena.WebApp.Core.Models
         public virtual Updater Updater { get; set; }
 
         public int UpdaterId { get; set; }
+
+        public void UpdateWithNewContent(long fileSizeBytes)
+        {
+            this.FileSizeBytes = fileSizeBytes;
+            this.UploadedDate = DateTime.UtcNow;
+        }
     }
 }

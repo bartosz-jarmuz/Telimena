@@ -11,23 +11,23 @@ namespace Telimena.WebApp.Infrastructure
     {
         public static class Api
         {
-            private const string DownloadProgramUpdatePackage = "api/ProgramUpdates/Get";
-            private const string DownloadToolkitUpdatePackage = "api/Toolkit/Get";
-            private const string DownloadUpdaterUpdatePackage = "api/Updater/Get";
+            private const string DownloadProgramUpdatePackage = "api/v1/update-packages";
+            private const string DownloadToolkitUpdatePackage = "api/v1/toolkit";
+            private const string DownloadUpdaterUpdatePackage = "api/v1/updaters";
 
             public static string DownloadProgramUpdate(ProgramUpdatePackageInfo pkg)
             {
-                return $"{DownloadProgramUpdatePackage}?id={pkg.Guid}";
+                return $"{DownloadProgramUpdatePackage}/{pkg.Guid}";
             }
 
             public static string DownloadUpdaterUpdate(UpdaterPackageInfo pkg)
             {
-                return $"{DownloadUpdaterUpdatePackage}?id={pkg.Guid}";
+                return $"{DownloadUpdaterUpdatePackage}/{pkg.Guid}";
             }
 
             public static string DownloadToolkitUpdate(TelimenaPackageInfo pkg)
             {
-                return $"{DownloadToolkitUpdatePackage}?id={pkg.Guid}";
+                return $"{DownloadToolkitUpdatePackage}/{pkg.Guid}";
             }
         }
     }

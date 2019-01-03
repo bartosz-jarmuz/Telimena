@@ -153,13 +153,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <summary>
         /// Gets the info about the newer version of the updater
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="requestModel"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost, Route("update-check", Name = Routes.UpdateCheck)]
-        public async Task<UpdateResponse> UpdateCheck(string request)
+        public async Task<UpdateResponse> UpdateCheck(UpdateRequest requestModel)
         {
-            UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
+         //   UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
             var program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey);
             if (program == null)
             {
