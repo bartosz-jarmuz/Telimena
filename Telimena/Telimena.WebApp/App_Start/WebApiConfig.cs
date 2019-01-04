@@ -72,7 +72,10 @@ namespace Telimena.WebApp
                                 swagger.OperationFilter<SwaggerDefaultValues>();
 
                                 // integrate xml comments
-                                swagger.IncludeXmlComments(XmlCommentsFilePath);
+                                if (File.Exists(XmlCommentsFilePath))
+                                {
+                                    swagger.IncludeXmlComments(XmlCommentsFilePath);
+                                }
                             })
                          .EnableSwaggerUi(swagger => swagger.EnableDiscoveryUrlSelector());
 
@@ -107,7 +110,7 @@ namespace Telimena.WebApp
         {
             get
             {
-                var fileName = typeof(WebApiConfig).GetTypeInfo().Assembly.GetName().Name + ".xml";
+                var fileName = typeof(WebApiConfig).GetTypeInfo().Assembly.GetName().Name + ".XML";
                 return Path.Combine(ContentRootPath, fileName);
             }
         }
