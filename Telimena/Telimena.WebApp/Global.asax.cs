@@ -1,11 +1,12 @@
 ﻿using System.Web;
-using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using DataTables.AspNet.Mvc5;
+using Hangfire;
 using log4net;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using MvcAuditLogger;
 using Ninject;
@@ -22,11 +23,14 @@ using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
+using GlobalConfiguration = System.Web.Http.GlobalConfiguration;
+
 
 namespace Telimena.WebApi
 {
     public class MvcApplication : NinjectHttpApplication
     {
+
         protected override IKernel CreateKernel()
         {
             StandardKernel kernel = new StandardKernel();
@@ -35,6 +39,7 @@ namespace Telimena.WebApi
             kernel.BindFilter<AuditFilter>(FilterScope.Action, null).WhenActionMethodHas<AuditAttribute>();
             kernel.Bind<IAuditLogger>().To<DebugAuditLogger>();
             GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
+            Hangfire.GlobalConfiguration.Configuration.UseNinjectActivator(kernel);
             return kernel;
         }
 
@@ -42,12 +47,12 @@ namespace Telimena.WebApi
         {
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AutoMapperConfiguration.Configure();
             Configuration.RegisterDataTables();
         }
+
     }
 
     internal class ServiceModule : NinjectModule

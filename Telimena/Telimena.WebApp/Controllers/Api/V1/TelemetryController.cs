@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Results;
+using Hangfire;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
@@ -38,8 +41,9 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPost, Route("event", Name = Routes.Event)]
         public Task<TelemetryUpdateResponse> Event(TelemetryUpdateRequest request)
         {
+            var ip = this.Request.GetClientIp();
             return TelemetryControllerHelpers.InsertData(this.work, request,
-                () => this.Request.GetClientIp(),
+                ip,
                 (name, prg) => TelemetryControllerHelpers.GetEventOrAddIfMissing(this.work, name, prg));
 
         }
@@ -53,9 +57,20 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPost, Route("view", Name = Routes.View)]
         public Task<TelemetryUpdateResponse> View(TelemetryUpdateRequest request)
         {
-            return TelemetryControllerHelpers.InsertData(this.work, request, 
-                ()=> this.Request.GetClientIp(),  
-                (name, prg) => TelemetryControllerHelpers.GetViewOrAddIfMissing(this.work, name, prg));
+            return this.ReportView(request);
+            //BackgroundJob.Enqueue(()=> this.ReportView(request));
+
+            //return Task.FromResult(new TelemetryUpdateResponse(){ComponentId = 555});
+        }
+
+        public async Task<TelemetryUpdateResponse> ReportView(TelemetryUpdateRequest request)
+        {
+            var ip = this.Request.GetClientIp();
+
+
+            return await TelemetryControllerHelpers.InsertData(this.work, request, ip
+                , (name, prg) => TelemetryControllerHelpers.GetViewOrAddIfMissing(this.work, name, prg));
+
         }
 
         /// <summary>

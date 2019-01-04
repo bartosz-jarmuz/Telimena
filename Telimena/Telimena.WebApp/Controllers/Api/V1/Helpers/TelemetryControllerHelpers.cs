@@ -36,10 +36,14 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             return response;
         }
 
-        public static async Task<TelemetryUpdateResponse> InsertData(ITelemetryUnitOfWork work, TelemetryUpdateRequest request, Func<string> getClientIp, Func<string, Program, Task<ITelemetryAware>> getTrackedComponent)
+        public static async Task<TelemetryUpdateResponse> InsertData(ITelemetryUnitOfWork work, TelemetryUpdateRequest request, string ipAddress, Func<string, Program, Task<ITelemetryAware>> getTrackedComponent)
         {
             try
             {
+#if DEBUG
+                await Task.Delay(15000);
+#endif
+
                 (bool isRequestValid, TelemetryUpdateResponse response, Program program, ClientAppUser clientAppUser) actionItems = await GetTelemetryUpdateActionItems(work, request);
                 if (!actionItems.isRequestValid)
                 {
@@ -52,7 +56,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 
                 AssemblyVersionInfo versionInfoInfo = GetAssemblyVersionInfoOrAddIfMissing(request.VersionData, actionItems.program);
 
-                summary.UpdateTelemetry(versionInfoInfo, getClientIp(), request.TelemetryData);
+                summary.UpdateTelemetry(versionInfoInfo, ipAddress, request.TelemetryData);
 
                 await work.CompleteAsync();
                 return PrepareUpdateResponse(request, summary, actionItems.program, actionItems.clientAppUser);

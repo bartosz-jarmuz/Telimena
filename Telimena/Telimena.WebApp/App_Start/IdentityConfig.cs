@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Hangfire;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
@@ -13,7 +14,9 @@ namespace Telimena.WebApp
         {
             app.CreatePerOwinContext(() => new TelimenaContext());
             app.CreatePerOwinContext<TelimenaUserManager>(TelimenaUserManager.Create);
-
+            Hangfire.GlobalConfiguration.Configuration.UseSqlServerStorage("AuditingDBContext");
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
