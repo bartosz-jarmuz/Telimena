@@ -95,6 +95,7 @@ namespace TelimenaClient
 
                     request = new TelemetryUpdateRequest(this.telimena.Properties.TelemetryKey)
                     {
+                        DebugMode = this.telimena.Properties.GetFullResponseApiResponse,
                         UserId = this.telimena.Properties.LiveProgramInfo.UserId,
                         ComponentName = componentName,
                         VersionData = this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData,

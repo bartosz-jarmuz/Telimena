@@ -54,6 +54,7 @@
     <Compile Include="TestAppWorker.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="addToZip.ps1" />
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -64,4 +65,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>powershell -NoProfile -ExecutionPolicy RemoteSigned -file $(ProjectDir)\addToZip.ps1 -SolutionDir $(SolutionDir) -TargetPath $(TargetPath)</PostBuildEvent>
+  </PropertyGroup>
 </Project>

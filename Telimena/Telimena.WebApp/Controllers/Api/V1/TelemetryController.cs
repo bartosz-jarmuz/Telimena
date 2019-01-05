@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
@@ -39,14 +40,41 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost, Route("event", Name = Routes.Event)]
-        public Task<TelemetryUpdateResponse> Event(TelemetryUpdateRequest request)
+        public async Task<IHttpActionResult> Event(TelemetryUpdateRequest request)
+        {
+            if (request.DebugMode)
+            {
+                return await this.ReportEvent(request);
+            }
+            else
+            {
+                BackgroundJob.Enqueue(() => this.ReportEvent(request));
+                return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted));
+            }
+        }
+
+        /// <summary>
+        /// Enqueued request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [NonAction]
+        public async Task<IHttpActionResult> ReportEvent(TelemetryUpdateRequest request)
         {
             var ip = this.Request.GetClientIp();
-            return TelemetryControllerHelpers.InsertData(this.work, request,
-                ip,
-                (name, prg) => TelemetryControllerHelpers.GetEventOrAddIfMissing(this.work, name, prg));
 
+            var result = await TelemetryControllerHelpers.InsertData(this.work, request, ip
+                , (name, prg) => TelemetryControllerHelpers.GetEventOrAddIfMissing(this.work, name, prg));
+            if (result.Exception == null)
+            {
+                return this.Ok(result);
+            }
+            else
+            {
+                return this.InternalServerError(result.Exception);
+            }
         }
+
 
         /// <summary>
         /// Report a program view access
@@ -55,22 +83,40 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost, Route("view", Name = Routes.View)]
-        public Task<TelemetryUpdateResponse> View(TelemetryUpdateRequest request)
+        public async Task<IHttpActionResult> View(TelemetryUpdateRequest request)
         {
-            return this.ReportView(request);
-            //BackgroundJob.Enqueue(()=> this.ReportView(request));
+            if (request.DebugMode)
+            {
+                return await this.ReportView(request);
+            }
+            else
+            {
+                BackgroundJob.Enqueue(() => this.ReportView(request));
+                return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted));
+            }
 
-            //return Task.FromResult(new TelemetryUpdateResponse(){ComponentId = 555});
         }
 
-        public async Task<TelemetryUpdateResponse> ReportView(TelemetryUpdateRequest request)
+        /// <summary>
+        /// Enqueued request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [NonAction]
+        public async Task<IHttpActionResult> ReportView(TelemetryUpdateRequest request)
         {
             var ip = this.Request.GetClientIp();
 
-
-            return await TelemetryControllerHelpers.InsertData(this.work, request, ip
+            var result = await TelemetryControllerHelpers.InsertData(this.work, request, ip
                 , (name, prg) => TelemetryControllerHelpers.GetViewOrAddIfMissing(this.work, name, prg));
-
+            if (result.Exception == null)
+            {
+                return this.Ok(result);
+            }
+            else
+            {
+                return this.InternalServerError(result.Exception);
+            }
         }
 
         /// <summary>

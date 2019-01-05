@@ -11,6 +11,11 @@ namespace TelimenaClient
         ///     If true, then Telimena will swallow any errors. Otherwise, it will rethrow
         /// </summary>
         bool SuppressAllErrors { get; set; }
+        
+        /// <summary>
+        /// If set to true, the response object returned from API will contain some telemetry data - otherwise, status code (and exception) only
+        /// </summary>
+        bool GetFullResponseApiResponse { get; set; }
 
         /// <summary>
         ///     The unique key for this program's telemetry service

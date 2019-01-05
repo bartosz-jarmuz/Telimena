@@ -55,5 +55,10 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The custom data.</value>
         public Dictionary<string, string> TelemetryData { get; set; }
+
+        /// <summary>
+        /// Requests sent in debug mode will return telemetry data response
+        /// </summary>
+        public bool DebugMode { get; set; }
     }
 }

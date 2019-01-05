@@ -42,6 +42,9 @@ namespace TelimenaClient
         /// </summary>
         public ITelimenaStartupInfo StartupInfo { get; }
 
+        /// <inheritdoc />
+        public bool GetFullResponseApiResponse { get; set; }
+
         /// <summary>
         ///     The unique key for this program's telemetry service
         /// </summary>

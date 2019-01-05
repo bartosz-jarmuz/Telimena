@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Results;
 using DbIntegrationTestHelpers;
 using DotNetLittleHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,6 +35,8 @@ namespace Telimena.Tests
 
     #endregion
 
+
+
     [TestFixture]
     public class TelemetryControllerTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
     {
@@ -50,14 +53,14 @@ namespace Telimena.Tests
 
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
 
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
                 TelemetryData = new Dictionary<string, string>()
             {
                 { "AKey", "AValue"},
                 { "AKey2", "AValue2"},
             }};
 
-            TelemetryUpdateResponse response = await sut.View(request);
+            TelemetryUpdateResponse response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
             View view = prg.Views.Single();
 
             var viewId = this.Context.Views.FirstOrDefault(x => x.Name == view.Name).Id;
@@ -87,7 +90,9 @@ namespace Telimena.Tests
             ClientAppUser otherUser = Helpers.GetUser(this.Context, "Jack Black");
 
             //run again with different user
-            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = otherUser.Guid,
+            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"),
+                DebugMode = true,
+                UserId = otherUser.Guid,
                 VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
                 TelemetryData = new Dictionary<string, string>()
                 {
@@ -97,7 +102,8 @@ namespace Telimena.Tests
                 }
             };
 
-            response = await sut.View(request);
+            response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
+
             Assert.AreEqual(1, response.Count);
             prg = await unit.Programs.FirstOrDefaultAsync(x => x.Id == prg.Id);
             Assert.AreEqual(1, prg.Views.Count);
@@ -121,9 +127,9 @@ namespace Telimena.Tests
             Assert.AreEqual("AValue4", otherUserDetail.GetTelemetryUnits().ElementAt(1).ValueString);
             
 
-            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0")/*, TelemetryData = serialized*/};
+            request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0")/*, TelemetryData = serialized*/};
             //run again with first user
-            response = await sut.View(request);
+            response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
             view = prg.Views.Single();
             Assert.AreEqual(2, view.TelemetrySummaries.Count);
             Assert.AreEqual(2, view.GetTelemetrySummary(this.GetUserByGuid(response.UserId).Id).SummaryCount);
@@ -162,10 +168,13 @@ namespace Telimena.Tests
             Program prg = (await unit.Programs.GetAsync(x => x.Name == "SomeApp")).FirstOrDefault();
             Assert.IsTrue(prg.Id > 0);
 
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) { UserId = Guid.NewGuid() };
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) { DebugMode = true, UserId = Guid.NewGuid() };
 
             TelemetryController sut = new TelemetryController(unit);
-            TelemetryUpdateResponse response = await sut.View(request);
+
+
+            ExceptionResult response = (await sut.View(request) as ExceptionResult);
+            
             Assert.AreEqual($"User [{request.UserId}] is null", response.Exception.Message);
         }
 
@@ -564,9 +573,9 @@ namespace Telimena.Tests
             Helpers.AddHelperAssemblies(this.Context, 2, "TestApp");
 
             Helpers.GetProgramAndUser(this.Context, "TestApp3", "Jim Beam", out Program prg, out ClientAppUser usr);
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) { UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0") , ComponentName = "SomeView"};
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) { DebugMode = true, UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0") , ComponentName = "SomeView"};
 
-            TelemetryUpdateResponse response = await sut.View(request);
+            TelemetryUpdateResponse response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
 
             Assert.IsTrue(prg.Id > 0 && usr.Id > 0);
 
@@ -583,7 +592,8 @@ namespace Telimena.Tests
 
 
             //run again
-            response = await sut.View(request);
+            response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
+
             Helpers.GetProgramAndUser(this.Context, "TestApp3", "Jim Beam", out prg, out usr);
             Helpers.AssertUpdateResponse(response, prg, usr, 2, "SomeView");
             view = prg.Views.FirstOrDefault(x => x.Name == "SomeView");

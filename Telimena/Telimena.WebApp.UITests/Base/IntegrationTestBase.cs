@@ -75,6 +75,7 @@ namespace Telimena.WebApp.UITests.Base
         protected Process LaunchTestsApp(FileInfo appFile, Actions action, ProgramInfo pi = null, bool waitForExit = true, string viewName = null)
         {
             Arguments args = new Arguments { ApiUrl = this.BaseUrl, Action = action };
+            args.DebugMode = true;
             args.ProgramInfo = pi;
             args.ViewName = viewName;
             args.TelemetryKey = Guid.Parse(AutomaticTestsClientTelemetryKey);

@@ -5,6 +5,8 @@ namespace AutomaticTestsClient
 {
     public class Arguments
     {
+        public bool DebugMode { get; set; }
+
         public string ApiUrl { get; set; }
 
         public Actions Action { get; set; }
