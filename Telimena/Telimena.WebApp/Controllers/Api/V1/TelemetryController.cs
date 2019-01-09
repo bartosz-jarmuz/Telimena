@@ -137,21 +137,17 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 string ip = this.Request.GetClientIp();
                 ClientAppUser clientAppUser = await TelemetryControllerHelpers.GetUserOrAddIfMissing(this.work, request.UserInfo, ip);
 
-                TelemetrySummary summary = TelemetryControllerHelpers.GetTelemetrySummary(clientAppUser, actionItems.program);
-
                 TelemetryControllerHelpers.SetPrimaryAssembly(actionItems.program, request);
 
                 await TelemetryControllerHelpers.RecordVersions(this.work, actionItems.program, request);
 
-                AssemblyVersionInfo versionInfoInfo = TelemetryControllerHelpers.GetAssemblyVersionInfoOrAddIfMissing(request.ProgramInfo.PrimaryAssembly.VersionData, actionItems.program);
+                TelemetryControllerHelpers.GetAssemblyVersionInfoOrAddIfMissing(request.ProgramInfo.PrimaryAssembly.VersionData, actionItems.program);
 
-                // todo summary.UpdateTelemetry(versionInfoInfo, ip, request.TelemetryData);
 
                 await this.work.CompleteAsync();
-                var response = new TelemetryInitializeResponse()
+                TelemetryInitializeResponse response = new TelemetryInitializeResponse()
                 {
                     UserId = clientAppUser.Guid,
-                    Count = summary.SummaryCount
                 };
                 return response;
             }

@@ -53,18 +53,25 @@ namespace Telimena.Tests
 
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
 
-            var telemetryItem = new TelemetryItem(Helpers.GetName("Func1"), TelemetryItemTypes.View, new VersionData("1.2.3.4", "2.0.0.0"), new Dictionary<string, object>()
+            TelemetryItem telemetryItem = new TelemetryItem(Helpers.GetName("Func1"), TelemetryItemTypes.View, new VersionData("1.2.3.4", "2.0.0.0"), new Dictionary<string, object>()
             {
                 { "AKey", "AValue"},
                 { "AKey2", "AValue2"},
             });
 
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>(){ this.serializer.SerializeTelemetryItem(telemetryItem) } };
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>(){ this.serializer.Serialize(telemetryItem) } };
 
-            TelemetryUpdateResponse response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
+            IHttpActionResult result = await sut.View(request);
+            if (result is ExceptionResult ex)
+            {
+                Assert.Fail(ex.Exception.ToString());
+            }
+            Assert.IsInstanceOf<OkNegotiatedContentResult<TelemetryUpdateResponse>>(result);
+
+            TelemetryUpdateResponse response = (result as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
             View view = prg.Views.Single();
 
-            var viewId = this.Context.Views.FirstOrDefault(x => x.Name == view.Name).Id;
+            int viewId = this.Context.Views.FirstOrDefault(x => x.Name == view.Name).Id;
 
             Helpers.AssertUpdateResponse(response, prg, usr, 1, Helpers.GetName("Func1"), viewId);
 
@@ -75,10 +82,10 @@ namespace Telimena.Tests
             Assert.AreEqual(1, view.TelemetrySummaries.Count);
             Assert.AreEqual(prg.Id, view.ProgramId);
 
-            var summary = view.GetTelemetrySummary(this.GetUserByGuid(response.UserId).Id);
+            TelemetrySummary summary = view.GetTelemetrySummary(this.GetUserByGuid(response.UserId).Id);
             Assert.AreEqual(usr.Id, summary.ClientAppUserId);
             
-            var detail = view.GetTelemetryDetails(this.GetUserByGuid(response.UserId).Id).Single();
+            TelemetryDetail detail = view.GetTelemetryDetails(this.GetUserByGuid(response.UserId).Id).Single();
             Assert.AreEqual(detail.GetTelemetrySummary().Id, summary.Id);
             Assert.AreEqual(usr.Id, detail.GetTelemetrySummary().ClientAppUserId);
             Assert.AreEqual(2, detail.GetTelemetryUnits().Count());
@@ -99,7 +106,7 @@ namespace Telimena.Tests
                 };
             //run again with different user
             request = new TelemetryUpdateRequest(apps[0].Value) {
-                SerializedTelemetryUnits = new List<string>() { this.serializer.SerializeTelemetryItem(telemetryItem) },
+                SerializedTelemetryUnits = new List<string>() { this.serializer.Serialize(telemetryItem) },
                 DebugMode = true,
                 UserId = otherUser.Guid,
             };
@@ -117,10 +124,10 @@ namespace Telimena.Tests
 
             Assert.AreNotEqual(otherUser.Guid, usr.Guid);
 
-            var otherSummary = view.GetTelemetrySummary(this.GetUserByGuid(response.UserId).Id);
+            TelemetrySummary otherSummary = view.GetTelemetrySummary(this.GetUserByGuid(response.UserId).Id);
             Assert.AreEqual(otherUser.Id, otherSummary.ClientAppUserId);
 
-            var otherUserDetail = view.GetTelemetryDetails(this.GetUserByGuid(response.UserId).Id).Single();
+            TelemetryDetail otherUserDetail = view.GetTelemetryDetails(this.GetUserByGuid(response.UserId).Id).Single();
             Assert.AreEqual(otherUser.Id, otherUserDetail.GetTelemetrySummary().ClientAppUserId);
             Assert.AreEqual(3, otherUserDetail.GetTelemetryUnits().Count());
             Assert.AreEqual("AKey3", otherUserDetail.GetTelemetryUnits().ElementAt(0).Key);
@@ -129,7 +136,7 @@ namespace Telimena.Tests
             Assert.AreEqual("AValue5", otherUserDetail.GetTelemetryUnits().ElementAt(2).ValueString);
 
             telemetryItem.TelemetryData = null;
-            request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>() { this.serializer.SerializeTelemetryItem(telemetryItem) }};
+            request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>() { this.serializer.Serialize(telemetryItem) }};
             //run again with first user
             response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
             view = prg.Views.Single();
@@ -185,7 +192,7 @@ namespace Telimena.Tests
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            var apps = await Helpers.SeedInitialPrograms(this.Context, 4, "TestApp", new []{ "Johnny Walker"});
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 4, "TestApp", new []{ "Johnny Walker"});
             Helpers.AddHelperAssemblies(this.Context, 2, "TestApp");
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Johnny Walker", out Program prg, out ClientAppUser usr);
 
@@ -201,7 +208,7 @@ namespace Telimena.Tests
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            var apps = await Helpers.SeedInitialPrograms(this.Context, 4, "TestApp", new[] { "NewGuy" });
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 4, "TestApp", new[] { "NewGuy" });
             Helpers.GetProgramAndUser(this.Context, "TestApp", "NewGuy", out Program prg, out ClientAppUser usr);
 
             prg.ProgramAssemblies.Add(new ProgramAssembly { Name = "Helper1" });
@@ -230,7 +237,7 @@ namespace Telimena.Tests
             TelemetryController sut = new TelemetryController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
-            var apps = await Helpers.SeedInitialPrograms(this.Context, 4, "TestProg", new[] { "NewGuy" });
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 4, "TestProg", new[] { "NewGuy" });
 
             TelemetryInitializeRequest request = new TelemetryInitializeRequest(apps[0].Value)
             {
@@ -308,7 +315,7 @@ namespace Telimena.Tests
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            var apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0] );
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0] );
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
             TelemetryInitializeRequest request = new TelemetryInitializeRequest(apps[0].Value)
@@ -398,7 +405,7 @@ namespace Telimena.Tests
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            var apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
 
             UserInfo oldGuyUserInfo = Helpers.GetUserInfo(Helpers.GetName("OldGuy"));
             UserInfo newGuyUserInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
@@ -427,14 +434,11 @@ namespace Telimena.Tests
             Assert.AreEqual(1, prg.ProgramAssemblies.Count);
             Assert.IsTrue(prg.PrimaryAssembly.Versions.Any(x => x.AssemblyVersion == "1.2.3.4"));
             Assert.IsTrue(prg.PrimaryAssembly.Versions.Any(x => x.AssemblyVersion == "6.0"));
-            Assert.AreEqual(5, prg.TelemetrySummaries.Sum(x => x.SummaryCount));
-            Assert.AreEqual(2, prg.TelemetrySummaries.Count);
-            Assert.AreEqual(5, prg.TelemetrySummaries.Sum(x => x.GetTelemetryDetails().Count()));
         }
 
         private void SetIp(ApiController controller, string ip)
         {
-            var request = new Mock<HttpRequestBase>();
+            Mock<HttpRequestBase> request = new Mock<HttpRequestBase>();
             // Not working - IsAjaxRequest() is static extension method and cannot be mocked
             // request.Setup(x => x.IsAjaxRequest()).Returns(true /* or false */);
             // use this
@@ -458,7 +462,7 @@ namespace Telimena.Tests
             TelemetryController sut;
             TelemetryInitializeRequest request = null;
             UserInfo userInfo;
-            var apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
 
             for (int i = 0; i <= 2; i++)
             {
@@ -504,8 +508,8 @@ namespace Telimena.Tests
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
-            var apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
-            var apps2 = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg2", new string[0]);
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
+            List<KeyValuePair<string, Guid>> apps2 = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg2", new string[0]);
 
 
             TelemetryInitializeRequest request = new TelemetryInitializeRequest(apps[0].Value)
@@ -520,7 +524,6 @@ namespace Telimena.Tests
             Assert.IsTrue(prg.Id > 0 && usr.Id > 0);
             Helpers.AssertRegistrationResponse(response, prg, usr, 1);
 
-            Assert.AreEqual(1, prg.TelemetrySummaries.Count());
             Assert.AreEqual(request.ProgramInfo.PrimaryAssembly.Name, prg.PrimaryAssembly.Name);
             Assert.AreEqual("xyz", prg.PrimaryAssembly.Company);
             Assert.AreEqual(prg.Id, this.Context.ProgramAssemblies.FirstOrDefault(x => x.Name == request.ProgramInfo.PrimaryAssembly.Name).Program.Id);
@@ -528,7 +531,6 @@ namespace Telimena.Tests
             Assert.AreEqual(userInfo.UserName, usr.UserName);
             Assert.AreEqual(request.UserInfo.MachineName, usr.MachineName);
             Assert.AreEqual(request.UserInfo.UserName, usr.UserName);
-            Assert.AreEqual(usr.Id, prg.TelemetrySummaries.Single().ClientAppUserId);
 
             string prgName2 = Helpers.GetName("TestProg2");
             //now second app for same user
@@ -540,7 +542,6 @@ namespace Telimena.Tests
             Helpers.AssertRegistrationResponse(response, prg2, usr, 1);
 
             Assert.IsTrue(prg2.Id > prg.Id);
-            Assert.AreEqual(usr.Id, prg2.TelemetrySummaries.Single().ClientAppUserId);
         }
 
         //[Test]
@@ -570,31 +571,40 @@ namespace Telimena.Tests
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            var apps  = await Helpers.SeedInitialPrograms(this.Context, 4,"TestApp", new []{"Johnny Walker","Jim Beam", "Eric Cartman" });
+            List<KeyValuePair<string, Guid>> apps  = await Helpers.SeedInitialPrograms(this.Context, 4,"TestApp", new []{"Johnny Walker","Jim Beam", "Eric Cartman" });
           
             Helpers.AddHelperAssemblies(this.Context, 2, "TestApp");
 
             Helpers.GetProgramAndUser(this.Context, "TestApp3", "Jim Beam", out Program prg, out ClientAppUser usr);
 
-            var telemetryItem = new TelemetryItem(Helpers.GetName("SomeView"), TelemetryItemTypes.View, new VersionData("1.2.3.4", "2.0.0.0"), new Dictionary<string, object>()
+            TelemetryItem telemetryItem = new TelemetryItem(Helpers.GetName("SomeView"), TelemetryItemTypes.View, new VersionData("1.2.3.4", "2.0.0.0"), new Dictionary<string, object>()
             {
                 { "AKey", "AValue"},
                 { "AKey2", "AValue2"},
             });
 
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>() { this.serializer.SerializeTelemetryItem(telemetryItem) }, };
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey)
+            {
+                DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>() { this.serializer.Serialize(telemetryItem) },
+            };
 
-            TelemetryUpdateResponse response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
+            IHttpActionResult result = await sut.View(request);
+            if (result is ExceptionResult ex)
+            {
+                Assert.Fail(ex.Exception.ToString());
+            }
+            Assert.IsInstanceOf<OkNegotiatedContentResult<TelemetryUpdateResponse>>(result);
+
+            TelemetryUpdateResponse response = (result as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
 
             Assert.IsTrue(prg.Id > 0 && usr.Id > 0);
 
             Helpers.AssertUpdateResponse(response, prg, usr, 1, "SomeView");
 
-            var view = prg.Views.FirstOrDefault(x => x.Name == "SomeView");
+            View view = prg.Views.FirstOrDefault(x => x.Name == "SomeView");
 
-            Assert.AreEqual(3, prg.TelemetrySummaries.Count);
             Assert.AreEqual(1, view.TelemetrySummaries.Count);
-            var summary = view.TelemetrySummaries.SingleOrDefault(x => x.ClientAppUser.UserName == "TestUpdateAction_Jim Beam");
+            ViewTelemetrySummary summary = view.TelemetrySummaries.SingleOrDefault(x => x.ClientAppUser.UserName == "TestUpdateAction_Jim Beam");
             Assert.AreEqual(1, summary.SummaryCount);
 
             Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(telemetryItem.VersionData.Map()).Id);
@@ -607,14 +617,12 @@ namespace Telimena.Tests
             Helpers.AssertUpdateResponse(response, prg, usr, 2, "SomeView");
             view = prg.Views.FirstOrDefault(x => x.Name == "SomeView");
 
-            Assert.AreEqual(3, prg.TelemetrySummaries.Count);
             Assert.AreEqual(1, view.TelemetrySummaries.Count);
 
             Assert.AreEqual(2, view.GetTelemetrySummary(this.GetUserByGuid(response.UserId).Id).SummaryCount);
             Assert.AreEqual(2, view.TelemetrySummaries.Single(x => x.ClientAppUser.UserName == "TestUpdateAction_Jim Beam").SummaryCount);
 
             Assert.AreEqual(2, view.GetTelemetryDetails(this.GetUserByGuid(response.UserId).Id).Count);
-            Assert.AreEqual(3, this.Context.ProgramTelemetryDetails.Count(x => x.TelemetrySummary.ProgramId == prg.Id));
             Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(telemetryItem.VersionData.Map()).Id);
         }
 
@@ -624,56 +632,38 @@ namespace Telimena.Tests
         }
 
         [Test]
-        public async Task TestUsageDetailsAndVersions()
+        public async Task TestVersions()
         {
+
+
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            var apps = await Helpers.SeedInitialPrograms(this.Context, 2, "TestApp", new[] { "Billy Jean", "Jack Black" });
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 2, "TestApp", new[] { "Billy Jean", "Jack Black" });
 
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Jack Black", out prg, out ClientAppUser usr2);
 
-            ProgramTelemetryDetail detail = prg.GetLatestTelemetryDetail();
-            Assert.AreEqual(usr2.Id, detail.TelemetrySummary.ClientAppUserId);
-            Assert.AreEqual(0, detail.TelemetryUnits.Count);
-            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.AssemblyVersion);
-
             TelemetryInitializeRequest request = new TelemetryInitializeRequest(prg.TelemetryKey) {
-                UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")), ProgramInfo = Helpers.GetProgramInfo("TestApp",version: new VersionData("1.2.3.4", "2.2.3.4")) };
+                UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")),
+                ProgramInfo = Helpers.GetProgramInfo("TestApp",version: new VersionData("1.2.3.4", "2.2.3.4")) };
 
-            TelemetryInitializeResponse response = await sut.Initialize(request);
+            await sut.Initialize(request);
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);
 
-            Assert.AreEqual(3, prg.TelemetrySummaries.Sum(x => x.GetTelemetryDetails().Count()));
-            Assert.AreEqual(2, prg.GetTelemetryDetails(usr.Id).Count);
-            Assert.AreEqual(1, prg.GetTelemetryDetails(usr2.Id).Count);
-            Assert.IsTrue(prg.GetTelemetryDetails(usr.Id).All(x => x.AssemblyVersion.AssemblyVersion == "1.2.3.4"));
-            Assert.IsTrue(prg.GetTelemetryDetails(usr2.Id).All(x => x.AssemblyVersion.AssemblyVersion == "1.2.3.4"));
 
             Assert.AreEqual(1, this.Context.Versions.Count(x => x.ProgramAssembly.ProgramId == prg.Id));
 
-            detail = prg.GetLatestTelemetryDetail();
-            Assert.AreEqual(usr.Id, detail.TelemetrySummary.ClientAppUserId);
-            Assert.AreEqual("1.2.3.4", detail.AssemblyVersion.AssemblyVersion);
+            request = new TelemetryInitializeRequest(prg.TelemetryKey)
+            {
+                UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")),
+                ProgramInfo = Helpers.GetProgramInfo("TestApp", version: new VersionData("2.0.0.0", "3.0.0.0"))
+            };
 
-            request = new TelemetryInitializeRequest(prg.TelemetryKey) { UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")), ProgramInfo = Helpers.GetProgramInfo("TestApp", version: new VersionData("2.0.0.0", "3.0.0.0")) };
-
-            response = await sut.Initialize(request);
+            await sut.Initialize(request);
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);
-
-            Assert.AreEqual(4, prg.TelemetrySummaries.Sum(x => x.GetTelemetryDetails().Count()));
-            Assert.AreEqual(3, prg.GetTelemetryDetails(usr.Id).Count);
-            Assert.AreEqual(1, prg.GetTelemetryDetails(usr2.Id).Count);
-            Assert.AreEqual(2, prg.GetTelemetryDetails(usr.Id).Count(x => x.AssemblyVersion.AssemblyVersion == "1.2.3.4"));
-            Assert.AreEqual(1, prg.GetTelemetryDetails(usr.Id).Count(x => x.AssemblyVersion.AssemblyVersion == "2.0.0.0"));
-            Assert.IsTrue(prg.GetTelemetryDetails(usr2.Id).All(x => x.AssemblyVersion.AssemblyVersion == "1.2.3.4"));
 
             Assert.AreEqual(2, this.Context.Versions.Count(x => x.ProgramAssembly.ProgramId == prg.Id));
 
-
-            detail = prg.GetLatestTelemetryDetail();
-            Assert.AreEqual(usr.Id, detail.TelemetrySummary.ClientAppUserId);
-            Assert.AreEqual("2.0.0.0", detail.AssemblyVersion.AssemblyVersion);
         }
 
     }

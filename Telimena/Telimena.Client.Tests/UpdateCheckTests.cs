@@ -47,7 +47,7 @@ namespace TelimenaClient.Tests
             client.Setup(x => x.PostAsync("api/v1/Telemetry/Initialize", It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
-                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse {Count = 0, UserId = Guid.NewGuid()};
+                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse { UserId = Guid.NewGuid()};
                 response.Content = new StringContent(JsonConvert.SerializeObject(telemetryInitializeResponse));
                 return Task.FromResult(response);
             });

@@ -45,9 +45,9 @@ namespace TelimenaClient.Tests
                 { "DateLocal", new DateTime(2010,02,28,18,20,00,DateTimeKind.Local)},
             });
 
-            string serialized = sut.SerializeTelemetryItem(originalItem);
+            string serialized = sut.Serialize(originalItem);
          
-            TelemetryItem deserialized = sut.DeserializeTelemetryItem(serialized);
+            TelemetryItem deserialized = sut.Deserialize<TelemetryItem>(serialized);
             originalItem.ShouldBeEquivalentTo(deserialized);
 
 

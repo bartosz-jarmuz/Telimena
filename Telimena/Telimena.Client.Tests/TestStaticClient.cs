@@ -33,7 +33,7 @@ namespace TelimenaClient.Tests
             client.Setup(x => x.PostAsync(ApiRoutes.Initialize, It.IsAny<HttpContent>())).Returns((string uri, HttpContent requestContent) =>
             {
                 HttpResponseMessage response = new HttpResponseMessage();
-                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse {Count = 0,  UserId = this.returnedUserGuid };
+                TelemetryInitializeResponse telemetryInitializeResponse = new TelemetryInitializeResponse { UserId = this.returnedUserGuid };
                 response.Content = new StringContent(JsonConvert.SerializeObject(telemetryInitializeResponse));
                 return Task.FromResult(response);
             });

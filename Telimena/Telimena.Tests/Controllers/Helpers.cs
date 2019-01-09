@@ -43,7 +43,6 @@ namespace Telimena.Tests
         public static void AssertRegistrationResponse(TelemetryInitializeResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
         {
             Assert.IsNull(response.Exception);
-            Assert.AreEqual(expectedCount, response.Count);
             Assert.AreEqual(usr.Guid, response.UserId);
         }
 

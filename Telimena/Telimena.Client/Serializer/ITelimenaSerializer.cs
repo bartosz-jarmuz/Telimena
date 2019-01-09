@@ -20,19 +20,5 @@ namespace TelimenaClient.Serializer
         /// <returns>System.String.</returns>
         string Serialize(object objectToPost);
 
-        /// <summary>
-        /// Converts object to string
-        /// </summary>
-        /// <param name="objectToPost"></param>
-        /// <returns></returns>
-        string SerializeTelemetryItem(TelemetryItem objectToPost);
-
-        /// <summary>
-        /// Object from string
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="stringContent"></param>
-        /// <returns></returns>
-        TelemetryItem DeserializeTelemetryItem(string stringContent);
     }
 }

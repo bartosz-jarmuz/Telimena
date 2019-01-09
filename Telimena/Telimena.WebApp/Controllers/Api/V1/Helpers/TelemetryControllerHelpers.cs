@@ -37,7 +37,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             return response;
         }
 
-        private static List<TelemetryItem> DeserializeUnits(TelemetryUpdateRequest request)
+        private static List<TelemetryItem> DeserializeItems(TelemetryUpdateRequest request)
         {
             var list = new List<TelemetryItem>();
             var serializer = new TelimenaSerializer();
@@ -80,7 +80,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
                     return actionItems.response;
                 }
 
-                var units = DeserializeUnits(request);
+                var units = DeserializeItems(request);
 
                 var typeGroupings = units.GroupBy(x => x.TelemetryItemType);
 
@@ -140,7 +140,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 
         }
 
-        public static async Task<ITelemetryAware> RecordVersions(ITelemetryUnitOfWork work, Program program, TelemetryInitializeRequest request)
+        public static async Task RecordVersions(ITelemetryUnitOfWork work, Program program, TelemetryInitializeRequest request)
         {
             AssemblyInfo primaryAss = request.ProgramInfo.PrimaryAssembly;
             program.PrimaryAssembly.AddVersion(primaryAss.VersionData.Map());
@@ -165,7 +165,6 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             }
 
             await AssignToolkitVersion(work, program.PrimaryAssembly, primaryAss.VersionData , request.TelimenaVersion);
-            return program;
         }
 
         private static  async Task AssignToolkitVersion(ITelemetryUnitOfWork work, ProgramAssembly programAssembly, VersionData versionData, string toolkitVersion)
@@ -270,11 +269,6 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             }
 
             return view;
-        }
-
-        public static async Task<ITelemetryAware> GetProgram(ITelemetryUnitOfWork work, Guid telemetryKey)
-        {
-            return await work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
         }
 
         public static void SetPrimaryAssembly(Program program, TelemetryInitializeRequest request)

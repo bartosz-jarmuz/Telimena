@@ -97,9 +97,6 @@
     <Compile Include="Messages\CreateUpdatePackageRequest.cs" />
     <Compile Include="Messages\LatestVersionResponse.cs" />
     <Compile Include="DTO\VersionInfo.cs" />
-    <Compile Include="Models\Telemetry\ProgramTelemetryDetail.cs" />
-    <Compile Include="Models\Telemetry\ProgramTelemetrySummary.cs" />
-    <Compile Include="Models\Telemetry\ProgramTelemetryUnit.cs" />
     <Compile Include="Models\Telemetry\ViewTelemetryUnit.cs" />
     <Compile Include="Models\Telemetry\ViewTelemetryDetail.cs" />
     <Compile Include="Models\Telemetry\ViewTelemetrySummary.cs" />

@@ -71,17 +71,6 @@ namespace Telimena.WebApp.Controllers
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
-        public async Task<JsonResult> GetProgramUsageData(Guid telemetryKey, IDataTablesRequest request)
-        {
-            IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x=>x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
-                
-            UsageDataTableResult result = await this.Work.GetProgramUsageData(telemetryKey, request.Start, request.Length, sorts);
-
-            DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
-
-            return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
-        }
 
         [HttpGet]
         public async Task<JsonResult> GetProgramViewsUsageData(Guid telemetryKey, IDataTablesRequest request)

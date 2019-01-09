@@ -26,25 +26,12 @@
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">View Usages</h3>
-                @Html.ActionLink("Export custom data", "ExportViewUsageCustomData", "ProgramStatistics", new { telemetryKey = @Model.TelemetryKey, includeGenericData = false }, new { @class = "btn btn-primary" })
-                @Html.ActionLink("Export custom data with generic data", "ExportViewUsageCustomData", "ProgramStatistics", new { telemetryKey = @Model.TelemetryKey, includeGenericData = true }, new { @class = "btn btn-primary" })
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
                 <table id="@Strings.Id.ViewUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
             </div>
         </div>
     </div>
-    <div class="col-md-12">
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">Program Usages</h3>
-            </div>
-            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="@Strings.Id.ProgramUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
-            </div>
-        </div>
-    </div>
-
 </div>
 
 @section scripts
@@ -96,56 +83,10 @@
                         sortable: true,
                         searchable: true
                     },
-                    {
-                        name:  "@nameof(UsageData.CustomData)",
-                        data:  "@nameof(UsageData.CustomData).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.CustomData)",
-                        sortable: true,
-                        searchable: false
-                    },
-
-                ]
+                 ]
 
             });
 
-            $('#@Strings.Id.ProgramUsageTable').DataTable({
-                serverSide: true,
-                searching: false,
-                processing: true,
-                order: [[0, 'desc']],
-                lengthMenu: [[15, 30, 70, -1], [15, 30, 70, "All"]],
-                pageLength: 15,
-                ajax: "@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey",
-
-                columns: [
-                    {
-                        name: "@nameof(UsageData.DateTime)",
-                        data: "@nameof(UsageData.DateTime).ToLowerFirstChar()",
-                        render: function(data, type, row, meta) {
-                            return toFormattedTimestamp(new Date(data));;
-                        },
-                        title:"@nameof(UsageData.DateTime)",
-                        sortable: true,
-                        searchable: false
-                    },
-                    {
-                        name:  "@nameof(UsageData.ProgramVersion)",
-                        data:  "@nameof(UsageData.ProgramVersion).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.ProgramVersion)",
-                        sortable: true,
-                        searchable: true
-                    },
-                    {
-                        name:  "@nameof(UsageData.UserName)",
-                        data:  "@nameof(UsageData.UserName).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.UserName)",
-                        sortable: true,
-                        searchable: true
-                    },
-
-                ]
-
-            });
         });
     </script>
 

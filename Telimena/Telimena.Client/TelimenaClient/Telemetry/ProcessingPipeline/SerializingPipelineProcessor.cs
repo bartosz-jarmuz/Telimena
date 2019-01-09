@@ -8,7 +8,7 @@ namespace TelimenaClient
         public Task<TelemetryPipelineTransportUnit> Process(TelemetryPipelineTransportUnit unit)
         {
             TelimenaSerializer serializer = new TelimenaSerializer();
-            string stringified = serializer.SerializeTelemetryItem(unit.TelemetryItem);
+            string stringified = serializer.Serialize(unit.TelemetryItem);
             unit.SerializedEntry = stringified;
             return Task.FromResult(unit);
         }

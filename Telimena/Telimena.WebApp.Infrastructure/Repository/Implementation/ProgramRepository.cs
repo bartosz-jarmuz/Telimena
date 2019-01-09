@@ -82,9 +82,6 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             this.telimenaContext.ViewTelemetrySummaries.RemoveRange(this.telimenaContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id));
             this.telimenaContext.Views.RemoveRange(this.telimenaContext.Views.Where(x => x.ProgramId == program.Id));
 
-            this.telimenaContext.ProgramTelemetryDetails.RemoveRange(this.telimenaContext.ProgramTelemetryDetails.Where(x => x.TelemetrySummary.ProgramId == program.Id));
-            this.telimenaContext.ProgramTelemetrySummaries.RemoveRange(this.telimenaContext.ProgramTelemetrySummaries.Where(x => x.ProgramId == program.Id));
-
             this.telimenaContext.Versions.RemoveRange(this.telimenaContext.Versions.Where(x => x.ProgramAssembly.ProgramId == program.Id));
             this.telimenaContext.ProgramAssemblies.RemoveRange(this.telimenaContext.ProgramAssemblies.Where(x => x.ProgramId == program.Id));
 

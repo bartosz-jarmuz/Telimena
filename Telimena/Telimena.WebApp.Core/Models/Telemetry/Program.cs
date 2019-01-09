@@ -8,7 +8,7 @@ using TelimenaClient;
 
 namespace Telimena.WebApp.Core.Models
 {
-    public class Program : ITelemetryAware
+    public class Program 
     {
         protected Program()
         {
@@ -29,7 +29,6 @@ namespace Telimena.WebApp.Core.Models
         public virtual ProgramAssembly PrimaryAssembly { get; set; }
         public virtual ICollection<View> Views { get; set; } = new List<View>();
         public virtual ICollection<Event> Events { get; set; } = new List<Event>();
-        public virtual RestrictedAccessList<ProgramTelemetrySummary> TelemetrySummaries { get; set; } = new RestrictedAccessList<ProgramTelemetrySummary>();
         public DateTime RegisteredDate { get; set; }
 
         [StringLength(255)]
@@ -42,34 +41,8 @@ namespace Telimena.WebApp.Core.Models
 
         public virtual Updater Updater { get; set; }
 
-        public IReadOnlyList<TelemetrySummary> GetTelemetrySummaries()
-        {
-            return this.TelemetrySummaries.AsReadOnly();
-        }
+       
 
-        public IReadOnlyList<TelemetryDetail> GetTelemetryDetails(int clientAppUserId)
-        {
-            TelemetrySummary summary = this.GetTelemetrySummary(clientAppUserId);
-            return summary?.GetTelemetryDetails();
-        }
-
-        public TelemetrySummary GetTelemetrySummary(int clientAppUserId)
-        {
-            return this.TelemetrySummaries.FirstOrDefault(x => x.ClientAppUser.Id == clientAppUserId);
-        }
-
-        public TelemetrySummary AddTelemetrySummary(int clientAppUserId)
-        {
-            ProgramTelemetrySummary summary = new ProgramTelemetrySummary {ClientAppUserId = clientAppUserId, Program = this};
-            ((List<ProgramTelemetrySummary>) this.TelemetrySummaries).Add(summary);
-            return summary;
-        }
-
-        public ProgramTelemetryDetail GetLatestTelemetryDetail()
-        {
-            ProgramTelemetrySummary summary = this.TelemetrySummaries.MaxFirstBy(x => x.LastTelemetryUpdateTimestamp);
-            return summary.GetTelemetryDetails().MaxFirstBy(x => x.Id) as ProgramTelemetryDetail;
-        }
 
         public AssemblyVersionInfo GetLatestVersion()
         {

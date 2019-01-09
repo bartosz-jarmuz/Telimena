@@ -17,8 +17,6 @@ namespace Telimena.WebApp.Infrastructure
                     return context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id);
                 case TelemetryTypes.Event:
                     return context.EventTelemetryDetails.Where(x => x.TelemetrySummary.Event.ProgramId == program.Id);
-                case TelemetryTypes.Program:
-                    return context.ProgramTelemetryDetails.Where(x => x.TelemetrySummary.ProgramId == program.Id);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }

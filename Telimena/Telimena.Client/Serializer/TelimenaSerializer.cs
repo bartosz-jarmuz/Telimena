@@ -19,7 +19,7 @@ namespace TelimenaClient.Serializer
         /// </summary>
         /// <param name="objectToPost"></param>
         /// <returns></returns>
-        public string SerializeTelemetryItem(TelemetryItem objectToPost)
+        private string SerializeTelemetryItem(TelemetryItem objectToPost)
         {
             using (MemoryStream stream = new System.IO.MemoryStream())
             {
@@ -58,7 +58,7 @@ namespace TelimenaClient.Serializer
         /// <typeparam name="T"></typeparam>
         /// <param name="stringContent"></param>
         /// <returns></returns>
-        public TelemetryItem DeserializeTelemetryItem(string stringContent)
+        private object DeserializeTelemetryItem(string stringContent)
         {
             try
             {
@@ -77,25 +77,38 @@ namespace TelimenaClient.Serializer
         /// <inheritdoc />
         public T Deserialize<T>(string stringContent)
         {
-            try
+            if (typeof(T) == typeof(TelemetryItem))
             {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                return serializer.Deserialize<T>(stringContent);
+                return (T) this.DeserializeTelemetryItem(stringContent);
             }
-            catch (Exception ex)
+            else
             {
-                throw new InvalidOperationException($"Error while deserializing string as {typeof(T).Name}", ex);
+                try
+                {
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    return serializer.Deserialize<T>(stringContent);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Error while deserializing string as {typeof(T).Name}", ex);
+                }
             }
-
         }
 
         /// <inheritdoc />
         public string Serialize(object objectToPost)
         {
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            serializer.RegisterConverters(new JavaScriptConverter[] { new PropertiesConverter() });
-            string jsonObject = serializer.Serialize(objectToPost);
-            return jsonObject;
+            if (objectToPost is TelemetryItem telemetryItem)
+            {
+                return this.SerializeTelemetryItem(telemetryItem);
+            }
+            else
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                serializer.RegisterConverters(new JavaScriptConverter[] { new PropertiesConverter() });
+                string jsonObject = serializer.Serialize(objectToPost);
+                return jsonObject;
+            }
         }
     }
 }

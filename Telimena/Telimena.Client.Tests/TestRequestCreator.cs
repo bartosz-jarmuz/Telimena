@@ -82,9 +82,9 @@ namespace TelimenaClient.Tests
             Assert.AreEqual(3, deserialized.SerializedTelemetryUnits.Count);
 
             List<TelemetryItem> list = new List<TelemetryItem>();
-            list.Add(serializer.DeserializeTelemetryItem(deserialized.SerializedTelemetryUnits[0]));
-            list.Add(serializer.DeserializeTelemetryItem(deserialized.SerializedTelemetryUnits[1]));
-            list.Add(serializer.DeserializeTelemetryItem(deserialized.SerializedTelemetryUnits[2]));
+            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryUnits[0]));
+            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryUnits[1]));
+            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryUnits[2]));
             TelemetryItem deserializedItem1 = list.Single(x => x.Id == item1.Id);
             deserializedItem1.ShouldBeEquivalentTo(item1);
             Assert.IsInstanceOf<Guid>(deserializedItem1.Id);
@@ -109,7 +109,7 @@ namespace TelimenaClient.Tests
                     FileInfo file = locator.TelemetryStorageDirectory.GetFiles().Single();
                     Assert.AreEqual(telemetryItem.Id + ".json", file.Name);
                     var serializer = new TelimenaSerializer();
-                    var deserialized = serializer.DeserializeTelemetryItem(File.ReadAllText(file.FullName));
+                    var deserialized = serializer.Deserialize<TelemetryItem>(File.ReadAllText(file.FullName));
                     telemetryItem.ShouldBeEquivalentTo(deserialized);
                 }
                 if (index == 1)

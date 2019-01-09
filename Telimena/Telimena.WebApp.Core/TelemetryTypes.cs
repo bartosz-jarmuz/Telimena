@@ -4,6 +4,5 @@
     {
         View,
         Event,
-        Program
     }
 }
