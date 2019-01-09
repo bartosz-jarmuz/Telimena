@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 
 namespace TelimenaClient.Serializer
 {
-    internal class NullPropertiesConverter : JavaScriptConverter
+    internal class PropertiesConverter : JavaScriptConverter
     {
-        public override IEnumerable<Type> SupportedTypes => this.GetType().Assembly.GetTypes();
+        public override IEnumerable<Type> SupportedTypes => this.GetType().Assembly.GetTypes().Where(
+            x=> !x.IsEnum);
 
         public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException($"Deserialization is not implemented in {this.GetType().Name}");
         }
 
         public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)
@@ -25,11 +28,27 @@ namespace TelimenaClient.Serializer
                 object value = prop.GetValue(obj, BindingFlags.Public, null, null, null);
                 if (value != null && !ignoreProp)
                 {
-                    jsonExample.Add(prop.Name, value);
+                    AssignValue(jsonExample, prop, value);
                 }
             }
 
             return jsonExample;
+        }
+
+        private static void AssignValue(Dictionary<string, object> jsonExample, PropertyInfo prop, object value)
+        {
+            if (prop.PropertyType == typeof(DateTimeOffset))
+            {
+                jsonExample.Add(prop.Name, ((DateTimeOffset)value).ToString("O"));
+            }
+            else if (prop.PropertyType == typeof(DateTime))
+            {
+                jsonExample.Add(prop.Name, ((DateTime)value).ToString("O"));
+            }
+            else
+            {
+                jsonExample.Add(prop.Name, value);
+            }
         }
     }
 }

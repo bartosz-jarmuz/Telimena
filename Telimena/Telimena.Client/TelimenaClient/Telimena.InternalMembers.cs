@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using TelimenaClient.Serializer;
 
 namespace TelimenaClient
@@ -43,13 +44,13 @@ namespace TelimenaClient
         ///     Locator provides paths to toolkit files and folders.
         /// </summary>
         /// <value>The locator.</value>
-        private Locator Locator { get; set; }
+        internal readonly Locator Locator;
 
         private readonly ITelimenaHttpClient httpClient;
         private TelemetryInitializeResponse initializationResponse;
         private readonly ITelemetryModule telemetry;
         private readonly IUpdatesModule updates;
         private readonly TelimenaProperties properties;
-
+       
     }
 }

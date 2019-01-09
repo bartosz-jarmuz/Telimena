@@ -8,13 +8,15 @@ namespace TelimenaClient
     /// </summary>
     public class TelemetryUpdateRequest
     {
+        [Obsolete]
         /// <summary>
         /// For serialization
         /// </summary>
-        protected TelemetryUpdateRequest()
+        public  TelemetryUpdateRequest()
         {
 
         }
+
 
         /// <summary>
         /// New instance of request
@@ -39,22 +41,11 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The program identifier.</value>
         public Guid TelemetryKey { get; set; }
+      
         /// <summary>
-        /// Gets or sets the name of the view.
+        /// The actual telemetry data
         /// </summary>
-        /// <value>The name of the view.</value>
-        public string ComponentName { get; set; }
-        
-        /// <summary>
-        /// Holds info about the version components (file, assembly)
-        /// </summary>
-        public VersionData VersionData { get; set; }
-
-        /// <summary>
-        /// Gets or sets the custom data.
-        /// </summary>
-        /// <value>The custom data.</value>
-        public Dictionary<string, string> TelemetryData { get; set; }
+        public List<string> SerializedTelemetryUnits { get; set; }
 
         /// <summary>
         /// Requests sent in debug mode will return telemetry data response

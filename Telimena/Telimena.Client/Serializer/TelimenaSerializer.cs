@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Web.Script.Serialization;
 
 namespace TelimenaClient.Serializer
@@ -8,27 +13,43 @@ namespace TelimenaClient.Serializer
     /// </summary>
     public class TelimenaSerializer : ITelimenaSerializer
     {
+
         /// <summary>
         /// Converts object to string
         /// </summary>
         /// <param name="objectToPost"></param>
         /// <returns></returns>
-        public string Serialize(object objectToPost)
+        public string SerializeTelemetryItem(TelemetryItem objectToPost)
         {
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            serializer.RegisterConverters(new JavaScriptConverter[] {new NullPropertiesConverter()});
-            string jsonObject = serializer.Serialize(objectToPost);
-            return jsonObject;
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                DataContractJsonSerializer serializer = GetDataContractJsonSerializer(objectToPost.GetType());
+                serializer.WriteObject(stream, objectToPost);
+                stream.Flush();
+                stream.Seek(0, SeekOrigin.Begin);
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
         }
 
-        string ITelimenaSerializer.UrlEncodeJson(string jsonString)
+        private static DataContractJsonSerializer GetDataContractJsonSerializer(Type type)
         {
-            return UrlEncodeJson(jsonString);
-        }
+            DataContractJsonSerializerSettings settings = new DataContractJsonSerializerSettings()
+            {
+                DateTimeFormat = new DateTimeFormat("O")
+                , UseSimpleDictionaryFormat = true
+                , DataContractSurrogate = new DateTimeDataContractSurrogate()
+                , KnownTypes = new Type[]
+                {
+                    typeof(DateTimeOffset),
+                    typeof(DateTime),
+                }
+            };
 
-        string ITelimenaSerializer.UrlDecodeJson(string escapedJsonString)
-        {
-            return UrlDecodeJson(escapedJsonString);
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(type, settings);
+            return serializer;
         }
 
         /// <summary>
@@ -37,6 +58,23 @@ namespace TelimenaClient.Serializer
         /// <typeparam name="T"></typeparam>
         /// <param name="stringContent"></param>
         /// <returns></returns>
+        public TelemetryItem DeserializeTelemetryItem(string stringContent)
+        {
+            try
+            {
+                using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(stringContent)))
+                {
+                    DataContractJsonSerializer serializer = GetDataContractJsonSerializer(typeof(TelemetryItem));
+                    return (TelemetryItem)serializer.ReadObject(ms);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error while deserializing string as {typeof(TelemetryItem).Name}", ex); 
+            }
+        }
+
+        /// <inheritdoc />
         public T Deserialize<T>(string stringContent)
         {
             try
@@ -46,40 +84,18 @@ namespace TelimenaClient.Serializer
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Error while deserializing string as {typeof(T).Name}", ex); 
+                throw new InvalidOperationException($"Error while deserializing string as {typeof(T).Name}", ex);
             }
-            
+
         }
 
-        /// <summary>
-        /// Converts to string and URL encodes (so that Json can be sent as GET)
-        /// </summary>
-        /// <param name="objectToPost"></param>
-        /// <returns></returns>
-        public string SerializeAndEncode(object objectToPost)
+        /// <inheritdoc />
+        public string Serialize(object objectToPost)
         {
-            string json = this.Serialize(objectToPost);
-            return UrlEncodeJson(json);
-        }
-
-        /// <summary>
-        /// Converts url encoded string to JSON
-        /// </summary>
-        /// <param name="escapedJsonString"></param>
-        /// <returns></returns>
-        public static string UrlDecodeJson(string escapedJsonString)
-        {
-            return Uri.UnescapeDataString(escapedJsonString);
-        }
-
-        /// <summary>
-        /// URL Encodes json string
-        /// </summary>
-        /// <param name="jsonString"></param>
-        /// <returns></returns>
-        public static string UrlEncodeJson(string jsonString)
-        {
-            return Uri.EscapeDataString(jsonString);
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            serializer.RegisterConverters(new JavaScriptConverter[] { new PropertiesConverter() });
+            string jsonObject = serializer.Serialize(objectToPost);
+            return jsonObject;
         }
     }
 }

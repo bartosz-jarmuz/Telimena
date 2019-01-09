@@ -19,23 +19,20 @@ namespace TelimenaClient.Serializer
         /// <param name="objectToPost">The object to post.</param>
         /// <returns>System.String.</returns>
         string Serialize(object objectToPost);
+
         /// <summary>
-        /// Serializes the and encode.
+        /// Converts object to string
         /// </summary>
-        /// <param name="objectToPost">The object to post.</param>
-        /// <returns>System.String.</returns>
-        string SerializeAndEncode(object objectToPost);
+        /// <param name="objectToPost"></param>
+        /// <returns></returns>
+        string SerializeTelemetryItem(TelemetryItem objectToPost);
+
         /// <summary>
-        /// URLs the decode json.
+        /// Object from string
         /// </summary>
-        /// <param name="escapedJsonString">The escaped json string.</param>
-        /// <returns>System.String.</returns>
-        string UrlDecodeJson(string escapedJsonString);
-        /// <summary>
-        /// URLs the encode json.
-        /// </summary>
-        /// <param name="jsonString">The json string.</param>
-        /// <returns>System.String.</returns>
-        string UrlEncodeJson(string jsonString);
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stringContent"></param>
+        /// <returns></returns>
+        TelemetryItem DeserializeTelemetryItem(string stringContent);
     }
 }

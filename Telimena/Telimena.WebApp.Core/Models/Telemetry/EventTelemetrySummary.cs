@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DotNetLittleHelpers;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -9,15 +11,15 @@ namespace Telimena.WebApp.Core.Models
         public int EventId { get; set; }
         public virtual Event Event { get; set; }
         public override ITelemetryAware GetComponent() => this.Event;
+        public override TelemetryDetail CreateNewDetail()
+        {
+            return new EventTelemetryDetail();
+        }
 
         public virtual RestrictedAccessList<EventTelemetryDetail> TelemetryDetails { get; set; } = new RestrictedAccessList<EventTelemetryDetail>();
 
-        public override IReadOnlyList<TelemetryDetail> GetTelemetryDetails() => this.TelemetryDetails.AsReadOnly();
+        public override List<TelemetryDetail> GetTelemetryDetails() => this.TelemetryDetails.OfType<TelemetryDetail>().ToList();
 
-        public override void AddTelemetryDetail(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo
-            , Dictionary<string, string> telemetryUnits)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

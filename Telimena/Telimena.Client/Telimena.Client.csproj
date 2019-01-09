@@ -82,9 +82,12 @@
     <Compile Include="DefaultToolkitNames.cs" />
     <Compile Include="Model\FileDownloadResult.cs" />
     <Compile Include="Model\LiveProgramInfo.cs" />
+    <Compile Include="Model\TelemetryItem.cs" />
+    <Compile Include="Model\TelemetryItemTypes.cs" />
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
     <Compile Include="Model\VersionData.cs" />
+    <Compile Include="Serializer\DateTimeDataContractSurrogate.cs" />
     <Compile Include="TelimenaClient\Interface\ITelimenaProperties.cs" />
     <Compile Include="TelimenaClient\Interface\Updates\IAsyncUpdatesHandler.cs" />
     <Compile Include="TelimenaClient\Interface\Telemetry\IAsyncTelemetryHandler.cs" />
@@ -97,6 +100,13 @@
     <Compile Include="TelimenaClient\Static\Telemetry\Telimena.Static.Telemetry.cs" />
     <Compile Include="TelimenaClient\Static\Telimena.Static.cs" />
     <Compile Include="TelimenaClient\Static\Updates\Telimena.Static.Updates.cs" />
+    <Compile Include="TelimenaClient\Interface\Telemetry\ProcessingPipeline\ITelemetryPipelineProcessor.cs" />
+    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\DebugLoggerPipelineProcessor.cs" />
+    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\PersistingPipelineProcessor.cs" />
+    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\SerializingPipelineProcessor.cs" />
+    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryPipelineTransportUnit.cs" />
+    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryProcessingPipeline.cs" />
+    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryRequestCreator.cs" />
     <Compile Include="TelimenaClient\Telemetry\TelemetryModule.cs" />
     <Compile Include="TelimenaClient\Telemetry\Telimena.AsyncTelemetryHandler.cs" />
     <Compile Include="TelimenaClient\TelimenaProperties.cs" />
@@ -117,6 +127,7 @@
     <Compile Include="UpdateInstallation\UpdateInstaller.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\Retry\Retrier.cs" />
+    <Compile Include="Utilities\StringCompressor.cs" />
     <Compile Include="Utilities\TelimenaVersionReader.cs" />
     <Compile Include="Utilities\TelimenaVersionStringComparer.cs" />
     <Compile Include="UpdateInstallation\UpdateInstructionCreator.cs" />
@@ -131,7 +142,7 @@
     <Compile Include="Messages\TelemetryUpdateRequest.cs" />
     <Compile Include="Messages\TelemetryUpdateResponse.cs" />
     <Compile Include="Model\AssemblyInfo.cs" />
-    <Compile Include="Serializer\NullPropertiesConverter.cs" />
+    <Compile Include="Serializer\PropertiesConverter.cs" />
     <Compile Include="TelimenaClient\Telimena.cs" />
     <Compile Include="TelimenaClient\Telimena.InternalMembers.cs" />
     <Compile Include="Model\ProgramInfo.cs" />
@@ -148,7 +159,6 @@
     <None Include="addToZip.ps1" />
     <None Include="Properties\Telimena.Client.nuspec" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>powershell -NoProfile -ExecutionPolicy RemoteSigned -file $(ProjectDir)\addToZip.ps1 -SolutionDir $(SolutionDir) -TargetPath $(TargetPath)</PostBuildEvent>

@@ -42,7 +42,7 @@ namespace Telimena.Tests
     {
         protected override Action SeedAction => () => TelimenaDbInitializer.SeedUsers(this.Context);
 
-
+        private TelimenaSerializer serializer = new TelimenaSerializer();
 
         [Test]
         public async Task TestViewUsages()
@@ -53,12 +53,13 @@ namespace Telimena.Tests
 
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
 
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
-                TelemetryData = new Dictionary<string, string>()
+            var telemetryItem = new TelemetryItem(Helpers.GetName("Func1"), TelemetryItemTypes.View, new VersionData("1.2.3.4", "2.0.0.0"), new Dictionary<string, object>()
             {
                 { "AKey", "AValue"},
                 { "AKey2", "AValue2"},
-            }};
+            });
+
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>(){ this.serializer.SerializeTelemetryItem(telemetryItem) } };
 
             TelemetryUpdateResponse response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
             View view = prg.Views.Single();
@@ -89,17 +90,18 @@ namespace Telimena.Tests
 
             ClientAppUser otherUser = Helpers.GetUser(this.Context, "Jack Black");
 
+            telemetryItem.TelemetryData = new Dictionary<string, object>()
+                {
+                    { "AKey", "AValue"},
+                    { "AKey2", "AValue2"},
+                    { "AKey5", "AValue5"},
+
+                };
             //run again with different user
-            request = new TelemetryUpdateRequest(apps[0].Value) {ComponentName = Helpers.GetName("Func1"),
+            request = new TelemetryUpdateRequest(apps[0].Value) {
+                SerializedTelemetryUnits = new List<string>() { this.serializer.SerializeTelemetryItem(telemetryItem) },
                 DebugMode = true,
                 UserId = otherUser.Guid,
-                VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
-                TelemetryData = new Dictionary<string, string>()
-                {
-                    { "AKey3", "AValue3"},
-                    { "AKey4", "AValue4"},
-                    { "AKey5", "AValue5"},
-                }
             };
 
             response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
@@ -123,11 +125,11 @@ namespace Telimena.Tests
             Assert.AreEqual(3, otherUserDetail.GetTelemetryUnits().Count());
             Assert.AreEqual("AKey3", otherUserDetail.GetTelemetryUnits().ElementAt(0).Key);
             Assert.AreEqual("AValue3", otherUserDetail.GetTelemetryUnits().ElementAt(0).ValueString);
-            Assert.AreEqual("AKey4", otherUserDetail.GetTelemetryUnits().ElementAt(1).Key);
-            Assert.AreEqual("AValue4", otherUserDetail.GetTelemetryUnits().ElementAt(1).ValueString);
-            
+            Assert.AreEqual("AKey5", otherUserDetail.GetTelemetryUnits().ElementAt(2).Key);
+            Assert.AreEqual("AValue5", otherUserDetail.GetTelemetryUnits().ElementAt(2).ValueString);
 
-            request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, ComponentName = Helpers.GetName("Func1"), UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0")/*, TelemetryData = serialized*/};
+            telemetryItem.TelemetryData = null;
+            request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>() { this.serializer.SerializeTelemetryItem(telemetryItem) }};
             //run again with first user
             response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
             view = prg.Views.Single();
@@ -139,9 +141,9 @@ namespace Telimena.Tests
             List<ViewTelemetryDetail> details = view.GetTelemetryDetails(this.GetUserByGuid(response.UserId).Id).OrderBy(x => x.Id).Cast<ViewTelemetryDetail>().ToList();
             Assert.AreEqual(2, details.Count);
             Assert.IsTrue(details.All(x => x.TelemetrySummary.ClientAppUserId == this.GetUserByGuid(response.UserId).Id));
-            Assert.IsTrue(details.First().DateTime < details.Last().DateTime);
+            Assert.IsTrue(details.First().Timestamp < details.Last().Timestamp);
 
-            Assert.AreEqual(3, this.Context.ViewTelemetryDetails.Count(x=>x.TelemetrySummary.View.Name == request.ComponentName));
+            Assert.AreEqual(3, this.Context.ViewTelemetryDetails.Count(x=>x.TelemetrySummary.View.Name == telemetryItem.EntryKey));
             Assert.AreEqual(2, this.Context.ViewTelemetryDetails.Count(x => x.TelemetrySummaryId == summary.Id));
         }
 
@@ -573,7 +575,14 @@ namespace Telimena.Tests
             Helpers.AddHelperAssemblies(this.Context, 2, "TestApp");
 
             Helpers.GetProgramAndUser(this.Context, "TestApp3", "Jim Beam", out Program prg, out ClientAppUser usr);
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) { DebugMode = true, UserId = usr.Guid, VersionData = new VersionData("1.2.3.4", "2.0.0.0") , ComponentName = "SomeView"};
+
+            var telemetryItem = new TelemetryItem(Helpers.GetName("SomeView"), TelemetryItemTypes.View, new VersionData("1.2.3.4", "2.0.0.0"), new Dictionary<string, object>()
+            {
+                { "AKey", "AValue"},
+                { "AKey2", "AValue2"},
+            });
+
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>() { this.serializer.SerializeTelemetryItem(telemetryItem) }, };
 
             TelemetryUpdateResponse response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
 
@@ -588,7 +597,7 @@ namespace Telimena.Tests
             var summary = view.TelemetrySummaries.SingleOrDefault(x => x.ClientAppUser.UserName == "TestUpdateAction_Jim Beam");
             Assert.AreEqual(1, summary.SummaryCount);
 
-            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.VersionData.Map()).Id);
+            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(telemetryItem.VersionData.Map()).Id);
 
 
             //run again
@@ -606,7 +615,7 @@ namespace Telimena.Tests
 
             Assert.AreEqual(2, view.GetTelemetryDetails(this.GetUserByGuid(response.UserId).Id).Count);
             Assert.AreEqual(3, this.Context.ProgramTelemetryDetails.Count(x => x.TelemetrySummary.ProgramId == prg.Id));
-            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(request.VersionData.Map()).Id);
+            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(telemetryItem.VersionData.Map()).Id);
         }
 
         private ClientAppUser GetUserByGuid(Guid id)

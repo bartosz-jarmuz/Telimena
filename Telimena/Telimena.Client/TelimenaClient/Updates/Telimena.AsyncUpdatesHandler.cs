@@ -42,6 +42,9 @@ namespace TelimenaClient
                     updateRequest = new UpdateRequest(this.telimena.Properties.TelemetryKey, this.telimena.Properties.ProgramVersion, this.telimena.Properties.LiveProgramInfo.UserId, acceptBeta
                         , this.telimena.Properties.TelimenaVersion, updaterVersion);
 
+                    UpdateResponse temp = await
+                        this.GetUpdateResponse(ApiRoutes.ProgramUpdateCheck, updateRequest).ConfigureAwait(false);
+
                     ConfiguredTaskAwaitable<UpdateResponse> programUpdateTask = this
                         .GetUpdateResponse(ApiRoutes.ProgramUpdateCheck, updateRequest).ConfigureAwait(false);
                     ConfiguredTaskAwaitable<UpdateResponse> updaterUpdateTask = this
@@ -114,7 +117,7 @@ namespace TelimenaClient
 
             internal string GetUpdaterVersion()
             {
-                FileInfo updaterFile = this.telimena.Locator.GetUpdater();
+                FileInfo updaterFile = this.telimena.Locator.GetUpdater(this.telimena.Properties.LiveProgramInfo);
                 if (updaterFile.Exists)
                 {
                     string version = TelimenaVersionReader.ReadToolkitVersion(updaterFile.FullName);

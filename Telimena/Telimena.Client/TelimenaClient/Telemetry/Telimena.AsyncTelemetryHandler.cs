@@ -19,17 +19,21 @@ namespace TelimenaClient
             /// <summary>
             ///     Asynchronous Telimena methods
             /// </summary>
-            public AsyncTelemetryHandler(Telimena telimena)
+            public AsyncTelemetryHandler(Telimena telimena, TelemetryProcessingPipeline pipeline)
             {
                 this.telimena = telimena;
+                this.pipeline = pipeline;
             }
 
             private readonly Telimena telimena;
+            private readonly TelemetryProcessingPipeline pipeline;
 
             /// <inheritdoc />
-            public Task<TelemetryUpdateResponse> View(string viewName, Dictionary<string, object> telemetryData = null)
+            public async Task<TelemetryUpdateResponse> View(string viewName, Dictionary<string, object> telemetryData = null)
             {
-                return this.Report(ApiRoutes.ReportView, viewName, telemetryData);
+                var unit = new TelemetryItem(viewName, TelemetryItemTypes.View, this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData, telemetryData);
+                await this.pipeline.Process(unit);
+                return await this.Report(ApiRoutes.ReportView, viewName, telemetryData);
             }
 
             /// <inheritdoc />
@@ -56,7 +60,6 @@ namespace TelimenaClient
 
                     await this.telimena.LoadLiveData(response).ConfigureAwait(false);
 
-                    this.telimena.Locator = new Locator(this.telimena.Properties.LiveProgramInfo);
 
 
                     return response;
@@ -95,11 +98,11 @@ namespace TelimenaClient
 
                     request = new TelemetryUpdateRequest(this.telimena.Properties.TelemetryKey)
                     {
-                        DebugMode = this.telimena.Properties.GetFullResponseApiResponse,
+                        DebugMode = this.telimena.Properties.GetFullApiResponse,
                         UserId = this.telimena.Properties.LiveProgramInfo.UserId,
-                        ComponentName = componentName,
-                        VersionData = this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData,
-                        TelemetryData = telemetryData?.ToDictionary(x=>x.Key, y=>y.Value.ToString())
+                        //ComponentName = componentName,
+                        //VersionData = this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData,
+                        //TelemetryData = telemetryData?.ToDictionary(x=>x.Key, y=>y.Value.ToString())
                     };
                     string responseContent = await this.telimena.Messenger.SendPostRequest(apiRoute, request).ConfigureAwait(false);
                     return this.telimena.Serializer.Deserialize<TelemetryUpdateResponse>(responseContent);

@@ -55,17 +55,17 @@ namespace Telimena.WebApp.Infrastructure.Repository
                         , AssociatedToolkitVersion = program.PrimaryAssembly?.GetLatestVersion()?.ToolkitData?.Version
                         , TelemetryKey = program.TelemetryKey
                         , RegisteredDate = program.RegisteredDate
-                        , LastUsage = program.TelemetrySummaries.MaxOrNull(x => x.LastReportedDateTime)
+                        , LastUsage = program.TelemetrySummaries.MaxOrNull(x => x.LastTelemetryUpdateTimestamp)
                         , UsersCount = program.TelemetrySummaries.Count
                         , TodayUsageCount =
-                            program.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastReportedDateTime).TotalHours <= 24).Sum(smr =>
-                                smr.GetTelemetryDetails().Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24))
+                            program.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
+                                smr.GetTelemetryDetails().Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24))
                         , TotalUsageCount = program.TelemetrySummaries.Sum(x => x.SummaryCount)
                         , ViewsCount = views.Count
                         , TotalViewsUsageCount = views.Sum(f => f.TelemetrySummaries.Sum(s => s.SummaryCount))
                         , TotalTodayViewsUsageCount = views.Sum(f =>
-                            f.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastReportedDateTime).TotalHours <= 24).Sum(smr =>
-                                smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.DateTime).TotalHours <= 24)))
+                            f.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
+                                smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24)))
                     };
                 }
                 catch (Exception)
@@ -263,8 +263,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             {
                 UsageData data = new UsageData
                 {
-                    //CustomData = detail.CustomUsageData?.Data
-                    DateTime = detail.DateTime
+                      DateTime = detail.Timestamp
                     , UserName = detail.TelemetrySummary.ClientAppUser.UserName
                     , ViewName = detail.TelemetrySummary.View.Name
                     , ProgramVersion = detail.AssemblyVersion.AssemblyVersion
@@ -298,7 +297,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             {
                 UsageData data = new UsageData
                 {
-                    DateTime = detail.DateTime
+                    DateTime = detail.Timestamp
                     ,UserName = detail.TelemetrySummary.ClientAppUser.UserName
                     ,ProgramVersion = detail.AssemblyVersion.AssemblyVersion
 
@@ -329,8 +328,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     TelemetryPivotTableRow row = new TelemetryPivotTableRow()
                     {
                         ComponentName = detail.GetTelemetrySummary().GetComponent().Name
-                        , Date = detail.DateTime.Date.ToString("yyyy-MM-dd")
-                        , Time = detail.DateTime.TimeOfDay.TotalSeconds
+                        , Date = detail.Timestamp.Date.ToString("yyyy-MM-dd")
+                        , Time = detail.Timestamp.TimeOfDay.TotalSeconds
                         , Value = detailTelemetryUnit.ValueString
                         , Key = detailTelemetryUnit.Key
                         , TelemetryDetailId = detail.Guid

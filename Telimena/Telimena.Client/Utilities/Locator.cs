@@ -7,11 +7,11 @@ namespace TelimenaClient
 {
     internal class Locator
     {
-        public Locator(LiveProgramInfo programInfo) : this(programInfo, AppDomain.CurrentDomain.BaseDirectory)
+        public Locator(ProgramInfo programInfo) : this(programInfo, AppDomain.CurrentDomain.BaseDirectory)
         {
         }
 
-        internal Locator(LiveProgramInfo programInfo, string basePath)
+        internal Locator(ProgramInfo programInfo, string basePath)
         {
             this.programInfo = programInfo;
             this.telimenaWorkingDirectory = new Lazy<DirectoryInfo>(() =>
@@ -32,11 +32,11 @@ namespace TelimenaClient
                     return "Updates";
                 }
 
-                return this.programInfo.Program.Name + " Updates";
+                return this.programInfo.Name + " Updates";
             });
         }
 
-        private readonly LiveProgramInfo programInfo;
+        private readonly ProgramInfo programInfo;
         private readonly Lazy<string> updatesFolderName;
 
         /// <summary>
@@ -45,6 +45,8 @@ namespace TelimenaClient
         /// </summary>
         /// <returns>DirectoryInfo.</returns>
         private readonly Lazy<DirectoryInfo> telimenaWorkingDirectory;
+
+        public DirectoryInfo TelemetryStorageDirectory => this.telimenaWorkingDirectory.Value.CreateSubdirectory("Telemetry");
 
         public static class Static
         {
@@ -71,12 +73,12 @@ namespace TelimenaClient
             return new FileInfo(Path.Combine(this.GetUpdatesParentFolder().FullName, result.FileName));
         }
 
-        public FileInfo GetUpdater()
+        public FileInfo GetUpdater(LiveProgramInfo liveProgramInfo)
         {
-            return new FileInfo(Path.Combine(this.GetUpdatesParentFolder().FullName, this.programInfo.UpdaterName));
+            return new FileInfo(Path.Combine(this.GetUpdatesParentFolder().FullName, liveProgramInfo.UpdaterName));
         }
 
-        private DirectoryInfo GetAppDataFolder()
+        protected virtual DirectoryInfo GetAppDataFolder()
         {
             return new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
         }
@@ -86,7 +88,7 @@ namespace TelimenaClient
             try
             {
                 DirectoryInfo dir = this.GetAppDataFolder();
-                DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine(dir.FullName, "Telimena", this.programInfo.Program.Name));
+                DirectoryInfo dirInfo = new DirectoryInfo(Path.Combine(dir.FullName, "Telimena", this.programInfo.Name));
                 dirInfo.Create();
                 return dirInfo;
             }

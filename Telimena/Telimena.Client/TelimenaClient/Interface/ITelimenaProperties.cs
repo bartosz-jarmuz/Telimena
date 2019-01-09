@@ -15,7 +15,7 @@ namespace TelimenaClient
         /// <summary>
         /// If set to true, the response object returned from API will contain some telemetry data - otherwise, status code (and exception) only
         /// </summary>
-        bool GetFullResponseApiResponse { get; set; }
+        bool GetFullApiResponse { get; set; }
 
         /// <summary>
         ///     The unique key for this program's telemetry service

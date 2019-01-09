@@ -4,7 +4,7 @@ namespace Telimena.WebApp.Core.DTO
 {
     public class UsageData
     {
-        public DateTime DateTime { get; set; }
+        public DateTimeOffset DateTime { get; set; }
 
         public string CustomData { get; set; }
 

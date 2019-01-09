@@ -10,6 +10,10 @@ namespace Telimena.WebApp.Core.Models
         public virtual RestrictedAccessList<EventTelemetryUnit> TelemetryUnits { get; set; } = new RestrictedAccessList<EventTelemetryUnit>();
 
         public override TelemetrySummary GetTelemetrySummary() => this.TelemetrySummary;
+        public override void SetTelemetrySummary(TelemetrySummary summary)
+        {
+            this.TelemetrySummary = (EventTelemetrySummary) summary;
+        }
 
         public override IReadOnlyList<TelemetryUnit> GetTelemetryUnits() => this.TelemetryUnits.AsReadOnly();
     }

@@ -127,7 +127,7 @@ namespace TelimenaClient
 
         private async Task<FileInfo> InstallUpdater(UpdatePackageData pkgData)
         {
-            var updaterExecutable = this.locator.GetUpdater();
+            var updaterExecutable = this.locator.GetUpdater(this.programInfo);
             if (pkgData == null)
             {
                 return updaterExecutable;

@@ -183,7 +183,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_UpdateInstructionCreator()
         {
-            var locator = new Locator(new LiveProgramInfo(new ProgramInfo { Name = "App.exe" }) { UpdaterName = "MyUpdater.exe" }, @"C:\AppFolder\");
+            var locator = new Locator(new ProgramInfo { Name = "App.exe" }, @"C:\AppFolder\");
 
             List<UpdatePackageData> packages = new List<UpdatePackageData>
             {
@@ -243,10 +243,10 @@ namespace TelimenaClient.Tests
             string temp = Path.GetTempPath();
 
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            
-            Locator locator = new Locator(new LiveProgramInfo(new ProgramInfo {Name = "Test_UpdaterPathFinder"}) {UpdaterName = "MyUpdater.exe"}, temp);
+            var lpi = new LiveProgramInfo(new ProgramInfo {Name = "Test_UpdaterPathFinder"}) {UpdaterName = "MyUpdater.exe"};
+            Locator locator = new Locator(lpi.Program, temp);
 
-            FileInfo updater = locator.GetUpdater();
+            FileInfo updater = locator.GetUpdater(lpi);
             Assert.AreEqual($@"{appData}\Telimena\Test_UpdaterPathFinder\Updates\MyUpdater.exe", updater.FullName);
         }
 
@@ -269,10 +269,11 @@ namespace TelimenaClient.Tests
             securityRules.AddAccessRule(new FileSystemAccessRule("Users", FileSystemRights.Write, AccessControlType.Deny));
 
             dirInfo.SetAccessControl(securityRules);
+            var lpi = new LiveProgramInfo(new ProgramInfo {Name = "Test_UpdaterPathFinder_CannotAccessAppData"}) {UpdaterName = "MyUpdater.exe"};
             Locator locator =
-                new Locator(new LiveProgramInfo(new ProgramInfo {Name = "Test_UpdaterPathFinder_CannotAccessAppData"}) {UpdaterName = "MyUpdater.exe"}, temp);
+                new Locator(lpi.Program, temp);
 
-            FileInfo updater = locator.GetUpdater();
+            FileInfo updater = locator.GetUpdater(lpi);
             Assert.AreEqual($@"{temp}Test_UpdaterPathFinder_CannotAccessAppData Updates\MyUpdater.exe", updater.FullName);
 
             DirectoryInfo subFolder = locator.GetCurrentUpdateSubfolder(packages);
@@ -287,7 +288,7 @@ namespace TelimenaClient.Tests
         public void TestLocator()
         {
             Locator locator =
-                new Locator(new LiveProgramInfo(new ProgramInfo { Name = "TestApp" }) { UpdaterName = "MyUpdater.exe" });
+                new Locator(new ProgramInfo { Name = "TestApp" }) ;
             var pkg = new UpdatePackageData() { FileName = "Update.zip", Version = "1.2.0" };
 
             var parent = locator.GetCurrentUpdateSubfolder(new[] {pkg});

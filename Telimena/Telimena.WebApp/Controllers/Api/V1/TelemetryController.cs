@@ -63,8 +63,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             var ip = this.Request.GetClientIp();
 
-            var result = await TelemetryControllerHelpers.InsertData(this.work, request, ip
-                , (name, prg) => TelemetryControllerHelpers.GetEventOrAddIfMissing(this.work, name, prg));
+            var result = await TelemetryControllerHelpers.InsertData(this.work, request, ip);
             if (result.Exception == null)
             {
                 return this.Ok(result);
@@ -107,8 +106,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             var ip = this.Request.GetClientIp();
 
-            var result = await TelemetryControllerHelpers.InsertData(this.work, request, ip
-                , (name, prg) => TelemetryControllerHelpers.GetViewOrAddIfMissing(this.work, name, prg));
+            var result = await TelemetryControllerHelpers.InsertData(this.work, request, ip);
             if (result.Exception == null)
             {
                 return this.Ok(result);
@@ -147,7 +145,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
                 AssemblyVersionInfo versionInfoInfo = TelemetryControllerHelpers.GetAssemblyVersionInfoOrAddIfMissing(request.ProgramInfo.PrimaryAssembly.VersionData, actionItems.program);
 
-                summary.UpdateTelemetry(versionInfoInfo, ip, request.TelemetryData);
+                // todo summary.UpdateTelemetry(versionInfoInfo, ip, request.TelemetryData);
 
                 await this.work.CompleteAsync();
                 var response = new TelemetryInitializeResponse()

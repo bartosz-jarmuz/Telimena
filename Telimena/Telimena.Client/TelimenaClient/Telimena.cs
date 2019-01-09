@@ -39,11 +39,14 @@ namespace TelimenaClient
         private Telimena(ITelimenaStartupInfo startupInfo)
         {
             this.properties= new TelimenaProperties(startupInfo);
+            this.Locator = new Locator(this.Properties.StaticProgramInfo);
+
             this.telemetry = new TelemetryModule(this);
-            this.updates= new UpdatesModule(this);
-    
+            this.updates = new UpdatesModule(this);
+
             this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.properties.StartupInfo.TelemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.httpClient);
         }
+
     }
 }

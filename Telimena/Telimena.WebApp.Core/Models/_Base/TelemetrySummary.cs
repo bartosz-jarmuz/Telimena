@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Core.Models
 {
     public abstract class TelemetrySummary
     {
         public int Id { get; set; }
-        public DateTime LastReportedDateTime { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset LastTelemetryUpdateTimestamp { get; set; } = DateTime.UtcNow;
 
         public virtual ClientAppUser ClientAppUser { get; set; }
         public int? ClientAppUserId { get; set; }
@@ -24,16 +25,35 @@ namespace Telimena.WebApp.Core.Models
             }
             set => this.summaryCount = value;
         }
-        public abstract IReadOnlyList<TelemetryDetail> GetTelemetryDetails();
+
+        public abstract List<TelemetryDetail> GetTelemetryDetails();
         public abstract ITelemetryAware GetComponent();
+        public abstract TelemetryDetail CreateNewDetail();
 
-        public abstract void AddTelemetryDetail(DateTime lastUsageDateTime, string ipAddress, AssemblyVersionInfo versionInfo
-            , Dictionary<string, string> telemetryUnits);
-
-        public virtual void UpdateTelemetry(AssemblyVersionInfo versionInfo, string ipAddress, Dictionary<string, string> telemetryUnits = null)
+        public void AddTelemetryDetail(string ipAddress, AssemblyVersionInfo versionInfo, TelemetryItem telemetryItem)
         {
-            this.LastReportedDateTime = DateTime.UtcNow;
-            this.AddTelemetryDetail(this.LastReportedDateTime, ipAddress, versionInfo, telemetryUnits);
+            var detail = this.CreateNewDetail();
+            detail.Timestamp = telemetryItem.Timestamp;
+            detail.AssemblyVersion = versionInfo;
+            detail.IpAddress = ipAddress;
+            detail.SetTelemetrySummary(this);
+
+            //if (telemetryItem.TelemetryData != null && telemetryItem.TelemetryData.Any())
+            //{
+            //    foreach (KeyValuePair<string, object> unit in telemetryItem.TelemetryData)
+            //    {
+            //        var telemetryUnit = new ViewTelemetryUnit() { Key = unit.Key, ValueString = unit.Value?.ToString() };
+            //        ((List<ViewTelemetryUnit>)detail.TelemetryUnits).Add(telemetryUnit);
+            //    }
+            //}
+
+            (this.GetTelemetryDetails()).Add(detail);
+        }
+
+        public virtual void UpdateTelemetry(AssemblyVersionInfo versionInfo, string ipAddress, TelemetryItem telemetryItem)
+        {
+            this.LastTelemetryUpdateTimestamp = DateTimeOffset.UtcNow;
+            this.AddTelemetryDetail(ipAddress, versionInfo, telemetryItem);
         }
     }
 }

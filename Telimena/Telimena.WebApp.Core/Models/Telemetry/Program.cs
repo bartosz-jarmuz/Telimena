@@ -67,7 +67,7 @@ namespace Telimena.WebApp.Core.Models
 
         public ProgramTelemetryDetail GetLatestTelemetryDetail()
         {
-            ProgramTelemetrySummary summary = this.TelemetrySummaries.MaxFirstBy(x => x.LastReportedDateTime);
+            ProgramTelemetrySummary summary = this.TelemetrySummaries.MaxFirstBy(x => x.LastTelemetryUpdateTimestamp);
             return summary.GetTelemetryDetails().MaxFirstBy(x => x.Id) as ProgramTelemetryDetail;
         }
 

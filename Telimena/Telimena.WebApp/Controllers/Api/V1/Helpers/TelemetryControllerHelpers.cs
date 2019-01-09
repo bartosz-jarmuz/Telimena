@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using TelimenaClient;
+using TelimenaClient.Serializer;
 
 namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 {
@@ -22,7 +24,6 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
                 Count = usageSummary.SummaryCount,
                 TelemetryKey = program.TelemetryKey,
                 UserId = clientAppUser.Guid,
-                ComponentName = updateRequest.ComponentName
             };
             if (usageSummary is ViewTelemetrySummary viewSummary)
             {
@@ -36,13 +37,42 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             return response;
         }
 
-        public static async Task<TelemetryUpdateResponse> InsertData(ITelemetryUnitOfWork work, TelemetryUpdateRequest request, string ipAddress, Func<string, Program, Task<ITelemetryAware>> getTrackedComponent)
+        private static List<TelemetryItem> DeserializeUnits(TelemetryUpdateRequest request)
+        {
+            var list = new List<TelemetryItem>();
+            var serializer = new TelimenaSerializer();
+            foreach (string requestSerializedTelemetryUnit in request.SerializedTelemetryUnits)
+            {
+                try
+                {
+                    list.Add(serializer.Deserialize<TelemetryItem>(requestSerializedTelemetryUnit));
+                }
+                catch (Exception)
+                {
+                    // log todo
+                }
+            }
+
+            return list;
+        }
+
+        private static async Task<ITelemetryAware> GetTrackedComponent(ITelemetryUnitOfWork work, TelemetryItemTypes itemType, string key, Program program)
+        {
+            switch (itemType)
+            {
+                case TelemetryItemTypes.Event:
+                    return await GetEventOrAddIfMissing(work, key, program);
+                case TelemetryItemTypes.View:
+                    return await GetViewOrAddIfMissing(work, key, program);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(itemType), itemType, null);
+            }
+        }
+
+        public static async Task<TelemetryUpdateResponse> InsertData(ITelemetryUnitOfWork work, TelemetryUpdateRequest request, string ipAddress)
         {
             try
             {
-#if DEBUG
-                await Task.Delay(15000);
-#endif
 
                 (bool isRequestValid, TelemetryUpdateResponse response, Program program, ClientAppUser clientAppUser) actionItems = await GetTelemetryUpdateActionItems(work, request);
                 if (!actionItems.isRequestValid)
@@ -50,16 +80,27 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
                     return actionItems.response;
                 }
 
-                ITelemetryAware trackedComponent = await getTrackedComponent(request.ComponentName, actionItems.program);
+                var units = DeserializeUnits(request);
 
-                TelemetrySummary summary = GetTelemetrySummary(actionItems.clientAppUser, trackedComponent);
+                var typeGroupings = units.GroupBy(x => x.TelemetryItemType);
 
-                AssemblyVersionInfo versionInfoInfo = GetAssemblyVersionInfoOrAddIfMissing(request.VersionData, actionItems.program);
+                foreach (IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping in typeGroupings)
+                {
+                    foreach (IGrouping<string, TelemetryItem> keyGroupings in typeGrouping.GroupBy(x=>x.EntryKey))
+                    {
+                        ITelemetryAware trackedComponent = await GetTrackedComponent(work, typeGrouping.Key, keyGroupings.Key, actionItems.program);
+                        TelemetrySummary summary = GetTelemetrySummary(actionItems.clientAppUser, trackedComponent);
+                        AssemblyVersionInfo versionInfoInfo = GetAssemblyVersionInfoOrAddIfMissing(keyGroupings.First().VersionData, actionItems.program);
+                        foreach (TelemetryItem telemetryItem in keyGroupings)
+                        {
+                            summary.UpdateTelemetry(versionInfoInfo, ipAddress, telemetryItem); 
+                        }
 
-                summary.UpdateTelemetry(versionInfoInfo, ipAddress, request.TelemetryData);
+                    }
+                }
 
                 await work.CompleteAsync();
-                return PrepareUpdateResponse(request, summary, actionItems.program, actionItems.clientAppUser);
+                return PrepareUpdateResponse(request, null, actionItems.program, actionItems.clientAppUser);//todo
             }
             catch (Exception ex)
             {

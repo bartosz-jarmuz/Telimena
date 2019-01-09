@@ -19,7 +19,7 @@ namespace Telimena.WebApp.Core.DTO
         public int TotalUsageCount { get; set; }
         public int TodayUsageCount { get; set; }
 
-        public DateTime? LastUsage { get; set; }
+        public DateTimeOffset? LastUsage { get; set; }
 
         public DateTime RegisteredDate { get; set; }
         public int TotalTodayViewsUsageCount { get; set; }
