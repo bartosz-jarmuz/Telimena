@@ -34,87 +34,34 @@ namespace Telimena.WebApp.Controllers.Api.V1
         private readonly ITelemetryUnitOfWork work;
 
         /// <summary>
-        /// Report new event occurrence
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpPost, Route("event", Name = Routes.Event)]
-        public async Task<IHttpActionResult> Event(TelemetryUpdateRequest request)
-        {
-            if (request.DebugMode)
-            {
-                return await this.ReportEvent(request);
-            }
-            else
-            {
-                BackgroundJob.Enqueue(() => this.ReportEvent(request));
-                return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted));
-            }
-        }
-
-        /// <summary>
-        /// Enqueued request
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [NonAction]
-        public async Task<IHttpActionResult> ReportEvent(TelemetryUpdateRequest request)
-        {
-            var ip = this.Request.GetClientIp();
-
-            var result = await TelemetryControllerHelpers.InsertData(this.work, request, ip);
-            if (result.Exception == null)
-            {
-                return this.Ok(result);
-            }
-            else
-            {
-                return this.InternalServerError(result.Exception);
-            }
-        }
-
-
-        /// <summary>
         /// Report a program view access
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost, Route("view", Name = Routes.View)]
-        public async Task<IHttpActionResult> View(TelemetryUpdateRequest request)
-        {
-            if (request.DebugMode)
-            {
-                return await this.ReportView(request);
-            }
-            else
-            {
-                BackgroundJob.Enqueue(() => this.ReportView(request));
-                return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted));
-            }
-
-        }
-
-        /// <summary>
-        /// Enqueued request
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [NonAction]
-        public async Task<IHttpActionResult> ReportView(TelemetryUpdateRequest request)
+        [HttpPost, Route("", Name = Routes.Post)]
+        public async Task<IHttpActionResult> Post(TelemetryUpdateRequest request)
         {
             var ip = this.Request.GetClientIp();
 
-            var result = await TelemetryControllerHelpers.InsertData(this.work, request, ip);
-            if (result.Exception == null)
+            if (request.DebugMode)
             {
-                return this.Ok(result);
+                TelemetryUpdateResponse result = await TelemetryControllerHelpers.InsertData(this.work, request, ip);
+                if (result.Exception == null)
+                {
+                    return this.Ok(result);
+                }
+                else
+                {
+                    return this.InternalServerError(result.Exception);
+                }
             }
             else
             {
-                return this.InternalServerError(result.Exception);
+                BackgroundJob.Enqueue(() => TelemetryControllerHelpers.InsertData(this.work, request, ip));
+                return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted));
             }
+
         }
 
         /// <summary>

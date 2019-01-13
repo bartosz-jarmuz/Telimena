@@ -61,7 +61,7 @@ namespace Telimena.Tests
 
             TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>(){ this.serializer.Serialize(telemetryItem) } };
 
-            IHttpActionResult result = await sut.View(request);
+            IHttpActionResult result = await sut.Post(request);
             if (result is ExceptionResult ex)
             {
                 Assert.Fail(ex.Exception.ToString());
@@ -111,7 +111,7 @@ namespace Telimena.Tests
                 UserId = otherUser.Guid,
             };
 
-            response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
+            response = (await sut.Post(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
 
             Assert.AreEqual(1, response.Count);
             prg = await unit.Programs.FirstOrDefaultAsync(x => x.Id == prg.Id);
@@ -138,7 +138,7 @@ namespace Telimena.Tests
             telemetryItem.TelemetryData = null;
             request = new TelemetryUpdateRequest(apps[0].Value) { DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>() { this.serializer.Serialize(telemetryItem) }};
             //run again with first user
-            response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
+            response = (await sut.Post(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
             view = prg.Views.Single();
             Assert.AreEqual(2, view.TelemetrySummaries.Count);
             Assert.AreEqual(2, view.GetTelemetrySummary(this.GetUserByGuid(response.UserId).Id).SummaryCount);
@@ -182,7 +182,7 @@ namespace Telimena.Tests
             TelemetryController sut = new TelemetryController(unit);
 
 
-            ExceptionResult response = (await sut.View(request) as ExceptionResult);
+            ExceptionResult response = (await sut.Post(request) as ExceptionResult);
             
             Assert.AreEqual($"User [{request.UserId}] is null", response.Exception.Message);
         }
@@ -588,7 +588,7 @@ namespace Telimena.Tests
                 DebugMode = true, UserId = usr.Guid, SerializedTelemetryUnits = new List<string>() { this.serializer.Serialize(telemetryItem) },
             };
 
-            IHttpActionResult result = await sut.View(request);
+            IHttpActionResult result = await sut.Post(request);
             if (result is ExceptionResult ex)
             {
                 Assert.Fail(ex.Exception.ToString());
@@ -611,7 +611,7 @@ namespace Telimena.Tests
 
 
             //run again
-            response = (await sut.View(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
+            response = (await sut.Post(request) as OkNegotiatedContentResult<TelemetryUpdateResponse>).Content;
 
             Helpers.GetProgramAndUser(this.Context, "TestApp3", "Jim Beam", out prg, out usr);
             Helpers.AssertUpdateResponse(response, prg, usr, 2, "SomeView");
