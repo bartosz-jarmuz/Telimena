@@ -20,31 +20,60 @@ namespace TelimenaClient
         public ITelimenaSerializer Serializer { get; }
         public ITelimenaHttpClient HttpClient { get; }
 
-        public async Task<string> SendPostRequest(string requestUri, object objectToPost)
+        public async Task<T> SendGetRequest<T>(string requestUri)
+        {
+            HttpResponseMessage content = await this.SendGetRequest(requestUri);
+            try
+            {
+                string stringified = await content.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                if (typeof(T) == typeof(string))
+                {
+                    return (T)(object)stringified;
+                }
+                return this.Serializer.Deserialize<T>(stringified);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException("An error occurred while deserializing response from POST to [{requestUri}]. Base URL [{this.HttpClient.BaseUri}]", e);
+            }
+        }
+
+        public async Task<HttpResponseMessage> SendPostRequest(string requestUri, object objectToPost)
         {
             try
             {
                 string jsonObject = this.Serializer.Serialize(objectToPost);
                 StringContent content = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await this.HttpClient.PostAsync(requestUri, content).ConfigureAwait(false);
+                List<TimeSpan> retryIntervals = new List<TimeSpan>() { TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(500) };
 
-                List<TimeSpan> retryIntervals = new List<TimeSpan>() {TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(500)};
-                string responseContent = await Retrier.RetryTaskAsync( ()=> response.Content.ReadAsStringAsync(), (Exception ex) => ex.GetType()==typeof(SocketException), retryIntervals);
-                return responseContent; 
+                return await Retrier.RetryTaskAsync(() => this.HttpClient.PostAsync(requestUri, content), (Exception ex) => ex.GetType() == typeof(SocketException), retryIntervals).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-               throw new InvalidOperationException($"An error occured while posting to [{requestUri}]. Base URL [{this.HttpClient.BaseUri}]",ex);
+               throw new InvalidOperationException($"An error occurred while posting to [{requestUri}]. Base URL [{this.HttpClient.BaseUri}]",ex);
             }
         }
 
-        public async Task<string> SendGetRequest(string requestUri)
+        public async Task<T> SendPostRequest<T>(string requestUri, object objectToPost)
+        {
+            HttpResponseMessage content = await this.SendPostRequest(requestUri, objectToPost);
+            try
+            {
+                string stringified = await content.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return this.Serializer.Deserialize<T>(stringified);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException("An error occurred while deserializing response from POST to [{requestUri}]. Base URL [{this.HttpClient.BaseUri}]", e);
+            }
+        }
+
+        public Task<HttpResponseMessage> SendGetRequest(string requestUri)
         {
             try
             {
-                HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri).ConfigureAwait(false);
-                string responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return responseContent;
+                return this.HttpClient.GetAsync(requestUri);
             }
                 catch (Exception ex)
                 {
@@ -58,7 +87,7 @@ namespace TelimenaClient
             {
                 HttpResponseMessage response = await this.HttpClient.GetAsync(requestUri).ConfigureAwait(false);
 
-                var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 return new FileDownloadResult()
                 {
                     FileName = response.Content.Headers.ContentDisposition.FileName.Trim('\"')

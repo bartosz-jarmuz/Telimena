@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -40,24 +43,41 @@ namespace Telimena.Tests
             }
         }
 
+        public static void SetIp(ApiController controller, string ip)
+        {
+            Mock<HttpRequestBase> request = new Mock<HttpRequestBase>();
+            // Not working - IsAjaxRequest() is static extension method and cannot be mocked
+            // request.Setup(x => x.IsAjaxRequest()).Returns(true /* or false */);
+            // use this
+            request.SetupGet(x => x.UserHostAddress).Returns(ip);
+
+            //var ctx = new Mock<HttpContextWrapper>();
+            //ctx.SetupGet(x => x.Request).Returns(request.Object);
+
+            Mock<HttpContextBase> mockContext = new Mock<HttpContextBase>();
+            mockContext.SetupAllProperties();
+            mockContext.Setup(c => c.Request).Returns(request.Object);
+
+            TestingUtilities.SetReuqest(controller, HttpMethod.Post, new Dictionary<string, object>() { { "MS_HttpContext", mockContext.Object } });
+
+        }
         public static void AssertRegistrationResponse(TelemetryInitializeResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null)
         {
             Assert.IsNull(response.Exception);
             Assert.AreEqual(usr.Guid, response.UserId);
         }
 
-        public static void AssertUpdateResponse(TelemetryUpdateResponse response, Program prg, ClientAppUser usr, int expectedCount, string funcName = null, int funcId = 0)
+        public static void AssertUpdateResponse(List<TelemetrySummary> response, Program prg, ClientAppUser usr, int expectedSummariesCount, string funcName = null, int funcId = 0)
         {
-            Assert.IsNull(response.Exception);
-            Assert.AreEqual(expectedCount, response.Count);
-            Assert.AreEqual(funcName, response.ComponentName);
+            Assert.AreEqual(expectedSummariesCount, response.Count);
+            Assert.AreEqual(1, response.Count(x => x.GetComponent().Name == funcName));
             if (funcId != 0)
             {
-                Assert.AreEqual(funcId, response.ComponentId);
+                Assert.AreEqual(1, response.Count(x => x.GetComponent().Id == funcId));
             }
 
-            Assert.AreEqual(prg.TelemetryKey, response.TelemetryKey);
-            Assert.AreEqual(usr.Guid, response.UserId);
+            Assert.IsTrue(response.All(x=>x.GetComponent().Program.TelemetryKey == prg.TelemetryKey));
+            Assert.IsTrue(response.All(x=>x.ClientAppUser.Guid == usr.Guid));
         }
 
         public static async Task<TelimenaUser> CreateTelimenaUser(TelimenaContext context, string email, string displayName = null, [CallerMemberName] string caller = "")

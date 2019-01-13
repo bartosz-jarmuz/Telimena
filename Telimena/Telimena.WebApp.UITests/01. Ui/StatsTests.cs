@@ -20,13 +20,9 @@ namespace Telimena.WebApp.UITests._01._Ui
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_UiTests : UiTestBase
     {
-        
-
         [Test]
         public void Test_AppUsageTable()
         {
-
-          
               var app = this.LaunchTestsAppNewInstance(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable));
                 Task.Delay(1000).GetAwaiter().GetResult();
                 var previous = this.GetLatestUsageFromTable();

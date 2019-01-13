@@ -28,7 +28,8 @@ namespace Telimena.WebApp.Core.Models
         public ICollection<ProgramAssembly> ProgramAssemblies { get; set; } = new List<ProgramAssembly>();
         public virtual ProgramAssembly PrimaryAssembly { get; set; }
         public virtual ICollection<View> Views { get; set; } = new List<View>();
-        public virtual ICollection<Event> Events { get; set; } = new List<Event>();
+        public virtual ICollection<Event> Events { get; set; } = 
+            new List<Event>();
         public DateTime RegisteredDate { get; set; }
 
         [StringLength(255)]

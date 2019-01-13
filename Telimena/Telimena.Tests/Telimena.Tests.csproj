@@ -154,6 +154,8 @@
     <Compile Include="AssemblyVersionReader\AssemblyVersionReaderTests.cs" />
     <Compile Include="Controllers\AccountControllerTests.cs" />
     <Compile Include="ApiTests.cs" />
+    <Compile Include="Controllers\TelemetryControllerHelpersTests.cs" />
+    <Compile Include="ReferencedAssembliesTests.cs" />
     <Compile Include="EntitiesTests.cs" />
     <Compile Include="MiscTests.cs" />
     <Compile Include="UnitOfWorkTests\AsyncQueryableExtensions.cs" />

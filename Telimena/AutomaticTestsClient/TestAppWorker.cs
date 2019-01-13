@@ -18,7 +18,6 @@ namespace AutomaticTestsClient
         public void Work()
         {
             ITelimena telimena = this.GetTelimena(this.arguments.TelemetryKey);
-            telimena.Properties.GetFullApiResponse = this.arguments.DebugMode;
 
             try
             {

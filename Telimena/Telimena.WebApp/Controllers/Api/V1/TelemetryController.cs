@@ -42,26 +42,21 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPost, Route("", Name = Routes.Post)]
         public async Task<IHttpActionResult> Post(TelemetryUpdateRequest request)
         {
-            var ip = this.Request.GetClientIp();
+            string ip = this.Request.GetClientIp();
+            BackgroundJob.Enqueue(() => this.InsertDataInternal(request, ip));
+            return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted));
+        }
 
-            if (request.DebugMode)
-            {
-                TelemetryUpdateResponse result = await TelemetryControllerHelpers.InsertData(this.work, request, ip);
-                if (result.Exception == null)
-                {
-                    return this.Ok(result);
-                }
-                else
-                {
-                    return this.InternalServerError(result.Exception);
-                }
-            }
-            else
-            {
-                BackgroundJob.Enqueue(() => TelemetryControllerHelpers.InsertData(this.work, request, ip));
-                return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted));
-            }
-
+        /// <summary>
+        /// For Hangfire to support the job creation
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="ip"></param>
+        /// <returns></returns>
+        [NonAction]
+        public Task InsertDataInternal(TelemetryUpdateRequest request, string ip)
+        {
+            return TelemetryControllerHelpers.InsertData(this.work, request, ip);
         }
 
         /// <summary>

@@ -109,10 +109,9 @@ namespace TelimenaClient
             ///     Gets the update response.
             /// </summary>
             /// <returns>Task&lt;UpdateResponse&gt;.</returns>
-            private async Task<UpdateResponse> GetUpdateResponse(string requestUri, UpdateRequest request)
+            private Task<UpdateResponse> GetUpdateResponse(string requestUri, UpdateRequest request)
             {
-                string responseContent = await this.telimena.Messenger.SendPostRequest(requestUri, request).ConfigureAwait(false);
-                return this.telimena.Serializer.Deserialize<UpdateResponse>(responseContent);
+                return this.telimena.Messenger.SendPostRequest< UpdateResponse>(requestUri, request);
             }
 
             internal string GetUpdaterVersion()

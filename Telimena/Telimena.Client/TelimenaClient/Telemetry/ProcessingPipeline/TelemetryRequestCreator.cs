@@ -22,7 +22,7 @@ namespace TelimenaClient
 
             TelemetryUpdateRequest request = new TelemetryUpdateRequest(telemetryKey)
             {
-                DebugMode = debugMode, SerializedTelemetryUnits = serializedData.Select(x=>x.Value).ToList(), TelemetryKey = telemetryKey, UserId = userId
+                 SerializedTelemetryUnits = serializedData.Select(x=>x.Value).ToList(), TelemetryKey = telemetryKey, UserId = userId
             };
             return request;
 

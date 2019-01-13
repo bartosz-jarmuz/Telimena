@@ -50,12 +50,7 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The telimena version.</value>
         public string TelimenaVersion { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether [skip usage incrementation].
-        /// </summary>
-        /// <value><c>true</c> if [skip usage incrementation]; otherwise, <c>false</c>.</value>
-        public bool SkipUsageIncrementation { get; set; }
-
+      
         /// <summary>
         /// Gets or sets the custom data.
         /// </summary>

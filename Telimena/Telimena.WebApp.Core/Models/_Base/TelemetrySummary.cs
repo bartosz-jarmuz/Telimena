@@ -28,27 +28,8 @@ namespace Telimena.WebApp.Core.Models
 
         public abstract List<TelemetryDetail> GetTelemetryDetails();
         public abstract ITelemetryAware GetComponent();
-        public abstract TelemetryDetail CreateNewDetail();
 
-        public void AddTelemetryDetail(string ipAddress, AssemblyVersionInfo versionInfo, TelemetryItem telemetryItem)
-        {
-            var detail = this.CreateNewDetail();
-            detail.Timestamp = telemetryItem.Timestamp;
-            detail.AssemblyVersion = versionInfo;
-            detail.IpAddress = ipAddress;
-            detail.SetTelemetrySummary(this);
-
-            //if (telemetryItem.TelemetryData != null && telemetryItem.TelemetryData.Any())
-            //{
-            //    foreach (KeyValuePair<string, object> unit in telemetryItem.TelemetryData)
-            //    {
-            //        var telemetryUnit = new ViewTelemetryUnit() { Key = unit.Key, ValueString = unit.Value?.ToString() };
-            //        ((List<ViewTelemetryUnit>)detail.TelemetryUnits).Add(telemetryUnit);
-            //    }
-            //}
-
-            (this.GetTelemetryDetails()).Add(detail);
-        }
+        public abstract void AddTelemetryDetail(string ipAddress, AssemblyVersionInfo versionInfo, TelemetryItem telemetryItem);
 
         public virtual void UpdateTelemetry(AssemblyVersionInfo versionInfo, string ipAddress, TelemetryItem telemetryItem)
         {

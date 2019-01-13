@@ -41,7 +41,7 @@ namespace TelimenaClient.Tests
                 response.Content = new StringContent(JsonConvert.SerializeObject(telemetryInitializeResponse));
                 return Task.FromResult(response);
             });
-            client.Setup(x => x.PostAsync(It.IsIn(ApiRoutes.ReportEvent, ApiRoutes.ReportView), It.IsAny<HttpContent>())).Callback(
+            client.Setup(x => x.PostAsync(It.IsIn(ApiRoutes.PostTelemetryData), It.IsAny<HttpContent>())).Callback(
                 (string uri, HttpContent requestContent) =>
                 {
                     throw new AggregateException(new AssertionException(uri)
@@ -69,7 +69,6 @@ namespace TelimenaClient.Tests
                 {
                     TelimenaException ex = e as TelimenaException;
                     TelemetryUpdateRequest jObj = ex.RequestObjects[0].Value as TelemetryUpdateRequest;
-                    //Assert.AreEqual("SomeView", jObj.ComponentName);
 
                     //Assert.AreEqual(data, jObj.TelemetryData);
                 }
