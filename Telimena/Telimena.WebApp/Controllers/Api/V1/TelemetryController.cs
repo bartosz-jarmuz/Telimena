@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
+using DotNetLittleHelpers;
 using Hangfire;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.Interfaces;
@@ -42,6 +43,16 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPost, Route("", Name = Routes.Post)]
         public async Task<IHttpActionResult> Post(TelemetryUpdateRequest request)
         {
+            if (request.TelemetryKey == Guid.Empty)
+            {
+                return this.BadRequest("Empty telemetry key");
+            }
+
+            if (request.SerializedTelemetryUnits.IsNullOrEmpty())
+            {
+                return this.BadRequest("Missing telemetry units");
+            }
+
             string ip = this.Request.GetClientIp();
             BackgroundJob.Enqueue(() => this.InsertDataInternal(request, ip));
             return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted));

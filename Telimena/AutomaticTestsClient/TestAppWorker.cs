@@ -64,13 +64,17 @@ namespace AutomaticTestsClient
 
         private void HandleInitialize(ITelimena telimena)
         {
+            Console.WriteLine("Sending Initialize request");
             TelemetryInitializeResponse result = telimena.Telemetry.Blocking.Initialize();
+            Console.WriteLine("Received Initialize response");
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
 
         private void HandleReportViewUsage(ITelimena telimena)
         {
+            Console.WriteLine("Sending View usage report");
+
             TelemetryUpdateResponse result;
             Dictionary<string, object> customData = new Dictionary<string, object>();
             customData.Add("Time", DateTime.Now.ToShortTimeString());
@@ -83,6 +87,7 @@ namespace AutomaticTestsClient
             {
                 result = telimena.Telemetry.Blocking.View("DefaultView", customData);
             }
+            Console.WriteLine("Received View usage response");
 
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
