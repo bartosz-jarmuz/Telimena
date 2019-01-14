@@ -211,7 +211,7 @@ namespace Telimena.WebApp.UITests.Base
                     Log(output);
                     try
                     {
-                        T obj = JsonConvert.DeserializeObject<T>(output);
+                        T obj = JsonConvert.DeserializeObject<T>(output, new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto});
                         if (obj != null)
                         {
                             return obj;
