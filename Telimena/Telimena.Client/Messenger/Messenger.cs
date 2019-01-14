@@ -35,7 +35,7 @@ namespace TelimenaClient
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException("An error occurred while deserializing response from POST to [{requestUri}]. Base URL [{this.HttpClient.BaseUri}]", e);
+                throw new InvalidOperationException($"An error occurred while deserializing response from GET to [{requestUri}]. Base URL [{this.HttpClient.BaseUri}]", e);
             }
         }
 

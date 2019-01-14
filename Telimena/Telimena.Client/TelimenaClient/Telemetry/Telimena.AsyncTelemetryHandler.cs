@@ -114,7 +114,6 @@ namespace TelimenaClient
                         },
                     };
 
-
                     HttpResponseMessage response  = await this.telimena.Messenger.SendPostRequest(ApiRoutes.PostTelemetryData, request).ConfigureAwait(false);
                     return new TelemetryUpdateResponse { Result = response };
                 }
