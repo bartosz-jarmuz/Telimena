@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using AutomaticTestsClient;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using PackageTriggerUpdaterTestApp;
+using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 using TestStack.White;
@@ -24,6 +27,8 @@ namespace Telimena.WebApp.UITests.Base
         protected ITestEngine TestEngine { get; set; }
 
         protected string BaseUrl => this.TestEngine.BaseUrl;
+
+        protected HttpClient HttpClient { get; } = new HttpClient();
 
         protected Exception CleanupAndRethrow(Exception ex, [CallerMemberName] string caller = "")
         {
@@ -61,6 +66,15 @@ namespace Telimena.WebApp.UITests.Base
             }
 
             this.TestEngine.BaseInitialize();
+        }
+
+        protected async Task<TelemetryQueryResponse> CheckTelemetry(TelemetryQueryRequest request)
+        {
+            HttpResponseMessage response = await this.HttpClient.PostAsJsonAsync(this.BaseUrl.TrimEnd('/') + "/api/v1/telemetry/execute-query", request);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<TelemetryQueryResponse>(content);
         }
 
         protected FileInfo LaunchTestsAppNewInstance(out Process process, Actions action, string appName, string testSubfolderName, ProgramInfo pi = null

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Models;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository
 {
@@ -18,6 +19,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<PortalSummaryData> GetPortalSummary();
         Task<IEnumerable<ProgramSummary>> GetProgramsSummary(List<Program> programs);
         Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null);
-        Task<TelemetryInfoTable> GetPivotTableData(TelemetryTypes type, Guid telemetryKey);
+        Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey);
     }
 }

@@ -4,9 +4,11 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using AutomaticTestsClient;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
@@ -32,12 +34,15 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         }
 
         [Test]
-        public void ReportView()
+        public async Task ReportView()
         {
             FileInfo app;
             TelemetryUpdateResponse response = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(out app, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, "", viewName: MethodBase.GetCurrentMethod().Name);
             Assert.IsNull(response.Exception);
             Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
+
+            var request = TelemetryQueryRequest.CreateFull(new Guid(AutomaticTestsClientTelemetryKey));
+            var teleResponse = await this.CheckTelemetry(request);
             //todo do some asserts
             //Assert.IsTrue(response.TelemetryKey != Guid.Empty);
             //Assert.IsTrue(response.UserId != Guid.Empty);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -7,6 +8,7 @@ namespace Telimena.WebApp.Core.Models
         int Id { get; set; }
         string Name { get; set; }
         Program Program { get; set; }
+        DateTime FirstReportedDate { get; set; }
         IReadOnlyList<TelemetrySummary> GetTelemetrySummaries();
         IReadOnlyList<TelemetryDetail> GetTelemetryDetails(int clientAppUserId);
         TelemetrySummary GetTelemetrySummary(int clientAppUserId);

@@ -13,6 +13,7 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository
 {
@@ -257,7 +258,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return new UsageDataTableResult {TotalCount = totalCount, FilteredCount = totalCount, UsageData = result};
         }
 
-        public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryTypes type, Guid telemetryKey)
+        public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
         {
             var program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
 

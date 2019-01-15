@@ -18,6 +18,7 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Models.ProgramStatistics;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers
 {
@@ -65,7 +66,7 @@ namespace Telimena.WebApp.Controllers
 
      
         [HttpGet]
-        public async Task<JsonResult> GetPivotTableData(TelemetryTypes type, Guid telemetryKey)
+        public async Task<JsonResult> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
         {
             var result = await this.Work.GetPivotTableData(type, telemetryKey);
             return this.Json(result, JsonRequestBehavior.AllowGet);

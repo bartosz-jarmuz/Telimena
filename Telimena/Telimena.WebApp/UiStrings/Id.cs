@@ -54,6 +54,7 @@ namespace Telimena.WebApp.UiStrings
             public static string SubmitUpdaterChange { get; } = "SubmitUpdaterChange";
             public static string ProgramSummaryBoxConfirmationLabel { get; } = "ProgramSummaryBoxConfirmationLabel";
             public static string UpdaterExecutableName { get; } = "UpdaterExecutableName";
+            public static string EventsTable { get; } = "EventsTable";
         }
 
         public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";
