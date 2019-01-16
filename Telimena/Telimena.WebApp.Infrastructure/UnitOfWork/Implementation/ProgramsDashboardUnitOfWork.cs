@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
-using Newtonsoft.Json.Linq;
-using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
-using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using TelimenaClient;
 
@@ -23,6 +19,31 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
     public class ProgramsDashboardUnitOfWork : IProgramsDashboardUnitOfWork
     {
+        private class OrderingMethodFinder : ExpressionVisitor
+        {
+            private bool _orderingMethodFound;
+
+            public static bool OrderMethodExists(Expression expression)
+            {
+                OrderingMethodFinder visitor = new OrderingMethodFinder();
+                visitor.Visit(expression);
+                return visitor._orderingMethodFound;
+            }
+
+            protected override Expression VisitMethodCall(MethodCallExpression node)
+            {
+                string name = node.Method.Name;
+
+                if (node.Method.DeclaringType == typeof(Queryable) &&
+                    (name.StartsWith("OrderBy", StringComparison.Ordinal) || name.StartsWith("ThenBy", StringComparison.Ordinal)))
+                {
+                    this._orderingMethodFound = true;
+                }
+
+                return base.VisitMethodCall(node);
+            }
+        }
+
         public ProgramsDashboardUnitOfWork(TelimenaContext context)
         {
             this.context = context;
@@ -47,7 +68,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 ProgramSummary summary;
                 try
                 {
-
                     summary = new ProgramSummary
                     {
                         ProgramName = program.Name
@@ -74,111 +94,13 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 {
                     summary = new ProgramSummary();
                     summary.ProgramName = program?.Name ?? "Error while loading summary";
-                    summary.DeveloperName =  "Error while loading summary";
+                    summary.DeveloperName = "Error while loading summary";
                 }
 
                 returnData.Add(summary);
             }
 
             return returnData;
-        }
-
-        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, string key, bool desc, int index) where T: TelemetryDetail
-        {
-            if (index == 0)
-            {
-                return query.OrderBy(key, desc);
-            }
-            else
-            {
-                return (query as IOrderedQueryable<T>).ThenBy(key, desc);
-            }
-        }
-
-        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, Expression<Func<T,string>> key, bool desc, int index) where T : TelemetryDetail
-        {
-            if (index == 0)
-            {
-                return query.OrderBy(key, desc);
-            }
-            else
-            {
-                if (desc)
-                {
-                    return (query as IOrderedQueryable<T>).ThenByDescending(key);
-                }
-                return (query as IOrderedQueryable<T>).ThenBy(key);
-            }
-        }
-
-        internal static async Task<List<T>> ApplyOrderingQuery<T>
-            (IEnumerable<Tuple<string, bool>> sortBy, IQueryable<T> query, int skip, int take) where T: TelemetryDetail
-        {
-            List<Tuple<string, bool>> rules = sortBy.ToList();
-
-         //   query = query.OrderByDescending(x => x.Id);
-            try
-            {
-
-                for (int index = 0; index < rules.Count; index++)
-                {
-                    Tuple<string, bool> rule = rules[index];
-                    if (rule.Item1 == nameof(UsageData.DateTime))
-                    {
-                        query = Order(query, rule.Item1, rule.Item2, index);
-                    }
-                    else if (rule.Item1 == nameof(UsageData.ProgramVersion))
-                    {
-                        query = Order(query, x=>x.AssemblyVersion.AssemblyVersion, rule.Item2, index);
-                    }
-                    else if (rule.Item1 == nameof(UsageData.UserName))
-                    {
-                    //todo - verify    - what about events?
-                         query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.ClientAppUser.UserName, rule.Item2, index);
-                    }
-                    else if (rule.Item1 == nameof(UsageData.ViewName) && typeof(T) == typeof(ViewTelemetryDetail))
-                    {
-                        query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.View.Name, rule.Item2, index);
-                    }
-                }
-
-                var orderedQuery = query as IOrderedQueryable<T>;
-                if (!OrderingMethodFinder.OrderMethodExists(orderedQuery.Expression))
-                {
-                    orderedQuery = query.OrderByDescending(x => x.Id);
-                }
-                return await orderedQuery.Skip(skip).Take(take).ToListAsync();
-            }
-            catch (Exception)
-            {
-                return await query.OrderByDescending(x=>x.Id).Skip(skip).Take(take).ToListAsync();
-            }
-        }
-
-        class OrderingMethodFinder : ExpressionVisitor
-        {
-            bool _orderingMethodFound = false;
-
-            protected override Expression VisitMethodCall(MethodCallExpression node)
-            {
-                var name = node.Method.Name;
-
-                if (node.Method.DeclaringType == typeof(Queryable) && (
-                        name.StartsWith("OrderBy", StringComparison.Ordinal) ||
-                        name.StartsWith("ThenBy", StringComparison.Ordinal)))
-                {
-                    _orderingMethodFound = true;
-                }
-
-                return base.VisitMethodCall(node);
-            }
-
-            public static bool OrderMethodExists(Expression expression)
-            {
-                var visitor = new OrderingMethodFinder();
-                visitor.Visit(expression);
-                return visitor._orderingMethodFound;
-            }
         }
 
         public async Task<PortalSummaryData> GetPortalSummary()
@@ -226,7 +148,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
         {
-            var program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
 
             if (program == null)
             {
@@ -247,7 +169,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             {
                 UsageData data = new UsageData
                 {
-                      DateTime = detail.Timestamp
+                    DateTime = detail.Timestamp
                     , UserName = detail.TelemetrySummary.ClientAppUser.UserName
                     , ViewName = detail.TelemetrySummary.View.Name
                     , ProgramVersion = detail.AssemblyVersion.AssemblyVersion
@@ -260,7 +182,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
         {
-            var program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
 
             if (program == null)
             {
@@ -269,20 +191,20 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             List<TelemetryDetail> details = program.GetTelemetryDetails(this.context, type).ToList();
 
-            List<TelemetryPivotTableRow>rows = new List<TelemetryPivotTableRow>();
+            List<TelemetryPivotTableRow> rows = new List<TelemetryPivotTableRow>();
 
             foreach (TelemetryDetail detail in details)
             {
                 foreach (TelemetryUnit detailTelemetryUnit in detail.GetTelemetryUnits())
                 {
-                    TelemetryPivotTableRow row = new TelemetryPivotTableRow()
+                    TelemetryPivotTableRow row = new TelemetryPivotTableRow
                     {
                         ComponentName = detail.GetTelemetrySummary().GetComponent().Name
                         , Date = detail.Timestamp.Date.ToString("yyyy-MM-dd")
                         , Time = detail.Timestamp.TimeOfDay.TotalSeconds
                         , Value = detailTelemetryUnit.ValueString
                         , Key = detailTelemetryUnit.Key
-                        , TelemetryDetailId = detail.Guid
+                        , TelemetryDetailId = detail.Id
                         , UserName = detail.GetTelemetrySummary().ClientAppUser.UserName
                     };
                     rows.Add(row);
@@ -291,9 +213,76 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             TelemetryInfoTableHeader header = new TelemetryInfoTableHeader();
 
-            return new TelemetryInfoTable() {Header = header, Rows = rows};
+            return new TelemetryInfoTable {Header = header, Rows = rows};
         }
 
-       
+        internal static async Task<List<T>> ApplyOrderingQuery<T>(IEnumerable<Tuple<string, bool>> sortBy, IQueryable<T> query, int skip, int take)
+            where T : TelemetryDetail
+        {
+            List<Tuple<string, bool>> rules = sortBy.ToList();
+
+            //   query = query.OrderByDescending(x => x.Id);
+            try
+            {
+                for (int index = 0; index < rules.Count; index++)
+                {
+                    Tuple<string, bool> rule = rules[index];
+                    if (rule.Item1 == nameof(UsageData.DateTime))
+                    {
+                        query = Order(query, rule.Item1, rule.Item2, index);
+                    }
+                    else if (rule.Item1 == nameof(UsageData.ProgramVersion))
+                    {
+                        query = Order(query, x => x.AssemblyVersion.AssemblyVersion, rule.Item2, index);
+                    }
+                    else if (rule.Item1 == nameof(UsageData.UserName))
+                    {
+                        //todo - verify    - what about events?
+                        query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.ClientAppUser.UserName, rule.Item2, index);
+                    }
+                    else if (rule.Item1 == nameof(UsageData.ViewName) && typeof(T) == typeof(ViewTelemetryDetail))
+                    {
+                        query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.View.Name, rule.Item2, index);
+                    }
+                }
+
+                IOrderedQueryable<T> orderedQuery = query as IOrderedQueryable<T>;
+                if (!OrderingMethodFinder.OrderMethodExists(orderedQuery.Expression))
+                {
+                    orderedQuery = query.OrderByDescending(x => x.Timestamp);
+                }
+
+                return await orderedQuery.Skip(skip).Take(take).ToListAsync();
+            }
+            catch (Exception)
+            {
+                return await query.OrderByDescending(x => x.Timestamp).Skip(skip).Take(take).ToListAsync();
+            }
+        }
+
+        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, string key, bool desc, int index) where T : TelemetryDetail
+        {
+            if (index == 0)
+            {
+                return query.OrderBy(key, desc);
+            }
+
+            return (query as IOrderedQueryable<T>).ThenBy(key, desc);
+        }
+
+        private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, Expression<Func<T, string>> key, bool desc, int index) where T : TelemetryDetail
+        {
+            if (index == 0)
+            {
+                return query.OrderBy(key, desc);
+            }
+
+            if (desc)
+            {
+                return (query as IOrderedQueryable<T>).ThenByDescending(key);
+            }
+
+            return (query as IOrderedQueryable<T>).ThenBy(key);
+        }
     }
 }
