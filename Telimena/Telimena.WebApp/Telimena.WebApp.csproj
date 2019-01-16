@@ -28,6 +28,7 @@
     </NuGetPackageImportStamp>
     <ApplicationInsightsResourceId>/subscriptions/4e05ea48-70e3-4f69-8ac2-afe102b1dd0a/resourcegroups/MISC/providers/microsoft.insights/components/Telimena-dev.WebApp</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/4e05ea48-70e3-4f69-8ac2-afe102b1dd0a/resourcegroups/MISC/providers/microsoft.insights/components/Telimena-dev.WebApp</ApplicationInsightsAnnotationResourceId>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
