@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutomaticTestsClient;
@@ -11,33 +12,15 @@ using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
 namespace Telimena.WebApp.UITests._01._Ui
 {
-    using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
-
-    [TestFixture()]
+    [TestFixture]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_UiTests : UiTestBase
     {
-        [Test]
-        public void Test_AppUsageTable()
-        {
-              var app = this.LaunchTestsAppNewInstance(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable));
-                Task.Delay(1000).GetAwaiter().GetResult();
-                var previous = this.GetLatestUsageFromTable();
-            Task.Delay(1000).GetAwaiter().GetResult();
-
-            this.LaunchTestsApp(app, Actions.Initialize);
-
-              var current = this.GetLatestUsageFromTable();
-
-                Assert.IsTrue(current > previous, $"current {current} is not larger than previous {previous}");
-
-
-        }
-
-        private DateTime GetLatestUsageFromTable()
+        private async Task<DateTime> GetLatestUsageFromTable()
         {
             try
             {
@@ -46,15 +29,16 @@ namespace Telimena.WebApp.UITests._01._Ui
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
                 this.Driver.FindElement(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_menu")).Click();
-                IWebElement statLink = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_statsLink")));
+                IWebElement statLink = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_statsLink")));
 
                 statLink.Click();
 
-                IWebElement programsTable = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
-                wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.ViewUsageTable)));
+                IWebElement programsTable = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
+                wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.ViewUsageTable)));
                 wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.Id("ProgramUsageTable_processing")));
 
-                IWebElement latestRow = programsTable.FindElement(By.TagName("tbody")).FindElements(By.TagName("tr")).FirstOrDefault();
+                IWebElement latestRow = this.TryFind(() => programsTable.FindElement(By.TagName("tbody")).FindElements(By.TagName("tr")).FirstOrDefault()
+                    , TimeSpan.FromSeconds(2));
 
                 if (latestRow == null)
                 {
@@ -75,11 +59,25 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, this.outputs,this.errors);
+                this.HandleError(ex, this.outputs, this.errors);
                 return default(DateTime);
             }
         }
 
-    
+        [Test]
+        public async Task Test_AppUsageTable()
+        {
+            FileInfo app = this.LaunchTestsAppNewInstance(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable)
+                , viewName: nameof(this.Test_AppUsageTable));
+            Task.Delay(1000).GetAwaiter().GetResult();
+            DateTime previous = await this.GetLatestUsageFromTable();
+            Task.Delay(1000).GetAwaiter().GetResult();
+
+            this.LaunchTestsApp(app, Actions.ReportViewUsage);
+
+            DateTime current = await this.GetLatestUsageFromTable();
+
+            Assert.IsTrue(current > previous, $"current {current} is not larger than previous {previous}");
+        }
     }
 }

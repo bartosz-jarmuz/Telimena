@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Web.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -13,15 +13,13 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestContext = Microsoft.VisualStudio.TestTools.UnitTesting.TestContext;
+using TestContext = NUnit.Framework.TestContext;
 
 namespace Telimena.WebApp.UITests.Base
 {
     [TestFixture]
     public abstract class UiTestBase : IntegrationTestBase
     {
-        
         public readonly string AdminName = GetSetting<string>(ConfigKeys.AdminName);
         public readonly string UserName = GetSetting(ConfigKeys.UserName);
         public readonly string AdminPassword = GetSetting(ConfigKeys.AdminPassword);
@@ -34,7 +32,7 @@ namespace Telimena.WebApp.UITests.Base
             switch (browser)
             {
                 case "Chrome":
-                    var opt = new ChromeOptions();
+                    ChromeOptions opt = new ChromeOptions();
 #if DEBUG
 
 #else
@@ -50,7 +48,6 @@ namespace Telimena.WebApp.UITests.Base
             }
         }
 
-
         internal IWebDriver Driver => RemoteDriver.Value;
         internal ITakesScreenshot Screenshooter => this.Driver as ITakesScreenshot;
 
@@ -58,7 +55,6 @@ namespace Telimena.WebApp.UITests.Base
         {
             try
             {
-
                 this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
                 this.LoginAdminIfNeeded();
             }
@@ -78,9 +74,10 @@ namespace Telimena.WebApp.UITests.Base
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             if (this.Driver.Url.Contains("ChangePassword"))
             {
-                Log("Going from change password page to Admin dashboard");
+                this.Log("Going from change password page to Admin dashboard");
                 this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
             }
+
             wait.Until(x => x.FindElement(By.Id(Strings.Id.PortalSummary)));
         }
 
@@ -91,24 +88,50 @@ namespace Telimena.WebApp.UITests.Base
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(timeoutSeconds));
                 return wait.Until(x => x.FindElement(By.Id(nameOrId)));
             }
-            catch { }
+            catch
+            {
+            }
 
             return null;
         }
 
-        public IWebElement TryFind(By by, int timeoutSeconds = 10)
+        protected IWebElement TryFind(By by, int timeoutSeconds = 10)
         {
             try
             {
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(timeoutSeconds));
                 return wait.Until(x => x.FindElement(by));
             }
-            catch { }
+            catch
+            {
+            }
 
             return null;
         }
 
-        protected  bool IsLoggedIn()
+        protected IWebElement TryFind(Func<IWebElement> finderFunc, TimeSpan timeout)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+            while (sw.ElapsedMilliseconds < timeout.TotalMilliseconds)
+            {
+                try
+                {
+                    IWebElement result = finderFunc();
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
+                catch
+                {
+                    //np
+                }
+            }
+
+            return null;
+        }
+
+        protected bool IsLoggedIn()
         {
             if (this.TryFind(Strings.Id.MainHeader) != null)
             {
@@ -118,25 +141,26 @@ namespace Telimena.WebApp.UITests.Base
             return false;
         }
 
-
         protected void HandleError(Exception ex, List<string> outputs = null, List<string> errors = null, [CallerMemberName] string memberName = "")
         {
             Screenshot screen = this.Screenshooter.GetScreenshot();
-            var path = Common.CreatePngPath(memberName);
+            string path = Common.CreatePngPath(memberName);
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
-            var page = this.Driver.PageSource;
+            string page = this.Driver.PageSource;
 
             string errorOutputs = "";
             if (errors != null)
             {
-                errorOutputs = String.Join("\r\n", errors);
+                errorOutputs = string.Join("\r\n", errors);
             }
+
             string normalOutputs = "";
             if (outputs != null)
             {
-                normalOutputs = String.Join("\r\n", outputs);
+                normalOutputs = string.Join("\r\n", outputs);
             }
-            var alert = this.Driver.WaitForAlert(500);
+
+            IAlert alert = this.Driver.WaitForAlert(500);
             alert?.Dismiss();
             throw new AssertFailedException($"{ex}\r\n\r\n{this.PresentParams()}\r\n\r\n{errorOutputs}\r\n\r\n{normalOutputs}\r\n\r\n{page}", ex);
 
@@ -145,12 +169,12 @@ namespace Telimena.WebApp.UITests.Base
 
         private string PresentParams()
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             sb.Append("Url: " + this.Driver.Url);
             sb.Append("TestContext Parameters: ");
-            foreach (var testParameter in NUnit.Framework.TestContext.Parameters.Names)
+            foreach (string testParameter in TestContext.Parameters.Names)
             {
-                sb.Append(testParameter + ": " + NUnit.Framework.TestContext.Parameters[testParameter] + " ");
+                sb.Append(testParameter + ": " + TestContext.Parameters[testParameter] + " ");
             }
 
             return sb.ToString();
@@ -168,9 +192,10 @@ namespace Telimena.WebApp.UITests.Base
                 this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/Login"));
             }
 
-            if (this.Driver.Url.IndexOf("Login", StringComparison.InvariantCultureIgnoreCase) != -1 && this.Driver.FindElement(new ByIdOrName(Strings.Id.LoginForm)) != null)
+            if (this.Driver.Url.IndexOf("Login", StringComparison.InvariantCultureIgnoreCase) != -1 &&
+                this.Driver.FindElement(new ByIdOrName(Strings.Id.LoginForm)) != null)
             {
-                Log("Trying to log in...");
+                this.Log("Trying to log in...");
                 IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
 
                 if (login != null)
@@ -182,12 +207,11 @@ namespace Telimena.WebApp.UITests.Base
                     submit.Click();
                     this.GoToAdminHomePage();
                     this.RecognizeAdminDashboardPage();
-
                 }
             }
             else
             {
-                Log("Skipping logging in");
+                this.Log("Skipping logging in");
             }
         }
     }
