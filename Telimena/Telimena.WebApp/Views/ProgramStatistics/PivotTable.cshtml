@@ -2,7 +2,8 @@
 @using Telimena.WebApp.Core
 @using Telimena.WebApp.Core.DTO
 @using Telimena.WebApp.UiStrings
-@model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
+@using TelimenaClient
+@model global::Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
 @{
     ViewBag.Title = "Admin Dashboard";
 }
@@ -76,9 +77,8 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryTypes.Event&telemetryKey=@Model.TelemetryKey", @Strings.Id.EventTelemetryPivotTable);
-            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryTypes.View&telemetryKey=@Model.TelemetryKey", @Strings.Id.ViewTelemetryPivotTable);
-            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryTypes.Program&telemetryKey=@Model.TelemetryKey", @Strings.Id.ProgramTelemetryPivotTable);
+            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryItemTypes.Event&telemetryKey=@Model.TelemetryKey", @Strings.Id.EventTelemetryPivotTable);
+            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryItemTypes.View&telemetryKey=@Model.TelemetryKey", @Strings.Id.ViewTelemetryPivotTable);
 
             function loadPivotTableData(url, table) {
                 $.get(url,
