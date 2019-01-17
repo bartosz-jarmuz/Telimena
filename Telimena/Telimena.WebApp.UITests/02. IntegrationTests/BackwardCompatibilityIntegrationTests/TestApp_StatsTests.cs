@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using AutomaticTestsClient;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
@@ -68,14 +70,22 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         [Test]
         public async Task ReportView()
         {
+            string viewName = nameof(this.ReportView);
+
             FileInfo app;
+            DateTimeOffset timestamp = DateTimeOffset.UtcNow;
             TelemetryUpdateResponse response = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(out app, Actions.ReportViewUsage
-                , TestAppProvider.FileNames.TestAppV1, "", viewName: nameof(this.ReportView));
+                , TestAppProvider.FileNames.TestAppV1, "", viewName: viewName);
             Assert.IsNull(response.Exception);
             Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
 
             TelemetryQueryRequest request = TelemetryQueryRequest.CreateFull(new Guid(AutomaticTestsClientTelemetryKey));
             TelemetryQueryResponse queryResponse = await this.CheckTelemetry(request);
+
+            TelemetryAwareComponentDto viewComponent = queryResponse.TelemetryAware.First(x => x.ComponentKey == viewName);
+
+            Assert.IsNotNull(viewComponent);
+
 
             //todo do some asserts
             //Assert.IsTrue(response.TelemetryKey != Guid.Empty);

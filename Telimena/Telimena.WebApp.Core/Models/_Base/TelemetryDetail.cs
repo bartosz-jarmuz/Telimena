@@ -5,8 +5,8 @@ namespace Telimena.WebApp.Core.Models
 {
     public abstract class TelemetryDetail
     {
-        [Obsolete("For EF")]
-        private TelemetryDetail()
+        //[Obsolete("For EF")]
+        protected TelemetryDetail()
         {
         }
 

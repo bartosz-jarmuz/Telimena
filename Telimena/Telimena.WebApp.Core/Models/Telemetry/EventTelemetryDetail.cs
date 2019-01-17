@@ -6,6 +6,11 @@ namespace Telimena.WebApp.Core.Models
 {
     public class EventTelemetryDetail : TelemetryDetail
     {
+        [Obsolete("EF")]
+        public EventTelemetryDetail()
+        {
+        }
+
         public EventTelemetryDetail(Guid id) : base(id)
         {
         }
