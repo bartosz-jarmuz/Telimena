@@ -41,7 +41,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [AllowAnonymous]
+        [AllowAnonymous] //todo - this should not be anon
         [HttpPost,Route("execute-query", Name = Routes.ExecuteQuery)]
         public async Task<IHttpActionResult> ExecuteQuery(TelemetryQueryRequest request)
         {
@@ -111,6 +111,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [NonAction]
         public Task InsertDataInternal(TelemetryUpdateRequest request, string ip)
         {
+            
             return TelemetryControllerHelpers.InsertData(this.work, request, ip);
         }
 

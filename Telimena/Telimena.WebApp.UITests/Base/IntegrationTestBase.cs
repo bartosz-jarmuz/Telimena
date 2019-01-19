@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Web.UI.HtmlControls;
 using AutomaticTestsClient;
+using HtmlAgilityPack;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using PackageTriggerUpdaterTestApp;
 using Telimena.WebApp.Core.Messages;
+using Telimena.WebApp.Models.Account;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 using TestStack.White;
@@ -19,6 +23,12 @@ namespace Telimena.WebApp.UITests.Base
     [TestFixture]
     public abstract class IntegrationTestBase : TestBase
     {
+        public readonly string AdminName = GetSetting<string>(ConfigKeys.AdminName);
+        public readonly string UserName = GetSetting(ConfigKeys.UserName);
+        public readonly string AdminPassword = GetSetting(ConfigKeys.AdminPassword);
+        public readonly string UserPassword = GetSetting(ConfigKeys.UserPassword);
+
+        
         protected List<string> errors = new List<string>();
         protected List<string> outputs = new List<string>();
         private readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
@@ -26,9 +36,9 @@ namespace Telimena.WebApp.UITests.Base
         public const string PackageUpdaterClientTelemetryKey = "43808405-afca-4abb-a92a-519489d62290";
         protected ITestEngine TestEngine { get; set; }
 
-        protected string BaseUrl => this.TestEngine.BaseUrl;
+        private string BaseUrl => this.TestEngine.BaseUrl;
 
-        protected HttpClient HttpClient { get; } = new HttpClient();
+        private HttpClient HttpClient { get; } = new HttpClient();
 
         protected Exception CleanupAndRethrow(Exception ex, [CallerMemberName] string caller = "")
         {
@@ -64,7 +74,7 @@ namespace Telimena.WebApp.UITests.Base
             {
                 this.TestEngine = new DeployedTestEngine(GetSetting<string>(ConfigKeys.PortalUrl));
             }
-
+            
             this.TestEngine.BaseInitialize();
         }
 

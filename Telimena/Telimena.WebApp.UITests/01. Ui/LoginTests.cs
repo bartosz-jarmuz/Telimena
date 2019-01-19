@@ -7,6 +7,7 @@ using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
 using Assert = NUnit.Framework.Assert;
 
+// ReSharper disable once IdentifierTypo
 namespace Telimena.WebApp.UITests._01._Ui
 {
 
@@ -33,7 +34,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
                 submit.Click();
 
-                if (this.TryFind(Strings.Id.PasswordForm) == null)
+                  if (this.TryFind(Strings.Id.PasswordForm) == null)
                 {
                     this.RecognizeAdminDashboardPage();
 

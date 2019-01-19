@@ -20,11 +20,7 @@ namespace Telimena.WebApp.UITests.Base
     [TestFixture]
     public abstract class UiTestBase : IntegrationTestBase
     {
-        public readonly string AdminName = GetSetting<string>(ConfigKeys.AdminName);
-        public readonly string UserName = GetSetting(ConfigKeys.UserName);
-        public readonly string AdminPassword = GetSetting(ConfigKeys.AdminPassword);
-        public readonly string UserPassword = GetSetting(ConfigKeys.UserPassword);
-
+       
         internal static Lazy<RemoteWebDriver> RemoteDriver = new Lazy<RemoteWebDriver>(() => GetBrowser("Chrome"));
 
         private static RemoteWebDriver GetBrowser(string browser)

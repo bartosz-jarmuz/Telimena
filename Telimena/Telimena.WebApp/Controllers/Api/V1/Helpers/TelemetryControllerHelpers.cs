@@ -50,7 +50,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 
         public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, TelemetryUpdateRequest request, string ipAddress)
         {
-            
+
             (Program program, ClientAppUser clientAppUser) actionItems = await GetTelemetryUpdateActionItems(work, request);
           
             List<TelemetryItem> units = DeserializeItems(request);

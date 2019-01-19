@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutomaticTestsClient;
+using DotNetLittleHelpers;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Telimena.WebApp.Core.DTO;
@@ -13,7 +14,6 @@ using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityIntegrationTests
 {
@@ -72,6 +72,14 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         {
             string viewName = nameof(this.ReportView);
 
+            TelemetryQueryRequest request = TelemetryQueryRequest.CreateFull(new Guid(AutomaticTestsClientTelemetryKey));
+            TelemetryQueryResponse queryResponse = await this.CheckTelemetry(request);
+
+            TelemetryAwareComponentDto viewComponent = queryResponse.TelemetryAware.First(x => x.ComponentKey == viewName);
+            Assert.IsNotNull(viewComponent);
+            var summary = viewComponent.Summaries.FirstOrDefault(x => x.UserName == Environment.UserName);
+            Assert.IsNotNull(summary);
+
             FileInfo app;
             DateTimeOffset timestamp = DateTimeOffset.UtcNow;
             TelemetryUpdateResponse response = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(out app, Actions.ReportViewUsage
@@ -79,32 +87,17 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             Assert.IsNull(response.Exception);
             Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
 
-            TelemetryQueryRequest request = TelemetryQueryRequest.CreateFull(new Guid(AutomaticTestsClientTelemetryKey));
-            TelemetryQueryResponse queryResponse = await this.CheckTelemetry(request);
+            queryResponse = await this.CheckTelemetry(request);
 
-            TelemetryAwareComponentDto viewComponent = queryResponse.TelemetryAware.First(x => x.ComponentKey == viewName);
+            viewComponent = queryResponse.TelemetryAware.First(x => x.ComponentKey == viewName);
+            var summaryAfterUpdate = viewComponent.Summaries.FirstOrDefault(x => x.UserName == Environment.UserName);
+            Assert.IsNotNull(summaryAfterUpdate);
 
-            Assert.IsNotNull(viewComponent);
+            Assert.Greater(summaryAfterUpdate.SummaryCount,summary.SummaryCount);
+            Assert.Greater(summaryAfterUpdate.LastReported  , summary.LastReported);
+            Assert.Greater(summaryAfterUpdate.Details.Count , summary.Details.Count);
+            Assert.That(summaryAfterUpdate.Details.OrderByDescending(x=>x.Timestamp).First().Timestamp, Is.EqualTo(timestamp).Within(TimeSpan.FromSeconds(3.0)));
 
-
-            //todo do some asserts
-            //Assert.IsTrue(response.TelemetryKey != Guid.Empty);
-            //Assert.IsTrue(response.UserId != Guid.Empty);
-            //Assert.IsTrue(response.Count > 0);
-            //Assert.IsTrue(response.ComponentId > 0);
-            //Assert.AreEqual("ReportView", response.ComponentName);
-
-            //TelemetryUpdateResponse responseNew = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(out app, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, "", viewName: MethodBase.GetCurrentMethod().Name);
-            //Assert.IsNull(response.Exception);
-            //Assert.AreEqual(HttpStatusCode.Accepted, response.Result.StatusCode);
-            //todo do some asserts
-            //Assert.AreEqual(responseNew.Count, response.Count + 1);
-            //Assert.AreEqual("ReportView", responseNew.ComponentName);
-
-            //TelemetryUpdateResponse customViewNameResponse = this.LaunchTestsAppAndGetResult<TelemetryUpdateResponse>(app, Actions.ReportViewUsage, viewName: "UnitTestView");
-            //Assert.IsTrue(response.ComponentId < customViewNameResponse.ComponentId);
-            //Assert.AreEqual("UnitTestView", customViewNameResponse.ComponentName);
-            //Assert.IsTrue(customViewNameResponse.Count > 0);
         }
     }
 }
