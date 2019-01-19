@@ -26,13 +26,13 @@ namespace TelimenaClient
             private readonly ITelimena telimena;
 
             /// <inheritdoc />
-            public TelemetryUpdateResponse View(string viewName, Dictionary<string, object> telemetryData = null)
+            public TelemetryItem View(string viewName, Dictionary<string, object> telemetryData = null)
             {
                 return Task.Run(() => this.telimena.Telemetry.Async.View(viewName, telemetryData)).GetAwaiter().GetResult();
             }
 
             /// <inheritdoc />
-            public TelemetryUpdateResponse Event(string eventName, Dictionary<string, object> telemetryData = null)
+            public TelemetryItem Event(string eventName, Dictionary<string, object> telemetryData = null)
             {
                 return Task.Run(() => this.telimena.Telemetry.Async.Event(eventName, telemetryData)).GetAwaiter().GetResult();
             }

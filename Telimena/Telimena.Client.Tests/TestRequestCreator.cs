@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
@@ -13,32 +15,8 @@ using TelimenaClient.Serializer;
 
 namespace TelimenaClient.Tests
 {
-
-
-    public static class Common
-    {
-        public static string TestAppDataPath =>
-            Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName, "FakeAppData");
-    }
-
-    internal class TestLocator : Locator
-    {
-        public TestLocator(ProgramInfo programInfo) : base(programInfo)
-        {
-        }
-
-        internal TestLocator(ProgramInfo programInfo, string basePath) : base(programInfo, basePath)
-        {
-        }
-
-        protected override DirectoryInfo GetAppDataFolder()
-        {
-            return new DirectoryInfo(Common.TestAppDataPath);
-        }
-    }
-
-
     [TestFixture]
+    [SuppressMessage("ReSharper", "ConsiderUsingConfigureAwait")]
     public class TestRequestCreator
     {
         Guid telemetryKey = Guid.Parse("cb451750-d3a1-4917-8f5f-1f978e86d064");
@@ -53,8 +31,11 @@ namespace TelimenaClient.Tests
                 PrimaryAssembly = new AssemblyInfo(this.GetType().Assembly)
                 
             };
-            TestLocator locator = GetLocatorWithCleanFolder(program);
 
+            ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey) { SuppressAllErrors = false });
+            ((Telimena)telimena).Messenger = Helpers.GetMessenger_InitializeAndAcceptTelemetry(telimena.Properties.TelemetryKey);
+
+            TestLocator locator = GetLocatorWithCleanFolder(program);
 
             TelemetryItem item1 = new TelemetryItem("MainView", TelemetryItemTypes.View, new VersionData("1.0", null),null);
             TelemetryItem item2 = new TelemetryItem("MainView", TelemetryItemTypes.View, new VersionData("1.0", null), new Dictionary<string, object>()
@@ -72,7 +53,27 @@ namespace TelimenaClient.Tests
             await TestItemsProcessing(locator, new []{item1, item2, item3});
 
             TelemetryRequestCreator requestCreator = new TelemetryRequestCreator(locator.TelemetryStorageDirectory);
-            TelemetryUpdateRequest request = await requestCreator.Create(this.telemetryKey, this.userId, false);
+
+            var  requestTuple = await requestCreator.Create(this.telemetryKey, this.userId);
+
+            VerifyRequest(requestTuple, item1, item2, item3);
+
+            var sender = new TelemetryRequestSender((Telimena) telimena);
+            var response = await sender.SendRequests(requestTuple.Item1, requestTuple.Item2);
+
+            Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
+            foreach (var fileInfo in requestTuple.Item2)
+            {
+                Assert.IsFalse(File.Exists(fileInfo.FullName));
+            }
+        }
+
+        private static void VerifyRequest(Tuple<TelemetryUpdateRequest, List<FileInfo>> requestTuple, TelemetryItem item1, TelemetryItem item2, TelemetryItem item3)
+        {
+            TelemetryUpdateRequest request = requestTuple.Item1;
+            var files = requestTuple.Item2;
+
+            Assert.AreEqual(files.Count, request.SerializedTelemetryUnits.Count);
 
             TelimenaSerializer serializer = new TelimenaSerializer();
 
@@ -86,6 +87,7 @@ namespace TelimenaClient.Tests
             list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryUnits[1]));
             list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryUnits[2]));
             TelemetryItem deserializedItem1 = list.Single(x => x.Id == item1.Id);
+
             deserializedItem1.ShouldBeEquivalentTo(item1);
             Assert.IsInstanceOf<Guid>(deserializedItem1.Id);
             Assert.IsInstanceOf<DateTimeOffset>(deserializedItem1.Timestamp);
@@ -93,7 +95,12 @@ namespace TelimenaClient.Tests
             list.Single(x => x.Id == item2.Id).ShouldBeEquivalentTo(item2);
             list.Single(x => x.Id == item3.Id).ShouldBeEquivalentTo(item3);
 
+            foreach (var fileInfo in files)
+            {
+                Assert.IsTrue(list.Single(x => $"{x.Id}.json" == fileInfo.Name) != null);
+                Assert.IsTrue(File.Exists(fileInfo.FullName));
 
+            }
         }
 
         private static async Task TestItemsProcessing(TestLocator locator, TelemetryItem[] items)
@@ -131,25 +138,6 @@ namespace TelimenaClient.Tests
 
             return locator;
         }
-
-        //[Test]
-        //public async Task Sb()
-        //{
-        //    var file = @"C:\Users\bjarmuz\Downloads\2019-01-07 11-36-39_FunctionsCustomDataExport_TimesheetPro.json";
-
-        //    var text = File.ReadAllText(file);
-
-        //    dynamic dataObj= JsonConvert.DeserializeObject<dynamic>(text);
-        //    var sb = new StringBuilder();
-
-        //    foreach (dynamic dataElement in dataObj.data)
-        //    {
-
-        //        sb.AppendLine($"\"{dataElement.genericData.DateTime}\";\"{dataElement.genericData.functionName}\";\"{dataElement.genericData.userName}\"");
-        //    }
-
-        //    File.WriteAllText(@"C:\Users\bjarmuz\Desktop\test.csv", sb.ToString());
-        //}
 
     }
 }

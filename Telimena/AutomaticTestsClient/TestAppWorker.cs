@@ -75,7 +75,7 @@ namespace AutomaticTestsClient
         {
             Console.WriteLine("Sending View usage report");
 
-            TelemetryUpdateResponse result;
+            TelemetryItem result;
             Dictionary<string, object> customData = new Dictionary<string, object>();
             customData.Add("Time", DateTime.Now.ToShortTimeString());
             customData.Add("RandomNumber", new Random().Next(0, 10).ToString());

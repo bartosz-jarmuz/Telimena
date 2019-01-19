@@ -106,6 +106,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestLocator.cs" />
     <Compile Include="TestRequestCreator.cs" />
     <Compile Include="UtilitiesTests.cs" />
     <Compile Include="TestReportUsageRequests.cs" />

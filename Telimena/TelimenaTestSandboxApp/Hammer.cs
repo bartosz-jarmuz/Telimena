@@ -138,6 +138,12 @@ namespace TelimenaTestSandboxApp
             return new JavaScriptSerializer().Serialize(response);
         }
 
+        private string PresentResponse(TelemetryItem response)
+        {
+            return new JavaScriptSerializer().Serialize(response);
+        }
+
+
         private async Task StartReporting(UserInfo userInfo)
         {
             Random random = new Random();
@@ -145,29 +151,32 @@ namespace TelimenaTestSandboxApp
             {
                 ProgramInfo prg = this.apps[random.Next(0, this.apps.Count)];
                 ITelimena teli = Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = prg});
-                TelimenaResponseBase result;
                 int operation = random.Next(4);
                 if (operation == 1)
                 {
-                    result = await teli.Telemetry.Async.Event("SomeEvent");
+                    var result = await teli.Telemetry.Async.Event("SomeEvent");
+                    this.progressReport(this.PresentResponse(result));
+
                 }
                 else if (operation == 2)
                 {
-                    result = await teli.Telemetry.Async.Initialize();
+                    var result = await teli.Telemetry.Async.Initialize();
+                    this.progressReport(this.PresentResponse(result));
                 }
                 else
                 {
                     if (random.Next(2) == 1)
                     {
-                        result = await teli.Telemetry.Async.View(this.funcs[random.Next(0, this.funcs.Count)]);
+                        var result = await teli.Telemetry.Async.View(this.funcs[random.Next(0, this.funcs.Count)]);
+                        this.progressReport(this.PresentResponse(result));
                     }
                     else
                     {
-                        result = await teli.Telemetry.Async.View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
+                        var result = await teli.Telemetry.Async.View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
+                        this.progressReport(this.PresentResponse(result));
                     }
                 }
 
-                this.progressReport(this.PresentResponse(result));
                 await Task.Delay(random.Next(this.delayMin, this.delayMax));
             }
         }

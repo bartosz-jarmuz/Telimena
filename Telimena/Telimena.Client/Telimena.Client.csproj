@@ -109,6 +109,7 @@
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryProcessingPipeline.cs" />
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryRequestCreator.cs" />
     <Compile Include="TelimenaClient\Telemetry\TelemetryModule.cs" />
+    <Compile Include="TelimenaClient\Telemetry\TelemetryRequestSender.cs" />
     <Compile Include="TelimenaClient\Telemetry\Telimena.AsyncTelemetryHandler.cs" />
     <Compile Include="TelimenaClient\TelimenaProperties.cs" />
     <Compile Include="TelimenaClient\Updates\Telimena.AsyncUpdatesHandler.cs" />

@@ -16,7 +16,7 @@ namespace TelimenaClient
             this.telemetryDirectory = telemetryDirectory;
         }
 
-        public async Task<TelemetryUpdateRequest> Create(Guid telemetryKey, Guid userId, bool debugMode)
+        public async Task<Tuple<TelemetryUpdateRequest, List<FileInfo>>> Create(Guid telemetryKey, Guid userId)
         {
             var serializedData = await this.GetAllFilesContent();
 
@@ -24,7 +24,7 @@ namespace TelimenaClient
             {
                  SerializedTelemetryUnits = serializedData.Select(x=>x.Value).ToList(), TelemetryKey = telemetryKey, UserId = userId
             };
-            return request;
+            return new Tuple<TelemetryUpdateRequest, List<FileInfo>>(request, serializedData.Select(x=>x.Key).ToList());
 
         }
 

@@ -27,11 +27,9 @@ namespace TelimenaClient
         {
             this.AssemblyVersion = assemblyVersion;
             this.FileVersion = fileVersion;
-            this.Dec = 23.4M;
         }
 
 
-        public decimal Dec { get; set; }
         /// <summary>
         /// Gets or sets the version related to the [assembly: AssemblyVersion("1.0")] attribute
         /// </summary>

@@ -96,6 +96,25 @@ namespace Telimena.WebApp.UITests.Base
             return appFile;
         }
 
+        protected FileInfo LaunchTestsAppNewInstanceAndGetResult<T>(out Process process, out T result, Actions action, string appName, string testSubfolderName, ProgramInfo pi = null
+            , string viewName = null, bool waitForExit = true) where T : class
+        {
+            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
+
+
+            this.outputs.Clear();
+            this.errors.Clear();
+
+            process = this.LaunchTestsApp(appFile, action, pi, waitForExit, viewName);
+            
+            result = this.ParseOutput<T>();
+            this.outputs.Clear();
+            this.errors.Clear();
+
+
+            return appFile;
+        }
+
         protected Process LaunchTestsApp(FileInfo appFile, Actions action, ProgramInfo pi = null, bool waitForExit = true, string viewName = null)
         {
             Arguments args = new Arguments { ApiUrl = this.BaseUrl, Action = action };

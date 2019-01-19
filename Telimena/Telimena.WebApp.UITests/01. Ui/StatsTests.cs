@@ -11,6 +11,7 @@ using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
+using TelimenaClient;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
@@ -67,13 +68,14 @@ namespace Telimena.WebApp.UITests._01._Ui
         [Test]
         public async Task Test_AppUsageTable()
         {
-            FileInfo app = this.LaunchTestsAppNewInstance(out _, Actions.Initialize, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable)
-                , viewName: nameof(this.Test_AppUsageTable));
+            string viewName = nameof(this.Test_AppUsageTable);
+            FileInfo app = this.LaunchTestsAppNewInstanceAndGetResult(out _, out TelemetryItem first, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable)
+                , viewName: viewName);
             Task.Delay(1000).GetAwaiter().GetResult();
             DateTime previous = await this.GetLatestUsageFromTable();
-            Task.Delay(1000).GetAwaiter().GetResult();
+            Task.Delay(1500).GetAwaiter().GetResult();
 
-            this.LaunchTestsApp(app, Actions.ReportViewUsage);
+            var second = this.LaunchTestsAppAndGetResult<TelemetryItem>(app, Actions.ReportViewUsage, viewName: viewName);
 
             DateTime current = await this.GetLatestUsageFromTable();
 

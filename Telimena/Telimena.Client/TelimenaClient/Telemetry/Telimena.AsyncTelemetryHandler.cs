@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,17 +28,19 @@ namespace TelimenaClient
             private readonly TelemetryRequestCreator requestCreator;
 
             /// <inheritdoc />
-            public async Task<TelemetryUpdateResponse> View(string viewName, Dictionary<string, object> telemetryData = null)
+            public async Task<TelemetryItem> View(string viewName, Dictionary<string, object> telemetryData = null)
             {
-                TelemetryItem unit = new TelemetryItem(viewName, TelemetryItemTypes.View, this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData, telemetryData);
-                await this.pipeline.Process(unit);
-                return await this.Report(TelemetryItemTypes.View, viewName, telemetryData);
+                TelemetryItem item = new TelemetryItem(viewName, TelemetryItemTypes.View, this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData, telemetryData);
+                await this.pipeline.Process(item).ConfigureAwait(false);
+                return item;
             }
 
             /// <inheritdoc />
-            public Task<TelemetryUpdateResponse> Event(string eventName, Dictionary<string, object> telemetryData = null)
+            public async Task<TelemetryItem> Event(string eventName, Dictionary<string, object> telemetryData = null)
             {
-                return this.Report(TelemetryItemTypes.Event, eventName, telemetryData);
+                TelemetryItem item = new TelemetryItem(eventName, TelemetryItemTypes.Event, this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData, telemetryData);
+                await this.pipeline.Process(item).ConfigureAwait(false);
+                return item;
             }
 
             /// <inheritdoc />
@@ -83,52 +84,8 @@ namespace TelimenaClient
                 }
             }
 
-            /// <summary>
-            ///     Where the telemetry begins...
-            /// </summary>
-            /// <param name="telemetryItemType"></param>
-            /// <param name="componentName"></param>
-            /// <param name="telemetryData"></param>
-            /// <param name="apiRoute"></param>
-            /// <returns></returns>
-            private async Task<TelemetryUpdateResponse> Report(TelemetryItemTypes telemetryItemType, string componentName, Dictionary<string, object> telemetryData = null)
-            {
-                TelemetryUpdateRequest request = null;
-                try
-                {
-                    TelemetryInitializeResponse result = await this.telimena.InitializeIfNeeded().ConfigureAwait(false);
-                    if (result.Exception != null)
-                    {
-                        throw result.Exception;
-                    }
-
-
-                    var item = new TelemetryItem(componentName, telemetryItemType, this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData
-                        , telemetryData);
-                    request = new TelemetryUpdateRequest(this.telimena.Properties.TelemetryKey)
-                    {
-                        UserId = this.telimena.Properties.LiveProgramInfo.UserId,
-                        SerializedTelemetryUnits = new List<string>()
-                        {
-                            this.telimena.Serializer.Serialize(item)
-                        },
-                    };
-
-                    HttpResponseMessage response  = await this.telimena.Messenger.SendPostRequest(ApiRoutes.PostTelemetryData, request).ConfigureAwait(false);
-                    return new TelemetryUpdateResponse(response);
-                }
-                catch (Exception ex)
-                {
-                    TelimenaException exception = new TelimenaException($"Error occurred while sending update [{componentName}] telemetry request to [{ApiRoutes.PostTelemetryData}]", this.telimena.Properties, ex
-                        , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), request));
-                    if (!this.telimena.Properties.SuppressAllErrors)
-                    {
-                        throw exception;
-                    }
-
-                    return new TelemetryUpdateResponse( exception );
-                }
-            }
+            
         }
+        
     }
 }

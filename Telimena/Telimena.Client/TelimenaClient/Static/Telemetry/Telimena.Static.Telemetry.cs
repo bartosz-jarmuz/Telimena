@@ -25,8 +25,7 @@ namespace TelimenaClient
                 /// <param name="eventName">Name of the event</param>
                 /// <param name="telemetryData">Custom telemetry data</param>
                 /// <returns></returns>
-                [MethodImpl(MethodImplOptions.NoInlining)]
-                public static Task<TelemetryUpdateResponse> Event(ITelimenaStartupInfo startupInfo, string eventName, Dictionary<string, object> telemetryData = null)
+                public static Task<TelemetryItem> Event(ITelimenaStartupInfo startupInfo, string eventName, Dictionary<string, object> telemetryData = null)
                 {
                     ITelimena teli = Telimena.Construct(startupInfo);
                     return teli.Telemetry.Async.Event(eventName, telemetryData);
@@ -40,8 +39,7 @@ namespace TelimenaClient
                 /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
                 /// <param name="telemetryData"></param>
                 /// <returns></returns>
-                [MethodImpl(MethodImplOptions.NoInlining)]
-                public static Task<TelemetryUpdateResponse> View(ITelimenaStartupInfo startupInfo, string viewName, Dictionary<string, object> telemetryData = null)
+                public static Task<TelemetryItem> View(ITelimenaStartupInfo startupInfo, string viewName, Dictionary<string, object> telemetryData = null)
                 {
                     ITelimena teli = Telimena.Construct(startupInfo);
                     return teli.Telemetry.Async.View(viewName, telemetryData);
