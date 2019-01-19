@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using DotNetLittleHelpers;
 using Hangfire;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
-using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -50,16 +47,14 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 return this.BadRequest("Empty telemetry key");
             }
 
-
             Program prg = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey);
             if (prg == null)
             {
                 return this.BadRequest($"Program with key [{request.TelemetryKey}] not found");
             }
 
-            TelemetryQueryResponse queryResult = new TelemetryQueryResponse();
 
-            LoadData(request, prg, queryResult);
+             TelemetryQueryResponse queryResult = TelemetryQueryResponseCreator.Create(request, prg);
 
             return this.Ok(queryResult);
         }
@@ -140,97 +135,6 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted));
         }
 
-        private static IEnumerable<IEnumerable<ITelemetryAware>> GetCollections(IEnumerable<TelemetryItemTypes> types, Program program)
-        {
-            foreach (TelemetryItemTypes telemetryItemType in types)
-            {
-                switch (telemetryItemType)
-                {
-                    case TelemetryItemTypes.Event:
-                        yield return program.Events;
-                        break;
-                    case TelemetryItemTypes.View:
-                        yield return program.Views;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
-
-        private static void LoadData(TelemetryQueryRequest request, Program program, TelemetryQueryResponse queryResult)
-        {
-            IEnumerable<IEnumerable<ITelemetryAware>> collections = GetCollections(request.TelemetryItemTypes, program);
-
-            foreach (IEnumerable<ITelemetryAware> collection in collections)
-            {
-                foreach (ITelemetryAware telemetryAwareComponent in collection.Where(cmp => request.ComponentKeys.Contains("*") || request.ComponentKeys.Contains(cmp.Name)))
-                {
-                    ProcessComponents(request, queryResult, telemetryAwareComponent);
-                }
-            }
-        }
-
-        private static void ProcessComponents(TelemetryQueryRequest request, TelemetryQueryResponse queryResult, ITelemetryAware telemetryAwareComponent)
-        {
-            if (queryResult.TelemetryAware == null)
-            {
-                queryResult.TelemetryAware = new List<TelemetryAwareComponentDto>();
-            }
-            TelemetryAwareComponentDto componentDto = new TelemetryAwareComponentDto(telemetryAwareComponent, request.PropertiesToInclude);
-            queryResult.TelemetryAware.Add(componentDto);
-
-            if (request.Granularity >= TelemetryRequestGranularity.Summaries)
-            {
-                foreach (TelemetrySummary telemetrySummary in telemetryAwareComponent.GetTelemetrySummaries())
-                {
-                    ProcessSummaries(request, telemetrySummary, componentDto);
-                }
-            }
-        }
-
-        private static void ProcessSummaries(TelemetryQueryRequest request, TelemetrySummary telemetrySummary, TelemetryAwareComponentDto componentDto)
-        {
-            if (componentDto.Summaries == null)
-            {
-                componentDto.Summaries = new List<TelemetrySummaryDto>();
-            }
-
-            TelemetrySummaryDto summaryDto = new TelemetrySummaryDto(telemetrySummary, request.PropertiesToInclude);
-            componentDto.Summaries.Add(summaryDto);
-
-            if (request.Granularity >= TelemetryRequestGranularity.Details)
-            {
-                foreach (TelemetryDetail telemetryDetail in telemetrySummary.GetTelemetryDetails())
-                {
-                    ProcessDetails(request, telemetryDetail, summaryDto);
-                }
-            }
-
-        }
-
-        private static void ProcessDetails(TelemetryQueryRequest request, TelemetryDetail telemetryDetail, TelemetrySummaryDto summaryDto)
-        {
-            if (summaryDto.Details == null)
-            {
-                summaryDto.Details = new List<TelemetryDetailDto>();
-            }
-            TelemetryDetailDto detailDto = new TelemetryDetailDto(telemetryDetail, request.PropertiesToInclude);
-            summaryDto.Details.Add(detailDto);
-
-            if (request.Granularity >= TelemetryRequestGranularity.Units)
-            {
-                if (detailDto.Units == null)
-                {
-                    detailDto.Units = new List<TelemetryUnitDto>();
-                }
-                foreach (TelemetryUnit telemetryUnit in telemetryDetail.GetTelemetryUnits())
-                {
-                    TelemetryUnitDto unit = new TelemetryUnitDto(telemetryUnit, request.PropertiesToInclude);
-                    detailDto.Units.Add(unit);
-                }
-            }
-        }
+        
     }
 }
