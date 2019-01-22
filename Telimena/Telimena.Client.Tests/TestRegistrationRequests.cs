@@ -19,28 +19,10 @@ namespace TelimenaClient.Tests
     {
         private readonly Guid testTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
 
-        public void Test_RegistrationFunc(ITelimena telimena, Func<TelemetryInitializeResponse> func, bool skipFlagExpectedValue)
-        {
-            try
-            {
-                TelemetryInitializeResponse result = func();
-                Assert.Fail("Exception expected");
-            }
-            catch (Exception e)
-            {
-                TelimenaException ex = e as TelimenaException;
-                Assert.AreEqual(1, ex.InnerExceptions.Count);
-
-                StringAssert.Contains("An error occurred while posting to [api/v1/telemetry/initialize]", ex.InnerExceptions[0].Message);
-                TelemetryInitializeRequest jObj = ex.RequestObjects[0].Value as TelemetryInitializeRequest;
-                ((Telimena) telimena).Properties.StaticProgramInfo.ThrowIfPublicPropertiesNotEqual(jObj.ProgramInfo, true);
-            }
-        }
-
         [Test]
         public void Test_InitializeRequestCreation()
         {
-            var si = new TelimenaStartupInfo(this.testTelemetryKey);
+            TelimenaStartupInfo si = new TelimenaStartupInfo(this.testTelemetryKey);
             si.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
             ITelimena telimena = Telimena.Construct(si) ;
@@ -55,12 +37,31 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_RegisterRequestCreation()
         {
-            ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(this.testTelemetryKey)) ;
+            ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(this.testTelemetryKey));
             telimena.Properties.SuppressAllErrors = false;
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
             this.Test_RegistrationFunc(telimena, () => telimena.Telemetry.Async.Initialize().GetAwaiter().GetResult(), false);
             //todo    this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync(true).GetAwaiter().GetResult(), true);
         }
+
+        public void Test_RegistrationFunc(ITelimena telimena, Func<TelemetryInitializeResponse> func, bool skipFlagExpectedValue)
+        {
+            try
+            {
+                TelemetryInitializeResponse result = func();
+                Assert.Fail("Exception expected");
+            }
+            catch (Exception e)
+            {
+                TelimenaException ex = e as TelimenaException;
+                Assert.AreEqual(1, ex.InnerExceptions.Count);
+
+                StringAssert.Contains("An error occurred while posting to [api/v1/telemetry/initialize]", ex.InnerExceptions[0].Message);
+                TelemetryInitializeRequest jObj = ex.RequestObjects[0].Value as TelemetryInitializeRequest;
+                ((Telimena)telimena).Properties.StaticProgramInfo.ThrowIfPublicPropertiesNotEqual(jObj.ProgramInfo, true);
+            }
+        }
+
 
         [Test]
         public void Test_RegisterRequestCreation_EmptyKey()
