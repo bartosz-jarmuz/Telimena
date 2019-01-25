@@ -125,7 +125,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 return this.BadRequest("Empty telemetry key");
             }
 
-            if (request.SerializedTelemetryUnits.IsNullOrEmpty())
+            if (request.SerializedTelemetryItems.IsNullOrEmpty())
             {
                 return this.BadRequest("Missing telemetry units");
             }

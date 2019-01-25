@@ -52,5 +52,11 @@ namespace TelimenaClient
         /// The action result
         /// </summary>
         public HttpResponseMessage HttpResponse { get; }
+
+        /// <summary>
+        /// Gets or sets the content.
+        /// </summary>
+        /// <value>The content.</value>
+        public string Content { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using DbIntegrationTestHelpers;
@@ -16,6 +17,7 @@ using TelimenaClient.Serializer;
 namespace Telimena.Tests
 {
     [TestFixture]
+    [SuppressMessage("ReSharper", "ConsiderUsingConfigureAwait")]
     public class TelemetryControllerHelpersTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
     {
         protected override Action SeedAction => () => TelimenaDbInitializer.SeedUsers(this.Context);
@@ -27,14 +29,7 @@ namespace Telimena.Tests
             return this.Context.AppUsers.FirstOrDefault(x => x.Guid == id);
         }
 
-        private TelemetryUpdateRequest CreateTelemetryUpdateRequest(Guid telemetryKey, ClientAppUser usr, TelemetryItem telemetryItem)
-        {
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(telemetryKey)
-            {
-                UserId = usr.Guid, SerializedTelemetryUnits = new List<string> {this.serializer.Serialize(telemetryItem)}
-            };
-            return request;
-        }
+        
 
         [Test]
         public async Task TestMissingUser()
@@ -47,7 +42,7 @@ namespace Telimena.Tests
             Program prg = (await unit.Programs.GetAsync(x => x.Name == "SomeApp")).FirstOrDefault();
             Assert.IsTrue(prg.Id > 0);
 
-            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey) {UserId = Guid.NewGuid()};
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey, Guid.NewGuid(), null);
 
             try
             {
@@ -73,7 +68,7 @@ namespace Telimena.Tests
             TelemetryItem telemetryItem = new TelemetryItem(Helpers.GetName("SomeView"), TelemetryItemTypes.View, new VersionData("1.2.3.4", "2.0.0.0")
                 , new Dictionary<string, object> {{"AKey", "AValue"}, {"AKey2", "AValue2"}});
 
-            TelemetryUpdateRequest request = this.CreateTelemetryUpdateRequest(prg.TelemetryKey, usr, telemetryItem);
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(prg.TelemetryKey, usr.Guid, new List<string>(){this.serializer.Serialize(telemetryItem)});
 
             //send
             List<TelemetrySummary> response = await TelemetryControllerHelpers.InsertData(unit, request, "127.1.1.1");
@@ -87,7 +82,7 @@ namespace Telimena.Tests
 
             //run again
             telemetryItem.Id = Guid.NewGuid();
-            request = this.CreateTelemetryUpdateRequest(prg.TelemetryKey, usr, telemetryItem);
+            request = new TelemetryUpdateRequest(prg.TelemetryKey, usr.Guid, new List<string>() { this.serializer.Serialize(telemetryItem) });
             response = await TelemetryControllerHelpers.InsertData(unit, request, "127.1.1.1");
 
             Helpers.GetProgramAndUser(this.Context, "TestApp3", "Jim Beam", out prg, out usr);
@@ -115,7 +110,7 @@ namespace Telimena.Tests
             TelemetryItem telemetryItem = new TelemetryItem(Helpers.GetName("Func1"), TelemetryItemTypes.View, new VersionData("1.2.3.4", "2.0.0.0")
                 , new Dictionary<string, object> {{"AKey", "AValue"}, {"AKey2", "AValue2"}});
 
-            TelemetryUpdateRequest request = this.CreateTelemetryUpdateRequest(apps[0].Value, usr, telemetryItem);
+            TelemetryUpdateRequest request = new TelemetryUpdateRequest(apps[0].Value, usr.Guid, new List<string>() { this.serializer.Serialize(telemetryItem) });
 
             List<TelemetrySummary> result = await TelemetryControllerHelpers.InsertData(unit, request, "127.1.1.1");
 
@@ -148,10 +143,8 @@ namespace Telimena.Tests
                 , new Dictionary<string, object> {{"AKey3", "AValue3"}, {"AKey4", "AValue4"}, {"AKey5", "AValue5"}});
 
             //run again with different user
-            request = new TelemetryUpdateRequest(apps[0].Value)
-            {
-                SerializedTelemetryUnits = new List<string> {this.serializer.Serialize(telemetryItem)}, UserId = otherUser.Guid
-            };
+            request = new TelemetryUpdateRequest(apps[0].Value, otherUser.Guid
+                , new List<string> {this.serializer.Serialize(telemetryItem)});
             result = await TelemetryControllerHelpers.InsertData(unit, request, "127.1.1.1");
 
             Helpers.AssertUpdateResponse(result, prg, otherUser, 1, Helpers.GetName("Func1"), viewId);
@@ -179,8 +172,7 @@ namespace Telimena.Tests
 
             telemetryItem = new TelemetryItem(Helpers.GetName("Func1"), TelemetryItemTypes.View, new VersionData("1.2.3.4", "2.0.0.0"), null);
 
-            request = this.CreateTelemetryUpdateRequest(apps[0].Value, usr, telemetryItem);
-
+            request = new TelemetryUpdateRequest(apps[0].Value, usr.Guid, new List<string>() { this.serializer.Serialize(telemetryItem) });
             //run again with first user
             result = await TelemetryControllerHelpers.InsertData(unit, request, "127.1.1.1");
 

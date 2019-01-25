@@ -38,8 +38,6 @@
             this.SendUpdateAppUsageButton = new System.Windows.Forms.Button();
             this.resultTextBox = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.appNameTextBox = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.userNameTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.setAppButton = new System.Windows.Forms.Button();
@@ -71,6 +69,7 @@
             this.useCurrentAppButton = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.apiKeyTextBox = new System.Windows.Forms.TextBox();
+            this.throwErrorButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -179,25 +178,9 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Result";
             // 
-            // appNameTextBox
-            // 
-            this.appNameTextBox.Location = new System.Drawing.Point(398, 9);
-            this.appNameTextBox.Name = "appNameTextBox";
-            this.appNameTextBox.Size = new System.Drawing.Size(84, 20);
-            this.appNameTextBox.TabIndex = 5;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(337, 13);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(55, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "App name";
-            // 
             // userNameTextBox
             // 
-            this.userNameTextBox.Location = new System.Drawing.Point(546, 9);
+            this.userNameTextBox.Location = new System.Drawing.Point(401, 9);
             this.userNameTextBox.Name = "userNameTextBox";
             this.userNameTextBox.Size = new System.Drawing.Size(84, 20);
             this.userNameTextBox.TabIndex = 7;
@@ -205,7 +188,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(482, 12);
+            this.label3.Location = new System.Drawing.Point(337, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(58, 13);
             this.label3.TabIndex = 6;
@@ -213,7 +196,7 @@
             // 
             // setAppButton
             // 
-            this.setAppButton.Location = new System.Drawing.Point(636, 7);
+            this.setAppButton.Location = new System.Drawing.Point(491, 7);
             this.setAppButton.Name = "setAppButton";
             this.setAppButton.Size = new System.Drawing.Size(54, 23);
             this.setAppButton.TabIndex = 5;
@@ -493,11 +476,22 @@
             this.apiKeyTextBox.Size = new System.Drawing.Size(67, 20);
             this.apiKeyTextBox.TabIndex = 11;
             // 
+            // throwErrorButton
+            // 
+            this.throwErrorButton.Location = new System.Drawing.Point(551, 7);
+            this.throwErrorButton.Name = "throwErrorButton";
+            this.throwErrorButton.Size = new System.Drawing.Size(75, 23);
+            this.throwErrorButton.TabIndex = 13;
+            this.throwErrorButton.Text = "Throw ex";
+            this.throwErrorButton.UseVisualStyleBackColor = true;
+            this.throwErrorButton.Click += new System.EventHandler(this.throwErrorButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1056, 441);
+            this.Controls.Add(this.throwErrorButton);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.apiKeyTextBox);
             this.Controls.Add(this.useCurrentAppButton);
@@ -507,8 +501,6 @@
             this.Controls.Add(this.setAppButton);
             this.Controls.Add(this.userNameTextBox);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.appNameTextBox);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
@@ -539,8 +531,6 @@
         private System.Windows.Forms.TextBox resultTextBox;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox viewNameTextBox;
-        private System.Windows.Forms.TextBox appNameTextBox;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox userNameTextBox;
         private System.Windows.Forms.Label label3;
@@ -574,6 +564,7 @@
         private System.Windows.Forms.Button sendSync_button;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox apiKeyTextBox;
+        private System.Windows.Forms.Button throwErrorButton;
     }
 }
 

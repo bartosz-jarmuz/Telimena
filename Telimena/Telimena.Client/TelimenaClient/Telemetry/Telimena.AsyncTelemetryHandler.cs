@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,12 +23,10 @@ namespace TelimenaClient
             {
                 this.telimena = telimena;
                 this.pipeline = pipeline;
-                this.requestCreator = new TelemetryRequestCreator(this.telimena.Locator.TelemetryStorageDirectory);
             }
 
             private readonly Telimena telimena;
             private readonly TelemetryProcessingPipeline pipeline;
-            private readonly TelemetryRequestCreator requestCreator;
 
             /// <inheritdoc />
             public async Task<TelemetryItem> View(string viewName, Dictionary<string, object> telemetryData = null)

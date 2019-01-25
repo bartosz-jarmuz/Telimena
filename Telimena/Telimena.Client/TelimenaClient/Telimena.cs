@@ -1,5 +1,7 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace TelimenaClient
 {
@@ -9,6 +11,8 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
+        private TelemetryBroadcaster broadcaster;
+
         /// <summary>
         ///     Creates a new instance of Telimena Client
         /// </summary>
@@ -29,7 +33,7 @@ namespace TelimenaClient
         ITelemetryModule ITelimena.Telemetry => this.telemetry;
 
         /// <inheritdoc />
-        public ITelimenaProperties Properties => this.properties;
+        public ITelimenaProperties Properties => this.propertiesInternal;
 
         /// <summary>
         ///     Creates a new instance of Telimena Client
@@ -38,15 +42,27 @@ namespace TelimenaClient
         [MethodImpl(MethodImplOptions.NoInlining)]
         private Telimena(ITelimenaStartupInfo startupInfo)
         {
-            this.properties= new TelimenaProperties(startupInfo);
+            this.propertiesInternal= new TelimenaProperties(startupInfo);
             this.Locator = new Locator(this.Properties.StaticProgramInfo);
 
             this.telemetry = new TelemetryModule(this);
             this.updates = new UpdatesModule(this);
 
-            this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.properties.StartupInfo.TelemetryApiBaseUrl});
+
+            this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.httpClient);
+            RegisterBroadcasters();
         }
 
+        private void RegisterBroadcasters()
+        {
+            var pipe = new BroadcastingPipeline();
+            pipe.Processors.Add(new StoredTelemetryFilesProvider(this.Locator.TelemetryStorageDirectory));
+            pipe.Processors.Add(new TelemetryRequestDataReader());
+            pipe.Processors.Add(new TelemetryRequestSender(this));
+            pipe.Processors.Add(new StoredTelemetryFilesRemover());
+            TelemetryBroadcaster.Instance.Initialize(pipe);
+            this.broadcaster = TelemetryBroadcaster.Instance;
+        }
     }
 }

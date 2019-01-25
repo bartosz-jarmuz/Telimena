@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -19,6 +20,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
 {
     [TestFixture]
     [Order(2)]
+    [SuppressMessage("ReSharper", "ConsiderUsingConfigureAwait")]
     public partial class _2_NonUiTests : IntegrationTestBase
     {
         internal class DtoJsonConverter : JsonConverter

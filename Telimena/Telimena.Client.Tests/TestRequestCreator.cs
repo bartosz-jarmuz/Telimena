@@ -5,8 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
+using System.Windows;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -15,77 +17,112 @@ using TelimenaClient.Serializer;
 
 namespace TelimenaClient.Tests
 {
+
+   
+
     [TestFixture]
     [SuppressMessage("ReSharper", "ConsiderUsingConfigureAwait")]
     public class TestRequestCreator
     {
-        Guid telemetryKey = Guid.Parse("cb451750-d3a1-4917-8f5f-1f978e86d064");
-        Guid userId = Guid.Parse("abcc5364-af27-4b6f-ab8b-d4f000727798");
+        Guid telemetryKey => Guid.Parse("cb451750-d3a1-4917-8f5f-1f978e86d064");
+        Guid userId => Guid.Parse("abcc5364-af27-4b6f-ab8b-d4f000727798");
+
 
         [Test]
-        public async Task ProcessItems_CreateRequest_EndToEndTest()
+        public async Task Sandbox()
         {
-            ProgramInfo program = new ProgramInfo()
+
+
+
+            //ITelimena teli;
+            //ITelimena teli2;
+
+            //Task.Run(() =>
+            //{
+            //    teli = Telimena.Construct(
+            //        new TelimenaStartupInfo(telemetryKey) { UserInfo = new UserInfo() });
+
+            //});
+
+            //await Task.Run(() =>
+            //{
+            //    teli2 = Telimena.Construct(
+            //        new TelimenaStartupInfo(telemetryKey) { UserInfo = new UserInfo() });
+
+            //});
+
+            Telimena.Construct(new TelimenaStartupInfo(Guid.Empty)).Telemetry.Async.View("");
+            Telimena.Telemetry.Async.View(new TelimenaStartupInfo(Guid.Empty), "");
+            while (true)
             {
-                Name = "TestRequestCreator",
-                PrimaryAssembly = new AssemblyInfo(this.GetType().Assembly)
-                
-            };
-
-            ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey) { SuppressAllErrors = false });
-            ((Telimena)telimena).Messenger = Helpers.GetMessenger_InitializeAndAcceptTelemetry(telimena.Properties.TelemetryKey);
-
-            TestLocator locator = GetLocatorWithCleanFolder(program);
-
-            TelemetryItem item1 = new TelemetryItem("MainView", TelemetryItemTypes.View, new VersionData("1.0", null),null);
-            TelemetryItem item2 = new TelemetryItem("MainView", TelemetryItemTypes.View, new VersionData("1.0", null), new Dictionary<string, object>()
-            {
-                {"TS", new DateTime(2001,01,02,12,14,00, DateTimeKind.Local) },
-                {"TSOffset", new DateTimeOffset(2001,01,02,12,14,00, TimeSpan.Zero) }
-            });
-
-            TelemetryItem item3 = new TelemetryItem("UserLogin", TelemetryItemTypes.Event, new VersionData("2.0", "3.2.2"), new Dictionary<string, object>()
-            {
-                {"Dec", 23.2M }
-            });
-
-
-            await TestItemsProcessing(locator, new []{item1, item2, item3});
-
-            TelemetryRequestCreator requestCreator = new TelemetryRequestCreator(locator.TelemetryStorageDirectory);
-
-            var  requestTuple = await requestCreator.Create(this.telemetryKey, this.userId);
-
-            VerifyRequest(requestTuple, item1, item2, item3);
-
-            var sender = new TelemetryRequestSender((Telimena) telimena);
-            var response = await sender.SendRequests(requestTuple.Item1, requestTuple.Item2);
-
-            Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
-            foreach (var fileInfo in requestTuple.Item2)
-            {
-                Assert.IsFalse(File.Exists(fileInfo.FullName));
+                await Task.Delay(1);
             }
         }
 
-        private static void VerifyRequest(Tuple<TelemetryUpdateRequest, List<FileInfo>> requestTuple, TelemetryItem item1, TelemetryItem item2, TelemetryItem item3)
-        {
-            TelemetryUpdateRequest request = requestTuple.Item1;
-            var files = requestTuple.Item2;
 
-            Assert.AreEqual(files.Count, request.SerializedTelemetryUnits.Count);
+        //[Test]
+        //public async Task ProcessItems_CreateRequest_EndToEndTest()
+        //{
+        //    ProgramInfo program = new ProgramInfo()
+        //    {
+        //        Name = "TestRequestCreator",
+        //        PrimaryAssembly = new AssemblyInfo(this.GetType().Assembly)
+                
+        //    };
+
+        //    ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey) { SuppressAllErrors = false });
+        //    ((Telimena)telimena).Messenger = Helpers.GetMessenger_InitializeAndAcceptTelemetry(telimena.Properties.TelemetryKey);
+
+        //    TestLocator locator = GetLocatorWithCleanFolder(program);
+
+        //    TelemetryItem item1 = new TelemetryItem("MainView", TelemetryItemTypes.View, new VersionData("1.0", null),null);
+        //    TelemetryItem item2 = new TelemetryItem("MainView", TelemetryItemTypes.View, new VersionData("1.0", null), new Dictionary<string, object>()
+        //    {
+        //        {"TS", new DateTime(2001,01,02,12,14,00, DateTimeKind.Local) },
+        //        {"TSOffset", new DateTimeOffset(2001,01,02,12,14,00, TimeSpan.Zero) }
+        //    });
+
+        //    TelemetryItem item3 = new TelemetryItem("UserLogin", TelemetryItemTypes.Event, new VersionData("2.0", "3.2.2"), new Dictionary<string, object>()
+        //    {
+        //        {"Dec", 23.2M }
+        //    });
+
+
+        //    await TestItemsProcessing(locator, new []{item1, item2, item3});
+
+        //    TelemetryRequestDataReader requestDataReader = new TelemetryRequestDataReader(locator.TelemetryStorageDirectory);
+
+        //    TelemetryBroadcastingContext storedData = await requestDataReader.GetStoredData();
+
+        //    var request = new TelemetryUpdateRequest(this.telemetryKey, this.userId, storedData.SerializedTelemetryItems);
+
+        //    VerifyRequest(request, storedData.Files, item1, item2, item3);
+
+        //    var sender = new TelemetryRequestSender((Telimena) telimena, new StoredTelemetryFilesRemover());
+        //    var response = await sender.SendRequests(storedData);
+
+        //    Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
+        //    foreach (var fileInfo in storedData.Files)
+        //    {
+        //        Assert.IsFalse(File.Exists(fileInfo.FullName));
+        //    }
+        //}
+
+        private  void VerifyRequest(TelemetryUpdateRequest request, List<FileInfo>files, TelemetryItem item1, TelemetryItem item2, TelemetryItem item3)
+        {
+            Assert.AreEqual(files.Count, request.SerializedTelemetryItems.Count);
 
             TelimenaSerializer serializer = new TelimenaSerializer();
 
             string serialized = serializer.Serialize(request);
             //deserialilzation done in the API with Json.Net
             TelemetryUpdateRequest deserialized = JsonConvert.DeserializeObject<TelemetryUpdateRequest>(serialized);
-            Assert.AreEqual(3, deserialized.SerializedTelemetryUnits.Count);
+            Assert.AreEqual(3, deserialized.SerializedTelemetryItems.Count);
 
             List<TelemetryItem> list = new List<TelemetryItem>();
-            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryUnits[0]));
-            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryUnits[1]));
-            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryUnits[2]));
+            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryItems[0]));
+            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryItems[1]));
+            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryItems[2]));
             TelemetryItem deserializedItem1 = list.Single(x => x.Id == item1.Id);
 
             deserializedItem1.ShouldBeEquivalentTo(item1);
@@ -94,6 +131,9 @@ namespace TelimenaClient.Tests
 
             list.Single(x => x.Id == item2.Id).ShouldBeEquivalentTo(item2);
             list.Single(x => x.Id == item3.Id).ShouldBeEquivalentTo(item3);
+
+            Assert.AreEqual(deserialized.TelemetryKey, this.telemetryKey);
+            Assert.AreEqual(deserialized.UserId, this.userId);
 
             foreach (var fileInfo in files)
             {

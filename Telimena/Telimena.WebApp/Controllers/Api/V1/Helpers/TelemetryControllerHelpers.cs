@@ -20,7 +20,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
         {
             List<TelemetryItem> list = new List<TelemetryItem>();
             TelimenaSerializer serializer = new TelimenaSerializer();
-            foreach (string requestSerializedTelemetryUnit in request.SerializedTelemetryUnits)
+            foreach (string requestSerializedTelemetryUnit in request.SerializedTelemetryItems)
             {
                 try
                 {

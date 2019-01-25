@@ -50,7 +50,6 @@ namespace TelimenaClient
         private TelemetryInitializeResponse initializationResponse;
         private readonly ITelemetryModule telemetry;
         private readonly IUpdatesModule updates;
-        private readonly TelimenaProperties properties;
-       
+        private readonly TelimenaProperties propertiesInternal;
     }
 }

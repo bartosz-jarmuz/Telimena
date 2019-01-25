@@ -74,6 +74,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRoutes.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="DefaultToolkitNames.cs" />
     <Compile Include="Model\FileDownloadResult.cs" />
     <Compile Include="Model\LiveProgramInfo.cs" />
+    <Compile Include="Model\TelemetryBroadcastingContext.cs" />
     <Compile Include="Model\TelemetryItem.cs" />
     <Compile Include="Model\TelemetryItemTypes.cs" />
     <Compile Include="Model\UpdateCheckResult.cs" />
@@ -102,15 +104,24 @@
     <Compile Include="TelimenaClient\Static\Telimena.Static.cs" />
     <Compile Include="TelimenaClient\Static\Updates\Telimena.Static.Updates.cs" />
     <Compile Include="TelimenaClient\Interface\Telemetry\ProcessingPipeline\ITelemetryPipelineProcessor.cs" />
+    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\BroadcastingPipelineBuilder.cs" />
+    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\StoredTelemetryFilesProvider.cs" />
+    <Compile Include="TelimenaClient\Telemetry\InMemoryTransmitter.cs" />
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\DebugLoggerPipelineProcessor.cs" />
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\PersistingPipelineProcessor.cs" />
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\SerializingPipelineProcessor.cs" />
+    <Compile Include="Model\StoredTelemetryData.cs" />
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryPipelineTransportUnit.cs" />
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryProcessingPipeline.cs" />
-    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryRequestCreator.cs" />
+    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\TelemetryRequestDataReader.cs" />
+    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\StoredTelemetryFilesRemover.cs" />
+    <Compile Include="TelimenaClient\Telemetry\SdkInternalOperationsMonitor.cs" />
+    <Compile Include="TelimenaClient\Telemetry\TelemetryBroadcaster.cs" />
+    <Compile Include="TelimenaClient\Telemetry\TelemetryBuffer.cs" />
     <Compile Include="TelimenaClient\Telemetry\TelemetryModule.cs" />
-    <Compile Include="TelimenaClient\Telemetry\TelemetryRequestSender.cs" />
+    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\TelemetryRequestSender.cs" />
     <Compile Include="TelimenaClient\Telemetry\Telimena.AsyncTelemetryHandler.cs" />
+    <Compile Include="TelimenaClient\Telemetry\Transmission.cs" />
     <Compile Include="TelimenaClient\TelimenaProperties.cs" />
     <Compile Include="TelimenaClient\Updates\Telimena.AsyncUpdatesHandler.cs" />
     <Compile Include="TelimenaClient\Telemetry\Telimena.BlockingTelemetryHandler.cs" />

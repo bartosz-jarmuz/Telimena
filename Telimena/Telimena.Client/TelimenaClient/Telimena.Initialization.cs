@@ -40,7 +40,7 @@ namespace TelimenaClient
         {
             try
             {
-                this.properties.LiveProgramInfo = new LiveProgramInfo(this.Properties.StaticProgramInfo) {UserId = response.UserId};
+                this.propertiesInternal.LiveProgramInfo = new LiveProgramInfo(this.Properties.StaticProgramInfo) {UserId = response.UserId};
 
                 Task<string> updaterNameTask = this.Messenger.SendGetRequest<string>($"{ApiRoutes.GetProgramUpdaterName(this.Properties.TelemetryKey)}");
 

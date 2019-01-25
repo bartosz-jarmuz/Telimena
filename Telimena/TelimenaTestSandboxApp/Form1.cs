@@ -25,9 +25,15 @@ namespace TelimenaTestSandboxApp
             {
                 this.teli =
                     Telimena.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text))) as Telimena;
+                this.teli2 =
+                    Telimena.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text))) as Telimena;
+                this.teli3 =
+                    Telimena.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text))) as Telimena;
             }
 
             this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
+
+           
         }
 
         private string PresentResponse(TelemetryItem response)
@@ -50,6 +56,8 @@ namespace TelimenaTestSandboxApp
 
         private ITelimena teli;
         private TelimenaHammer hammer;
+        private Telimena teli2;
+        private Telimena teli3;
 
         private async void InitializeButton_Click(object sender, EventArgs e)
         {
@@ -148,6 +156,7 @@ namespace TelimenaTestSandboxApp
 
         private void setAppButton_Click(object sender, EventArgs e)
         {
+
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
@@ -159,20 +168,6 @@ namespace TelimenaTestSandboxApp
             else
             {
                 MessageBox.Show("Api key missing, cannot run teli");
-            }
-
-            if (!string.IsNullOrEmpty(this.appNameTextBox.Text))
-            {
-                (this.teli.Properties as TelimenaProperties).StaticProgramInfo = new ProgramInfo
-                {
-                    Name = this.appNameTextBox.Text
-                    , PrimaryAssembly = new AssemblyInfo
-                    {
-                        Company = "Comp A Ny"
-                        , Name = this.appNameTextBox.Text + ".dll"
-                        , VersionData = new VersionData("1.0.0.0", "2.0.0.0")
-                    }
-                };
             }
 
             if (!string.IsNullOrEmpty(this.userNameTextBox.Text))
@@ -266,6 +261,11 @@ namespace TelimenaTestSandboxApp
         private void hammer_StopBtn_Click(object sender, EventArgs e)
         {
             this.hammer?.Stop();
+        }
+
+        private void throwErrorButton_Click(object sender, EventArgs e)
+        {
+            throw new InvalidOperationException("Manual error");
         }
     }
 
