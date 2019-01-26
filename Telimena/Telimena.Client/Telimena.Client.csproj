@@ -106,7 +106,6 @@
     <Compile Include="TelimenaClient\Interface\Telemetry\ProcessingPipeline\ITelemetryPipelineProcessor.cs" />
     <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\BroadcastingPipelineBuilder.cs" />
     <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\StoredTelemetryFilesProvider.cs" />
-    <Compile Include="TelimenaClient\Telemetry\InMemoryTransmitter.cs" />
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\DebugLoggerPipelineProcessor.cs" />
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\PersistingPipelineProcessor.cs" />
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\SerializingPipelineProcessor.cs" />
@@ -115,13 +114,11 @@
     <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryProcessingPipeline.cs" />
     <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\TelemetryRequestDataReader.cs" />
     <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\StoredTelemetryFilesRemover.cs" />
-    <Compile Include="TelimenaClient\Telemetry\SdkInternalOperationsMonitor.cs" />
     <Compile Include="TelimenaClient\Telemetry\TelemetryBroadcaster.cs" />
     <Compile Include="TelimenaClient\Telemetry\TelemetryBuffer.cs" />
     <Compile Include="TelimenaClient\Telemetry\TelemetryModule.cs" />
     <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\TelemetryRequestSender.cs" />
     <Compile Include="TelimenaClient\Telemetry\Telimena.AsyncTelemetryHandler.cs" />
-    <Compile Include="TelimenaClient\Telemetry\Transmission.cs" />
     <Compile Include="TelimenaClient\TelimenaProperties.cs" />
     <Compile Include="TelimenaClient\Updates\Telimena.AsyncUpdatesHandler.cs" />
     <Compile Include="TelimenaClient\Telemetry\Telimena.BlockingTelemetryHandler.cs" />
