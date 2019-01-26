@@ -8,7 +8,7 @@
     using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.Implementation;
 
     /// <summary>
-    /// Represents a communication channel for sending telemetry to Application Insights via HTTP/S. test
+    /// Represents a communication channel for sending telemetry to Application Insights via HTTP/S
     /// </summary>
     public sealed class ServerTelemetryChannel : ITelemetryChannel, ITelemetryModule
     {
