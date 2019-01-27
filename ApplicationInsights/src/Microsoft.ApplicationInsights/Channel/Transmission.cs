@@ -21,7 +21,10 @@
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(100);
         private static HttpClient client = new HttpClient() { Timeout = System.Threading.Timeout.InfiniteTimeSpan };
 
-        private int isSending;
+        /// <summary>
+        /// Determines if send operation is in progress
+        /// </summary>
+        protected int isSending;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Transmission"/> class.
