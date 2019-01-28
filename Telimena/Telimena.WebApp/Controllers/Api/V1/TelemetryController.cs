@@ -150,6 +150,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         
         }
 
+        [NonAction]
+
         /// <summary>
         /// Deserializes and decompress the telemetry items into a collection.
         /// </summary>
