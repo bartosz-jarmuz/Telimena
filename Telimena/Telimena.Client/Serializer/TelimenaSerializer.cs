@@ -14,25 +14,6 @@ namespace TelimenaClient.Serializer
     public class TelimenaSerializer : ITelimenaSerializer
     {
 
-        private static DataContractJsonSerializer GetDataContractJsonSerializer(Type type)
-        {
-            DataContractJsonSerializerSettings settings = new DataContractJsonSerializerSettings()
-            {
-                DateTimeFormat = new DateTimeFormat("O")
-                , UseSimpleDictionaryFormat = true
-                , DataContractSurrogate = new DateTimeDataContractSurrogate()
-                , KnownTypes = new Type[]
-                {
-                    typeof(DateTimeOffset),
-                    typeof(DateTime),
-                }
-            };
-
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(type, settings);
-            return serializer;
-        }
-
-
         /// <inheritdoc />
         public T Deserialize<T>(string stringContent)
         {
