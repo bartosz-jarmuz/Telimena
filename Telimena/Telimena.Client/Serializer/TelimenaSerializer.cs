@@ -14,6 +14,8 @@ namespace TelimenaClient.Serializer
     public class TelimenaSerializer : ITelimenaSerializer
     {
 
+
+
         /// <summary>
         /// Converts object to string
         /// </summary>

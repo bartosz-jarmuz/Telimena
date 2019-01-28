@@ -25,13 +25,13 @@ namespace Telimena.WebApp.Controllers.Developer
         [HttpPost]
         public async Task<ActionResult> GetAllPrograms()
         {
-            List<ProgramSummary> programs = await this.dashboardBase.GetAllPrograms(this.User);
+            List<ProgramSummary> programs = await this.dashboardBase.GetAllPrograms(this.User).ConfigureAwait(false);
             return this.Content(JsonConvert.SerializeObject(programs));
         }
 
         public async Task<ActionResult> GetAllProgramsSummaryCounts()
         {
-            AllProgramsSummaryData summary = await this.dashboardBase.GetAllProgramsSummaryCounts(this.User);
+            AllProgramsSummaryData summary = await this.dashboardBase.GetAllProgramsSummaryCounts(this.User).ConfigureAwait(false);
             return this.PartialView("_AllProgramsSummaryBoxes", summary);
         }
 

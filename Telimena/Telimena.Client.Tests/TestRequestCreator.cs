@@ -108,65 +108,65 @@ namespace TelimenaClient.Tests
         //    }
         //}
 
-        private  void VerifyRequest(TelemetryUpdateRequest request, List<FileInfo>files, TelemetryItem item1, TelemetryItem item2, TelemetryItem item3)
-        {
-            Assert.AreEqual(files.Count, request.SerializedTelemetryItems.Count);
+        //private  void VerifyRequest(TelemetryUpdateRequest request, List<FileInfo>files, TelemetryItem item1, TelemetryItem item2, TelemetryItem item3)
+        //{
+        //    Assert.AreEqual(files.Count, request.SerializedTelemetryItems.Count);
 
-            TelimenaSerializer serializer = new TelimenaSerializer();
+        //    TelimenaSerializer serializer = new TelimenaSerializer();
 
-            string serialized = serializer.Serialize(request);
-            //deserialilzation done in the API with Json.Net
-            TelemetryUpdateRequest deserialized = JsonConvert.DeserializeObject<TelemetryUpdateRequest>(serialized);
-            Assert.AreEqual(3, deserialized.SerializedTelemetryItems.Count);
+        //    string serialized = serializer.Serialize(request);
+        //    //deserialilzation done in the API with Json.Net
+        //    TelemetryUpdateRequest deserialized = JsonConvert.DeserializeObject<TelemetryUpdateRequest>(serialized);
+        //    Assert.AreEqual(3, deserialized.SerializedTelemetryItems.Count);
 
-            List<TelemetryItem> list = new List<TelemetryItem>();
-            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryItems[0]));
-            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryItems[1]));
-            list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryItems[2]));
-            TelemetryItem deserializedItem1 = list.Single(x => x.Id == item1.Id);
+        //    List<TelemetryItem> list = new List<TelemetryItem>();
+        //    list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryItems[0]));
+        //    list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryItems[1]));
+        //    list.Add(serializer.Deserialize<TelemetryItem>(deserialized.SerializedTelemetryItems[2]));
+        //    TelemetryItem deserializedItem1 = list.Single(x => x.Id == item1.Id);
 
-            deserializedItem1.ShouldBeEquivalentTo(item1);
-            Assert.IsInstanceOf<Guid>(deserializedItem1.Id);
-            Assert.IsInstanceOf<DateTimeOffset>(deserializedItem1.Timestamp);
+        //    deserializedItem1.ShouldBeEquivalentTo(item1);
+        //    Assert.IsInstanceOf<Guid>(deserializedItem1.Id);
+        //    Assert.IsInstanceOf<DateTimeOffset>(deserializedItem1.Timestamp);
 
-            list.Single(x => x.Id == item2.Id).ShouldBeEquivalentTo(item2);
-            list.Single(x => x.Id == item3.Id).ShouldBeEquivalentTo(item3);
+        //    list.Single(x => x.Id == item2.Id).ShouldBeEquivalentTo(item2);
+        //    list.Single(x => x.Id == item3.Id).ShouldBeEquivalentTo(item3);
 
-            Assert.AreEqual(deserialized.TelemetryKey, this.telemetryKey);
-            Assert.AreEqual(deserialized.UserId, this.userId);
+        //    Assert.AreEqual(deserialized.TelemetryKey, this.telemetryKey);
+        //    Assert.AreEqual(deserialized.UserId, this.userId);
 
-            foreach (var fileInfo in files)
-            {
-                Assert.IsTrue(list.Single(x => $"{x.Id}.json" == fileInfo.Name) != null);
-                Assert.IsTrue(File.Exists(fileInfo.FullName));
+        //    foreach (var fileInfo in files)
+        //    {
+        //        Assert.IsTrue(list.Single(x => $"{x.Id}.json" == fileInfo.Name) != null);
+        //        Assert.IsTrue(File.Exists(fileInfo.FullName));
 
-            }
-        }
+        //    }
+        //}
 
-        private static async Task TestItemsProcessing(TestLocator locator, TelemetryItem[] items)
-        {
-            Assert.AreEqual(0, locator.TelemetryStorageDirectory.GetFiles().Length);
-            TelemetryProcessingPipeline pipeline = TelemetryModule.BuildProcessingPipeline(locator);
-            for (int index = 0; index < items.Length; index++)
-            {
-                TelemetryItem telemetryItem = items[index];
-                await pipeline.Process(telemetryItem);
-                if (index == 0)
-                {
-                    FileInfo file = locator.TelemetryStorageDirectory.GetFiles().Single();
-                    Assert.AreEqual(telemetryItem.Id + ".json", file.Name);
-                    var serializer = new TelimenaSerializer();
-                    var deserialized = serializer.Deserialize<TelemetryItem>(File.ReadAllText(file.FullName));
-                    telemetryItem.ShouldBeEquivalentTo(deserialized);
-                }
-                if (index == 1)
-                {
-                    Assert.IsNotNull(locator.TelemetryStorageDirectory.GetFiles().Single(x=>x.Name == telemetryItem.Id + ".json"));
-                }
-            }
-            Assert.AreEqual(items.Length, locator.TelemetryStorageDirectory.GetFiles().Length);
+        //private static async Task TestItemsProcessing(TestLocator locator, TelemetryItem[] items)
+        //{
+        //    Assert.AreEqual(0, locator.TelemetryStorageDirectory.GetFiles().Length);
+        //    TelemetryProcessingPipeline pipeline = TelemetryModule.BuildProcessingPipeline(locator);
+        //    for (int index = 0; index < items.Length; index++)
+        //    {
+        //        TelemetryItem telemetryItem = items[index];
+        //        await pipeline.Process(telemetryItem);
+        //        if (index == 0)
+        //        {
+        //            FileInfo file = locator.TelemetryStorageDirectory.GetFiles().Single();
+        //            Assert.AreEqual(telemetryItem.Id + ".json", file.Name);
+        //            var serializer = new TelimenaSerializer();
+        //            var deserialized = serializer.Deserialize<TelemetryItem>(File.ReadAllText(file.FullName));
+        //            telemetryItem.ShouldBeEquivalentTo(deserialized);
+        //        }
+        //        if (index == 1)
+        //        {
+        //            Assert.IsNotNull(locator.TelemetryStorageDirectory.GetFiles().Single(x=>x.Name == telemetryItem.Id + ".json"));
+        //        }
+        //    }
+        //    Assert.AreEqual(items.Length, locator.TelemetryStorageDirectory.GetFiles().Length);
 
-        }
+        //}
 
         private static TestLocator GetLocatorWithCleanFolder(ProgramInfo program)
         {

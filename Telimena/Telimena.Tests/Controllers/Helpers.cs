@@ -15,6 +15,7 @@ using Moq;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Controllers.Api.V1;
+using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -23,7 +24,6 @@ using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 using TelimenaClient;
-using TelimenaClient.Serializer;
 
 namespace Telimena.Tests
 {
@@ -88,7 +88,7 @@ namespace Telimena.Tests
 
 
             TelimenaUser user = new TelimenaUser(caller + "_" + email, caller + "_" + (displayName ?? email.ToUpper()));
-           await  unit.RegisterUserAsync(user, "P@ssword", TelimenaRoles.Developer);
+           await  unit.RegisterUserAsync(user, "P@ssword", TelimenaRoles.Developer).ConfigureAwait(false);
 
             unit.Complete();
             return user;
@@ -133,17 +133,17 @@ namespace Telimena.Tests
         public static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(TelimenaContext context, int prgCount, string getName, string[] userNames, string devName = "Some Developer", string devEmail = "some@dev.dev", [CallerMemberName] string caller = "")
         {
 
-            Mock<HttpRequestContext> requestContext = await SetupUserIntoRequestContext(context, devName, devEmail);
+            Mock<HttpRequestContext> requestContext = await SetupUserIntoRequestContext(context, devName, devEmail).ConfigureAwait(false);
 
 
             ProgramsUnitOfWork unit = new ProgramsUnitOfWork(context, new TelimenaUserManager(new UserStore<TelimenaUser>(context)), new AssemblyStreamVersionReader());
 
-            ProgramsController programsController = new ProgramsController(unit, new TelimenaSerializer(), new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object) {RequestContext = requestContext.Object};
+            ProgramsController programsController = new ProgramsController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object) {RequestContext = requestContext.Object};
             TelemetryController telemetryController = new TelemetryController(new TelemetryUnitOfWork(context, new AssemblyStreamVersionReader())) ;
 
 
-           List<KeyValuePair<string, Guid>> list =  await SeedInitialPrograms(programsController,telemetryController, prgCount, GetName(getName, caller), userNames.Select(x=> GetName(x, caller)).ToList());
-            await unit.CompleteAsync();
+           List<KeyValuePair<string, Guid>> list =  await SeedInitialPrograms(programsController,telemetryController, prgCount, GetName(getName, caller), userNames.Select(x=> GetName(x, caller)).ToList()).ConfigureAwait(false);
+            await unit.CompleteAsync().ConfigureAwait(false);
             return list;
         }
 
@@ -152,7 +152,7 @@ namespace Telimena.Tests
             TelimenaUser teliUsr = context.Users.FirstOrDefault(x => x.Email == devEmail);
             if (teliUsr == null)
             {
-                teliUsr = await CreateTelimenaUser(context, devEmail, devName);
+                teliUsr = await CreateTelimenaUser(context, devEmail, devName).ConfigureAwait(false);
             }
 
             GenericIdentity identity = new GenericIdentity(teliUsr.UserName);
@@ -171,7 +171,7 @@ namespace Telimena.Tests
             for (int i = 0; i < prgCount; i++)
             {
                 string counter = i > 0 ? i.ToString() : "";
-                KeyValuePair<string, Guid> pair = await SeedProgramAsync(programsController, prgName + counter);
+                KeyValuePair<string, Guid> pair = await SeedProgramAsync(programsController, prgName + counter).ConfigureAwait(false);
 
                 foreach (string userName in enumerable)
                 {
@@ -182,7 +182,7 @@ namespace Telimena.Tests
                         ,TelimenaVersion = "1.0.0.0"
                     };
 
-                    TelemetryInitializeResponse response = await telemetryController.Initialize(request);
+                    TelemetryInitializeResponse response = await telemetryController.Initialize(request).ConfigureAwait(false);
                     if (response.Exception != null)
                     {
                         throw response.Exception;
@@ -204,7 +204,7 @@ namespace Telimena.Tests
                 TelemetryKey = Guid.NewGuid(),
                 PrimaryAssemblyFileName = programName + ".dll"
             };
-            RegisterProgramResponse response = await controller.Register(register);
+            RegisterProgramResponse response = await controller.Register(register).ConfigureAwait(false);
             if (response.Exception != null)
             {
                 throw response.Exception;

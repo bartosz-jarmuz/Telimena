@@ -19,12 +19,16 @@
         internal const string ContentEncodingHeader = "Content-Encoding";
 
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(100);
+
+        /// <summary>
+        /// The HTTP client used for the operation
+        /// </summary>
         private static HttpClient client = new HttpClient() { Timeout = System.Threading.Timeout.InfiniteTimeSpan };
 
         /// <summary>
         /// Determines if send operation is in progress
         /// </summary>
-        protected int isSending;
+        private int isSending;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Transmission"/> class.

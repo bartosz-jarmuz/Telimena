@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -25,6 +26,8 @@
     <AssemblyInfoVersionSettings>None.None.None.None</AssemblyInfoVersionSettings>
     <AssemblyInfoVersionSemVerSettings>
     </AssemblyInfoVersionSemVerSettings>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -61,7 +64,13 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Costura, Version=3.3.1.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.3.3.1\lib\net40\Costura.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,46 +87,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRoutes.cs" />
-    <Compile Include="Messages\TelemetryUpdateResponse.cs" />
-    <Compile Include="Messages\UpdateRequest.cs" />
-    <Compile Include="Messages\UpdateResponse.cs" />
-    <Compile Include="DefaultToolkitNames.cs" />
-    <Compile Include="Model\FileDownloadResult.cs" />
-    <Compile Include="Model\LiveProgramInfo.cs" />
-    <Compile Include="Model\TelemetryBroadcastingContext.cs" />
-    <Compile Include="Model\TelemetryItem.cs" />
-    <Compile Include="Model\TelemetryItemTypes.cs" />
-    <Compile Include="Model\UpdateCheckResult.cs" />
-    <Compile Include="Model\UpdatePackageData.cs" />
-    <Compile Include="Model\VersionData.cs" />
+    <Compile Include="Locator.cs" />
+    <Compile Include="Messenger\TelimenaInMemoryChannel.cs" />
+    <Compile Include="Retry\Retrier.cs" />
     <Compile Include="Serializer\DateTimeDataContractSurrogate.cs" />
-    <Compile Include="TelimenaClient\Interface\ITelimenaProperties.cs" />
+    <Compile Include="Serializer\ITelimenaSerializer.cs" />
+    <Compile Include="Serializer\PropertiesConverter.cs" />
+    <Compile Include="Serializer\TelimenaSerializer.cs" />
     <Compile Include="TelimenaClient\Interface\Updates\IAsyncUpdatesHandler.cs" />
-    <Compile Include="TelimenaClient\Interface\Telemetry\IAsyncTelemetryHandler.cs" />
-    <Compile Include="TelimenaClient\Interface\Telemetry\IBlockingTelemetryHandler.cs" />
     <Compile Include="TelimenaClient\Interface\Updates\IBlockingUpdatesHandler.cs" />
-    <Compile Include="TelimenaClient\Interface\IFluentInterface.cs" />
-    <Compile Include="TelimenaClient\Interface\Telemetry\ITelemetryModule.cs" />
     <Compile Include="TelimenaClient\Interface\Updates\IUpdatesModule.cs" />
-    <Compile Include="TelimenaClient\Interface\ITelimenaStartupInfo.cs" />
     <Compile Include="TelimenaClient\Static\Telemetry\Telimena.Static.Telemetry.cs" />
     <Compile Include="TelimenaClient\Static\Telimena.Static.cs" />
     <Compile Include="TelimenaClient\Static\Updates\Telimena.Static.Updates.cs" />
-    <Compile Include="TelimenaClient\Interface\Telemetry\ProcessingPipeline\ITelemetryPipelineProcessor.cs" />
-    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\BroadcastingPipelineBuilder.cs" />
-    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\StoredTelemetryFilesProvider.cs" />
-    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\DebugLoggerPipelineProcessor.cs" />
-    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\PersistingPipelineProcessor.cs" />
-    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\SerializingPipelineProcessor.cs" />
-    <Compile Include="Model\StoredTelemetryData.cs" />
-    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryPipelineTransportUnit.cs" />
-    <Compile Include="TelimenaClient\Telemetry\ProcessingPipeline\TelemetryProcessingPipeline.cs" />
-    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\TelemetryRequestDataReader.cs" />
-    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\StoredTelemetryFilesRemover.cs" />
-    <Compile Include="TelimenaClient\Telemetry\TelemetryBroadcaster.cs" />
-    <Compile Include="TelimenaClient\Telemetry\TelemetryBuffer.cs" />
+    <Compile Include="TelimenaClient\Telemetry\Interface\IAsyncTelemetryHandler.cs" />
+    <Compile Include="TelimenaClient\Telemetry\Interface\IBlockingTelemetryHandler.cs" />
+    <Compile Include="TelimenaClient\Telemetry\Interface\ITelemetryModule.cs" />
     <Compile Include="TelimenaClient\Telemetry\TelemetryModule.cs" />
-    <Compile Include="TelimenaClient\Telemetry\DeliveryPipeline\Processors\TelemetryRequestSender.cs" />
     <Compile Include="TelimenaClient\Telemetry\Telimena.AsyncTelemetryHandler.cs" />
     <Compile Include="TelimenaClient\TelimenaProperties.cs" />
     <Compile Include="TelimenaClient\Updates\Telimena.AsyncUpdatesHandler.cs" />
@@ -127,49 +113,53 @@
     <Compile Include="TelimenaClient\TelimenaStartupInfo.cs" />
     <Compile Include="TelimenaClient\Updates\UpdatesModule.cs" />
     <Compile Include="UpdateInstallation\UpdateInstructions.cs" />
-    <Compile Include="Utilities\Locator.cs" />
-    <Compile Include="TelimenaException.cs" />
     <Compile Include="UpdateInstallation\DefaultWpfInputReceiver.cs" />
     <Compile Include="UpdateInstallation\IInstallUpdates.cs" />
     <Compile Include="UpdateInstallation\IReceiveUserInput.cs" />
     <Compile Include="UpdateInstallation\StartInfoCreator.cs" />
     <Compile Include="UpdateInstallation\UpdateHandler.cs" />
     <Compile Include="UpdateInstallation\UpdateInstaller.cs" />
-    <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\Retry\Retrier.cs" />
-    <Compile Include="Utilities\StringCompressor.cs" />
-    <Compile Include="Utilities\TelimenaVersionReader.cs" />
-    <Compile Include="Utilities\TelimenaVersionStringComparer.cs" />
     <Compile Include="UpdateInstallation\UpdateInstructionCreator.cs" />
     <Compile Include="Messenger\ITelimenaHttpClient.cs" />
     <Compile Include="Messenger\IMessenger.cs" />
     <Compile Include="Messenger\TelimenaHttpClient.cs" />
     <Compile Include="TelimenaClient\Interface\ITelimena.cs" />
     <Compile Include="Messenger\Messenger.cs" />
-    <Compile Include="Serializer\ITelimenaSerializer.cs" />
-    <Compile Include="Messages\TelemetryInitializeRequest.cs" />
-    <Compile Include="Messages\TelemetryInitializeResponse.cs" />
-    <Compile Include="Messages\TelemetryUpdateRequest.cs" />
-    <Compile Include="Model\AssemblyInfo.cs" />
-    <Compile Include="Serializer\PropertiesConverter.cs" />
     <Compile Include="TelimenaClient\Telimena.cs" />
     <Compile Include="TelimenaClient\Telimena.InternalMembers.cs" />
-    <Compile Include="Model\ProgramInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Messages\TelimenaMessageBase.cs" />
-    <Compile Include="Model\UserInfo.cs" />
-    <Compile Include="Serializer\TelimenaSerializer.cs" />
-    <Compile Include="Utilities\VersionTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\TelimenaKey.snk">
       <Link>Properties\TelimenaKey.snk</Link>
     </None>
     <None Include="addToZip.ps1" />
+    <None Include="packages.config" />
     <None Include="Properties\Telimena.Client.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ApplicationInsights\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj">
+      <Project>{2d753566-8eca-4a34-8dc9-de0c2a55ed88}</Project>
+      <Name>Microsoft.ApplicationInsights</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telimena.Contracts\Telimena.Contracts.csproj">
+      <Project>{d2536bb2-84c5-479c-9500-c7a2b84b6779}</Project>
+      <Name>Telimena.Contracts</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>powershell -NoProfile -ExecutionPolicy RemoteSigned -file $(ProjectDir)\addToZip.ps1 -SolutionDir $(SolutionDir) -TargetPath $(TargetPath)</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\Fody.3.3.5\build\Fody.targets" Condition="Exists('..\packages\Fody.3.3.5\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.3.3.5\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.3.3.5\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.3.1\build\Costura.Fody.props'))" />
+  </Target>
 </Project>

@@ -86,6 +86,8 @@
     <Compile Include="DTO\TelemetryInfoHeaderItem.cs" />
     <Compile Include="DTO\TelemetryInfoTable.cs" />
     <Compile Include="DTO\TelemetryInfoTableHeader.cs" />
+    <Compile Include="DTO\TelemetryItem.cs" />
+    <Compile Include="DTO\TelemetryItemTypes.cs" />
     <Compile Include="DTO\TelemetryPivotTableRow.cs" />
     <Compile Include="DTO\TelemetryQuery\TelemetryAwareComponentDto.cs" />
     <Compile Include="DTO\TelemetryQuery\TelemetryDetailDto.cs" />
@@ -95,7 +97,6 @@
     <Compile Include="DTO\TelemetryQuery\TelemetrySummaryDto.cs" />
     <Compile Include="DTO\UsageDataTableResult.cs" />
     <Compile Include="DTO\UsageViewModel.cs" />
-    <Compile Include="DTO\VersionData.cs" />
     <Compile Include="Interfaces\Roles.cs" />
     <Compile Include="Messages\RegisterProgramRequest.cs" />
     <Compile Include="Messages\RegisterProgramResponse.cs" />
@@ -138,11 +139,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
-      <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
-      <Name>Telimena.Client</Name>
+    <ProjectReference Include="..\Telimena.Contracts\Telimena.Contracts.csproj">
+      <Project>{D2536BB2-84C5-479C-9500-C7A2B84B6779}</Project>
+      <Name>Telimena.Contracts</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

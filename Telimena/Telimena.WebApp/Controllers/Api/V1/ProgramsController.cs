@@ -21,7 +21,6 @@ using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using TelimenaClient;
-using TelimenaClient.Serializer;
 
 namespace Telimena.WebApp.Controllers.Api.V1
 {
@@ -36,7 +35,6 @@ namespace Telimena.WebApp.Controllers.Api.V1
     [RoutePrefix("api/v{version:apiVersion}/programs")]
     public partial class ProgramsController : ApiController
     {
-        private readonly ITelimenaSerializer serializer;
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
 
@@ -44,12 +42,10 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// New instance
         /// </summary>
         /// <param name="work"></param>
-        /// <param name="serializer"></param>
         /// <param name="fileSaver"></param>
         /// <param name="fileRetriever"></param>
-        public ProgramsController(IProgramsUnitOfWork work, ITelimenaSerializer serializer, IFileSaver fileSaver, IFileRetriever fileRetriever)
+        public ProgramsController(IProgramsUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
-            this.serializer = serializer;
             this.fileSaver = fileSaver;
             this.fileRetriever = fileRetriever;
             this.Work = work;
@@ -73,12 +69,12 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     return new RegisterProgramResponse(new BadRequestException(string.Join(", ", errors)));
                 }
 
-                if (await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey) != null)
+                if (await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false) != null)
                 {
                     return new RegisterProgramResponse(new BadRequestException($"Use different telemetry key"));
                 }
 
-                TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name);
+                TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name).ConfigureAwait(false);
                 DeveloperAccount developerAccount = user.GetDeveloperAccountsLedByUser().FirstOrDefault();
                 if (developerAccount == null)
                 {
@@ -100,9 +96,9 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
                 this.Work.Programs.Add(program);
 
-                await this.Work.CompleteAsync();
+                await this.Work.CompleteAsync().ConfigureAwait(false);
 
-                program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey);
+                program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false);
                 var url = this.Url?.Link("Default", new { Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey });
                 return new RegisterProgramResponse(program.TelemetryKey, program.DeveloperAccount.Id, url);
             }
@@ -122,7 +118,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpDelete, Route("{telemetryKey}", Name = Routes.Delete)]
         public async Task<IHttpActionResult> Delete(Guid telemetryKey)
         {
-            var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program with key {telemetryKey} does not exist");
@@ -130,7 +126,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             try
             {
                 this.Work.Programs.Remove(prg);
-                await this.Work.CompleteAsync();
+                await this.Work.CompleteAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -153,15 +149,15 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    var program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+                    var program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
                     if (program == null)
                     {
                         return this.BadRequest("Failed to find corresponding program");
                     }
 
-                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(program.Id, uploadedFile.InputStream, uploadedFile.FileName, this.fileSaver);
-                    await this.Work.CompleteAsync();
+                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(program.Id, uploadedFile.InputStream, uploadedFile.FileName, this.fileSaver).ConfigureAwait(false);
+                    await this.Work.CompleteAsync().ConfigureAwait(false);
                     return this.Ok(pkg.Id);
                 }
 
@@ -183,12 +179,12 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{telemetryKey}/packages/latest", Name = Routes.DownloadLatestProgramPackage)]
         public async Task<IHttpActionResult> DownloadLatestProgramPackage(Guid telemetryKey)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program with key [{telemetryKey}] does not exist");
             }
-            return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever);
+            return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -202,12 +198,12 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{developerName}/download/{programName}", Name =  Routes.DownloadApp)]
         public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program [{programName}] does not exist");
             }
-            return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever);
+            return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -220,7 +216,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             try
             {
-                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
                 if (program == null)
                 {
                     return new LatestVersionResponse { Error = new InvalidOperationException($"Failed to find program by Key: [{telemetryKey}]") };
@@ -252,7 +248,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{telemetryKey}/versions/count", Name = Routes.GetVersionsCount)]
         public async Task<IHttpActionResult> GetVersionsCount(Guid telemetryKey)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program key [{telemetryKey}] not found");
@@ -270,7 +266,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{telemetryKey}/updater/name", Name= Routes.GetProgramUpdaterName)]
         public async Task<HttpResponseMessage> GetProgramUpdaterName(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 throw new BadRequestException($"Program with Key [{telemetryKey}] does not exist");
@@ -293,20 +289,20 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPut, Route("{telemetryKey}/updater/set-updater/{updaterId}", Name = Routes.SetUpdater)]
         public async Task<IHttpActionResult> SetUpdater(Guid telemetryKey, Guid updaterId)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program with Key {telemetryKey} does not exist");
             }
 
-            var updater = await this.Work.UpdaterRepository.GetUpdater(updaterId);
+            var updater = await this.Work.UpdaterRepository.GetUpdater(updaterId).ConfigureAwait(false);
             if (updater == null)
             {
                 return this.BadRequest($"Updater with Unique Id {updaterId} does not exist");
             }
 
             prg.Updater = updater;
-            await this.Work.CompleteAsync();
+            await this.Work.CompleteAsync().ConfigureAwait(false);
             return this.Ok($"Updater set to {updater.InternalName}");
         }
 
@@ -323,19 +319,19 @@ namespace Telimena.WebApp.Controllers.Api.V1
             {
                 //UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
 
-                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey);
+                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey).ConfigureAwait(false);
                 if (program == null)
                 {
                     return new UpdateResponse { Exception = new BadRequestException($"Failed to find program by Id: [{requestModel.TelemetryKey}]") };
                 }
 
                 List<ProgramUpdatePackageInfo> allUpdatePackages =
-                    (await this.Work.UpdatePackages.GetAllPackagesNewerThan(requestModel.VersionData.Map(), program.Id))
+                    (await this.Work.UpdatePackages.GetAllPackagesNewerThan(requestModel.VersionData.Map(), program.Id).ConfigureAwait(false))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
 
                 List<ProgramUpdatePackageInfo> filteredPackages = ProgramsControllerHelpers.FilterPackagesSet(allUpdatePackages, requestModel);
-                string supportedToolkitVersion = await ProgramsControllerHelpers.GetMaximumSupportedToolkitVersion(this.Work, filteredPackages, program, requestModel);
-                TelimenaPackageInfo toolkitPackage = await ProgramsControllerHelpers.GetToolkitUpdateInfo(this.Work, program, requestModel, supportedToolkitVersion);
+                string supportedToolkitVersion = await ProgramsControllerHelpers.GetMaximumSupportedToolkitVersion(this.Work, filteredPackages, program, requestModel).ConfigureAwait(false);
+                TelimenaPackageInfo toolkitPackage = await ProgramsControllerHelpers.GetToolkitUpdateInfo(this.Work, program, requestModel, supportedToolkitVersion).ConfigureAwait(false);
 
                 List<UpdatePackageData> packageDataSets = new List<UpdatePackageData>();
                 foreach (ProgramUpdatePackageInfo programUpdatePackageInfo in filteredPackages)

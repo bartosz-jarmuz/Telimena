@@ -60,13 +60,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
-            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Guid == id);
+            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Guid == id).ConfigureAwait(false);
             if (toolkitData == null)
             {
                 return this.BadRequest($"Toolkit id [{id}] does not exist");
             }
 
-            byte[] bytes = await this.work.ToolkitDataRepository.GetPackage(toolkitData.Id, this.fileRetriever);
+            byte[] bytes = await this.work.ToolkitDataRepository.GetPackage(toolkitData.Id, this.fileRetriever).ConfigureAwait(false);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) };
 
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = toolkitData.TelimenaPackageInfo.ZippedFileName };
@@ -94,8 +94,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
                             $"Incorrect file. Expected {DefaultToolkitNames.TelimenaAssemblyName} or {DefaultToolkitNames.ZippedPackageName}");
                     }
                     TelimenaToolkitData pkg =
-                        await this.work.ToolkitDataRepository.StorePackageAsync(false, false, uploadedFile.InputStream, this.fileSaver);
-                    await this.work.CompleteAsync();
+                        await this.work.ToolkitDataRepository.StorePackageAsync(false, false, uploadedFile.InputStream, this.fileSaver).ConfigureAwait(false);
+                    await this.work.CompleteAsync().ConfigureAwait(false);
                     return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
                 }
 

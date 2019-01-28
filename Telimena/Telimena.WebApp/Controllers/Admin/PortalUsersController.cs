@@ -34,7 +34,7 @@ namespace Telimena.WebApp.Controllers.Admin
         [Audit]
         public async Task<ActionResult> Index()
         {
-            PortalUsersViewModel model = await this.InitializeModel();
+            PortalUsersViewModel model = await this.InitializeModel().ConfigureAwait(false);
             return this.View(model);
         }
 
@@ -42,19 +42,19 @@ namespace Telimena.WebApp.Controllers.Admin
         [HttpPost]
         public async Task<ActionResult> ToggleRoleActivation(string userId, bool activateRole, string roleName)
         {
-            TelimenaUser user = await this.userManager.FindByIdAsync(userId);
+            TelimenaUser user = await this.userManager.FindByIdAsync(userId).ConfigureAwait(false);
             try
             {
                 if (activateRole)
                 {
-                    await this.userManager.AddToRoleAsync(user.Id, roleName);
+                    await this.userManager.AddToRoleAsync(user.Id, roleName).ConfigureAwait(false);
                 }
                 else
                 {
-                    await this.userManager.RemoveFromRoleAsync(user.Id, roleName);
+                    await this.userManager.RemoveFromRoleAsync(user.Id, roleName).ConfigureAwait(false);
                 }
 
-                bool isInRole = await this.userManager.IsInRoleAsync(user.Id, roleName);
+                bool isInRole = await this.userManager.IsInRoleAsync(user.Id, roleName).ConfigureAwait(false);
                 this.logger.Error($"User [{user.UserName}] role [{roleName}] status changed. Is in role: [{isInRole}].");
                 return this.Json(isInRole);
             }
@@ -69,9 +69,9 @@ namespace Telimena.WebApp.Controllers.Admin
         [HttpPost]
         public async Task<ActionResult> ToggleUserActivation(string userId, bool isActive)
         {
-            TelimenaUser user = await this.userManager.FindByIdAsync(userId);
+            TelimenaUser user = await this.userManager.FindByIdAsync(userId).ConfigureAwait(false);
             user.IsActivated = !isActive;
-            await this.userManager.UpdateAsync(user);
+            await this.userManager.UpdateAsync(user).ConfigureAwait(false);
             this.logger.Info($"User [{user.UserName}] activation status changed to [{user.IsActivated}]");
             return this.Json(user.IsActivated);
         }
@@ -79,11 +79,11 @@ namespace Telimena.WebApp.Controllers.Admin
         private async Task<PortalUsersViewModel> InitializeModel()
         {
             PortalUsersViewModel model = new PortalUsersViewModel();
-            List<TelimenaUser> users = await this.userManager.Users.ToListAsync();
+            List<TelimenaUser> users = await this.userManager.Users.ToListAsync().ConfigureAwait(false);
             foreach (TelimenaUser telimenaUser in users)
             {
                 TelimenaUserViewModel userViewModel = Mapper.Map<TelimenaUserViewModel>(telimenaUser);
-                userViewModel.RoleNames = await this.userManager.GetRolesAsync(telimenaUser.Id);
+                userViewModel.RoleNames = await this.userManager.GetRolesAsync(telimenaUser.Id).ConfigureAwait(false);
                 userViewModel.DeveloperAccountsLed = telimenaUser.GetDeveloperAccountsLedByUser().Select(x => x.Name);
                 model.Users.Add(userViewModel);
             }

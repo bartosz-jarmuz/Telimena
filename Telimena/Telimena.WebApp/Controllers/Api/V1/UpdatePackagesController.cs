@@ -61,14 +61,14 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
-            ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id);
+            ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id).ConfigureAwait(false);
 
             if (packageInfo == null)
             {
                 return this.BadRequest($"Program Update Package [{id}] does not exist!");
             }
 
-            byte[] bytes = await this.work.UpdatePackages.GetPackage(id, this.FileRetriever);
+            byte[] bytes = await this.work.UpdatePackages.GetPackage(id, this.FileRetriever).ConfigureAwait(false);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) };
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = packageInfo.FileName };
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
@@ -91,10 +91,10 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey);
+                    Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false);
                     ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, uploadedFile.FileName, uploadedFile.InputStream
-                        , request.ToolkitVersionUsed, this.fileSaver);
-                    await this.work.CompleteAsync();
+                        , request.ToolkitVersionUsed, this.fileSaver).ConfigureAwait(false);
+                    await this.work.CompleteAsync().ConfigureAwait(false);
                     return this.Ok(pkg.Id);
                 }
 
@@ -116,9 +116,9 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPut, Route("{packageId}/is-beta/{isBeta}", Name = Routes.ToggleBetaSetting)]
         public async Task<bool> ToggleBetaSetting(Guid packageId, bool isBeta)
         {
-            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == packageId);
+            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == packageId).ConfigureAwait(false);
             pkg.IsBeta = isBeta;
-            await this.work.CompleteAsync();
+            await this.work.CompleteAsync().ConfigureAwait(false);
             return pkg.IsBeta;
         }
 

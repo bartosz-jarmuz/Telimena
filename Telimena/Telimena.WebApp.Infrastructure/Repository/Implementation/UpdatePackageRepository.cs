@@ -35,12 +35,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string packageName, Stream fileStream, string supportedToolkitVersion, IFileSaver fileSaver)
         {
-            string actualVersion = await this.streamVersionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  true);
+            string actualVersion = await this.streamVersionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  true).ConfigureAwait(false);
             fileStream.Position = 0;
 
-            string actualToolkitVersion = await this.streamVersionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, false);
+            string actualToolkitVersion = await this.streamVersionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, false).ConfigureAwait(false);
             fileStream.Position = 0;
-            fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream);
+            fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream).ConfigureAwait(false);
 
             if (actualToolkitVersion != null)
             {
@@ -53,26 +53,26 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 , new ArgumentException($"There is no toolkit package with version [{supportedToolkitVersion}]"));
 
             ProgramUpdatePackageInfo pkg = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == program.Id
-                                                                                                            && x.Version == actualVersion
-                                                                                                            && x.SupportedToolkitVersion == supportedToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+                                                                                                && x.Version == actualVersion
+                                                                                                && x.SupportedToolkitVersion == supportedToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
             if (pkg == null)
             {
                 pkg = new ProgramUpdatePackageInfo(packageName, program.Id, actualVersion, fileStream.Length, supportedToolkitVersion);
                 this.TelimenaContext.UpdatePackages.Add(pkg);
             }
 
-            await fileSaver.SaveFile(pkg, fileStream, this.containerName);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
 
             return pkg;
         }
 
         public async Task<byte[]> GetPackage(Guid packageId, IFileRetriever fileRetriever)
         {
-            ProgramUpdatePackageInfo pkg = await this.GetUpdatePackageInfo(packageId);
+            ProgramUpdatePackageInfo pkg = await this.GetUpdatePackageInfo(packageId).ConfigureAwait(false);
 
             if (pkg != null)
             {
-                return await fileRetriever.GetFile(pkg, this.containerName);
+                return await fileRetriever.GetFile(pkg, this.containerName).ConfigureAwait(false);
             }
 
             return null;
@@ -85,11 +85,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<List<ProgramUpdatePackageInfo>> GetAllPackagesNewerThan(Core.VersionData versionData, int programId)
         {
-            var program = await this.TelimenaContext.Programs.SingleOrDefaultAsync(x => x.Id == programId);
-            List<ProgramUpdatePackageInfo> packages = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
+            var program = await this.TelimenaContext.Programs.SingleOrDefaultAsync(x => x.Id == programId).ConfigureAwait(false);
+            List<ProgramUpdatePackageInfo> packages = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync().ConfigureAwait(false);
 
             var currentVersion = program.DetermineProgramVersion(versionData);
-            var newerOnes = packages.Where(x => x.Version.IsNewerVersionThan(currentVersion)).OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id);
+            var newerOnes = packages.Where(x => TelimenaClient.Extensions.IsNewerVersionThan(x.Version, currentVersion)).OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id);
             List<ProgramUpdatePackageInfo> uniquePackages = this.GetUniquePackages(newerOnes);
             return uniquePackages;
         }

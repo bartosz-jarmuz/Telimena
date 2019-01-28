@@ -43,7 +43,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{developerId}/programs", Name = Routes.GetPrograms)]
         public async Task<IEnumerable<Program>> GetPrograms(Guid developerId)
         {
-            return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Guid == developerId);
+            return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Guid == developerId).ConfigureAwait(false);
         }
     }
 }

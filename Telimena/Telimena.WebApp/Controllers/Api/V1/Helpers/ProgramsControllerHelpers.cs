@@ -84,14 +84,14 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
                 //no updates now, so figure out what version is supported by the client already
                 var version = program.DetermineProgramVersion(updateRequest.VersionData.Map());
                 ProgramUpdatePackageInfo previousPackage =
-                    await unitOfWork.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == version);
+                    await unitOfWork.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == version).ConfigureAwait(false);
                 if (previousPackage != null)
                 {
                     maxVersionInPackages = previousPackage.SupportedToolkitVersion;
                 }
                 else
                 {
-                    maxVersionInPackages = (await unitOfWork.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id)).SupportedToolkitVersion;
+                    maxVersionInPackages = (await unitOfWork.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id).ConfigureAwait(false)).SupportedToolkitVersion;
                 }
             }
 
@@ -108,7 +108,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             ObjectValidator.Validate(() => Version.TryParse(request.ToolkitVersion, out _)
                 , new ArgumentException($"[{request.ToolkitVersion}] is not a valid version string"));
 
-            List<TelimenaPackageInfo> packages = (await unitOfWork.ToolkitData.GetPackagesNewerThan(request.ToolkitVersion))
+            List<TelimenaPackageInfo> packages = (await unitOfWork.ToolkitData.GetPackagesNewerThan(request.ToolkitVersion).ConfigureAwait(false))
                 .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
 
             if (!request.AcceptBeta)
@@ -147,9 +147,9 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 
         public static async Task<IHttpActionResult> GetDownloadLatestProgramPackageResponse(IProgramsUnitOfWork unitOfWork, int programId, IFileRetriever fileRetriever)
         {
-            ProgramPackageInfo packageInfo = await unitOfWork.ProgramPackages.GetLatestProgramPackageInfo(programId);
+            ProgramPackageInfo packageInfo = await unitOfWork.ProgramPackages.GetLatestProgramPackageInfo(programId).ConfigureAwait(false);
 
-            byte[] bytes = await unitOfWork.ProgramPackages.GetPackage(packageInfo.Id, fileRetriever);
+            byte[] bytes = await unitOfWork.ProgramPackages.GetPackage(packageInfo.Id, fileRetriever).ConfigureAwait(false);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) };
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = packageInfo.FileName };
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");

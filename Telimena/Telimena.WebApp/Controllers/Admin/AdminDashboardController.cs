@@ -44,7 +44,7 @@ namespace Telimena.WebApp.Controllers.Admin
         [HttpPost]
         public async Task<ActionResult> GetAllPrograms()
         {
-            List<ProgramSummary> programs = await this.dashboardBase.GetAllPrograms(this.User);
+            List<ProgramSummary> programs = await this.dashboardBase.GetAllPrograms(this.User).ConfigureAwait(false);
             return this.Content(JsonConvert.SerializeObject(programs));
         }
 
@@ -54,14 +54,14 @@ namespace Telimena.WebApp.Controllers.Admin
             List<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending)).ToList();
 
 
-            var totalCount = await this.auditingContext.AuditRecords.CountAsync();
+            var totalCount = await this.auditingContext.AuditRecords.CountAsync().ConfigureAwait(false);
             var query = this.auditingContext.AuditRecords.AsQueryable();
             var take = request.Length;
             if (take == -1)
             {
                 take = totalCount;
             }
-            List<Audit> data = await query.OrderByMany(sorts).Skip(request.Start).Take(take).ToListAsync();
+            List<Audit> data = await query.OrderByMany(sorts).Skip(request.Start).Take(take).ToListAsync().ConfigureAwait(false);
 
             DataTablesResponse response = DataTablesResponse.Create(request, totalCount, totalCount, data);
 
@@ -96,13 +96,13 @@ namespace Telimena.WebApp.Controllers.Admin
 
         public async Task<ActionResult> GetAllProgramsSummaryCounts()
         {
-            AllProgramsSummaryData summary = await this.dashboardBase.GetAllProgramsSummaryCounts(this.User);
+            AllProgramsSummaryData summary = await this.dashboardBase.GetAllProgramsSummaryCounts(this.User).ConfigureAwait(false);
             return this.PartialView("_AllProgramsSummaryBoxes", summary);
         }
 
         public async Task<ActionResult> GetPortalSummary()
         {
-            PortalSummaryData summary = await this.unitOfWork.GetPortalSummary();
+            PortalSummaryData summary = await this.unitOfWork.GetPortalSummary().ConfigureAwait(false);
             return this.PartialView("_PortalSummaryBoxes", summary);
         }
 

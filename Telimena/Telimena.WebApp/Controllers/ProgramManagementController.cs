@@ -27,7 +27,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -45,12 +45,12 @@ namespace Telimena.WebApp.Controllers
             model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) +
                                        this.Url.LatestApiUrl(ProgramsController.Routes.DownloadApp, new {developerName = program.DeveloperAccount.Name, programName = model.ProgramName});
 
-            List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(program.Id);
+            List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(program.Id).ConfigureAwait(false);
             model.UpdatePackages = packages;
 
-            model.ProgramPackageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(program.Id);
+            model.ProgramPackageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(program.Id).ConfigureAwait(false);
 
-            var publicUpdaters = await this.Work.UpdaterRepository.GetPublicUpdaters();
+            var publicUpdaters = await this.Work.UpdaterRepository.GetPublicUpdaters().ConfigureAwait(false);
             model.UpdatersSelectList = new List<SelectListItem>();
             foreach (Updater publicUpdater in publicUpdaters)
             {

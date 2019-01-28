@@ -79,7 +79,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
             else
             {
-                packages = (await this.TelimenaContext.ToolkitPackages.ToListAsync()).Where(x => x.Version.IsNewerVersionThan(version))
+                packages = (await this.TelimenaContext.ToolkitPackages.ToListAsync().ConfigureAwait(false)).Where(x => TelimenaClient.Extensions.IsNewerVersionThan(x.Version, version))
                 .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x => x.Id).ToList();
             }
 

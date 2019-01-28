@@ -13,6 +13,13 @@ namespace Microsoft.ApplicationInsights.Channel
     using Extensibility.Implementation;
     using Extensibility.Implementation.Tracing;
 
+    internal class DeliverySettings
+    {
+        public bool AppInsightsEndpointEnabled = false;
+
+        public Uri TelimenaEndpoint { get; set; }
+    }
+
     /// <summary>
     /// A transmitter that will immediately send telemetry over HTTP. 
     /// Telemetry items are being sent when Flush is called, or when the buffer is full (An OnFull "event" is raised) or every 30 seconds. 
@@ -20,6 +27,7 @@ namespace Microsoft.ApplicationInsights.Channel
     internal class InMemoryTransmitter : IDisposable
     {
         private readonly TelemetryBuffer buffer;
+        internal DeliverySettings DeliverySettings { get; }
 
         /// <summary>
         /// A lock object to serialize the sending calls from Flush, OnFull event and the Runner.  
@@ -35,7 +43,12 @@ namespace Microsoft.ApplicationInsights.Channel
 
         private TimeSpan sendingInterval = TimeSpan.FromSeconds(30);
         private Uri endpointAddress = new Uri(Constants.TelemetryServiceEndpoint);
-                
+
+        internal InMemoryTransmitter(TelemetryBuffer buffer, DeliverySettings deliverySettings) : this(buffer)
+        {
+            this.DeliverySettings = deliverySettings;
+        }
+
         internal InMemoryTransmitter(TelemetryBuffer buffer)
         {
             this.buffer = buffer;
@@ -148,7 +161,7 @@ namespace Microsoft.ApplicationInsights.Channel
         /// <summary>
         /// Serializes a list of telemetry items and sends them.
         /// </summary>
-        private Task Send(IEnumerable<ITelemetry> telemetryItems, TimeSpan timeout)
+        private async Task Send(IEnumerable<ITelemetry> telemetryItems, TimeSpan timeout)
         {
             byte[] data = null;
 
@@ -160,12 +173,20 @@ namespace Microsoft.ApplicationInsights.Channel
             if (data == null || data.Length == 0)
             {
                 CoreEventSource.Log.LogVerbose("No Telemetry Items passed to Enqueue");
-                return Task.FromResult<object>(null);
+                return;
             }
 
-            var transmission = new Transmission(this.endpointAddress, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
+            if (this.DeliverySettings == null || this.DeliverySettings.AppInsightsEndpointEnabled)
+            {
+                var transmission = new Transmission(this.endpointAddress, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
+                await transmission.SendAsync();
+            }
+            if (this.DeliverySettings != null)
+            {
+                var teliTransmission = new Transmission(this.DeliverySettings.TelimenaEndpoint, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
+                await teliTransmission.SendAsync();
+            }
 
-            return transmission.SendAsync();
         }
 
         private void Dispose(bool disposing)

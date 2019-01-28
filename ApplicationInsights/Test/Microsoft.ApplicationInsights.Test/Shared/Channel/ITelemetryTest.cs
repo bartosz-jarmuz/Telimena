@@ -1,4 +1,6 @@
-﻿namespace Microsoft.ApplicationInsights.Channel
+﻿using Microsoft.ApplicationInsights.Extensibility.Implementation.External;
+
+namespace Microsoft.ApplicationInsights.Channel
 {
     using System;
     using System.Linq;

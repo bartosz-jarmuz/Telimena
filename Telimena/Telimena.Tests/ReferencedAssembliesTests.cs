@@ -23,7 +23,7 @@ namespace Telimena.Tests
         [Test]
         public async Task TestReferencedAssemblies_Add()
         {
-            await Helpers.SeedInitialPrograms(this.Context, 4, "TestApp", new[] { "Johnny Walker" });
+            await Helpers.SeedInitialPrograms(this.Context, 4, "TestApp", new[] { "Johnny Walker" }).ConfigureAwait(false);
 
             Helpers.AddHelperAssemblies(this.Context, 2, "TestApp");
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Johnny Walker", out Program prg, out ClientAppUser usr);
@@ -38,7 +38,7 @@ namespace Telimena.Tests
         [Test]
         public async Task TestReferencedAssembliesAddRemove()
         {
-            await Helpers.SeedInitialPrograms(this.Context, 4, "TestApp", new[] { "NewGuy" });
+            await Helpers.SeedInitialPrograms(this.Context, 4, "TestApp", new[] { "NewGuy" }).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestApp", "NewGuy", out Program prg, out ClientAppUser usr);
 
             prg.ProgramAssemblies.Add(new ProgramAssembly { Name = "Helper1" });

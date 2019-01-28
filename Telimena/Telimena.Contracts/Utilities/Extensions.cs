@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace TelimenaClient
 {
-    internal static class Extensions
+    public static class Extensions
     {
         public static bool IsDirectoryWritable(this DirectoryInfo dir, bool throwIfFails = false)
         {

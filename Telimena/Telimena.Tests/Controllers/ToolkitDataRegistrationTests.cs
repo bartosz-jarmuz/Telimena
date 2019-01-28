@@ -32,8 +32,8 @@ namespace Telimena.Tests
 
             TelemetryController sut = new TelemetryController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
-                var apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
-                var apps2 = await Helpers.SeedInitialPrograms(this.Context, 1, "OtherProg", new string[0]);
+                var apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]).ConfigureAwait(false);
+                var apps2 = await Helpers.SeedInitialPrograms(this.Context, 1, "OtherProg", new string[0]).ConfigureAwait(false);
 
             TelemetryInitializeRequest request = new TelemetryInitializeRequest(apps[0].Value)
 
@@ -48,7 +48,7 @@ namespace Telimena.Tests
                 new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.0.0.1", "3.0.0")}
             };
 
-            await sut.Initialize(request);
+            await sut.Initialize(request).ConfigureAwait(false);
 
             TelimenaToolkitData toolkitData = unit.ToolkitData.Single();
             Assert.AreEqual("1.3.0.0", toolkitData.Version);
@@ -67,7 +67,7 @@ namespace Telimena.Tests
                 UserInfo = userInfo
             };
 
-            await sut.Initialize(request);
+            await sut.Initialize(request).ConfigureAwait(false);
 
             toolkitData = unit.ToolkitData.Single();
             Assert.AreEqual("1.3.0.0", toolkitData.Version);
@@ -80,7 +80,7 @@ namespace Telimena.Tests
             //now a new version of an assembly will use the same toolkit version
             request.ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: new VersionData("3.0.0", "4.0.0"));
 
-            await sut.Initialize(request);
+            await sut.Initialize(request).ConfigureAwait(false);
 
             toolkitData = unit.ToolkitData.Single();
             Assert.AreEqual("1.3.0.0", toolkitData.Version);
@@ -94,7 +94,7 @@ namespace Telimena.Tests
             request.ProgramInfo = Helpers.GetProgramInfo(Helpers.GetName("OtherProg"), version: new VersionData("4.0.0", "5.0.0"));
             request.TelimenaVersion = "4.5.0.0";
 
-            await sut.Initialize(request);
+            await sut.Initialize(request).ConfigureAwait(false);
 
             toolkitData = unit.ToolkitData.Single(x => x.Id == 1);
             TelimenaToolkitData newToolkitData = unit.ToolkitData.Single(x => x.Id == 2);

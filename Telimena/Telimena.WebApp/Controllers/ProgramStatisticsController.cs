@@ -36,7 +36,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -52,7 +52,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> PivotTable(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -68,7 +68,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<JsonResult> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
         {
-            var result = await this.Work.GetPivotTableData(type, telemetryKey);
+            var result = await this.Work.GetPivotTableData(type, telemetryKey).ConfigureAwait(false);
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -78,7 +78,7 @@ namespace Telimena.WebApp.Controllers
         {
             IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
 
-            UsageDataTableResult result = await this.Work.GetProgramViewsUsageData(telemetryKey, request.Start, request.Length, sorts);
+            UsageDataTableResult result = await this.Work.GetProgramViewsUsageData(telemetryKey, request.Start, request.Length, sorts).ConfigureAwait(false);
 
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
 

@@ -72,7 +72,7 @@ namespace TelimenaTestSandboxApp
                 return;
             }
 
-            TelemetryInitializeResponse response = await this.teli.Telemetry.Async.Initialize();
+            TelemetryInitializeResponse response = await this.teli.Telemetry.Async.Initialize().ConfigureAwait(true);
 
             this.resultTextBox.Text += this.teli.Properties.StaticProgramInfo.Name + " - " +
                                        this.PresentResponse(response) + Environment.NewLine;
@@ -80,19 +80,26 @@ namespace TelimenaTestSandboxApp
 
         private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
         {
-            TelemetryItem result;
+            TelemetryItem result = new TelemetryItem();
             Stopwatch sw = Stopwatch.StartNew();
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
-                result = await this.teli.Telemetry.Async.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
-                    ? null
-                    : this.viewNameTextBox.Text);
+                var rand = new Random();
+
+                for (int index = 0; index < rand.Next(40,140); index++)
+                {
+                    result = await this.teli.Telemetry.Async.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
+                        ? null
+                        : this.viewNameTextBox.Text).ConfigureAwait(true);
+                }
+                   
+                
                 sw.Stop();
             }
             else
             {
-                result = await this.teli.Telemetry.Async.View("DefaultView");
+                result = await this.teli.Telemetry.Async.View("DefaultView").ConfigureAwait(true);
                 sw.Stop();
             }
 
@@ -132,18 +139,22 @@ namespace TelimenaTestSandboxApp
 
         private async void checkForUpdateButton_Click(object sender, EventArgs e)
         {
-            var response = await this.teli.Updates.Async.CheckForUpdates();
+            var response = await this.teli.Updates.Async.CheckForUpdates().ConfigureAwait(true);
             this.UpdateText(this.PresentResponse(response));
         }
 
         private async void handleUpdatesButton_Click(object sender, EventArgs e)
         {
+
+
+
+            throw new InvalidOperationException("I wanted this");
             this.UpdateText("Handling updates...");
             var suppressAllErrors = this.teli.Properties.SuppressAllErrors;
             this.teli.Properties.SuppressAllErrors = false;
             try
             {
-                await this.teli.Updates.Async.HandleUpdates(false);
+                await this.teli.Updates.Async.HandleUpdates(false).ConfigureAwait(true);
             }
             catch (Exception ex)
             {
@@ -156,6 +167,7 @@ namespace TelimenaTestSandboxApp
 
         private void setAppButton_Click(object sender, EventArgs e)
         {
+           
 
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
@@ -218,12 +230,12 @@ namespace TelimenaTestSandboxApp
             if (!string.IsNullOrEmpty(this.static_viewNameTextBox.Text))
             {
                 result = await Telimena.Telemetry.Async.View(new TelimenaStartupInfo(key)
-                    , string.IsNullOrEmpty(this.static_viewNameTextBox.Text) ? null : this.static_viewNameTextBox.Text);
+                    , string.IsNullOrEmpty(this.static_viewNameTextBox.Text) ? null : this.static_viewNameTextBox.Text).ConfigureAwait(true);
                 sw.Stop();
             }
             else
             {
-                result = await Telimena.Telemetry.Async.View(new TelimenaStartupInfo(key), "No Name");
+                result = await Telimena.Telemetry.Async.View(new TelimenaStartupInfo(key), "No Name").ConfigureAwait(true);
                 sw.Stop();
             }
 
@@ -255,7 +267,7 @@ namespace TelimenaTestSandboxApp
                 , Convert.ToInt32(this.hammer_delayMinTextBox.Text), Convert.ToInt32(this.hammer_delayMaxTextBox.Text)
                 , Convert.ToInt32(this.hammer_DurationTextBox.Text), this.UpdateText);
 
-            await this.hammer.Hit();
+            await this.hammer.Hit().ConfigureAwait(true);
         }
 
         private void hammer_StopBtn_Click(object sender, EventArgs e)

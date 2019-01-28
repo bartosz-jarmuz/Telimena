@@ -46,7 +46,7 @@ namespace Telimena.Tests
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
 
             TelemetryController sut = new TelemetryController(unit);
-            TelemetryInitializeResponse response = await sut.Initialize(request);
+            TelemetryInitializeResponse response = await sut.Initialize(request).ConfigureAwait(false);
             Assert.IsTrue(response.Exception.Message.Contains($"Program [{request.TelemetryKey}] is null"));
         }
 
@@ -57,7 +57,7 @@ namespace Telimena.Tests
             TelemetryController sut = new TelemetryController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
-            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 4, "TestProg", new[] { "NewGuy" });
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 4, "TestProg", new[] { "NewGuy" }).ConfigureAwait(false);
 
             TelemetryInitializeRequest request = new TelemetryInitializeRequest(apps[0].Value)
             {
@@ -70,7 +70,7 @@ namespace Telimena.Tests
                 new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.0.0.1", "2.0.0.0")}
             };
 
-            TelemetryInitializeResponse response = await sut.Initialize(request);
+            TelemetryInitializeResponse response = await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 2);
             Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
@@ -85,7 +85,7 @@ namespace Telimena.Tests
             int firstVersionId = prg.PrimaryAssembly.GetLatestVersion().Id;
 
             //second time
-            response = await  sut.Initialize(request);
+            response = await  sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 3);
             Assert.AreEqual(1, prg.PrimaryAssembly.Versions.Count);
@@ -100,7 +100,7 @@ namespace Telimena.Tests
                 TelimenaVersion = "1.0.0.0",
                 UserInfo = userInfo
             };
-            response = await sut.Initialize(request);
+            response = await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 4);
             Assert.AreEqual("2.0.0.0", prg.PrimaryAssembly.GetLatestVersion().AssemblyVersion);
@@ -120,7 +120,7 @@ namespace Telimena.Tests
                 TelimenaVersion = "1.0.0.0",
                 UserInfo = userInfo
             };
-            response = await sut.Initialize(request);
+            response = await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 5);
             Assert.AreEqual(latestId, prg.PrimaryAssembly.GetLatestVersion().Id);
@@ -135,7 +135,7 @@ namespace Telimena.Tests
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0] );
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0] ).ConfigureAwait(false);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
             TelemetryInitializeRequest request = new TelemetryInitializeRequest(apps[0].Value)
@@ -148,7 +148,7 @@ namespace Telimena.Tests
             {
                 new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.0.0.1", "2.0.0.0")}
             };
-            TelemetryInitializeResponse response = await sut.Initialize(request);
+            TelemetryInitializeResponse response = await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 1);
             Assert.AreEqual(2, prg.ProgramAssemblies.Count);
@@ -162,7 +162,7 @@ namespace Telimena.Tests
             {
                 new AssemblyInfo {Name = "Helper2_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.0.2.2", "2.0.0.0")}
             };
-            response = await sut.Initialize(request);
+            response = await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 2);
             Assert.AreEqual(3, prg.ProgramAssemblies.Count);
@@ -185,7 +185,7 @@ namespace Telimena.Tests
             {
                 new AssemblyInfo {Name = "Helper_" + Helpers.GetName("TestProg") + ".dll", VersionData = new VersionData("0.3.0.1", "2.0.0.0")} //newer version of helper!
             };
-            response = await sut.Initialize(request);
+            response = await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 3);
 
@@ -206,7 +206,7 @@ namespace Telimena.Tests
                 TelimenaVersion = "1.0.0.0",
                 UserInfo = userInfo
             };
-            response =  await sut.Initialize(request);
+            response =  await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out prg, out usr);
             Helpers.AssertRegistrationResponse(response, prg, usr, 4);
             Assert.AreEqual(3, prg.ProgramAssemblies.Count);
@@ -225,7 +225,7 @@ namespace Telimena.Tests
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]).ConfigureAwait(false);
 
             UserInfo oldGuyUserInfo = Helpers.GetUserInfo(Helpers.GetName("OldGuy"));
             UserInfo newGuyUserInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
@@ -243,11 +243,11 @@ namespace Telimena.Tests
                 UserInfo = newGuyUserInfo
             };
 
-            TelemetryInitializeResponse response = await sut.Initialize(oldGuyRequest);
-            await sut.Initialize(newGuyRequest);
-            await sut.Initialize(oldGuyRequest);
-            await sut.Initialize(newGuyRequest);
-            await sut.Initialize(oldGuyRequest);
+            TelemetryInitializeResponse response = await sut.Initialize(oldGuyRequest).ConfigureAwait(false);
+            await sut.Initialize(newGuyRequest).ConfigureAwait(false);
+            await sut.Initialize(oldGuyRequest).ConfigureAwait(false);
+            await sut.Initialize(newGuyRequest).ConfigureAwait(false);
+            await sut.Initialize(oldGuyRequest).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
 
             Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
@@ -263,7 +263,7 @@ namespace Telimena.Tests
             TelemetryController sut;
             TelemetryInitializeRequest request = null;
             UserInfo userInfo;
-            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]).ConfigureAwait(false);
 
             for (int i = 0; i <= 2; i++)
             {
@@ -281,7 +281,7 @@ namespace Telimena.Tests
                     UserInfo = userInfo
                 };
 
-                TelemetryInitializeResponse response = await sut.Initialize(request);
+                TelemetryInitializeResponse response = await sut.Initialize(request).ConfigureAwait(false);
                 Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
 
                 Assert.AreEqual("1.2.3.4", usr.IpAddresses.Single());
@@ -295,7 +295,7 @@ namespace Telimena.Tests
             userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
 
 
-            await sut.Initialize(request);
+            await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program _, out ClientAppUser usr2);
 
             Assert.AreEqual("1.2.3.4", usr2.IpAddresses[0]);
@@ -309,8 +309,8 @@ namespace Telimena.Tests
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
             UserInfo userInfo = Helpers.GetUserInfo(Helpers.GetName("NewGuy"));
-            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]);
-            List<KeyValuePair<string, Guid>> apps2 = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg2", new string[0]);
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg", new string[0]).ConfigureAwait(false);
+            List<KeyValuePair<string, Guid>> apps2 = await Helpers.SeedInitialPrograms(this.Context, 1, "TestProg2", new string[0]).ConfigureAwait(false);
 
 
             TelemetryInitializeRequest request = new TelemetryInitializeRequest(apps[0].Value)
@@ -319,7 +319,7 @@ namespace Telimena.Tests
                 TelimenaVersion = "1.0.0.0",
                 UserInfo = userInfo
             };
-            TelemetryInitializeResponse response = await sut.Initialize(request);
+            TelemetryInitializeResponse response = await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestProg", "NewGuy", out Program prg, out ClientAppUser usr);
 
             Assert.IsTrue(prg.Id > 0 && usr.Id > 0);
@@ -337,8 +337,8 @@ namespace Telimena.Tests
             //now second app for same user
             request = new TelemetryInitializeRequest(apps2[0].Value) { ProgramInfo = Helpers.GetProgramInfo(prgName2), TelimenaVersion = "1.0.0.0", UserInfo = userInfo };
 
-            response = await sut.Initialize(request);
-            Program prg2 = await unit.Programs.SingleOrDefaultAsync(x => x.Name == prgName2);
+            response = await sut.Initialize(request).ConfigureAwait(false);
+            Program prg2 = await unit.Programs.SingleOrDefaultAsync(x => x.Name == prgName2).ConfigureAwait(false);
 
             Helpers.AssertRegistrationResponse(response, prg2, usr, 1);
 
@@ -350,7 +350,7 @@ namespace Telimena.Tests
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.Context, new AssemblyStreamVersionReader());
             TelemetryController sut = new TelemetryController(unit);
-            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 2, "TestApp", new[] { "Billy Jean", "Jack Black" });
+            List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.Context, 2, "TestApp", new[] { "Billy Jean", "Jack Black" }).ConfigureAwait(false);
 
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out Program prg, out ClientAppUser usr);
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Jack Black", out prg, out ClientAppUser usr2);
@@ -359,7 +359,7 @@ namespace Telimena.Tests
                 UserInfo = Helpers.GetUserInfo(Helpers.GetName("Billy Jean")),
                 ProgramInfo = Helpers.GetProgramInfo("TestApp",version: new VersionData("1.2.3.4", "2.2.3.4")) };
 
-            await sut.Initialize(request);
+            await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);
 
 
@@ -371,7 +371,7 @@ namespace Telimena.Tests
                 ProgramInfo = Helpers.GetProgramInfo("TestApp", version: new VersionData("2.0.0.0", "3.0.0.0"))
             };
 
-            await sut.Initialize(request);
+            await sut.Initialize(request).ConfigureAwait(false);
             Helpers.GetProgramAndUser(this.Context, "TestApp", "Billy Jean", out prg, out usr);
 
             Assert.AreEqual(2, this.Context.Versions.Count(x => x.ProgramAssembly.ProgramId == prg.Id));

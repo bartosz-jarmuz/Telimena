@@ -70,7 +70,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             Updater updater = await this.GetUpdaterForProgram(program);
 
-            List<UpdaterPackageInfo> newerOnes = updater.Packages.Where(x => x.Version.IsNewerVersionThan(version))
+            List<UpdaterPackageInfo> newerOnes = updater.Packages.Where(x => TelimenaClient.Extensions.IsNewerVersionThan(x.Version, version))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x=>x.Id).ToList();
             
 

@@ -18,7 +18,6 @@ using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using TelimenaClient;
-using TelimenaClient.Serializer;
 
 namespace Telimena.WebApp.Controllers.Api.V1
 {
@@ -34,19 +33,16 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// New instance
         /// </summary>
         /// <param name="work"></param>
-        /// <param name="serializer"></param>
         /// <param name="fileSaver"></param>
         /// <param name="fileRetriever"></param>
-        public UpdatersController(IToolkitDataUnitOfWork work, ITelimenaSerializer serializer, IFileSaver fileSaver, IFileRetriever fileRetriever)
+        public UpdatersController(IToolkitDataUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
             this.work = work;
-            this.serializer = serializer;
             this.fileSaver = fileSaver;
             this.fileRetriever = fileRetriever;
         }
 
         private readonly IToolkitDataUnitOfWork work;
-        private readonly ITelimenaSerializer serializer;
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
 
@@ -60,13 +56,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
-            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetPackageInfo(id);
+            UpdaterPackageInfo updaterInfo = await this.work.UpdaterRepository.GetPackageInfo(id).ConfigureAwait(false);
             if (updaterInfo == null)
             {
                 return this.BadRequest($"Updater id [{id}] does not exist");
             }
 
-            byte[] bytes = await this.work.UpdaterRepository.GetPackage(updaterInfo.Id, this.fileRetriever);
+            byte[] bytes = await this.work.UpdaterRepository.GetPackage(updaterInfo.Id, this.fileRetriever).ConfigureAwait(false);
             HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) };
             result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = updaterInfo.ZippedFileName };
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
@@ -90,8 +86,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    TelimenaUser user = await this.work.Users.GetByPrincipalAsync(this.User);
-                    Updater updater = await this.work.UpdaterRepository.GetUpdater(request.UpdaterInternalName);
+                    TelimenaUser user = await this.work.Users.GetByPrincipalAsync(this.User).ConfigureAwait(false);
+                    Updater updater = await this.work.UpdaterRepository.GetUpdater(request.UpdaterInternalName).ConfigureAwait(false);
 
                     if (updater == null)
                     {
@@ -111,8 +107,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     }
 
                     UpdaterPackageInfo pkg =
-                        await this.work.UpdaterRepository.StorePackageAsync(updater, request.MinimumCompatibleToolkitVersion, uploadedFile.InputStream, this.fileSaver);
-                    await this.work.CompleteAsync();
+                        await this.work.UpdaterRepository.StorePackageAsync(updater, request.MinimumCompatibleToolkitVersion, uploadedFile.InputStream, this.fileSaver).ConfigureAwait(false);
+                    await this.work.CompleteAsync().ConfigureAwait(false);
                     return this.Ok($"Uploaded package {pkg.Version} with ID {pkg.Id}");
                 }
 
@@ -134,7 +130,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPut, Route("{id}/is-public/{isPublic}", Name=Routes.SetIsPublic)]
         public async Task<IHttpActionResult> SetIsPublic(Guid id, bool isPublic)
         {
-            var updater = await this.work.UpdaterRepository.GetUpdater(id);
+            var updater = await this.work.UpdaterRepository.GetUpdater(id).ConfigureAwait(false);
             if (updater == null)
             {
                 return this.BadRequest($"Updater id [{id}] does not exist");
@@ -145,7 +141,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 return this.BadRequest($"Cannot change default updater");
             }
             updater.IsPublic = isPublic;
-            await this.work.CompleteAsync();
+            await this.work.CompleteAsync().ConfigureAwait(false);
             return this.Ok($"Set package with ID: {id} public flag to: {isPublic}");
         }
 
@@ -160,7 +156,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         public async Task<UpdateResponse> UpdateCheck(UpdateRequest requestModel)
         {
          //   UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
-            var program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey);
+            var program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 return new UpdateResponse()
@@ -169,7 +165,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 };
             }
             UpdaterPackageInfo updaterInfo =
-                await this.work.UpdaterRepository.GetNewestCompatibleUpdater(program, requestModel.UpdaterVersion, requestModel.ToolkitVersion, false);
+                await this.work.UpdaterRepository.GetNewestCompatibleUpdater(program, requestModel.UpdaterVersion, requestModel.ToolkitVersion, false).ConfigureAwait(false);
             UpdateResponse response = new UpdateResponse();
             if (updaterInfo != null)
             {

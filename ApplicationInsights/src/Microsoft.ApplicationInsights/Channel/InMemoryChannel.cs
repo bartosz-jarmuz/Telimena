@@ -9,15 +9,15 @@
     /// </summary>
     public class InMemoryChannel : ITelemetryChannel
     {
-        private readonly TelemetryBuffer buffer;
-        private readonly InMemoryTransmitter transmitter;
+        internal readonly TelemetryBuffer buffer;
+        internal readonly InMemoryTransmitter transmitter;
         private bool? developerMode = false;
         private int bufferSize;
 
         /// <summary>
         /// Indicates if this instance has been disposed of.
         /// </summary>
-        private bool isDisposed = false;
+        protected bool isDisposed = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InMemoryChannel" /> class.
@@ -120,7 +120,7 @@
         /// <summary>
         /// Sends an instance of ITelemetry through the channel.
         /// </summary>
-        public void Send(ITelemetry item)
+        public virtual void Send(ITelemetry item)
         {
             if (item == null)
             {

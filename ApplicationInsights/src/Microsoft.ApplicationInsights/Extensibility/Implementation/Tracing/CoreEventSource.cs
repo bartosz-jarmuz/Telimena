@@ -533,6 +533,12 @@
             this.WriteEvent(44, details, this.nameProvider.Name);
         }
 
+        [Event(46, Message = "Item has no instrumentation key set. Telemetry will not be sent to ApplicationInsights. Item: {0}", Level = EventLevel.Verbose)]
+        public void ItemMissingInstrumentationKey(string item, string appDomainName = "Incorrect")
+        {
+            this.WriteEvent(35, item ?? string.Empty, this.nameProvider.Name);
+        }
+
         /// <summary>
         /// Keywords for the PlatformEventSource.
         /// </summary>

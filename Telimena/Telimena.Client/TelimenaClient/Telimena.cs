@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace TelimenaClient
 {
@@ -11,7 +16,6 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
-        private TelemetryBroadcaster broadcaster;
 
         /// <summary>
         ///     Creates a new instance of Telimena Client
@@ -51,18 +55,60 @@ namespace TelimenaClient
 
             this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.httpClient);
-            RegisterBroadcasters();
+
+            BuildTelemetryClient();
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
         }
 
-        private void RegisterBroadcasters()
+        private readonly object telemetryClientBuildingLock = new object();
+
+        private void BuildTelemetryClient()
         {
-            var pipe = new BroadcastingPipeline();
-            pipe.Processors.Add(new StoredTelemetryFilesProvider(this.Locator.TelemetryStorageDirectory));
-            pipe.Processors.Add(new TelemetryRequestDataReader());
-            pipe.Processors.Add(new TelemetryRequestSender(this));
-            pipe.Processors.Add(new StoredTelemetryFilesRemover());
-            TelemetryBroadcaster.Instance.Initialize(pipe);
-            this.broadcaster = TelemetryBroadcaster.Instance;
+            lock (this.telemetryClientBuildingLock)
+            {
+                TelemetryConfiguration cfg = TelemetryConfiguration.Active;
+                TelemetryBuffer buffer = new TelemetryBuffer();
+                cfg.TelemetryChannel = new TelimenaInMemoryChannel(buffer
+                    , new InMemoryTransmitter(buffer
+                        , new DeliverySettings()
+                        {
+                            TelimenaEndpoint = new Uri(this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl
+                                , ApiRoutes.PostTelemetryData)
+                        }));
+                if (!cfg.TelemetryInitializers.Any(x => x is SequencePropertyInitializer))
+                {
+                    cfg.TelemetryInitializers.Add(new SequencePropertyInitializer());
+                }
+
+                var teliInitializer = cfg.TelemetryInitializers.FirstOrDefault(x => x is TelimenaPropertiesInitializer);
+                if (teliInitializer != null)
+                {
+                    cfg.TelemetryInitializers.Remove(teliInitializer);
+                }
+                cfg.TelemetryInitializers.Add(new TelimenaPropertiesInitializer(this.Properties));
+
+                cfg.InstrumentationKey = "1a14064b-d326-4ce3-939e-8cba4d08c255";
+                this.telemetryClient = new TelemetryClient(cfg);
+            }
+        }
+
+
+        private readonly object exceptionReportingLocker = new object();
+        private static readonly List<object> UnhandledExceptionsReported = new List<object>();
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            lock (this.exceptionReportingLocker)
+            {
+                if (!UnhandledExceptionsReported.Contains(e.ExceptionObject))
+                {
+                    this.telemetryClient.TrackException((Exception) e.ExceptionObject);
+                    this.telemetryClient.Flush();
+                    UnhandledExceptionsReported.Add(e.ExceptionObject);
+                }
+            }
         }
     }
 }

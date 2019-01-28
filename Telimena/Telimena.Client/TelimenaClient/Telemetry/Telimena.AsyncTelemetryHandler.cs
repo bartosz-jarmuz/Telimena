@@ -6,6 +6,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.DataContracts;
 
 namespace TelimenaClient
 {
@@ -19,29 +20,25 @@ namespace TelimenaClient
             /// <summary>
             ///     Asynchronous Telimena methods
             /// </summary>
-            public AsyncTelemetryHandler(Telimena telimena, TelemetryProcessingPipeline pipeline)
+            public AsyncTelemetryHandler(Telimena telimena)
             {
                 this.telimena = telimena;
-                this.pipeline = pipeline;
             }
 
             private readonly Telimena telimena;
-            private readonly TelemetryProcessingPipeline pipeline;
 
             /// <inheritdoc />
-            public async Task<TelemetryItem> View(string viewName, Dictionary<string, object> telemetryData = null)
+            public async Task View(string viewName, Dictionary<string, object> telemetryData = null)
             {
-                TelemetryItem item = new TelemetryItem(viewName, TelemetryItemTypes.View, this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData, telemetryData);
-                await this.pipeline.Process(item).ConfigureAwait(false);
-                return item;
+                this.telimena.telemetryClient.TrackPageView(viewName);
             }
 
             /// <inheritdoc />
-            public async Task<TelemetryItem> Event(string eventName, Dictionary<string, object> telemetryData = null)
+            public async Task Event(string eventName, Dictionary<string, object> telemetryData = null)
             {
-                TelemetryItem item = new TelemetryItem(eventName, TelemetryItemTypes.Event, this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData, telemetryData);
-                await this.pipeline.Process(item).ConfigureAwait(false);
-                return item;
+                //TelemetryItem item = new TelemetryItem(eventName, TelemetryItemTypes.Event, this.telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData, telemetryData);
+                this.telimena.telemetryClient.TrackEvent(eventName);
+
             }
 
             /// <inheritdoc />
@@ -74,8 +71,7 @@ namespace TelimenaClient
 
                 catch (Exception ex)
                 {
-                    TelimenaException exception = new TelimenaException("Error occurred while sending registration request", this.telimena.Properties, ex
-                        , new KeyValuePair<Type, object>(typeof(TelemetryUpdateRequest), request));
+                    TelimenaException exception = new TelimenaException("Error occurred while sending registration request", this.telimena.Properties, ex);
                     if (!this.telimena.Properties.SuppressAllErrors)
                     {
                         throw exception;

@@ -56,15 +56,15 @@ namespace Telimena.WebApp.Controllers
                 }
                 else
                 {
-                    TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(this.User.Identity.Name, model.OldPassword);
+                    TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(this.User.Identity.Name, model.OldPassword).ConfigureAwait(false);
                     if (user != null)
                     {
                         IdentityResult result =
-                            await this.unitOfWork.UserManager.ChangePasswordAsync(this.User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+                            await this.unitOfWork.UserManager.ChangePasswordAsync(this.User.Identity.GetUserId(), model.OldPassword, model.NewPassword).ConfigureAwait(false);
                         if (result.Succeeded)
                         {
                             user.MustChangePassword = false;
-                            await this.unitOfWork.UserManager.UpdateAsync(user);
+                            await this.unitOfWork.UserManager.UpdateAsync(user).ConfigureAwait(false);
                             model.IsSuccess = true;
                             this.logger.Info($"[{this.User.Identity.Name}] password changed");
                             return this.View(model);
@@ -110,15 +110,15 @@ namespace Telimena.WebApp.Controllers
             {
                 this.logger.Info($"[{model.Email}] login attempt");
 
-                TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(model.Email, model.Password);
+                TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(model.Email, model.Password).ConfigureAwait(false);
                 if (user != null)
                 {
                     if (user.IsActivated)
                     {
                         this.logger.Info($"[{model.Email}] logged in.");
                         user.LastLoginDate = DateTime.UtcNow;
-                        await this.unitOfWork.UserManager.UpdateAsync(user);
-                        ClaimsIdentity ident = await this.unitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+                        await this.unitOfWork.UserManager.UpdateAsync(user).ConfigureAwait(false);
+                        ClaimsIdentity ident = await this.unitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie).ConfigureAwait(false);
                         this.unitOfWork.AuthManager.SignIn(new AuthenticationProperties {IsPersistent = false}, ident);
                         if (user.MustChangePassword)
                         {
@@ -172,8 +172,8 @@ namespace Telimena.WebApp.Controllers
 
                 TelimenaUser user = new TelimenaUser(model.Email, model.Name);
 
-                Tuple<IdentityResult, IdentityResult> results = await this.unitOfWork.RegisterUserAsync(user, model.Password, TelimenaRoles.Viewer, model.Role);
-                await this.unitOfWork.CompleteAsync();
+                Tuple<IdentityResult, IdentityResult> results = await this.unitOfWork.RegisterUserAsync(user, model.Password, TelimenaRoles.Viewer, model.Role).ConfigureAwait(false);
+                await this.unitOfWork.CompleteAsync().ConfigureAwait(false);
 
                 if (results.Item1.Succeeded)
                 {

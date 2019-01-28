@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using Microsoft.ApplicationInsights;
 using TelimenaClient.Serializer;
 
 namespace TelimenaClient
@@ -51,5 +52,6 @@ namespace TelimenaClient
         private readonly ITelemetryModule telemetry;
         private readonly IUpdatesModule updates;
         private readonly TelimenaProperties propertiesInternal;
+        private TelemetryClient telemetryClient;
     }
 }
