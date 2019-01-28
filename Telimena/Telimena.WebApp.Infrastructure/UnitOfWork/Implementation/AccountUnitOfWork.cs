@@ -35,12 +35,12 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 
         public async Task<Tuple<IdentityResult, IdentityResult>> RegisterUserAsync(TelimenaUser user, string password, params string[] roles)
         {
-            IdentityResult registerResult = await this.UserManager.CreateAsync(user, password);
+            IdentityResult registerResult = await this.UserManager.CreateAsync(user, password).ConfigureAwait(false);
             if (registerResult.Succeeded)
             {
-                TelimenaUser addedUser = await this.UserManager.FindByIdAsync(user.Id);
+                TelimenaUser addedUser = await this.UserManager.FindByIdAsync(user.Id).ConfigureAwait(false);
 
-                IdentityResult roleResult = await this.HandleRoleRegistrationAsync(roles, addedUser);
+                IdentityResult roleResult = await this.HandleRoleRegistrationAsync(roles, addedUser).ConfigureAwait(false);
 
                 return new Tuple<IdentityResult, IdentityResult>(registerResult, roleResult);
             }
@@ -58,7 +58,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
             IdentityResult roleresult = IdentityResult.Success;
             if (roles.Contains(TelimenaRoles.Viewer))
             {
-                roleresult = await this.UserManager.AddToRoleAsync(user.Id, TelimenaRoles.Viewer);
+                roleresult = await this.UserManager.AddToRoleAsync(user.Id, TelimenaRoles.Viewer).ConfigureAwait(false);
                 if (!roleresult.Succeeded)
                 {
                     return roleresult;
@@ -68,7 +68,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 
             if (roles.Contains(TelimenaRoles.Developer))
             {
-                roleresult = await this.UserManager.AddToRoleAsync(user.Id, TelimenaRoles.Developer);
+                roleresult = await this.UserManager.AddToRoleAsync(user.Id, TelimenaRoles.Developer).ConfigureAwait(false);
                 if (roleresult.Succeeded)
                 {
                     DeveloperAccount developer = new DeveloperAccount(user);

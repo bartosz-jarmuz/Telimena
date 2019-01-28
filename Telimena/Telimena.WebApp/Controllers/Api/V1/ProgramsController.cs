@@ -326,7 +326,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 }
 
                 List<ProgramUpdatePackageInfo> allUpdatePackages =
-                    (await this.Work.UpdatePackages.GetAllPackagesNewerThan(requestModel.VersionData.Map(), program.Id).ConfigureAwait(false))
+                    (await this.Work.UpdatePackages.GetAllPackagesNewerThan(requestModel.VersionData, program.Id).ConfigureAwait(false))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
 
                 List<ProgramUpdatePackageInfo> filteredPackages = ProgramsControllerHelpers.FilterPackagesSet(allUpdatePackages, requestModel);

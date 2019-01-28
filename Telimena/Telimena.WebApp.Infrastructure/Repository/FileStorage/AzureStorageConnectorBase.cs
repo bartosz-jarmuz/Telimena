@@ -20,7 +20,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             CloudBlobContainer container = client.GetContainerReference(containerName.ToLower());
             try
             {
-                await container.CreateIfNotExistsAsync();
+                await container.CreateIfNotExistsAsync().ConfigureAwait(false);
             }
             catch (StorageException ex)
             {

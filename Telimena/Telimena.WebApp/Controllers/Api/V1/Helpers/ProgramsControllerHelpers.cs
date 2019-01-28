@@ -82,7 +82,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             else
             {
                 //no updates now, so figure out what version is supported by the client already
-                var version = program.DetermineProgramVersion(updateRequest.VersionData.Map());
+                var version = program.DetermineProgramVersion(updateRequest.VersionData );
                 ProgramUpdatePackageInfo previousPackage =
                     await unitOfWork.UpdatePackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id && x.Version == version).ConfigureAwait(false);
                 if (previousPackage != null)

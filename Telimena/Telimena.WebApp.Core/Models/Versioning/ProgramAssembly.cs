@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using DotNetLittleHelpers;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Core.Models
 {

@@ -29,8 +29,7 @@ namespace TelimenaClient.Tests
             telimena.Properties.SuppressAllErrors = false;
             Assert.AreEqual(this.testTelemetryKey, telimena.Properties.TelemetryKey);
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
-            this.Test_RegistrationFunc(telimena, () => telimena.Telemetry.Async.Initialize().GetAwaiter().GetResult(), false);
-            this.Test_RegistrationFunc(telimena, () => telimena.Telemetry.Blocking.Initialize(), false);
+            this.Test_RegistrationFunc(telimena, () => telimena.Telemetry.Initialize().GetAwaiter().GetResult(), false);
 
         }
 
@@ -40,8 +39,7 @@ namespace TelimenaClient.Tests
             ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(this.testTelemetryKey));
             telimena.Properties.SuppressAllErrors = false;
             Helpers.SetupMockHttpClient(telimena, Helpers.GetMockClient());
-            this.Test_RegistrationFunc(telimena, () => telimena.Telemetry.Async.Initialize().GetAwaiter().GetResult(), false);
-            //todo    this.Test_RegistrationFunc(telimena, () => telimena.InitializeAsync(true).GetAwaiter().GetResult(), true);
+            this.Test_RegistrationFunc(telimena, () => telimena.Telemetry.Initialize().GetAwaiter().GetResult(), false);
         }
 
         public void Test_RegistrationFunc(ITelimena telimena, Func<TelemetryInitializeResponse> func, bool skipFlagExpectedValue)
@@ -72,7 +70,7 @@ namespace TelimenaClient.Tests
 
             try
             {
-                telimena.Telemetry.Async.Initialize().GetAwaiter().GetResult();
+                telimena.Telemetry.Initialize().GetAwaiter().GetResult();
                 Assert.Fail("Error expected");
             }
             catch (Exception ex)

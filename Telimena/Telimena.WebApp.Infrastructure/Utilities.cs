@@ -31,7 +31,7 @@ namespace Telimena.WebApp.Infrastructure
                 DirectoryInfo directoryToCompress = Directory.CreateDirectory(Path.GetDirectoryName(originalFilePath));
                 using (Stream compressedStream = File.Create(originalFilePath))
                 {
-                    await fileStream.CopyToAsync(compressedStream);
+                    await fileStream.CopyToAsync(compressedStream).ConfigureAwait(false);
                 }
 
                 var zippedFilePath = directoryToCompress.FullName + ".zip";

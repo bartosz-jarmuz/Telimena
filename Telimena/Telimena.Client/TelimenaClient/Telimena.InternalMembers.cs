@@ -39,7 +39,7 @@ namespace TelimenaClient
         ///     Gets or sets a value indicating whether this instance is initialized.
         /// </summary>
         /// <value><c>true</c> if this instance is initialized; otherwise, <c>false</c>.</value>
-        private bool IsInitialized { get; set; }
+        internal bool IsInitialized { get; set; }
 
         /// <summary>
         ///     Locator provides paths to toolkit files and folders.
@@ -48,10 +48,10 @@ namespace TelimenaClient
         internal readonly Locator Locator;
 
         private readonly ITelimenaHttpClient httpClient;
-        private TelemetryInitializeResponse initializationResponse;
+        internal TelemetryInitializeResponse initializationResponse;
         private readonly ITelemetryModule telemetry;
         private readonly IUpdatesModule updates;
         private readonly TelimenaProperties propertiesInternal;
-        private TelemetryClient telemetryClient;
+        internal TelemetryClient telemetryClient;
     }
 }

@@ -14,7 +14,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             string tempFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             using (Stream file = File.Create(tempFilePath))
             {
-                await stream.CopyToAsync(file);
+                await stream.CopyToAsync(file).ConfigureAwait(false);
             }
 
             var unzippedPath = this.GetUnzippedPath(tempFilePath, expectedFileName, expectSingleFile);
@@ -35,7 +35,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             Directory.CreateDirectory(Path.GetDirectoryName(zipPath));
             using (FileStream fs = new FileStream(zipPath, FileMode.Create))
             {
-                await fileStream.CopyToAsync(fs);
+                await fileStream.CopyToAsync(fs).ConfigureAwait(false);
             }
 
             fileStream.Seek(0, SeekOrigin.Begin);

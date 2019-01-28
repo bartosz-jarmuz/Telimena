@@ -38,7 +38,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 
         public async Task CompleteAsync()
         {
-            await this._context.SaveChangesAsync();
+            await this._context.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }

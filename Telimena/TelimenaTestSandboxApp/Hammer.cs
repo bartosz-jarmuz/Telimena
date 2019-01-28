@@ -62,7 +62,7 @@ namespace TelimenaTestSandboxApp
         public async Task Hit()
         {
             this.progressReport("HAMMER STARTING...\r\n\r\n");
-            await this.Initialize();
+            await this.Initialize().ConfigureAwait(false);
             this.progressReport("HAMMER Apps Initialized. Start hitting...\r\n\r\n");
 
             this.timeoutStopwatch = new Stopwatch();
@@ -73,7 +73,7 @@ namespace TelimenaTestSandboxApp
                 tasks.Add(this.StartReporting(userInfo));
             }
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
             this.progressReport("\r\nHAMMER FINISHED...\r\n\r\n");
         }
 
@@ -117,7 +117,7 @@ namespace TelimenaTestSandboxApp
                 this.apps.Add(programInfo);
                 ITelimena teli = Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = programInfo});
 
-                await teli.Telemetry.Async.Initialize();
+                await teli.Telemetry.Initialize().ConfigureAwait(false);
             }
 
             this.funcs = new List<string>();
@@ -138,10 +138,6 @@ namespace TelimenaTestSandboxApp
             return new JavaScriptSerializer().Serialize(response);
         }
 
-        private string PresentResponse(TelemetryItem response)
-        {
-            return new JavaScriptSerializer().Serialize(response);
-        }
 
 
         private async Task StartReporting(UserInfo userInfo)
@@ -154,30 +150,30 @@ namespace TelimenaTestSandboxApp
                 int operation = random.Next(4);
                 if (operation == 1)
                 {
-                    var result = await teli.Telemetry.Async.Event("SomeEvent");
-                    this.progressReport(this.PresentResponse(result));
+                     teli.Telemetry.Event("SomeEvent");
+                    this.progressReport("Done");
 
                 }
                 else if (operation == 2)
                 {
-                    var result = await teli.Telemetry.Async.Initialize();
+                    var result = await teli.Telemetry. Initialize().ConfigureAwait(false);
                     this.progressReport(this.PresentResponse(result));
                 }
                 else
                 {
                     if (random.Next(2) == 1)
                     {
-                        var result = await teli.Telemetry.Async.View(this.funcs[random.Next(0, this.funcs.Count)]);
-                        this.progressReport(this.PresentResponse(result));
+                          teli.Telemetry. View(this.funcs[random.Next(0, this.funcs.Count)]) ;
+                        this.progressReport("Done");
                     }
                     else
                     {
-                        var result = await teli.Telemetry.Async.View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
-                        this.progressReport(this.PresentResponse(result));
+                          teli.Telemetry. View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
+                        this.progressReport("Done");
                     }
                 }
 
-                await Task.Delay(random.Next(this.delayMin, this.delayMax));
+                await Task.Delay(random.Next(this.delayMin, this.delayMax)).ConfigureAwait(false);
             }
         }
     }

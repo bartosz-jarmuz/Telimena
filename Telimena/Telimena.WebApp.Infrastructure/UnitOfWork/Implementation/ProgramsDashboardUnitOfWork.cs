@@ -64,7 +64,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             foreach (Program program in programs)
             {
-                List<View> views = await this.Views.FindAsync(x => x.ProgramId == program.Id);
+                List<View> views = await this.Views.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
                 ProgramSummary summary;
                 try
                 {
@@ -107,11 +107,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
             PortalSummaryData summary = new PortalSummaryData
             {
-                TotalUsersCount = await this.context.Users.CountAsync()
-                , NewestUser = await this.context.Users.OrderByDescending(x => x.UserNumber).FirstAsync()
-                , LastActiveUser = await this.context.Users.OrderByDescending(x => x.LastLoginDate).FirstAsync()
+                TotalUsersCount = await this.context.Users.CountAsync().ConfigureAwait(false)
+                , NewestUser = await this.context.Users.OrderByDescending(x => x.UserNumber).FirstAsync().ConfigureAwait(false)
+                , LastActiveUser = await this.context.Users.OrderByDescending(x => x.LastLoginDate).FirstAsync().ConfigureAwait(false)
                 , UsersActiveInLast24Hrs = await this.context.Users.CountAsync(x =>
-                    x.LastLoginDate != null && DbFunctions.DiffDays(DateTime.UtcNow, x.LastLoginDate.Value) < 1)
+                    x.LastLoginDate != null && DbFunctions.DiffDays(DateTime.UtcNow, x.LastLoginDate.Value) < 1).ConfigureAwait(false)
             };
             return summary;
         }
@@ -122,7 +122,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             List<View> views = programs.SelectMany(x => x.Views).ToList();
             IEnumerable<int> viewIds = views.Select(x => x.Id);
             List<ViewTelemetrySummary> viewTelemetrySummaries =
-                await this.context.ViewTelemetrySummaries.Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync();
+                await this.context.ViewTelemetrySummaries.Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync().ConfigureAwait(false);
             //List<ClientAppUser> users = programUsageSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
             AllProgramsSummaryData summary = new AllProgramsSummaryData
             {
@@ -143,12 +143,12 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task CompleteAsync()
         {
-            await this.context.SaveChangesAsync();
+            await this.context.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
         {
-            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -156,13 +156,13 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
 
             IQueryable<ViewTelemetryDetail> query = this.context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id);
-            int totalCount = await this.context.ViewTelemetryDetails.CountAsync(x => x.TelemetrySummary.View.ProgramId == program.Id);
+            int totalCount = await this.context.ViewTelemetryDetails.CountAsync(x => x.TelemetrySummary.View.ProgramId == program.Id).ConfigureAwait(false);
             if (take == -1)
             {
                 take = totalCount;
             }
 
-            List<ViewTelemetryDetail> usages = await ApplyOrderingQuery(sortBy, query, skip, take);
+            List<ViewTelemetryDetail> usages = await ApplyOrderingQuery(sortBy, query, skip, take).ConfigureAwait(false);
 
             List<UsageData> result = new List<UsageData>();
             foreach (ViewTelemetryDetail detail in usages)
@@ -182,7 +182,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
         {
-            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey);
+            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -252,11 +252,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     orderedQuery = query.OrderByDescending(x => x.Timestamp);
                 }
 
-                return await orderedQuery.Skip(skip).Take(take).ToListAsync();
+                return await orderedQuery.Skip(skip).Take(take).ToListAsync().ConfigureAwait(false);
             }
             catch (Exception)
             {
-                return await query.OrderByDescending(x => x.Timestamp).Skip(skip).Take(take).ToListAsync();
+                return await query.OrderByDescending(x => x.Timestamp).Skip(skip).Take(take).ToListAsync().ConfigureAwait(false);
             }
         }
 

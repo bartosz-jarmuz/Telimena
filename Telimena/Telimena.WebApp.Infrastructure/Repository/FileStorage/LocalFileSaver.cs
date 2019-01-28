@@ -21,7 +21,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             Directory.CreateDirectory(Path.GetDirectoryName(fileLocation));
             using (Stream file = File.Create(fileLocation))
             {
-                await fileStream.CopyToAsync(file);
+                await fileStream.CopyToAsync(file).ConfigureAwait(false);
             }
 
             repositoryFile.FileLocation = fileLocation;

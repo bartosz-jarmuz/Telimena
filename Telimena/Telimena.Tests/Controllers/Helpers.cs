@@ -39,7 +39,7 @@ namespace Telimena.Tests
                 ProgramAssembly ass = new ProgramAssembly {Name = assName, Extension = ".dll"};
                 prg.ProgramAssemblies.Add(ass);
 
-                ass.AddVersion(new WebApp.Core.VersionData("0.0.1.0", "2.0.1.0"));
+                ass.AddVersion(new VersionData("0.0.1.0", "2.0.1.0"));
             }
         }
 

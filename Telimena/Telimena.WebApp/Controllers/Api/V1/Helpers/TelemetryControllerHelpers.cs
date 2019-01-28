@@ -96,7 +96,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
         public static async Task RecordVersions(ITelemetryUnitOfWork work, Program program, TelemetryInitializeRequest request)
         {
             AssemblyInfo primaryAss = request.ProgramInfo.PrimaryAssembly;
-            program.PrimaryAssembly.AddVersion(primaryAss.VersionData.Map());
+            program.PrimaryAssembly.AddVersion(primaryAss.VersionData);
 
             if (request.ProgramInfo.HelperAssemblies.AnyAndNotNull())
             {
@@ -113,7 +113,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
                         UpdateAssemblyInfo(existingAssembly, helperAssembly);
                     }
 
-                    existingAssembly.AddVersion(helperAssembly.VersionData.Map());
+                    existingAssembly.AddVersion(helperAssembly.VersionData);
                 }
             }
 
@@ -124,7 +124,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
         {
             TelimenaToolkitData toolkitData = await work.ToolkitData.FirstOrDefaultAsync(x => x.Version == toolkitVersion).ConfigureAwait(false);
 
-            AssemblyVersionInfo assemblyVersionInfo = programAssembly.GetVersion(versionData.Map());
+            AssemblyVersionInfo assemblyVersionInfo = programAssembly.GetVersion(versionData);
             if (toolkitData == null)
             {
                 toolkitData = new TelimenaToolkitData(toolkitVersion);
@@ -136,9 +136,8 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 
         public static AssemblyVersionInfo GetAssemblyVersionInfoOrAddIfMissing(VersionData versionData, Program program)
         {
-            Core.VersionData mappedData = Mapper.Map<Core.VersionData>(versionData);
-            program.PrimaryAssembly.AddVersion(mappedData);
-            AssemblyVersionInfo versionInfo = program.PrimaryAssembly.GetVersion(mappedData);
+            program.PrimaryAssembly.AddVersion(versionData);
+            AssemblyVersionInfo versionInfo = program.PrimaryAssembly.GetVersion(versionData);
             return versionInfo;
         }
 

@@ -28,11 +28,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<TelimenaToolkitData> StorePackageAsync(bool isBeta, bool introducesBreakingChanges, Stream fileStream, IFileSaver fileSaver)
         {
-            string actualVersion = await this.versionReader.GetFileVersion(fileStream, DefaultToolkitNames.TelimenaAssemblyName, true);
+            string actualVersion = await this.versionReader.GetFileVersion(fileStream, DefaultToolkitNames.TelimenaAssemblyName, true).ConfigureAwait(false);
             fileStream.Position = 0;
-            fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream);
+            fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream).ConfigureAwait(false);
 
-            TelimenaToolkitData data = await this.TelimenaContext.TelimenaToolkitData.Where(x => x.Version == actualVersion).Include(nameof(TelimenaToolkitData.TelimenaPackageInfo)).FirstOrDefaultAsync();
+            TelimenaToolkitData data = await this.TelimenaContext.TelimenaToolkitData.Where(x => x.Version == actualVersion).Include(nameof(TelimenaToolkitData.TelimenaPackageInfo)).FirstOrDefaultAsync().ConfigureAwait(false);
             if (data == null)
             {
                 data = new TelimenaToolkitData(actualVersion);
@@ -46,7 +46,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
 
             data.TelimenaPackageInfo.UpdateWithNewContent(isBeta, introducesBreakingChanges, actualVersion, fileStream.Length);
-            await fileSaver.SaveFile(data.TelimenaPackageInfo, fileStream, this.containerName);
+            await fileSaver.SaveFile(data.TelimenaPackageInfo, fileStream, this.containerName).ConfigureAwait(false);
 
             return data;
         }
@@ -55,12 +55,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<byte[]> GetPackage(int toolkitDataId, IFileRetriever fileRetriever)
         {
-            TelimenaToolkitData toolkitData = await this.TelimenaContext.TelimenaToolkitData.FirstOrDefaultAsync(x => x.Id == toolkitDataId);
+            TelimenaToolkitData toolkitData = await this.TelimenaContext.TelimenaToolkitData.FirstOrDefaultAsync(x => x.Id == toolkitDataId).ConfigureAwait(false);
 
             TelimenaPackageInfo pkg = toolkitData?.TelimenaPackageInfo;
             if (pkg != null)
             {
-                return await fileRetriever.GetFile(pkg, this.containerName);
+                return await fileRetriever.GetFile(pkg, this.containerName).ConfigureAwait(false);
             }
 
             return null;
@@ -70,11 +70,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             ObjectValidator.Validate(() => Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
 
-            TelimenaPackageInfo current = await this.TelimenaContext.ToolkitPackages.Where(x => x.Version == version).OrderByDescending(x => x.Id).FirstOrDefaultAsync() ;
+            TelimenaPackageInfo current = await this.TelimenaContext.ToolkitPackages.Where(x => x.Version == version).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false) ;
             List<TelimenaPackageInfo> packages;
             if (current != null)
             {
-                packages = (await this.TelimenaContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync())
+                packages = (await this.TelimenaContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync().ConfigureAwait(false))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x=>x.Id).ToList();
             }
             else

@@ -20,7 +20,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             using (FileStream stream = File.Open(repositoryFile.FileLocation, FileMode.Open))
             {
                 result = new byte[stream.Length];
-                await stream.ReadAsync(result, 0, (int) stream.Length);
+                await stream.ReadAsync(result, 0, (int) stream.Length).ConfigureAwait(false);
             }
 
             return result;

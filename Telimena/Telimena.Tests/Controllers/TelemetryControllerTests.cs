@@ -125,7 +125,7 @@ namespace Telimena.Tests
             Helpers.AssertRegistrationResponse(response, prg, usr, 5);
             Assert.AreEqual(latestId, prg.PrimaryAssembly.GetLatestVersion().Id);
             Assert.AreEqual(latestId, prg.GetLatestVersion().Id);
-            Assert.AreEqual(firstVersionId, prg.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.VersionData.Map()).Id);
+            Assert.AreEqual(firstVersionId, prg.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.VersionData ).Id);
 
             Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
         }

@@ -4,7 +4,6 @@ using System.Linq;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using TelimenaClient;
-using VersionData = Telimena.WebApp.Core.VersionData;
 
 namespace Telimena.WebApp.Infrastructure
 {
@@ -23,13 +22,6 @@ namespace Telimena.WebApp.Infrastructure
             }
         }
 
-        public static VersionData Map(this TelimenaClient.VersionData clientVersionData)
-        {
-            if (clientVersionData == null)
-            {
-                return null;
-            }
-            return AutoMapper.Mapper.Map<VersionData>(clientVersionData);
-        }
+        
     }
 }

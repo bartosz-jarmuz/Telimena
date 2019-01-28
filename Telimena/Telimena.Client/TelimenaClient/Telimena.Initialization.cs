@@ -20,7 +20,7 @@ namespace TelimenaClient
         {
             if (!this.IsInitialized)
             {
-                TelemetryInitializeResponse response = await this.telemetry.Async.Initialize().ConfigureAwait(false);
+                TelemetryInitializeResponse response = await this.telemetry.Initialize().ConfigureAwait(false);
                 if (response != null && response.Exception == null)
                 {
                     this.IsInitialized = true;
@@ -36,7 +36,7 @@ namespace TelimenaClient
             return this.initializationResponse;
         }
 
-        private async Task LoadLiveData(TelemetryInitializeResponse response)
+        internal async Task LoadLiveData(TelemetryInitializeResponse response)
         {
             try
             {

@@ -51,12 +51,7 @@ namespace TelimenaClient.Tests
 
             //});
 
-            Telimena.Construct(new TelimenaStartupInfo(Guid.Empty)).Telemetry.Async.View("");
-            Telimena.Telemetry.Async.View(new TelimenaStartupInfo(Guid.Empty), "");
-            while (true)
-            {
-                await Task.Delay(1);
-            }
+          
         }
 
 

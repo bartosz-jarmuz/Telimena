@@ -64,7 +64,6 @@
     <Compile Include="Model\LiveProgramInfo.cs" />
     <Compile Include="Model\ProgramInfo.cs" />
     <Compile Include="Model\StoredTelemetryData.cs" />
-    <Compile Include="Model\TelemetryBroadcastingContext.cs" />
     <Compile Include="Model\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
     <Compile Include="Model\UserInfo.cs" />

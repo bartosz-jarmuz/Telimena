@@ -43,12 +43,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
             else
             {
-                prg = await this.telimenaContext.Set<Program>().FirstOrDefaultAsync(predicate);
+                prg = await this.telimenaContext.Set<Program>().FirstOrDefaultAsync(predicate).ConfigureAwait(false);
             }
 
             if (prg != null && prg.Updater == null)
             {
-                prg.Updater = await this.telimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName);
+                prg.Updater = await this.telimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName).ConfigureAwait(false);
             }
 
             return prg;
@@ -66,12 +66,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
             else
             {
-                prg = await this.telimenaContext.Set<Program>().SingleOrDefaultAsync(predicate);
+                prg = await this.telimenaContext.Set<Program>().SingleOrDefaultAsync(predicate).ConfigureAwait(false);
             }
 
             if (prg != null && prg.Updater == null)
             {
-                prg.Updater = await this.telimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName);
+                prg.Updater = await this.telimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName).ConfigureAwait(false);
             }
 
             return prg;
@@ -98,10 +98,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             if (orderBy != null)
             {
-                return await orderBy(query).ToListAsync();
+                return await orderBy(query).ToListAsync().ConfigureAwait(false);
             }
 
-            return await query.ToListAsync();
+            return await query.ToListAsync().ConfigureAwait(false);
         }
 
         
@@ -109,12 +109,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public async Task<IEnumerable<Program>> GetProgramsByDeveloperName(string developerName)
         {
             return await this.telimenaContext.Programs.Include(x => x.DeveloperAccount)
-                .Where(x => x.DeveloperAccount != null && x.DeveloperAccount.Name == developerName).ToListAsync();
+                .Where(x => x.DeveloperAccount != null && x.DeveloperAccount.Name == developerName).ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<Program>> GetProgramsForUserAsync(TelimenaUser user)
         {
-            return await this.telimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id).ToListAsync();
+            return await this.telimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id).ToListAsync().ConfigureAwait(false);
         }
 
         public List<Program> GetProgramsVisibleToUser(TelimenaUser user, IPrincipal principal)

@@ -36,11 +36,6 @@ namespace TelimenaTestSandboxApp
            
         }
 
-        private string PresentResponse(TelemetryItem response)
-        {
-            JsonSerializerSettings settings = new JsonSerializerSettings { ContractResolver = new MyContractResolver(), };
-            return JsonConvert.SerializeObject(response, settings);
-        }
 
         private string PresentResponse(TelimenaResponseBase response)
         {
@@ -72,7 +67,7 @@ namespace TelimenaTestSandboxApp
                 return;
             }
 
-            TelemetryInitializeResponse response = await this.teli.Telemetry.Async.Initialize().ConfigureAwait(true);
+            TelemetryInitializeResponse response = await this.teli.Telemetry.Initialize().ConfigureAwait(true);
 
             this.resultTextBox.Text += this.teli.Properties.StaticProgramInfo.Name + " - " +
                                        this.PresentResponse(response) + Environment.NewLine;
@@ -80,7 +75,6 @@ namespace TelimenaTestSandboxApp
 
         private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
         {
-            TelemetryItem result = new TelemetryItem();
             Stopwatch sw = Stopwatch.StartNew();
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
@@ -89,9 +83,9 @@ namespace TelimenaTestSandboxApp
 
                 for (int index = 0; index < rand.Next(40,140); index++)
                 {
-                    result = await this.teli.Telemetry.Async.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
+                        this.teli.Telemetry.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
                         ? null
-                        : this.viewNameTextBox.Text).ConfigureAwait(true);
+                        : this.viewNameTextBox.Text);
                 }
                    
                 
@@ -99,37 +93,36 @@ namespace TelimenaTestSandboxApp
             }
             else
             {
-                result = await this.teli.Telemetry.Async.View("DefaultView").ConfigureAwait(true);
+                this.teli.Telemetry.View("DefaultView");
                 sw.Stop();
             }
 
                 this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " +
                                            this.teli.Properties.StaticProgramInfo.Name + " - " +
-                                           this.PresentResponse(result) + Environment.NewLine;
+                                           "SENT" + Environment.NewLine;
         }
 
         private void sendSync_button_Click(object sender, EventArgs e)
         {
             Stopwatch sw = Stopwatch.StartNew();
 
-            TelemetryItem result;
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
-                result = this.teli.Telemetry.Blocking.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
+             this.teli.Telemetry.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
                     ? null
                     : this.viewNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = this.teli.Telemetry.Blocking.View("DefaultView");
+              this.teli.Telemetry.View("DefaultView");
                 sw.Stop();
             }
 
                 this.resultTextBox.Text += $@"BLOCKING INSTANCE: {sw.ElapsedMilliseconds}ms " +
                                            this.teli.Properties.StaticProgramInfo.Name + " - " +
-                                           this.PresentResponse(result) + Environment.NewLine;
+                                           "SENT" + Environment.NewLine;
         }
 
         private void UpdateText(string text)
@@ -212,7 +205,6 @@ namespace TelimenaTestSandboxApp
 
         private async void static_sendUsageReportButton_Click(object sender, EventArgs e)
         {
-            TelemetryItem result;
             Stopwatch sw = Stopwatch.StartNew();
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
@@ -229,17 +221,17 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.static_viewNameTextBox.Text))
             {
-                result = await Telimena.Telemetry.Async.View(new TelimenaStartupInfo(key)
-                    , string.IsNullOrEmpty(this.static_viewNameTextBox.Text) ? null : this.static_viewNameTextBox.Text).ConfigureAwait(true);
+                  Telimena.Telemetry.View(new TelimenaStartupInfo(key)
+                    , string.IsNullOrEmpty(this.static_viewNameTextBox.Text) ? null : this.static_viewNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                result = await Telimena.Telemetry.Async.View(new TelimenaStartupInfo(key), "No Name").ConfigureAwait(true);
+                  Telimena.Telemetry.View(new TelimenaStartupInfo(key), "No Name");
                 sw.Stop();
             }
 
-                this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms " + this.PresentResponse(result) +
+                this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms "  +
                                            Environment.NewLine;
         }
 

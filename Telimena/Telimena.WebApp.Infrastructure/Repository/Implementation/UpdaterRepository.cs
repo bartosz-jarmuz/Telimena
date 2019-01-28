@@ -55,12 +55,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<IEnumerable<UpdaterPackageInfo>> GetPackages(string updaterInternalName)
         {
-            return (await this.TelimenaContext.UpdaterPackages.Where(x => x.Updater.InternalName == updaterInternalName).ToListAsync()).AsReadOnly();
+            return (await this.TelimenaContext.UpdaterPackages.Where(x => x.Updater.InternalName == updaterInternalName).ToListAsync().ConfigureAwait(false)).AsReadOnly();
         }
 
         public async Task<IEnumerable<UpdaterPackageInfo>> GetAllPackages()
         {
-            return (await this.TelimenaContext.UpdaterPackages.ToListAsync()).AsReadOnly();
+            return (await this.TelimenaContext.UpdaterPackages.ToListAsync().ConfigureAwait(false)).AsReadOnly();
         }
 
         public async Task<UpdaterPackageInfo> GetNewestCompatibleUpdater(Program program, string version, string toolkitVersion, bool includingBeta)
@@ -68,7 +68,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             ObjectValidator.Validate(() => Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
             ObjectValidator.Validate(() => Version.TryParse(toolkitVersion, out _), new ArgumentException($"[{toolkitVersion}] is not a valid version string"));
 
-            Updater updater = await this.GetUpdaterForProgram(program);
+            Updater updater = await this.GetUpdaterForProgram(program).ConfigureAwait(false);
 
             List<UpdaterPackageInfo> newerOnes = updater.Packages.Where(x => TelimenaClient.Extensions.IsNewerVersionThan(x.Version, version))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x=>x.Id).ToList();
@@ -91,26 +91,26 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<IEnumerable<Updater>> GetPublicUpdaters()
         {
-            return await this.TelimenaContext.Updaters.Where(x => x.IsPublic).ToListAsync();
+            return await this.TelimenaContext.Updaters.Where(x => x.IsPublic).ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<Updater> GetUpdater(string updaterInternalName)
         {
-            var updater = await this.TelimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == updaterInternalName);
+            var updater = await this.TelimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == updaterInternalName).ConfigureAwait(false);
             if (updater == null && updaterInternalName == DefaultToolkitNames.UpdaterInternalName) //create the default updater
             {
                 updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
-                updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
+                updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
             else if (updater == null && updaterInternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName) //create the default package  updater
             {
                 updater = new Updater(DefaultToolkitNames.PackageTriggerUpdaterFileName, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
-                updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
+                updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
 
             if (updater != null && updater.DeveloperAccount == null)
             {
-                updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
+                updater.DeveloperAccount = await this.TelimenaContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
 
             return updater;
@@ -123,7 +123,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             var updater = program.Updater;
             if (updater == null)
             {
-                updater = await this.TelimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName);
+                updater = await this.TelimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName).ConfigureAwait(false);
                 if (updater == null)
                 {
                     throw new InvalidOperationException("Default updater not found!");
@@ -138,13 +138,13 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<UpdaterPackageInfo> StorePackageAsync(Updater updater, string minimumRequiredToolkitVersion, Stream fileStream, IFileSaver fileSaver)
         {
-            string actualVersion = await this.streamVersionReader.GetFileVersion(fileStream, updater.FileName, true);
+            string actualVersion = await this.streamVersionReader.GetFileVersion(fileStream, updater.FileName, true).ConfigureAwait(false);
             fileStream.Position = 0;
-            fileStream = await Utilities.EnsureStreamIsZipped(updater.FileName, fileStream);
+            fileStream = await Utilities.EnsureStreamIsZipped(updater.FileName, fileStream).ConfigureAwait(false);
 
             UpdaterPackageInfo pkg = await this.TelimenaContext.UpdaterPackages.Where(x =>
                 x.FileName == updater.FileName && x.Version == actualVersion && x.MinimumRequiredToolkitVersion == minimumRequiredToolkitVersion &&
-                x.Updater.InternalName == updater.InternalName).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+                x.Updater.InternalName == updater.InternalName).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
 
             if (pkg == null)
             {
@@ -154,7 +154,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
             pkg.UpdateWithNewContent(fileStream.Length);
 
-            await fileSaver.SaveFile(pkg, fileStream, this.containerName);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
 
             return pkg;
         }
@@ -163,11 +163,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever)
         {
-            UpdaterPackageInfo pkg = await this.TelimenaContext.UpdaterPackages.FirstOrDefaultAsync(x => x.Id == packageId);
+            UpdaterPackageInfo pkg = await this.TelimenaContext.UpdaterPackages.FirstOrDefaultAsync(x => x.Id == packageId).ConfigureAwait(false);
 
             if (pkg != null)
             {
-                return await fileRetriever.GetFile(pkg, this.containerName);
+                return await fileRetriever.GetFile(pkg, this.containerName).ConfigureAwait(false);
             }
 
             return null;

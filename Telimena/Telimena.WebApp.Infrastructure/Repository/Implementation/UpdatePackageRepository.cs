@@ -83,7 +83,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
         }
 
-        public async Task<List<ProgramUpdatePackageInfo>> GetAllPackagesNewerThan(Core.VersionData versionData, int programId)
+        public async Task<List<ProgramUpdatePackageInfo>> GetAllPackagesNewerThan( VersionData versionData, int programId)
         {
             var program = await this.TelimenaContext.Programs.SingleOrDefaultAsync(x => x.Id == programId).ConfigureAwait(false);
             List<ProgramUpdatePackageInfo> packages = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync().ConfigureAwait(false);

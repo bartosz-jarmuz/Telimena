@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using TelimenaClient;
 
 namespace Telimena.WebApp.Core.Models
 {

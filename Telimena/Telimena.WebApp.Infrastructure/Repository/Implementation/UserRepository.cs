@@ -24,7 +24,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<TelimenaUser> GetByPrincipalAsync(IPrincipal userPrincipal)
         {
-            return await this.TelimenaContext.Users.FirstOrDefaultAsync(x => x.UserName == userPrincipal.Identity.Name);
+            return await this.TelimenaContext.Users.FirstOrDefaultAsync(x => x.UserName == userPrincipal.Identity.Name).ConfigureAwait(false);
         }
 
         public TelimenaUser GetByPrincipal(IPrincipal userPrincipal)
