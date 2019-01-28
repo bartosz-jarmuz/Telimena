@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using Microsoft.ApplicationInsights;
 using TelimenaClient.Serializer;
 
 namespace TelimenaClient
@@ -39,7 +38,7 @@ namespace TelimenaClient
         ///     Gets or sets a value indicating whether this instance is initialized.
         /// </summary>
         /// <value><c>true</c> if this instance is initialized; otherwise, <c>false</c>.</value>
-        internal bool IsInitialized { get; set; }
+        private bool IsInitialized { get; set; }
 
         /// <summary>
         ///     Locator provides paths to toolkit files and folders.
@@ -48,10 +47,9 @@ namespace TelimenaClient
         internal readonly Locator Locator;
 
         private readonly ITelimenaHttpClient httpClient;
-        internal TelemetryInitializeResponse initializationResponse;
+        private TelemetryInitializeResponse initializationResponse;
         private readonly ITelemetryModule telemetry;
         private readonly IUpdatesModule updates;
         private readonly TelimenaProperties propertiesInternal;
-        internal TelemetryClient telemetryClient;
     }
 }

@@ -67,7 +67,7 @@ namespace TelimenaTestSandboxApp
                 return;
             }
 
-            TelemetryInitializeResponse response = await this.teli.Telemetry.Initialize().ConfigureAwait(true);
+            TelemetryInitializeResponse response = await this.teli.Initialize().ConfigureAwait(true);
 
             this.resultTextBox.Text += this.teli.Properties.StaticProgramInfo.Name + " - " +
                                        this.PresentResponse(response) + Environment.NewLine;
@@ -116,7 +116,7 @@ namespace TelimenaTestSandboxApp
             }
             else
             {
-              this.teli.Telemetry.View("DefaultView");
+                this.teli.Telemetry.View("DefaultView");
                 sw.Stop();
             }
 

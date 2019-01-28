@@ -20,7 +20,7 @@ namespace TelimenaClient
         {
             if (!this.IsInitialized)
             {
-                TelemetryInitializeResponse response = await this.telemetry.Initialize().ConfigureAwait(false);
+                TelemetryInitializeResponse response = await this.Initialize().ConfigureAwait(false);
                 if (response != null && response.Exception == null)
                 {
                     this.IsInitialized = true;
@@ -36,6 +36,48 @@ namespace TelimenaClient
             return this.initializationResponse;
         }
 
+
+        /// <inheritdoc />
+        public async Task<TelemetryInitializeResponse> Initialize(Dictionary<string, object> telemetryData = null)
+        {
+            TelemetryInitializeRequest request = null;
+            try
+            {
+                request = new TelemetryInitializeRequest(this.Properties.TelemetryKey)
+                {
+                    ProgramInfo = this.Properties.StaticProgramInfo
+                    ,
+                    TelimenaVersion = this.Properties.TelimenaVersion
+                    ,
+                    UserInfo = this.Properties.UserInfo
+                };
+                TelemetryInitializeResponse response = await this.Messenger.SendPostRequest<TelemetryInitializeResponse>(ApiRoutes.Initialize, request).ConfigureAwait(false);
+
+                await this.LoadLiveData(response).ConfigureAwait(false);
+
+                if (response != null && response.Exception == null)
+                {
+                    this.IsInitialized = true;
+                    this. initializationResponse = response;
+                    return this.initializationResponse;
+                }
+                else
+                {
+                    return response;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                TelimenaException exception = new TelimenaException("Error occurred while sending registration request", this.Properties, ex);
+                if (!this.Properties.SuppressAllErrors)
+                {
+                    throw exception;
+                }
+
+                return new TelemetryInitializeResponse { Exception = exception };
+            }
+        }
         internal async Task LoadLiveData(TelemetryInitializeResponse response)
         {
             try

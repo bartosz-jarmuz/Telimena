@@ -86,20 +86,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiRoutes.cs" />
     <Compile Include="Locator.cs" />
-    <Compile Include="Messenger\TelimenaInMemoryChannel.cs" />
     <Compile Include="Retry\Retrier.cs" />
     <Compile Include="Serializer\DateTimeDataContractSurrogate.cs" />
     <Compile Include="Serializer\ITelimenaSerializer.cs" />
     <Compile Include="Serializer\PropertiesConverter.cs" />
     <Compile Include="Serializer\TelimenaSerializer.cs" />
-    <Compile Include="TelimenaClient\Interface\Updates\IAsyncUpdatesHandler.cs" />
-    <Compile Include="TelimenaClient\Interface\Updates\IBlockingUpdatesHandler.cs" />
-    <Compile Include="TelimenaClient\Interface\Updates\IUpdatesModule.cs" />
     <Compile Include="TelimenaClient\Static\Telimena.Static.Telemetry.cs" />
-    <Compile Include="TelimenaClient\Telemetry\Interface\ITelemetryModule.cs" />
-    <Compile Include="TelimenaClient\Telemetry\TelemetryModule.cs" />
     <Compile Include="TelimenaClient\TelimenaProperties.cs" />
     <Compile Include="TelimenaClient\Updates\Telimena.AsyncUpdatesHandler.cs" />
     <Compile Include="TelimenaClient\Updates\Telimena.BlockingUpdatesHandler.cs" />
@@ -114,10 +107,7 @@
     <Compile Include="UpdateInstallation\UpdateHandler.cs" />
     <Compile Include="UpdateInstallation\UpdateInstaller.cs" />
     <Compile Include="UpdateInstallation\UpdateInstructionCreator.cs" />
-    <Compile Include="Messenger\ITelimenaHttpClient.cs" />
-    <Compile Include="Messenger\IMessenger.cs" />
     <Compile Include="Messenger\TelimenaHttpClient.cs" />
-    <Compile Include="TelimenaClient\Interface\ITelimena.cs" />
     <Compile Include="Messenger\Messenger.cs" />
     <Compile Include="TelimenaClient\Telimena.cs" />
     <Compile Include="TelimenaClient\Telimena.InternalMembers.cs" />
@@ -132,17 +122,21 @@
     <None Include="Properties\Telimena.Client.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ApplicationInsights\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj">
-      <Project>{2d753566-8eca-4a34-8dc9-de0c2a55ed88}</Project>
-      <Name>Microsoft.ApplicationInsights</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Telimena.Contracts\Telimena.Contracts.csproj">
       <Project>{d2536bb2-84c5-479c-9500-c7a2b84b6779}</Project>
       <Name>Telimena.Contracts</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Telimena.Telemetry\Telimena.Telemetry.csproj">
+      <Project>{BAD963EC-7192-4B1B-B30E-A00D9DE38AE7}</Project>
+      <Name>Telimena.Telemetry</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TelimenaClient\Interface\" />
+    <Folder Include="TelimenaClient\Telemetry\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

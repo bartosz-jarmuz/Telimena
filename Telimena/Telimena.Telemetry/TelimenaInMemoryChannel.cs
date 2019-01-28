@@ -1,15 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
+using TelimenaClient;
 
-namespace TelimenaClient
+namespace Telimena.Telemetry
 {
     /// <summary>
     /// Sends telemetry to Telimena

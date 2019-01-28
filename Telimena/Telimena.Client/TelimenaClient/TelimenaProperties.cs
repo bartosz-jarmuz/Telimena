@@ -17,6 +17,7 @@ namespace TelimenaClient
         {
             this.StartupInfo = info;
             this.TelemetryKey = this.StartupInfo.TelemetryKey;
+            this.TelemetryApiBaseUrl = this.StartupInfo.TelemetryApiBaseUrl;
 
             if (this.StartupInfo.TelemetryApiBaseUrl == null)
             {
@@ -64,6 +65,12 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The live program information.</value>
         public LiveProgramInfo LiveProgramInfo { get; internal set; }
+
+        /// <summary>
+        /// Gets the telimena base URL.
+        /// </summary>
+        /// <value>The telimena base URL.</value>
+        public Uri TelemetryApiBaseUrl { get; internal set; }
 
         /// <summary>
         ///     Gets the program version.

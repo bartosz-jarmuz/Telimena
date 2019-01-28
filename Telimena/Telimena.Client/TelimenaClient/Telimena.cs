@@ -4,9 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Channel;
-using Microsoft.ApplicationInsights.Extensibility;
+using Telimena.Telemetry;
 
 namespace TelimenaClient
 {
@@ -52,49 +50,15 @@ namespace TelimenaClient
             this.telemetry = new TelemetryModule(this);
             this.updates = new UpdatesModule(this);
 
-
             this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.httpClient);
-
-            BuildTelemetryClient();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
         }
 
-        private readonly object telemetryClientBuildingLock = new object();
 
-        private void BuildTelemetryClient()
-        {
-            lock (this.telemetryClientBuildingLock)
-            {
-                TelemetryConfiguration cfg = TelemetryConfiguration.Active;
-                TelemetryBuffer buffer = new TelemetryBuffer();
-                cfg.TelemetryChannel = new TelimenaInMemoryChannel(buffer
-                    , new InMemoryTransmitter(buffer
-                        , new DeliverySettings()
-                        {
-                            TelimenaEndpoint = new Uri(this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl
-                                , ApiRoutes.PostTelemetryData)
-                        }));
-                if (!cfg.TelemetryInitializers.Any(x => x is SequencePropertyInitializer))
-                {
-                    cfg.TelemetryInitializers.Add(new SequencePropertyInitializer());
-                }
-
-                var teliInitializer = cfg.TelemetryInitializers.FirstOrDefault(x => x is TelimenaPropertiesInitializer);
-                if (teliInitializer != null)
-                {
-                    cfg.TelemetryInitializers.Remove(teliInitializer);
-                }
-                cfg.TelemetryInitializers.Add(new TelimenaPropertiesInitializer(this.Properties));
-
-                cfg.InstrumentationKey = "1a14064b-d326-4ce3-939e-8cba4d08c255";
-                this.telemetryClient = new TelemetryClient(cfg);
-            }
-        }
-
-
+        
         private readonly object exceptionReportingLocker = new object();
         private static readonly List<object> UnhandledExceptionsReported = new List<object>();
 
@@ -104,8 +68,8 @@ namespace TelimenaClient
             {
                 if (!UnhandledExceptionsReported.Contains(e.ExceptionObject))
                 {
-                    this.telemetryClient.TrackException((Exception) e.ExceptionObject);
-                    this.telemetryClient.Flush();
+                    this.telemetry.Exception((Exception) e.ExceptionObject);
+                    this.telemetry.SendAllDataNow();
                     UnhandledExceptionsReported.Add(e.ExceptionObject);
                 }
             }

@@ -117,7 +117,7 @@ namespace TelimenaTestSandboxApp
                 this.apps.Add(programInfo);
                 ITelimena teli = Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = programInfo});
 
-                await teli.Telemetry.Initialize().ConfigureAwait(false);
+                await teli.Initialize().ConfigureAwait(false);
             }
 
             this.funcs = new List<string>();
@@ -156,7 +156,7 @@ namespace TelimenaTestSandboxApp
                 }
                 else if (operation == 2)
                 {
-                    var result = await teli.Telemetry. Initialize().ConfigureAwait(false);
+                    var result = await teli.Initialize().ConfigureAwait(false);
                     this.progressReport(this.PresentResponse(result));
                 }
                 else

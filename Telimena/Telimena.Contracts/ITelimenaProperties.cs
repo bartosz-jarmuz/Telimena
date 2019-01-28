@@ -46,5 +46,11 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The live program information.</value>
         LiveProgramInfo LiveProgramInfo { get; }
+
+        /// <summary>
+        /// Gets the telimena base URL.
+        /// </summary>
+        /// <value>The telimena base URL.</value>
+        Uri TelemetryApiBaseUrl { get; }
     }
 }

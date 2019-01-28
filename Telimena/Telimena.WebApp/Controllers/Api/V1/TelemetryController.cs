@@ -113,10 +113,10 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [NonAction]
         public Task InsertDataInternal(List<TelemetryItem> items, Guid telemetryKey, Guid userId, string ip)
         {
-            
             return TelemetryControllerHelpers.InsertData(this.work,items, telemetryKey, userId, ip);
         }
 
+        private TelimenaClient.Telimena teli;
         /// <summary>
         ///     Report a program view access
         /// </summary>

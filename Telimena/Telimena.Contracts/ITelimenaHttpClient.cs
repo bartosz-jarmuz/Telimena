@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace TelimenaClient
 {
-    internal interface ITelimenaHttpClient
+    public interface ITelimenaHttpClient
     {
         Uri BaseUri { get; }
         Task<HttpResponseMessage> GetAsync(string requestUri);

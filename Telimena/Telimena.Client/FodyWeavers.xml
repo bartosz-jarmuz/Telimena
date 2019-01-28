@@ -4,6 +4,7 @@
     <IncludeAssemblies>
       Microsoft.ApplicationInsights
       Telimena.Contracts
+      Telimena.Telemetry
       System.Diagnostics.DiagnosticSource
     </IncludeAssemblies>
   </Costura>
