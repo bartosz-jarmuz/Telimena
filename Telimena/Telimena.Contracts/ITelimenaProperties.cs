@@ -52,5 +52,11 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The telimena base URL.</value>
         Uri TelemetryApiBaseUrl { get; }
+
+        /// <summary>
+        /// Gets or sets the instrumentation key (If AppInsights is used)
+        /// </summary>
+        /// <value>The instrumentation key.</value>
+        string InstrumentationKey { get; set; }
     }
 }

@@ -25,10 +25,6 @@ namespace TelimenaTestSandboxApp
             {
                 this.teli =
                     Telimena.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text))) as Telimena;
-                this.teli2 =
-                    Telimena.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text))) as Telimena;
-                this.teli3 =
-                    Telimena.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text))) as Telimena;
             }
 
             this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
@@ -51,15 +47,13 @@ namespace TelimenaTestSandboxApp
 
         private ITelimena teli;
         private TelimenaHammer hammer;
-        private Telimena teli2;
-        private Telimena teli3;
 
         private async void InitializeButton_Click(object sender, EventArgs e)
         {
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
                 this.teli = Telimena.Construct(new TelimenaStartupInfo(key
-                    , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text)));
+                    , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text)){ InstrumentationKey = "1a14064b-d326-4ce3-939e-8cba4d08c255" });
             }
             else
             {
@@ -167,7 +161,8 @@ namespace TelimenaTestSandboxApp
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
                 Properties.Settings.Default.Save();
                 this.teli = Telimena.Construct(new TelimenaStartupInfo(key
-                    , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))) as Telimena;
+                    , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))
+                    { InstrumentationKey = "1a14064b-d326-4ce3-939e-8cba4d08c255" }) as Telimena;
                 ;
             }
             else

@@ -281,6 +281,7 @@
     <Compile Include="AutoMapperWebProfile.cs" />
     <Compile Include="Controllers\Admin\AdminDashboardController.cs" />
     <Compile Include="Controllers\Admin\ToolkitManagementController.cs" />
+    <Compile Include="Controllers\Api\V1\Helpers\AppInsightsDeserializer.cs" />
     <Compile Include="Controllers\Api\V1\DevelopersController.cs" />
     <Compile Include="Controllers\Api\V1\Routes\DevelopersController.Routes.cs" />
     <Compile Include="Controllers\Api\V1\Helpers\ProgramsControllerHelpers.cs" />
@@ -2033,10 +2034,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
-      <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
-      <Name>Telimena.Client</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Telimena.Contracts\Telimena.Contracts.csproj">
       <Project>{D2536BB2-84C5-479C-9500-C7A2B84B6779}</Project>
       <Name>Telimena.Contracts</Name>

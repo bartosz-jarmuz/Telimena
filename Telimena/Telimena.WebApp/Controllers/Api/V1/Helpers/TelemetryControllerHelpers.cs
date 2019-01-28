@@ -33,7 +33,7 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             }
         }
 
-        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, List<TelemetryItem> units, Guid telemetryKey, Guid userId, string ipAddress)
+        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, IEnumerable<TelemetryItem> units, Guid telemetryKey, Guid userId, string ipAddress)
         {
 
             (Program program, ClientAppUser clientAppUser) actionItems = await GetTelemetryUpdateActionItems(work, telemetryKey, userId).ConfigureAwait(false);

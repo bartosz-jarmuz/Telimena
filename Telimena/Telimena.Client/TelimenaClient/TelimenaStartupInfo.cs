@@ -55,6 +55,12 @@ namespace TelimenaClient
         public List<AssemblyInfo> HelperAssemblies { get; private set; } = new List<AssemblyInfo>();
 
         /// <summary>
+        /// Gets or sets the instrumentation key (if AppInsights is in use)
+        /// </summary>
+        /// <value>The instrumentation key.</value>
+        public string InstrumentationKey { get; set; }
+
+        /// <summary>
         /// Loads the helper assemblies based on Assembly Name
         /// </summary>
         /// <param name="assemblyNames"></param>

@@ -18,6 +18,7 @@ namespace TelimenaClient
             this.StartupInfo = info;
             this.TelemetryKey = this.StartupInfo.TelemetryKey;
             this.TelemetryApiBaseUrl = this.StartupInfo.TelemetryApiBaseUrl;
+            this.InstrumentationKey = this.StartupInfo.InstrumentationKey;
 
             if (this.StartupInfo.TelemetryApiBaseUrl == null)
             {
@@ -71,6 +72,12 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The telimena base URL.</value>
         public Uri TelemetryApiBaseUrl { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the instrumentation key (If AppInsights is used)
+        /// </summary>
+        /// <value>The instrumentation key.</value>
+        public string InstrumentationKey { get; set; }
 
         /// <summary>
         ///     Gets the program version.

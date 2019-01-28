@@ -4,7 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Telimena.Telemetry;
+using Microsoft.ApplicationInsights.Channel;
+using TelimenaClient.Telemetry;
 
 namespace TelimenaClient
 {
@@ -47,18 +48,19 @@ namespace TelimenaClient
             this.propertiesInternal= new TelimenaProperties(startupInfo);
             this.Locator = new Locator(this.Properties.StaticProgramInfo);
 
-            this.telemetry = new TelemetryModule(this);
+            this.telemetry = new TelemetryModule(this, this.Properties);
             this.updates = new UpdatesModule(this);
 
             this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.httpClient);
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            telemetry.InitializeTelemetryClient();
 
         }
 
 
-        
+
         private readonly object exceptionReportingLocker = new object();
         private static readonly List<object> UnhandledExceptionsReported = new List<object>();
 

@@ -37,5 +37,7 @@ namespace TelimenaClient
         /// Sends all the accumulated data now.
         /// </summary>
         void SendAllDataNow();
+
+        void InitializeTelemetryClient();
     }
 }

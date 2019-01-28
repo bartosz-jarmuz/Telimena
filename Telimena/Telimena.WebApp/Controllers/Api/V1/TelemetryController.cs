@@ -111,12 +111,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="request"></param>
         /// <returns></returns>
         [NonAction]
-        public Task InsertDataInternal(List<TelemetryItem> items, Guid telemetryKey, Guid userId, string ip)
+        public Task InsertDataInternal(IEnumerable<TelemetryItem> items, Guid telemetryKey, Guid userId, string ip)
         {
-            return TelemetryControllerHelpers.InsertData(this.work,items, telemetryKey, userId, ip);
+            return TelemetryControllerHelpers.InsertData(this.work, items, telemetryKey, userId, ip);
         }
 
-        private TelimenaClient.Telimena teli;
         /// <summary>
         ///     Report a program view access
         /// </summary>
@@ -125,83 +124,36 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPost]
         [Route("", Name = Routes.Post)]
         public async Task<IHttpActionResult> Post()
-
-
         {
-            List<TelemetryItem> telemetryItems = this.Deserialize(await Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true).ToList();
+
+            IEnumerable<dynamic> dynamicObjects = AppInsightsDeserializer.Deserialize(await Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
+            IEnumerable<TelemetryItem> items = AppInsightsDeserializer.BuildItems(dynamicObjects);
+
 
             string deserialized = JsonSerializer.Deserialize(await Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
             if (!string.IsNullOrEmpty(deserialized))
             {
-                var items = deserialized.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var item in items)
+                string[] itemsss = deserialized.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string item in itemsss)
                 {
                     dynamic dynamicObject = JsonConvert.DeserializeObject(item);
 
                 }
             }
-
-
-
             string ip = this.Request.GetClientIp();
-            BackgroundJob.Enqueue(() => this.InsertDataInternal(telemetryItems, Guid.Empty,Guid.Empty,  ip));
+
+            await this.InsertDataInternal(items, Guid.Empty, Guid.Empty, ip).ConfigureAwait(false);
+
             return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
 
         
         }
 
-        [NonAction]
-
-        /// <summary>
-        /// Deserializes and decompress the telemetry items into a collection.
-        /// </summary>
-        /// <param name="telemetryItemsData">Serialized telemetry items.</param>
-        /// <param name="compress">Should deserialization also perform decompression.</param>
-        /// <returns>Telemetry items serialized as a string.</returns>
-        public IEnumerable<TelemetryItem> Deserialize(byte[] telemetryItemsData, bool compress = true)
-        {
-            string deserialized = JsonSerializer.Deserialize(telemetryItemsData, compress);
-            if (!string.IsNullOrEmpty(deserialized))
-            {
-                var items = deserialized.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var item in items)
-                {
-                    dynamic dynamicObject = JsonConvert.DeserializeObject(item);
-
-                    yield return BuildItem(dynamicObject);
-                }
-            }
-        }
-
-        private TelemetryItem BuildItem(dynamic dynamicObject)
-        {
-            var itemType = GetItemType(dynamicObject);
-
-            var item = new TelemetryItem(Guid.NewGuid().ToString(), itemType, null, null);
-            return item;
-        }
-
-        private TelemetryItemTypes GetItemType(dynamic dynamicObject)
-        {
-
-            string baseType = dynamicObject?.data?.baseType;
-            switch (baseType)
-            {
-                case "PageViewData":
-                    return TelemetryItemTypes.View;
-                default:
-                    return TelemetryItemTypes.Event;
-            }
-
-        }
 
 
 
-        public static class AppInsightsDeserializer
-        {
-          
 
-        }
+
 
     }
 }

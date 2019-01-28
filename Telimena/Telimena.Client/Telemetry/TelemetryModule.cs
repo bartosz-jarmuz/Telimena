@@ -4,10 +4,9 @@ using System.Linq;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
-using TelimenaClient;
-using ITelemetryModule = TelimenaClient.ITelemetryModule;
+using TelimenaClient.Telemetry.AppInsightsComponents;
 
-namespace Telimena.Telemetry
+namespace TelimenaClient.Telemetry
 {
     /// <inheritdoc />
     public class TelemetryModule : ITelemetryModule
@@ -15,16 +14,17 @@ namespace Telimena.Telemetry
         /// <summary>
         ///     Asynchronous Telimena methods
         /// </summary>
-        public TelemetryModule(ITelimena telimena)
+        public TelemetryModule(ITelimena telimena, ITelimenaProperties properties)
         {
             this.telimena = telimena;
+            this.properties = properties;
         }
 
         private readonly ITelimena telimena;
         private readonly ITelimenaProperties properties;
 
         private readonly object telemetryClientBuildingLock = new object();
-        internal TelemetryClient telemetryClient;
+        private TelemetryClient telemetryClient;
 
 
         /// <inheritdoc />
@@ -33,10 +33,14 @@ namespace Telimena.Telemetry
             this.telemetryClient.TrackPageView(viewName);
         }
 
+        /// <inheritdoc />
+
         public void Exception(Exception exception, Dictionary<string, object> telemetryData = null)
         {
             this.telemetryClient.TrackException(exception);
         }
+
+        /// <inheritdoc />
 
         public void SendAllDataNow()
         {
@@ -51,6 +55,9 @@ namespace Telimena.Telemetry
 
         }
 
+        /// <summary>
+        /// Initializes the telemetry client.
+        /// </summary>
         public void InitializeTelemetryClient()
         {
             lock (this.telemetryClientBuildingLock)
@@ -76,7 +83,10 @@ namespace Telimena.Telemetry
                 }
                 cfg.TelemetryInitializers.Add(new TelimenaPropertiesInitializer(this.properties));
 
-                cfg.InstrumentationKey = "1a14064b-d326-4ce3-939e-8cba4d08c255";
+                if (this.properties.InstrumentationKey != null)
+                {
+                    cfg.InstrumentationKey = this.properties.InstrumentationKey;
+                }
                 this.telemetryClient = new TelemetryClient(cfg);
             }
         }
