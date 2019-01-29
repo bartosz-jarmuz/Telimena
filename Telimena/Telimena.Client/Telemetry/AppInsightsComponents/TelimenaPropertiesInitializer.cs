@@ -11,7 +11,10 @@ namespace TelimenaClient.Telemetry.AppInsightsComponents
     public sealed class TelimenaPropertiesInitializer : ITelemetryInitializer
     {
         private readonly ITelimenaProperties properties;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TelimenaPropertiesInitializer"/> class.
+        /// </summary>
+        /// <param name="properties">The properties.</param>
         public TelimenaPropertiesInitializer(ITelimenaProperties properties)
         {
             this.properties = properties;

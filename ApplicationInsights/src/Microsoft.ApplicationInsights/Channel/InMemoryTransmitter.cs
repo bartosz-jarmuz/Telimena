@@ -13,13 +13,6 @@ namespace Microsoft.ApplicationInsights.Channel
     using Extensibility.Implementation;
     using Extensibility.Implementation.Tracing;
 
-    internal class DeliverySettings
-    {
-        public bool AppInsightsEndpointEnabled = false;
-
-        public Uri TelimenaEndpoint { get; set; }
-    }
-
     /// <summary>
     /// A transmitter that will immediately send telemetry over HTTP. 
     /// Telemetry items are being sent when Flush is called, or when the buffer is full (An OnFull "event" is raised) or every 30 seconds. 
@@ -27,7 +20,6 @@ namespace Microsoft.ApplicationInsights.Channel
     internal class InMemoryTransmitter : IDisposable
     {
         private readonly TelemetryBuffer buffer;
-        internal DeliverySettings DeliverySettings { get; }
 
         /// <summary>
         /// A lock object to serialize the sending calls from Flush, OnFull event and the Runner.  
@@ -35,19 +27,14 @@ namespace Microsoft.ApplicationInsights.Channel
         private object sendingLockObj = new object();
         private AutoResetEvent startRunnerEvent;
         private bool enabled = true;
-        
+
         /// <summary>
         /// The number of times this object was disposed.
         /// </summary>
         private int disposeCount = 0;
 
         private TimeSpan sendingInterval = TimeSpan.FromSeconds(30);
-        private Uri endpointAddress = new Uri(Constants.TelemetryServiceEndpoint);
-
-        internal InMemoryTransmitter(TelemetryBuffer buffer, DeliverySettings deliverySettings) : this(buffer)
-        {
-            this.DeliverySettings = deliverySettings;
-        }
+        protected Uri endpointAddress = new Uri(Constants.TelemetryServiceEndpoint);
 
         internal InMemoryTransmitter(TelemetryBuffer buffer)
         {
@@ -57,11 +44,11 @@ namespace Microsoft.ApplicationInsights.Channel
             // Starting the Runner
             Task.Factory.StartNew(this.Runner, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default)
                 .ContinueWith(
-                    task => 
+                    task =>
                     {
                         string msg = string.Format(CultureInfo.InvariantCulture, "InMemoryTransmitter: Unhandled exception in Runner: {0}", task.Exception);
                         CoreEventSource.Log.LogVerbose(msg);
-                    }, 
+                    },
                     TaskContinuationOptions.OnlyOnFaulted);
         }
 
@@ -161,7 +148,7 @@ namespace Microsoft.ApplicationInsights.Channel
         /// <summary>
         /// Serializes a list of telemetry items and sends them.
         /// </summary>
-        private async Task Send(IEnumerable<ITelemetry> telemetryItems, TimeSpan timeout)
+        protected virtual Task Send(IEnumerable<ITelemetry> telemetryItems, TimeSpan timeout)
         {
             byte[] data = null;
 
@@ -173,20 +160,12 @@ namespace Microsoft.ApplicationInsights.Channel
             if (data == null || data.Length == 0)
             {
                 CoreEventSource.Log.LogVerbose("No Telemetry Items passed to Enqueue");
-                return;
+                return Task.FromResult<object>(null);
             }
 
-            if (this.DeliverySettings == null || this.DeliverySettings.AppInsightsEndpointEnabled)
-            {
-                var transmission = new Transmission(this.endpointAddress, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
-                await transmission.SendAsync();
-            }
-            if (this.DeliverySettings != null)
-            {
-                var teliTransmission = new Transmission(this.DeliverySettings.TelimenaEndpoint, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
-                await teliTransmission.SendAsync();
-            }
+            var transmission = new Transmission(this.endpointAddress, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
 
+            return transmission.SendAsync();
         }
 
         private void Dispose(bool disposing)

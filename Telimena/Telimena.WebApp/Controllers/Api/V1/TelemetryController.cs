@@ -122,8 +122,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        [Route("", Name = Routes.Post)]
-        public async Task<IHttpActionResult> Post()
+        [Route("{telemetryKey}", Name = Routes.Post)]
+        public async Task<IHttpActionResult> Post(Guid telemetryKey)
         {
 
             IEnumerable<dynamic> dynamicObjects = AppInsightsDeserializer.Deserialize(await Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
@@ -142,7 +142,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             string ip = this.Request.GetClientIp();
 
-            await this.InsertDataInternal(items, Guid.Empty, Guid.Empty, ip).ConfigureAwait(false);
+            await this.InsertDataInternal(items, telemetryKey, Guid.Empty, ip).ConfigureAwait(false);
 
             return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
 

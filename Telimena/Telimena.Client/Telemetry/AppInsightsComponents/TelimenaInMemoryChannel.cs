@@ -10,7 +10,7 @@ namespace TelimenaClient.Telemetry.AppInsightsComponents
     /// <seealso cref="Microsoft.ApplicationInsights.Channel.Transmission" />
     internal class TelimenaInMemoryChannel : InMemoryChannel
     {
-        public TelimenaInMemoryChannel(TelemetryBuffer buffer, InMemoryTransmitter transmitter) : base(buffer
+        public TelimenaInMemoryChannel(TelemetryBuffer buffer, TelimenaInMemoryTransmitter transmitter) : base(buffer
             , transmitter)
         {
 
@@ -30,12 +30,6 @@ namespace TelimenaClient.Telemetry.AppInsightsComponents
                 {
                     CoreEventSource.Log.ItemMissingInstrumentationKey(item.ToString());
                 }
-
-                transmitter.DeliverySettings.AppInsightsEndpointEnabled = false;
-            }
-            else
-            {
-                transmitter.DeliverySettings.AppInsightsEndpointEnabled = true;
             }
 
             try

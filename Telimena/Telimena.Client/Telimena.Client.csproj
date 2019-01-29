@@ -91,8 +91,11 @@
     <Compile Include="Serializer\ITelimenaSerializer.cs" />
     <Compile Include="Serializer\PropertiesConverter.cs" />
     <Compile Include="Serializer\TelimenaSerializer.cs" />
+    <Compile Include="Telemetry\AppInsightsComponents\DeliverySettings.cs" />
+    <Compile Include="Telemetry\AppInsightsComponents\TelimenaInMemoryTransmitter.cs" />
     <Compile Include="Telemetry\AppInsightsComponents\TelimenaInMemoryChannel.cs" />
     <Compile Include="Telemetry\AppInsightsComponents\TelimenaPropertiesInitializer.cs" />
+    <Compile Include="Telemetry\TelemetryClientBuilder.cs" />
     <Compile Include="Telemetry\TelemetryModule.cs" />
     <Compile Include="Telemetry\TelimenaContextPropertyKeys.cs" />
     <Compile Include="TelimenaClient\Static\Telimena.Static.Telemetry.cs" />
