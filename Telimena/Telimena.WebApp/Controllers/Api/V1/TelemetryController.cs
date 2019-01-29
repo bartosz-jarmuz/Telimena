@@ -8,12 +8,14 @@ using DotNetLittleHelpers;
 using Hangfire;
 using Newtonsoft.Json;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
+using Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
+using Telimena.WebApp.Utils;
 using TelimenaClient;
 using JsonSerializer = Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer;
 
@@ -125,24 +127,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [Route("{telemetryKey}", Name = Routes.Post)]
         public async Task<IHttpActionResult> Post(Guid telemetryKey)
         {
+            IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
 
-            IEnumerable<dynamic> dynamicObjects = AppInsightsDeserializer.Deserialize(await Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
-            IEnumerable<TelemetryItem> items = AppInsightsDeserializer.BuildItems(dynamicObjects);
+            IEnumerable<TelemetryItem> telemetryItems = AppInsightsTelemetryAdapter.Map(appInsightsTelemetries);
 
-
-            string deserialized = JsonSerializer.Deserialize(await Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
-            if (!string.IsNullOrEmpty(deserialized))
-            {
-                string[] itemsss = deserialized.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (string item in itemsss)
-                {
-                    dynamic dynamicObject = JsonConvert.DeserializeObject(item);
-
-                }
-            }
             string ip = this.Request.GetClientIp();
 
-            await this.InsertDataInternal(items, telemetryKey, Guid.Empty, ip).ConfigureAwait(false);
+            await this.InsertDataInternal(telemetryItems, telemetryKey, Guid.Empty, ip).ConfigureAwait(false);
 
             return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
 

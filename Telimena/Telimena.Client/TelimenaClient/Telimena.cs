@@ -48,7 +48,7 @@ namespace TelimenaClient
             this.propertiesInternal= new TelimenaProperties(startupInfo);
             this.Locator = new Locator(this.Properties.StaticProgramInfo);
 
-            this.telemetry = new TelemetryModule(this, this.Properties);
+            this.telemetry = new TelemetryModule(this.Properties);
             this.updates = new UpdatesModule(this);
 
             this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl});

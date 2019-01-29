@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -10,6 +11,10 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Mvc;
+using DotNetLittleHelpers;
+using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.TestFramework;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Moq;
 using NUnit.Framework;
@@ -24,11 +29,25 @@ using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 using TelimenaClient;
+using TelimenaClient.Telemetry;
 
 namespace Telimena.Tests
 {
     public static class Helpers
     {
+        public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey)
+        {
+            TelemetryModule module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey)));
+            StubTelemetryChannel channel = new StubTelemetryChannel { OnSend = t => sentTelemetry.Add(t) };
+
+#pragma warning disable 618
+            module.InvokeMethod(nameof(TelemetryModule.InitializeTelemetryClient), channel);
+#pragma warning restore 618
+
+            Assert.IsInstanceOf<StubTelemetryChannel>(module.TelemetryClient.GetPropertyValue<TelemetryConfiguration>("TelemetryConfiguration").TelemetryChannel);
+            return module;
+        }
+
         public static void AddHelperAssemblies(TelimenaContext context, int assCount, string prgName, [CallerMemberName] string caller = "")
         {
             for (int i = 0; i < assCount; i++)

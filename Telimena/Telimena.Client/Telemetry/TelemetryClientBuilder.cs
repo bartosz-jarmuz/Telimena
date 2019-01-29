@@ -24,16 +24,52 @@ namespace TelimenaClient.Telemetry
             {
                 TelemetryConfiguration config = TelemetryConfiguration.Active;
 
-                LoadTelemetryChannel(config);
+                this.LoadTelemetryChannel(config);
 
-                LoadInitializers(config);
+                this.LoadInitializers(config);
+
+                var client = new TelemetryClient(config);
+
+                this.InitializeContext(client);
 
                 if (this.properties.InstrumentationKey != null)
                 {
                     config.InstrumentationKey = this.properties.InstrumentationKey;
+                    client.InstrumentationKey = this.properties.InstrumentationKey;
                 }
-                return new TelemetryClient(config);
+
+                return client;
             }
+        }
+
+        private void InitializeContext(TelemetryClient client)
+        {
+            if (!client.Context.GlobalProperties.ContainsKey(TelimenaContextPropertyKeys.TelemetryKey))
+            {
+                client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.TelemetryKey, this.properties.TelemetryKey.ToString());
+            }
+            if (string.IsNullOrEmpty(client.Context.User.AccountId))
+            {
+                client.Context.User.AuthenticatedUserId = this.properties.UserInfo.UserName;
+                client.Context.User.Id = this.properties.UserInfo.UserName;
+            }
+            client.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
+            client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.TelimenaVersion, this.properties.TelimenaVersion);
+            client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.ProgramAssemblyVersion, this.properties.ProgramVersion.AssemblyVersion);
+            client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.ProgramFileVersion, this.properties.ProgramVersion.FileVersion);
+        }
+
+        /// <summary>
+        /// Gets the client. Swaps the channel with whatever provided
+        /// </summary>
+        /// <param name="channel">The channel.</param>
+        /// <returns>TelemetryClient.</returns>
+        [Obsolete("For tests only.")]
+        internal TelemetryClient GetClient(ITelemetryChannel channel)
+        {
+            var client = this.GetClient();
+            client.TelemetryConfiguration.TelemetryChannel = channel;
+            return client;
         }
 
         private void LoadInitializers(TelemetryConfiguration cfg)

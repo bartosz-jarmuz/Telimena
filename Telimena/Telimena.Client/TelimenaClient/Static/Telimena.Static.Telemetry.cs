@@ -20,7 +20,7 @@ namespace TelimenaClient
             /// <param name="eventName">Name of the event</param>
             /// <param name="telemetryData">Custom telemetry data</param>
             /// <returns></returns>
-            public static void Event(ITelimenaStartupInfo startupInfo, string eventName, Dictionary<string, object> telemetryData = null)
+            public static void Event(ITelimenaStartupInfo startupInfo, string eventName, Dictionary<string, string> telemetryData = null)
             {
                 ITelimena teli = Telimena.Construct(startupInfo);
                 teli.Telemetry.Event(eventName, telemetryData);

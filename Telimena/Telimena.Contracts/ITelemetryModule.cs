@@ -9,14 +9,13 @@ namespace TelimenaClient
     /// </summary>
     public interface ITelemetryModule : IFluentInterface
     {
-
         /// <summary>
         ///     Reports an occurence of an event
         /// </summary>
         /// <param name="eventName">Name of the event</param>
         /// <param name="telemetryData">Custom telemetry data</param>
         /// <returns></returns>
-        void Event(string eventName, Dictionary<string, object> telemetryData = null);
+        void Event(string eventName, Dictionary<string, string> telemetryData = null);
 
         /// <summary>
         ///     Report the usage of the application view.

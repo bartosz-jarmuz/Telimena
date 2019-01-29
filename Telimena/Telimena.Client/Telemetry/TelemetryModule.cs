@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Channel;
 
 namespace TelimenaClient.Telemetry
 {
@@ -10,14 +11,18 @@ namespace TelimenaClient.Telemetry
         /// <summary>
         ///     Asynchronous Telimena methods
         /// </summary>
-        public TelemetryModule(ITelimena telimena, ITelimenaProperties properties)
+        public TelemetryModule(ITelimenaProperties properties)
         {
-            this.telimena = telimena;
             this.properties = properties;
         }
 
-        private readonly ITelimena telimena;
         private readonly ITelimenaProperties properties;
+
+        /// <summary>
+        /// Gets the telemetry client.
+        /// </summary>
+        /// <value>The telemetry client.</value>
+        public TelemetryClient TelemetryClient  => this.telemetryClient;
 
         private TelemetryClient telemetryClient;
 
@@ -51,10 +56,22 @@ namespace TelimenaClient.Telemetry
             this.telemetryClient = builder.GetClient();
         }
 
-        /// <inheritdoc />
-        public void Event(string eventName, Dictionary<string, object> telemetryData = null)
+        /// <summary>
+        /// Initializes the telemetry client.
+        /// </summary>
+        [Obsolete("For tests only")]
+        internal void InitializeTelemetryClient(ITelemetryChannel channel)
         {
-            this.telemetryClient.TrackEvent(eventName);
+            TelemetryClientBuilder builder = new TelemetryClientBuilder(this.properties);
+#pragma warning disable 618
+            this.telemetryClient = builder.GetClient(channel);
+#pragma warning restore 618
+        }
+
+        /// <inheritdoc />
+        public void Event(string eventName, Dictionary<string, string> telemetryData = null)
+        {
+            this.telemetryClient.TrackEvent(eventName, telemetryData);
 
         }
 

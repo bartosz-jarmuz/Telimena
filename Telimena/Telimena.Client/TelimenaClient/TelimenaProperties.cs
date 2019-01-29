@@ -9,6 +9,7 @@ namespace TelimenaClient
     /// </summary>
     public class TelimenaProperties : ITelimenaProperties
     {
+
         /// <summary>
         ///     Creates new instance
         /// </summary>
@@ -17,13 +18,13 @@ namespace TelimenaClient
         {
             this.StartupInfo = info;
             this.TelemetryKey = this.StartupInfo.TelemetryKey;
-            this.TelemetryApiBaseUrl = this.StartupInfo.TelemetryApiBaseUrl;
             this.InstrumentationKey = this.StartupInfo.InstrumentationKey;
 
             if (this.StartupInfo.TelemetryApiBaseUrl == null)
             {
                 this.StartupInfo.TelemetryApiBaseUrl = Telimena.DefaultApiUri;
             }
+            this.TelemetryApiBaseUrl = this.StartupInfo.TelemetryApiBaseUrl;
 
             if (this.StartupInfo.MainAssembly == null)
             {

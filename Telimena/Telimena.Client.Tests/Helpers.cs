@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.TestFramework;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using TelimenaClient.Serializer;
+using TelimenaClient.Telemetry;
 
 namespace TelimenaClient.Tests
 {
@@ -15,6 +19,17 @@ namespace TelimenaClient.Tests
     {
         public static string TestAppDataPath =>
             Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName, "FakeAppData");
+
+        public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey)
+        {
+            var module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey)));
+            var channel = new StubTelemetryChannel { OnSend = t => sentTelemetry.Add(t) };
+#pragma warning disable 618
+            module.InitializeTelemetryClient(channel);
+#pragma warning restore 618
+            Assert.IsInstanceOf<StubTelemetryChannel>(module.TelemetryClient.TelemetryConfiguration.TelemetryChannel);
+            return module;
+        }
 
         public static Mock<ITelimenaHttpClient> GetMockClient()
         {

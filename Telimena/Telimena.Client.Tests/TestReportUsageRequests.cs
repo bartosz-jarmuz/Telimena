@@ -12,10 +12,18 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.TestFramework;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Telimena.WebApp.Controllers.Api.V1;
 using TelimenaClient.Serializer;
+using TelimenaClient.Telemetry;
+using JsonSerializer = Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer;
 
 namespace TelimenaClient.Tests
 {
@@ -36,6 +44,9 @@ namespace TelimenaClient.Tests
             return telimena.Locator.TelemetryStorageDirectory;
 
         }
+
+        
+
 
         ////todo restore
         //[Test]

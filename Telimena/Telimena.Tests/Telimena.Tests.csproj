@@ -64,8 +64,8 @@
     <Reference Include="DbIntegrationTestHelpers, Version=1.0.32.0, Culture=neutral, PublicKeyToken=19193c78ae1cb0d4, processorArchitecture=MSIL">
       <HintPath>..\packages\DbIntegrationTestHelpers.1.0.32\lib\net461\DbIntegrationTestHelpers.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetLittleHelpers, Version=1.0.90.0, Culture=neutral, PublicKeyToken=339dc7d237f083dc, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetLittleHelpers.1.0.90\lib\net461\DotNetLittleHelpers.dll</HintPath>
+    <Reference Include="DotNetLittleHelpers, Version=1.0.96.0, Culture=neutral, PublicKeyToken=339dc7d237f083dc, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetLittleHelpers.1.0.96\lib\net461\DotNetLittleHelpers.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
@@ -93,8 +93,8 @@
     <Reference Include="Moq, Version=4.8.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.8.2\lib\net45\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NMemory, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6a46696d54971e6d, processorArchitecture=MSIL">
       <HintPath>..\packages\NMemory.1.1.0\lib\net45\NMemory.dll</HintPath>
@@ -151,6 +151,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppInsightsDeserializerTests.cs" />
     <Compile Include="AssemblyVersionReader\AssemblyVersionReaderTests.cs" />
     <Compile Include="Controllers\AccountControllerTests.cs" />
     <Compile Include="ApiTests.cs" />
@@ -184,6 +185,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ApplicationInsights\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj">
+      <Project>{2D753566-8ECA-4A34-8DC9-DE0C2A55ED88}</Project>
+      <Name>Microsoft.ApplicationInsights</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ApplicationInsights\Test\Microsoft.ApplicationInsights.Test\Net46\Microsoft.ApplicationInsights.Net46.Tests.csproj">
+      <Project>{0927E682-4A56-46B6-8125-94FA066B2F57}</Project>
+      <Name>Microsoft.ApplicationInsights.Net46.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
       <Project>{8bc1dd73-2520-4361-9845-282e87442339}</Project>
       <Name>Telimena.Client</Name>
@@ -195,6 +204,10 @@
     <ProjectReference Include="..\Telimena.Updater\Telimena.Updater.csproj">
       <Project>{6dee078f-92bd-4f45-a876-bc4446217d83}</Project>
       <Name>Telimena.Updater</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telimena.WebApp.Utils\Telimena.WebApp.Utils.csproj">
+      <Project>{1F08CB36-09F1-4134-A921-E8162F820383}</Project>
+      <Name>Telimena.WebApp.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\Telimena.WebApp\Telimena.WebApp.csproj">
       <Project>{eb646426-47c4-464a-abb0-415ca73b432f}</Project>
