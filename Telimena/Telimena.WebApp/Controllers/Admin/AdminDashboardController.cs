@@ -19,9 +19,19 @@ using Telimena.WebApp.Infrastructure.Security;
 
 namespace Telimena.WebApp.Controllers.Admin
 {
+    /// <summary>
+    /// Class AdminDashboardController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class AdminDashboardController : Controller
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AdminDashboardController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="unitOfWork">The unit of work.</param>
+        /// <param name="auditingContext">The auditing context.</param>
         public AdminDashboardController(ILog logger, IProgramsDashboardUnitOfWork unitOfWork, AuditingContext auditingContext)
         {
             this.logger = logger;
@@ -30,17 +40,37 @@ namespace Telimena.WebApp.Controllers.Admin
             this.dashboardBase = new ProgramsDashboardBase(unitOfWork);
         }
 
+        /// <summary>
+        /// The logger
+        /// </summary>
         private readonly ILog logger;
+        /// <summary>
+        /// The unit of work
+        /// </summary>
         private readonly IProgramsDashboardUnitOfWork unitOfWork;
+        /// <summary>
+        /// The auditing context
+        /// </summary>
         private readonly AuditingContext auditingContext;
+        /// <summary>
+        /// The dashboard base
+        /// </summary>
         private readonly ProgramsDashboardBase dashboardBase;
 
+        /// <summary>
+        /// Appses this instance.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [Audit]
         public ActionResult Apps()
         {
             return this.View();
         }
 
+        /// <summary>
+        /// Gets all programs.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         public async Task<ActionResult> GetAllPrograms()
         {
@@ -48,6 +78,11 @@ namespace Telimena.WebApp.Controllers.Admin
             return this.Content(JsonConvert.SerializeObject(programs));
         }
 
+        /// <summary>
+        /// Gets the last audit data.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpGet]
         public async Task<ActionResult> GetLastAuditData(IDataTablesRequest request)
         {
@@ -69,6 +104,12 @@ namespace Telimena.WebApp.Controllers.Admin
 
         }
 
+        /// <summary>
+        /// Applies the ordering query.
+        /// </summary>
+        /// <param name="sortBy">The sort by.</param>
+        /// <param name="query">The query.</param>
+        /// <returns>IOrderedQueryable&lt;Audit&gt;.</returns>
         private static IOrderedQueryable<Audit> ApplyOrderingQuery(IEnumerable<Tuple<string, bool>> sortBy, IQueryable<Audit> query) 
         {
             List<Tuple<string, bool>> rules = sortBy?.ToList();
@@ -94,18 +135,30 @@ namespace Telimena.WebApp.Controllers.Admin
 
 
 
+        /// <summary>
+        /// Gets all programs summary counts.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         public async Task<ActionResult> GetAllProgramsSummaryCounts()
         {
             AllProgramsSummaryData summary = await this.dashboardBase.GetAllProgramsSummaryCounts(this.User).ConfigureAwait(false);
             return this.PartialView("_AllProgramsSummaryBoxes", summary);
         }
 
+        /// <summary>
+        /// Gets the portal summary.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         public async Task<ActionResult> GetPortalSummary()
         {
             PortalSummaryData summary = await this.unitOfWork.GetPortalSummary().ConfigureAwait(false);
             return this.PartialView("_PortalSummaryBoxes", summary);
         }
 
+        /// <summary>
+        /// Portals this instance.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [Audit]
         public ActionResult Portal()
         {

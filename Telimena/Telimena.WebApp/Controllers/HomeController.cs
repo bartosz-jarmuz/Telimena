@@ -10,16 +10,31 @@ using Telimena.WebApp.Models.Shared;
 
 namespace Telimena.WebApp.Controllers
 {
+    /// <summary>
+    /// Class HomeController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [TelimenaAuthorize]
     public class HomeController : Controller
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomeController"/> class.
+        /// </summary>
+        /// <param name="work">The work.</param>
         public HomeController(IProgramsUnitOfWork work)
         {
             this.work = work;
         }
 
+        /// <summary>
+        /// The work
+        /// </summary>
         private readonly IProgramsUnitOfWork work;
 
+        /// <summary>
+        /// Indexes this instance.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [Audit]
         public ActionResult Index()
         {
@@ -31,6 +46,10 @@ namespace Telimena.WebApp.Controllers
             return this.RedirectToAction("Index", "DeveloperDashboard");
         }
 
+        /// <summary>
+        /// Programses the list.
+        /// </summary>
+        /// <returns>PartialViewResult.</returns>
         [ChildActionOnly]
         public PartialViewResult ProgramsList()
         {

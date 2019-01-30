@@ -110,10 +110,6 @@
       <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
       <Name>Telimena.Client</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Telimena.Contracts\Telimena.Contracts.csproj">
-      <Project>{D2536BB2-84C5-479C-9500-C7A2B84B6779}</Project>
-      <Name>Telimena.Contracts</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

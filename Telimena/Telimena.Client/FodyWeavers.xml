@@ -3,7 +3,6 @@
   <Costura>
     <IncludeAssemblies>
       Microsoft.ApplicationInsights
-      Telimena.Contracts
       System.Diagnostics.DiagnosticSource
     </IncludeAssemblies>
   </Costura>

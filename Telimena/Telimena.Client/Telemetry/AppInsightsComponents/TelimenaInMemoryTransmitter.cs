@@ -17,7 +17,6 @@ namespace TelimenaClient.Telemetry.AppInsightsComponents
     /// </summary>
     internal class TelimenaInMemoryTransmitter : InMemoryTransmitter, IDisposable
     {
-        private readonly TelemetryBuffer buffer;
         internal TelimenaClient.Telemetry.AppInsightsComponents.DeliverySettings DeliverySettings { get; }
 
         /// <summary>
@@ -25,10 +24,6 @@ namespace TelimenaClient.Telemetry.AppInsightsComponents
         /// </summary>
         private readonly object sendingLockObj = new object();
         
-        /// <summary>
-        /// The number of times this object was disposed.
-        /// </summary>
-        private int disposeCount = 0;
 
         internal TelimenaInMemoryTransmitter(TelemetryBuffer buffer, DeliverySettings deliverySettings) : base(buffer)
         {

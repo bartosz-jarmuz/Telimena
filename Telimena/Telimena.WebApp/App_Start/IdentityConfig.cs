@@ -11,8 +11,15 @@ using Telimena.WebApp.Infrastructure.Identity;
 
 namespace Telimena.WebApp
 {
+    /// <summary>
+    /// Class IdentityConfig.
+    /// </summary>
     public class IdentityConfig
     {
+        /// <summary>
+        /// Configurations the specified application.
+        /// </summary>
+        /// <param name="app">The application.</param>
         public void Configuration(IAppBuilder app)
         {
             app.CreatePerOwinContext(() => new TelimenaContext());
@@ -35,6 +42,10 @@ namespace Telimena.WebApp
             });
         }
 
+        /// <summary>
+        /// Loads the hangfire.
+        /// </summary>
+        /// <param name="app">The application.</param>
         private static void LoadHangfire(IAppBuilder app)
         {
             try

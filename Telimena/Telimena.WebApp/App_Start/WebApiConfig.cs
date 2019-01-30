@@ -14,8 +14,15 @@ using Swashbuckle.Swagger;
 
 namespace Telimena.WebApp
 {
+    /// <summary>
+    /// Class WebApiConfig.
+    /// </summary>
     public static class WebApiConfig
     {
+        /// <summary>
+        /// Registers the specified configuration.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
@@ -106,6 +113,10 @@ namespace Telimena.WebApp
             }
         }
 
+        /// <summary>
+        /// Gets the XML comments file path.
+        /// </summary>
+        /// <value>The XML comments file path.</value>
         static string XmlCommentsFilePath
         {
             get
@@ -119,7 +130,8 @@ namespace Telimena.WebApp
     /// <summary>
     /// Represents the Swagger/Swashbuckle operation filter used to provide default values.
     /// </summary>
-    /// <remarks>This <see cref="IOperationFilter"/> is only required due to bugs in the <see cref="SwaggerGenerator"/>.
+    /// <seealso cref="Swashbuckle.Swagger.IOperationFilter" />
+    /// <remarks>This <see cref="IOperationFilter" /> is only required due to bugs in the <see cref="SwaggerGenerator" />.
     /// Once they are fixed and published, this class can be removed.</remarks>
     public class SwaggerDefaultValues : IOperationFilter
     {

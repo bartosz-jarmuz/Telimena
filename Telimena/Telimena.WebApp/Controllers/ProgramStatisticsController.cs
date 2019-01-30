@@ -22,16 +22,33 @@ using Telimena.WebApp.Models.ProgramStatistics;
 
 namespace Telimena.WebApp.Controllers
 {
+    /// <summary>
+    /// Class ProgramStatisticsController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramStatisticsController : Controller
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProgramStatisticsController" /> class.
+        /// </summary>
+        /// <param name="work">The work.</param>
         public ProgramStatisticsController(IProgramsDashboardUnitOfWork work)
         {
             this.Work = work;
         }
 
+        /// <summary>
+        /// Gets the work.
+        /// </summary>
+        /// <value>The work.</value>
         private IProgramsDashboardUnitOfWork Work { get; }
 
+        /// <summary>
+        /// Indexes the specified telemetry key.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit]
         [HttpGet]
         public async Task<ActionResult> Index(Guid telemetryKey)
@@ -48,6 +65,11 @@ namespace Telimena.WebApp.Controllers
             return this.View("Index", model);
         }
 
+        /// <summary>
+        /// Pivots the table.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit]
         [HttpGet]
         public async Task<ActionResult> PivotTable(Guid telemetryKey)
@@ -64,7 +86,13 @@ namespace Telimena.WebApp.Controllers
             return this.View("PivotTable", model);
         }
 
-     
+
+        /// <summary>
+        /// Gets the pivot table data.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <returns>Task&lt;JsonResult&gt;.</returns>
         [HttpGet]
         public async Task<JsonResult> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
         {
@@ -73,6 +101,12 @@ namespace Telimena.WebApp.Controllers
         }
 
 
+        /// <summary>
+        /// Gets the program views usage data.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <param name="request">The request.</param>
+        /// <returns>Task&lt;JsonResult&gt;.</returns>
         [HttpGet]
         public async Task<JsonResult> GetProgramViewsUsageData(Guid telemetryKey, IDataTablesRequest request)
         {

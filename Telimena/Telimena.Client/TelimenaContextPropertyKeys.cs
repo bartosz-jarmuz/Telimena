@@ -1,4 +1,5 @@
-﻿namespace TelimenaClient
+﻿#pragma warning disable 1591
+namespace TelimenaClient
 {
     public static class TelimenaContextPropertyKeys
     {

@@ -13,16 +13,33 @@ using Telimena.WebApp.Models.ProgramDetails;
 
 namespace Telimena.WebApp.Controllers
 {
+    /// <summary>
+    /// Class ProgramManagementController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramManagementController : Controller
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProgramManagementController"/> class.
+        /// </summary>
+        /// <param name="work">The work.</param>
         public ProgramManagementController(IProgramsUnitOfWork work)
         {
             this.Work = work;
         }
 
+        /// <summary>
+        /// Gets the work.
+        /// </summary>
+        /// <value>The work.</value>
         private IProgramsUnitOfWork Work { get; }
 
+        /// <summary>
+        /// Indexes the specified telemetry key.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit]
         [HttpGet]
         public async Task<ActionResult> Index(Guid telemetryKey)

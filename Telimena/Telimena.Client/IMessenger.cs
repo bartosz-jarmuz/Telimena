@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TelimenaClient
 {
-    public interface IMessenger
+    internal interface IMessenger
     {
         Task<FileDownloadResult> DownloadFile(string requestUri);
         Task<HttpResponseMessage> SendGetRequest(string requestUri);

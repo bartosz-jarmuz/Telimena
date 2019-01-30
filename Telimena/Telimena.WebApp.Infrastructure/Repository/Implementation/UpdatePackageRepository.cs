@@ -54,7 +54,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             ProgramUpdatePackageInfo pkg = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == program.Id
                                                                                                 && x.Version == actualVersion
+#pragma warning disable 618
                                                                                                 && x.SupportedToolkitVersion == supportedToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
+#pragma warning restore 618
             if (pkg == null)
             {
                 pkg = new ProgramUpdatePackageInfo(packageName, program.Id, actualVersion, fileStream.Length, supportedToolkitVersion);
@@ -89,7 +91,9 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             List<ProgramUpdatePackageInfo> packages = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync().ConfigureAwait(false);
 
             var currentVersion = program.DetermineProgramVersion(versionData);
+#pragma warning disable 618
             var newerOnes = packages.Where(x => Utils.VersionComparison.Extensions.IsNewerVersionThan(x.Version, currentVersion)).OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id);
+#pragma warning restore 618
             List<ProgramUpdatePackageInfo> uniquePackages = this.GetUniquePackages(newerOnes);
             return uniquePackages;
         }

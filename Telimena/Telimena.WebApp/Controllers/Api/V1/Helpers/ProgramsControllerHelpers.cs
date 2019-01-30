@@ -75,7 +75,9 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             , UpdateRequest updateRequest)
         {
             string maxVersionInPackages = null;
+#pragma warning disable 618
             ProgramUpdatePackageInfo newestPackage = updatePackages.OrderByDescending(x => x.Id).FirstOrDefault();
+#pragma warning restore 618
             if (newestPackage != null)
             {
                 maxVersionInPackages = newestPackage.SupportedToolkitVersion;

@@ -30,22 +30,6 @@ namespace TelimenaClient.Tests
     public class UtilitiesTests
     {
 
-        private string GetIt()
-        {
-            return "aaa";
-        }
-
-
-        [Test]
-        public async Task Sandbox()
-        {
-            var list = new List<string>();
-            for (int i = 0; i < 1000000; i++)
-            {
-                list.Add(this.GetIt());
-            }
-
-        }
 
        
     }

@@ -28,9 +28,9 @@ namespace TelimenaClient.Tests
         Guid userId => Guid.Parse("abcc5364-af27-4b6f-ab8b-d4f000727798");
 
 
-        [Test]
-        public async Task Sandbox()
-        {
+        //[Test]
+        //public async Task Sandbox()
+        //{
 
 
 
@@ -52,7 +52,7 @@ namespace TelimenaClient.Tests
             //});
 
           
-        }
+        //}
 
 
         //[Test]

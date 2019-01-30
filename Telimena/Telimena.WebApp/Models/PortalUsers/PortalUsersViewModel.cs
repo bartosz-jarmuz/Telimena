@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#pragma warning disable 1591
+using System.Collections.Generic;
 
 namespace Telimena.WebApp.Models.PortalUsers
 {

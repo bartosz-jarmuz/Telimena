@@ -67,7 +67,7 @@ namespace TelimenaTestSandboxApp
                                        this.PresentResponse(response) + Environment.NewLine;
         }
 
-        private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
+        private void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
         {
             Stopwatch sw = Stopwatch.StartNew();
 
@@ -130,26 +130,26 @@ namespace TelimenaTestSandboxApp
             this.UpdateText(this.PresentResponse(response));
         }
 
-        private async void handleUpdatesButton_Click(object sender, EventArgs e)
+        private void handleUpdatesButton_Click(object sender, EventArgs e)
         {
 
 
 
             throw new InvalidOperationException("I wanted this");
-            this.UpdateText("Handling updates...");
-            var suppressAllErrors = this.teli.Properties.SuppressAllErrors;
-            this.teli.Properties.SuppressAllErrors = false;
-            try
-            {
-                await this.teli.Updates.Async.HandleUpdates(false).ConfigureAwait(true);
-            }
-            catch (Exception ex)
-            {
-                this.UpdateText(ex.ToString());
-            }
+            //this.UpdateText("Handling updates...");
+            //var suppressAllErrors = this.teli.Properties.SuppressAllErrors;
+            //this.teli.Properties.SuppressAllErrors = false;
+            //try
+            //{
+            //    await this.teli.Updates.Async.HandleUpdates(false).ConfigureAwait(true);
+            //}
+            //catch (Exception ex)
+            //{
+            //    this.UpdateText(ex.ToString());
+            //}
 
-            this.teli.Properties.SuppressAllErrors = suppressAllErrors;
-            this.UpdateText("Finished handling updates...");
+            //this.teli.Properties.SuppressAllErrors = suppressAllErrors;
+            //this.UpdateText("Finished handling updates...");
         }
 
         private void setAppButton_Click(object sender, EventArgs e)
@@ -198,7 +198,7 @@ namespace TelimenaTestSandboxApp
             Properties.Settings.Default.Save();
         }
 
-        private async void static_sendUsageReportButton_Click(object sender, EventArgs e)
+        private void static_sendUsageReportButton_Click(object sender, EventArgs e)
         {
             Stopwatch sw = Stopwatch.StartNew();
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))

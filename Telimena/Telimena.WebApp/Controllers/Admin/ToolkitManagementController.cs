@@ -10,16 +10,31 @@ using Telimena.WebApp.Models.Updater;
 
 namespace Telimena.WebApp.Controllers.Admin
 {
+    /// <summary>
+    /// Class ToolkitManagementController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [TelimenaAuthorize(Roles = TelimenaRoles.Admin)]
     public class ToolkitManagementController : Controller
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ToolkitManagementController"/> class.
+        /// </summary>
+        /// <param name="work">The work.</param>
         public ToolkitManagementController(IToolkitDataUnitOfWork work)
         {
             this.work = work;
         }
 
+        /// <summary>
+        /// The work
+        /// </summary>
         private readonly IToolkitDataUnitOfWork work;
 
+        /// <summary>
+        /// Indexes this instance.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpGet]
         public async Task<ActionResult> Index()
         {

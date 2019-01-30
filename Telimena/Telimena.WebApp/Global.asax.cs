@@ -28,9 +28,16 @@ using GlobalConfiguration = System.Web.Http.GlobalConfiguration;
 
 namespace Telimena.WebApi
 {
+    /// <summary>
+    /// Class MvcApplication.
+    /// </summary>
+    /// <seealso cref="Ninject.Web.Common.WebHost.NinjectHttpApplication" />
     public class MvcApplication : NinjectHttpApplication
     {
-
+        /// <summary>
+        /// Creates the kernel that will manage your application.
+        /// </summary>
+        /// <returns>The created kernel.</returns>
         protected override IKernel CreateKernel()
         {
             StandardKernel kernel = new StandardKernel();
@@ -42,7 +49,9 @@ namespace Telimena.WebApi
             Hangfire.GlobalConfiguration.Configuration.UseNinjectActivator(kernel);
             return kernel;
         }
-
+        /// <summary>
+        /// Called when the application is started.
+        /// </summary>
         protected override void OnApplicationStarted()
         {
             AreaRegistration.RegisterAllAreas();

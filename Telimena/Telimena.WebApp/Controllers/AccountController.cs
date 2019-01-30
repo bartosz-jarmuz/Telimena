@@ -19,19 +19,38 @@ namespace Telimena.WebApp.Controllers
 
     #endregion
     //dev branch test...
+    /// <summary>
+    /// Class AccountController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [TelimenaAuthorize]
     public class AccountController : Controller 
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// </summary>
+        /// <param name="unitOfWork">The unit of work.</param>
+        /// <param name="logger">The logger.</param>
         public AccountController(IAccountUnitOfWork unitOfWork, ILog logger)
         {
             this.unitOfWork = unitOfWork;
             this.logger = logger;
         }
 
+        /// <summary>
+        /// The unit of work
+        /// </summary>
         private readonly IAccountUnitOfWork unitOfWork;
+        /// <summary>
+        /// The logger
+        /// </summary>
         private readonly ILog logger;
 
 
+        /// <summary>
+        /// Changes the password.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [Audit]
         [HttpGet]
         public ActionResult ChangePassword()
@@ -39,6 +58,11 @@ namespace Telimena.WebApp.Controllers
             return this.View();
         }
 
+        /// <summary>
+        /// Changes the password.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -85,6 +109,10 @@ namespace Telimena.WebApp.Controllers
             return this.View(model);
         }
 
+        /// <summary>
+        /// Forgots the password.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [Audit]
         [AllowAnonymous]
         public ActionResult ForgotPassword()
@@ -92,6 +120,10 @@ namespace Telimena.WebApp.Controllers
             return this.Content("<label class=\"warning\">Contact the administrator</label>");
         }
 
+        /// <summary>
+        /// Logins this instance.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [HttpGet]
         [Audit]
         [AllowAnonymous]
@@ -100,6 +132,12 @@ namespace Telimena.WebApp.Controllers
             return this.View();
         }
 
+        /// <summary>
+        /// Logins the specified model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
         [Audit]
@@ -138,7 +176,7 @@ namespace Telimena.WebApp.Controllers
         }
 
         /// <summary>
-        ///     Logs the off.
+        /// Logs the off.
         /// </summary>
         /// <returns>ActionResult.</returns>
         public ActionResult LogOff()
@@ -149,6 +187,10 @@ namespace Telimena.WebApp.Controllers
             return this.RedirectToAction("Index", "Home");
         }
 
+        /// <summary>
+        /// Registers this instance.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [Audit]
         [HttpGet]
         [AllowAnonymous]
@@ -157,6 +199,11 @@ namespace Telimena.WebApp.Controllers
             return this.View(new RegisterViewModel());
         }
 
+        /// <summary>
+        /// Registers the specified model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
         [Audit]
@@ -207,6 +254,11 @@ namespace Telimena.WebApp.Controllers
             return this.View(model);
         }
 
+        /// <summary>
+        /// Validates the registration model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         private bool ValidateRegistrationModel(RegisterViewModel model)
         {
             bool valid = true;

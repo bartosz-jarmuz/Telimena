@@ -18,18 +18,37 @@ namespace Telimena.WebApp.Controllers.Admin
 
     #endregion
 
+    /// <summary>
+    /// Class PortalUsersController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [Authorize(Roles = TelimenaRoles.Admin)]
     public class PortalUsersController : Controller
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PortalUsersController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="userManager">The user manager.</param>
         public PortalUsersController(ILog logger, ITelimenaUserManager userManager)
         {
             this.logger = logger;
             this.userManager = userManager;
         }
 
+        /// <summary>
+        /// The logger
+        /// </summary>
         private readonly ILog logger;
+        /// <summary>
+        /// The user manager
+        /// </summary>
         private readonly ITelimenaUserManager userManager;
 
+        /// <summary>
+        /// Indexes this instance.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpGet]
         [Audit]
         public async Task<ActionResult> Index()
@@ -38,6 +57,13 @@ namespace Telimena.WebApp.Controllers.Admin
             return this.View(model);
         }
 
+        /// <summary>
+        /// Toggles the role activation.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="activateRole">if set to <c>true</c> [activate role].</param>
+        /// <param name="roleName">Name of the role.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit]
         [HttpPost]
         public async Task<ActionResult> ToggleRoleActivation(string userId, bool activateRole, string roleName)
@@ -65,6 +91,12 @@ namespace Telimena.WebApp.Controllers.Admin
             }
         }
 
+        /// <summary>
+        /// Toggles the user activation.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="isActive">if set to <c>true</c> [is active].</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit]
         [HttpPost]
         public async Task<ActionResult> ToggleUserActivation(string userId, bool isActive)
@@ -76,6 +108,10 @@ namespace Telimena.WebApp.Controllers.Admin
             return this.Json(user.IsActivated);
         }
 
+        /// <summary>
+        /// Initializes the model.
+        /// </summary>
+        /// <returns>Task&lt;PortalUsersViewModel&gt;.</returns>
         private async Task<PortalUsersViewModel> InitializeModel()
         {
             PortalUsersViewModel model = new PortalUsersViewModel();

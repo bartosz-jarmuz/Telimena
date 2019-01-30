@@ -22,7 +22,7 @@ namespace Telimena.WebApp.UITests._01._Ui
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_UiTests : UiTestBase
     {
-        private async Task<DateTime> GetLatestUsageFromTable()
+        private Task<DateTime> GetLatestUsageFromTable()
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 {
                     dateTime = latestRow.FindElements(By.TagName("td")).FirstOrDefault()?.Text;
                     DateTime parsed = DateTime.ParseExact(dateTime, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
-                    return parsed;
+                    return Task.FromResult(parsed);
                 }
                 catch (Exception ex)
                 {
@@ -62,7 +62,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             catch (Exception ex)
             {
                 this.HandleError(ex, this.outputs, this.errors);
-                return default(DateTime);
+                return Task.FromResult(default(DateTime));
             }
         }
 

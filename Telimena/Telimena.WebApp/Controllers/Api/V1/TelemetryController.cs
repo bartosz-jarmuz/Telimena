@@ -110,7 +110,6 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="ip"></param>
         /// <param name="telemetryKey"></param>
         /// <param name="items"></param>
-        /// <param name="request"></param>
         /// <returns></returns>
         [NonAction]
         public Task InsertDataInternal(IEnumerable<TelemetryItem> items, Guid telemetryKey, string ip)

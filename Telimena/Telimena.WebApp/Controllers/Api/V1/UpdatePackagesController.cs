@@ -94,7 +94,9 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, uploadedFile.FileName, uploadedFile.InputStream
                         , request.ToolkitVersionUsed, this.fileSaver).ConfigureAwait(false);
                     await this.work.CompleteAsync().ConfigureAwait(false);
+#pragma warning disable 618
                     return this.Ok(pkg.Id);
+#pragma warning restore 618
                 }
 
                 return this.BadRequest("Empty attachment");
