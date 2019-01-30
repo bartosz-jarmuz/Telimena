@@ -99,7 +99,7 @@ namespace TelimenaUpdaterTests
         {
             //package which is donwloaded needs to be extracted, hence the expected executable package is in _Extracted folder
             var sut = new PackageUpdaterWorker();
-            var executablePackage = sut.GetExecutablePackage(new FileInfo(Path.Combine(this.Update12Folder.FullName, "1.2", "MyPackageBasedApp Updates v. 1.2.zip")));
+            var executablePackage = sut.GetExecutablePackage(new FileInfo(Path.Combine(this.Update12Folder.FullName, "1.2", "MyPackageBasedApp Update v. 1.2.zip")));
             Assert.IsTrue(executablePackage.Exists);
             StringAssert.EndsWith( @"\PackagedApp\Updates\1.2\1.2 Extracted\UpdatePackage.pkg", executablePackage.FullName);
 
@@ -112,8 +112,8 @@ namespace TelimenaUpdaterTests
         public void Test_Worker_Pkg()
         {
             var sut = new PackageUpdaterWorker();
-            var executablePackage = sut.GetExecutablePackage(new FileInfo(Path.Combine(this.Update11Folder.FullName, "MyPackageBasedApp Updates v. 1.1.pkg")));
-            StringAssert.EndsWith( @"\PackagedApp\Updates\1.1\MyPackageBasedApp Updates v. 1.1.pkg", executablePackage.FullName);
+            var executablePackage = sut.GetExecutablePackage(new FileInfo(Path.Combine(this.Update11Folder.FullName, "MyPackageBasedApp Update v. 1.1.pkg")));
+            StringAssert.EndsWith( @"\PackagedApp\Updates\1.1\MyPackageBasedApp Update v. 1.1.pkg", executablePackage.FullName);
             Assert.IsTrue(executablePackage.Exists);
         }
 

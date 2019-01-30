@@ -44,7 +44,7 @@ namespace TelimenaClient
         ///     <para>This is an ASYNC method which should be awaited</para>
         /// </summary>
         /// <returns></returns>
-        public async Task<TelemetryInitializeResponse> Initialize(Dictionary<string, object> telemetryData = null)
+        public async Task<TelemetryInitializeResponse> Initialize()
         {
             TelemetryInitializeRequest request = null;
             try

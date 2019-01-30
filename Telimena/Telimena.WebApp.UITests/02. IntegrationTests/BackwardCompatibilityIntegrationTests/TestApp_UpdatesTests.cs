@@ -25,7 +25,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
 
 
 
-    [TestFixture(), Timeout(1*60*1000)]
+    [TestFixture(), Timeout(3*60*1000)]
     public partial class _2_NonUiTests : IntegrationTestBase
     {
         public async Task<VersionTuple> GetVersionsFromApp(string appName, string testSubfolderName)
@@ -71,7 +71,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                 Window updater = await TestHelpers.WaitForWindowAsync(x => x.Contains("Updater"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
                 updater.Get<Button>(SearchCriteria.ByText("Install now!")).Click();
 
-                Window doneMsg = await TestHelpers.WaitForMessageBoxAsync(updater, "Updates complete", TimeSpan.FromMinutes(1)).ConfigureAwait(false);
+                Window doneMsg = await TestHelpers.WaitForMessageBoxAsync(updater, "Update complete", TimeSpan.FromMinutes(1)).ConfigureAwait(false);
                 doneMsg.Get<Button>(SearchCriteria.ByText("Yes")).Click();
 
                 Window appWarning = await TestHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient - This app requires arguments to run")

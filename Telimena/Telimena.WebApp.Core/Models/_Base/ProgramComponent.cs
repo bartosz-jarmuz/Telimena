@@ -10,7 +10,7 @@ namespace Telimena.WebApp.Core.Models
         public string Name { get; set; }
         public virtual Program Program { get; set; }
         public int ProgramId { get; set; }
-        public DateTime FirstReportedDate { get; set; }
+        public DateTimeOffset FirstReportedDate { get; set; } = DateTimeOffset.UtcNow;
 
         public abstract IReadOnlyList<TelemetrySummary> GetTelemetrySummaries();
 

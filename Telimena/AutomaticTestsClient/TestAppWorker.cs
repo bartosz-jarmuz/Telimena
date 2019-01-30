@@ -69,7 +69,7 @@ namespace AutomaticTestsClient
         private void HandleInitialize(ITelimena telimena)
         {
             Console.WriteLine("Sending Initialize request");
-            TelemetryInitializeResponse result = telimena.Initialize().GetAwaiter().GetResult();
+            TelemetryInitializeResponse result = (telimena as Telimena).Initialize().GetAwaiter().GetResult();
             Console.WriteLine("Received Initialize response");
 
             Console.WriteLine(JsonConvert.SerializeObject(result));

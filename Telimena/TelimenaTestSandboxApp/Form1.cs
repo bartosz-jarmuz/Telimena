@@ -63,7 +63,7 @@ namespace TelimenaTestSandboxApp
                 return;
             }
 
-            TelemetryInitializeResponse response = await this.teli.Initialize().ConfigureAwait(true);
+            TelemetryInitializeResponse response = await (this.teli as Telimena).Initialize().ConfigureAwait(true);
 
             this.resultTextBox.Text += this.teli.Properties.StaticProgramInfo.Name + " - " +
                                        this.PresentResponse(response) + Environment.NewLine;

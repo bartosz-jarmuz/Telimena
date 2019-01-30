@@ -43,7 +43,7 @@ namespace TelimenaClient
         ///     Locator provides paths to toolkit files and folders.
         /// </summary>
         /// <value>The locator.</value>
-        internal readonly Locator Locator { get; }
+        internal Locator Locator { get; }
 
         private readonly ITelimenaHttpClient httpClient;
         private TelemetryInitializeResponse initializationResponse;
