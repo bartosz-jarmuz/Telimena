@@ -23,7 +23,7 @@ namespace TelimenaClient.Tests
             var transmitter = channel.transmitter as TelimenaInMemoryTransmitter;
             Assert.IsNotNull(transmitter);
             Assert.That(()=> transmitter.DeliverySettings.AppInsightsEndpointEnabled == false);
-            Assert.That(()=> transmitter.DeliverySettings.TelimenaTelemetryEndpoint.ToString(), Is.EqualTo("http://localhost:7757/api/v1/telemetry/"+TestTelemetryKey.ToString()));
+            Assert.That(()=> transmitter.DeliverySettings.TelimenaTelemetryEndpoint.ToString(), Is.EqualTo(Telimena.DefaultApiUri+ "api/v1/telemetry/" +TestTelemetryKey.ToString()));
         }
 
         [Test]
