@@ -6,10 +6,11 @@ using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
-using TelimenaClient;
+using Telimena.WebApp.Utils.VersionComparison;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
@@ -79,7 +80,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
             else
             {
-                packages = (await this.TelimenaContext.ToolkitPackages.ToListAsync().ConfigureAwait(false)).Where(x => TelimenaClient.Extensions.IsNewerVersionThan(x.Version, version))
+                packages = (await this.TelimenaContext.ToolkitPackages.ToListAsync().ConfigureAwait(false)).Where(x => Utils.VersionComparison.Extensions.IsNewerVersionThan(x.Version, version))
                 .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x => x.Id).ToList();
             }
 

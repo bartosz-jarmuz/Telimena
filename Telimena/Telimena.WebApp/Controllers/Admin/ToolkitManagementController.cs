@@ -7,7 +7,6 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Models.Updater;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers.Admin
 {

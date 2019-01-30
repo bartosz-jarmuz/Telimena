@@ -8,7 +8,9 @@ using DotNetLittleHelpers;
 using Hangfire;
 using Newtonsoft.Json;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
+using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -16,7 +18,6 @@ using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Utils;
-using TelimenaClient;
 using JsonSerializer = Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer;
 
 namespace Telimena.WebApp.Controllers.Api.V1
@@ -108,14 +109,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="ip"></param>
         /// <param name="telemetryKey"></param>
-        /// <param name="userId"></param>
         /// <param name="items"></param>
         /// <param name="request"></param>
         /// <returns></returns>
         [NonAction]
-        public Task InsertDataInternal(IEnumerable<TelemetryItem> items, Guid telemetryKey, Guid userId, string ip)
+        public Task InsertDataInternal(IEnumerable<TelemetryItem> items, Guid telemetryKey, string ip)
         {
-            return TelemetryControllerHelpers.InsertData(this.work, items, telemetryKey, userId, ip);
+            return TelemetryControllerHelpers.InsertData(this.work, items.ToList(), telemetryKey,ip);
         }
 
         /// <summary>
@@ -129,11 +129,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
 
-            IEnumerable<TelemetryItem> telemetryItems = AppInsightsTelemetryAdapter.Map(appInsightsTelemetries);
+            IEnumerable<TelemetryItem> telemetryItems = AppInsightsTelemetryMapper.Map(appInsightsTelemetries);
 
             string ip = this.Request.GetClientIp();
 
-            await this.InsertDataInternal(telemetryItems, telemetryKey, Guid.Empty, ip).ConfigureAwait(false);
+            await this.InsertDataInternal(telemetryItems, telemetryKey, ip).ConfigureAwait(false);
 
             return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
 

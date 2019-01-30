@@ -96,7 +96,7 @@ namespace TelimenaTestSandboxApp
             {
                 UserInfo user = new UserInfo
                 {
-                    Email = this.GetRandomName("Email@", i), UserName = this.GetRandomName("User", i), MachineName = this.GetRandomName("Machine", i)
+                    Email = this.GetRandomName("Email@", i), UserId = this.GetRandomName("User", i), MachineName = this.GetRandomName("Machine", i)
                 };
                 this.users.Add(user);
             }
@@ -128,7 +128,7 @@ namespace TelimenaTestSandboxApp
             }
         }
 
-        private string PresentResponse(TelimenaResponseBase response)
+        private string PresentResponse(TelemetryInitializeResponse response)
         {
             if (response.Exception != null)
             {
@@ -137,7 +137,6 @@ namespace TelimenaTestSandboxApp
 
             return new JavaScriptSerializer().Serialize(response);
         }
-
 
 
         private async Task StartReporting(UserInfo userInfo)

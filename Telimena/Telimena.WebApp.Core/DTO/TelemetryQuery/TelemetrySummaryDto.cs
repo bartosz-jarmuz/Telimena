@@ -15,7 +15,7 @@ namespace Telimena.WebApp.Core.DTO
         {
             if (propertiesToInclude.Contains(nameof(this.UserName)))
             {
-                this.UserName = telemetrySummary.ClientAppUser.UserName;
+                this.UserName = telemetrySummary.ClientAppUser.UserId;
             }
             if (propertiesToInclude.Contains(nameof(this.UserGuid)))
             {

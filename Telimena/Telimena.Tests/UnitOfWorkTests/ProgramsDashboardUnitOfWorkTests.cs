@@ -5,10 +5,10 @@ using DbIntegrationTestHelpers;
 using NUnit.Framework;
 using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository;
-using TelimenaClient;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Telimena.Tests
@@ -27,7 +27,7 @@ namespace Telimena.Tests
 
         private ViewTelemetrySummary GetSummary(string userName, string viewName)
         {
-            return new ViewTelemetrySummary {ClientAppUser = new ClientAppUser {UserName = userName}, View = new View {Name = viewName}};
+            return new ViewTelemetrySummary {ClientAppUser = new ClientAppUser {UserId = userName}, View = new View {Name = viewName}};
         }
 
         [Test]

@@ -1,50 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 
-namespace TelimenaClient
+namespace Telimena.WebApp.Core.DTO
 {
     /// <summary>
     /// A single telemetry record of any type
     /// </summary>
     public class TelemetryItem
     {
+     
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public TelemetryItem()
+        {
+        }
+
+
         /// <summary>
         /// Type of telemetry item
         /// </summary>
         public TelemetryItemTypes TelemetryItemType { get; set; }
 
         /// <summary>
-        /// 
+        /// FROM APP INSIGHTS
+        /// Gets or sets the value that defines absolute order of the telemetry item.
         /// </summary>
-        [Obsolete("For serialization")]
-        public TelemetryItem()
-        {
-        }
+        /// <remarks>
+        /// The sequence is used to track absolute order of uploaded telemetry items. It is a two-part value that includes 
+        /// a stable identifier for the current boot session and an incrementing identifier for each event added to the upload queue:
+        /// For UTC this would increment for all events across the system.
+        /// For Persistence this would increment for all events emitted from the hosting process.    
+        /// The Sequence helps track how many events were fired and how many events were uploaded and enables identification 
+        /// of data lost during upload and de-duplication of events on the ingress server.
+        /// From <a href="https://microsoft.sharepoint.com/teams/CommonSchema/Shared%20Documents/Schema%20Specs/Common%20Schema%202%20-%20Language%20Specification.docx"/>.
+        /// </remarks>
+        public string Sequence { get; set; }
+        
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         /// <summary>
-        /// Creates a new instance
+        /// Gets or sets the user identifier.
         /// </summary>
-        /// <param name="entryKey"></param>
-        /// <param name="telemetryItemType"></param>
-        /// <param name="versionData"></param>
-        /// <param name="telemetryData"></param>
-        public TelemetryItem(string entryKey, TelemetryItemTypes telemetryItemType, VersionData versionData, Dictionary<string, object> telemetryData)
-        {
-            this.TelemetryItemType = telemetryItemType;
-            this.Id = Guid.NewGuid();
-            this.Timestamp = DateTimeOffset.Now;
-            this.EntryKey = entryKey;
-            this.VersionData = versionData;
-            this.TelemetryData = telemetryData;
-        }
-
-        /// <summary>
-        /// Unique identifier
-        /// </summary>
-        public Guid Id { get; set; }
+        /// <value>The user identifier.</value>
+        public string UserId { get; set; }
 
         /// <summary>
         /// When an event occurred
@@ -64,6 +65,6 @@ namespace TelimenaClient
         /// <summary>
         /// Custom telemetry data
         /// </summary>
-        public Dictionary<string, object> TelemetryData { get; set; }
+        public Dictionary<string, string> TelemetryData { get; set; }
     }
 }

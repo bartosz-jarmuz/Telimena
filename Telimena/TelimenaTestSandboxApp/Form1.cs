@@ -33,7 +33,7 @@ namespace TelimenaTestSandboxApp
         }
 
 
-        private string PresentResponse(TelimenaResponseBase response)
+        private string PresentResponse(TelemetryInitializeResponse response)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyContractResolver(),};
             return JsonConvert.SerializeObject(response, settings);
@@ -173,7 +173,7 @@ namespace TelimenaTestSandboxApp
             if (!string.IsNullOrEmpty(this.userNameTextBox.Text))
             {
                 (this.teli.Properties as TelimenaProperties).UserInfo =
-                    new UserInfo {UserName = this.userNameTextBox.Text};
+                    new UserInfo {UserId = this.userNameTextBox.Text};
             }
 
             Properties.Settings.Default.baseUri = this.apiUrlTextBox.Text;

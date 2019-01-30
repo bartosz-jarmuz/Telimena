@@ -10,9 +10,9 @@ namespace Telimena.WebApp.Core.Models
     {
         public Guid Guid { get; set; } = Guid.NewGuid();
 
-        public DateTime RegisteredDate { get; set; }
+        public DateTime FirstSeenDate { get; set; }
         public int Id { get; set; }
-        public string UserName { get; set; }
+        public string UserId { get; set; }
         public string Email { get; set; }
         public string MachineName { get; set; }
 

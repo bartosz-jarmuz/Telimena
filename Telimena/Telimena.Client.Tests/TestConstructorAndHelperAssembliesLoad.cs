@@ -30,7 +30,7 @@ namespace TelimenaClient.Tests
             Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.AssemblyVersion);
             Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.FileVersion);
 
-            Assert.IsNotNull(telimena.Properties.UserInfo.UserName);
+            Assert.IsNotNull(telimena.Properties.UserInfo.UserId);
             Assert.IsNotNull(telimena.Properties.UserInfo.MachineName);
         }
 
@@ -70,7 +70,7 @@ namespace TelimenaClient.Tests
             Assert.IsTrue(telimena.Properties.StaticProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Telimena.Client.Tests.dll"));
             Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.AssemblyVersion);
             Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.FileVersion);
-            Assert.IsNotNull(telimena.Properties.UserInfo.UserName);
+            Assert.IsNotNull(telimena.Properties.UserInfo.UserId);
             Assert.IsNotNull(telimena.Properties.UserInfo.MachineName);
         }
 
@@ -85,7 +85,7 @@ namespace TelimenaClient.Tests
             Assert.IsTrue(telimena.Properties.StaticProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Moq.dll"));
             Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.AssemblyVersion);
             Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.FileVersion);
-            Assert.IsNotNull(telimena.Properties.UserInfo.UserName);
+            Assert.IsNotNull(telimena.Properties.UserInfo.UserId);
             Assert.IsNotNull(telimena.Properties.UserInfo.MachineName);
         }
     }

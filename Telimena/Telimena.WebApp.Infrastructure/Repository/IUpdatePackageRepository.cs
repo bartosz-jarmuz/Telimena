@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Telimena.WebApp.Core;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository
 {

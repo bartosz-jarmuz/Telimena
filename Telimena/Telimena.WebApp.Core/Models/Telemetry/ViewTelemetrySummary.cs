@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using DotNetLittleHelpers;
-using TelimenaClient;
+using Telimena.WebApp.Core.DTO;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -19,7 +19,7 @@ namespace Telimena.WebApp.Core.Models
             };
             if (telemetryItem.TelemetryData != null && telemetryItem.TelemetryData.Any())
             {
-                foreach (KeyValuePair<string, object> unit in telemetryItem.TelemetryData)
+                foreach (KeyValuePair<string, string> unit in telemetryItem.TelemetryData)
                 {
                     ViewTelemetryUnit telemetryUnit = new ViewTelemetryUnit {Key = unit.Key, ValueString = unit.Value?.ToString()};
                     ((List<ViewTelemetryUnit>) detail.TelemetryUnits).Add(telemetryUnit);

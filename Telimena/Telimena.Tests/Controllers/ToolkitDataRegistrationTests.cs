@@ -6,11 +6,12 @@ using DbIntegrationTestHelpers;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Controllers.Api.V1;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
-using TelimenaClient;
+using UserInfo = Telimena.WebApp.Core.DTO.MappableToClient.UserInfo;
 
 namespace Telimena.Tests
 {

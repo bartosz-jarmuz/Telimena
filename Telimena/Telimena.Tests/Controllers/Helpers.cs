@@ -1,4 +1,5 @@
 ﻿using System;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -20,7 +21,7 @@ using Moq;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Controllers.Api.V1;
-using Telimena.WebApp.Core;
+using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -30,6 +31,11 @@ using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 using TelimenaClient;
 using TelimenaClient.Telemetry;
+using ProgramInfo = Telimena.WebApp.Core.DTO.MappableToClient.ProgramInfo;
+using TelemetryInitializeRequest = Telimena.WebApp.Core.DTO.MappableToClient.TelemetryInitializeRequest;
+using TelemetryInitializeResponse = Telimena.WebApp.Core.DTO.MappableToClient.TelemetryInitializeResponse;
+using UserInfo = Telimena.WebApp.Core.DTO.MappableToClient.UserInfo;
+using VersionData = Telimena.WebApp.Core.DTO.MappableToClient.VersionData;
 
 namespace Telimena.Tests
 {
@@ -58,7 +64,7 @@ namespace Telimena.Tests
                 ProgramAssembly ass = new ProgramAssembly {Name = assName, Extension = ".dll"};
                 prg.ProgramAssemblies.Add(ass);
 
-                ass.AddVersion(new VersionData("0.0.1.0", "2.0.1.0"));
+                ass.AddVersion(new WebApp.Core.DTO.MappableToClient.VersionData("0.0.1.0", "2.0.1.0"));
             }
         }
 
@@ -134,19 +140,19 @@ namespace Telimena.Tests
             }
             return new ProgramInfo
             {
-                Name = name, PrimaryAssembly = new AssemblyInfo {Company = company, Copyright = copyright, Name = name, Extension = ".dll", VersionData = version}
+                Name = name, PrimaryAssembly = new Telimena.WebApp.Core.DTO.MappableToClient.AssemblyInfo {Company = company, Copyright = copyright, Name = name, Extension = ".dll", VersionData = version}
             };
         }
 
         public static ClientAppUser GetUser(TelimenaContext context, string name, [CallerMemberName] string methodIdentifier = "")
         {
             string usrName = GetName(name, methodIdentifier);
-            return context.AppUsers.First(x => x.UserName == usrName);
+            return context.AppUsers.First(x => x.UserId == usrName);
         }
 
         public static UserInfo GetUserInfo(string name, string machineName = "SomeMachine")
         {
-            return new UserInfo {UserName = name, MachineName = machineName};
+            return new UserInfo {UserId = name, MachineName = machineName};
         }
 
         public static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(TelimenaContext context, int prgCount, string getName, string[] userNames, string devName = "Some Developer", string devEmail = "some@dev.dev", [CallerMemberName] string caller = "")
@@ -212,6 +218,7 @@ namespace Telimena.Tests
 
             return list;
         }
+
 
         public static async Task<KeyValuePair<string, Guid>> SeedProgramAsync(ProgramsController controller, string programName)
         {

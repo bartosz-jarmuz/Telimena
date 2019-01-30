@@ -3,15 +3,13 @@ using System.Linq;
 using DbIntegrationTestHelpers;
 using Moq;
 using NUnit.Framework;
-using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Controllers.Api.V1;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
-using TelimenaClient;
-using TelimenaClient.Serializer;
 using static Telimena.Tests.TestingUtilities;
 
 namespace Telimena.Tests
@@ -22,7 +20,6 @@ namespace Telimena.Tests
         public Guid TestProgramTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
         public Guid TestProgramWithDifferentUpdaterTelemetryKey = Guid.Parse("14b6e9b2-7886-4e4b-ba55-3541155c29ee");
         public Guid ProgramWhichChangesUpdaterTelemetryKey = Guid.Parse("ae21e6c3-131c-46ca-a91a-ee51f90d44cb");
-        private ITelimenaSerializer serializer = new TelimenaSerializer();
 
         private IFileSaver saver = new Mock<IFileSaver>().Object;
         private IAssemblyStreamVersionReader assemblyStreamVersionReader;

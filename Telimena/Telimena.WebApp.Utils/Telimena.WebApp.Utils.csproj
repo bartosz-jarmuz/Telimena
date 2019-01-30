@@ -57,17 +57,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppInsightsDeserializer.cs" />
-    <Compile Include="AppInsightsTelemetryAdapter.cs" />
+    <Compile Include="AppInsightsTelemetryMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VersionComparison\Extensions.cs" />
+    <Compile Include="VersionComparison\TelimenaVersionReader.cs" />
+    <Compile Include="VersionComparison\TelimenaVersionStringComparer.cs" />
+    <Compile Include="VersionComparison\VersionTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Telimena.Contracts\Telimena.Contracts.csproj">
-      <Project>{D2536BB2-84C5-479C-9500-C7A2B84B6779}</Project>
-      <Name>Telimena.Contracts</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Telimena.WebApp.Core\Telimena.WebApp.Core.csproj">
       <Project>{FFD85253-874C-41CB-9242-9267BFA3647B}</Project>
       <Name>Telimena.WebApp.Core</Name>

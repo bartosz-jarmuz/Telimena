@@ -10,6 +10,7 @@ using System.Web.Http;
 using AutoMapper;
 using MvcAuditLogger;
 using Newtonsoft.Json;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -17,7 +18,6 @@ using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers.Api.V1
 {

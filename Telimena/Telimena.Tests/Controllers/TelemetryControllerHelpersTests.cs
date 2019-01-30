@@ -76,7 +76,7 @@
 //            Helpers.AssertUpdateResponse(response, prg, usr, 1, Helpers.GetName("SomeView"));
 //            View view = prg.Views.FirstOrDefault(x => x.Name == Helpers.GetName("SomeView"));
 //            Assert.AreEqual(1, view.TelemetrySummaries.Count);
-//            ViewTelemetrySummary summary = view.TelemetrySummaries.SingleOrDefault(x => x.ClientAppUser.UserName == Helpers.GetName("Jim Beam"));
+//            ViewTelemetrySummary summary = view.TelemetrySummaries.SingleOrDefault(x => x.ClientAppUser.UserId == Helpers.GetName("Jim Beam"));
 //            Assert.AreEqual(1, summary.SummaryCount);
 //            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(telemetryItem.VersionData.Map()).Id);
 
@@ -93,7 +93,7 @@
 //            Assert.AreEqual(1, view.TelemetrySummaries.Count);
 
 //            Assert.AreEqual(2, view.GetTelemetrySummary(response.First().ClientAppUser.Id).SummaryCount);
-//            Assert.AreEqual(2, view.TelemetrySummaries.Single(x => x.ClientAppUser.UserName == Helpers.GetName("Jim Beam")).SummaryCount);
+//            Assert.AreEqual(2, view.TelemetrySummaries.Single(x => x.ClientAppUser.UserId == Helpers.GetName("Jim Beam")).SummaryCount);
 
 //            Assert.AreEqual(2, view.GetTelemetryDetails(response.First().ClientAppUser.Id).Count);
 //            Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersionId, prg.PrimaryAssembly.GetVersion(telemetryItem.VersionData.Map()).Id);

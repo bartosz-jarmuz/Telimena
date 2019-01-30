@@ -79,7 +79,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
 
         //    TelemetryAwareComponentDto viewComponent = queryResponse.TelemetryAware.First(x => x.ComponentKey == viewName);
         //    Assert.IsNotNull(viewComponent);
-        //    var summary = viewComponent.Summaries.FirstOrDefault(x => x.UserName == Environment.UserName);
+        //    var summary = viewComponent.Summaries.FirstOrDefault(x => x.UserId == Environment.UserId);
         //    Assert.IsNotNull(summary);
 
         //    FileInfo app;
@@ -92,7 +92,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         //    queryResponse = await this.CheckTelemetry(request);
 
         //    viewComponent = queryResponse.TelemetryAware.First(x => x.ComponentKey == viewName);
-        //    var summaryAfterUpdate = viewComponent.Summaries.FirstOrDefault(x => x.UserName == Environment.UserName);
+        //    var summaryAfterUpdate = viewComponent.Summaries.FirstOrDefault(x => x.UserId == Environment.UserId);
         //    Assert.IsNotNull(summaryAfterUpdate);
 
         //    Assert.Greater(summaryAfterUpdate.SummaryCount,summary.SummaryCount);

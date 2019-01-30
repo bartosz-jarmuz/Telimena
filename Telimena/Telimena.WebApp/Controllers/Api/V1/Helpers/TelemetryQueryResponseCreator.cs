@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers.Api.V1
 {

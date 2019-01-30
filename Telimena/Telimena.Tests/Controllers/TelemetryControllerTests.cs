@@ -20,12 +20,12 @@ using Moq;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Controllers.Api.V1;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
-using TelimenaClient;
 using TelimenaClient.Serializer;
 using Assert = NUnit.Framework.Assert;
 
@@ -125,7 +125,7 @@ namespace Telimena.Tests
             Helpers.AssertRegistrationResponse(response, prg, usr, 5);
             Assert.AreEqual(latestId, prg.PrimaryAssembly.GetLatestVersion().Id);
             Assert.AreEqual(latestId, prg.GetLatestVersion().Id);
-            Assert.AreEqual(firstVersionId, prg.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.VersionData ).Id);
+            Assert.AreEqual(firstVersionId, prg.PrimaryAssembly.GetVersion(request.ProgramInfo.PrimaryAssembly.VersionData).Id);
 
             Assert.AreEqual(2, prg.PrimaryAssembly.Versions.Count);
         }
@@ -329,9 +329,9 @@ namespace Telimena.Tests
             Assert.AreEqual("xyz", prg.PrimaryAssembly.Company);
             Assert.AreEqual(prg.Id, this.Context.ProgramAssemblies.FirstOrDefault(x => x.Name == request.ProgramInfo.PrimaryAssembly.Name).Program.Id);
 
-            Assert.AreEqual(userInfo.UserName, usr.UserName);
+            Assert.AreEqual(userInfo.UserId, usr.UserId);
             Assert.AreEqual(request.UserInfo.MachineName, usr.MachineName);
-            Assert.AreEqual(request.UserInfo.UserName, usr.UserName);
+            Assert.AreEqual(request.UserInfo.UserId, usr.UserId);
 
             string prgName2 = Helpers.GetName("TestProg2");
             //now second app for same user

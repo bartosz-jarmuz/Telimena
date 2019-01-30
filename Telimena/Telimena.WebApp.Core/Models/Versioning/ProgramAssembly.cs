@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using DotNetLittleHelpers;
-using TelimenaClient;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 
 namespace Telimena.WebApp.Core.Models
 {

@@ -75,19 +75,19 @@ namespace TelimenaClient.Tests
         //    }
         //}
 
-        private void AssertItem(TelemetryItem item, VersionData version, string key, TelemetryItemTypes type)
-        {
-            Assert.IsTrue(item.Id != Guid.Empty);
-            Assert.AreEqual(key, item.EntryKey);
-            Assert.That(item.Timestamp, Is.EqualTo(DateTimeOffset.UtcNow).Within(TimeSpan.FromSeconds(1)));
-            Assert.That(item.TelemetryItemType, Is.EqualTo(type));
-            item.VersionData.ShouldBeEquivalentTo(version);
-            Assert.IsFalse(string.IsNullOrEmpty(item.VersionData.AssemblyVersion));
-            var file = Path.Combine(this.GetTelemetryStorage().FullName, item.Id.ToString() + ".json");
-            Assert.IsTrue(File.Exists(file));
-            var deserialized = new TelimenaSerializer().Deserialize<TelemetryItem>(File.ReadAllText(file));
-            item.ShouldBeEquivalentTo(deserialized);
-        }
+        //private void AssertItem(TelemetryItem item, VersionData version, string key, TelemetryItemTypes type)
+        //{
+        //    Assert.IsTrue(item.Id != Guid.Empty);
+        //    Assert.AreEqual(key, item.EntryKey);
+        //    Assert.That(item.Timestamp, Is.EqualTo(DateTimeOffset.UtcNow).Within(TimeSpan.FromSeconds(1)));
+        //    Assert.That(item.TelemetryItemType, Is.EqualTo(type));
+        //    item.VersionData.ShouldBeEquivalentTo(version);
+        //    Assert.IsFalse(string.IsNullOrEmpty(item.VersionData.AssemblyVersion));
+        //    var file = Path.Combine(this.GetTelemetryStorage().FullName, item.Id.ToString() + ".json");
+        //    Assert.IsTrue(File.Exists(file));
+        //    var deserialized = new TelimenaSerializer().Deserialize<TelemetryItem>(File.ReadAllText(file));
+        //    item.ShouldBeEquivalentTo(deserialized);
+        //}
         ////todo restore
         //[Test]
         //public void Test_NoCustomData()

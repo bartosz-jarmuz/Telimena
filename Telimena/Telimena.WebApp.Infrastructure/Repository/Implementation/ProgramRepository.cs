@@ -5,10 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {

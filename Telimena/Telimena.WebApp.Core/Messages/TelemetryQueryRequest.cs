@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Telimena.WebApp.Core.DTO;
-using TelimenaClient;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 
 namespace Telimena.WebApp.Core.Messages
 {

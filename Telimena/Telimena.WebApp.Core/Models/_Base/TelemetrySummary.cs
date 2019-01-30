@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using TelimenaClient;
+using Telimena.WebApp.Core.DTO;
 
 namespace Telimena.WebApp.Core.Models
 {

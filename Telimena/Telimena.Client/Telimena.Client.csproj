@@ -86,7 +86,28 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiRoutes.cs" />
+    <Compile Include="DefaultToolkitNames.cs" />
+    <Compile Include="IFluentInterface.cs" />
+    <Compile Include="IMessenger.cs" />
+    <Compile Include="ITelemetryModule.cs" />
+    <Compile Include="ITelimena.cs" />
+    <Compile Include="ITelimenaHttpClient.cs" />
+    <Compile Include="ITelimenaProperties.cs" />
+    <Compile Include="ITelimenaStartupInfo.cs" />
     <Compile Include="Locator.cs" />
+    <Compile Include="Messages\TelemetryInitializeRequest.cs" />
+    <Compile Include="Messages\TelemetryInitializeResponse.cs" />
+    <Compile Include="Messages\UpdateRequest.cs" />
+    <Compile Include="Messages\UpdateResponse.cs" />
+    <Compile Include="Model\AssemblyInfo.cs" />
+    <Compile Include="Model\FileDownloadResult.cs" />
+    <Compile Include="Model\LiveProgramInfo.cs" />
+    <Compile Include="Model\ProgramInfo.cs" />
+    <Compile Include="Model\StoredTelemetryData.cs" />
+    <Compile Include="Model\UpdateCheckResult.cs" />
+    <Compile Include="Model\UpdatePackageData.cs" />
+    <Compile Include="Model\UserInfo.cs" />
     <Compile Include="Retry\Retrier.cs" />
     <Compile Include="Serializer\ITelimenaSerializer.cs" />
     <Compile Include="Serializer\PropertiesConverter.cs" />
@@ -94,10 +115,8 @@
     <Compile Include="Telemetry\AppInsightsComponents\DeliverySettings.cs" />
     <Compile Include="Telemetry\AppInsightsComponents\TelimenaInMemoryTransmitter.cs" />
     <Compile Include="Telemetry\AppInsightsComponents\TelimenaInMemoryChannel.cs" />
-    <Compile Include="Telemetry\AppInsightsComponents\TelimenaPropertiesInitializer.cs" />
     <Compile Include="Telemetry\TelemetryClientBuilder.cs" />
     <Compile Include="Telemetry\TelemetryModule.cs" />
-    <Compile Include="Telemetry\TelimenaContextPropertyKeys.cs" />
     <Compile Include="TelimenaClient\Static\Telimena.Static.Telemetry.cs" />
     <Compile Include="TelimenaClient\TelimenaProperties.cs" />
     <Compile Include="TelimenaClient\Updates\Telimena.AsyncUpdatesHandler.cs" />
@@ -105,6 +124,8 @@
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
     <Compile Include="TelimenaClient\TelimenaStartupInfo.cs" />
     <Compile Include="TelimenaClient\Updates\UpdatesModule.cs" />
+    <Compile Include="TelimenaContextPropertyKeys.cs" />
+    <Compile Include="TelimenaException.cs" />
     <Compile Include="UpdateInstallation\UpdateInstructions.cs" />
     <Compile Include="UpdateInstallation\DefaultWpfInputReceiver.cs" />
     <Compile Include="UpdateInstallation\IInstallUpdates.cs" />
@@ -118,6 +139,14 @@
     <Compile Include="TelimenaClient\Telimena.cs" />
     <Compile Include="TelimenaClient\Telimena.InternalMembers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Updates\IAsyncUpdatesHandler.cs" />
+    <Compile Include="Updates\IBlockingUpdatesHandler.cs" />
+    <Compile Include="Updates\IUpdatesModule.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\TelimenaVersionReader.cs" />
+    <Compile Include="Utilities\TelimenaVersionStringComparer.cs" />
+    <Compile Include="Utilities\VersionTypes.cs" />
+    <Compile Include="VersionData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\TelimenaKey.snk">

@@ -69,7 +69,8 @@ namespace TelimenaClient
 
             catch (Exception ex)
             {
-                TelimenaException exception = new TelimenaException("Error occurred while sending registration request", this.Properties, ex);
+                TelimenaException exception = new TelimenaException("Error occurred while sending registration request", this.Properties, ex,
+                    new KeyValuePair<Type, object>(typeof(TelemetryInitializeRequest), request));
                 if (!this.Properties.SuppressAllErrors)
                 {
                     throw exception;

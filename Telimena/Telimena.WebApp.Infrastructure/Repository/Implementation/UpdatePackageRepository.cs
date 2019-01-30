@@ -8,10 +8,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 {
@@ -89,7 +89,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             List<ProgramUpdatePackageInfo> packages = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync().ConfigureAwait(false);
 
             var currentVersion = program.DetermineProgramVersion(versionData);
-            var newerOnes = packages.Where(x => TelimenaClient.Extensions.IsNewerVersionThan(x.Version, currentVersion)).OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id);
+            var newerOnes = packages.Where(x => Utils.VersionComparison.Extensions.IsNewerVersionThan(x.Version, currentVersion)).OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id);
             List<ProgramUpdatePackageInfo> uniquePackages = this.GetUniquePackages(newerOnes);
             return uniquePackages;
         }

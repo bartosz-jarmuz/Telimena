@@ -8,6 +8,7 @@ using AutomaticTestsClient;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;

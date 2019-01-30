@@ -44,14 +44,10 @@ namespace TelimenaClient.Telemetry
 
         private void InitializeContext(TelemetryClient client)
         {
-            if (!client.Context.GlobalProperties.ContainsKey(TelimenaContextPropertyKeys.TelemetryKey))
-            {
-                client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.TelemetryKey, this.properties.TelemetryKey.ToString());
-            }
             if (string.IsNullOrEmpty(client.Context.User.AccountId))
             {
-                client.Context.User.AuthenticatedUserId = this.properties.UserInfo.UserName;
-                client.Context.User.Id = this.properties.UserInfo.UserName;
+                client.Context.User.AuthenticatedUserId = this.properties.UserInfo.UserId;
+                client.Context.User.Id = this.properties.UserInfo.UserId;
             }
             client.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
             client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.TelimenaVersion, this.properties.TelimenaVersion);
@@ -79,14 +75,7 @@ namespace TelimenaClient.Telemetry
                 cfg.TelemetryInitializers.Add(new SequencePropertyInitializer());
             }
 
-            ITelemetryInitializer teliInitializer =
-                cfg.TelemetryInitializers.FirstOrDefault(x => x is TelimenaPropertiesInitializer);
-            if (teliInitializer != null)
-            {
-                cfg.TelemetryInitializers.Remove(teliInitializer);
-            }
-
-            cfg.TelemetryInitializers.Add(new TelimenaPropertiesInitializer(this.properties));
+           
         }
 
         private void LoadTelemetryChannel(TelemetryConfiguration cfg)

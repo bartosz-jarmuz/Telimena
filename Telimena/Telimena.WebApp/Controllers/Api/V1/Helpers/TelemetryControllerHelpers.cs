@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DotNetLittleHelpers;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Telimena.WebApp.Core;
+using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
-using TelimenaClient;
-using UserInfo = TelimenaClient.UserInfo;
-using VersionData = TelimenaClient.VersionData;
+using UserInfo = Telimena.WebApp.Core.DTO.MappableToClient.UserInfo;
 
-namespace Telimena.WebApp.Controllers.Api.V1.Helpers
+namespace Telimena.WebApp.Controllers.Api.V1
 {
     internal static class TelemetryControllerHelpers
     {
@@ -33,10 +32,10 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             }
         }
 
-        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, IEnumerable<TelemetryItem> units, Guid telemetryKey, Guid userId, string ipAddress)
+        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, List<TelemetryItem> units, Guid telemetryKey, string ipAddress)
         {
 
-            (Program program, ClientAppUser clientAppUser) actionItems = await GetTelemetryUpdateActionItems(work, telemetryKey, userId).ConfigureAwait(false);
+            (Program program, ClientAppUser clientAppUser) actionItems = await GetTelemetryUpdateActionItems(work, telemetryKey, units.First().UserId, ipAddress).ConfigureAwait(false);
           
 
             IEnumerable<IGrouping<TelemetryItemTypes, TelemetryItem>> typeGroupings = units.GroupBy(x => x.TelemetryItemType);
@@ -63,11 +62,11 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 
         public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, UserInfo userDto, string ip)
         {
-            ClientAppUser user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserName == userDto.UserName).ConfigureAwait(false);
+            ClientAppUser user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserId == userDto.UserId).ConfigureAwait(false);
             if (user == null)
             {
                 user = Mapper.Map<ClientAppUser>(userDto);
-                user.RegisteredDate = DateTime.UtcNow;
+                user.FirstSeenDate = DateTime.UtcNow;
                 user.IpAddresses.Add(ip);
                 work.ClientAppUsers.Add(user);
             }
@@ -81,6 +80,26 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             return user;
         }
 
+        public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, string userId, string ip)
+        {
+            ClientAppUser user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserId == userId).ConfigureAwait(false);
+            if (user == null)
+            {
+                user = new ClientAppUser();
+                user.UserId = userId;
+                user.FirstSeenDate = DateTime.UtcNow;
+                user.IpAddresses.Add(ip);
+                work.ClientAppUsers.Add(user);
+            }
+            else
+            {
+                if (!user.IpAddresses.Contains(ip))
+                {
+                    user.IpAddresses.Add(ip);
+                }
+            }
+            return user;
+        }
         private static void UpdateAssemblyInfo(ProgramAssembly existing, AssemblyInfo assemblyInfo)
         {
             existing.Company = assemblyInfo.Company;
@@ -141,24 +160,16 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             return versionInfo;
         }
 
-        public static async Task<(Program program, ClientAppUser user)> GetTelemetryUpdateActionItems(ITelemetryUnitOfWork work, Guid telemetryKey, Guid userId)
+        public static async Task<(Program program, ClientAppUser user)> GetTelemetryUpdateActionItems(ITelemetryUnitOfWork work, Guid telemetryKey, string userId, string ip)
         {
 
             Program program = await work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
-                {
-                    throw new InvalidOperationException($"Program [{telemetryKey}] is null") ;
-                }
+                throw new InvalidOperationException($"Program [{telemetryKey}] is null") ;
             }
 
-            ClientAppUser clientAppUser = await work.ClientAppUsers.FirstOrDefaultAsync(x=> x.Guid == userId).ConfigureAwait(false);
-            if (clientAppUser == null)
-            {
-                {
-                    throw new InvalidOperationException($"User [{userId}] is null") ;
-                }
-            }
+            ClientAppUser clientAppUser = await GetUserOrAddIfMissing(work, userId, ip).ConfigureAwait(false);
 
             return (program, clientAppUser);
         }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TelimenaClient
+namespace Telimena.WebApp.Utils.VersionComparison
 {
     /// <summary>
     /// Compares versions

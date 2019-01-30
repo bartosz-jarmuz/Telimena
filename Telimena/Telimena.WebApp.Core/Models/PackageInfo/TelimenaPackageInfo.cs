@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using TelimenaClient;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 
 namespace Telimena.WebApp.Core.Models
 {

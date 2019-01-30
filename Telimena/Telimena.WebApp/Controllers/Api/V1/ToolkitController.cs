@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using MvcAuditLogger;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers.Api.V1
 {

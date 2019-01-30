@@ -26,7 +26,7 @@ namespace Telimena.Tests
             () =>
             {
                 TelimenaDbInitializer.SeedUsers(this.Context);
-                //   this.Context.Users.Add(new TelimenaUser() {UserName = "aa", Email = "aa@b.com", CreatedDate = DateTime.UtcNow});
+                //   this.Context.Users.Add(new TelimenaUser() {UserId = "aa", Email = "aa@b.com", CreatedDate = DateTime.UtcNow});
                 this.Context.SaveChanges();
             };
 

@@ -9,11 +9,12 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
-using TelimenaClient;
+using Telimena.WebApp.Utils.VersionComparison;
 
 namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 {

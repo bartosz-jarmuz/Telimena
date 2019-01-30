@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
-using TelimenaClient;
+using Telimena.WebApp.Utils.VersionComparison;
 
 namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 {

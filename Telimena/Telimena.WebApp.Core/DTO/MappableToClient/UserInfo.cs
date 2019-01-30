@@ -1,4 +1,4 @@
-﻿namespace TelimenaClient
+﻿namespace Telimena.WebApp.Core.DTO.MappableToClient
 {
     /// <summary>
     /// Class UserInfo.
@@ -10,7 +10,7 @@
         /// Gets or sets the name of the user.
         /// </summary>
         /// <value>The name of the user.</value>
-        public string UserName { get; set; }
+        public string UserId { get; set; }
         /// <summary>
         /// Gets or sets the email.
         /// </summary>

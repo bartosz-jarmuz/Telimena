@@ -9,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Controllers.Api.V1;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Identity;
@@ -16,7 +17,6 @@ using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
-using TelimenaClient;
 using TelimenaClient.Serializer;
 
 namespace Telimena.Tests

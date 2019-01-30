@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository
 {

@@ -13,12 +13,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Models.ProgramStatistics;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Controllers
 {

@@ -218,13 +218,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Telimena.Contracts\Telimena.Contracts.csproj">
-      <Project>{D2536BB2-84C5-479C-9500-C7A2B84B6779}</Project>
-      <Name>Telimena.Contracts</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Telimena.WebApp.Core\Telimena.WebApp.Core.csproj">
       <Project>{ffd85253-874c-41cb-9242-9267bfa3647b}</Project>
       <Name>Telimena.WebApp.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telimena.WebApp.Utils\Telimena.WebApp.Utils.csproj">
+      <Project>{1F08CB36-09F1-4134-A921-E8162F820383}</Project>
+      <Name>Telimena.WebApp.Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure
 {
@@ -28,7 +28,7 @@ namespace Telimena.WebApp.Infrastructure
                 .ForMember(x => x.Guid, o => o.Ignore())
                 .ForMember(x => x.IpAddresses, o => o.Ignore())
                 .ForMember(x => x.IpAddressesString, o => o.Ignore())
-                .ForMember(x => x.RegisteredDate, o => o.Ignore());
+                .ForMember(x => x.FirstSeenDate, o => o.Ignore());
 
             this.CreateMap<AssemblyInfo, ProgramAssembly>()
                 .ForMember(x => x.PrimaryOf, o => o.Ignore())

@@ -6,10 +6,10 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure.Repository
 {
@@ -128,7 +128,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             {
                 TotalProgramsCount = programs.Count()
                 //, TotalAppUsersCount = users.Count()
-                //, AppUsersRegisteredLast7DaysCount = users.Count(x => (DateTime.UtcNow - x.RegisteredDate).TotalDays <= 7)
+                //, AppUsersRegisteredLast7DaysCount = users.Count(x => (DateTime.UtcNow - x.FirstSeenDate).TotalDays <= 7)
                 , TotalViewsCount = views.Count()
             };
             //int? value = programUsageSummaries.Sum(x => (int?) x.GetTelemetryDetails().Count()) ?? 0;
@@ -170,7 +170,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 UsageData data = new UsageData
                 {
                     DateTime = detail.Timestamp
-                    , UserName = detail.TelemetrySummary.ClientAppUser.UserName
+                    , UserName = detail.TelemetrySummary.ClientAppUser.UserId
                     , ViewName = detail.TelemetrySummary.View.Name
                     , ProgramVersion = detail.AssemblyVersion.AssemblyVersion
                 };
@@ -205,7 +205,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                         , Value = detailTelemetryUnit.ValueString
                         , Key = detailTelemetryUnit.Key
                         , TelemetryDetailId = detail.Id
-                        , UserName = detail.GetTelemetrySummary().ClientAppUser.UserName
+                        , UserName = detail.GetTelemetrySummary().ClientAppUser.UserId
                     };
                     rows.Add(row);
                 }
@@ -238,7 +238,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     else if (rule.Item1 == nameof(UsageData.UserName))
                     {
                         //todo - verify    - what about events?
-                        query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.ClientAppUser.UserName, rule.Item2, index);
+                        query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.ClientAppUser.UserId, rule.Item2, index);
                     }
                     else if (rule.Item1 == nameof(UsageData.ViewName) && typeof(T) == typeof(ViewTelemetryDetail))
                     {

@@ -47,17 +47,6 @@ namespace TelimenaClient.Tests
 
         }
 
-        [Test]
-        public void CompreessorTest_AllOk()
-        {
-            var text = "awsze w mojej świadomości wyraz \"gęślą\" był przymiotnikiem dzierżawczym utworzonym sufiksem \"-i\". Zażółć jaźń (jaką?) gęślą. \r\nNiestety, coraz częściej -ą w wygłosie brzmi jak \"oł\", nawet wśród osób wypowiadających się publicznie. Już mniej mnie razi \"om\". \r\nWarto też nadmienić, że zachowanie samogłosek nosowych z prasłowiańszczyzny to unikatowa cecha polszczyzny wśród innych żywych języków słowiańskich i właśnie dlatego powinniśmy być z nich dumni. A w prasłowiańszczyźnie wiele wyrazów zaczynało się samogłoską nosową, co dzisiaj może dziwić.";
-
-            var bytes = StringCompressor.Compress(text);
-
-            var decompressed = StringCompressor.Decompress(bytes);
-
-            Assert.AreEqual(text, decompressed);
-
-        }
+       
     }
 }

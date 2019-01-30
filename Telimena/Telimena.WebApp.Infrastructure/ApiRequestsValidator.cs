@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DotNetLittleHelpers;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Messages;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure
 {

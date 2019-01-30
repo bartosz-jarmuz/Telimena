@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
-using TelimenaClient;
 
 namespace Telimena.WebApp.Infrastructure
 {
