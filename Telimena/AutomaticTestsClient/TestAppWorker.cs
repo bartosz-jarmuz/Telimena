@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TelimenaClient;
@@ -33,6 +34,7 @@ namespace AutomaticTestsClient
                         this.HandleUpdates(telimena);
                         break;
                 }
+                Thread.Sleep(45*1000);
             }
             catch (Exception ex)
             {

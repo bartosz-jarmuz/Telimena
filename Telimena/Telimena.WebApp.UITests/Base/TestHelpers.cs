@@ -18,7 +18,7 @@ namespace Telimena.WebApp.UITests.Base
             Stopwatch timeoutWatch = Stopwatch.StartNew();
             while (true)
             {
-                await Task.Delay(50);
+                await Task.Delay(50).ConfigureAwait(false);
 
                 Process[] allProcesses = Process.GetProcesses().Where(x => !string.IsNullOrEmpty(x.MainWindowTitle)).ToArray();
                 var compiled = match.Compile();
@@ -54,7 +54,7 @@ namespace Telimena.WebApp.UITests.Base
             Stopwatch timeoutWatch = Stopwatch.StartNew();
             while (true)
             {
-                await Task.Delay(50);
+                await Task.Delay(50).ConfigureAwait(false);
 
                 Process[] allProcesses = Process.GetProcesses().Where(x => !string.IsNullOrEmpty(x.MainWindowTitle)).ToArray();
                 var compiled = match.Compile();
@@ -95,7 +95,7 @@ namespace Telimena.WebApp.UITests.Base
             Stopwatch timeoutWatch = Stopwatch.StartNew();
             while (win == null)
             {
-                await Task.Delay(50);
+                await Task.Delay(50).ConfigureAwait(false);
                 win = parent.MessageBox(title);
 
                 if (timeoutWatch.Elapsed > timeout)

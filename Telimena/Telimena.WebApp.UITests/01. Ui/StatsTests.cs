@@ -67,18 +67,19 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
         [Test]
+        [Timeout(3*60*1000)]
         public async Task Test_AppUsageTable()
         {
             string viewName = nameof(this.Test_AppUsageTable);
             FileInfo app = this.LaunchTestsAppNewInstanceAndGetResult(out _, out TelemetryItem first, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable)
                 , viewName: viewName);
             Task.Delay(1000).GetAwaiter().GetResult();
-            DateTime previous = await this.GetLatestUsageFromTable();
+            DateTime previous = await this.GetLatestUsageFromTable().ConfigureAwait(false);
             Task.Delay(1500).GetAwaiter().GetResult();
 
             var second = this.LaunchTestsAppAndGetResult<TelemetryItem>(app, Actions.ReportViewUsage, viewName: viewName);
 
-            DateTime current = await this.GetLatestUsageFromTable();
+            DateTime current = await this.GetLatestUsageFromTable().ConfigureAwait(false);
 
             Assert.IsTrue(current > previous, $"current {current} is not larger than previous {previous}");
         }

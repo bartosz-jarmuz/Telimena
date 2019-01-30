@@ -80,9 +80,9 @@ namespace Telimena.WebApp.UITests.Base
 
         protected async Task<TelemetryQueryResponse> CheckTelemetry(TelemetryQueryRequest request)
         {
-            HttpResponseMessage response = await this.HttpClient.PostAsJsonAsync(this.BaseUrl.TrimEnd('/') + "/api/v1/telemetry/execute-query", request);
+            HttpResponseMessage response = await this.HttpClient.PostAsJsonAsync(this.BaseUrl.TrimEnd('/') + "/api/v1/telemetry/execute-query", request).ConfigureAwait(false);
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             return JsonConvert.DeserializeObject<TelemetryQueryResponse>(content);
         }

@@ -38,7 +38,7 @@ namespace Telimena.Tests
 
 
             var items = AppInsightsDeserializer.Deserialize(serialized, true).ToList();
-            var mapped = AppInsightsTelemetryMapper.Map(items).ToList();
+            var mapped = AppInsightsTelemetryMapper.Map(items, out TODO).ToList();
 
             for (int index = 0; index < sentTelemetry.Count; index++)
             {

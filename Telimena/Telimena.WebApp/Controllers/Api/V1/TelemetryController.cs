@@ -107,14 +107,14 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <summary>
         ///     For Hangfire to support the job creation
         /// </summary>
+        /// <param name="program"></param>
         /// <param name="ip"></param>
-        /// <param name="telemetryKey"></param>
         /// <param name="items"></param>
         /// <returns></returns>
         [NonAction]
-        public Task InsertDataInternal(IEnumerable<TelemetryItem> items, Guid telemetryKey, string ip)
+        public Task InsertDataInternal(IEnumerable<TelemetryItem> items, Program program, string ip)
         {
-            return TelemetryControllerHelpers.InsertData(this.work, items.ToList(), telemetryKey,ip);
+            return TelemetryControllerHelpers.InsertData(this.work, items.ToList(), program, ip);
         }
 
         /// <summary>
@@ -126,13 +126,19 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [Route("{telemetryKey}", Name = Routes.Post)]
         public async Task<IHttpActionResult> Post(Guid telemetryKey)
         {
-            IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
+            Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                throw new InvalidOperationException($"Program with telemetry key [{telemetryKey}] does not exist");
+            }
+
+            IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
 
             IEnumerable<TelemetryItem> telemetryItems = AppInsightsTelemetryMapper.Map(appInsightsTelemetries);
 
             string ip = this.Request.GetClientIp();
 
-            await this.InsertDataInternal(telemetryItems, telemetryKey, ip).ConfigureAwait(false);
+            await this.InsertDataInternal(telemetryItems, program, ip).ConfigureAwait(false);
 
             return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
 

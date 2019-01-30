@@ -32,32 +32,43 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
         }
 
-        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, List<TelemetryItem> units, Guid telemetryKey, string ipAddress)
+        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, List<TelemetryItem> units, Program program, string ipAddress)
         {
-
-            (Program program, ClientAppUser clientAppUser) actionItems = await GetTelemetryUpdateActionItems(work, telemetryKey, units.First().UserId, ipAddress).ConfigureAwait(false);
-          
-
-            IEnumerable<IGrouping<TelemetryItemTypes, TelemetryItem>> typeGroupings = units.GroupBy(x => x.TelemetryItemType);
-            List<TelemetrySummary> summaries = new List<TelemetrySummary>();
-            foreach (IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping in typeGroupings)
+            if (units.Any())
             {
-                foreach (IGrouping<string, TelemetryItem> keyGroupings in typeGrouping.GroupBy(x=>x.EntryKey))
-                {
-                    ITelemetryAware trackedComponent = await GetTrackedComponent(work, typeGrouping.Key, keyGroupings.Key, actionItems.program).ConfigureAwait(false);
-                    TelemetrySummary summary = GetTelemetrySummary(actionItems.clientAppUser, trackedComponent);
-                    AssemblyVersionInfo versionInfoInfo = GetAssemblyVersionInfoOrAddIfMissing(keyGroupings.First().VersionData, actionItems.program);
-                    foreach (TelemetryItem telemetryItem in keyGroupings)
-                    {
-                        summary.UpdateTelemetry(versionInfoInfo, ipAddress, telemetryItem); 
-                    }
-                    summaries.Add(summary);
 
+                ClientAppUser clientAppUser =
+                    await GetUserOrAddIfMissing(work, units.First().UserId, ipAddress).ConfigureAwait(false);
+
+                IEnumerable<IGrouping<TelemetryItemTypes, TelemetryItem>> typeGroupings =
+                    units.GroupBy(x => x.TelemetryItemType);
+                List<TelemetrySummary> summaries = new List<TelemetrySummary>();
+                foreach (IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping in typeGroupings)
+                {
+                    foreach (IGrouping<string, TelemetryItem> keyGroupings in typeGrouping.GroupBy(x => x.EntryKey))
+                    {
+                        ITelemetryAware trackedComponent =
+                            await GetTrackedComponent(work, typeGrouping.Key, keyGroupings.Key, program)
+                                .ConfigureAwait(false);
+                        TelemetrySummary summary = GetTelemetrySummary(clientAppUser, trackedComponent);
+                        AssemblyVersionInfo versionInfoInfo =
+                            GetAssemblyVersionInfoOrAddIfMissing(keyGroupings.First().VersionData, program);
+                        foreach (TelemetryItem telemetryItem in keyGroupings)
+                        {
+                            summary.UpdateTelemetry(versionInfoInfo, ipAddress, telemetryItem);
+                        }
+
+                        summaries.Add(summary);
+
+                    }
                 }
+
+                await work.CompleteAsync().ConfigureAwait(false);
+                return summaries;
+
             }
 
-            await work.CompleteAsync().ConfigureAwait(false);
-            return summaries;
+            return null;
         }
 
         public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, UserInfo userDto, string ip)
@@ -160,20 +171,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return versionInfo;
         }
 
-        public static async Task<(Program program, ClientAppUser user)> GetTelemetryUpdateActionItems(ITelemetryUnitOfWork work, Guid telemetryKey, string userId, string ip)
-        {
-
-            Program program = await work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
-            if (program == null)
-            {
-                throw new InvalidOperationException($"Program [{telemetryKey}] is null") ;
-            }
-
-            ClientAppUser clientAppUser = await GetUserOrAddIfMissing(work, userId, ip).ConfigureAwait(false);
-
-            return (program, clientAppUser);
-        }
-
+       
         public static async Task<(bool isValid, TelemetryInitializeResponse response, Program program)> GetTelemetryInitializeActionItems(ITelemetryUnitOfWork work, TelemetryInitializeRequest request)
         {
             if (!ApiRequestsValidator.IsRequestValid(request))
