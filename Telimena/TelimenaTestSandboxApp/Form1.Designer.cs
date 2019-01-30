@@ -105,7 +105,7 @@
             this.groupBox1.Size = new System.Drawing.Size(318, 90);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "INSTANCE CLIENT - Update app usage";
+            this.groupBox1.Text = "INSTANCE CLIENT - Updates app usage";
             // 
             // sendSync_button
             // 
@@ -214,7 +214,7 @@
             this.groupBox4.Size = new System.Drawing.Size(318, 90);
             this.groupBox4.TabIndex = 8;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "STATIC CLIENT - Update app usage";
+            this.groupBox4.Text = "STATIC CLIENT - Updates app usage";
             // 
             // static_viewNameTextBox
             // 

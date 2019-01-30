@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace TelimenaClient
 {
     /// <summary>
-    /// A collection of Telemetry related functions
+    /// A collection of Track related functions
     /// </summary>
     public interface ITelemetryModule : IFluentInterface
     {

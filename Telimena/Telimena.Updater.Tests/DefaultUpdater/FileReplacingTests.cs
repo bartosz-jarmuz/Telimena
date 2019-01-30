@@ -94,8 +94,8 @@ namespace TelimenaUpdaterTests.DefaultUpdater
                 {
                     Packages = new List<UpdateInstructions.PackageData>()
                     {
-                        new UpdateInstructions.PackageData(){Version = "1.1", Path = Path.Combine(this.Update12Folder.FullName, "MyApp Update v. 1.1.zip")},
-                        new UpdateInstructions.PackageData(){Version = "1.2", Path = Path.Combine(this.Update12Folder.FullName, "MyApp Update v. 1.2.zip")},
+                        new UpdateInstructions.PackageData(){Version = "1.1", Path = Path.Combine(this.Update12Folder.FullName, "MyApp Updates v. 1.1.zip")},
+                        new UpdateInstructions.PackageData(){Version = "1.2", Path = Path.Combine(this.Update12Folder.FullName, "MyApp Updates v. 1.2.zip")},
                     },
                     ProgramExecutableLocation = this.MyAppExePath.FullName
                 });
@@ -126,8 +126,8 @@ namespace TelimenaUpdaterTests.DefaultUpdater
                 {
                     Packages = new List<UpdateInstructions.PackageData>()
                     {
-                        new UpdateInstructions.PackageData(){Version = "1.1", Path = Path.Combine(this.Update12FolderAppData.FullName, "MyApp Update v. 1.1.zip")},
-                        new UpdateInstructions.PackageData(){Version = "1.2", Path = Path.Combine(this.Update12FolderAppData.FullName, "MyApp Update v. 1.2.zip")},
+                        new UpdateInstructions.PackageData(){Version = "1.1", Path = Path.Combine(this.Update12FolderAppData.FullName, "MyApp Updates v. 1.1.zip")},
+                        new UpdateInstructions.PackageData(){Version = "1.2", Path = Path.Combine(this.Update12FolderAppData.FullName, "MyApp Updates v. 1.2.zip")},
                     },
                     ProgramExecutableLocation = this.MyAppExePath.FullName
                 });

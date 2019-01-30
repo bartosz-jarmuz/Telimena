@@ -118,7 +118,6 @@
     <Compile Include="Telemetry\TelemetryModule.cs" />
     <Compile Include="TelimenaClient\Static\Telimena.Static.Telemetry.cs" />
     <Compile Include="TelimenaClient\TelimenaProperties.cs" />
-    <Compile Include="Updates\Telimena.AsyncUpdatesHandler.cs" />
     <Compile Include="Updates\Telimena.BlockingUpdatesHandler.cs" />
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
     <Compile Include="TelimenaClient\TelimenaStartupInfo.cs" />

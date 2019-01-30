@@ -76,7 +76,7 @@ namespace TelimenaClient.Tests
             }
             catch (Exception ex)
             {
-                Assert.IsTrue(ex.InnerException.Message.Contains("Telemetry key is an empty guid."));
+                Assert.IsTrue(ex.InnerException.Message.Contains("Track key is an empty guid."));
             }
         }
     }

@@ -237,8 +237,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     }
                     else if (rule.Item1 == nameof(UsageData.UserName))
                     {
-                        //todo - verify    - what about events?
-                        query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.ClientAppUser.UserId, rule.Item2, index);
+                        query = Order(query, x => x.GetTelemetrySummary().ClientAppUser.UserId, rule.Item2, index);
                     }
                     else if (rule.Item1 == nameof(UsageData.ViewName) && typeof(T) == typeof(ViewTelemetryDetail))
                     {

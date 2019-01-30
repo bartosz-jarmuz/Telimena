@@ -79,7 +79,7 @@ namespace TelimenaTestSandboxApp
 
                 for (int index = 0; index < rand.Next(40,140); index++)
                 {
-                        this.teli.Telemetry.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
+                        this.teli.Track.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
                         ? null
                         : this.viewNameTextBox.Text);
                 }
@@ -89,7 +89,7 @@ namespace TelimenaTestSandboxApp
             }
             else
             {
-                this.teli.Telemetry.View("DefaultView");
+                this.teli.Track.View("DefaultView");
                 sw.Stop();
             }
 
@@ -105,14 +105,14 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
             {
-             this.teli.Telemetry.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
+             this.teli.Track.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
                     ? null
                     : this.viewNameTextBox.Text);
                 sw.Stop();
             }
             else
             {
-                this.teli.Telemetry.View("DefaultView");
+                this.teli.Track.View("DefaultView");
                 sw.Stop();
             }
 
@@ -128,7 +128,7 @@ namespace TelimenaTestSandboxApp
 
         private async void checkForUpdateButton_Click(object sender, EventArgs e)
         {
-            var response = await this.teli.Updates.Async.CheckForUpdates().ConfigureAwait(true);
+            var response = await this.teli.Updates.CheckForUpdatesAsync().ConfigureAwait(true);
             this.UpdateText(this.PresentResponse(response));
         }
 
@@ -143,7 +143,7 @@ namespace TelimenaTestSandboxApp
             //this.teli.Properties.SuppressAllErrors = false;
             //try
             //{
-            //    await this.teli.Updates.Async.HandleUpdates(false).ConfigureAwait(true);
+            //    await this.teli.Updates.Async.HandleUpdatesAsync(false).ConfigureAwait(true);
             //}
             //catch (Exception ex)
             //{

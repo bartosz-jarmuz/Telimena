@@ -13,7 +13,7 @@ namespace TelimenaClient
     #endregion
 
     /// <summary>
-    ///     Telemetry and Lifecycle Management Engine App
+    ///     Track and Lifecycle Management Engine App
     ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
     /// </summary>
     public partial class Telimena : ITelimena

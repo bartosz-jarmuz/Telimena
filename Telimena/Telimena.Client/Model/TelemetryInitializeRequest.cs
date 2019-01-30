@@ -24,7 +24,7 @@ namespace TelimenaClient.Model
         {
             if (telemetryKey == Guid.Empty)
             {
-                throw new ArgumentException("Telemetry key is an empty guid.",nameof(this.TelemetryKey));
+                throw new ArgumentException("Track key is an empty guid.",nameof(this.TelemetryKey));
             }
             this.TelemetryKey = telemetryKey;
         }

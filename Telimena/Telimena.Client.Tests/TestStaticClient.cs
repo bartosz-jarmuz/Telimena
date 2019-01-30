@@ -54,7 +54,7 @@ namespace TelimenaClient.Tests
         //{
         //    var si = new TelimenaStartupInfo(this.telemetryKey);
         //    si.TelemetryApiBaseUrl = new Uri("http://localhost:667");
-        //        TelemetryUpdateResponse result = TelimenaClient.Telimena.Telemetry.Async.Event(si, "Boo").GetAwaiter().GetResult();
+        //        TelemetryUpdateResponse result = TelimenaClient.Telimena.Track.Async.Event(si, "Boo").GetAwaiter().GetResult();
         //        Assert.AreEqual("Error occurred while sending update [Boo] telemetry request to [api/v1/telemetry]", result.Exception.Message);
         //    Assert.IsInstanceOf<TelimenaException>(result?.Exception.InnerException);
         //    TelimenaException registrationError = result.Exception.InnerException as TelimenaException;
@@ -74,7 +74,7 @@ namespace TelimenaClient.Tests
         //    var si = new TelimenaStartupInfo(this.telemetryKey);
         //    si.ProgramInfo = pi;
         //    si.TelemetryApiBaseUrl = new Uri("http://localhost:667");
-        //        TelemetryUpdateResponse result = TelimenaClient.Telimena.Telemetry.Async.View(si, "Booo").GetAwaiter().GetResult();
+        //        TelemetryUpdateResponse result = TelimenaClient.Telimena.Track.Async.View(si, "Booo").GetAwaiter().GetResult();
         //    Assert.AreEqual("Error occurred while sending update [Booo] telemetry request to [api/v1/telemetry]", result.Exception.Message);
         //    Assert.AreEqual("An App!", (result.Exception as TelimenaException).TelimenaProperties.StaticProgramInfo.Name);
         //}

@@ -150,7 +150,7 @@ namespace TelimenaTestSandboxApp
                 int operation = random.Next(4);
                 if (operation == 1)
                 {
-                     teli.Telemetry.Event("SomeEvent");
+                     teli.Track.Event("SomeEvent");
                     this.progressReport("Done");
 
                 }
@@ -163,12 +163,12 @@ namespace TelimenaTestSandboxApp
                 {
                     if (random.Next(2) == 1)
                     {
-                          teli.Telemetry. View(this.funcs[random.Next(0, this.funcs.Count)]) ;
+                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)]) ;
                         this.progressReport("Done");
                     }
                     else
                     {
-                          teli.Telemetry. View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
+                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
                         this.progressReport("Done");
                     }
                 }

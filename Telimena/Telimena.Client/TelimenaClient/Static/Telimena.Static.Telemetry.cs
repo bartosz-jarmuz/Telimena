@@ -23,7 +23,7 @@ namespace TelimenaClient
             public static void Event(ITelimenaStartupInfo startupInfo, string eventName, Dictionary<string, string> telemetryData = null)
             {
                 ITelimena teli = Telimena.Construct(startupInfo);
-                teli.Telemetry.Event(eventName, telemetryData);
+                teli.Track.Event(eventName, telemetryData);
             }
 
             /// <summary>
@@ -37,7 +37,7 @@ namespace TelimenaClient
             public static void View(ITelimenaStartupInfo startupInfo, string viewName, Dictionary<string, object> telemetryData = null)
             {
                 ITelimena teli = Telimena.Construct(startupInfo);
-                teli.Telemetry.View(viewName, telemetryData);
+                teli.Track.View(viewName, telemetryData);
             }
 
 

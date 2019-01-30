@@ -48,7 +48,7 @@ namespace TelimenaClient
         /// <returns>DirectoryInfo.</returns>
         private readonly Lazy<DirectoryInfo> telimenaWorkingDirectory;
 
-        public DirectoryInfo TelemetryStorageDirectory => this.telimenaWorkingDirectory.Value.CreateSubdirectory("Telemetry");
+        public DirectoryInfo TelemetryStorageDirectory => this.telimenaWorkingDirectory.Value.CreateSubdirectory("Track");
 
         public static class Static
         {

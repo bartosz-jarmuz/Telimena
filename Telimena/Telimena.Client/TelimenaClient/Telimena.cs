@@ -10,7 +10,7 @@ using TelimenaClient.Telemetry;
 namespace TelimenaClient
 {
     /// <summary>
-    ///     Telemetry and Lifecycle Management Engine App
+    ///     Track and Lifecycle Management Engine App
     ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
     /// </summary>
     public partial class Telimena : ITelimena
@@ -33,7 +33,7 @@ namespace TelimenaClient
 
         /// <inheritdoc />
         /// ReSharper disable once ConvertToAutoProperty
-        ITelemetryModule ITelimena.Telemetry => this.telemetry;
+        ITelemetryModule ITelimena.Track => this.telemetry;
 
         /// <inheritdoc />
         public ITelimenaProperties Properties => this.propertiesInternal;

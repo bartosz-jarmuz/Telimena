@@ -9,7 +9,7 @@ using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
-using Telimena.WebApp.Models.ProgramDetails;
+using Telimena.WebApp.Models.ProgramManagement;
 
 namespace Telimena.WebApp.Controllers
 {

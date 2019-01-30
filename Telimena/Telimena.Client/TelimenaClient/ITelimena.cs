@@ -5,7 +5,7 @@ using TelimenaClient.Model;
 namespace TelimenaClient
 {
     /// <summary>
-    ///     Telemetry and Lifecycle Management Engine App
+    ///     Track and Lifecycle Management Engine App
     ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
     /// </summary>
     public interface ITelimena : IFluentInterface
@@ -16,9 +16,9 @@ namespace TelimenaClient
         IUpdatesModule Updates { get; }
 
         /// <summary>
-        /// Telemetry related methods
+        /// Track related methods
         /// </summary>
-        ITelemetryModule Telemetry { get; }
+        ITelemetryModule Track { get; }
        
         /// <summary>
         /// Telimena Client properties

@@ -110,7 +110,6 @@
     <Compile Include="TestRequestCreator.cs" />
     <Compile Include="TestTelemetryClientBuilder.cs" />
     <Compile Include="UtilitiesTests.cs" />
-    <Compile Include="TestReportUsageRequests.cs" />
     <Compile Include="TestSandboxAppBuilding.cs" />
     <Compile Include="TestSerializer.cs" />
     <Compile Include="TestStaticClient.cs" />

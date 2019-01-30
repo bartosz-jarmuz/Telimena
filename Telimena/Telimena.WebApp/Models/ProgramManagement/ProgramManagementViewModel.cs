@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using Telimena.WebApp.Core.Models;
 
-namespace Telimena.WebApp.Models.ProgramDetails
+namespace Telimena.WebApp.Models.ProgramManagement
 {
     public class ProgramManagementViewModel
     {
@@ -13,7 +13,7 @@ namespace Telimena.WebApp.Models.ProgramDetails
         public string PrimaryAssemblyName { get; set; }
         public Guid TelemetryKey { get; set; }
 
-        public ICollection<ProgramUpdatePackageInfo> UpdatePackages { get; set; } = new List<ProgramUpdatePackageInfo>(); //todo replace with VM
+        public ICollection<ProgramUpdatePackageInfo> UpdatePackages { get; set; } = new List<ProgramUpdatePackageInfo>();  
 
         public string ProgramDownloadUrl { get; set; }
         public ProgramPackageInfo ProgramPackageInfo { get; set; }

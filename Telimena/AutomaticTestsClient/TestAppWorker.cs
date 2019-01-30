@@ -84,11 +84,11 @@ namespace AutomaticTestsClient
             customData.Add("RandomNumber", new Random().Next(0, 10).ToString());
             if (this.arguments.ViewName != null)
             {
-                 telimena.Telemetry.View(this.arguments.ViewName, customData);
+                 telimena.Track.View(this.arguments.ViewName, customData);
             }
             else
             {
-                 telimena.Telemetry.View("DefaultView", customData);
+                 telimena.Track.View("DefaultView", customData);
             }
             Console.WriteLine("Received View usage response..");
 
@@ -100,7 +100,7 @@ namespace AutomaticTestsClient
         {
             Console.WriteLine("Starting update handling...");
 
-            UpdateCheckResult result = telimena.Updates.Blocking.HandleUpdates(false);
+            UpdateCheckResult result = telimena.Updates.HandleUpdates(false);
             Console.WriteLine("Finished update handling...");
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto};
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));
