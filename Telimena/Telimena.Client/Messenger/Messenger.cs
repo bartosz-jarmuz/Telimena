@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 using TelimenaClient.Serializer;
 
 namespace TelimenaClient

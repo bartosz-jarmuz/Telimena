@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using TelimenaClient;
+using TelimenaClient.Model;
 
 namespace TelimenaTestSandboxApp
 {

@@ -7,6 +7,8 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TelimenaClient;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 
 namespace PackageTriggerUpdaterTestApp
 {

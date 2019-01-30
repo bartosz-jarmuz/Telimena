@@ -1,4 +1,6 @@
 ﻿using System;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 
 namespace TelimenaClient
 {

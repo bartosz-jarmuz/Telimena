@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
-namespace TelimenaClient
+namespace TelimenaClient.Model.Internal
 {
     /// <summary>
     /// Holds the result of file download

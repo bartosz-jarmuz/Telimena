@@ -7,6 +7,8 @@ using NUnit.Framework;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 using TestStack.White;
 using TestStack.White.UIItems;
 using TestStack.White.UIItems.Finders;

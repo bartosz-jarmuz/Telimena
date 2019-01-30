@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 
 namespace TelimenaClient
 {

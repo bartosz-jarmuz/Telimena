@@ -9,6 +9,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+using TelimenaClient.Model;
 
 namespace TelimenaClient.Tests
 {
@@ -78,7 +79,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void TestInitialize_ProgramInfo()
         {
-            ProgramInfo pi = new ProgramInfo {Name = "An App!", PrimaryAssembly = new AssemblyInfo(typeof(Mock).Assembly)};
+            ProgramInfo pi = new ProgramInfo {Name = "An App!", PrimaryAssembly = new Model.AssemblyInfo(typeof(Mock).Assembly)};
             ITelimena telimena = Telimena.Construct(new TelimenaStartupInfo(Guid.Empty){ProgramInfo = pi});
             Assert.AreEqual("An App!", telimena.Properties.StaticProgramInfo.Name);
             Assert.AreEqual("Moq", telimena.Properties.StaticProgramInfo.PrimaryAssembly.Name);

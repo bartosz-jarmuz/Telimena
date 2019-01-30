@@ -7,6 +7,7 @@
 using System;
 using DotNetLittleHelpers;
 using NUnit.Framework;
+using TelimenaClient.Model;
 
 namespace TelimenaClient.Tests
 {

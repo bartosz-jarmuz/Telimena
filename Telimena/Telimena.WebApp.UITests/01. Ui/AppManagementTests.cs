@@ -10,6 +10,7 @@ using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
+using TelimenaClient.Model;
 
 namespace Telimena.WebApp.UITests._01._Ui
 {

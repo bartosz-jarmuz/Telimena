@@ -1,10 +1,11 @@
-﻿namespace TelimenaClient
+﻿namespace TelimenaClient.Model
 {
     /// <summary>
     /// Class DefaultToolkitNames.
     /// </summary>
     public static class DefaultToolkitNames
     {
+
         /// <summary>
         /// The updater file name
         /// </summary>

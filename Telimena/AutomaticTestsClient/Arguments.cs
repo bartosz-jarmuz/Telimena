@@ -1,5 +1,6 @@
 ﻿using System;
 using TelimenaClient;
+using TelimenaClient.Model;
 
 namespace AutomaticTestsClient
 {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TelimenaClient.Model;
 
 namespace TelimenaClient
 {

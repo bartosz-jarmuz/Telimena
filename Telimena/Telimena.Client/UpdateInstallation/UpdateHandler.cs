@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 
 namespace TelimenaClient
 {

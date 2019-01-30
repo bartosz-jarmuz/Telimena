@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TelimenaClient
+namespace TelimenaClient.Model
 {
     /// <summary>
     /// Class TelemetryInitializeRequest.
@@ -11,11 +11,11 @@ namespace TelimenaClient
         /// <summary>
         /// For serialization
         /// </summary>
-        protected TelemetryInitializeRequest()
+        [Obsolete]
+        public TelemetryInitializeRequest()
         {
 
         }
-
         /// <summary>
         /// New instance of request
         /// </summary>

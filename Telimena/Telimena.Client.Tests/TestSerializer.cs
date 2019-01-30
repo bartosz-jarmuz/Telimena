@@ -8,6 +8,7 @@ using System.Text;
 using DotNetLittleHelpers;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using TelimenaClient.Model;
 using TelimenaClient.Serializer;
 
 namespace TelimenaClient.Tests

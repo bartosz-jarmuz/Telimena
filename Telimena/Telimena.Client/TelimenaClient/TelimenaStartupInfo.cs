@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using TelimenaClient.Model;
 
 namespace TelimenaClient
 {
@@ -52,7 +53,7 @@ namespace TelimenaClient
         ///     Gets the helper assemblies infos.
         /// </summary>
         /// <value>The helper assemblies.</value>
-        public List<AssemblyInfo> HelperAssemblies { get; private set; } = new List<AssemblyInfo>();
+        public List<Model.AssemblyInfo> HelperAssemblies { get; private set; } = new List<Model.AssemblyInfo>();
 
         /// <summary>
         /// Gets or sets the instrumentation key (if AppInsights is in use)
@@ -77,10 +78,10 @@ namespace TelimenaClient
 
         private void LoadAssemblyInfos(IEnumerable<Assembly> assemblies)
         {
-            this.HelperAssemblies = new List<AssemblyInfo>();
+            this.HelperAssemblies = new List<Model.AssemblyInfo>();
             foreach (Assembly assembly in assemblies)
             {
-                this.HelperAssemblies.Add(new AssemblyInfo(assembly));
+                this.HelperAssemblies.Add(new Model.AssemblyInfo(assembly));
             }
         }
     }

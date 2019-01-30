@@ -11,7 +11,8 @@ namespace Telimena.WebApp.Core.DTO.MappableToClient
         /// <summary>
         /// For serialization
         /// </summary>
-        protected TelemetryInitializeRequest()
+        [Obsolete]
+        public TelemetryInitializeRequest()
         {
 
         }

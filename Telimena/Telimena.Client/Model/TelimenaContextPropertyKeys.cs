@@ -1,5 +1,5 @@
 ﻿#pragma warning disable 1591
-namespace TelimenaClient
+namespace TelimenaClient.Model
 {
     public static class TelimenaContextPropertyKeys
     {

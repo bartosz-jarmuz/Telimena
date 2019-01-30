@@ -1,21 +1,7 @@
-﻿// ***********************************************************************
-// Assembly         : Telimena.Client
-// Author           : bjarmuz
-// Created          : 07-23-2018
-//
-// Last Modified By : bjarmuz
-// Last Modified On : 09-27-2018
-// ***********************************************************************
-// <copyright file="AssemblyInfo.cs" company="">
-//     Copyright © Bartosz Jarmuz 2018
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 
-namespace TelimenaClient
+namespace TelimenaClient.Model
 {
     #region Using
 

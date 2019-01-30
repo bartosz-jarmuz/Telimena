@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 
 namespace TelimenaClient
 {

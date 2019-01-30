@@ -18,6 +18,8 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Telimena.Updater;
 using Telimena.PackageTriggerUpdater;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 
 namespace TelimenaClient.Tests
 {
@@ -198,7 +200,7 @@ namespace TelimenaClient.Tests
             packages.ForEach(x=>x.StoredFilePath = Locator.Static.BuildUpdatePackagePath(currentUpdateSubfolder, x).FullName);
 
             Tuple<XDocument, FileInfo> tuple = UpdateInstructionCreator.CreateXDoc(packages
-                , new ProgramInfo {PrimaryAssembly = new AssemblyInfo {Location = @"C:\AppFolder\MyApp.exe"}});
+                , new ProgramInfo {PrimaryAssembly = new Model.AssemblyInfo {Location = @"C:\AppFolder\MyApp.exe"}});
             XDocument xDoc = tuple.Item1;
             FileInfo file = tuple.Item2;
             Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\UpdateInstructions.xml", file.FullName);

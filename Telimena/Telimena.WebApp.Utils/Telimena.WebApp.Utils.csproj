@@ -37,6 +37,9 @@
     <AssemblyOriginatorKeyFile>..\TelimenaKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetLittleHelpers, Version=1.0.96.0, Culture=neutral, PublicKeyToken=339dc7d237f083dc, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetLittleHelpers.1.0.96\lib\net461\DotNetLittleHelpers.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.ApplicationInsights, Version=2.8.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.8.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
     </Reference>
@@ -48,6 +51,9 @@
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,9 +62,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiRouter.cs" />
     <Compile Include="AppInsightsDeserializer.cs" />
     <Compile Include="AppInsightsTelemetryMapper.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities.cs" />
     <Compile Include="VersionComparison\Extensions.cs" />
     <Compile Include="VersionComparison\TelimenaVersionReader.cs" />
     <Compile Include="VersionComparison\TelimenaVersionStringComparer.cs" />

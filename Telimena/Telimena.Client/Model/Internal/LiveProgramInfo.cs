@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TelimenaClient
+namespace TelimenaClient.Model.Internal
 {
     /// <summary>
     /// Holds live &amp; static data about a program

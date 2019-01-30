@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using TelimenaClient.Model;
 using TelimenaClient.Serializer;
 
 namespace TelimenaClient

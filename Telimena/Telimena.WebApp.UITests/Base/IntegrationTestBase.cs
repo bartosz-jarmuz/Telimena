@@ -16,6 +16,7 @@ using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Models.Account;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
+using TelimenaClient.Model;
 using TestStack.White;
 
 namespace Telimena.WebApp.UITests.Base

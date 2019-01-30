@@ -1,4 +1,4 @@
-﻿namespace TelimenaClient
+﻿namespace TelimenaClient.Model
 {
     /// <summary>
     /// Class UserInfo.

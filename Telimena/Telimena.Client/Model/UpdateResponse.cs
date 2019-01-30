@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TelimenaClient
+namespace TelimenaClient.Model
 {
     /// <summary>
     /// Class UpdateResponse.

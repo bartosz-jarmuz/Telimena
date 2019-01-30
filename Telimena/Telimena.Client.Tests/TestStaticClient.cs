@@ -12,6 +12,7 @@ using DotNetLittleHelpers;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using TelimenaClient.Model;
 
 namespace TelimenaClient.Tests
 {

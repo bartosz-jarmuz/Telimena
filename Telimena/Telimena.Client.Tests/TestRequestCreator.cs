@@ -13,6 +13,7 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Telimena.WebApp.Core.Models;
+using TelimenaClient.Model;
 using TelimenaClient.Serializer;
 
 namespace TelimenaClient.Tests

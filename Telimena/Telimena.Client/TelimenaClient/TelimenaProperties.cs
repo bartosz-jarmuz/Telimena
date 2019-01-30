@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 
 namespace TelimenaClient
 {
@@ -31,7 +33,7 @@ namespace TelimenaClient
                 this.StartupInfo.MainAssembly = GetProperCallingAssembly();
             }
             
-            this.StaticProgramInfo = info.ProgramInfo ?? new ProgramInfo { PrimaryAssembly = new AssemblyInfo(this.StartupInfo.MainAssembly), Name = this.StartupInfo.MainAssembly.GetName().Name };
+            this.StaticProgramInfo = info.ProgramInfo ?? new ProgramInfo { PrimaryAssembly = new Model.AssemblyInfo(this.StartupInfo.MainAssembly), Name = this.StartupInfo.MainAssembly.GetName().Name };
             this.UserInfo = info.UserInfo ?? new UserInfo { UserId = Environment.UserName, MachineName = Environment.MachineName };
 
             this.StaticProgramInfo.HelperAssemblies = info.HelperAssemblies;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TelimenaClient
+namespace TelimenaClient.Model
 {
     /// <summary>
     /// Class UpdatePackageData.

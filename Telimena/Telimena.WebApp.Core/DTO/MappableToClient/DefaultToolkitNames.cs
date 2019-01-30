@@ -5,6 +5,7 @@
     /// </summary>
     public static class DefaultToolkitNames
     {
+
         /// <summary>
         /// The updater file name
         /// </summary>

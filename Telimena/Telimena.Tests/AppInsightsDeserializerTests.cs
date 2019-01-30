@@ -13,6 +13,7 @@ using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Utils;
 using TelimenaClient;
+using TelimenaClient.Model;
 using TelimenaClient.Telemetry;
 
 namespace Telimena.Tests
@@ -38,7 +39,7 @@ namespace Telimena.Tests
 
 
             var items = AppInsightsDeserializer.Deserialize(serialized, true).ToList();
-            var mapped = AppInsightsTelemetryMapper.Map(items, out TODO).ToList();
+            var mapped = AppInsightsTelemetryMapper.Map(items).ToList();
 
             for (int index = 0; index < sentTelemetry.Count; index++)
             {

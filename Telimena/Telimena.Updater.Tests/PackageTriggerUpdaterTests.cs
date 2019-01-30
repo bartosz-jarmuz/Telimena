@@ -17,6 +17,7 @@ using NUnit.Framework;
 using TelimenaClient;
 using Telimena.PackageTriggerUpdater;
 using Telimena.PackageTriggerUpdater.CommandLineArguments;
+using TelimenaClient.Model;
 using Assert = NUnit.Framework.Assert;
 using StringAssert = NUnit.Framework.StringAssert;
 using UpdateInstructions = Telimena.PackageTriggerUpdater.UpdateInstructions;
