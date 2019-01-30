@@ -22,29 +22,27 @@ namespace TelimenaClient.Telemetry
         /// Gets the telemetry client.
         /// </summary>
         /// <value>The telemetry client.</value>
-        public TelemetryClient TelemetryClient  => this.telemetryClient;
-
-        private TelemetryClient telemetryClient;
+        public TelemetryClient TelemetryClient { get; private set; }
 
 
         /// <inheritdoc />
         public void View(string viewName, Dictionary<string, object> telemetryData = null)
         {
-            this.telemetryClient.TrackPageView(viewName);
+            this.TelemetryClient.TrackPageView(viewName);
         }
 
         /// <inheritdoc />
 
         public void Exception(Exception exception, Dictionary<string, object> telemetryData = null)
         {
-            this.telemetryClient.TrackException(exception);
+            this.TelemetryClient.TrackException(exception);
         }
 
         /// <inheritdoc />
 
         public void SendAllDataNow()
         {
-            this.telemetryClient.Flush();
+            this.TelemetryClient.Flush();
         }
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace TelimenaClient.Telemetry
         public void InitializeTelemetryClient()
         {
             TelemetryClientBuilder builder = new TelemetryClientBuilder(this.properties);
-            this.telemetryClient = builder.GetClient();
+            this.TelemetryClient = builder.GetClient();
         }
 
         /// <summary>
@@ -64,14 +62,14 @@ namespace TelimenaClient.Telemetry
         {
             TelemetryClientBuilder builder = new TelemetryClientBuilder(this.properties);
 #pragma warning disable 618
-            this.telemetryClient = builder.GetClient(channel);
+            this.TelemetryClient = builder.GetClient(channel);
 #pragma warning restore 618
         }
 
         /// <inheritdoc />
         public void Event(string eventName, Dictionary<string, string> telemetryData = null)
         {
-            this.telemetryClient.TrackEvent(eventName, telemetryData);
+            this.TelemetryClient.TrackEvent(eventName, telemetryData);
 
         }
 

@@ -14,9 +14,7 @@ namespace TelimenaClient
 
         public Uri BaseUri => this.client.BaseAddress;
 
-        private readonly HttpClient client; 
-
-        #region Implementation of IHttpClient
+        private readonly HttpClient client;
 
         public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent httpContent)
         {
@@ -29,7 +27,5 @@ namespace TelimenaClient
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             return this.client.GetAsync(requestUri);
         }
-
-        #endregion
     }
 }

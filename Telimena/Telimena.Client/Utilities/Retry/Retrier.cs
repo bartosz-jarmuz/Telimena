@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TelimenaClient
@@ -196,7 +194,7 @@ namespace TelimenaClient
         public static async Task RetryTaskAsync(Func<Task> action, TimeSpan retryInterval, int maxAttemptCount, decimal retryIntervalMultiplier, IEnumerable<Type> exceptionTypeWhitelist, IEnumerable<Type> exceptionTypeBlacklist)
         {
             await RetryTaskAsync<object>(async () => {
-                await action();
+                await action().ConfigureAwait(false);
                 return Task.FromResult(default(object));
             }, retryInterval, maxAttemptCount, retryIntervalMultiplier, exceptionTypeWhitelist, exceptionTypeBlacklist).ConfigureAwait(false);
         }

@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using Microsoft.ApplicationInsights.Channel;
 using TelimenaClient.Telemetry;
 
 namespace TelimenaClient
 {
     /// <summary>
     ///     Track and Lifecycle Management Engine App
-    ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
+    ///     <para>This is a client SDK that allows handling application telemetryModule and lifecycle</para>
     /// </summary>
     public partial class Telimena : ITelimena
     {
@@ -33,7 +30,7 @@ namespace TelimenaClient
 
         /// <inheritdoc />
         /// ReSharper disable once ConvertToAutoProperty
-        ITelemetryModule ITelimena.Track => this.telemetry;
+        ITelemetryModule ITelimena.Track => this.telemetryModule;
 
         /// <inheritdoc />
         public ITelimenaProperties Properties => this.propertiesInternal;
@@ -48,14 +45,14 @@ namespace TelimenaClient
             this.propertiesInternal= new TelimenaProperties(startupInfo);
             this.Locator = new Locator(this.Properties.StaticProgramInfo);
 
-            this.telemetry = new TelemetryModule(this.Properties);
+            this.telemetryModule = new TelemetryModule(this.Properties);
             this.updates = new UpdatesModule(this);
 
             this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.httpClient);
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            telemetry.InitializeTelemetryClient();
+            this.telemetryModule.InitializeTelemetryClient();
 
         }
 
@@ -70,8 +67,8 @@ namespace TelimenaClient
             {
                 if (!UnhandledExceptionsReported.Contains(e.ExceptionObject))
                 {
-                    this.telemetry.Exception((Exception) e.ExceptionObject);
-                    this.telemetry.SendAllDataNow();
+                    this.telemetryModule.Exception((Exception) e.ExceptionObject);
+                    this.telemetryModule.SendAllDataNow();
                     UnhandledExceptionsReported.Add(e.ExceptionObject);
                 }
             }

@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using TelimenaClient.Model;
 using TelimenaClient.Model.Internal;
 using TelimenaClient.Serializer;
 
@@ -24,7 +23,7 @@ namespace TelimenaClient
 
         public async Task<T> SendGetRequest<T>(string requestUri)
         {
-            HttpResponseMessage content = await this.SendGetRequest(requestUri);
+            HttpResponseMessage content = await this.SendGetRequest(requestUri).ConfigureAwait(false);
             try
             {
                 string stringified = await content.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -59,7 +58,7 @@ namespace TelimenaClient
 
         public async Task<T> SendPostRequest<T>(string requestUri, object objectToPost)
         {
-            HttpResponseMessage content = await this.SendPostRequest(requestUri, objectToPost);
+            HttpResponseMessage content = await this.SendPostRequest(requestUri, objectToPost).ConfigureAwait(false);
             try
             {
                 string stringified = await content.Content.ReadAsStringAsync().ConfigureAwait(false);

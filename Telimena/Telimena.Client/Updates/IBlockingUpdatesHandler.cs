@@ -1,7 +1,4 @@
-﻿using TelimenaClient.Model;
-using TelimenaClient.Model.Internal;
-
-namespace TelimenaClient
+﻿namespace TelimenaClient
 {
     /// <summary>
     /// Synchronous app update methods

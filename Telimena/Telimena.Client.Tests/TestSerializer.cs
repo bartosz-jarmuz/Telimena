@@ -17,12 +17,6 @@ namespace TelimenaClient.Tests
 
     #endregion
 
-    public class TestObject
-    {
-        public Dictionary<string, object> Dict { get; set; }
-    }
-
-
     [TestFixture]
     public class TestSerializer
     {

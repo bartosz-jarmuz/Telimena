@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using TelimenaClient.Model;
 using TelimenaClient.Model.Internal;
@@ -38,8 +36,14 @@ namespace TelimenaClient
             return this.initializationResponse;
         }
 
-
-        /// <inheritdoc />
+        /// <summary>
+        ///     Initializes the Telimena client.
+        ///     <para />
+        ///     Each time initialization is called, it will increment the program usage statistics.
+        ///     It should be called once per application execution
+        ///     <para>This is an ASYNC method which should be awaited</para>
+        /// </summary>
+        /// <returns></returns>
         public async Task<TelemetryInitializeResponse> Initialize(Dictionary<string, object> telemetryData = null)
         {
             TelemetryInitializeRequest request = null;

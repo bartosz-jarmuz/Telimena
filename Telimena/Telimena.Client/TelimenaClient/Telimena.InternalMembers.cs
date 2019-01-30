@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.IO;
 using TelimenaClient.Model;
 using TelimenaClient.Serializer;
 
@@ -8,7 +6,7 @@ namespace TelimenaClient
 {
     /// <summary>
     ///     Track and Lifecycle Management Engine App
-    ///     <para>This is a client SDK that allows handling application telemetry and lifecycle</para>
+    ///     <para>This is a client SDK that allows handling application telemetryModule and lifecycle</para>
     /// </summary>
     public partial class Telimena : ITelimena
     {
@@ -45,11 +43,11 @@ namespace TelimenaClient
         ///     Locator provides paths to toolkit files and folders.
         /// </summary>
         /// <value>The locator.</value>
-        internal readonly Locator Locator;
+        internal readonly Locator Locator { get; }
 
         private readonly ITelimenaHttpClient httpClient;
         private TelemetryInitializeResponse initializationResponse;
-        private readonly ITelemetryModule telemetry;
+        private readonly ITelemetryModule telemetryModule;
         private readonly IUpdatesModule updates;
         private readonly TelimenaProperties propertiesInternal;
     }

@@ -13,6 +13,7 @@ using NUnit.Framework;
 using TelimenaClient.Model;
 using TelimenaClient.Serializer;
 using TelimenaClient.Telemetry;
+using TelimenaTestSandboxApp;
 
 namespace TelimenaClient.Tests
 {
@@ -21,16 +22,6 @@ namespace TelimenaClient.Tests
         public static string TestAppDataPath =>
             Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName, "FakeAppData");
 
-        public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey)
-        {
-            var module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey)));
-            var channel = new StubTelemetryChannel { OnSend = t => sentTelemetry.Add(t) };
-#pragma warning disable 618
-            module.InitializeTelemetryClient(channel);
-#pragma warning restore 618
-            Assert.IsInstanceOf<StubTelemetryChannel>(module.TelemetryClient.TelemetryConfiguration.TelemetryChannel);
-            return module;
-        }
 
         public static Mock<ITelimenaHttpClient> GetMockClient()
         {
@@ -67,6 +58,17 @@ namespace TelimenaClient.Tests
                 (string uri, HttpContent requestContent) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.Accepted)));
             return new Messenger(new TelimenaSerializer(), client.Object);
             ;
+        }
+
+        [TestFixture]
+        class TestSandboxAppBuilding
+        {
+            [Test]
+            public void JustCallItEnsureItBuilds()
+            {
+                TelimenaHammer hammer = null;//no action needed
+                Assert.IsNull(hammer);
+            }
         }
     }
 }

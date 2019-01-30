@@ -77,7 +77,7 @@ namespace TelimenaClient
         {
             try
             {
-                UpdateCheckResult checkResult = await this.CheckForUpdatesAsync(acceptBeta);
+                UpdateCheckResult checkResult = await this.CheckForUpdatesAsync(acceptBeta).ConfigureAwait(false);
                 if (checkResult.Exception == null)
                 {
                     UpdateHandler handler = new UpdateHandler(this.telimena.Messenger, this.telimena.Properties.LiveProgramInfo, new DefaultWpfInputReceiver()

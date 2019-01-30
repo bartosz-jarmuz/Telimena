@@ -25,14 +25,5 @@ namespace TelimenaClient
         /// </summary>
         ITelimenaProperties Properties { get; }
 
-        /// <summary>
-        ///     Initializes the Telimena client.
-        ///     <para />
-        ///     Each time initialization is called, it will increment the program usage statistics.
-        ///     It should be called once per application execution
-        ///     <para>This is an ASYNC method which should be awaited</para>
-        /// </summary>
-        /// <returns></returns>
-        Task<TelemetryInitializeResponse> Initialize(Dictionary<string, object> telemetryData = null);
     }
 }

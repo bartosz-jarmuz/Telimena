@@ -107,12 +107,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestLocator.cs" />
-    <Compile Include="TestRequestCreator.cs" />
     <Compile Include="TestTelemetryClientBuilder.cs" />
-    <Compile Include="UtilitiesTests.cs" />
-    <Compile Include="TestSandboxAppBuilding.cs" />
     <Compile Include="TestSerializer.cs" />
-    <Compile Include="TestStaticClient.cs" />
     <Compile Include="RetrierTests.cs" />
     <Compile Include="UpdateCheckTests.cs" />
     <Compile Include="TestRegistrationRequests.cs" />

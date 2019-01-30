@@ -1,8 +1,4 @@
-﻿using System.Threading.Tasks;
-using TelimenaClient.Model;
-using TelimenaClient.Model.Internal;
-
-namespace TelimenaClient
+﻿namespace TelimenaClient
 {
     #region Using
 
