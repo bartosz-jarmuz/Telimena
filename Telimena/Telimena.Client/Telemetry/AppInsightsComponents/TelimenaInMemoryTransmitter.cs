@@ -9,7 +9,7 @@ namespace TelimenaClient
 {
     /// <summary>
     /// A transmitter that will immediately send telemetry over HTTP. 
-    /// Track items are being sent when Flush is called, or when the buffer is full (An OnFull "event" is raised) or every 30 seconds. 
+    /// Tracking items are being sent when Flush is called, or when the buffer is full (An OnFull "event" is raised) or every 30 seconds. 
     /// </summary>
     internal class TelimenaInMemoryTransmitter : InMemoryTransmitter, IDisposable
     {
@@ -41,7 +41,7 @@ namespace TelimenaClient
 
             if (data == null || data.Length == 0)
             {
-                CoreEventSource.Log.LogVerbose("No Track Items passed to Enqueue");
+                CoreEventSource.Log.LogVerbose("No Tracking Items passed to Enqueue");
                 return;
             }
 

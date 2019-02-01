@@ -61,6 +61,9 @@ namespace TelimenaClient
         /// <value>The instrumentation key.</value>
         public string InstrumentationKey { get; set; }
 
+        /// <inheritdoc />
+        public bool RegisterUnhandledExceptionsTracking { get; set; } = true;
+
         /// <summary>
         /// Loads the helper assemblies based on Assembly Name
         /// </summary>

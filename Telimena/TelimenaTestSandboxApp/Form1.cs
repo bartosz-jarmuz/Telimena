@@ -35,12 +35,6 @@ namespace TelimenaTestSandboxApp
         }
 
 
-        private string PresentResponse(TelemetryInitializeResponse response)
-        {
-            JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyContractResolver(),};
-            return JsonConvert.SerializeObject(response, settings);
-        }
-
         private string PresentResponse(UpdateCheckResult response)
         {
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyContractResolver(),};
@@ -50,75 +44,45 @@ namespace TelimenaTestSandboxApp
         private ITelimena teli;
         private TelimenaHammer hammer;
 
-        private async void InitializeButton_Click(object sender, EventArgs e)
+        private void ThrowUnhandledButton_Click(object sender, EventArgs e)
         {
-            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
-            {
-                this.teli = Telimena.Construct(new TelimenaStartupInfo(key
-                    , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text)){ InstrumentationKey = "1a14064b-d326-4ce3-939e-8cba4d08c255" });
-            }
-            else
-            {
-                this.resultTextBox.Text = "Cannot run without telemetry key";
-                return;
-            }
-
-            TelemetryInitializeResponse response = await (this.teli as Telimena).Initialize().ConfigureAwait(true);
-
-            this.resultTextBox.Text += this.teli.Properties.StaticProgramInfo.Name + " - " +
-                                       this.PresentResponse(response) + Environment.NewLine;
+            throw new NotImplementedException(this.telemetryDataTextBox.Text);
         }
 
         private void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
         {
             Stopwatch sw = Stopwatch.StartNew();
-
-            if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
+            var rand = new Random();
+            var numberOfMessages = rand.Next(40, 140);
+            string viewName = string.IsNullOrEmpty(this.telemetryDataTextBox.Text)
+                ? "DefaultView"
+                : this.telemetryDataTextBox.Text;
+            if (!string.IsNullOrEmpty(this.telemetryDataTextBox.Text))
             {
-                var rand = new Random();
 
-                for (int index = 0; index < rand.Next(40,140); index++)
+                for (int index = 0; index < numberOfMessages; index++)
                 {
-                        this.teli.Track.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
-                        ? null
-                        : this.viewNameTextBox.Text);
+                        this.teli.Tracking.View(viewName);
                 }
-                   
-                
                 sw.Stop();
             }
-            else
-            {
-                this.teli.Track.View("DefaultView");
-                sw.Stop();
-            }
-
-                this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " +
-                                           this.teli.Properties.StaticProgramInfo.Name + " - " +
-                                           "SENT" + Environment.NewLine;
+                this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of view [{viewName}] access" + Environment.NewLine;
         }
 
-        private void sendSync_button_Click(object sender, EventArgs e)
+        private void reportErrorButtonClick(object sender, EventArgs e)
         {
             Stopwatch sw = Stopwatch.StartNew();
 
-
-            if (!string.IsNullOrEmpty(this.viewNameTextBox.Text))
+            try
             {
-             this.teli.Track.View(string.IsNullOrEmpty(this.viewNameTextBox.Text)
-                    ? null
-                    : this.viewNameTextBox.Text);
-                sw.Stop();
+                throw new DivideByZeroException(this.telemetryDataTextBox.Text);
             }
-            else
+            catch (Exception ex)
             {
-                this.teli.Track.View("DefaultView");
-                sw.Stop();
+                this.teli.Tracking.Exception(ex);
             }
 
-                this.resultTextBox.Text += $@"BLOCKING INSTANCE: {sw.ElapsedMilliseconds}ms " +
-                                           this.teli.Properties.StaticProgramInfo.Name + " - " +
-                                           "SENT" + Environment.NewLine;
+                this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Thrown error: {this.telemetryDataTextBox.Text}" + Environment.NewLine;
         }
 
         private void UpdateText(string text)
@@ -156,28 +120,31 @@ namespace TelimenaTestSandboxApp
 
         private void setAppButton_Click(object sender, EventArgs e)
         {
-           
+
+            var si = new TelimenaStartupInfo(Guid.Empty, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))
+            {
+                InstrumentationKey = "1a14064b-d326-4ce3-939e-8cba4d08c255"
+            };
+
+            if (!string.IsNullOrEmpty(this.userNameTextBox.Text))
+            {   
+                si.UserInfo = new UserInfo { UserId = this.userNameTextBox.Text };
+            }
+
+
 
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
+                si.TelemetryKey = key;
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
                 Properties.Settings.Default.Save();
-                this.teli = Telimena.Construct(new TelimenaStartupInfo(key
-                    , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))
-                    { InstrumentationKey = "1a14064b-d326-4ce3-939e-8cba4d08c255" }) as Telimena;
+                this.teli = Telimena.Construct(si) as Telimena;
                 ;
             }
             else
             {
                 MessageBox.Show("Api key missing, cannot run teli");
             }
-
-            if (!string.IsNullOrEmpty(this.userNameTextBox.Text))
-            {
-                (this.teli.Properties as TelimenaProperties).UserInfo =
-                    new UserInfo {UserId = this.userNameTextBox.Text};
-            }
-
             Properties.Settings.Default.baseUri = this.apiUrlTextBox.Text;
             Properties.Settings.Default.Save();
         }
@@ -198,38 +165,6 @@ namespace TelimenaTestSandboxApp
 
             Properties.Settings.Default.baseUri = this.apiUrlTextBox.Text;
             Properties.Settings.Default.Save();
-        }
-
-        private void static_sendUsageReportButton_Click(object sender, EventArgs e)
-        {
-            Stopwatch sw = Stopwatch.StartNew();
-            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
-            {
-                Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
-                Properties.Settings.Default.Save();
-                this.teli = Telimena.Construct(new TelimenaStartupInfo(key
-                    , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))) as Telimena;
-            }
-            else
-            {
-                MessageBox.Show("Api key missing, cannot run teli");
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(this.static_viewNameTextBox.Text))
-            {
-                  Telimena.Telemetry.View(new TelimenaStartupInfo(key)
-                    , string.IsNullOrEmpty(this.static_viewNameTextBox.Text) ? null : this.static_viewNameTextBox.Text);
-                sw.Stop();
-            }
-            else
-            {
-                  Telimena.Telemetry.View(new TelimenaStartupInfo(key), "No Name");
-                sw.Stop();
-            }
-
-                this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms "  +
-                                           Environment.NewLine;
         }
 
         private async void hammer_StartButton_Click(object sender, EventArgs e)
@@ -267,6 +202,32 @@ namespace TelimenaTestSandboxApp
         private void throwErrorButton_Click(object sender, EventArgs e)
         {
             throw new InvalidOperationException("Manual error");
+        }
+
+        private void sendEvent_Button_Click(object sender, EventArgs e)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+            var rand = new Random();
+            var numberOfMessages = rand.Next(40, 140);
+            string name = string.IsNullOrEmpty(this.telemetryDataTextBox.Text)
+                ? "DefaultView"
+                : this.telemetryDataTextBox.Text;
+            if (!string.IsNullOrEmpty(this.telemetryDataTextBox.Text))
+            {
+
+                for (int index = 0; index < numberOfMessages; index++)
+                {
+                    this.teli.Tracking.Event(name);
+                }
+                sw.Stop();
+            }
+            this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of event [{name}] access" + Environment.NewLine;
+
+        }
+
+        private void sendLog_Button_Click(object sender, EventArgs e)
+        {
+            this.teli.Tracking.Log(this.telemetryDataTextBox.Text);
         }
     }
 

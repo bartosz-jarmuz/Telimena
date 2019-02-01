@@ -31,20 +31,18 @@
             this.apiUrlTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.sendSync_button = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.viewNameTextBox = new System.Windows.Forms.TextBox();
+            this.sendLog_Button = new System.Windows.Forms.Button();
+            this.sendEvent_Button = new System.Windows.Forms.Button();
+            this.reportError_Button = new System.Windows.Forms.Button();
+            this.throwUnhandledError = new System.Windows.Forms.Button();
+            this.telemetryDataTextBox = new System.Windows.Forms.TextBox();
             this.F = new System.Windows.Forms.Label();
-            this.SendUpdateAppUsageButton = new System.Windows.Forms.Button();
+            this.SendViewUsage_Button = new System.Windows.Forms.Button();
             this.resultTextBox = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.userNameTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.setAppButton = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.static_viewNameTextBox = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.static_sendUsageReportButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.handleUpdatesButton = new System.Windows.Forms.Button();
             this.checkForUpdateButton = new System.Windows.Forms.Button();
@@ -72,7 +70,6 @@
             this.throwErrorButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.SuspendLayout();
@@ -95,63 +92,85 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.sendSync_button);
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.viewNameTextBox);
+            this.groupBox1.Controls.Add(this.sendLog_Button);
+            this.groupBox1.Controls.Add(this.sendEvent_Button);
+            this.groupBox1.Controls.Add(this.reportError_Button);
+            this.groupBox1.Controls.Add(this.throwUnhandledError);
+            this.groupBox1.Controls.Add(this.telemetryDataTextBox);
             this.groupBox1.Controls.Add(this.F);
-            this.groupBox1.Controls.Add(this.SendUpdateAppUsageButton);
+            this.groupBox1.Controls.Add(this.SendViewUsage_Button);
             this.groupBox1.Location = new System.Drawing.Point(20, 46);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(318, 90);
+            this.groupBox1.Size = new System.Drawing.Size(551, 90);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "INSTANCE CLIENT - Updates app usage";
             // 
-            // sendSync_button
+            // sendLog_Button
             // 
-            this.sendSync_button.Location = new System.Drawing.Point(156, 48);
-            this.sendSync_button.Name = "sendSync_button";
-            this.sendSync_button.Size = new System.Drawing.Size(75, 23);
-            this.sendSync_button.TabIndex = 5;
-            this.sendSync_button.Text = "Send sync";
-            this.sendSync_button.UseVisualStyleBackColor = true;
-            this.sendSync_button.Click += new System.EventHandler(this.sendSync_button_Click);
+            this.sendLog_Button.Location = new System.Drawing.Point(398, 48);
+            this.sendLog_Button.Name = "sendLog_Button";
+            this.sendLog_Button.Size = new System.Drawing.Size(75, 23);
+            this.sendLog_Button.TabIndex = 14;
+            this.sendLog_Button.Text = "Send log";
+            this.sendLog_Button.UseVisualStyleBackColor = true;
+            this.sendLog_Button.Click += new System.EventHandler(this.sendLog_Button_Click);
             // 
-            // button1
+            // sendEvent_Button
             // 
-            this.button1.Location = new System.Drawing.Point(14, 46);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(114, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Call \'Initialize\'";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.InitializeButton_Click);
+            this.sendEvent_Button.Location = new System.Drawing.Point(317, 48);
+            this.sendEvent_Button.Name = "sendEvent_Button";
+            this.sendEvent_Button.Size = new System.Drawing.Size(75, 23);
+            this.sendEvent_Button.TabIndex = 6;
+            this.sendEvent_Button.Text = "Send Event";
+            this.sendEvent_Button.UseVisualStyleBackColor = true;
+            this.sendEvent_Button.Click += new System.EventHandler(this.sendEvent_Button_Click);
             // 
-            // viewNameTextBox
+            // reportError_Button
             // 
-            this.viewNameTextBox.Location = new System.Drawing.Point(100, 22);
-            this.viewNameTextBox.Name = "viewNameTextBox";
-            this.viewNameTextBox.Size = new System.Drawing.Size(212, 20);
-            this.viewNameTextBox.TabIndex = 2;
+            this.reportError_Button.Location = new System.Drawing.Point(156, 48);
+            this.reportError_Button.Name = "reportError_Button";
+            this.reportError_Button.Size = new System.Drawing.Size(75, 23);
+            this.reportError_Button.TabIndex = 5;
+            this.reportError_Button.Text = "Report error";
+            this.reportError_Button.UseVisualStyleBackColor = true;
+            this.reportError_Button.Click += new System.EventHandler(this.reportErrorButtonClick);
+            // 
+            // throwUnhandledError
+            // 
+            this.throwUnhandledError.Location = new System.Drawing.Point(14, 48);
+            this.throwUnhandledError.Name = "throwUnhandledError";
+            this.throwUnhandledError.Size = new System.Drawing.Size(136, 23);
+            this.throwUnhandledError.TabIndex = 4;
+            this.throwUnhandledError.Text = "Throw unhandled error";
+            this.throwUnhandledError.UseVisualStyleBackColor = true;
+            this.throwUnhandledError.Click += new System.EventHandler(this.ThrowUnhandledButton_Click);
+            // 
+            // telemetryDataTextBox
+            // 
+            this.telemetryDataTextBox.Location = new System.Drawing.Point(51, 22);
+            this.telemetryDataTextBox.Name = "telemetryDataTextBox";
+            this.telemetryDataTextBox.Size = new System.Drawing.Size(422, 20);
+            this.telemetryDataTextBox.TabIndex = 2;
             // 
             // F
             // 
             this.F.AutoSize = true;
             this.F.Location = new System.Drawing.Point(17, 25);
             this.F.Name = "F";
-            this.F.Size = new System.Drawing.Size(59, 13);
+            this.F.Size = new System.Drawing.Size(28, 13);
             this.F.TabIndex = 1;
-            this.F.Text = "View name";
+            this.F.Text = "Text";
             // 
-            // SendUpdateAppUsageButton
+            // SendViewUsage_Button
             // 
-            this.SendUpdateAppUsageButton.Location = new System.Drawing.Point(237, 48);
-            this.SendUpdateAppUsageButton.Name = "SendUpdateAppUsageButton";
-            this.SendUpdateAppUsageButton.Size = new System.Drawing.Size(75, 23);
-            this.SendUpdateAppUsageButton.TabIndex = 0;
-            this.SendUpdateAppUsageButton.Text = "Send";
-            this.SendUpdateAppUsageButton.UseVisualStyleBackColor = true;
-            this.SendUpdateAppUsageButton.Click += new System.EventHandler(this.SendUpdateAppUsageButton_Click);
+            this.SendViewUsage_Button.Location = new System.Drawing.Point(236, 48);
+            this.SendViewUsage_Button.Name = "SendViewUsage_Button";
+            this.SendViewUsage_Button.Size = new System.Drawing.Size(75, 23);
+            this.SendViewUsage_Button.TabIndex = 0;
+            this.SendViewUsage_Button.Text = "Send View";
+            this.SendViewUsage_Button.UseVisualStyleBackColor = true;
+            this.SendViewUsage_Button.Click += new System.EventHandler(this.SendUpdateAppUsageButton_Click);
             // 
             // resultTextBox
             // 
@@ -203,44 +222,6 @@
             this.setAppButton.Text = "Set App ";
             this.setAppButton.UseVisualStyleBackColor = true;
             this.setAppButton.Click += new System.EventHandler(this.setAppButton_Click);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.static_viewNameTextBox);
-            this.groupBox4.Controls.Add(this.label4);
-            this.groupBox4.Controls.Add(this.static_sendUsageReportButton);
-            this.groupBox4.Location = new System.Drawing.Point(366, 46);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(318, 90);
-            this.groupBox4.TabIndex = 8;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "STATIC CLIENT - Updates app usage";
-            // 
-            // static_viewNameTextBox
-            // 
-            this.static_viewNameTextBox.Location = new System.Drawing.Point(100, 22);
-            this.static_viewNameTextBox.Name = "static_viewNameTextBox";
-            this.static_viewNameTextBox.Size = new System.Drawing.Size(212, 20);
-            this.static_viewNameTextBox.TabIndex = 2;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(17, 25);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(59, 13);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "View name";
-            // 
-            // static_sendUsageReportButton
-            // 
-            this.static_sendUsageReportButton.Location = new System.Drawing.Point(237, 48);
-            this.static_sendUsageReportButton.Name = "static_sendUsageReportButton";
-            this.static_sendUsageReportButton.Size = new System.Drawing.Size(75, 23);
-            this.static_sendUsageReportButton.TabIndex = 0;
-            this.static_sendUsageReportButton.Text = "Send Usage Report";
-            this.static_sendUsageReportButton.UseVisualStyleBackColor = true;
-            this.static_sendUsageReportButton.Click += new System.EventHandler(this.static_sendUsageReportButton_Click);
             // 
             // groupBox3
             // 
@@ -497,7 +478,6 @@
             this.Controls.Add(this.useCurrentAppButton);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.setAppButton);
             this.Controls.Add(this.userNameTextBox);
             this.Controls.Add(this.label3);
@@ -511,8 +491,6 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
@@ -527,18 +505,14 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label F;
-        private System.Windows.Forms.Button SendUpdateAppUsageButton;
+        private System.Windows.Forms.Button SendViewUsage_Button;
         private System.Windows.Forms.TextBox resultTextBox;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox viewNameTextBox;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox telemetryDataTextBox;
+        private System.Windows.Forms.Button throwUnhandledError;
         private System.Windows.Forms.TextBox userNameTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button setAppButton;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox static_viewNameTextBox;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button static_sendUsageReportButton;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button checkForUpdateButton;
         private System.Windows.Forms.GroupBox groupBox5;
@@ -561,10 +535,12 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button handleUpdatesButton;
         private System.Windows.Forms.Button useCurrentAppButton;
-        private System.Windows.Forms.Button sendSync_button;
+        private System.Windows.Forms.Button reportError_Button;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TextBox apiKeyTextBox;
         private System.Windows.Forms.Button throwErrorButton;
+        private System.Windows.Forms.Button sendLog_Button;
+        private System.Windows.Forms.Button sendEvent_Button;
     }
 }
 

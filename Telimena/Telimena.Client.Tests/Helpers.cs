@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using TelimenaClient.Model;
 using TelimenaClient.Serializer;
-using TelimenaClient.Telemetry;
 using TelimenaTestSandboxApp;
 
 namespace TelimenaClient.Tests

@@ -56,5 +56,11 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The instrumentation key.</value>
         string InstrumentationKey { get; set; }
+
+        /// <summary>
+        /// Specify whether all unhandled exception should be tracked by telemetry
+        /// </summary>
+        /// <value><c>true</c> if [register unhandled exceptions tracking]; otherwise, <c>false</c>.</value>
+        bool RegisterUnhandledExceptionsTracking { get; set; }
     }
 }

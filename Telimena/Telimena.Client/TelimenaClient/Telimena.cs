@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
-using TelimenaClient.Telemetry;
 
 namespace TelimenaClient
 {
     /// <summary>
-    ///     Track and Lifecycle Management Engine App
+    ///     Tracking and Lifecycle Management Engine App
     ///     <para>This is a client SDK that allows handling application telemetryModule and lifecycle</para>
     /// </summary>
     public partial class Telimena : ITelimena
@@ -30,7 +29,7 @@ namespace TelimenaClient
 
         /// <inheritdoc />
         /// ReSharper disable once ConvertToAutoProperty
-        ITelemetryModule ITelimena.Track => this.telemetryModule;
+        ITelemetryModule ITelimena.Tracking => this.telemetryModule;
 
         /// <inheritdoc />
         public ITelimenaProperties Properties => this.propertiesInternal;
@@ -51,12 +50,12 @@ namespace TelimenaClient
             this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl});
             this.Messenger = new Messenger(this.Serializer, this.httpClient);
 
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            this.telemetryModule.InitializeTelemetryClient();
-
+            ((TelemetryModule) this.telemetryModule).InitializeTelemetryClient();
+            if (startupInfo.RegisterUnhandledExceptionsTracking)
+            {
+                AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
+            }
         }
-
-
 
         private readonly object exceptionReportingLocker = new object();
         private static readonly List<object> UnhandledExceptionsReported = new List<object>();

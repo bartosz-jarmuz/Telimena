@@ -14,7 +14,6 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Utils;
 using TelimenaClient;
 using TelimenaClient.Model;
-using TelimenaClient.Telemetry;
 
 namespace Telimena.Tests
 {

@@ -20,7 +20,7 @@ namespace TelimenaClient
             public static void Event(ITelimenaStartupInfo startupInfo, string eventName, Dictionary<string, string> telemetryData = null)
             {
                 ITelimena teli = Telimena.Construct(startupInfo);
-                teli.Track.Event(eventName, telemetryData);
+                teli.Tracking.Event(eventName, telemetryData);
             }
 
             /// <summary>
@@ -31,10 +31,10 @@ namespace TelimenaClient
             /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
             /// <param name="telemetryData"></param>
             /// <returns></returns>
-            public static void View(ITelimenaStartupInfo startupInfo, string viewName, Dictionary<string, object> telemetryData = null)
+            public static void View(ITelimenaStartupInfo startupInfo, string viewName, Dictionary<string, string> telemetryData = null)
             {
                 ITelimena teli = Telimena.Construct(startupInfo);
-                teli.Track.View(viewName, telemetryData);
+                teli.Tracking.View(viewName, telemetryData);
             }
 
 

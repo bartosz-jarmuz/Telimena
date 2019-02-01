@@ -30,7 +30,6 @@ using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 using TelimenaClient;
-using TelimenaClient.Telemetry;
 using ProgramInfo = Telimena.WebApp.Core.DTO.MappableToClient.ProgramInfo;
 using TelemetryInitializeRequest = Telimena.WebApp.Core.DTO.MappableToClient.TelemetryInitializeRequest;
 using TelemetryInitializeResponse = Telimena.WebApp.Core.DTO.MappableToClient.TelemetryInitializeResponse;

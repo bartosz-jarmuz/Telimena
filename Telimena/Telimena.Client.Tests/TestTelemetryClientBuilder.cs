@@ -1,7 +1,5 @@
 ﻿using System;
 using NUnit.Framework;
-using TelimenaClient.Telemetry;
-using TelimenaClient.Telemetry.AppInsightsComponents;
 
 namespace TelimenaClient.Tests
 {

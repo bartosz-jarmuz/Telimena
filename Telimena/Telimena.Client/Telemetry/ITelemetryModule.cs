@@ -1,28 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.ApplicationInsights.DataContracts;
 
 namespace TelimenaClient
 {
     /// <summary>
-    /// A collection of Track related functions
+    /// A collection of Tracking related functions
     /// </summary>
     public interface ITelemetryModule : IFluentInterface
     {
+
+
+        /// <summary>
+        /// Logs the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        void Log(string message);
+
         /// <summary>
         ///     Reports an occurence of an event
         /// </summary>
         /// <param name="eventName">Name of the event</param>
         /// <param name="telemetryData">Custom telemetry data</param>
+        /// <param name="metrics">Event related metrics</param>
         /// <returns></returns>
-        void Event(string eventName, Dictionary<string, string> telemetryData = null);
+        void Event(string eventName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null);
 
         /// <summary>
         ///     Report the usage of the application view.
         /// </summary>
         /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <param name="telemetryData"></param>
+        /// <param name="metrics">View access related metrics</param>
         /// <returns></returns>
-        void View(string viewName, Dictionary<string, string> telemetryData = null);
+        void View(string viewName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null);
 
         /// <summary>
         /// Tracks the occurence of the given exception
@@ -36,9 +47,5 @@ namespace TelimenaClient
         /// </summary>
         void SendAllDataNow();
 
-        /// <summary>
-        /// Initializes the telemetry client.
-        /// </summary>
-        void InitializeTelemetryClient();
     }
 }

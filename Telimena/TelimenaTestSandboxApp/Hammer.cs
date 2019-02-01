@@ -48,11 +48,11 @@ namespace TelimenaTestSandboxApp
         private Stopwatch timeoutStopwatch;
         private List<string> funcs;
 
-        public Dictionary<string, object> GetRandomData()
+        public Dictionary<string, string> GetRandomData()
         {
             Random random = new Random();
 
-            return new Dictionary<string, object>
+            return new Dictionary<string, string>
             {
                 {"PageCount", random.Next(1, 100).ToString()}
                 , {"WordCount", random.Next(1, 100).ToString()}
@@ -150,7 +150,7 @@ namespace TelimenaTestSandboxApp
                 int operation = random.Next(4);
                 if (operation == 1)
                 {
-                     teli.Track.Event("SomeEvent");
+                     teli.Tracking.Event("SomeEvent");
                     this.progressReport("Done");
 
                 }
@@ -163,12 +163,12 @@ namespace TelimenaTestSandboxApp
                 {
                     if (random.Next(2) == 1)
                     {
-                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)]) ;
+                          teli.Tracking. View(this.funcs[random.Next(0, this.funcs.Count)]) ;
                         this.progressReport("Done");
                     }
                     else
                     {
-                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
+                          teli.Tracking. View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
                         this.progressReport("Done");
                     }
                 }

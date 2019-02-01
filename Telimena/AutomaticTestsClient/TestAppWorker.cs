@@ -71,7 +71,6 @@ namespace AutomaticTestsClient
             Console.WriteLine("Sending Initialize request");
             TelemetryInitializeResponse result = (telimena as Telimena).Initialize().GetAwaiter().GetResult();
             Console.WriteLine("Received Initialize response");
-
             Console.WriteLine(JsonConvert.SerializeObject(result));
         }
 
@@ -79,16 +78,16 @@ namespace AutomaticTestsClient
         {
             Console.WriteLine("Sending View usage report");
 
-            Dictionary<string, object> customData = new Dictionary<string, object>();
+            Dictionary<string, string> customData = new Dictionary<string, string>();
             customData.Add("Time", DateTime.Now.ToShortTimeString());
             customData.Add("RandomNumber", new Random().Next(0, 10).ToString());
             if (this.arguments.ViewName != null)
             {
-                 telimena.Track.View(this.arguments.ViewName, customData);
+                 telimena.Tracking.View(this.arguments.ViewName, customData);
             }
             else
             {
-                 telimena.Track.View("DefaultView", customData);
+                 telimena.Tracking.View("DefaultView", customData);
             }
             Console.WriteLine("Received View usage response..");
 
