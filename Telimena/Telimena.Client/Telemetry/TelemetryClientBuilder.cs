@@ -4,9 +4,8 @@ using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 using TelimenaClient.Model;
-using TelimenaClient.Telemetry.AppInsightsComponents;
 
-namespace TelimenaClient.Telemetry
+namespace TelimenaClient
 {
     internal class TelemetryClientBuilder
     {

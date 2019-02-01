@@ -22,14 +22,14 @@ namespace TelimenaClient
         /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
         /// <param name="telemetryData"></param>
         /// <returns></returns>
-        void View(string viewName, Dictionary<string, object> telemetryData = null);
+        void View(string viewName, Dictionary<string, string> telemetryData = null);
 
         /// <summary>
         /// Tracks the occurence of the given exception
         /// </summary>
         /// <param name="exception">The exception.</param>
         /// <param name="telemetryData">The telemetry data.</param>
-        void Exception(Exception exception, Dictionary<string, object> telemetryData = null);
+        void Exception(Exception exception, Dictionary<string, string> telemetryData = null);
 
         /// <summary>
         /// Sends all the accumulated data now.

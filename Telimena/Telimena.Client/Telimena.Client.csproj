@@ -88,6 +88,7 @@
   <ItemGroup>
     <Compile Include="Messenger\ApiRoutes.cs" />
     <Compile Include="Model\DefaultToolkitNames.cs" />
+    <Compile Include="Telemetry\TelemetryModule.Tracking.cs" />
     <Compile Include="TelimenaClient\IFluentInterface.cs" />
     <Compile Include="Messenger\IMessenger.cs" />
     <Compile Include="Telemetry\ITelemetryModule.cs" />

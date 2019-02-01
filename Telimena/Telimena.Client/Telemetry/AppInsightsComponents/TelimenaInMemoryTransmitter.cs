@@ -5,7 +5,7 @@ using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
 
-namespace TelimenaClient.Telemetry.AppInsightsComponents
+namespace TelimenaClient
 {
     /// <summary>
     /// A transmitter that will immediately send telemetry over HTTP. 
@@ -13,7 +13,7 @@ namespace TelimenaClient.Telemetry.AppInsightsComponents
     /// </summary>
     internal class TelimenaInMemoryTransmitter : InMemoryTransmitter, IDisposable
     {
-        internal TelimenaClient.Telemetry.AppInsightsComponents.DeliverySettings DeliverySettings { get; }
+        internal DeliverySettings DeliverySettings { get; }
 
         /// <summary>
         /// A lock object to serialize the sending calls from Flush, OnFull event and the Runner.  

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 
-namespace TelimenaClient.Telemetry
+namespace TelimenaClient
 {
     /// <inheritdoc />
-    public class TelemetryModule : ITelemetryModule
+    public partial class TelemetryModule : ITelemetryModule
     {
         /// <summary>
         ///     Asynchronous Telimena methods
@@ -25,18 +25,6 @@ namespace TelimenaClient.Telemetry
         public TelemetryClient TelemetryClient { get; private set; }
 
 
-        /// <inheritdoc />
-        public void View(string viewName, Dictionary<string, object> telemetryData = null)
-        {
-            this.TelemetryClient.TrackPageView(viewName);
-        }
-
-        /// <inheritdoc />
-
-        public void Exception(Exception exception, Dictionary<string, object> telemetryData = null)
-        {
-            this.TelemetryClient.TrackException(exception);
-        }
 
         /// <inheritdoc />
 
@@ -66,12 +54,6 @@ namespace TelimenaClient.Telemetry
 #pragma warning restore 618
         }
 
-        /// <inheritdoc />
-        public void Event(string eventName, Dictionary<string, string> telemetryData = null)
-        {
-            this.TelemetryClient.TrackEvent(eventName, telemetryData);
-
-        }
 
      
     }

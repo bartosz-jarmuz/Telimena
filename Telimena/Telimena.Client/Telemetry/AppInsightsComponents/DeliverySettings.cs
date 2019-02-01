@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TelimenaClient.Telemetry.AppInsightsComponents
+namespace TelimenaClient
 {
     internal class DeliverySettings
     {
