@@ -55,9 +55,60 @@ namespace Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel
         [JsonProperty("name")]
         public string Name { get; set; }
 
+        [JsonProperty("message")]
+        public string Message { get; set; }
+
+        [JsonProperty("severityLevel")]
+        public string SeverityLevel { get; set; }
+
         [JsonProperty("properties")]
         public Dictionary<string, string> Properties { get; set; }
+        [JsonProperty("exceptions")]
+        public ExceptionElement[] Exceptions { get; set; }
+
     }
+
+    public partial class ExceptionElement
+    {
+        [JsonProperty("id")]
+        public long Id { get; set; }
+
+        [JsonProperty("outerId")]
+        public long OuterId { get; set; }
+
+        [JsonProperty("typeName")]
+        public string TypeName { get; set; }
+
+        [JsonProperty("message")]
+        public string Message { get; set; }
+
+        [JsonProperty("hasFullStack")]
+        public bool HasFullStack { get; set; }
+
+        [JsonProperty("parsedStack")]
+        public ParsedStack[] ParsedStack { get; set; }
+    }
+
+    public partial class ParsedStack
+    {
+        [JsonProperty("level")]
+        public long Level { get; set; }
+
+        [JsonProperty("method")]
+        public string Method { get; set; }
+
+        [JsonProperty("assembly")]
+        public string Assembly { get; set; }
+
+        [JsonProperty("fileName")]
+        public string FileName { get; set; }
+
+        [JsonProperty("line")]
+        public long Line { get; set; }
+    }
+
+
+
 
     public partial class Tags
     {

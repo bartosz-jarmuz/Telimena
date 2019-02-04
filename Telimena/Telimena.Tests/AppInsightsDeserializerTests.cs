@@ -2,18 +2,24 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using DotNetLittleHelpers;
+using FluentAssertions;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
-using Microsoft.ApplicationInsights.Extensibility.Implementation;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Utils;
 using TelimenaClient;
-using TelimenaClient.Model;
+using JsonSerializer = Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer;
+using TelimenaContextPropertyKeys = TelimenaClient.Model.TelimenaContextPropertyKeys;
 
 namespace Telimena.Tests
 {
@@ -24,8 +30,84 @@ namespace Telimena.Tests
     {
         private readonly Guid testTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
 
+
         [Test]
-        public void TrackEventSendsEventTelemetryWithSpecifiedNameToProvideSimplestWayOfSendingEventTelemetry()
+        public void TestEvent()
+        {
+
+            List<ITelemetry> sentTelemetry = new List<ITelemetry>();
+            TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
+
+            telemetryModule.Event("TestEvent", new Dictionary<string, string>() {{"AKey", $"AValue"}});
+
+            List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
+
+            Assert.AreEqual(TelemetryItemTypes.Event, mapped.Single().TelemetryItemType);
+        }
+
+        [Test]
+        public void TestException()
+        {
+
+            List<ITelemetry> sentTelemetry = new List<ITelemetry>();
+            TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
+
+            telemetryModule.Exception(new InvalidCastException("A Message", new InvalidOperationException("Inner")));
+
+            List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
+            var exTelemetry = sentTelemetry.First() as ExceptionTelemetry;
+            Assert.AreEqual(TelemetryItemTypes.Exception, mapped.Single().TelemetryItemType);
+            Assert.AreEqual(exTelemetry.Exception.Message, mapped[0].Exceptions[0].Message);
+            Assert.AreEqual(exTelemetry.Exception.InnerException.Message, mapped[0].Exceptions[1].Message);
+            Assert.AreEqual(exTelemetry.Exception.GetType().FullName, mapped[0].Exceptions[0].TypeName);
+            Assert.AreEqual(exTelemetry.Exception.InnerException.GetType().FullName, mapped[0].Exceptions[1].TypeName);
+
+        }
+
+        [Test]
+        public void TestLogMessage()
+        {
+
+            List<ITelemetry> sentTelemetry = new List<ITelemetry>();
+            TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
+
+            telemetryModule.Log("A Message");
+
+            List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
+
+            Assert.AreEqual(TelemetryItemTypes.LogMessage, mapped.Single().TelemetryItemType);
+            Assert.AreEqual((sentTelemetry[0] as TraceTelemetry).Message, mapped[0].LogMessage);
+
+        }
+
+        [Test]
+        public void TestView()
+        {
+
+            List<ITelemetry> sentTelemetry = new List<ITelemetry>();
+            TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
+
+            telemetryModule.View("A View", new Dictionary<string, string>() { { "AKey", $"AValue" } });
+
+            List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
+
+            Assert.AreEqual(TelemetryItemTypes.View, mapped.Single().TelemetryItemType);
+        }
+
+
+
+
+
+        private static List<TelemetryItem> DoTheMapping(List<ITelemetry> sentTelemetry)
+        {
+            byte[] serialized = JsonSerializer.Serialize(sentTelemetry, false);
+            var items = AppInsightsDeserializer.Deserialize(serialized, false).ToList();
+            var mapped = AppInsightsTelemetryMapper.Map(items).ToList();
+            return mapped;
+        }
+
+        [Test]
+        public void CheckListOfItems()
         {
 
             List<ITelemetry> sentTelemetry = new List<ITelemetry>();
@@ -33,6 +115,8 @@ namespace Telimena.Tests
 
                 telemetryModule.Event("TestEvent", new Dictionary<string, string>(){{"AKey", $"AValue"}});
                 telemetryModule.View("TestView");
+                telemetryModule.Log("A log message");
+                telemetryModule.Exception(new Exception("An error that happened"));
 
             byte[] serialized = JsonSerializer.Serialize(sentTelemetry, true);
 
@@ -48,7 +132,10 @@ namespace Telimena.Tests
                 Assert.AreEqual(appInsightsItem.Timestamp, telimenaItem.Timestamp);
                 Assert.AreEqual(appInsightsItem.Sequence, telimenaItem.Sequence);
                 Assert.AreEqual(appInsightsItem.Context.User.Id, telimenaItem.UserId);
-                Assert.AreEqual(appInsightsItem.GetPropertyValue<string>("Name"), telimenaItem.EntryKey);
+                if (telimenaItem.TelemetryItemType != TelemetryItemTypes.LogMessage && telimenaItem.TelemetryItemType != TelemetryItemTypes.Exception)
+                {
+                    Assert.AreEqual(appInsightsItem.GetPropertyValue<string>("Name"), telimenaItem.EntryKey);
+                }
                 foreach (KeyValuePair<string, string> keyValuePair in appInsightsItem.GetPropertyValue<ConcurrentDictionary<string, string>>("Properties"))
                 {
                     var props = typeof(TelimenaContextPropertyKeys).GetProperties().Select(x => x.Name);

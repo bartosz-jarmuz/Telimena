@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel;
 using JsonSerializer = Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer;
 
@@ -19,6 +22,7 @@ namespace Telimena.WebApp.Utils
         /// <returns>Telemetry items serialized as a string.</returns>
         public static IEnumerable<AppInsightsTelemetry> Deserialize(byte[] telemetryItemsData, bool compress = true)
         {
+
             string deserialized = JsonSerializer.Deserialize(telemetryItemsData, compress);
             if (!string.IsNullOrEmpty(deserialized))
             {

@@ -12,6 +12,14 @@
         /// <summary>
         /// A view
         /// </summary>
-        View
+        View,
+        /// <summary>
+        /// The log message
+        /// </summary>
+        LogMessage,
+        /// <summary>
+        /// The exception
+        /// </summary>
+        Exception
     }
 }

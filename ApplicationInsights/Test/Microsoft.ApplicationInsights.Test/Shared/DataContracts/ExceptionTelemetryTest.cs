@@ -502,7 +502,7 @@
         [TestMethod]
         public void SerializePopulatesRequiredFieldsOfExceptionTelemetry()
         {
-            var exceptionTelemetry = new ExceptionTelemetry();
+            var exceptionTelemetry = new ExceptionTelemetry(new InvalidOperationException("aa"));
             exceptionTelemetry.Context.InstrumentationKey = Guid.NewGuid().ToString();
             var item = TelemetryItemTestHelper.SerializeDeserializeTelemetryItem<AI.ExceptionData>(exceptionTelemetry);
 

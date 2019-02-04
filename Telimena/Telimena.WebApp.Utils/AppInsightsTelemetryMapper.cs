@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
+using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel;
 using Telimena.WebApp.Core.DTO.MappableToClient;
@@ -36,10 +38,25 @@ namespace Telimena.WebApp.Utils
                 TelemetryData = GetFilteredProperties(appInsightsProperties),
                 TelemetryItemType = GetItemType(appInsightsTelemetry),
                 EntryKey = appInsightsTelemetry.Data.BaseData.Name,
-                Sequence = appInsightsTelemetry.Seq
+                Sequence = appInsightsTelemetry.Seq,
+                LogMessage = appInsightsTelemetry.Data.BaseData.Message
             };
 
+            MapExceptionProperties(appInsightsTelemetry, item);
+
             return item;
+        }
+
+        private static void MapExceptionProperties(AppInsightsTelemetry appInsightsTelemetry, TelemetryItem item)
+        {
+            if (!appInsightsTelemetry.Data.BaseData.Exceptions.IsNullOrEmpty())
+            {
+                item.Exceptions = new List<TelemetryItem.ExceptionInfo>();
+                foreach (ExceptionElement baseDataException in appInsightsTelemetry.Data.BaseData.Exceptions)
+                {
+                    item.Exceptions.Add(Mapper.Map<TelemetryItem.ExceptionInfo>(baseDataException));
+                }
+            }
         }
 
         private static Dictionary<string, string> GetFilteredProperties(Dictionary<string, string> properties)
@@ -89,6 +106,10 @@ namespace Telimena.WebApp.Utils
             {
                 case "PageViewData":
                     return TelemetryItemTypes.View;
+                case "ExceptionData":
+                    return TelemetryItemTypes.Exception;
+                case "MessageData":
+                    return TelemetryItemTypes.LogMessage;
                 default:
                     return TelemetryItemTypes.Event;
             }

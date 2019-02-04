@@ -19,10 +19,39 @@ namespace Telimena.WebApp.Core.DTO
         }
 
 
+        public List<ExceptionInfo> Exceptions { get; set; }
+
+        public class ExceptionInfo
+        {
+            public long Id { get; set; }
+
+            public long OuterId { get; set; }
+
+            public string TypeName { get; set; }
+
+            public string Message { get; set; }
+
+            public bool HasFullStack { get; set; }
+
+            public List<ParsedStackTrace> ParsedStack { get; set; }
+
+            public partial class ParsedStackTrace
+            {
+                public long Level { get; set; }
+                public string Method { get; set; }
+                public string Assembly { get; set; }
+                public string FileName { get; set; }
+                public long Line { get; set; }
+
+            }
+        }
+
+       
+
         /// <summary>
-        /// Type of telemetry item
-        /// </summary>
-        public TelemetryItemTypes TelemetryItemType { get; set; }
+            /// Type of telemetry item
+            /// </summary>
+            public TelemetryItemTypes TelemetryItemType { get; set; }
 
         /// <summary>
         /// FROM APP INSIGHTS
@@ -66,5 +95,12 @@ namespace Telimena.WebApp.Core.DTO
         /// Custom telemetry data
         /// </summary>
         public Dictionary<string, string> TelemetryData { get; set; }
+
+        /// <summary>
+        /// Gets or sets the log message.
+        /// </summary>
+        /// <value>The log message.</value>
+        public string LogMessage { get; set; }
+
     }
 }
