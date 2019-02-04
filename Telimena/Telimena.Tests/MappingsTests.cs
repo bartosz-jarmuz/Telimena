@@ -26,8 +26,8 @@ namespace Telimena.Tests
         [Test]
         public void TestMappableObjects()
         {
-            List<Type> webAppClasses = typeof(UpdateRequest).Assembly.GetTypes().Where(x => x.IsClass && x.Namespace == typeof(UpdateRequest).Namespace).ToList();
-            List<Type> clientClasses = typeof(TelimenaClient.Model.UpdateRequest).Assembly.GetTypes().Where(x => x.IsClass && x.Namespace == typeof(TelimenaClient.Model.UpdateRequest).Namespace).ToList();
+            List<Type> webAppClasses = typeof(UpdateRequest).Assembly.GetTypes().Where(x => (x.IsClass || x.IsEnum)  && x.Namespace == typeof(UpdateRequest).Namespace).ToList();
+            List<Type> clientClasses = typeof(TelimenaClient.Model.UpdateRequest).Assembly.GetTypes().Where(x => (x.IsClass || x.IsEnum) && x.Namespace == typeof(TelimenaClient.Model.UpdateRequest).Namespace).ToList();
 
             List<string> errors = new List<string>();
 
@@ -42,17 +42,18 @@ namespace Telimena.Tests
 
         private void PerformValidation(List<Type> sourceClasses, List<Type> targetClasses, List<string> errors)
         {
-            foreach (Type webAppClass in sourceClasses)
+            foreach (Type sourceClass in sourceClasses)
             {
-                Type clientClass = targetClasses.FirstOrDefault(x => x.Name == webAppClass.Name);
-                if (clientClass == null)
+                Type targetClass = targetClasses.FirstOrDefault(x => x.Name == sourceClass.Name);
+                if (targetClass == null)
                 {
-                    errors.Add($"Failed to find a counterpart of class [{webAppClass.FullName}]");
+                    errors.Add($"Failed to find a counterpart of class [{sourceClass.FullName}]");
                     continue;
                 }
 
-                this.CompareProperties(webAppClass, clientClass, errors);
-                this.CompareValues(webAppClass, clientClass, errors);
+                this.CompareProperties(sourceClass, targetClass, errors);
+                this.CompareValues(sourceClass, targetClass, errors);
+                this.CompareEnums(sourceClass, targetClass,errors);
             }
         }
 
@@ -77,8 +78,34 @@ namespace Telimena.Tests
             }
         }
 
+        private void CompareEnums(Type source, Type target, List<string> errors)
+        {
+            if (source.IsEnum)
+            {
+                foreach (object value in Enum.GetValues(source))
+                {
+                    var stringified = value.ToString();
+                    var numeric = (int)value ;
+
+                    Assert.AreEqual(stringified, Enum.GetName(target, numeric));
+                }
+                foreach (object value in Enum.GetValues(target))
+                {
+                    var stringified = value.ToString();
+                    var numeric = (int)value;
+
+                    Assert.AreEqual(stringified, Enum.GetName(target, numeric));
+                }
+            }
+        }
+
         private void CompareProperties(Type source, Type target, List<string> errors)
         {
+            if (source.IsEnum)
+            {
+                return;
+            }
+
             var allFlags = BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
                            BindingFlags.FlattenHierarchy;
 

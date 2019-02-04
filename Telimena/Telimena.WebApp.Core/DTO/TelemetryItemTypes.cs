@@ -1,4 +1,4 @@
-﻿namespace Telimena.WebApp.Core.DTO.MappableToClient
+﻿namespace Telimena.WebApp.Core.DTO
 {
     /// <summary>
     /// Type of telemetry item 
