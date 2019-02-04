@@ -22,12 +22,15 @@ namespace TelimenaClient.Tests
             Assert.IsNotNull(transmitter);
             Assert.That(()=> transmitter.DeliverySettings.AppInsightsEndpointEnabled == false);
             Assert.That(()=> transmitter.DeliverySettings.TelimenaTelemetryEndpoint.ToString(), Is.EqualTo(Telimena.DefaultApiUri+ "api/v1/telemetry/" +TestTelemetryKey.ToString()));
+            Assert.That(() => transmitter.SendingInterval == TimeSpan.FromSeconds(30));
+
         }
 
         [Test]
         public void Test__InstrumentationKey_DeliverySettingsProvided()
         {
             var si = new TelimenaStartupInfo(TestTelemetryKey);
+            si.DeliveryInterval = TimeSpan.FromHours(667);
             si.InstrumentationKey = "yo, MSFT-o";
             var props = new TelimenaProperties(si);
             var builder = new TelemetryClientBuilder(props);
@@ -39,6 +42,7 @@ namespace TelimenaClient.Tests
             Assert.IsNotNull(channel);
             var transmitter = channel.transmitter as TelimenaInMemoryTransmitter;
             Assert.IsNotNull(transmitter);
+            Assert.That(() => transmitter.SendingInterval == TimeSpan.FromHours(667));
             Assert.That(() => transmitter.DeliverySettings.AppInsightsEndpointEnabled == true);
         }
 

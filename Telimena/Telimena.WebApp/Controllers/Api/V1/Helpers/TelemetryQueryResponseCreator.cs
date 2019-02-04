@@ -25,8 +25,10 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     case TelemetryItemTypes.View:
                         yield return program.Views;
                         break;
+                    case TelemetryItemTypes.LogMessage:
+                    case TelemetryItemTypes.Exception:
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        break;
                 }
             }
         }

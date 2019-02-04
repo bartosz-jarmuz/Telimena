@@ -59,6 +59,11 @@ namespace TelimenaClient
         /// Gets or sets the instrumentation key (If AppInsights is used)
         /// </summary>
         /// <value>The instrumentation key.</value>
-        string InstrumentationKey { get; set; }
+        string InstrumentationKey { get; }
+
+        /// <summary>
+        ///     Data object containing information used at Telimena client startup
+        /// </summary>
+        ITelimenaStartupInfo StartupInfo { get; }
     }
 }

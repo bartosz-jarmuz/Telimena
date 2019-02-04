@@ -19,20 +19,7 @@ namespace TelimenaClient
         public TelimenaProperties(ITelimenaStartupInfo info)
         {
             this.StartupInfo = info;
-            this.TelemetryKey = this.StartupInfo.TelemetryKey;
-            this.InstrumentationKey = this.StartupInfo.InstrumentationKey;
 
-            if (this.StartupInfo.TelemetryApiBaseUrl == null)
-            {
-                this.StartupInfo.TelemetryApiBaseUrl = Telimena.DefaultApiUri;
-            }
-            this.TelemetryApiBaseUrl = this.StartupInfo.TelemetryApiBaseUrl;
-
-            if (this.StartupInfo.MainAssembly == null)
-            {
-                this.StartupInfo.MainAssembly = GetProperCallingAssembly();
-            }
-            
             this.StaticProgramInfo = info.ProgramInfo ?? new ProgramInfo { PrimaryAssembly = new Model.AssemblyInfo(this.StartupInfo.MainAssembly), Name = this.StartupInfo.MainAssembly.GetName().Name };
             this.UserInfo = info.UserInfo ?? new UserInfo { UserId = Environment.UserName, MachineName = Environment.MachineName };
 
@@ -50,7 +37,7 @@ namespace TelimenaClient
         /// <summary>
         ///     The unique key for this program's telemetry service
         /// </summary>
-        public Guid TelemetryKey { get; private set; }
+        public Guid TelemetryKey => this.StartupInfo.TelemetryKey;
 
         /// <summary>
         ///     Gets the user information.
@@ -74,13 +61,13 @@ namespace TelimenaClient
         /// Gets the telimena base URL.
         /// </summary>
         /// <value>The telimena base URL.</value>
-        public Uri TelemetryApiBaseUrl { get; internal set; }
+        public Uri TelemetryApiBaseUrl => this.StartupInfo.TelemetryApiBaseUrl;
 
         /// <summary>
         /// Gets or sets the instrumentation key (If AppInsights is used)
         /// </summary>
         /// <value>The instrumentation key.</value>
-        public string InstrumentationKey { get; set; }
+        public string InstrumentationKey => this.StartupInfo.InstrumentationKey;
 
         /// <summary>
         ///     Gets the program version.
@@ -100,26 +87,7 @@ namespace TelimenaClient
         /// </summary>
         public bool SuppressAllErrors { get; set; } = true;
 
-        private static Assembly GetProperCallingAssembly()
-        {
-            StackTrace stackTrace = new StackTrace();
-            int index = 1;
-            AssemblyName currentAss = typeof(Telimena).Assembly.GetName();
-            while (true)
-            {
-                MethodBase method = stackTrace.GetFrame(index)?.GetMethod();
-                if (method?.DeclaringType?.Assembly.GetName().Name != currentAss.Name)
-                {
-                    string name = method?.DeclaringType?.Assembly?.GetName()?.Name;
-                    if (name != null && name != "mscorlib")
-                    {
-                        return method.DeclaringType.Assembly;
-                    }
-                }
-
-                index++;
-            }
-        }
+        
 
     }
 }

@@ -15,6 +15,8 @@ namespace TelimenaClient
     {
         internal DeliverySettings DeliverySettings { get; }
 
+
+
         /// <summary>
         /// A lock object to serialize the sending calls from Flush, OnFull event and the Runner.  
         /// </summary>
@@ -24,6 +26,7 @@ namespace TelimenaClient
         internal TelimenaInMemoryTransmitter(TelemetryBuffer buffer, DeliverySettings deliverySettings) : base(buffer)
         {
             this.DeliverySettings = deliverySettings;
+            this.SendingInterval = deliverySettings.DeliveryInterval;
         }
 
 

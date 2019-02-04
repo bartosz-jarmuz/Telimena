@@ -36,7 +36,7 @@ namespace AutomaticTestsClient
                         this.HandleUpdates(telimena);
                         break;
                 }
-                Thread.Sleep(45*1000);
+                Thread.Sleep(7*1000);
             }
             catch (Exception ex)
             {
@@ -55,12 +55,16 @@ namespace AutomaticTestsClient
                 TelimenaStartupInfo si = new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl))
                 {
                     ProgramInfo = this.arguments.ProgramInfo
+                    ,DeliveryInterval = TimeSpan.FromSeconds(3)
                 };
                 telimena = Telimena.Construct(si);
             }
             else
             {
-                telimena = Telimena.Construct(new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl)));
+                telimena = Telimena.Construct(new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl))
+                {
+                    DeliveryInterval = TimeSpan.FromSeconds(3)
+                });
             }
 
             return telimena;

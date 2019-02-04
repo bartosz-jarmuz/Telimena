@@ -7,5 +7,7 @@ namespace TelimenaClient
         public bool AppInsightsEndpointEnabled = false;
 
         public Uri TelimenaTelemetryEndpoint { get; set; }
+
+        public TimeSpan DeliveryInterval { get; set; }
     }
 }

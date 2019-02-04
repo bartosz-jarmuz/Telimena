@@ -81,9 +81,12 @@ namespace TelimenaClient
         private void LoadTelemetryChannel(TelemetryConfiguration cfg)
         {
             TelemetryBuffer buffer = new TelemetryBuffer();
-            DeliverySettings deliverySettings = new DeliverySettings();
-            deliverySettings.AppInsightsEndpointEnabled = !string.IsNullOrEmpty( this.properties.InstrumentationKey);
-            deliverySettings.TelimenaTelemetryEndpoint = GetTelimenaTelemetryEndpoint(this.properties);
+            DeliverySettings deliverySettings = new DeliverySettings
+            {
+                AppInsightsEndpointEnabled = !string.IsNullOrEmpty(this.properties.InstrumentationKey)
+                , TelimenaTelemetryEndpoint = GetTelimenaTelemetryEndpoint(this.properties)
+                , DeliveryInterval = this.properties.StartupInfo.DeliveryInterval
+            };
             TelimenaInMemoryTransmitter transmitter = new TelimenaInMemoryTransmitter(buffer, deliverySettings);
 
             cfg.TelemetryChannel = new TelimenaInMemoryChannel(buffer, transmitter);

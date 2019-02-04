@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using TelimenaClient.Model;
@@ -20,7 +21,23 @@ namespace TelimenaClient
         {
             this.TelemetryKey = telemetryKey;
             this.TelemetryApiBaseUrl = telemetryApiBaseUrl;
+            if (this.TelemetryApiBaseUrl == null)
+            {
+                this.TelemetryApiBaseUrl = Telimena.DefaultApiUri;
+            }
+            if (this.MainAssembly == null)
+            {
+                this.MainAssembly = GetProperCallingAssembly();
+            }
+
         }
+
+
+        /// <summary>
+        /// Gets or sets the interval between batches of telemetry being sent. Default value is 30 seconds.
+        /// </summary>
+        /// <value>The delivery interval.</value>
+        public TimeSpan DeliveryInterval { get; set; } = TimeSpan.FromSeconds(30);
 
         /// <inheritdoc />
         public Guid TelemetryKey { get; set; }
@@ -85,6 +102,27 @@ namespace TelimenaClient
             foreach (Assembly assembly in assemblies)
             {
                 this.HelperAssemblies.Add(new Model.AssemblyInfo(assembly));
+            }
+        }
+
+        private static Assembly GetProperCallingAssembly()
+        {
+            StackTrace stackTrace = new StackTrace();
+            int index = 1;
+            AssemblyName currentAss = typeof(Telimena).Assembly.GetName();
+            while (true)
+            {
+                MethodBase method = stackTrace.GetFrame(index)?.GetMethod();
+                if (method?.DeclaringType?.Assembly.GetName().Name != currentAss.Name)
+                {
+                    string name = method?.DeclaringType?.Assembly?.GetName()?.Name;
+                    if (name != null && name != "mscorlib")
+                    {
+                        return method.DeclaringType.Assembly;
+                    }
+                }
+
+                index++;
             }
         }
     }
