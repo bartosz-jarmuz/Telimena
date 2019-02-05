@@ -267,10 +267,11 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.Driver.FindElement(By.Id(appName+ "_menu")).Click();
-                IWebElement link =
-                    wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(appName+ "_manageLink")));
-                Thread.Sleep(1000 );
+                IWebElement link = wait.Until( SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(appName + "_menu")));
+
+                link.Click();
+
+                link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(appName+ "_manageLink")));
                 link.Click();
                 IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
 
