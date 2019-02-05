@@ -239,7 +239,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         [Test]
         public void _06_SetUpdaterForPackageTriggerApp()
-        {
+        { 
 
             var app = TestAppProvider.PackageUpdaterTestAppName;
             var currentUpdater = this.GetUpdaterForApp(app);
@@ -270,6 +270,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.FindElement(By.Id(appName+ "_menu")).Click();
                 IWebElement link =
                     wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(appName+ "_manageLink")));
+                Thread.Sleep(1000 );
                 link.Click();
                 IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
 
