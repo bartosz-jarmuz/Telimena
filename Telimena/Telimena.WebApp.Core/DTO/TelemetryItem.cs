@@ -102,5 +102,10 @@ namespace Telimena.WebApp.Core.DTO
         /// <value>The log message.</value>
         public string LogMessage { get; set; }
 
+        /// <summary>
+        /// Gets or sets the log level.
+        /// </summary>
+        /// <value>The log level.</value>
+        public LogLevel LogLevel { get; set; }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using DotNetLittleHelpers;
+using Microsoft.ApplicationInsights.DataContracts;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel;
 using Telimena.WebApp.Core.DTO.MappableToClient;
@@ -40,11 +42,24 @@ namespace Telimena.WebApp.Utils
                 EntryKey = appInsightsTelemetry.Data.BaseData.Name,
                 Sequence = appInsightsTelemetry.Seq,
                 LogMessage = appInsightsTelemetry.Data.BaseData.Message
+                
             };
+            MapLogLevel(appInsightsTelemetry, item);
 
             MapExceptionProperties(appInsightsTelemetry, item);
 
             return item;
+        }
+
+        private static void MapLogLevel(AppInsightsTelemetry appInsightsTelemetry, TelemetryItem item)
+        {
+            if (appInsightsTelemetry.Data.BaseData.SeverityLevel != null)
+            {
+                if (Enum.TryParse(appInsightsTelemetry.Data.BaseData.SeverityLevel, out SeverityLevel enumerized))
+                {
+                    item.LogLevel = Map(enumerized);
+                }
+            }
         }
 
         private static void MapExceptionProperties(AppInsightsTelemetry appInsightsTelemetry, TelemetryItem item)
@@ -59,6 +74,24 @@ namespace Telimena.WebApp.Utils
             }
         }
 
+        private static LogLevel Map(SeverityLevel level)
+        {
+            switch (level)
+            {
+                case SeverityLevel.Verbose:
+                    return LogLevel.Debug;
+                case SeverityLevel.Information:
+                    return LogLevel.Info;
+                case SeverityLevel.Warning:
+                    return LogLevel.Warn;
+                case SeverityLevel.Error:
+                return LogLevel.Error;
+                case SeverityLevel.Critical:
+                    return LogLevel.Critical;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(level), level, null);
+            }
+        }
         private static Dictionary<string, string> GetFilteredProperties(Dictionary<string, string> properties)
         {
             var propNames = typeof(TelimenaContextPropertyKeys).GetProperties().Select(x => x.Name).ToList();

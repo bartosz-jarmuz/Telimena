@@ -19,6 +19,7 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Utils;
 using TelimenaClient;
 using JsonSerializer = Microsoft.ApplicationInsights.Extensibility.Implementation.JsonSerializer;
+using LogLevel = TelimenaClient.Model.LogLevel;
 using TelimenaContextPropertyKeys = TelimenaClient.Model.TelimenaContextPropertyKeys;
 
 namespace Telimena.Tests
@@ -71,11 +72,13 @@ namespace Telimena.Tests
             List<ITelemetry> sentTelemetry = new List<ITelemetry>();
             TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
 
-            telemetryModule.Log("A Message");
+            telemetryModule.Log(LogLevel.Warn, "A Message");
 
             List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
 
             Assert.AreEqual(TelemetryItemTypes.LogMessage, mapped.Single().TelemetryItemType);
+            Assert.AreEqual(LogLevel.Warn.ToString(), mapped.Single().LogLevel.ToString());
+            Assert.AreEqual((int)LogLevel.Warn, (int)mapped.Single().LogLevel);
             Assert.AreEqual((sentTelemetry[0] as TraceTelemetry).Message, mapped[0].LogMessage);
 
         }
@@ -115,7 +118,7 @@ namespace Telimena.Tests
 
                 telemetryModule.Event("TestEvent", new Dictionary<string, string>(){{"AKey", $"AValue"}});
                 telemetryModule.View("TestView");
-                telemetryModule.Log("A log message");
+                telemetryModule.Log(LogLevel.Warn, "A log message");
                 telemetryModule.Exception(new Exception("An error that happened"));
 
             byte[] serialized = JsonSerializer.Serialize(sentTelemetry, true);

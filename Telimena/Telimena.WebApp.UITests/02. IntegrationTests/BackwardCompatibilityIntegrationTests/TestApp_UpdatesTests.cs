@@ -96,7 +96,6 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             }
         }
 
-
         [Test]
         public async Task _01_HandlePackageUpdatesNonBetaTests()
         {

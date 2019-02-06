@@ -118,6 +118,8 @@
     <Compile Include="Messages\CreateUpdatePackageRequest.cs" />
     <Compile Include="Messages\LatestVersionResponse.cs" />
     <Compile Include="DTO\VersionInfo.cs" />
+    <Compile Include="Models\Telemetry\ExceptionInfo.cs" />
+    <Compile Include="Models\Telemetry\LogMessage.cs" />
     <Compile Include="Models\Telemetry\ViewTelemetryUnit.cs" />
     <Compile Include="Models\Telemetry\ViewTelemetryDetail.cs" />
     <Compile Include="Models\Telemetry\ViewTelemetrySummary.cs" />

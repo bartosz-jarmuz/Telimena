@@ -61,6 +61,9 @@ namespace Telimena.WebApp.Infrastructure.Database
         public DbSet<UpdaterPackageInfo> UpdaterPackages { get; set; }
         public DbSet<Updater> Updaters { get; set; }
 
+        public DbSet<ExceptionInfo> Exceptions{ get; set; }
+        public DbSet<LogMessage> LogMessages{ get; set; }
+
         public DbSet<ProgramPackageInfo> ProgramPackages { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

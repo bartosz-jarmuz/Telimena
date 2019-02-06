@@ -89,6 +89,7 @@
     <Compile Include="Messenger\ApiRoutes.cs" />
     <Compile Include="Model\DefaultToolkitNames.cs" />
     <Compile Include="Model\LogLevel.cs" />
+    <Compile Include="Utilities\LogSeverityMapper.cs" />
     <Compile Include="Telemetry\TelemetryModule.Tracking.cs" />
     <Compile Include="TelimenaClient\IFluentInterface.cs" />
     <Compile Include="Messenger\IMessenger.cs" />

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
-using Microsoft.ApplicationInsights.DataContracts;
+using TelimenaClient.Model;
 
 namespace TelimenaClient
 {
@@ -30,13 +30,9 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public void Log( string message)
+        public void Log(LogLevel level,  string message)
         {
-            this.TelemetryClient.TrackTrace(message, SeverityLevel.Warning);
+            this.TelemetryClient.TrackTrace(message, LogSeverityMapper.Map(level));
         }
-
-        
-
-     
     }
 }

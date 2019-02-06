@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
+using DotNetLittleHelpers;
 using TestStack.White;
 using TestStack.White.Factory;
 using TestStack.White.UIItems.WindowItems;
@@ -40,8 +43,9 @@ namespace Telimena.WebApp.UITests.Base
                 if (timeoutWatch.Elapsed > timeout)
                 {
                     string expBody = ((LambdaExpression)match).Body.ToString();
+                    throw new InvalidOperationException($"Failed to find window by expression on Title: {expBody}. " +
+                                                        $"Available processes {DisplayProcessesInfo(allProcesses)}. Error: {errorMessage}");
 
-                    throw new InvalidOperationException($"Failed to find window by expression on Title: {expBody}.{errorMessage}");
                 }
             }
         }
@@ -59,7 +63,7 @@ namespace Telimena.WebApp.UITests.Base
                 Process[] allProcesses = Process.GetProcesses().Where(x => !string.IsNullOrEmpty(x.MainWindowTitle)).ToArray();
                 var compiled = match.Compile();
 
-                var matchinApps = allProcesses.Where(x => compiled.Invoke(x.MainWindowTitle)).ToList();
+                List<Process> matchinApps = allProcesses.Where(x => compiled.Invoke(x.MainWindowTitle)).ToList();
 
                 foreach (Process appProcess in matchinApps)
                 {
@@ -83,10 +87,28 @@ namespace Telimena.WebApp.UITests.Base
                 {
                     string expBody = ((LambdaExpression)match).Body.ToString();
 
-                    throw new InvalidOperationException($"Failed to find window by expression on Title: {expBody}.{errorMessage}");
+                    throw new InvalidOperationException($"Failed to find window by expression on Title: {expBody}. Available processes {DisplayProcessesInfo(matchinApps)}. Error: {errorMessage}");
+                }
+            }
+        }
+
+        private static string DisplayProcessesInfo(IEnumerable<Process> processes)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine();
+            foreach (Process process in processes)
+            {
+                try
+                {
+                    sb.AppendLine(process.GetPropertyInfoString(nameof(Process.MainWindowTitle), nameof(Process.HasExited), nameof(Process.ProcessName)));
+                }
+                catch
+                {
+                    sb.AppendLine("Cannot get process info");
                 }
             }
 
+            return sb.ToString();
         }
 
         public static async Task<Window> WaitForMessageBoxAsync(Window parent, string title, TimeSpan timeout, string errorMessage = "")
@@ -96,11 +118,18 @@ namespace Telimena.WebApp.UITests.Base
             while (win == null)
             {
                 await Task.Delay(50).ConfigureAwait(false);
-                win = parent.MessageBox(title);
+                try
+                {
+                    win = parent.MessageBox(title);
+                }
+                catch (Exception)
+                {
+                    //
+                }
 
                 if (timeoutWatch.Elapsed > timeout)
                 {
-                    throw new InvalidOperationException($"Failed to find MessageBox {errorMessage}");
+                    throw new InvalidOperationException($"Failed to find MessageBox {errorMessage}. Parent window title: {parent.Title}, IsActive: {parent.IsCurrentlyActive}");
                 }
             }
 

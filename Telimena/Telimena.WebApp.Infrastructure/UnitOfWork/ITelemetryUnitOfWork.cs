@@ -16,6 +16,8 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
         IRepository<View> Views { get; }
         IRepository<Event> Events{ get; }
         IRepository<DeveloperAccount> Developers { get; set; }
+        IRepository<ExceptionInfo> Exceptions { get; }
+        IRepository<LogMessage> LogMessages { get; }
         Task CompleteAsync();
     }
 }

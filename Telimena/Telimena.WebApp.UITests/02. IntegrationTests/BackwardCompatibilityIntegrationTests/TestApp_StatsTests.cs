@@ -52,24 +52,9 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                 serializer.Serialize(writer, value);
             }
         }
-
+#if DEBUG
         [Test]
-        public void InitializeTest()
-        {
-            TelemetryInitializeResponse response = this.LaunchTestsAppAndGetResult<TelemetryInitializeResponse>(out _, Actions.Initialize
-                , TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
-
-            Assert.IsNull(response.Exception);
-            Assert.IsTrue(response.UserId != Guid.Empty);
-            //Assert.IsTrue(response.Count> 0);
-
-            TelemetryInitializeResponse responseNew = this.LaunchTestsAppAndGetResult<TelemetryInitializeResponse>(out _, Actions.Initialize
-                , TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name);
-
-            //Assert.AreEqual(responseNew.Count , response.Count +1);
-        }
-
-        [Test]
+#endif
         public async Task ReportView()
         {
             string viewName = nameof(this.ReportView);

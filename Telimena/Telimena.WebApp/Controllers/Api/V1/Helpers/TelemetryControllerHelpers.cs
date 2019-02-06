@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.IdentityModel;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using DotNetLittleHelpers;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
+using LogLevel = Telimena.WebApp.Core.DTO.MappableToClient.LogLevel;
 using UserInfo = Telimena.WebApp.Core.DTO.MappableToClient.UserInfo;
 
 namespace Telimena.WebApp.Controllers.Api.V1
@@ -45,21 +48,17 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 List<TelemetrySummary> summaries = new List<TelemetrySummary>();
                 foreach (IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping in typeGroupings)
                 {
-                    foreach (IGrouping<string, TelemetryItem> keyGroupings in typeGrouping.GroupBy(x => x.EntryKey))
+                    if (typeGrouping.Key == TelemetryItemTypes.Exception)
                     {
-                        ITelemetryAware trackedComponent =
-                            await GetTrackedComponent(work, typeGrouping.Key, keyGroupings.Key, program)
-                                .ConfigureAwait(false);
-                        TelemetrySummary summary = GetTelemetrySummary(clientAppUser, trackedComponent);
-                        AssemblyVersionInfo versionInfoInfo =
-                            GetAssemblyVersionInfoOrAddIfMissing(keyGroupings.First().VersionData, program);
-                        foreach (TelemetryItem telemetryItem in keyGroupings)
-                        {
-                            summary.UpdateTelemetry(versionInfoInfo, ipAddress, telemetryItem);
-                        }
-
-                        summaries.Add(summary);
-
+                        AddExceptions(work, program, typeGrouping, clientAppUser);
+                    }
+                    else if (typeGrouping.Key == TelemetryItemTypes.LogMessage)
+                    {
+                        AddLogs(work, program, typeGrouping);
+                    }
+                    else
+                    {
+                        await AddTelemetries(work, program, ipAddress, typeGrouping, clientAppUser, summaries).ConfigureAwait(false);
                     }
                 }
 
@@ -69,6 +68,68 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
 
             return null;
+        }
+
+        private static async Task AddTelemetries(ITelemetryUnitOfWork work, Program program, string ipAddress
+            , IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping, ClientAppUser clientAppUser, List<TelemetrySummary> summaries)
+        {
+            foreach (IGrouping<string, TelemetryItem> keyGroupings in typeGrouping.GroupBy(x => x.EntryKey))
+            {
+                ITelemetryAware trackedComponent = await GetTrackedComponent(work, typeGrouping.Key, keyGroupings.Key, program)
+                    .ConfigureAwait(false);
+                TelemetrySummary summary = GetTelemetrySummary(clientAppUser, trackedComponent);
+                AssemblyVersionInfo versionInfoInfo =
+                    GetAssemblyVersionInfoOrAddIfMissing(keyGroupings.First().VersionData, program);
+                foreach (TelemetryItem telemetryItem in keyGroupings)
+                {
+                    summary.UpdateTelemetry(versionInfoInfo, ipAddress, telemetryItem);
+                }
+
+                summaries.Add(summary);
+            }
+        }
+
+        private static void AddLogs(ITelemetryUnitOfWork work, Program program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping)
+        {
+            foreach (TelemetryItem telemetryItem in typeGrouping)
+            {
+                var logMsg = new LogMessage()
+                {
+                    Timestamp = telemetryItem.Timestamp
+                    , Id = Guid.NewGuid()
+                    , UserId = telemetryItem.UserId
+                    , Sequence = telemetryItem.Sequence
+                    , Message = telemetryItem.LogMessage
+                    , ProgramId = program.Id
+                    , Level = LogLevel.Critical
+                };
+                work.LogMessages.Add(logMsg);
+            }
+        }
+
+        private static void AddExceptions(ITelemetryUnitOfWork work, Program program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping
+            , ClientAppUser clientAppUser)
+        {
+            foreach (TelemetryItem telemetryItem in typeGrouping)
+            {
+                foreach (TelemetryItem.ExceptionInfo telemetryItemException in telemetryItem.Exceptions)
+                {
+                    var exception = new ExceptionInfo
+                    {
+                        Timestamp = telemetryItem.Timestamp
+                        , ProgramId = program.Id
+                        , UserId = clientAppUser.UserId
+                        , Sequence = telemetryItem.Sequence
+                        , ExceptionId = telemetryItemException.Id
+                        , ExceptionOuterId = telemetryItemException.OuterId
+                        , HasFullStack = telemetryItemException.HasFullStack
+                        , Message = telemetryItemException.Message
+                        , TypeName = telemetryItemException.TypeName
+                        , ParsedStack = JsonConvert.SerializeObject(telemetryItemException.ParsedStack)
+                    };
+                    work.Exceptions.Add(exception);
+                }
+            }
         }
 
         public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, UserInfo userDto, string ip)

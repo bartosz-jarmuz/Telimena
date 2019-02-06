@@ -227,7 +227,7 @@ namespace TelimenaTestSandboxApp
 
         private void sendLog_Button_Click(object sender, EventArgs e)
         {
-            this.teli.Tracking.Log(this.telemetryDataTextBox.Text);
+            this.teli.Tracking.Log(LogLevel.Warn, this.telemetryDataTextBox.Text);
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.ApplicationInsights.DataContracts;
+using TelimenaClient.Model;
 
 namespace TelimenaClient
 {
@@ -9,13 +10,12 @@ namespace TelimenaClient
     /// </summary>
     public interface ITelemetryModule : IFluentInterface
     {
-
-
         /// <summary>
         /// Logs the specified message.
         /// </summary>
+        /// <param name="level">The verbosity level</param>
         /// <param name="message">The message.</param>
-        void Log(string message);
+        void Log(LogLevel level, string message);
 
         /// <summary>
         ///     Reports an occurence of an event
