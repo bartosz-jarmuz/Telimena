@@ -18,7 +18,10 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs);
         Task<PortalSummaryData> GetPortalSummary();
         Task<IEnumerable<ProgramSummary>> GetProgramsSummary(List<Program> programs);
-        Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null);
+        Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, TelemetryItemTypes itemType, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null);
         Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey);
+
+        Task<UsageDataTableResult> GetExceptions(Guid telemetryKey, TelemetryItemTypes itemType
+            , int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null);
     }
 }

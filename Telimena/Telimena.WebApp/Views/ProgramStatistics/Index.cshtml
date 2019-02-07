@@ -20,7 +20,18 @@
     </h1>
 </section>
 <br />
-
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Events</h3>
+            </div>
+            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
+                <table id="@Strings.Id.EventsTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-12">
         <div class="box box-primary">
@@ -29,6 +40,19 @@
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
                 <table id="@Strings.Id.ViewUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">View Usages</h3>
+            </div>
+            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
+                <table id="@Strings.Id.ExceptionsTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -43,29 +67,37 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            $('#@Strings.Id.ViewUsageTable').DataTable({
+            function loadTable(url) {
+                return {
                 serverSide: true,
                 searching: false,
                 processing: true,
-                lengthMenu: [[15, 30, 70, -1], [15, 30, 70, "All"]],
+                lengthMenu: [[15, 25, 70, -1], [15, 25, 70, "All"]],
                 pageLength: 15,
                 order: [[ 0, 'desc' ]],
-                ajax: "@Url.Action("GetProgramViewsUsageData")" + "?telemetryKey=@Model.TelemetryKey",
+                ajax: url,
 
                 columns: [
                     {
-                        name: "@nameof(UsageData.DateTime)",
-                        data: "@nameof(UsageData.DateTime).ToLowerFirstChar()",
+                        name: "@nameof(UsageData.Timestamp)",
+                        data: "@nameof(UsageData.Timestamp).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
                             return toFormattedTimestamp(new Date(data));                        },
-                        title:"@nameof(UsageData.DateTime)",
+                        title:"@nameof(UsageData.Timestamp)",
                         sortable: true,
                         searchable: false
                     },
                     {
-                        name:  "@nameof(UsageData.ViewName)",
-                        data:  "@nameof(UsageData.ViewName).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.ViewName)",
+                        name:  "@nameof(UsageData.Sequence)",
+                        data:  "@nameof(UsageData.Sequence).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.Sequence)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(UsageData.EntryKey)",
+                        data:  "@nameof(UsageData.EntryKey).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.EntryKey)",
                         sortable: true,
                         searchable: true
                     },
@@ -83,9 +115,20 @@
                         sortable: true,
                         searchable: true
                     },
+                    {
+                        name:  "@nameof(UsageData.Details)",
+                        data:  "@nameof(UsageData.Details).ToLowerFirstChar()",
+                        title: "@nameof(UsageData.Details)",
+                        sortable: false,
+                        searchable: true
+                    },
                  ]
+            }
+            }
 
-            });
+            $('#@Strings.Id.EventsTable').DataTable(loadTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.Event"));
+            $('#@Strings.Id.ViewUsageTable').DataTable(loadTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.View"));
+            $('#@Strings.Id.ExceptionsTable').DataTable(loadTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.Exception"));
 
         });
     </script>

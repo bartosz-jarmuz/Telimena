@@ -97,7 +97,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 {
                     Timestamp = telemetryItem.Timestamp
                     , Id = Guid.NewGuid()
-                    , UserId = telemetryItem.UserId
+                    , UserName = telemetryItem.UserId
                     , Sequence = telemetryItem.Sequence
                     , Message = telemetryItem.LogMessage
                     , ProgramId = program.Id
@@ -118,7 +118,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     {
                         Timestamp = telemetryItem.Timestamp
                         , ProgramId = program.Id
-                        , UserId = clientAppUser.UserId
+                        , ProgramVersion = telemetryItem.VersionData.FileVersion
+                        , UserName = clientAppUser.UserId
                         , Sequence = telemetryItem.Sequence
                         , ExceptionId = telemetryItemException.Id
                         , ExceptionOuterId = telemetryItemException.OuterId

@@ -16,6 +16,7 @@ namespace Telimena.WebApp.Core.Models
         }
 
         public Guid Id { get; set; }
+        public string Sequence { get; set; }
         public string IpAddress { get; set; }
         public virtual AssemblyVersionInfo AssemblyVersion { get; set; }
         public int? AssemblyVersionId { get; set; }

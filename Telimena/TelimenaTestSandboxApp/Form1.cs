@@ -53,19 +53,16 @@ namespace TelimenaTestSandboxApp
         {
             Stopwatch sw = Stopwatch.StartNew();
             var rand = new Random();
-            var numberOfMessages = rand.Next(40, 140);
+            var numberOfMessages = 1;
             string viewName = string.IsNullOrEmpty(this.telemetryDataTextBox.Text)
                 ? "DefaultView"
                 : this.telemetryDataTextBox.Text;
-            if (!string.IsNullOrEmpty(this.telemetryDataTextBox.Text))
-            {
 
                 for (int index = 0; index < numberOfMessages; index++)
                 {
                         this.teli.Tracking.View(viewName);
                 }
                 sw.Stop();
-            }
                 this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of view [{viewName}] access" + Environment.NewLine;
         }
 
@@ -208,20 +205,17 @@ namespace TelimenaTestSandboxApp
         {
             Stopwatch sw = Stopwatch.StartNew();
             var rand = new Random();
-            var numberOfMessages = rand.Next(40, 140);
+            var numberOfMessages = 1;
             string name = string.IsNullOrEmpty(this.telemetryDataTextBox.Text)
-                ? "DefaultView"
+                ? "DefaultEvent"
                 : this.telemetryDataTextBox.Text;
-            if (!string.IsNullOrEmpty(this.telemetryDataTextBox.Text))
-            {
 
                 for (int index = 0; index < numberOfMessages; index++)
                 {
                     this.teli.Tracking.Event(name);
                 }
                 sw.Stop();
-            }
-            this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of event [{name}] access" + Environment.NewLine;
+            this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of event [{name}]" + Environment.NewLine;
 
         }
 

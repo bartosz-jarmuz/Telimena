@@ -7,6 +7,7 @@ namespace Telimena.WebApp.Core.Models
     public class LogMessage
     {
         public string Message { get; set; }
+        public string ProgramVersion{ get; set; }
 
         public LogLevel Level { get; set; }
 
@@ -21,7 +22,7 @@ namespace Telimena.WebApp.Core.Models
         /// Gets or sets the user identifier.
         /// </summary>
         /// <value>The user identifier.</value>
-        public string UserId { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// When an event occurred

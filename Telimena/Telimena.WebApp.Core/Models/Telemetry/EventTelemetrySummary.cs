@@ -16,7 +16,7 @@ namespace Telimena.WebApp.Core.Models
         {
             EventTelemetryDetail detail = new EventTelemetryDetail(telemetryItem.Id)
             {
-                Timestamp = telemetryItem.Timestamp, TelemetrySummary = this, AssemblyVersion = versionInfo, IpAddress = ipAddress
+                Timestamp = telemetryItem.Timestamp, TelemetrySummary = this, AssemblyVersion = versionInfo, IpAddress = ipAddress, Sequence = telemetryItem.Sequence
             };
             if (telemetryItem.TelemetryData != null && telemetryItem.TelemetryData.Any())
             {

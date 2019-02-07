@@ -100,19 +100,28 @@ namespace Telimena.WebApp.Controllers
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 
-
         /// <summary>
         /// Gets the program views usage data.
         /// </summary>
         /// <param name="telemetryKey">The telemetry key.</param>
+        /// <param name="itemType"></param>
         /// <param name="request">The request.</param>
         /// <returns>Task&lt;JsonResult&gt;.</returns>
         [HttpGet]
-        public async Task<JsonResult> GetProgramViewsUsageData(Guid telemetryKey, IDataTablesRequest request)
+        public async Task<JsonResult> GetProgramUsageData(Guid telemetryKey, TelemetryItemTypes itemType, IDataTablesRequest request)
         {
-            IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
+            IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => 
+                x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
+            UsageDataTableResult result;
+            if (itemType == TelemetryItemTypes.Exception)
+            {
+                result = await this.Work.GetExceptions(telemetryKey, itemType, request.Start, request.Length, sorts).ConfigureAwait(false);
 
-            UsageDataTableResult result = await this.Work.GetProgramViewsUsageData(telemetryKey, request.Start, request.Length, sorts).ConfigureAwait(false);
+            }
+            else
+            {
+                result= await this.Work.GetProgramViewsUsageData(telemetryKey, itemType ,request.Start, request.Length, sorts).ConfigureAwait(false);
+            }
 
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
 
