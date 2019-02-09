@@ -17,7 +17,10 @@ namespace TelimenaClient
         public void View(string viewName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null)
         {
             var tele = new PageViewTelemetry(viewName);
-            Utils.CopyDictionary(telemetryData, tele.Properties);
+            if (telemetryData != null)
+            {
+                Utils.CopyDictionary(telemetryData, tele.Properties);
+            }
             this.TelemetryClient.TrackPageView(tele);
         }
 
