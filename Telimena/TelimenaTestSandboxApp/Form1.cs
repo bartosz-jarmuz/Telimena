@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -46,7 +47,7 @@ namespace TelimenaTestSandboxApp
 
         private void ThrowUnhandledButton_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException(this.telemetryDataTextBox.Text);
+            throw new NotImplementedException(this.telemetryDataTextBox.Text, new AbandonedMutexException("Mutex soo lonely"));
         }
 
         private void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
@@ -60,7 +61,7 @@ namespace TelimenaTestSandboxApp
 
                 for (int index = 0; index < numberOfMessages; index++)
                 {
-                        this.teli.Tracking.View(viewName);
+                        this.teli.Tracking.View(viewName, new Dictionary<string, string>(){{"SomeViewMetric", $"{new Random().Next(100)}"}});
                 }
                 sw.Stop();
                 this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of view [{viewName}] access" + Environment.NewLine;
@@ -212,8 +213,12 @@ namespace TelimenaTestSandboxApp
 
                 for (int index = 0; index < numberOfMessages; index++)
                 {
-                    this.teli.Tracking.Event(name);
-                }
+                    this.teli.Tracking.Event(name, new Dictionary<string, string>()
+                    {
+                        { "SomeEventMetric", $"{new Random().Next(100)}" },
+                        {"WeekDay",$"{DateTime.Today.DayOfWeek}" }
+                    });
+            }
                 sw.Stop();
             this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of event [{name}]" + Environment.NewLine;
 

@@ -8,8 +8,18 @@
 
 @section styles{
     @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
-    <link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet" />
+    <style type="text/css">
+        td.details-control {
+            background: url('../../Content/Ionicons/png/512/plus-circled.png') no-repeat center center;
+            background-size: 24px 24px;
+            cursor: pointer;
+        }
 
+        tr.shown td.details-control {
+            background: url('../../Content/Ionicons/png/512/minus-circled.png') no-repeat center center;
+            background-size: 24px 24px;
+        }
+    </style>
 }
 
 
@@ -54,6 +64,24 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+            function format(d) {
+
+                var rows = '';
+
+                for (var property in d.values) {
+                    if (d.values.hasOwnProperty(property)) {
+                        var key = property;
+                        var value = d.values[property];
+
+                        rows += '<tr><td style="font-weight: bold; padding: 2px;">' + key + '</td><td style="padding: 2px;">'+value+'</td></tr>';
+                    }
+                }
+
+               
+
+                return '<table cellpadding="0" cellspacing="0" border="1" style="padding-left:50px;">' + rows + '</table>';
+            }
+
             function loadUsageTable(url) {
                 return {
                 serverSide: true,
@@ -66,55 +94,75 @@
 
                 columns: [
                     {
-                        name: "@nameof(UsageData.Timestamp)",
-                        data: "@nameof(UsageData.Timestamp).ToLowerFirstChar()",
+                        name: "@nameof(TelemetryDataBase.Timestamp)",
+                        data: "@nameof(TelemetryDataBase.Timestamp).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
                             return toFormattedTimestamp(new Date(data));                        },
-                        title:"@nameof(UsageData.Timestamp)",
+                        title:"@nameof(TelemetryDataBase.Timestamp)",
                         sortable: true,
                         searchable: false
                     },
                     {
-                        name:  "@nameof(UsageData.Sequence)",
-                        data:  "@nameof(UsageData.Sequence).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.Sequence)",
+                        name:  "@nameof(TelemetryDataBase.Sequence)",
+                        data:  "@nameof(TelemetryDataBase.Sequence).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.Sequence)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.EntryKey)",
-                        data:  "@nameof(UsageData.EntryKey).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.EntryKey)",
+                        name:  "@nameof(TelemetryDataBase.EntryKey)",
+                        data:  "@nameof(TelemetryDataBase.EntryKey).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.EntryKey)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.ProgramVersion)",
-                        data:  "@nameof(UsageData.ProgramVersion).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.ProgramVersion)",
+                        name:  "@nameof(TelemetryDataBase.ProgramVersion)",
+                        data:  "@nameof(TelemetryDataBase.ProgramVersion).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.ProgramVersion)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.UserName)",
-                        data:  "@nameof(UsageData.UserName).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.UserName)",
+                        name:  "@nameof(TelemetryDataBase.UserName)",
+                        data:  "@nameof(TelemetryDataBase.UserName).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.UserName)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.Details)",
-                        data:  "@nameof(UsageData.Details).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.Details)",
-                        sortable: false,
-                        searchable: true
+                        title: "Details",
+                        "className":      'details-control',
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ''
                     },
+
                  ]
             }
             }
 
             $('#@Strings.Id.EventsTable').DataTable(loadUsageTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.Event"));
             $('#@Strings.Id.ViewUsageTable').DataTable(loadUsageTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.View"));
+
+            
+            $('tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var table = $(this).closest('table').DataTable({ "bRetrieve": true });
+                var row = table.row( tr );
+ 
+                if ( row.child.isShown() ) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    // Open this row
+                    row.child( format(row.data()) ).show();
+                    tr.addClass('shown');
+                }
+            } );
+
 
         });
     </script>

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using TelimenaClient.Model;
 
 namespace TelimenaClient
@@ -14,7 +16,9 @@ namespace TelimenaClient
         /// <inheritdoc />
         public void View(string viewName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null)
         {
-            this.TelemetryClient.TrackPageView(viewName);
+            var tele = new PageViewTelemetry(viewName);
+            Utils.CopyDictionary(telemetryData, tele.Properties);
+            this.TelemetryClient.TrackPageView(tele);
         }
 
         /// <inheritdoc />

@@ -178,7 +178,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     ,EntryKey = exception.TypeName
                     ,ProgramVersion = exception.ProgramVersion
                     ,Sequence = exception.Sequence
-                    ,Details = exception.Message
+                    ,ErrorMessage = exception.Message
                     ,StackTrace = GetStackTrace(exception.ParsedStack)
                     ,
                 };
@@ -231,17 +231,17 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             List<TelemetryDetail> usages = await ApplyOrderingQuery(sortBy, query, skip, take).ConfigureAwait(false);
 
-            List<UsageData> result = new List<UsageData>();
+            List<TelemetryDataBase> result = new List<TelemetryDataBase>();
             foreach (TelemetryDetail detail in usages)
             {
-                UsageData data = new UsageData
+                TelemetryData data = new TelemetryData
                 {
                     Timestamp = detail.Timestamp
                     , UserName = detail.GetTelemetrySummary().ClientAppUser.UserId
                     , EntryKey = detail.GetTelemetrySummary().GetComponent().Name
                     , ProgramVersion = detail.AssemblyVersion.AssemblyVersion
                     , Sequence = detail.Sequence
-                    ,Details = JsonConvert.SerializeObject(detail.GetTelemetryUnits().Select(x=> x.Key + ":"+x.ValueString))
+                    ,Values = detail.GetTelemetryUnits().ToDictionary(x => x.Key,x=> x.ValueString)
                 };
                 result.Add(data);
             }
@@ -298,15 +298,15 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 for (int index = 0; index < rules.Count; index++)
                 {
                     Tuple<string, bool> rule = rules[index];
-                    if (rule.Item1 == nameof(UsageData.Timestamp))
+                    if (rule.Item1 == nameof(TelemetryDataBase.Timestamp))
                     {
                         query = Order(query, rule.Item1, rule.Item2, index);
                     }
-                    else if (rule.Item1 == nameof(UsageData.ProgramVersion))
+                    else if (rule.Item1 == nameof(TelemetryDataBase.ProgramVersion))
                     {
                         query = Order(query, x => x.AssemblyVersion.AssemblyVersion, rule.Item2, index);
                     }
-                    else if (rule.Item1 == nameof(UsageData.UserName))
+                    else if (rule.Item1 == nameof(TelemetryDataBase.UserName))
                     {
                         if (typeof(T) == typeof(ViewTelemetryDetail))
                         {
@@ -317,7 +317,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                             query = Order(query, x => (x as EventTelemetryDetail).TelemetrySummary.ClientAppUser.UserId, rule.Item2, index);
                         }
                     }
-                    else if (rule.Item1 == nameof(UsageData.EntryKey) )
+                    else if (rule.Item1 == nameof(TelemetryDataBase.EntryKey) )
                     {
                         if (typeof(T) == typeof(ViewTelemetryDetail))
                         {
@@ -352,13 +352,13 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 for (int index = 0; index < rules.Count; index++)
                 {
                     Tuple<string, bool> rule = rules[index];
-                    if (rule.Item1 == nameof(UsageData.Timestamp) || 
-                        rule.Item1 == nameof(UsageData.ProgramVersion) || 
-                        rule.Item1 == nameof(UsageData.UserName))
+                    if (rule.Item1 == nameof(TelemetryDataBase.Timestamp) || 
+                        rule.Item1 == nameof(TelemetryDataBase.ProgramVersion) || 
+                        rule.Item1 == nameof(TelemetryDataBase.UserName))
                     {
                         query = Order(query, rule.Item1, rule.Item2, index);
                     }
-                    else if (rule.Item1 == nameof(UsageData.EntryKey))
+                    else if (rule.Item1 == nameof(TelemetryDataBase.EntryKey))
                     {
                         query = Order(query, nameof(ExceptionInfo.TypeName), rule.Item2, index);
                     }

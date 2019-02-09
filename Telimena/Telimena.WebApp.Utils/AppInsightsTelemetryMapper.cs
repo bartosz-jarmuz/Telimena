@@ -51,6 +51,7 @@ namespace Telimena.WebApp.Utils
             return item;
         }
 
+
         private static void MapLogLevel(AppInsightsTelemetry appInsightsTelemetry, TelemetryItem item)
         {
             if (appInsightsTelemetry.Data.BaseData.SeverityLevel != null)

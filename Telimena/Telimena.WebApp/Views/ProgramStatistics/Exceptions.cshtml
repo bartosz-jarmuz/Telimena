@@ -60,7 +60,7 @@
                         '</p>';
                 }
 
-                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><tr><td>' + rows + '</tr></td></table>';
+                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><tr><td>' + rows + '</td></tr></table>';
             }
 
             function loadTable(url) {
@@ -76,52 +76,52 @@
                     columns: [
                     
                     {
-                        name: "@nameof(UsageData.Timestamp)",
-                        data: "@nameof(UsageData.Timestamp).ToLowerFirstChar()",
+                        name: "@nameof(TelemetryDataBase.Timestamp)",
+                        data: "@nameof(TelemetryDataBase.Timestamp).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
                             return toFormattedTimestamp(new Date(data));                        },
-                        title:"@nameof(UsageData.Timestamp)",
+                        title:"@nameof(TelemetryDataBase.Timestamp)",
                         sortable: true,
                         searchable: false
                     },
                     {
-                        name:  "@nameof(UsageData.Sequence)",
-                        data:  "@nameof(UsageData.Sequence).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.Sequence)",
+                        name:  "@nameof(TelemetryDataBase.Sequence)",
+                        data:  "@nameof(TelemetryDataBase.Sequence).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.Sequence)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.EntryKey)",
-                        data:  "@nameof(UsageData.EntryKey).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.EntryKey)",
+                        name:  "@nameof(TelemetryDataBase.EntryKey)",
+                        data:  "@nameof(TelemetryDataBase.EntryKey).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.EntryKey)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.ProgramVersion)",
-                        data:  "@nameof(UsageData.ProgramVersion).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.ProgramVersion)",
+                        name:  "@nameof(TelemetryDataBase.ProgramVersion)",
+                        data:  "@nameof(TelemetryDataBase.ProgramVersion).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.ProgramVersion)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.UserName)",
-                        data:  "@nameof(UsageData.UserName).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.UserName)",
+                        name:  "@nameof(TelemetryDataBase.UserName)",
+                        data:  "@nameof(TelemetryDataBase.UserName).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.UserName)",
                         sortable: true,
                         searchable: true
                     },
                       
                     {
-                        name:  "@nameof(UsageData.Details)",
-                        data:  "@nameof(UsageData.Details).ToLowerFirstChar()",
-                        title: "Error Message",
+                        name:  "@nameof(ExceptionData.ErrorMessage)",
+                        data:  "@nameof(ExceptionData.ErrorMessage).ToLowerFirstChar()",
+                        title: "@nameof(ExceptionData.ErrorMessage)",
                         sortable: false,
                         searchable: true
                         },
                         {
-                        title: "Stack",
+                        title: "Call Stack",
                         "className":      'details-control',
                         "orderable":      false,
                         "data":           null,

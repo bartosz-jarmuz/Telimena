@@ -49,46 +49,46 @@
 
                 columns: [
                     {
-                        name: "@nameof(UsageData.Timestamp)",
-                        data: "@nameof(UsageData.Timestamp).ToLowerFirstChar()",
+                        name: "@nameof(TelemetryDataBase.Timestamp)",
+                        data: "@nameof(TelemetryDataBase.Timestamp).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
                             return toFormattedTimestamp(new Date(data));                        },
-                        title:"@nameof(UsageData.Timestamp)",
+                        title:"@nameof(TelemetryDataBase.Timestamp)",
                         sortable: true,
                         searchable: false
                     },
                     {
-                        name:  "@nameof(UsageData.Sequence)",
-                        data:  "@nameof(UsageData.Sequence).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.Sequence)",
+                        name:  "@nameof(TelemetryDataBase.Sequence)",
+                        data:  "@nameof(TelemetryDataBase.Sequence).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.Sequence)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.EntryKey)",
-                        data:  "@nameof(UsageData.EntryKey).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.EntryKey)",
+                        name:  "@nameof(TelemetryDataBase.EntryKey)",
+                        data:  "@nameof(TelemetryDataBase.EntryKey).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.EntryKey)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.ProgramVersion)",
-                        data:  "@nameof(UsageData.ProgramVersion).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.ProgramVersion)",
+                        name:  "@nameof(TelemetryDataBase.ProgramVersion)",
+                        data:  "@nameof(TelemetryDataBase.ProgramVersion).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.ProgramVersion)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.UserName)",
-                        data:  "@nameof(UsageData.UserName).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.UserName)",
+                        name:  "@nameof(TelemetryDataBase.UserName)",
+                        data:  "@nameof(TelemetryDataBase.UserName).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.UserName)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.Details)",
-                        data:  "@nameof(UsageData.Details).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.Details)",
+                        name:  "@nameof(TelemetryDataBase.Details)",
+                        data:  "@nameof(TelemetryDataBase.Details).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.Details)",
                         sortable: false,
                         searchable: true
                     },
