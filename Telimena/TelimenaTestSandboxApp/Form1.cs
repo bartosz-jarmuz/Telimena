@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Web.Script.Serialization;
@@ -18,6 +19,10 @@ namespace TelimenaTestSandboxApp
         public Form1()
         {
             this.InitializeComponent();
+
+            Random rnd = new Random();
+            var randomName = new []{ "Jess", "Anastasia", "Bobby", "Steven", "Bonawentura" }.OrderBy(a => rnd.NextDouble()).First();
+            this.userNameTextBox.Text = randomName;
             this.apiUrlTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.baseUri)
                 ? "http://localhost:7757/"
                 : Properties.Settings.Default.baseUri;
@@ -27,13 +32,14 @@ namespace TelimenaTestSandboxApp
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
                 this.teli =
-                    Telimena.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text))) as Telimena;
+                    Telimena.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text)){UserInfo = new UserInfo(){UserId = this.userNameTextBox.Text}}) as Telimena;
             }
 
             this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
-
-           
         }
+
+
+        
 
 
         private string PresentResponse(UpdateCheckResult response)
