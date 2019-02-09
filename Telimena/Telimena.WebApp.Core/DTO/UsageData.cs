@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Telimena.WebApp.Core.DTO
 {
@@ -10,5 +11,10 @@ namespace Telimena.WebApp.Core.DTO
         public string ProgramVersion { get; set; }
         public string Sequence { get; set; }
         public string Details { get; set; }
+    }
+
+    public class ExceptionData : UsageData
+    {
+        public List<TelemetryItem.ExceptionInfo.ParsedStackTrace> StackTrace { get; set; } = new List<TelemetryItem.ExceptionInfo.ParsedStackTrace>();
     }
 }

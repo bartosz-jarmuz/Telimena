@@ -133,6 +133,9 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
         }
 
+
+        
+
         public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, UserInfo userDto, string ip)
         {
             ClientAppUser user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserId == userDto.UserId).ConfigureAwait(false);

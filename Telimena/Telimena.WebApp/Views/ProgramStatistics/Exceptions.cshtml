@@ -2,21 +2,26 @@
 @using Telimena.WebApp.Core.DTO
 @using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
-@{
-    ViewBag.Title = "Admin Dashboard";
-}
 
 @section styles{
     @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
-    <link href="https://cdn.webdatarocks.com/latest/webdatarocks.min.css" rel="stylesheet" />
-
+    <style type="text/css">
+        td.details-control {
+            background: url('../../Content/Ionicons/png/512/plus-circled.png') no-repeat center center;
+            background-size: 24px 24px;
+            cursor: pointer;
+        }
+        tr.shown td.details-control {
+            background: url('../../Content/Ionicons/png/512/minus-circled.png') no-repeat center center;
+            background-size: 24px 24px;        }
+    </style>
 }
 
 
 <section class="content-header">
     <h1>
         @Model.ProgramName
-        <small>Events and views statistics</small>
+        <small>Exceptions</small>
     </h1>
 </section>
 <br />
@@ -24,22 +29,10 @@
     <div class="col-md-12">
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Events</h3>
+                <h3 class="box-title">Exceptions details</h3>
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="@Strings.Id.EventsTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">View Usages</h3>
-            </div>
-            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="@Strings.Id.ViewUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
+                <table id="@Strings.Id.ExceptionsTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
             </div>
         </div>
     </div>
@@ -48,13 +41,29 @@
 @section scripts
 {
     @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
-    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
-    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
 
-            function loadUsageTable(url) {
+            function format(d) {
+
+                var rows = '';
+                for (var i = 0; i < d.stackTrace.length; i++) {
+                    var method = d.stackTrace[i].method;
+                    var file = d.stackTrace[i].fileName;
+                    var line = d.stackTrace[i].line;
+
+                    rows += '<p style="margin: 0px;">' +
+                        '   at <span style="font-weight: bold;">' + method + '()</span>' +
+                        ' in <span class="font-weight-light">[' + file + ']</span>.' +
+                        ' Line: <span style="font-weight: bold;">' + line +'</span>' +
+                        '</p>';
+                }
+
+                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><tr><td>' + rows + '</tr></td></table>';
+            }
+
+            function loadTable(url) {
                 return {
                 serverSide: true,
                 searching: false,
@@ -64,7 +73,8 @@
                 order: [[ 0, 'desc' ]],
                 ajax: url,
 
-                columns: [
+                    columns: [
+                    
                     {
                         name: "@nameof(UsageData.Timestamp)",
                         data: "@nameof(UsageData.Timestamp).ToLowerFirstChar()",
@@ -102,19 +112,43 @@
                         sortable: true,
                         searchable: true
                     },
+                      
                     {
                         name:  "@nameof(UsageData.Details)",
                         data:  "@nameof(UsageData.Details).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.Details)",
+                        title: "Error Message",
                         sortable: false,
                         searchable: true
-                    },
-                 ]
+                        },
+                        {
+                        title: "Stack",
+                        "className":      'details-control',
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ''
+                        },
+                 ]  
             }
             }
 
-            $('#@Strings.Id.EventsTable').DataTable(loadUsageTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.Event"));
-            $('#@Strings.Id.ViewUsageTable').DataTable(loadUsageTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.View"));
+            var table = $('#@Strings.Id.ExceptionsTable').DataTable(loadTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.Exception"));
+
+            
+            $('#@Strings.Id.ExceptionsTable tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row( tr );
+ 
+                if ( row.child.isShown() ) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    // Open this row
+                    row.child( format(row.data()) ).show();
+                    tr.addClass('shown');
+                }
+            } );
 
         });
     </script>

@@ -86,6 +86,50 @@ namespace Telimena.WebApp.Controllers
             return this.View("PivotTable", model);
         }
 
+        /// <summary>
+        /// Shows exceptions view
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        /// <returns></returns>
+        [Audit]
+        [HttpGet]
+        public async Task<ActionResult> Exceptions(Guid telemetryKey)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            ProgramStatisticsViewModel model = new ProgramStatisticsViewModel() { TelemetryKey = program.TelemetryKey, ProgramName = program.Name };
+
+            return this.View("Exceptions", model);
+        }
+
+
+
+        /// <summary>
+        /// Shows exceptions view
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        /// <returns></returns>
+        [Audit]
+        [HttpGet]
+        public async Task<ActionResult> Logs(Guid telemetryKey)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            ProgramStatisticsViewModel model = new ProgramStatisticsViewModel() { TelemetryKey = program.TelemetryKey, ProgramName = program.Name };
+
+            return this.View("Logs", model);
+        }
+
 
         /// <summary>
         /// Gets the pivot table data.
@@ -116,7 +160,6 @@ namespace Telimena.WebApp.Controllers
             if (itemType == TelemetryItemTypes.Exception)
             {
                 result = await this.Work.GetExceptions(telemetryKey, itemType, request.Start, request.Length, sorts).ConfigureAwait(false);
-
             }
             else
             {

@@ -2024,6 +2024,8 @@
     <Content Include="Views\ToolkitManagement\Index.cshtml" />
     <Content Include="Views\ProgramStatistics\Index.cshtml" />
     <Content Include="Views\ProgramStatistics\PivotTable.cshtml" />
+    <Content Include="Views\ProgramStatistics\Exceptions.cshtml" />
+    <Content Include="Views\ProgramStatistics\Logs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

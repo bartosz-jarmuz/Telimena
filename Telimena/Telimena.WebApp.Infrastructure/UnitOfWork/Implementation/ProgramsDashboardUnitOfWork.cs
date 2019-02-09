@@ -168,22 +168,37 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             List<ExceptionInfo> ordered = await ApplyOrderingQuery(sortBy, query, skip, take).ConfigureAwait(false);
 
-            List<UsageData> result = new List<UsageData>();
+            List<ExceptionData> result = new List<ExceptionData>();
             foreach (ExceptionInfo exception in ordered)
             {
-                UsageData data = new UsageData
+                ExceptionData data = new ExceptionData
                 {
                     Timestamp = exception.Timestamp
                     ,UserName = exception.UserName
                     ,EntryKey = exception.TypeName
                     ,ProgramVersion = exception.ProgramVersion
                     ,Sequence = exception.Sequence
-                    ,Details = exception.Message + "\r\n" + exception.ParsedStack
+                    ,Details = exception.Message
+                    ,StackTrace = GetStackTrace(exception.ParsedStack)
+                    ,
                 };
                 result.Add(data);
             }
 
             return new UsageDataTableResult { TotalCount = totalCount, FilteredCount = totalCount, UsageData = result };
+        }
+
+        private List<TelemetryItem.ExceptionInfo.ParsedStackTrace> GetStackTrace(string input)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<List<TelemetryItem.ExceptionInfo.ParsedStackTrace>>(input);
+            }
+            catch
+            {
+                //failsafe approach
+                return new List<TelemetryItem.ExceptionInfo.ParsedStackTrace>(){new TelemetryItem.ExceptionInfo.ParsedStackTrace(){Method = input}};
+            }
         }
 
         public async Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, TelemetryItemTypes itemType, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
