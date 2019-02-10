@@ -320,6 +320,7 @@
     <Compile Include="Models\ProgramStatistics\ProgramStatisticsViewModel.cs" />
     <Compile Include="Models\ProgramManagement\ProgramManagementViewModel.cs" />
     <Compile Include="Models\Shared\BoxViewModel.cs" />
+    <Compile Include="Models\Shared\ProgramHeaderMenuViewModel.cs" />
     <Compile Include="Models\Shared\ProgramsListViewModel.cs" />
     <Compile Include="Models\ToolkitManagement\ToolkitManagementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -365,7 +366,9 @@
     <Content Include="admin-lte\css\skins\skin-yellow.css" />
     <Content Include="admin-lte\css\skins\skin-yellow.min.css" />
     <Content Include="admin-lte\css\skins\_all-skins.css" />
-    <Content Include="admin-lte\css\skins\_all-skins.min.css" />
+    <Content Include="admin-lte\css\skins\_all-skins.min.css">
+      <DependentUpon>_all-skins.css</DependentUpon>
+    </Content>
     <Content Include="admin-lte\img\avatar.png" />
     <Content Include="admin-lte\img\avatar04.png" />
     <Content Include="admin-lte\img\avatar2.png" />
@@ -555,8 +558,10 @@
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\dataTables.bootstrap.min.css" />
     <Content Include="Content\dataTables.bootstrap.min.js" />
+    <Content Include="Content\favicon-16x16.png" />
+    <Content Include="Content\favicon-32x32.png" />
+    <Content Include="Content\favicon-96x96.png" />
     <Content Include="Content\favicon-alt.ico" />
-    <Content Include="Content\favicon.ico" />
     <Content Include="Content\Ionicons\cheatsheet.html" />
     <Content Include="Content\Ionicons\css\ionicons.css" />
     <Content Include="Content\Ionicons\css\ionicons.min.css" />
@@ -2025,6 +2030,7 @@
     <Content Include="Views\ProgramStatistics\PivotTable.cshtml" />
     <Content Include="Views\ProgramStatistics\Exceptions.cshtml" />
     <Content Include="Views\ProgramStatistics\Logs.cshtml" />
+    <Content Include="Views\Shared\_ProgramHeaderMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

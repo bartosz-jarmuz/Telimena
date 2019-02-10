@@ -1,5 +1,6 @@
 ﻿@using DotNetLittleHelpers
 @using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.Models.Shared
 @using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
 @{
@@ -22,14 +23,9 @@
     </style>
 }
 
+@Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model.ProgramName, TelemetryKey = Model.TelemetryKey})
 
-<section class="content-header">
-    <h1>
-        @Model.ProgramName
-        <small>Events and views statistics</small>
-    </h1>
-</section>
-<br />
+
 <div class="row">
     <div class="col-md-12">
         <div class="box box-primary">

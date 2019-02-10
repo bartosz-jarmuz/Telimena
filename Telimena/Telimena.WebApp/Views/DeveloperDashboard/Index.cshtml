@@ -1,4 +1,5 @@
 ﻿@using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.Models.Shared
 @using Telimena.WebApp.UiStrings
 @{
     ViewBag.Title = "Admin Dashboard";
@@ -8,13 +9,9 @@
     @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
 }
 
-<section id="@Strings.Id.DeveloperDashboard" class="content-header">
-    <h1>
-        Dashboard
-        <small>All your programs summary</small>
-    </h1>
-</section>
-<br />
+<span id="@Strings.Id.DeveloperDashboard"></span>
+@Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model?.ProgramName, TelemetryKey = Model?.TelemetryKey })
+
 <section class="apps-summary" data-url="@Url.Action("GetAllProgramsSummaryCounts")">
     <div class="box box-default col-md-12">
         <div class="box-header">

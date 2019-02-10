@@ -1,5 +1,6 @@
 ﻿@using DotNetLittleHelpers
 @using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.Models.Shared
 @using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
 
@@ -11,20 +12,16 @@
             background-size: 24px 24px;
             cursor: pointer;
         }
+
         tr.shown td.details-control {
             background: url('../../Content/Ionicons/png/512/minus-circled.png') no-repeat center center;
-            background-size: 24px 24px;        }
+            background-size: 24px 24px;
+        }
     </style>
 }
 
+@Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model?.ProgramName, TelemetryKey = Model?.TelemetryKey })
 
-<section class="content-header">
-    <h1>
-        @Model.ProgramName
-        <small>Exceptions</small>
-    </h1>
-</section>
-<br />
 <div class="row">
     <div class="col-md-12">
         <div class="box box-primary">
@@ -74,7 +71,7 @@
                 ajax: url,
 
                     columns: [
-                    
+
                     {
                         name: "@nameof(TelemetryDataBase.Timestamp)",
                         data: "@nameof(TelemetryDataBase.Timestamp).ToLowerFirstChar()",
@@ -112,7 +109,7 @@
                         sortable: true,
                         searchable: true
                     },
-                      
+
                     {
                         name:  "@nameof(ExceptionData.ErrorMessage)",
                         data:  "@nameof(ExceptionData.ErrorMessage).ToLowerFirstChar()",
@@ -127,17 +124,17 @@
                         "data":           null,
                         "defaultContent": ''
                         },
-                 ]  
+                 ]
             }
             }
 
             var table = $('#@Strings.Id.ExceptionsTable').DataTable(loadTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.Exception"));
 
-            
+
             $('#@Strings.Id.ExceptionsTable tbody').on('click', 'td.details-control', function () {
                 var tr = $(this).closest('tr');
                 var row = table.row( tr );
- 
+
                 if ( row.child.isShown() ) {
                     // This row is already open - close it
                     row.child.hide();

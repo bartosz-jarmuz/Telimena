@@ -8,12 +8,12 @@
         leftBarCollapsedState = "sidebar-collapse";
     }
 
-    string currentSkin = Request?.Cookies["currentSkin"]?.Value;
+    //string currentSkin = Request?.Cookies["currentSkin"]?.Value;
 
-    if (string.IsNullOrEmpty(currentSkin))
-    {
-        currentSkin =     "skin-purple-light";
-    }
+    //if (string.IsNullOrEmpty(currentSkin))
+    //{
+    string   currentSkin =     "skin-purple-light";
+    //}
 }
 
 <head>
@@ -37,7 +37,10 @@
     <!-- Google Font -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-    <link rel="icon" href="@Url.Content("~/Content/favicon.ico")"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="@Url.Content("~/Content/favicon-32x32.png")">
+    <link rel="icon" type="image/png" sizes="96x96" href="@Url.Content("~/Content/favicon-96x96.png")">
+    <link rel="icon" type="image/png" sizes="16x16" href="@Url.Content("~/Content/favicon-16x16.png")">
+
     <script type='text/javascript'>
         var appInsights = window.appInsights ||
             function(config) {

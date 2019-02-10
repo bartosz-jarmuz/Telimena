@@ -99,7 +99,8 @@ $(function () {
    * @returns void
    */
   function setup() {
-    var tmp = get('skin')
+      //var tmp = get('skin') 
+      tmp = 'skin-green-light';
     if (tmp && $.inArray(tmp, mySkins))
       changeSkin(tmp)
 

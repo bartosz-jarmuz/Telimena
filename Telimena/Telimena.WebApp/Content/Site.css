@@ -1,4 +1,16 @@
-﻿.label-sm {
+﻿a.headerMenuLink {
+    color: rgb(97, 96, 96)
+}
+
+.btn {
+    border-radius: 0!important;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border-width: 1px;
+}
+
+.label-sm {
     font-size: 75% !important;
 }
 

@@ -34,5 +34,11 @@
     "inputFiles": [
       "admin-lte/plugins/iCheck/icheck.js"
     ]
+  },
+  {
+    "outputFileName": "admin-lte/css/skins/_all-skins.min.css",
+    "inputFiles": [
+      "admin-lte/css/skins/_all-skins.css"
+    ]
   }
 ]

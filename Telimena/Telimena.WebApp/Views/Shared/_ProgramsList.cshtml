@@ -11,7 +11,7 @@
         @foreach (KeyValuePair<Guid, string> app in Model.Programs)
         {
             <li class="treeview">
-                <a href="#" id="@(app.Value)_menu">
+                <a href="@Url.Action("Index", "ProgramManagement", new {telemetryKey = app.Key})" id="@(app.Value)_menu">
                     <i class="fa fa-codepen"></i> <span>@app.Value</span>
                     <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
