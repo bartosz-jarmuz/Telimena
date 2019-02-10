@@ -232,9 +232,36 @@ namespace TelimenaTestSandboxApp
 
         private void sendLog_Button_Click(object sender, EventArgs e)
         {
-            this.teli.Tracking.Log(LogLevel.Warn, this.telemetryDataTextBox.Text);
+            string text = this.telemetryDataTextBox.Text;
+            if (string.IsNullOrEmpty(this.telemetryDataTextBox.Text))
+            {
+                text = this.GetRandomString();
+            }
+
+
+            var level = new Random().Next(0, 4);
+            
+
+            this.teli.Tracking.Log((LogLevel)level, text);
+        }
+
+        private string GetRandomString()
+        {
+            string[] words = { "anemone", "wagstaff", "man", "the", "for",
+                "and", "a", "with", "bird", "fox",  "apple", "mango", "papaya",
+                "banana", "guava", "pineapple" ,"the", "a", "one", "some",
+                "to", "from", "over", "under", "on",
+                "any","drove", "jumped", "ran", "walked", "skipped", };
+            RandomText text = new RandomText(words); 
+
+            var rnd = new Random();
+            text.AddContentParagraphs(rnd.Next(1,2), rnd.Next(1,5), rnd.Next(1, 5), rnd.Next(4,50), rnd.Next(50,150));
+
+            return text.Content;
         }
     }
+
+
 
     class MyContractResolver : DefaultContractResolver
     {

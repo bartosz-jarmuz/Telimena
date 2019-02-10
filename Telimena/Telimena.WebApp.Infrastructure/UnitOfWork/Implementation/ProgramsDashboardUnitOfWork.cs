@@ -206,6 +206,56 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return new UsageDataTableResult { TotalCount = totalCount, FilteredCount = totalCount, UsageData = result };
         }
 
+        public async Task<UsageDataTableResult> GetLogs(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy, string searchPhrase)
+        {
+            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+
+            if (program == null)
+            {
+                throw new ArgumentException($"Program with key {telemetryKey} does not exist");
+            }
+
+            IQueryable<LogMessage> query = this.context.LogMessages.Where(x => x.ProgramId == program.Id);
+            int totalCount = await this.context.LogMessages.CountAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+
+            if (take == -1)
+            {
+                take = totalCount;
+            }
+
+
+
+            IQueryable<LogMessage> filteredQuery = EntityFilter.Match(query
+                , property => property.Contains(searchPhrase)
+                , new List<Expression<Func<LogMessage, string>>>()
+                {
+                    {x=>x.Sequence },
+                    {x=>x.Message },
+                    { x=>x.ProgramVersion},
+                    {x=>x. UserName},
+                });
+
+
+            List<LogMessage> ordered = await ApplyOrderingQuery(sortBy, filteredQuery, skip, take).ConfigureAwait(false);
+
+            List<LogMessageData> result = new List<LogMessageData>();
+            foreach (LogMessage item in ordered)
+            {
+                LogMessageData data = new LogMessageData
+                {
+                    Timestamp = item.Timestamp,
+                    UserName = item.UserName,
+                    Message= item.Message
+                    ,ProgramVersion = item.ProgramVersion
+                    ,Sequence = item.Sequence
+                    ,LogLevel= item.Level.ToString()
+                };
+                result.Add(data);
+            }
+
+            return new UsageDataTableResult { TotalCount = totalCount, FilteredCount = totalCount, UsageData = result };
+        }
+
         private List<TelemetryItem.ExceptionInfo.ParsedStackTrace> GetStackTrace(string input)
         {
             try
@@ -391,11 +441,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
                         rule.Item1 == nameof(TelemetryDataBase.ProgramVersion) || 
                         rule.Item1 == nameof(TelemetryDataBase.UserName))
                     {
-                        query = Order(query, rule.Item1, rule.Item2, index);
+                        query = GenericOrder(query, rule.Item1, rule.Item2, index);
                     }
                     else if (rule.Item1 == nameof(TelemetryDataBase.EntryKey))
                     {
-                        query = Order(query, nameof(ExceptionInfo.TypeName), rule.Item2, index);
+                        query = GenericOrder(query, nameof(ExceptionInfo.TypeName), rule.Item2, index);
                     }
                 }
 
@@ -413,15 +463,52 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
         }
 
-        private static IOrderedQueryable<ExceptionInfo> Order(IQueryable<ExceptionInfo> query, string key, bool desc, int index)
+
+        internal static async Task<List<LogMessage>> ApplyOrderingQuery(IEnumerable<Tuple<string, bool>> sortBy, IQueryable<LogMessage> query, int skip, int take)
+        {
+            List<Tuple<string, bool>> rules = sortBy.ToList();
+            try
+            {
+                for (int index = 0; index < rules.Count; index++)
+                {
+                    Tuple<string, bool> rule = rules[index];
+                    if (rule.Item1 == nameof(TelemetryDataBase.Timestamp) ||
+                        rule.Item1 == nameof(TelemetryDataBase.ProgramVersion) ||
+                        rule.Item1 == nameof(TelemetryDataBase.UserName))
+                    {
+                        query = GenericOrder(query, rule.Item1, rule.Item2, index);
+                    }
+                    else if (rule.Item1 == nameof(TelemetryDataBase.EntryKey))
+                    {
+                        query = GenericOrder(query, nameof(ExceptionInfo.TypeName), rule.Item2, index);
+                    }
+                }
+
+                IOrderedQueryable<LogMessage> orderedQuery = query as IOrderedQueryable<LogMessage>;
+                if (!OrderingMethodFinder.OrderMethodExists(orderedQuery.Expression))
+                {
+                    orderedQuery = query.OrderByDescending(x => x.Timestamp);
+                }
+
+                return await orderedQuery.Skip(skip).Take(take).ToListAsync().ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                return await query.OrderByDescending(x => x.Timestamp).Skip(skip).Take(take).ToListAsync().ConfigureAwait(false);
+            }
+        }
+
+        private static IOrderedQueryable<T> GenericOrder<T>(IQueryable<T> query, string key, bool desc, int index)
         {
             if (index == 0)
             {
                 return query.OrderBy(key, desc);
             }
 
-            return (query as IOrderedQueryable<ExceptionInfo>).ThenBy(key, desc);
+            return (query as IOrderedQueryable<T>).ThenBy(key, desc);
         }
+
+
 
         private static IOrderedQueryable<T> Order<T>(IQueryable<T> query, string key, bool desc, int index) where T : TelemetryDetail
         {

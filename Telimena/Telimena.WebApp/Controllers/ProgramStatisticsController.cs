@@ -164,6 +164,10 @@ namespace Telimena.WebApp.Controllers
             {
                 result = await this.Work.GetExceptions(telemetryKey, itemType, request.Start, request.Length, sorts, request.Search, searchableColumns).ConfigureAwait(false);
             }
+            else if (itemType == TelemetryItemTypes.LogMessage)
+            {
+                result = await this.Work.GetLogs(telemetryKey,  request.Start, request.Length, sorts, request.Search.Value).ConfigureAwait(false);
+            }
             else
             {
                 result= await this.Work.GetProgramViewsUsageData(telemetryKey, itemType ,request.Start, request.Length, sorts, request.Search, searchableColumns).ConfigureAwait(false);

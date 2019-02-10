@@ -26,6 +26,9 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         Task<UsageDataTableResult> GetExceptions(Guid telemetryKey, TelemetryItemTypes itemType, int skip, int take
             , IEnumerable<Tuple<string, bool>> sortBy , ISearch requestSearch             , List<string> searchableColumns);
+
+        Task<UsageDataTableResult> GetLogs(Guid telemetryKey, int skip, int take
+            , IEnumerable<Tuple<string, bool>> sortBy, string searchPhrase);
     }
 
 

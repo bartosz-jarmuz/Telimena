@@ -101,7 +101,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     , Sequence = telemetryItem.Sequence
                     , Message = telemetryItem.LogMessage
                     , ProgramId = program.Id
-                    , Level = LogLevel.Critical
+                    , Level = telemetryItem.LogLevel
                 };
                 work.LogMessages.Add(logMsg);
             }

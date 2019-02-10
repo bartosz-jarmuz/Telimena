@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 
 namespace Telimena.WebApp.Core.DTO
 {
@@ -19,6 +20,11 @@ namespace Telimena.WebApp.Core.DTO
         public Dictionary<string, string> Values { get; set; } =new Dictionary<string, string>();
     }
 
+    public class LogMessageData : TelemetryDataBase
+    {
+        public string Message { get; set; }
+        public string LogLevel{ get; set; }
+    }
 
     public class ExceptionData : TelemetryDataBase
     {
