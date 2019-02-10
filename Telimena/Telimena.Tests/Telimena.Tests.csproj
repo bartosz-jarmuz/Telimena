@@ -165,6 +165,7 @@
     <Compile Include="Controllers\AccountControllerTests.cs" />
     <Compile Include="ApiTests.cs" />
     <Compile Include="Controllers\TelemetryControllerHelpersTests.cs" />
+    <Compile Include="SequenceIdParserTests.cs" />
     <Compile Include="TsProDataParse.cs" />
     <Compile Include="ReferencedAssembliesTests.cs" />
     <Compile Include="EntitiesTests.cs" />
