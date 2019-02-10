@@ -35,7 +35,7 @@ namespace Telimena.Updater
            
         }
 
-        private string updateVersionInfoLabel;
+        private string updateVersionInfoLabel = "1.0.0.0";
         private string titleLabel;
 
         public UpdateInstructions Instructions { get; set; }
