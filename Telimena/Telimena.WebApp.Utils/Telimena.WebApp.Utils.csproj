@@ -74,6 +74,7 @@
     <Compile Include="EntityFilter.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SequenceIdParser.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="VersionComparison\Extensions.cs" />
     <Compile Include="VersionComparison\TelimenaVersionReader.cs" />
