@@ -2004,7 +2004,6 @@
     <Content Include="Views\Account\WaitForActivationInfo.cshtml" />
     <Content Include="Views\Shared\_LayoutHeader.cshtml" />
     <Content Include="Views\Shared\_LayoutLeftSideBar.cshtml" />
-    <Content Include="Views\Shared\_LayoutRightSideBar.cshtml" />
     <Content Include="Views\Shared\_LayoutFooter.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
     <Content Include="Views\Shared\_AdminLeftSideBar.cshtml" />
