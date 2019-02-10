@@ -157,13 +157,16 @@ namespace Telimena.WebApp.Controllers
             IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => 
                 x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
             UsageDataTableResult result;
+
+            var searchableColumns = request.Columns.Where(x => x.IsSearchable).Select(x => x.Name).ToList();
+
             if (itemType == TelemetryItemTypes.Exception)
             {
-                result = await this.Work.GetExceptions(telemetryKey, itemType, request.Start, request.Length, sorts).ConfigureAwait(false);
+                result = await this.Work.GetExceptions(telemetryKey, itemType, request.Start, request.Length, sorts, request.Search, searchableColumns).ConfigureAwait(false);
             }
             else
             {
-                result= await this.Work.GetProgramViewsUsageData(telemetryKey, itemType ,request.Start, request.Length, sorts).ConfigureAwait(false);
+                result= await this.Work.GetProgramViewsUsageData(telemetryKey, itemType ,request.Start, request.Length, sorts, request.Search, searchableColumns).ConfigureAwait(false);
             }
 
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);

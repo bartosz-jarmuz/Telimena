@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using DataTables.AspNet.Core;
 using DotNetLittleHelpers;
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO;
@@ -12,6 +13,7 @@ using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
+using Telimena.WebApp.Utils;
 
 namespace Telimena.WebApp.Infrastructure.Repository
 {
@@ -148,8 +150,9 @@ namespace Telimena.WebApp.Infrastructure.Repository
             await this.context.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task<UsageDataTableResult> GetExceptions(Guid telemetryKey, TelemetryItemTypes itemType
-            , int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
+        public async Task<UsageDataTableResult> GetExceptions(Guid telemetryKey, TelemetryItemTypes itemType, int skip
+            , int take, IEnumerable<Tuple<string, bool>> sortBy , ISearch requestSearch 
+            , List<string> searchableColumns)
         {
             Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
@@ -158,7 +161,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 throw new ArgumentException($"Program with key {telemetryKey} does not exist");
             }
 
-            var query = this.context.Exceptions.Where(x => x.ProgramId == program.Id);
+            IQueryable<ExceptionInfo> query = this.context.Exceptions.Where(x => x.ProgramId == program.Id);
             int totalCount = await this.context.Exceptions.CountAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
 
             if (take == -1)
@@ -166,7 +169,22 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 take = totalCount;
             }
 
-            List<ExceptionInfo> ordered = await ApplyOrderingQuery(sortBy, query, skip, take).ConfigureAwait(false);
+
+
+            IQueryable<ExceptionInfo> filteredQuery = EntityFilter.Match(query
+                , property => property.Contains(requestSearch.Value)
+                , new List<Expression<Func<ExceptionInfo, string>>>()
+                {
+                    {x=>x.Sequence },
+                    {x=>x.Message },
+                    { x=>x.TypeName},
+                    { x=>x.ProgramVersion},
+                    {x=>x.ParsedStack},
+                    {x=>x. UserName},
+                });
+
+
+           List<ExceptionInfo> ordered = await ApplyOrderingQuery(sortBy, filteredQuery, skip, take).ConfigureAwait(false);
 
             List<ExceptionData> result = new List<ExceptionData>();
             foreach (ExceptionInfo exception in ordered)
@@ -201,8 +219,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
         }
 
-        public async Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, TelemetryItemTypes itemType, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy = null)
+        public async Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, TelemetryItemTypes itemType
+            , int skip, int take, IEnumerable<Tuple<string, bool>> sortBy, ISearch requestSearch 
+            , List<string> searchableColumns)
         {
+
             Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
@@ -224,12 +245,27 @@ namespace Telimena.WebApp.Infrastructure.Repository
                  totalCount = await this.context.EventTelemetryDetails.CountAsync(x => x.TelemetrySummary.Event.ProgramId == program.Id).ConfigureAwait(false);
             }
 
+
+
+            IQueryable<TelemetryDetail> filteredQuery = EntityFilter.Match(query
+                , property => property.Contains(requestSearch.Value)
+                , new List<Expression<Func<TelemetryDetail, string>>>()
+                {
+                    {x=>x.Sequence },
+                    {x=>x.IpAddress },
+                 //   {x=>x.GetTelemetrySummary().ClientAppUser.UserId },
+                  //  {x=>x.GetTelemetrySummary().GetComponent().Name },
+                    
+                    
+                });
+
+
             if (take == -1)
             {
                 take = totalCount;
             }
 
-            List<TelemetryDetail> usages = await ApplyOrderingQuery(sortBy, query, skip, take).ConfigureAwait(false);
+            List<TelemetryDetail> usages = await ApplyOrderingQuery(sortBy, filteredQuery, skip, take).ConfigureAwait(false);
 
             List<TelemetryDataBase> result = new List<TelemetryDataBase>();
             foreach (TelemetryDetail detail in usages)
@@ -238,6 +274,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 {
                     Timestamp = detail.Timestamp
                     , UserName = detail.GetTelemetrySummary().ClientAppUser.UserId
+                    , IpAddress = detail.IpAddress
                     , EntryKey = detail.GetTelemetrySummary().GetComponent().Name
                     , ProgramVersion = detail.AssemblyVersion.AssemblyVersion
                     , Sequence = detail.Sequence
@@ -413,4 +450,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return (query as IOrderedQueryable<T>).ThenBy(key);
         }
     }
+
+
+
 }

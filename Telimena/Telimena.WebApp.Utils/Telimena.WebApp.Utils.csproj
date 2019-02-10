@@ -71,6 +71,7 @@
     <Compile Include="ApiRouter.cs" />
     <Compile Include="AppInsightsDeserializer.cs" />
     <Compile Include="AppInsightsTelemetryMapper.cs" />
+    <Compile Include="EntityFilter.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />

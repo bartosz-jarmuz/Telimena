@@ -66,7 +66,7 @@
             function loadTable(url) {
                 return {
                 serverSide: true,
-                searching: false,
+                searching: true,
                 processing: true,
                 lengthMenu: [[15, 25, 70, -1], [15, 25, 70, "All"]],
                 pageLength: 15,
@@ -94,7 +94,7 @@
                     {
                         name:  "@nameof(TelemetryDataBase.EntryKey)",
                         data:  "@nameof(TelemetryDataBase.EntryKey).ToLowerFirstChar()",
-                        title: "@nameof(TelemetryDataBase.EntryKey)",
+                        title: "Type",
                         sortable: true,
                         searchable: true
                     },

@@ -10,6 +10,8 @@ namespace Telimena.WebApp.Core.DTO
         public string EntryKey { get; set; }
         public string ProgramVersion { get; set; }
         public string Sequence { get; set; }
+        public string IpAddress { get; set; }
+
     }
 
     public class TelemetryData : TelemetryDataBase

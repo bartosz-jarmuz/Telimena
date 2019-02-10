@@ -23,6 +23,6 @@ namespace Telimena.WebApp.Infrastructure
             }
         }
 
-        
+
     }
 }

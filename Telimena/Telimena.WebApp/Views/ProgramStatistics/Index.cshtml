@@ -85,7 +85,7 @@
             function loadUsageTable(url) {
                 return {
                 serverSide: true,
-                searching: false,
+                searching: true,
                 processing: true,
                 lengthMenu: [[15, 25, 70, -1], [15, 25, 70, "All"]],
                 pageLength: 15,
@@ -127,6 +127,13 @@
                         name:  "@nameof(TelemetryDataBase.UserName)",
                         data:  "@nameof(TelemetryDataBase.UserName).ToLowerFirstChar()",
                         title: "@nameof(TelemetryDataBase.UserName)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(TelemetryDataBase.IpAddress)",
+                        data:  "@nameof(TelemetryDataBase.IpAddress).ToLowerFirstChar()",
+                        title: "@nameof(TelemetryDataBase.IpAddress)",
                         sortable: true,
                         searchable: true
                     },
