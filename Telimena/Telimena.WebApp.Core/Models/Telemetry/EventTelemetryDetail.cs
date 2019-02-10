@@ -28,9 +28,5 @@ namespace Telimena.WebApp.Core.Models
             return this.TelemetryUnits.AsReadOnly();
         }
 
-        public override void SetTelemetrySummary(TelemetrySummary summary)
-        {
-            this.TelemetrySummary = (EventTelemetrySummary) summary;
-        }
     }
 }

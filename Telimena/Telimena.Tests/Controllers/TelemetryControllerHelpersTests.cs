@@ -133,6 +133,7 @@ namespace Telimena.Tests
             TelemetryDetail detail = @event.GetTelemetryDetails(this.GetUserByGuid(result.First().ClientAppUser.Guid).Id).Single();
             Assert.AreEqual(detail.GetTelemetrySummary().Id, summary.Id);
             Assert.AreEqual(usr.Id, detail.GetTelemetrySummary().ClientAppUserId);
+            Assert.AreEqual(usr.UserId, detail.UserId);
             Assert.AreEqual(2, detail.GetTelemetryUnits().Count());
             Assert.AreEqual("AKey", detail.GetTelemetryUnits().ElementAt(0).Key);
             Assert.AreEqual("AValue", detail.GetTelemetryUnits().ElementAt(0).ValueString);
@@ -173,6 +174,7 @@ namespace Telimena.Tests
 
             TelemetryDetail otherUserDetail = @event.GetTelemetryDetails(this.GetUserByGuid(result.First().ClientAppUser.Guid).Id).Single();
             Assert.AreEqual(otherUser.Id, otherUserDetail.GetTelemetrySummary().ClientAppUserId);
+            Assert.AreEqual(otherUser.UserId, otherUserDetail.UserId);
             Assert.AreEqual(3, otherUserDetail.GetTelemetryUnits().Count());
             Assert.AreEqual("AKey3", otherUserDetail.GetTelemetryUnits().ElementAt(0).Key);
             Assert.AreEqual("AValue3", otherUserDetail.GetTelemetryUnits().ElementAt(0).ValueString);

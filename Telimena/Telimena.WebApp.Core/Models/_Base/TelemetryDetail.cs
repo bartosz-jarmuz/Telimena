@@ -23,8 +23,11 @@ namespace Telimena.WebApp.Core.Models
         public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.UtcNow;
         public int TelemetrySummaryId { get; set; }
 
+        public string EntryKey { get; set; }
+
+        public string UserId { get; set; }
+
         public abstract TelemetrySummary GetTelemetrySummary();
         public abstract IReadOnlyList<TelemetryUnit> GetTelemetryUnits();
-        public abstract void SetTelemetrySummary(TelemetrySummary summary);
     }
 }

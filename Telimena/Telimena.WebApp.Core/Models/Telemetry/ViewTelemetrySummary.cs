@@ -16,7 +16,9 @@ namespace Telimena.WebApp.Core.Models
             ViewTelemetryDetail detail = new ViewTelemetryDetail(telemetryItem.Id)
             {
                 Timestamp = telemetryItem.Timestamp, TelemetrySummary = this, AssemblyVersion = versionInfo, IpAddress = ipAddress,
-                Sequence = telemetryItem.Sequence
+                Sequence = telemetryItem.Sequence,
+                UserId = telemetryItem.UserId,
+                EntryKey = telemetryItem.EntryKey
             };
             if (telemetryItem.TelemetryData != null && telemetryItem.TelemetryData.Any())
             {

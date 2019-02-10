@@ -253,10 +253,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 {
                     {x=>x.Sequence },
                     {x=>x.IpAddress },
-                 //   {x=>x.GetTelemetrySummary().ClientAppUser.UserId },
-                  //  {x=>x.GetTelemetrySummary().GetComponent().Name },
-                    
-                    
+                    {x=>x.UserId },
+                    {x=>x.EntryKey },
                 });
 
 
@@ -273,9 +271,9 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 TelemetryData data = new TelemetryData
                 {
                     Timestamp = detail.Timestamp
-                    , UserName = detail.GetTelemetrySummary().ClientAppUser.UserId
+                    , UserName = detail.UserId
                     , IpAddress = detail.IpAddress
-                    , EntryKey = detail.GetTelemetrySummary().GetComponent().Name
+                    , EntryKey = detail.EntryKey
                     , ProgramVersion = detail.AssemblyVersion.AssemblyVersion
                     , Sequence = detail.Sequence
                     ,Values = detail.GetTelemetryUnits().ToDictionary(x => x.Key,x=> x.ValueString)

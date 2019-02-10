@@ -7,11 +7,11 @@ namespace Telimena.WebApp.Core.DTO
     {
         public TelemetryPivotTableRow(TelemetryDetail detail)
         {
-            this.ComponentName = detail.GetTelemetrySummary().GetComponent().Name;
+            this.ComponentName = detail.EntryKey;
             this.Date = detail.Timestamp.ToString("O");
             this.Time = detail.Timestamp.TimeOfDay.TotalSeconds;
             this.Sequence = detail.Sequence;
-            this.UserName = detail.GetTelemetrySummary().ClientAppUser.UserId;
+            this.UserName = detail.UserId;
         }
 
         public TelemetryPivotTableRow()
