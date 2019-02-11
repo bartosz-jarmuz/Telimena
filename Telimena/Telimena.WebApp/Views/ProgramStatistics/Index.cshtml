@@ -90,46 +90,49 @@
 
                 columns: [
                     {
-                        name: "@nameof(TelemetryDataBase.Timestamp)",
-                        data: "@nameof(TelemetryDataBase.Timestamp).ToLowerFirstChar()",
+                        name: "@nameof(DataTableTelemetryDataBase.Timestamp)",
+                        data: "@nameof(DataTableTelemetryDataBase.Timestamp).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
                             return toFormattedTimestamp(new Date(data));                        },
-                        title:"@nameof(TelemetryDataBase.Timestamp)",
+                        title:"@nameof(DataTableTelemetryDataBase.Timestamp)",
                         sortable: true,
                         searchable: false
                     },
                     {
-                        name:  "@nameof(TelemetryDataBase.Sequence)",
-                        data:  "@nameof(TelemetryDataBase.Sequence).ToLowerFirstChar()",
-                        title: "@nameof(TelemetryDataBase.Sequence)",
+                        name:  "@nameof(DataTableTelemetryDataBase.Sequence)",
+                        data:  "@nameof(DataTableTelemetryDataBase.Sequence).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryDataBase.Sequence)",
+                        sortable: true,
+                        searchable: true,
+                        render: function (data, type, row, meta) {
+                            return renderSequenceHistoryUrl(data, type, "@Url.Action("SequenceHistory")?telemetryKey=@Model.TelemetryKey&sequenceId=" + encodeURIComponent(data));
+                        }
+                    },
+                    {   
+                        name:  "@nameof(DataTableTelemetryDataBase.EntryKey)",
+                        data:  "@nameof(DataTableTelemetryDataBase.EntryKey).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryDataBase.EntryKey)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(TelemetryDataBase.EntryKey)",
-                        data:  "@nameof(TelemetryDataBase.EntryKey).ToLowerFirstChar()",
-                        title: "@nameof(TelemetryDataBase.EntryKey)",
+                        name:  "@nameof(DataTableTelemetryDataBase.ProgramVersion)",
+                        data:  "@nameof(DataTableTelemetryDataBase.ProgramVersion).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryDataBase.ProgramVersion)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(TelemetryDataBase.ProgramVersion)",
-                        data:  "@nameof(TelemetryDataBase.ProgramVersion).ToLowerFirstChar()",
-                        title: "@nameof(TelemetryDataBase.ProgramVersion)",
+                        name:  "@nameof(DataTableTelemetryDataBase.UserName)",
+                        data:  "@nameof(DataTableTelemetryDataBase.UserName).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryDataBase.UserName)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(TelemetryDataBase.UserName)",
-                        data:  "@nameof(TelemetryDataBase.UserName).ToLowerFirstChar()",
-                        title: "@nameof(TelemetryDataBase.UserName)",
-                        sortable: true,
-                        searchable: true
-                    },
-                    {
-                        name:  "@nameof(TelemetryDataBase.IpAddress)",
-                        data:  "@nameof(TelemetryDataBase.IpAddress).ToLowerFirstChar()",
-                        title: "@nameof(TelemetryDataBase.IpAddress)",
+                        name:  "@nameof(DataTableTelemetryDataBase.IpAddress)",
+                        data:  "@nameof(DataTableTelemetryDataBase.IpAddress).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryDataBase.IpAddress)",
                         sortable: true,
                         searchable: true
                     },

@@ -29,6 +29,9 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         Task<UsageDataTableResult> GetLogs(Guid telemetryKey, int skip, int take
             , IEnumerable<Tuple<string, bool>> sortBy, string searchPhrase);
+
+        Task<UsageDataTableResult> GetSequenceHistory(Guid telemetryKey, string sequenceId, string searchValue);
+
     }
 
 

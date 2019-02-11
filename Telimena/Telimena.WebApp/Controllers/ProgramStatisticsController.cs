@@ -86,6 +86,25 @@ namespace Telimena.WebApp.Controllers
             return this.View("PivotTable", model);
         }
 
+        [Audit]
+        [HttpGet]
+        public async Task<ActionResult> SequenceHistory(Guid telemetryKey, string sequenceId)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            SequenceHistoryViewModel model = new SequenceHistoryViewModel()
+            {
+                TelemetryKey = program.TelemetryKey, ProgramName = program.Name, SequenceId = sequenceId
+            };
+
+            return this.View("SequenceHistory", model);
+        }
+
         /// <summary>
         /// Shows exceptions view
         /// </summary>
@@ -178,5 +197,25 @@ namespace Telimena.WebApp.Controllers
             return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
         }
 
+
+
+        /// <summary>
+        /// Gets the sequence history.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <param name="sequenceId">The sequence identifier.</param>
+        /// <param name="request">The request.</param>
+        /// <returns>Task&lt;JsonResult&gt;.</returns>
+        [HttpGet]
+        public async Task<JsonResult> GetSequenceHistoryData(Guid telemetryKey, string sequenceId, IDataTablesRequest request)
+        {
+            IEnumerable<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x =>
+                x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending));
+            UsageDataTableResult result = await this.Work.GetSequenceHistory(telemetryKey, sequenceId, request.Search.Value).ConfigureAwait(false);
+
+            DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
+
+            return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+        }
     }
 }

@@ -1,5 +1,9 @@
-function buildApiPath(route) {
-
+function renderSequenceHistoryUrl(data, type, url) {
+    if (type === 'display') {
+                        
+        data = '<a  href="' + url + '" data-toggle="tooltip" data-placement="top" title="Click to see what happened before and after for this user">' + data + '&nbsp;<i class="fa fa-share-square-o"></i></a>';
+    }
+    return data;
 }
 
 function convertUTCDateToLocalDate(date) {

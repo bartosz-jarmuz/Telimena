@@ -103,7 +103,7 @@ namespace Telimena.Tests
 
 
             List<Tuple<string, bool>> sorts = new List<Tuple<string, bool>>();
-            sorts.Add(new Tuple<string, bool>(nameof(TelemetryDataBase.EntryKey), false));
+            sorts.Add(new Tuple<string, bool>(nameof(DataTableTelemetryDataBase.EntryKey), false));
 
             List<ViewTelemetryDetail> ordered = ProgramsDashboardUnitOfWork.ApplyOrderingQuery(sorts, data.AsAsyncQueryable(), 0, 10).GetAwaiter().GetResult()
                 .ToList();
@@ -134,8 +134,8 @@ namespace Telimena.Tests
 
 
             List<Tuple<string, bool>> sorts = new List<Tuple<string, bool>>();
-            sorts.Add(new Tuple<string, bool>(nameof(TelemetryDataBase.UserName), false));
-            sorts.Add(new Tuple<string, bool>(nameof(TelemetryDataBase.EntryKey), false));
+            sorts.Add(new Tuple<string, bool>(nameof(DataTableTelemetryDataBase.UserName), false));
+            sorts.Add(new Tuple<string, bool>(nameof(DataTableTelemetryDataBase.EntryKey), false));
 
             List<ViewTelemetryDetail> ordered = ProgramsDashboardUnitOfWork.ApplyOrderingQuery(sorts, data.AsAsyncQueryable(), 0, 10).GetAwaiter().GetResult()
                 .ToList();
@@ -206,7 +206,7 @@ namespace Telimena.Tests
 
 
             List<Tuple<string, bool>> sorts = new List<Tuple<string, bool>>();
-            sorts.Add(new Tuple<string, bool>(nameof(TelemetryDataBase.ProgramVersion), false));
+            sorts.Add(new Tuple<string, bool>(nameof(DataTableTelemetryDataBase.ProgramVersion), false));
 
             List<ViewTelemetryDetail> ordered = ProgramsDashboardUnitOfWork.ApplyOrderingQuery(sorts, data.AsAsyncQueryable(), 0, 10).GetAwaiter().GetResult()
                 .ToList();

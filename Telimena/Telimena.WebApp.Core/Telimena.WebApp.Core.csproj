@@ -109,7 +109,7 @@
     <Compile Include="Messages\TelemetryQueryResponse.cs" />
     <Compile Include="DTO\TelemetryQuery\TelemetrySummaryDto.cs" />
     <Compile Include="DTO\UsageDataTableResult.cs" />
-    <Compile Include="DTO\TelemetryDataBase.cs" />
+    <Compile Include="DTO\DataTableTelemetryDataBase.cs" />
     <Compile Include="Interfaces\Roles.cs" />
     <Compile Include="Messages\RegisterProgramRequest.cs" />
     <Compile Include="Messages\RegisterProgramResponse.cs" />

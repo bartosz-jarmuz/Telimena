@@ -256,6 +256,71 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return new UsageDataTableResult { TotalCount = totalCount, FilteredCount = totalCount, UsageData = result };
         }
 
+        public async Task<UsageDataTableResult> GetSequenceHistory(Guid telemetryKey, string sequenceId, string searchValue)
+        {
+
+            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+
+            if (program == null)
+            {
+                throw new ArgumentException($"Program with key {telemetryKey} does not exist");
+            }
+
+           string sequencePrefix = SequenceIdParser.GetPrefix(sequenceId);
+           if (string.IsNullOrEmpty(sequencePrefix))
+           {
+               return new UsageDataTableResult { TotalCount = 0, FilteredCount = 0, UsageData = new List<DataTableTelemetryDataBase>()};
+            }
+            IEnumerable<TelemetryDetail> viewQuery = (await this.context.ViewTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
+           IEnumerable<TelemetryDetail> eventQuery = (await this.context.EventTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
+           List<LogMessage> logsQuery = (await this.context.LogMessages.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));
+           List<ExceptionInfo> exceptionsQuery = (await this.context.Exceptions.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));
+
+
+            List<object> allResults =  viewQuery.Concat(eventQuery).Cast<object>().ToList();
+            allResults.AddRange(logsQuery);
+            allResults.AddRange(exceptionsQuery);
+
+            int totalCount = allResults.Count;
+            
+            List<SequenceHistoryData> result = new List<SequenceHistoryData>();
+            foreach (object detail in allResults)
+            {
+
+                SequenceHistoryData data = this.BuildSequenceItem(detail);
+                result.Add(data);
+            }
+
+            result = result.OrderByDescending(x => x.Order).ToList();
+
+            return new UsageDataTableResult { TotalCount = totalCount, FilteredCount = totalCount, UsageData = result };
+        }
+
+
+        private SequenceHistoryData BuildSequenceItem(object item)
+        {
+            SequenceHistoryData data= null;
+            if (item is TelemetryDetail telemetryDetail)
+            {
+                data= new SequenceHistoryData(telemetryDetail);
+                data.Order = SequenceIdParser.GetOrder(telemetryDetail.Sequence);
+            }
+            else if (item is LogMessage logMessage)
+            {
+                data = new SequenceHistoryData(logMessage);
+                data.Order = SequenceIdParser.GetOrder(logMessage.Sequence);
+
+            }
+            else if (item is ExceptionInfo error)
+            {
+                data = new SequenceHistoryData(error);
+                data.Order = SequenceIdParser.GetOrder(error.Sequence);
+
+            }
+
+            return data;
+        }
+
         private List<TelemetryItem.ExceptionInfo.ParsedStackTrace> GetStackTrace(string input)
         {
             try
@@ -315,10 +380,10 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             List<TelemetryDetail> usages = await ApplyOrderingQuery(sortBy, filteredQuery, skip, take).ConfigureAwait(false);
 
-            List<TelemetryDataBase> result = new List<TelemetryDataBase>();
+            List<DataTableTelemetryDataBase> result = new List<DataTableTelemetryDataBase>();
             foreach (TelemetryDetail detail in usages)
             {
-                TelemetryData data = new TelemetryData
+                DataTableTelemetryData data = new DataTableTelemetryData
                 {
                     Timestamp = detail.Timestamp
                     , UserName = detail.UserId
@@ -348,7 +413,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             foreach (TelemetryDetail detail in details)
             {
-                var units = detail.GetTelemetryUnits().ToList();
+                List<TelemetryUnit> units = detail.GetTelemetryUnits().ToList();
                 if (units.Any())
                 {
                     foreach (TelemetryUnit detailTelemetryUnit in units)
@@ -383,15 +448,15 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 for (int index = 0; index < rules.Count; index++)
                 {
                     Tuple<string, bool> rule = rules[index];
-                    if (rule.Item1 == nameof(TelemetryDataBase.Timestamp))
+                    if (rule.Item1 == nameof(DataTableTelemetryDataBase.Timestamp))
                     {
                         query = Order(query, rule.Item1, rule.Item2, index);
                     }
-                    else if (rule.Item1 == nameof(TelemetryDataBase.ProgramVersion))
+                    else if (rule.Item1 == nameof(DataTableTelemetryDataBase.ProgramVersion))
                     {
                         query = Order(query, x => x.AssemblyVersion.AssemblyVersion, rule.Item2, index);
                     }
-                    else if (rule.Item1 == nameof(TelemetryDataBase.UserName))
+                    else if (rule.Item1 == nameof(DataTableTelemetryDataBase.UserName))
                     {
                         if (typeof(T) == typeof(ViewTelemetryDetail))
                         {
@@ -402,7 +467,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                             query = Order(query, x => (x as EventTelemetryDetail).TelemetrySummary.ClientAppUser.UserId, rule.Item2, index);
                         }
                     }
-                    else if (rule.Item1 == nameof(TelemetryDataBase.EntryKey) )
+                    else if (rule.Item1 == nameof(DataTableTelemetryDataBase.EntryKey) )
                     {
                         if (typeof(T) == typeof(ViewTelemetryDetail))
                         {
@@ -437,13 +502,13 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 for (int index = 0; index < rules.Count; index++)
                 {
                     Tuple<string, bool> rule = rules[index];
-                    if (rule.Item1 == nameof(TelemetryDataBase.Timestamp) || 
-                        rule.Item1 == nameof(TelemetryDataBase.ProgramVersion) || 
-                        rule.Item1 == nameof(TelemetryDataBase.UserName))
+                    if (rule.Item1 == nameof(DataTableTelemetryDataBase.Timestamp) || 
+                        rule.Item1 == nameof(DataTableTelemetryDataBase.ProgramVersion) || 
+                        rule.Item1 == nameof(DataTableTelemetryDataBase.UserName))
                     {
                         query = GenericOrder(query, rule.Item1, rule.Item2, index);
                     }
-                    else if (rule.Item1 == nameof(TelemetryDataBase.EntryKey))
+                    else if (rule.Item1 == nameof(DataTableTelemetryDataBase.EntryKey))
                     {
                         query = GenericOrder(query, nameof(ExceptionInfo.TypeName), rule.Item2, index);
                     }
@@ -472,13 +537,13 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 for (int index = 0; index < rules.Count; index++)
                 {
                     Tuple<string, bool> rule = rules[index];
-                    if (rule.Item1 == nameof(TelemetryDataBase.Timestamp) ||
-                        rule.Item1 == nameof(TelemetryDataBase.ProgramVersion) ||
-                        rule.Item1 == nameof(TelemetryDataBase.UserName))
+                    if (rule.Item1 == nameof(DataTableTelemetryDataBase.Timestamp) ||
+                        rule.Item1 == nameof(DataTableTelemetryDataBase.ProgramVersion) ||
+                        rule.Item1 == nameof(DataTableTelemetryDataBase.UserName))
                     {
                         query = GenericOrder(query, rule.Item1, rule.Item2, index);
                     }
-                    else if (rule.Item1 == nameof(TelemetryDataBase.EntryKey))
+                    else if (rule.Item1 == nameof(DataTableTelemetryDataBase.EntryKey))
                     {
                         query = GenericOrder(query, nameof(ExceptionInfo.TypeName), rule.Item2, index);
                     }
