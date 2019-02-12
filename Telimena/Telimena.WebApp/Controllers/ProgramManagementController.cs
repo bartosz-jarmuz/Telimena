@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.Results;
 using System.Web.Mvc;
 using MvcAuditLogger;
 using Telimena.WebApp.Controllers.Api.V1;
+using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Models.ProgramManagement;
@@ -20,13 +25,17 @@ namespace Telimena.WebApp.Controllers
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramManagementController : Controller
     {
+        private readonly IFileRetriever fileRetriever;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProgramManagementController"/> class.
         /// </summary>
         /// <param name="work">The work.</param>
-        public ProgramManagementController(IProgramsUnitOfWork work)
+        public ProgramManagementController(IProgramsUnitOfWork work, IFileRetriever fileRetriever)
         {
             this.Work = work;
+            this.fileRetriever = fileRetriever;
+
         }
 
         /// <summary>
@@ -41,7 +50,7 @@ namespace Telimena.WebApp.Controllers
         /// <param name="telemetryKey">The telemetry key.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit]
-        [HttpGet]
+        [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> Index(Guid telemetryKey)
         {
             Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
@@ -60,7 +69,7 @@ namespace Telimena.WebApp.Controllers
             };
 
             model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) +
-                                       this.Url.LatestApiUrl(ProgramsController.Routes.DownloadApp, new {developerName = program.DeveloperAccount.Name, programName = model.ProgramName});
+                                       this.Url.NeutralApiUrl(ProgramsController.Routes.DownloadApp, new {developerName = program.DeveloperAccount.Name, programName = model.ProgramName});
 
             List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(program.Id).ConfigureAwait(false);
             model.UpdatePackages = packages;
@@ -84,6 +93,19 @@ namespace Telimena.WebApp.Controllers
             }
 
             return this.View("ManageProgram", model);
+        }
+
+
+        [Audit]
+        [System.Web.Mvc.HttpGet, System.Web.Mvc.Route("~/{developerName}/{programName}/get", Name ="Get")]
+        public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
+        {
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName).ConfigureAwait(false);
+            if (prg == null)
+            {
+                throw new BadRequestException($"Program [{programName}] does not exist");
+            }
+            return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever).ConfigureAwait(false);
         }
     }
 }

@@ -25,5 +25,19 @@ namespace Telimena.WebApp
 
             return url.HttpRouteUrl(routeName, routeValueDictionary);
         }
+
+        /// <summary>
+        /// Gets an API url without version component.
+        /// </summary>
+        /// <param name="url">The URL.</param>
+        /// <param name="routeName">Name of the route.</param>
+        /// <param name="routeValues">The route values.</param>
+        /// <returns>System.String.</returns>
+        public static string NeutralApiUrl(this UrlHelper url, string routeName, object routeValues = null)
+        {
+            RouteValueDictionary routeValueDictionary = new RouteValueDictionary(routeValues);
+
+            return url.HttpRouteUrl(routeName, routeValueDictionary);
+        }
     }
 }

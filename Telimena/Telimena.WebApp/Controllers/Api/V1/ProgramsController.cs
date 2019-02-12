@@ -25,10 +25,6 @@ using Telimena.WebApp.Utils.VersionComparison;
 
 namespace Telimena.WebApp.Controllers.Api.V1
 {
-    #region Using
-
-    #endregion
-
     /// <summary>
     /// Controls program management related endpoints
     /// </summary>
@@ -188,24 +184,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// User friendly URL for downloading latest program version
-        /// </summary>
-        /// <param name="developerName"></param>
-        /// <param name="programName"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [Audit]
-        [HttpGet, Route("~/{developerName}/download/{programName}", Name =  Routes.DownloadApp)]
-        public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
-        {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName).ConfigureAwait(false);
-            if (prg == null)
-            {
-                return this.BadRequest($"Program [{programName}] does not exist");
-            }
-            return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever).ConfigureAwait(false);
-        }
+        
 
         /// <summary>
         /// Gets the latest version info for the specified program
@@ -361,5 +340,25 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
         }
 
+
+        /// <summary>
+        /// User friendly URL for downloading latest program version
+        /// </summary>
+        /// <param name="developerName"></param>
+        /// <param name="programName"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [ApiVersionNeutral]
+        [Audit]
+        [HttpGet, Route("~/{developerName}/{programName}/download", Name = ProgramsController.Routes.DownloadApp)]
+        public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
+        {
+            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName).ConfigureAwait(false);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program [{programName}] does not exist");
+            }
+            return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever).ConfigureAwait(false);
+        }
     }
 }
