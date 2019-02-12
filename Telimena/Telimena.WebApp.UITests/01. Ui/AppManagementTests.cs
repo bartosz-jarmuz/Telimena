@@ -96,8 +96,10 @@ namespace Telimena.WebApp.UITests._01._Ui
             IWebElement link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id($"{appName}_manageLink")));
 
             link.Click();
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
-            this.Driver.FindElement(By.Id(Strings.Id.DeleteProgramButton)).Click();
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DeleteProgramTab + "Id"))).Click();
+
+            var deleteBtn = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.DeleteProgramButton)));
+            deleteBtn.Click();
             var alert = this.Driver.WaitForAlert(10000, true);
             alert.Accept();
             Thread.Sleep(2000);
@@ -275,7 +277,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 link.Click();
                 IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
 
-                IWebElement input = form.FindElement(By.Id(Strings.Id.UpdaterSelectList));
+                IWebElement input = this.Driver.FindElement(By.Id(Strings.Id.UpdaterSelectList));
                 if (input == null)
                 {
                     Assert.Fail("Select list box not found");
@@ -304,18 +306,16 @@ namespace Telimena.WebApp.UITests._01._Ui
                 IWebElement link =
                     wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(appName+ "_manageLink")));
                 link.Click();
-                IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
+                IWebElement input = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UpdaterSelectList)));
 
-                IWebElement input = form.FindElement(By.Id(Strings.Id.UpdaterSelectList));
                 if (input == null)
                 {
                     Assert.Fail("Select list box not found");
                 }
 
                 new SelectElement(input).SelectByText(updaterName);
-                form.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).Click();
-
-                IWebElement confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBoxConfirmationLabel)));
+                this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).Click();
+                IWebElement confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.SetUpdaterConfirmationLabel)));
 
                 Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
 

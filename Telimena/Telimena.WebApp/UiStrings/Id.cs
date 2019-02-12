@@ -44,6 +44,7 @@ namespace Telimena.WebApp.UiStrings
             public static string SubmitAppRegistration { get; } = "SubmitAppRegistration";
             public static string ProgramSummaryBox { get; } = "ProgramSummaryBox";
             public static string DeleteProgramButton { get; } = "DeleteProgramButton";
+            public static string DeleteProgramTab { get; } = "DeleteProgramTab";
             public static string EventTelemetryPivotTable { get; } = "EventTelemetryPivotTable";
             public static string ViewTelemetryPivotTable { get; } = "ViewTelemetryPivotTable";
             public static string ProgramTelemetryPivotTable { get; } = "ProgramTelemetryPivotTable";
@@ -53,11 +54,15 @@ namespace Telimena.WebApp.UiStrings
             public static string UpdaterSelectList { get; } = "UpdaterSelectList";
             public static string SubmitUpdaterChange { get; } = "SubmitUpdaterChange";
             public static string ProgramSummaryBoxConfirmationLabel { get; } = "ProgramSummaryBoxConfirmationLabel";
+            public static string SetUpdaterConfirmationLabel { get; } = "SetUpdaterConfirmationLabel";
+            public static string ProgramDeletedConfirmationLabel { get; } = "ProgramDeletedConfirmationLabel";
             public static string UpdaterExecutableName { get; } = "UpdaterExecutableName";
             public static string EventsTable { get; } = "EventsTable";
             public static string ExceptionsTable { get; } = "ExceptionsTable";
             public static string LogsTable { get; } = "LogsTable";
             public static string SequenceHistoryTable { get; } = "SequenceHistoryTable";
+            public static string ManageProgramSettingsBoxConfirmationLabel { get; } = "ManageProgramSettingsBoxConfirmationLabel";
+            public static string ManageProgramSettingsBox { get; } = "ManageProgramSettingsBox";
         }
 
         public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";
