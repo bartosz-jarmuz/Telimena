@@ -85,6 +85,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="MainWindow.Properties.cs" />
     <Compile Include="ProcessKiller.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="UpdateWorker\FileReplacer.cs" />

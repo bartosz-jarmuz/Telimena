@@ -2003,7 +2003,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\ProgramManagement\Index.cshtml" />
+    <Content Include="Views\ProgramManagement\ManageProgram.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\WaitForActivationInfo.cshtml" />

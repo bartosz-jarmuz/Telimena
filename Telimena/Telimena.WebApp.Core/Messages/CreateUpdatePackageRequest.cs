@@ -8,5 +8,6 @@ namespace Telimena.WebApp.Core.Messages
         public string PackageVersion { get; set; }
         public string ToolkitVersionUsed { get; set; }
         public bool IsBeta { get; set; }
+        public string ReleaseNotes { get; set; }
     }
 }

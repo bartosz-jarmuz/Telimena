@@ -5,13 +5,16 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using NUnit.Framework;
 using Telimena.Updater;
 using TelimenaClient;
+using UpdateInstructions = Telimena.Updater.UpdateInstructions;
 
 namespace TelimenaUpdaterTests.DefaultUpdater
 {
@@ -63,5 +66,24 @@ namespace TelimenaUpdaterTests.DefaultUpdater
 
             Assert.AreEqual(@"C:\An app\Updates\3.2\Instructions.xml", settings.InstructionsFile.FullName);
         }
+
+        [Test, Apartment(ApartmentState.STA)]
+        [STAThread]
+        public void Test_Manual_NoReleaseNotes()
+        {
+            var instructions = new UpdateInstructions()
+            {
+                LatestVersion = "9.9.9.2", Packages = new List<UpdateInstructions.PackageData>()
+                {
+                    new UpdateInstructions.PackageData(){ Version = "9.8"},
+                    new UpdateInstructions.PackageData(){ Version = "9.9.9.2"}
+                }
+            };
+
+            var win = new MainWindow(instructions);
+
+            win.ShowDialog();
+        }
     }
+
 }

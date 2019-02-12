@@ -6,15 +6,20 @@
         xmlns:local="clr-namespace:Telimena.Updater"
         mc:Ignorable="d"
         Name="ThisUc"
-        Title="{Binding ElementName=ThisUc, Path=TitleLabel}" Height="161.261" Width="400">
-
+        SizeToContent="Height"
+        Title="{Binding ElementName=ThisUc, Path=TitleLabel}" Height="Auto" Width="400">
+        <Window.Resources>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        </Window.Resources>
     <Grid>
         <StackPanel >
             <TextBlock Text="An update to version" HorizontalAlignment="Center" />
             <TextBlock FontSize="16" Text="{Binding ElementName=ThisUc, Path=UpdateVersionInfoLabel}" FontWeight="Bold" HorizontalAlignment="Center"  ></TextBlock>
             <TextBlock Text="was downloaded." HorizontalAlignment="Center"  />
-
-            <Button Content="Install now!" Click="ButtonBase_OnClick" FontWeight="Bold" Margin="15" FontSize="18"/>
+            <GroupBox Header="Release notes" Visibility="{Binding ElementName=ThisUc, Path=ReleaseNotesVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBox Margin="5" Text="{Binding ElementName=ThisUc, Path=ReleaseNotes}"/>
+            </GroupBox>
+            <Button Content="Install now!" Click="PerformUpdatesButton_Click" FontWeight="Bold" Margin="15" FontSize="18"/>
         </StackPanel>
     </Grid>
 </Window>

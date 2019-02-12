@@ -21,6 +21,7 @@ namespace Telimena.Updater
             this.InitializeComponent();
             this.UpdateVersionInfoLabel = this.Instructions.LatestVersion;
             this.TitleLabel = "Updater v. " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            this.PrepareReleaseNotes();
         }
         public MainWindow()
         {
@@ -35,46 +36,16 @@ namespace Telimena.Updater
            
         }
 
-        private string updateVersionInfoLabel = "1.0.0.0";
-        private string titleLabel;
-
-        public UpdateInstructions Instructions { get; set; }
-
-        public string UpdateVersionInfoLabel
+        private void PrepareReleaseNotes()
         {
-            get => this.updateVersionInfoLabel;
-            set
+            if (this.Instructions.Packages.Any(x => !string.IsNullOrEmpty(x.ReleaseNotes)))
             {
-                if (value == this.updateVersionInfoLabel)
-                {
-                    return;
-                }
-
-                this.updateVersionInfoLabel = value;
-                this.OnPropertyChanged();
+                this.ReleaseNotesVisible = true;
+                this.ReleaseNotes = string.Join("\r\n", this.Instructions.Packages.Select(x => x.ReleaseNotes));
             }
         }
 
-        public string TitleLabel
-        {
-            get => this.titleLabel;
-            set
-            {
-                if (value == this.titleLabel) return;
-                this.titleLabel = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private void PerformUpdatesButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateWorker worker = new UpdateWorker();
             try
@@ -100,7 +71,6 @@ namespace Telimena.Updater
                 MessageBox.Show($"An error occurred while updating the program.\r\n{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             Environment.Exit(0);
-
         }
     }
 }

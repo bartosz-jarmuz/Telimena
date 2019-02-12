@@ -189,10 +189,10 @@ namespace TelimenaClient.Tests
 
             List<UpdatePackageData> packages = new List<UpdatePackageData>
             {
-                new UpdatePackageData   {Guid =   this.PrgPkg_4, Version = "3.5", FileName="Updates v 3.5.zip"  }
-                , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0",   FileName="Updates v 2.0.zip"  }
-                , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0",   FileName="Updates v 1.0.zip"  }
-                , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0",   FileName="Updates v 3.0.zip"  }
+                new UpdatePackageData   {Guid =   this.PrgPkg_4, Version = "3.5", FileName="Updates v 3.5.zip", ReleaseNotes = "Features for 3.5"  }
+                , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0",   FileName="Updates v 2.0.zip", ReleaseNotes = "Features for 2.0"  }
+                , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0",   FileName="Updates v 1.0.zip", ReleaseNotes = "Features for 1.0"  }
+                , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0",   FileName="Updates v 3.0.zip", ReleaseNotes = "Features for 3.0"  }
             };
             DirectoryInfo currentUpdateSubfolder = locator.GetCurrentUpdateSubfolder(packages);
 
@@ -213,8 +213,14 @@ namespace TelimenaClient.Tests
             Assert.That(()=>updaterInstructions.Packages[0].Version, Is.EqualTo("1.0"));      
             Assert.That(()=>updaterInstructions.Packages[1].Version, Is.EqualTo("2.0"));      
             Assert.That(()=>updaterInstructions.Packages[2].Version, Is.EqualTo("3.0"));      
-            Assert.That(()=>updaterInstructions.Packages[3].Version, Is.EqualTo("3.5"));      
-            
+            Assert.That(()=>updaterInstructions.Packages[3].Version, Is.EqualTo("3.5"));
+
+
+            Assert.That(() => updaterInstructions.Packages[0].ReleaseNotes, Is.EqualTo("Features for 1.0"));
+            Assert.That(() => updaterInstructions.Packages[1].ReleaseNotes, Is.EqualTo("Features for 2.0"));
+            Assert.That(() => updaterInstructions.Packages[2].ReleaseNotes, Is.EqualTo("Features for 3.0"));
+            Assert.That(() => updaterInstructions.Packages[3].ReleaseNotes, Is.EqualTo("Features for 3.5"));
+
             Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\1.0\Updates v 1.0.zip", updaterInstructions.Packages[0].Path);
             Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\2.0\Updates v 2.0.zip", updaterInstructions.Packages[1].Path);
             Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\3.0\Updates v 3.0.zip", updaterInstructions.Packages[2].Path);
@@ -229,6 +235,11 @@ namespace TelimenaClient.Tests
             Assert.That(() => packageUpdaterInstructions.Packages[1].Version, Is.EqualTo("2.0"));
             Assert.That(() => packageUpdaterInstructions.Packages[2].Version, Is.EqualTo("3.0"));
             Assert.That(() => packageUpdaterInstructions.Packages[3].Version, Is.EqualTo("3.5"));
+
+            Assert.That(() => packageUpdaterInstructions.Packages[0].ReleaseNotes, Is.EqualTo("Features for 1.0"));
+            Assert.That(() => packageUpdaterInstructions.Packages[1].ReleaseNotes, Is.EqualTo("Features for 2.0"));
+            Assert.That(() => packageUpdaterInstructions.Packages[2].ReleaseNotes, Is.EqualTo("Features for 3.0"));
+            Assert.That(() => packageUpdaterInstructions.Packages[3].ReleaseNotes, Is.EqualTo("Features for 3.5"));
 
             Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\1.0\Updates v 1.0.zip", packageUpdaterInstructions.Packages[0].Path);
             Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\2.0\Updates v 2.0.zip", packageUpdaterInstructions.Packages[1].Path);

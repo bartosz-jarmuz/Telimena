@@ -33,7 +33,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         protected TelimenaContext TelimenaContext { get; }
 
-        public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string packageName, Stream fileStream, string supportedToolkitVersion, IFileSaver fileSaver)
+        public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string packageName, Stream fileStream, string supportedToolkitVersion, bool isBeta, string releaseNotes, IFileSaver fileSaver)
         {
             string actualVersion = await this.streamVersionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  true).ConfigureAwait(false);
             fileStream.Position = 0;
@@ -63,6 +63,8 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 this.TelimenaContext.UpdatePackages.Add(pkg);
             }
 
+            pkg.ReleaseNotes = releaseNotes;
+            pkg.IsBeta = isBeta;
             await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
 
             return pkg;

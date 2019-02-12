@@ -196,7 +196,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [Audit]
-        [HttpGet, Route("{developerName}/download/{programName}", Name =  Routes.DownloadApp)]
+        [HttpGet, Route("~/{developerName}/download/{programName}", Name =  Routes.DownloadApp)]
         public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
         {
             Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName).ConfigureAwait(false);

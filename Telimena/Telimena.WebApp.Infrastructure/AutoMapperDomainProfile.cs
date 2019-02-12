@@ -15,11 +15,13 @@ namespace Telimena.WebApp.Infrastructure
 
             this.CreateMap<UpdaterPackageInfo, UpdatePackageData>()
                 .ForMember(x => x.StoredFilePath, o => o.Ignore())
+                .ForMember(x => x.ReleaseNotes, o => o.Ignore())
                 .ForMember(x => x.DownloadUrl, o => o.Ignore())
                 ;
 
             this.CreateMap<TelimenaPackageInfo, UpdatePackageData>()
                 .ForMember(x => x.StoredFilePath, o => o.Ignore())
+                .ForMember(x => x.ReleaseNotes, o => o.Ignore())
                 .ForMember(x => x.DownloadUrl, o => o.Ignore())
                 ;
 

@@ -26,5 +26,7 @@ namespace Telimena.WebApp.Core.Models
         public bool IsBeta { get; set; }
 
         public bool IsStandalone { get; set; }
+
+        public string ReleaseNotes { get; set; }
     }
 }

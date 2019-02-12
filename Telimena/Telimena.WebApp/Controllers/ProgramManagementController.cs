@@ -83,7 +83,7 @@ namespace Telimena.WebApp.Controllers
                
             }
 
-            return this.View("Index", model);
+            return this.View("ManageProgram", model);
         }
     }
 }

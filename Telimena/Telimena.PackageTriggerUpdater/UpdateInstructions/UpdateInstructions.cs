@@ -33,6 +33,11 @@ namespace Telimena.PackageTriggerUpdater
             /// </summary>
             public string Path { get; set; }
 
+            /// <summary>
+            /// Gets or sets the release notes.
+            /// </summary>
+            /// <value>The release notes.</value>
+            public string ReleaseNotes { get; set; }
         }
     }
 }

@@ -86,6 +86,13 @@ namespace Telimena.WebApp.Controllers
             return this.View("PivotTable", model);
         }
 
+
+        /// <summary>
+        /// Sequences the history.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <param name="sequenceId">The sequence identifier.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit]
         [HttpGet]
         public async Task<ActionResult> SequenceHistory(Guid telemetryKey, string sequenceId)

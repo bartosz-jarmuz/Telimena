@@ -13,6 +13,8 @@
             public const string Upload = nameof(UpdatePackagesController) + "." + nameof(UpdatePackagesController.Upload);
             public const string ToggleBetaSetting = nameof(UpdatePackagesController) + "." + nameof(UpdatePackagesController.ToggleBetaSetting);
             public const string ValidateRequest = nameof(UpdatePackagesController) + "." + nameof(UpdatePackagesController.ValidateRequest);
+            public const string SetReleaseNotes = nameof(UpdatePackagesController) + "." + nameof(UpdatePackagesController.SetReleaseNotes);
+            public const string GetReleaseNotes = nameof(UpdatePackagesController) + "." + nameof(UpdatePackagesController.GetReleaseNotes);
         }
 
     }

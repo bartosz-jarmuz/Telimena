@@ -8,6 +8,12 @@ namespace Telimena.WebApp.Core.DTO.MappableToClient
     public class UpdatePackageData
     {
         /// <summary>
+        /// Gets or sets the release notes.
+        /// </summary>
+        /// <value>The release notes.</value>
+        public string ReleaseNotes { get; set; }
+
+        /// <summary>
         /// Gets or sets the stored file path.
         /// </summary>
         /// <value>The stored file path.</value>

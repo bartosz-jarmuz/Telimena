@@ -92,7 +92,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 {
                     Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false);
                     ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, uploadedFile.FileName, uploadedFile.InputStream
-                        , request.ToolkitVersionUsed, this.fileSaver).ConfigureAwait(false);
+                        , request.ToolkitVersionUsed, request.IsBeta, request.ReleaseNotes, this.fileSaver).ConfigureAwait(false);
                     await this.work.CompleteAsync().ConfigureAwait(false);
 #pragma warning disable 618
                     return this.Ok(pkg.Id);
@@ -105,6 +105,35 @@ namespace Telimena.WebApp.Controllers.Api.V1
             {
                 return this.BadRequest(ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Sets release notes for package
+        /// </summary>
+        /// <param name="packageId"></param>
+        /// <param name="notes"></param>
+        /// <returns></returns>
+        [Audit]
+        [HttpPut, Route("{packageId}/release-notes", Name = Routes.SetReleaseNotes)]
+        public async Task<IHttpActionResult> SetReleaseNotes(Guid packageId,[FromBody] string notes)
+        {
+            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == packageId).ConfigureAwait(false);
+            pkg.ReleaseNotes = notes;
+            await this.work.CompleteAsync().ConfigureAwait(false);
+            return this.Ok();
+        }
+
+        /// <summary>
+        /// Gets release notes for package
+        /// </summary>
+        /// <param name="packageId"></param>
+        /// <returns></returns>
+        [Audit]
+        [HttpGet, Route("{packageId}/release-notes/", Name = Routes.GetReleaseNotes)]
+        public async Task<string> GetReleaseNotes(Guid packageId)
+        {
+            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == packageId).ConfigureAwait(false);
+            return pkg.ReleaseNotes;
         }
 
         /// <summary>

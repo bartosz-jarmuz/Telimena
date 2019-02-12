@@ -35,7 +35,8 @@ namespace TelimenaClient
                 Packages = new List<UpdateInstructions.PackageData>(sorted.Select(data => new UpdateInstructions.PackageData()
                 {
                     Version = data.Version,
-                    Path = data.StoredFilePath
+                    Path = data.StoredFilePath,
+                    ReleaseNotes = data.ReleaseNotes
                 }))
             };
 
