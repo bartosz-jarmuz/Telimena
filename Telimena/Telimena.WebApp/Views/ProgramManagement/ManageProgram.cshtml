@@ -1,4 +1,6 @@
-﻿@using DotNetLittleHelpers
+﻿@using System.Security.Policy
+@using DotNetLittleHelpers
+@using Telimena.Portal.Api.Models.RequestMessages
 @using Telimena.WebApp
 @using Telimena.WebApp.Controllers.Api.V1
 @using Telimena.WebApp.Core.Messages
@@ -161,7 +163,7 @@
 </div>
 <div class="row">
 
-    <div class="col-md-4">
+    <div class="col-md-2">
         <form id="@Strings.Id.UploadProgramUpdateForm" enctype="multipart/form-data" method="post">
             <div class="box box-primary">
                 <div class="box-header">
@@ -181,10 +183,7 @@
                                    name="uploadedPackage" />
                         </span>
                     </div>
-                    <button type="button" class="btn btn-default setReleaseNotesButton" data-toggle="modal" data-target="#setReleaseNotesModal">
-                        Set release notes
-                    </button>
-                    <label class="label label-success"  id="newPackageReleaseNotesSet" style="display: none;"><i class="icon fa fa-check"></i></label>
+                  
                     <input type="hidden" id="newPackageReleaseNotes"/>
                     <div class="InfoContainer">
                         <div class="info fileName">
@@ -201,6 +200,10 @@
                             <span></span>
                         </div>
                     </div>
+                    <button type="button" class="btn btn-default prepareReleaseNotesButton" data-toggle="modal" data-target="#setReleaseNotesModal">
+                        Set release notes
+                    </button>
+                    <label class="label label-success"  id="newPackageReleaseNotesSet" style="display: none;"><i class="icon fa fa-check"></i></label>
                     <div class="form-group">
                         <div class="">
                             <input type="submit" value="Create Package" class="btn btn-lg btn-primary" />
@@ -211,7 +214,7 @@
         </form>
     </div>
 
-    <div class="col-md-8">
+    <div class="col-md-10">
 
 
         <div class="box box-primary">
@@ -250,8 +253,7 @@
                                 <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
                                 <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
                                 <td>
-
-                                    <button type="button" data-pkg-id="@pkg.Guid" class="btn btn-default btn-sm setReleaseNotesButton" data-toggle="modal" data-target="#setReleaseNotesModal">
+                                    <button type="button" data-pkg-id="@pkg.Guid" class="btn btn-default btn-sm prepareReleaseNotesButton" data-toggle="modal" data-target="#setReleaseNotesModal">
                                         Set release notes
                                     </button>
                                     @pkg.ReleaseNotes
@@ -318,9 +320,9 @@
                     $(this).find('input'));
             });
 
-            $(".btn.setReleaseNotesButton").click(function () {
+            $(".btn.prepareReleaseNotesButton").click(function () {
                 var pkgId = $(this).data('pkg-id');
-                if (pkgId === undefined) {
+                if (!pkgId) {
                     $('#releaseNotesPkgId').val(''); //clear the value - setting notes for new pkg
                 } else {
                     $('#releaseNotesPkgId').val(pkgId);
@@ -333,27 +335,27 @@
             });
 
             $("#submitReleaseNotesButton").click(function () {
-                var textArea = $(this).closest('.modal-content').find('textarea');
+                var textArea = $(this).closest('.modal-content').find('textarea').val();
                 var pkgId = $('#releaseNotesPkgId').val();
-                if (pkgId === undefined) {
-                    $('#newPackageReleaseNotes').val($(textArea).val()); //setting notes for new pkg
+                if (!pkgId) {
+                    $('#newPackageReleaseNotes').val(textArea); //setting notes for new pkg
                     $('#setReleaseNotesModal').modal('toggle');
                     $('#newPackageReleaseNotesSet').show();
                 } else {
-                    var url =
-                        '@Url.LatestApiUrl(UpdatePackagesController.Routes.SetReleaseNotes, new { packageId = "__packageId__" })';
-                    url = url
-                        .replace("__packageId__", pkgId);
+                    var url ='@Url.LatestApiUrl(UpdatePackagesController.Routes.SetReleaseNotes, new { packageId = "__packageId__" })';
+                    url = url.replace("__packageId__", pkgId);
+                    var button = $('.prepareReleaseNotesButton').filter('[data-pkg-id="'+pkgId+'"]');
                     $.ajax({
                         type: 'PUT',
-                        url: url,
-                        data: $(textArea).val(),
-                        dataType: 'text json',
-                        success: function(result) {
-                            alert('ok');
+                        url: url, 
+                        data: { @nameof(ReleaseNotesRequest.Notes) : textArea},
+                        success: function (result) {
+                            $('#setReleaseNotesModal').modal('toggle');
+                            ShowConfirmationBox(button,"label-success", "Updated release notes. Reloading page...");
+                            setTimeout(location.reload.bind(location), 1500);
                         },
                         error: function(xhr) {
-                            alert(xhr.responseJSON.Message);
+                            ShowConfirmationBox(button, "label-danger", xhr.responseJSON.Message);
                         }
                     });
                 }
@@ -416,7 +418,8 @@
 
         function TogglePackageBeta(input) {
             var id = $(input).data("pkg-id");
-            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.ToggleBetaSetting, new { isBeta = "__isBeta__", packageId = "__packageId__" })';
+            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.ToggleBetaSetting,
+                           new { isBeta = "__isBeta__", packageId = "__packageId__" })';
             url = url
                 .replace("__isBeta__", input.checked)
                 .replace("__packageId__", id);

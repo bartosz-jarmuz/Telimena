@@ -67,7 +67,7 @@ namespace TelimenaUpdaterTests.DefaultUpdater
             Assert.AreEqual(@"C:\An app\Updates\3.2\Instructions.xml", settings.InstructionsFile.FullName);
         }
 
-        [Test, Apartment(ApartmentState.STA)]
+        [Apartment(ApartmentState.STA)]
         [STAThread]
         public void Test_Manual_NoReleaseNotes()
         {

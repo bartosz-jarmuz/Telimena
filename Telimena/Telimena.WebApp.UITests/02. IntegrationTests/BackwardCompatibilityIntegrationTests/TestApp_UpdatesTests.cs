@@ -113,7 +113,8 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                 Window doneMsg = await TestHelpers.WaitForWindowAsync(x => x.Equals("Updater finished"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
                 var text = doneMsg.Get<Label>();
                 Assert.AreEqual("Killed other processes: True", text.Text);
-                doneMsg.Get<Button>(SearchCriteria.ByText("OK")).Click();
+                var btn = doneMsg.Get<Button>(SearchCriteria.ByText("OK"));
+                btn.Click();
 
                 //do not check if app was updated, because we only care whether the updater was actually launched
 

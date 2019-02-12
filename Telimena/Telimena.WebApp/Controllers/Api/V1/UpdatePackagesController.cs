@@ -12,6 +12,7 @@ using AutoMapper;
 using DotNetLittleHelpers;
 using MvcAuditLogger;
 using Newtonsoft.Json;
+using Telimena.Portal.Api.Models.RequestMessages;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -111,16 +112,16 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// Sets release notes for package
         /// </summary>
         /// <param name="packageId"></param>
-        /// <param name="notes"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [Audit]
         [HttpPut, Route("{packageId}/release-notes", Name = Routes.SetReleaseNotes)]
-        public async Task<IHttpActionResult> SetReleaseNotes(Guid packageId,[FromBody] string notes)
+        public async Task<IHttpActionResult> SetReleaseNotes(Guid packageId, ReleaseNotesRequest request)
         {
             ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == packageId).ConfigureAwait(false);
-            pkg.ReleaseNotes = notes;
+            pkg.ReleaseNotes = request.Notes;
             await this.work.CompleteAsync().ConfigureAwait(false);
-            return this.Ok();
+            return this.Ok("");
         }
 
         /// <summary>
