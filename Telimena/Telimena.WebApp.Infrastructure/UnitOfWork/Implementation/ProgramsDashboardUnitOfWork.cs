@@ -458,25 +458,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     }
                     else if (rule.Item1 == nameof(DataTableTelemetryDataBase.UserName))
                     {
-                        if (typeof(T) == typeof(ViewTelemetryDetail))
-                        {
-                            query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.ClientAppUser.UserId, rule.Item2, index);
-                        }
-                        else
-                        {
-                            query = Order(query, x => (x as EventTelemetryDetail).TelemetrySummary.ClientAppUser.UserId, rule.Item2, index);
-                        }
+                        query = Order(query, x => x.UserId, rule.Item2, index);
                     }
                     else if (rule.Item1 == nameof(DataTableTelemetryDataBase.EntryKey) )
                     {
-                        if (typeof(T) == typeof(ViewTelemetryDetail))
-                        {
-                            query = Order(query, x => (x as ViewTelemetryDetail).TelemetrySummary.View.Name, rule.Item2, index);
-                        }
-                        else
-                        {
-                            query = Order(query, x => (x as EventTelemetryDetail).TelemetrySummary.Event.Name, rule.Item2, index);
-                        }
+                        query = Order(query, x=> x.EntryKey, rule.Item2, index);
                     }
                 }
 
