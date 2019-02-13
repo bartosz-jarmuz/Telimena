@@ -6,37 +6,37 @@
     background-color: #2f336f;
 }
 
-    .skin-purple-light .main-header .navbar .nav > li > a {
-        color: #ffffff;
+.skin-purple-light .main-header .navbar .nav > li > a {
+    color: #ffffff;
+}
+
+.skin-purple-light .main-header .navbar .nav > li > a:hover,
+.skin-purple-light .main-header .navbar .nav > li > a:active,
+.skin-purple-light .main-header .navbar .nav > li > a:focus,
+.skin-purple-light .main-header .navbar .nav .open > a,
+.skin-purple-light .main-header .navbar .nav .open > a:hover,
+.skin-purple-light .main-header .navbar .nav .open > a:focus,
+.skin-purple-light .main-header .navbar .nav > .active > a {
+    background: rgba(0, 0, 0, 0.1);
+    color: #f6f6f6;
+}
+
+.skin-purple-light .main-header .navbar .sidebar-toggle {
+    color: #ffffff;
+}
+
+    .skin-purple-light .main-header .navbar .sidebar-toggle:hover {
+        color: #f6f6f6;
+        background: rgba(0, 0, 0, 0.1);
     }
 
-        .skin-purple-light .main-header .navbar .nav > li > a:hover,
-        .skin-purple-light .main-header .navbar .nav > li > a:active,
-        .skin-purple-light .main-header .navbar .nav > li > a:focus,
-        .skin-purple-light .main-header .navbar .nav .open > a,
-        .skin-purple-light .main-header .navbar .nav .open > a:hover,
-        .skin-purple-light .main-header .navbar .nav .open > a:focus,
-        .skin-purple-light .main-header .navbar .nav > .active > a {
-            background: rgba(0, 0, 0, 0.1);
-            color: #f6f6f6;
-        }
+.skin-purple-light .main-header .navbar .sidebar-toggle {
+    color: #fff;
+}
 
-    .skin-purple-light .main-header .navbar .sidebar-toggle {
-        color: #ffffff;
+    .skin-purple-light .main-header .navbar .sidebar-toggle:hover {
+        background-color: #23275d;
     }
-
-        .skin-purple-light .main-header .navbar .sidebar-toggle:hover {
-            color: #f6f6f6;
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-    .skin-purple-light .main-header .navbar .sidebar-toggle {
-        color: #fff;
-    }
-
-        .skin-purple-light .main-header .navbar .sidebar-toggle:hover {
-            background-color: #23275d;
-        }
 
 @media (max-width: 767px) {
     .skin-purple-light .main-header .navbar .dropdown-menu li.divider {

@@ -4,9 +4,6 @@
 @using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
 
-@section styles{
-    @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
-}
 
 @Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model?.ProgramName, TelemetryKey = Model?.TelemetryKey })
 
