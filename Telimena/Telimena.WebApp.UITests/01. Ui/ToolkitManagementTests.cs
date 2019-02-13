@@ -44,15 +44,14 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterUpload)).Click();
 
-            var confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UpdaterConfirmationBox)));
 
-            Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
-
-            Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package "));
+            this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Uploaded package "));
 
         }
 
-        
+  
+
+
         [Test]
         public void _01_UploadToolkit()
         {
@@ -74,12 +73,9 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             this.Driver.FindElement(By.Id(Strings.Id.SubmitToolkitUpload)).Click();
 
-            var confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ToolkitConfirmationBox)));
 
-            Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
+            this.WaitForSuccessConfirmationWithText(wait, z=> (z.Contains("Uploaded package ")&& z.Contains(" with ID ")));
 
-            Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package "));
-            Assert.IsTrue(confirmationBox.Text.Contains(" with ID "));
 
         }
 
@@ -150,11 +146,8 @@ namespace Telimena.WebApp.UITests._01._Ui
                 {
                     checkBox.Click();
                     Thread.Sleep(1000);
-                    var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UpdaterPackagesTable)));
 
-                    var label = table.FindElement(By.XPath("../../label"));
-                    Assert.AreEqual(true, label.Displayed);
-                    Assert.AreEqual("Cannot change default updater", label.Text);
+                    this.WaitForErrorConfirmationWithText(wait, x=>x.Contains("Cannot change default updater"));
                 }
                 else
                 {

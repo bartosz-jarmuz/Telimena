@@ -221,11 +221,8 @@ namespace Telimena.WebApp.UITests._01._Ui
                 // ReSharper disable once PossibleNullReferenceException
                 form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "submit").Click();
 
-                IWebElement confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateConfirmationLabel)));
+                WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Uploaded package with ID"));
 
-                Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
-
-                Assert.IsTrue(confirmationBox.Text.Contains("Uploaded package with ID"));
             }
             catch (Exception ex)
             {
@@ -315,11 +312,8 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 new SelectElement(input).SelectByText(updaterName);
                 this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).Click();
-                IWebElement confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.SetUpdaterConfirmationLabel)));
 
-                Assert.IsTrue(confirmationBox.GetAttribute("class").Contains("label-success"));
-
-                Assert.IsTrue(confirmationBox.Text.Contains("Updater set to "+ updaterName));
+                WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Updater set to "+ updaterName));
             }
             catch (Exception ex)
             {

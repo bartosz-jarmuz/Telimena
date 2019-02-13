@@ -1,3 +1,85 @@
+function HideTopAlertBox() {
+    var $box = getTopAlertBox();
+    $box.hide();
+}
+
+function showSuccessTopAlert(text, header) {
+    if (!header) {
+        header = "Success";
+    }
+    showTopAlertBox('callout-success', 'icon fa fa-check', text, header);
+}
+
+function showSuccessTopAlertAndRefresh(text, header) {
+    if (!header) {
+        header = "Success";
+    }
+    showTopAlertBox('callout-success', 'icon fa fa-check', text + ". Reloading page...", header);
+    setTimeout(location.reload.bind(location), 1500);
+
+}
+
+function showWarningTopAlert(text, header) {
+    if (!header) {
+        header = "Warning";
+    }
+    showTopAlertBox('callout-warning', 'icon fa fa-warning', text, header);
+}
+
+function showDangerTopAlert(text, header) {
+    if (!header) {
+        header = "Error";
+    }
+    showTopAlertBox('callout-danger', 'icon fa fa-ban', text, header);
+}
+
+function getXhrErrorMessage(xhr) {
+    var text = "Something went wrong";
+    if (xhr) {
+        if (xhr.responseJSON && xhr.responseJSON.Message) {
+            text = xhr.responseJSON.Message;
+        }
+    }
+    return text;
+}
+
+
+function showInfoTopAlert(text, header) {
+    if (!header) {
+        header = "Info";
+    }
+    showTopAlertBox('callout-info', 'icon fa fa-info', text, header);
+}
+
+
+function showTopAlertBox(alertClass, iconClass, text, header) {
+    var $box = getTopAlertBox();
+    $box.find('h4').text(header);
+    $box.find('div.text').text(text);
+    $box.find('i').css(iconClass);
+    $box.show().attr("class", "alert top-alert-box callout alert-dismissible " + alertClass);
+}
+
+function getTopAlertBox() {
+    return  $($('.top-alert-box')[0]);    
+}
+
+function getTopAlertBoxTextElement($box) {
+    if (!$box) {
+        $box = getTopAlertBox();
+    } 
+    return $box.find('div.text');
+}
+
+
+
+
+$(function () {$("[data-hide]").on("click", function () {
+        $(this).closest("." + $(this).attr("data-hide")).hide();
+    });
+});
+
+
 function renderSequenceHistoryUrl(data, type, url) {
     if (type === 'display') {
                         

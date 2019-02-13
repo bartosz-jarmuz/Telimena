@@ -13,6 +13,8 @@ using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
+using Assert = NUnit.Framework.Assert;
+using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 using TestContext = NUnit.Framework.TestContext;
 
 namespace Telimena.WebApp.UITests.Base
@@ -20,7 +22,25 @@ namespace Telimena.WebApp.UITests.Base
     [TestFixture]
     public abstract class UiTestBase : IntegrationTestBase
     {
-       
+
+        public void WaitForSuccessConfirmationWithText(WebDriverWait wait, Func<string, bool> validateText)
+        {
+            this.WaitForSuccessConfirmationWithTextAndClass(wait, "success", validateText);
+        }
+
+        public void WaitForErrorConfirmationWithText(WebDriverWait wait, Func<string, bool> validateText)
+        {
+            this.WaitForSuccessConfirmationWithTextAndClass(wait, "danger", validateText);
+        }
+
+        public void WaitForSuccessConfirmationWithTextAndClass(WebDriverWait wait, string cssPart, Func<string, bool> validateText)
+        {
+            var confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName(Strings.Css.TopAlertBox)));
+
+            Assert.IsTrue(confirmationBox.GetAttribute("class").Contains(cssPart), "The alert has incorrect class: " + confirmationBox.GetAttribute("class"));
+            Assert.IsTrue(validateText(confirmationBox.Text), "Incorrect message: " + confirmationBox.Text);
+        }
+
         internal static Lazy<RemoteWebDriver> RemoteDriver = new Lazy<RemoteWebDriver>(() => GetBrowser("Chrome"));
 
         private static RemoteWebDriver GetBrowser(string browser)

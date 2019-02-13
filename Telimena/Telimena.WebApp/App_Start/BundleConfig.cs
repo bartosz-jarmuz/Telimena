@@ -29,8 +29,8 @@ namespace Telimena.WebApp
                 "~/Content/site.css",
                 "~/Content/font-awesome.css"
                 ,"~/Content/Ionicons/css/ionicons.min.css",
-                "~/admin-lte/css/AdminLTE.css", 
-                "~/admin-lte/css/skins/_all-skins.min.css"
+                "~/admin-lte/css/AdminLTE.css" 
+                //"~/admin-lte/css/skins/_all-skins.min.css"
                 ,"~/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css", 
                 "~/admin-lte/plugins/iCheck/all.min.css"));
 

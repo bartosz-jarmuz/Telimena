@@ -14,8 +14,6 @@
 
 @section styles{
     <style type="text/css">
-        .confirmation {
-        }
 
         .fileinput-button {
             position: relative;
@@ -36,167 +34,156 @@
             }
     </style>
 }
+@Html.Partial("_TopAlertBox")
 
 @Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model?.ProgramName, TelemetryKey = Model?.TelemetryKey })
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="box box-primary" id="@Strings.Id.ProgramSummaryBox">
-                <div class="box-header">
-                    <h3 class="box-title">Program summary</h3>
-                </div>
-                <div class="box-body">
-                    <label class="confirmation label label-md" id="@Strings.Id.ProgramSummaryBoxConfirmationLabel" style="display: none"></label>
-                    <ul class="list-group list-group-unbordered">
-                        <li class="list-group-item">
-                            <b>Name: </b>
-                            <a class="@Strings.Css.ProgramInfoElement pull-right">@Model.ProgramName</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Description: </b>
-                            <span class="@Strings.Css.ProgramInfoElement pull-right">@Model.ProgramDescription</span>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Telemetry Key: </b>
-                            <span class="@Strings.Css.ProgramInfoElement pull-right">@Model.TelemetryKey</span>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Primary assembly name: </b>
-                            <span class="@Strings.Css.ProgramInfoElement pull-right">@Model.PrimaryAssemblyName</span>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Latest version: </b>
-                            <span id="latestVersion" class="pull-right">...</span>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Versions count: </b>
-                            <span class="pull-right" id="versionsCount">...</span>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Download link: </b>
-                            <a class="pull-right" href="@Model.ProgramDownloadUrl">@Model.ProgramDownloadUrl</a>
-                        </li>
-                        
-                    </ul>
-                </div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-primary" id="@Strings.Id.ProgramSummaryBox">
+            <div class="box-header">
+                <h3 class="box-title">Program summary</h3>
             </div>
-            
-        </div>
+            <div class="box-body">
+                <ul class="list-group list-group-unbordered">
+                    <li class="list-group-item">
+                        <b>Name: </b>
+                        <a class="@Strings.Css.ProgramInfoElement pull-right">@Model.ProgramName</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Description: </b>
+                        <span class="@Strings.Css.ProgramInfoElement pull-right">@Model.ProgramDescription</span>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Telemetry Key: </b>
+                        <span class="@Strings.Css.ProgramInfoElement pull-right">@Model.TelemetryKey</span>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Primary assembly name: </b>
+                        <span class="@Strings.Css.ProgramInfoElement pull-right">@Model.PrimaryAssemblyName</span>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Latest version: </b>
+                        <span id="latestVersion" class="pull-right">...</span>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Versions count: </b>
+                        <span class="pull-right" id="versionsCount">...</span>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Download link: </b>
+                        <a class="pull-right" href="@Model.ProgramDownloadUrl">@Model.ProgramDownloadUrl</a>
+                    </li>
 
-
-        <div class="col-md-6">
-
-            <div class="box box-primary">
-                <div class="box-header">
-                    <h3 class="box-title">Program Package Info</h3>
-                </div>
-                <div class="box-body">
-                    <ul class="list-group list-group-unbordered">
-                        <li class="list-group-item">
-                            <b>Package Id</b> <a class="pull-right">@(Model.ProgramPackageInfo?.Id)</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>File Name</b> <a class="pull-right">@(Model.ProgramPackageInfo?.FileName)</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>File Size</b> <a class="pull-right">@(Model.ProgramPackageInfo?.FileSizeBytes.GetSizeString())</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Supported toolkit version</b> <a class="pull-right">@(Model.ProgramPackageInfo?.SupportedToolkitVersion)</a>
-                        </li>
-                        <li class="list-group-item">
-                            <b>Uploaded date</b> <a class="pull-right utcdate-tolocaldate">@(Model.ProgramPackageInfo?.UploadedDate.ToString(Strings.DateTimeFormat))</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-
-        </div>
-        
-        
-        <div class="col-md-3">
-            <div class="nav-tabs-custom" id="@Strings.Id.ManageProgramSettingsBox">
-                <ul class="nav nav-tabs pull-right">
-                    <li><a href="#@Strings.Id.DeleteProgramTab" id="@(Strings.Id.DeleteProgramTab)Id" data-toggle="tab">Delete</a></li>
-                    <li class="active"><a href="#tab_1-1" data-toggle="tab">Set updater</a></li>
-                    <li class="pull-left header"><i class="fa fa-th"></i> Manage program</li>
                 </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active" id="tab_1-1">
-                        <div class="box-body">
-                            <h5>Select updater which should be used with this app</h5>
-                        <label class="confirmation label label-md" id="@Strings.Id.SetUpdaterConfirmationLabel" style="display: none"></label>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="col-md-6">
+
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Program Package Info</h3>
+            </div>
+            <div class="box-body">
+                <ul class="list-group list-group-unbordered">
+                    <li class="list-group-item">
+                        <b>Package Id</b> <a class="pull-right">@(Model.ProgramPackageInfo?.Id)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>File Name</b> <a class="pull-right">@(Model.ProgramPackageInfo?.FileName)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>File Size</b> <a class="pull-right">@(Model.ProgramPackageInfo?.FileSizeBytes.GetSizeString())</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Supported toolkit version</b> <a class="pull-right">@(Model.ProgramPackageInfo?.SupportedToolkitVersion)</a>
+                    </li>
+                    <li class="list-group-item">
+                        <b>Uploaded date</b> <a class="pull-right utcdate-tolocaldate">@(Model.ProgramPackageInfo?.UploadedDate.ToString(Strings.DateTimeFormat))</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="col-md-3">
+        <div class="nav-tabs-custom" id="@Strings.Id.ManageProgramSettingsBox">
+            <ul class="nav nav-tabs pull-right">
+                <li><a href="#@Strings.Id.DeleteProgramTab" id="@(Strings.Id.DeleteProgramTab)Id" data-toggle="tab">Delete</a></li>
+                <li class="active"><a href="#tab_1-1" data-toggle="tab">Set updater</a></li>
+                <li class="pull-left header"><i class="fa fa-th"></i> Manage program</li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_1-1">
+                    <div class="box-body">
+                        <h5>Select updater which should be used with this app</h5>
 
                         <label class="control-label col-sm-4">Updater: </label>
                         <div class="col-sm-8">
-                            @Html.DropDownList("Updaters", Model.UpdatersSelectList, new {id = @Strings.Id.UpdaterSelectList})
-                        </div>
-                        </div>
-                        <div class="box-footer">
-
-                            <input type='submit' id="@Strings.Id.SubmitUpdaterChange" value='Change updater' class="btn btn-block"/>
-
-                        </div>
-                    </div>
-                    <!-- /.tab-pane -->
-                    <div class="tab-pane" id="@Strings.Id.DeleteProgramTab">
-                        <div class="box-body">
-                            <label class="confirmation label label-md" id="@Strings.Id.ProgramDeletedConfirmationLabel" style="display: none"></label>
-                            <h5>Warning: this cannot be undone</h5>
-                            <input type="button" class="btn btn-danger btn-block" id="@Strings.Id.DeleteProgramButton" value="Delete program" />
-                        </div>
-                        </div>
-                    </div>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <form id="uploadProgramPackageForm" enctype="multipart/form-data" method="post" class="form-horizontal">
-                <div class="box box-primary">
-
-                    <div class="box-header">
-                        <h3 class="box-title">Main program package</h3>
-                        <h5>Upload the main program package</h5>
-                    </div>
-                    <div class="box-body">
-                        <label class="confirmation label label-md" style="display: none"></label>
-
-                        <div class="form-group">
-                            <label class="control-label col-sm-4">Package: </label>
-                            <div class="col-sm-8">
-
-                                <span class="btn btn-success fileinput-button uploadedPackage">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    <span>Select file</span>
-                                    <input type="file"
-                                           name="uploadedPackage" />
-                                </span>
-                            </div>
-                        </div>
-                        <div class="InfoContainer">
-                            <div class="info fileName">
-                            </div>
-                            <div class="info fileType">
-                            </div>
-                            <div class="info fileSize">
-                            </div>
-                        </div>
-                        <div class="progress" style="display: none;">
-                            <div class="progress-bar" role="progressbar"
-                                 aria-valuenow="0" aria-valuemin="0"
-                                 aria-valuemax="100" style="width: 0%;">
-                                <span></span>
-                            </div>
+                            @Html.DropDownList("Updaters", Model.UpdatersSelectList, new { id = @Strings.Id.UpdaterSelectList })
                         </div>
                     </div>
                     <div class="box-footer">
-                        <input type="submit" value="Upload Main Package" class="btn btn-block btn-primary" />
+                        <input type='submit' id="@Strings.Id.SubmitUpdaterChange" value='Change updater' class="btn btn-block btn-primary" />
                     </div>
                 </div>
-            </form>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="@Strings.Id.DeleteProgramTab">
+                    <div class="box-body">
+                        <h5>Warning: this cannot be undone</h5>
+                        <input type="button" class="btn btn-danger btn-block" id="@Strings.Id.DeleteProgramButton" value="Delete program" />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="col-md-3">
+        <form id="uploadProgramPackageForm" enctype="multipart/form-data" method="post" class="form-horizontal">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Main program package</h3>
+                    <h5>Upload the main program package</h5>
+                </div>
+                <div class="box-body">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Package: </label>
+                        <div class="col-sm-8">
+
+                            <span class="btn btn-default fileinput-button uploadedPackage">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>Select file</span>
+                                <input type="file"
+                                       name="uploadedPackage" />
+                            </span>
+                        </div>
+                    </div>
+                    <div class="info-container">
+                        <div class="info fileName"></div>
+                        <div class="info fileType"></div>
+                        <div class="info fileSize"></div>
+                    </div>
+                    <div class="progress" style="display: none;">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                             aria-valuemax="100" style="width: 0%;">
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <input type="submit" value="Upload Main Package" class="btn btn-block btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="row">
 
     <div class="col-md-4">
@@ -206,7 +193,6 @@
                     <h3 class="box-title">Create Update Package</h3>
                 </div>
                 <div class="box-body">
-                    <label class="confirmation label label-md" style="display: none" Id="@Strings.Id.UploadProgramUpdateConfirmationLabel"></label>
                     <div class="form-group">
                         <label class="control-label col-sm-4">Toolkit version used: </label>
                         <div class="col-sm-8"><input class="form-control" placeholder="Leave blank if package contains Telimena toolkit dll" type="text" id="updatePackageToolkitVersion" /></div>
@@ -223,30 +209,30 @@
                         <label class="control-label col-sm-4">Package: </label>
                         <div class="col-sm-8">
 
-                            <span class="btn btn-success fileinput-button uploadedPackage">
+                            <span class="btn btn-default fileinput-button uploadedPackage">
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span>Select file</span>
                                 <input type="file" name="uploadedPackage" />
                             </span>
                         </div>
-                        </div>
-                        <input type="hidden" id="newPackageReleaseNotes" />
-                        <div class="InfoContainer">
-                            <div class="info fileName"></div>
-                            <div class="info fileType"></div>
-                            <div class="info fileSize"></div>
-                        </div>
-                        <div class="progress" style="display: none;">
-                            <div class="progress-bar" role="progressbar"
-                                 aria-valuenow="0" aria-valuemin="0"
-                                 aria-valuemax="100" style="width: 0%;">
-                                <span></span>
-                            </div>
-                        </div>
-
                     </div>
+                    <input type="hidden" id="newPackageReleaseNotes" />
+                    <div class="info-container">
+                        <div class="info fileName"></div>
+                        <div class="info fileType"></div>
+                        <div class="info fileSize"></div>
+                    </div>
+                    <div class="progress" style="display: none;">
+                        <div class="progress-bar" role="progressbar"
+                             aria-valuenow="0" aria-valuemin="0"
+                             aria-valuemax="100" style="width: 0%;">
+                            <span></span>
+                        </div>
+                    </div>
+
+                </div>
                 <div class="box-footer">
-                      <input type="submit" value="Upload Update Package" class="btn btn-block btn-primary" />
+                    <input type="submit" value="Upload Update Package" class="btn btn-block btn-primary" />
                 </div>
             </div>
         </form>
@@ -260,7 +246,6 @@
                 <h3 class="box-title">Update Packages</h3>
             </div>
             <div class="box-body">
-                <label class="confirmation label label-md" style="display: none"></label>
                 <table class="table table-bordered table-hover dataTable">
                     <thead>
                         <tr>
@@ -308,12 +293,13 @@
 </div>
 
 <div class="modal fade" id="setReleaseNotesModal">
-    <input type="hidden" id="releaseNotesPkgId"/>
+    <input type="hidden" id="releaseNotesPkgId" />
     <div class="modal-dialog" style="width: 800px;">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span></button>
+                    <span aria-hidden="true">×</span>
+                </button>
                 <h4 class="modal-title">Set release notes</h4>
             </div>
             <div class="modal-body">
@@ -338,7 +324,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-           
+
 
             $('.dataTable').DataTable();
             globalUtcConversion();
@@ -383,18 +369,16 @@
                 } else {
                     var url ='@Url.LatestApiUrl(UpdatePackagesController.Routes.SetReleaseNotes, new { packageId = "__packageId__" })';
                     url = url.replace("__packageId__", pkgId);
-                    var button = $('.prepareReleaseNotesButton').filter('[data-pkg-id="'+pkgId+'"]');
                     $.ajax({
                         type: 'PUT',
-                        url: url, 
+                        url: url,
                         data: { @nameof(ReleaseNotesRequest.Notes) : textArea},
                         success: function (result) {
                             $('#setReleaseNotesModal').modal('toggle');
-                            ShowConfirmationBox(button,"label-success", "Updated release notes. Reloading page...");
-                            setTimeout(location.reload.bind(location), 1500);
+                            showSuccessTopAlertAndRefresh("Updated release notes.");
                         },
                         error: function(xhr) {
-                            ShowConfirmationBox(button, "label-danger", xhr.responseJSON.Message);
+                            showDangerTopAlert(getXhrErrorMessage(xhr));
                         }
                     });
                 }
@@ -410,7 +394,7 @@
 
                 var prgName = prompt("If you're so sure, please enter the program name", "");
                 if (prgName !== '@Model.ProgramName') {
-                    ShowConfirmationBox(input, "label-default", "Program name mismatched. Deleting cancelled");
+                    ShowTopAlertBox(input, "label-default", "Program name mismatched. Deleting cancelled");
                     return;
                 }
 
@@ -418,12 +402,10 @@
                     type: 'DELETE',
                     url: '@Url.LatestApiUrl(ProgramsController.Routes.Delete, new {telemetryKey = @Model.TelemetryKey})',
                     success: function(result) {
-                        ShowConfirmationBox(input,
-                            "label-success",
-                            result);
+                        showSuccessTopAlert(result);
                     },
-                    error: function(xhr) {
-                        ShowConfirmationBox(input, "label-danger", xhr.responseJSON.Message);
+                    error: function (xhr) {
+                        showDangerTopAlert(getXhrErrorMessage(xhr));
                     }
                 });
             } else {
@@ -443,14 +425,11 @@
             $.ajax({
                 type: 'PUT',
                 url: url,
-                success: function(result) {
-                    ShowConfirmationBox(input,
-                        "label-success",
-                        result + ". Reloading page...");
-                    setTimeout(location.reload.bind(location), 1500);
+                success: function (result) {
+                    showSuccessTopAlertAndRefresh(result);
                 },
                 error: function(xhr) {
-                    ShowConfirmationBox(input, "label-danger", xhr.responseJSON.Message);
+                    showDangerTopAlert(getXhrErrorMessage(xhr));
                 }
             });
         }
@@ -467,12 +446,10 @@
                 type: 'POST',
                 url: url,
                 success: function(result) {
-                    ShowConfirmationBox(input,
-                        "label-success",
-                        'Set package with ID: [' + id + '] Beta flag to: ' + result);
+                    showSuccessTopAlert('Set package with ID: [' + id + '] Beta flag to: ' + result);
                 },
                 error: function(xhr) {
-                    ShowConfirmationBox(input, "label-danger", xhr.responseJSON.Message);
+                    showDangerTopAlert(getXhrErrorMessage(xhr));
                 }
             });
         }
@@ -488,7 +465,7 @@
                 } else {
                     fileSize = selectedFile.size + " Bytes";
                 }
-                var infoContainer = input.closest('.form-group').siblings('.InfoContainer');
+                var infoContainer = input.closest('.form-group').siblings('.info-container');
                 infoContainer.find(".fileName").text("Name : " + selectedFile.name);
                 infoContainer.find(".fileType").text("Type : " + selectedFile.type);
                 infoContainer.find(".fileSize").text("Size : " + fileSize);
@@ -517,10 +494,11 @@
                 },
                 //Ajax events
                 success: function(result) {
-                    ShowConfirmationBox(button, "label-success", 'Uploaded package with ID: [' + result + ']');
+                    showSuccessTopAlert('Uploaded package with ID: [' + result + ']');
                 },
                 error: function(xhr) {
-                    ShowConfirmationBox(button, "label-danger", xhr.responseJSON.Message);
+                    showDangerTopAlert(getXhrErrorMessage(xhr));
+
                 },
 
 
@@ -557,22 +535,12 @@
             }
         }
 
-        function HideConfirmationBox(button) {
-            $(button).closest('.box').find('.confirmation').hide();
-        }
-
-        function ShowConfirmationBox(button, classToAdd, text) {
-            var box = $(button).closest('.box').find('.confirmation')[0];
-            if (!box) {
-                box = $(button).closest('.tab-pane').find('.confirmation');
-            }
-            box.show().attr("class", "confirmation label label-md " + classToAdd).text(text);
-        }
+       
 
         function ValidateUpdatePackageRequest(button, modelString, successCallback) {
             var input = $('#@Strings.Id.UploadProgramUpdateForm').find("input[name='uploadedPackage']")[0];
             if (input.files.length === 0) {
-                ShowConfirmationBox(button, 'label-danger', "File not selected");
+                showDangerTopAlert("File not selected");
                 return;
             }
 
@@ -591,7 +559,8 @@
                         button);
                 })
                 .fail(function(xhr) {
-                    ShowConfirmationBox(button, 'label-danger', 'Error: ' + xhr.responseJSON.Message);
+                    showDangerTopAlert(getXhrErrorMessage(xhr));
+
                 });
         }
 

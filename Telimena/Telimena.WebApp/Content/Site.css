@@ -1,4 +1,7 @@
-﻿/*.btn-primary:focus,
+﻿.top-alert-box {
+
+}
+/*.btn-primary:focus,
 .btn-primary.focus {
     color: #fff;
     background-color: #2f336f;
@@ -37,9 +40,8 @@ a.headerMenuLink {
     color: rgb(97, 96, 96)
 }
     */
-
 .btn {
-    border-radius: 0!important;
+    border-radius: 0 !important;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;

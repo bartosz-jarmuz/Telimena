@@ -28,14 +28,12 @@ namespace Telimena.WebApp.UiStrings
             public static string PasswordForm { get; } = "PasswordForm";
             public static string MyAppsList { get; } = "MyAppsList ";
             public static string ViewUsageTable { get; } = "ViewUsageTable";
-            public static string ToolkitConfirmationBox { get; } = "ToolkitConfirmationBox";
             public static string SubmitToolkitUpload { get; } = "SubmitToolkitUpload";
             public static string MainHeader { get; } = "MainHeader";
             public static string UpdaterPackageUploader { get; } = "UpdaterPackageUploader";
             public static string UpdaterInternalName { get; } = "UpdaterInternalName";
             public static string SubmitUpdaterUpload { get; } = "SubmitUpdaterUpload";
             public static string UpdaterUploadInfoBox { get; } = "UpdaterUploadInfoBox";
-            public static string UpdaterConfirmationBox { get; } = "UpdaterConfirmationBox";
             public static string ProgramNameInputBox { get; } = "ProgramNameInputBox";
             public static string ProgramDescriptionInputBox { get; } = "ProgramDescriptionInputBox";
             public static string TelemetryKeyInputBox { get; } = "TelemetryKeyInputBox";
@@ -47,21 +45,15 @@ namespace Telimena.WebApp.UiStrings
             public static string DeleteProgramTab { get; } = "DeleteProgramTab";
             public static string EventTelemetryPivotTable { get; } = "EventTelemetryPivotTable";
             public static string ViewTelemetryPivotTable { get; } = "ViewTelemetryPivotTable";
-            public static string ProgramTelemetryPivotTable { get; } = "ProgramTelemetryPivotTable";
             public static string UpdaterPackagesTable { get; } = "UpdaterPackagesTable";
             public static string UploadProgramUpdateForm { get; } = "UploadProgramUpdateForm";
-            public static string UploadProgramUpdateConfirmationLabel { get; } = "UploadProgramUpdateConfirmationLabel";
             public static string UpdaterSelectList { get; } = "UpdaterSelectList";
             public static string SubmitUpdaterChange { get; } = "SubmitUpdaterChange";
-            public static string ProgramSummaryBoxConfirmationLabel { get; } = "ProgramSummaryBoxConfirmationLabel";
-            public static string SetUpdaterConfirmationLabel { get; } = "SetUpdaterConfirmationLabel";
-            public static string ProgramDeletedConfirmationLabel { get; } = "ProgramDeletedConfirmationLabel";
             public static string UpdaterExecutableName { get; } = "UpdaterExecutableName";
             public static string EventsTable { get; } = "EventsTable";
             public static string ExceptionsTable { get; } = "ExceptionsTable";
             public static string LogsTable { get; } = "LogsTable";
             public static string SequenceHistoryTable { get; } = "SequenceHistoryTable";
-            public static string ManageProgramSettingsBoxConfirmationLabel { get; } = "ManageProgramSettingsBoxConfirmationLabel";
             public static string ManageProgramSettingsBox { get; } = "ManageProgramSettingsBox";
         }
 

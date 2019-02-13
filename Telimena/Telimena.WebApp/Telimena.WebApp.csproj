@@ -2032,6 +2032,7 @@
     <Content Include="Views\ProgramStatistics\Logs.cshtml" />
     <Content Include="Views\Shared\_ProgramHeaderMenu.cshtml" />
     <Content Include="Views\ProgramStatistics\SequenceHistory.cshtml" />
+    <Content Include="Views\Shared\_TopAlertBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
