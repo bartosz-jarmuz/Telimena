@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using DbIntegrationTestHelpers;
 using NUnit.Framework;
-using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
@@ -11,7 +10,7 @@ using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace Telimena.Tests
+namespace Telimena.Tests.UnitOfWorkTests
 {
     [TestFixture]
     public class ProgramsDashboardUnitOfWorkTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
@@ -25,10 +24,7 @@ namespace Telimena.Tests
         private readonly Guid id_7 = Guid.Parse("d63af478-6fe7-4e77-8fc5-85c56755fabb");
         private readonly Guid id_8 = Guid.Parse("e336b9eb-3d7a-42cf-8997-0e3293e830f6");
 
-        private ViewTelemetrySummary GetSummary(string userName, string viewName)
-        {
-            return new ViewTelemetrySummary {ClientAppUser = new ClientAppUser {UserId = userName}, View = new View {Name = viewName}};
-        }
+      
 
         [Test]
         public void TestOrderingQuery_FailSafe()
@@ -37,20 +33,21 @@ namespace Telimena.Tests
 
             data.Add(new ViewTelemetryDetail(this.id_1)
             {
-                Timestamp = new DateTime(2000, 01, 01)
-                , TelemetrySummary = this.GetSummary("AAA", "ZZZ")
+                Timestamp = new DateTime(2000, 01, 01), UserId = "AAA", EntryKey = "ZZZ"
                 , AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))
             });
             data.Add(new ViewTelemetryDetail(this.id_2)
             {
-                Timestamp = new DateTime(2000, 01, 02)
-                , TelemetrySummary = this.GetSummary("BBB", "ZZZ")
+                Timestamp = new DateTime(2000, 01, 02),
+                UserId = "BBB",
+                EntryKey = "ZZZ"
                 , AssemblyVersion = new AssemblyVersionInfo(new VersionData("6.0", null))
             });
             data.Add(new ViewTelemetryDetail(this.id_3)
             {
                 Timestamp = new DateTime(2000, 01, 03)
-                , TelemetrySummary = this.GetSummary("CCC", "ZZZ")
+                ,
+                UserId = "CCC", EntryKey = "ZZZ"
                 , AssemblyVersion = new AssemblyVersionInfo(new VersionData("4.0", null))
             });
 
@@ -70,10 +67,10 @@ namespace Telimena.Tests
         {
             List<ViewTelemetryDetail> data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail(this.id_3) {Timestamp = new DateTime(2000, 01, 03), TelemetrySummary = this.GetSummary("CCC", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_4) {Timestamp = new DateTime(2000, 01, 04), TelemetrySummary = this.GetSummary("CCC", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_1) {Timestamp = new DateTime(2000, 01, 01), TelemetrySummary = this.GetSummary("AAA", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_2) {Timestamp = new DateTime(2000, 01, 02), TelemetrySummary = this.GetSummary("BBB", "ZZZ")});
+            data.Add(new ViewTelemetryDetail(this.id_3) {Timestamp = new DateTime(2000, 01, 03), UserId = "CCC", EntryKey = "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_4) {Timestamp = new DateTime(2000, 01, 04), UserId = "CCC", EntryKey = "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_1) {Timestamp = new DateTime(2000, 01, 01), UserId = "AAA", EntryKey = "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_2) {Timestamp = new DateTime(2000, 01, 02), UserId = "BBB", EntryKey = "ZZZ"});
 
 
             List<Tuple<string, bool>> sorts = new List<Tuple<string, bool>>();
@@ -92,14 +89,14 @@ namespace Telimena.Tests
         {
             List<ViewTelemetryDetail> data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail(this.id_1) {Timestamp = new DateTime(2000, 01, 01), TelemetrySummary = this.GetSummary("AAA", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_2) {Timestamp = new DateTime(2000, 01, 02), TelemetrySummary = this.GetSummary("BBB", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_3) {Timestamp = new DateTime(2000, 01, 03), TelemetrySummary = this.GetSummary("CCC", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_4) {Timestamp = new DateTime(2000, 01, 04), TelemetrySummary = this.GetSummary("CCC", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_5) {Timestamp = new DateTime(2000, 01, 05), TelemetrySummary = this.GetSummary("AAA", "XXX")});
-            data.Add(new ViewTelemetryDetail(this.id_6) {Timestamp = new DateTime(2000, 01, 06), TelemetrySummary = this.GetSummary("AAA", "YYY")});
-            data.Add(new ViewTelemetryDetail(this.id_7) {Timestamp = new DateTime(2000, 01, 07), TelemetrySummary = this.GetSummary("BBB", "YYY")});
-            data.Add(new ViewTelemetryDetail(this.id_8) {Timestamp = new DateTime(2000, 01, 08), TelemetrySummary = this.GetSummary("BBB", "XXX")});
+            data.Add(new ViewTelemetryDetail(this.id_1) {Timestamp = new DateTime(2000, 01, 01), UserId = "AAA", EntryKey = "ZZZ" });
+            data.Add(new ViewTelemetryDetail(this.id_2) {Timestamp = new DateTime(2000, 01, 02), UserId = "BBB", EntryKey = "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_3) {Timestamp = new DateTime(2000, 01, 03), UserId = "CCC", EntryKey = "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_4) {Timestamp = new DateTime(2000, 01, 04), UserId = "CCC", EntryKey = "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_5) {Timestamp = new DateTime(2000, 01, 05), UserId = "AAA", EntryKey = "XXX"});
+            data.Add(new ViewTelemetryDetail(this.id_6) {Timestamp = new DateTime(2000, 01, 06), UserId = "AAA", EntryKey = "YYY"});
+            data.Add(new ViewTelemetryDetail(this.id_7) {Timestamp = new DateTime(2000, 01, 07), UserId = "BBB", EntryKey = "YYY"});
+            data.Add(new ViewTelemetryDetail(this.id_8) {Timestamp = new DateTime(2000, 01, 08), UserId = "BBB", EntryKey = "XXX"});
 
 
             List<Tuple<string, bool>> sorts = new List<Tuple<string, bool>>();
@@ -123,14 +120,14 @@ namespace Telimena.Tests
         {
             List<ViewTelemetryDetail> data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail(this.id_1) {Timestamp = new DateTime(2000, 01, 01), TelemetrySummary = this.GetSummary("AAA", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_2) {Timestamp = new DateTime(2000, 01, 02), TelemetrySummary = this.GetSummary("BBB", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_3) {Timestamp = new DateTime(2000, 01, 03), TelemetrySummary = this.GetSummary("CCC", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_4) {Timestamp = new DateTime(2000, 01, 04), TelemetrySummary = this.GetSummary("CCC", "ZZZ")});
-            data.Add(new ViewTelemetryDetail(this.id_5) {Timestamp = new DateTime(2000, 01, 05), TelemetrySummary = this.GetSummary("AAA", "XXX")});
-            data.Add(new ViewTelemetryDetail(this.id_6) {Timestamp = new DateTime(2000, 01, 06), TelemetrySummary = this.GetSummary("AAA", "YYY")});
-            data.Add(new ViewTelemetryDetail(this.id_7) {Timestamp = new DateTime(2000, 01, 07), TelemetrySummary = this.GetSummary("BBB", "YYY")});
-            data.Add(new ViewTelemetryDetail(this.id_8) {Timestamp = new DateTime(2000, 01, 08), TelemetrySummary = this.GetSummary("BBB", "XXX")});
+            data.Add(new ViewTelemetryDetail(this.id_1) {Timestamp = new DateTime(2000, 01, 01), UserId = "AAA", EntryKey= "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_2) {Timestamp = new DateTime(2000, 01, 02), UserId = "BBB", EntryKey= "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_3) {Timestamp = new DateTime(2000, 01, 03), UserId = "CCC", EntryKey= "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_4) {Timestamp = new DateTime(2000, 01, 04), UserId = "CCC", EntryKey= "ZZZ"});
+            data.Add(new ViewTelemetryDetail(this.id_5) {Timestamp = new DateTime(2000, 01, 05), UserId = "AAA", EntryKey= "XXX"});
+            data.Add(new ViewTelemetryDetail(this.id_6) {Timestamp = new DateTime(2000, 01, 06), UserId = "AAA", EntryKey= "YYY"});
+            data.Add(new ViewTelemetryDetail(this.id_7) {Timestamp = new DateTime(2000, 01, 07), UserId = "BBB", EntryKey= "YYY"});
+            data.Add(new ViewTelemetryDetail(this.id_8) {Timestamp = new DateTime(2000, 01, 08), UserId = "BBB", EntryKey = "XXX"});
 
 
             List<Tuple<string, bool>> sorts = new List<Tuple<string, bool>>();
@@ -155,54 +152,14 @@ namespace Telimena.Tests
         {
             List<ViewTelemetryDetail> data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail(this.id_1)
-            {
-                Timestamp = new DateTime(2000, 01, 01)
-                , TelemetrySummary = this.GetSummary("AAA", "ZZZ")
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))
-            });
-            data.Add(new ViewTelemetryDetail(this.id_2)
-            {
-                Timestamp = new DateTime(2000, 01, 02)
-                , TelemetrySummary = this.GetSummary("BBB", "ZZZ")
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("6.0", null))
-            });
-            data.Add(new ViewTelemetryDetail(this.id_3)
-            {
-                Timestamp = new DateTime(2000, 01, 03)
-                , TelemetrySummary = this.GetSummary("CCC", "ZZZ")
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("4.0", null))
-            });
-            data.Add(new ViewTelemetryDetail(this.id_4)
-            {
-                Timestamp = new DateTime(2000, 01, 04)
-                , TelemetrySummary = this.GetSummary("CCC", "ZZZ")
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("4.0", null))
-            });
-            data.Add(new ViewTelemetryDetail(this.id_5)
-            {
-                Timestamp = new DateTime(2000, 01, 05)
-                , TelemetrySummary = this.GetSummary("AAA", "XXX")
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))
-            });
-            data.Add(new ViewTelemetryDetail(this.id_6)
-            {
-                Timestamp = new DateTime(2000, 01, 06)
-                , TelemetrySummary = this.GetSummary("AAA", "YYY")
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))
-            });
-            data.Add(new ViewTelemetryDetail(this.id_7)
-            {
-                Timestamp = new DateTime(2000, 01, 07)
-                , TelemetrySummary = this.GetSummary("BBB", "YYY")
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("9.0", null))
-            });
-            data.Add(new ViewTelemetryDetail(this.id_8)
-            {
-                Timestamp = new DateTime(2000, 01, 08)
-                , TelemetrySummary = this.GetSummary("BBB", "XXX")
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("1.0", null))
-            });
+            data.Add(new ViewTelemetryDetail(this.id_1){Timestamp = new DateTime(2000, 01, 01), UserId = "AAA",EntryKey = "ZZZ", AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))});
+            data.Add(new ViewTelemetryDetail(this.id_2){Timestamp = new DateTime(2000, 01, 02), UserId = "BBB",EntryKey = "ZZZ", AssemblyVersion = new AssemblyVersionInfo(new VersionData("6.0", null))});
+            data.Add(new ViewTelemetryDetail(this.id_3){Timestamp = new DateTime(2000, 01, 03), UserId = "CCC",EntryKey = "ZZZ", AssemblyVersion = new AssemblyVersionInfo(new VersionData("4.0", null))});
+            data.Add(new ViewTelemetryDetail(this.id_4){Timestamp = new DateTime(2000, 01, 04), UserId = "CCC",EntryKey = "ZZZ", AssemblyVersion = new AssemblyVersionInfo(new VersionData("4.0", null))});
+            data.Add(new ViewTelemetryDetail(this.id_5){Timestamp = new DateTime(2000, 01, 05), UserId = "AAA",EntryKey = "XXX", AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))});
+            data.Add(new ViewTelemetryDetail(this.id_6){Timestamp = new DateTime(2000, 01, 06), UserId = "AAA",EntryKey = "YYY", AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))});
+            data.Add(new ViewTelemetryDetail(this.id_7){Timestamp = new DateTime(2000, 01, 07), UserId = "BBB",EntryKey = "YYY", AssemblyVersion = new AssemblyVersionInfo(new VersionData("9.0", null))});
+            data.Add(new ViewTelemetryDetail(this.id_8){Timestamp = new DateTime(2000, 01, 08), UserId = "BBB",EntryKey = "XXX", AssemblyVersion = new AssemblyVersionInfo(new VersionData("1.0", null))});
 
 
             List<Tuple<string, bool>> sorts = new List<Tuple<string, bool>>();
