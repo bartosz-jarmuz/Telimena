@@ -55,6 +55,7 @@ namespace Telimena.WebApp.UiStrings
             public static string LogsTable { get; } = "LogsTable";
             public static string SequenceHistoryTable { get; } = "SequenceHistoryTable";
             public static string ManageProgramSettingsBox { get; } = "ManageProgramSettingsBox";
+            public static string ProgramUpdatePackagesTable { get; } = "ProgramUpdatePackagesTable";
         }
 
         public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";

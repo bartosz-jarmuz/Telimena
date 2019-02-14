@@ -246,9 +246,10 @@
                 <h3 class="box-title">Update Packages</h3>
             </div>
             <div class="box-body">
-                <table class="table table-bordered table-hover dataTable">
+                <table class="table table-bordered table-hover dataTable" id="@Strings.Id.ProgramUpdatePackagesTable">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Id</th>
                             <th>Is Beta</th>
                             <th>FileName</th>
@@ -264,6 +265,7 @@
                         @foreach (ProgramUpdatePackageInfo pkg in Model.UpdatePackages)
                         {
                             <tr>
+                                <td>@pkg.ReleaseNotes</td>
                                 <td>@pkg.Guid</td>
                                 <td style="text-align: center">
                                     <input type="checkbox" data-pkg-id="@pkg.Guid" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "") />
@@ -276,10 +278,13 @@
                                 <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
                                 <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
                                 <td>
-                                    <button type="button" data-pkg-id="@pkg.Guid" class="btn btn-default btn-sm prepareReleaseNotesButton" data-toggle="modal" data-target="#setReleaseNotesModal">
-                                        Set release notes
-                                    </button>
-                                    @pkg.ReleaseNotes
+                                    
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm expand">Show</button>
+                                        <button type="button"  data-toggle="modal" data-target="#setReleaseNotesModal" data-pkg-id="@pkg.Guid" class="btn btn-default btn-sm prepareReleaseNotesButton">Set</button>
+                                    </div>
+
+                                    
                                 </td>
                             </tr>
                         }
@@ -322,11 +327,21 @@
     @Scripts.Render("~/Content/dataTables.bootstrap.min.js")
 
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
 
 
+            $('#@Strings.Id.ProgramUpdatePackagesTable').DataTable({
+                "columnDefs": [
+                    {
+                        "targets": [ 0 ],
+                        "visible": false,
+                        "searchable": false
+                    },
+                  
+                ]
+            });
 
-            $('.dataTable').DataTable();
+
             globalUtcConversion();
             LoadCurrentVersion();
             $('#@Strings.Id.DeleteProgramButton').click(function() {
@@ -341,25 +356,28 @@
                 e.preventDefault();
                 var form = $('#uploadProgramPackageForm')[0];
                 var formData = new FormData(form);
-                UploadFile(formData, '@Url.LatestApiUrl(ProgramsController.Routes.Upload, new {telemetryKey = @Model.TelemetryKey})',
+                UploadFile(formData,
+                    '@Url.LatestApiUrl(ProgramsController.Routes.Upload, new {telemetryKey = @Model.TelemetryKey})',
                     $(this).find('input'));
             });
 
-            $(".btn.prepareReleaseNotesButton").click(function () {
+            $(".btn.prepareReleaseNotesButton").click(function() {
                 var pkgId = $(this).data('pkg-id');
                 if (!pkgId) {
                     $('#releaseNotesPkgId').val(''); //clear the value - setting notes for new pkg
                 } else {
                     $('#releaseNotesPkgId').val(pkgId);
-                    var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.GetReleaseNotes, new { packageId = "__packageId__" })';
+                    var url =
+                        '@Url.LatestApiUrl(UpdatePackagesController.Routes.GetReleaseNotes, new {packageId = "__packageId__"})';
                     url = url.replace("__packageId__", pkgId);
-                    $.get(url, function(data) {
+                    $.get(url,
+                        function(data) {
                             $('#setReleaseNotesModal').find('textarea').val(data);
                         });
                 }
             });
 
-            $("#submitReleaseNotesButton").click(function () {
+            $("#submitReleaseNotesButton").click(function() {
                 var textArea = $(this).closest('.modal-content').find('textarea').val();
                 var pkgId = $('#releaseNotesPkgId').val();
                 if (!pkgId) {
@@ -367,13 +385,14 @@
                     $('#setReleaseNotesModal').modal('toggle');
                     $('#newPackageReleaseNotesSet').show();
                 } else {
-                    var url ='@Url.LatestApiUrl(UpdatePackagesController.Routes.SetReleaseNotes, new { packageId = "__packageId__" })';
+                    var url =
+                        '@Url.LatestApiUrl(UpdatePackagesController.Routes.SetReleaseNotes, new {packageId = "__packageId__"})';
                     url = url.replace("__packageId__", pkgId);
                     $.ajax({
                         type: 'PUT',
                         url: url,
-                        data: { @nameof(ReleaseNotesRequest.Notes) : textArea},
-                        success: function (result) {
+                        data: { @nameof(ReleaseNotesRequest.Notes): textArea },
+                        success: function(result) {
                             $('#setReleaseNotesModal').modal('toggle');
                             showSuccessTopAlertAndRefresh("Updated release notes.");
                         },
@@ -385,7 +404,30 @@
 
             });
 
+            $('#@Strings.Id.ProgramUpdatePackagesTable tbody').on('click',
+                '.expand',
+                function() {
+                    var tr = $(this).closest('tr');
+                    var table = $(this).closest('table').DataTable({ "bRetrieve": true });
+                    var row = table.row(tr);
 
+                    if (row.child.isShown()) {
+                        // This row is already open - close it
+                        row.child.hide();
+                        tr.removeClass('shown');
+                    } else {
+                        // Open this row
+                        row.child(format(row.data())).show();
+                        tr.addClass('shown');
+                    }
+                });
+
+            function format(d) {
+
+                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><tr><td><pre>' +
+                    d[0] +
+                    '</pre></td></tr></table>';
+            }
         });
 
 
@@ -404,7 +446,7 @@
                     success: function(result) {
                         showSuccessTopAlert(result);
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         showDangerTopAlert(getXhrErrorMessage(xhr));
                     }
                 });
@@ -418,14 +460,14 @@
         function SetUpdater(input) {
             var id = $('#@Strings.Id.UpdaterSelectList').val();
             var url =
-                '@Url.LatestApiUrl(ProgramsController.Routes.SetUpdater, new { telemetryKey = Model.TelemetryKey, updaterId = "__updaterId__" })';
+                '@Url.LatestApiUrl(ProgramsController.Routes.SetUpdater, new {telemetryKey = Model.TelemetryKey, updaterId = "__updaterId__"})';
             url = url
                 .replace("__updaterId__", id);
 
             $.ajax({
                 type: 'PUT',
                 url: url,
-                success: function (result) {
+                success: function(result) {
                     showSuccessTopAlertAndRefresh(result);
                 },
                 error: function(xhr) {
@@ -436,8 +478,7 @@
 
         function TogglePackageBeta(input) {
             var id = $(input).data("pkg-id");
-            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.ToggleBetaSetting,
-                           new { isBeta = "__isBeta__", packageId = "__packageId__" })';
+            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.ToggleBetaSetting, new {isBeta = "__isBeta__", packageId = "__packageId__"})';
             url = url
                 .replace("__isBeta__", input.checked)
                 .replace("__packageId__", id);
@@ -475,7 +516,7 @@
         function UploadFile(formData, url, button) {
 
             $.ajax({
-                url:  url,
+                url: url,
                 type: 'POST',
                 data: formData,
                 cache: false,
@@ -535,7 +576,6 @@
             }
         }
 
-       
 
         function ValidateUpdatePackageRequest(button, modelString, successCallback) {
             var input = $('#@Strings.Id.UploadProgramUpdateForm').find("input[name='uploadedPackage']")[0];
@@ -546,7 +586,7 @@
 
             $.ajax({
                     type: 'POST',
-                    url:  '@Url.LatestApiUrl(UpdatePackagesController.Routes.ValidateRequest)',
+                    url: '@Url.LatestApiUrl(UpdatePackagesController.Routes.ValidateRequest)',
                     contentType: "application/json; charset=utf-8",
                     datatype: 'Json',
                     data: modelString
@@ -555,7 +595,8 @@
                     var form = $('#@Strings.Id.UploadProgramUpdateForm')[0];
                     var formData = new FormData(form);
                     formData.append('Model', modelString);
-                    successCallback(formData, '@Url.LatestApiUrl(UpdatePackagesController.Routes.Upload)',
+                    successCallback(formData,
+                        '@Url.LatestApiUrl(UpdatePackagesController.Routes.Upload)',
                         button);
                 })
                 .fail(function(xhr) {
@@ -569,7 +610,8 @@
             $('#latestVersion').html('...');
             $.ajax({
                 type: 'GET',
-                url: '@Url.LatestApiUrl(ProgramsController.Routes.GetLatestVersionInfo, new {telemetryKey = @Model.TelemetryKey})',
+                url:
+                    '@Url.LatestApiUrl(ProgramsController.Routes.GetLatestVersionInfo, new {telemetryKey = @Model.TelemetryKey})',
                 success: function(response) {
                     if (response.PrimaryAssemblyVersion !== undefined) {
                         $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
@@ -579,7 +621,8 @@
             $('#versionsCount').html('...');
             $.ajax({
                 type: 'GET',
-                url:  '@Url.LatestApiUrl(ProgramsController.Routes.GetVersionsCount, new {telemetryKey = @Model.TelemetryKey})',
+                url:
+                    '@Url.LatestApiUrl(ProgramsController.Routes.GetVersionsCount, new {telemetryKey = @Model.TelemetryKey})',
                 success: function(response) {
                     $('#versionsCount').html(response);
                 }
