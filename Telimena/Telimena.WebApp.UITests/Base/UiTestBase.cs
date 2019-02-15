@@ -46,7 +46,7 @@ namespace Telimena.WebApp.UITests.Base
         {
             var browser = GetBrowser("Chrome");
 
-            browser.Manage().Window.Maximize();
+          //  browser.Manage().Window.Maximize();
             browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
             return browser;
         });

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using Telimena.WebApp.UiStrings;
 using Telimena.WebApp.UITests.Base;
@@ -255,14 +256,11 @@ namespace Telimena.WebApp.UITests._01._Ui
             var showBtn = this.TryFind(() => table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName("expand"))
                 , TimeSpan.FromSeconds(15));
             Assert.IsNotNull(showBtn);
-            try
-            {
-                wait.Until(ExpectedConditions.ElementToBeClickable(showBtn));
-            }
-            catch (Exception ex)
-            {
+            Actions actions = new Actions(this.Driver);
+            actions.MoveToElement(showBtn);
+            actions.Perform();
 
-            }
+            wait.Until(ExpectedConditions.ElementToBeClickable(showBtn));
             showBtn.Click();
             IWebElement notesSection =
                 this.TryFind(
@@ -280,7 +278,15 @@ namespace Telimena.WebApp.UITests._01._Ui
             var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
 
             var rows = table.FindElements(By.TagName("tr")).ToList();
-            var setBtn = wait.Until(ExpectedConditions.ElementToBeClickable(table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))));
+
+            var setBtn = this.TryFind(() => table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))
+                , TimeSpan.FromSeconds(15));
+
+            Actions actions = new Actions(this.Driver);
+            actions.MoveToElement(setBtn);
+            actions.Perform();
+
+            wait.Until(ExpectedConditions.ElementToBeClickable(setBtn));
 
             setBtn.Click();
 
