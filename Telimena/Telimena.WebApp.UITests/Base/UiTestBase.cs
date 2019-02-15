@@ -46,6 +46,7 @@ namespace Telimena.WebApp.UITests.Base
             var browser = GetBrowser("Chrome");
 
             browser.Manage().Window.Maximize();
+            browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
             return browser;
         });
 
@@ -55,15 +56,19 @@ namespace Telimena.WebApp.UITests.Base
             {
                 case "Chrome":
                     ChromeOptions opt = new ChromeOptions();
-                    
+               //     opt.AddArgument("--headless");
+
 #if DEBUG
 
 #else
-                opt.AddArgument("--headless");
+              //  opt.AddArgument("--headless");
 #endif
                     return new ChromeDriver(opt);
                 case "Firefox":
-                    return new FirefoxDriver();
+                    FirefoxOptions options = new FirefoxOptions();
+             //       options.AddArguments("--headless");
+                    var ff = new FirefoxDriver(options);
+                    return ff;
                 case "IE":
                     return new InternetExplorerDriver();
                 default:
