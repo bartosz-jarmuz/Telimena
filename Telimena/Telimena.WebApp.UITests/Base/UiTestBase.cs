@@ -41,7 +41,13 @@ namespace Telimena.WebApp.UITests.Base
             Assert.IsTrue(validateText(confirmationBox.Text), "Incorrect message: " + confirmationBox.Text);
         }
 
-        internal static Lazy<RemoteWebDriver> RemoteDriver = new Lazy<RemoteWebDriver>(() => GetBrowser("Chrome"));
+        internal static Lazy<RemoteWebDriver> RemoteDriver = new Lazy<RemoteWebDriver>(() =>
+        {
+            var browser = GetBrowser("Chrome");
+
+            browser.Manage().Window.Maximize();
+            return browser;
+        });
 
         private static RemoteWebDriver GetBrowser(string browser)
         {
@@ -49,6 +55,7 @@ namespace Telimena.WebApp.UITests.Base
             {
                 case "Chrome":
                     ChromeOptions opt = new ChromeOptions();
+                    
 #if DEBUG
 
 #else

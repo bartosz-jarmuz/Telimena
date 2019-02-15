@@ -20,7 +20,7 @@ namespace Telimena.WebApp.UITests._01._Ui
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_UiTests : UiTestBase
     {
-        [Test]
+        [Test, Order(4)]
         public void _04_RegisterAutomaticTestsClient()
         {
             try
@@ -33,7 +33,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        [Test]
+        [Test, Order(4)]
         public void _04b_RegisterAutomaticTestsClient_PackageUpdaterTest()
         {
             try
@@ -184,7 +184,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             Assert.AreEqual(assemblyName, infoElements[3].Text);
         }
 
-        [Test]
+        [Test, Order(5)]
         public void _05_UploadTestAppUpdate()
         {
 
@@ -220,7 +220,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 wait.Until(x => form.FindElements(By.ClassName("info")).FirstOrDefault(e => e.Text.Contains(file.Name)));
                 var notes = DateTimeOffset.UtcNow.ToString("O");
-                this.SetReleaseNotesOnPackageUpload(form, wait, notes);
+                this.SetReleaseNotesOnPackageUpload(form,  notes);
                 // ReSharper disable once PossibleNullReferenceException
 
                 var btn = wait.Until(ExpectedConditions.ElementToBeClickable(form.FindElements(By.TagName("input"))
@@ -231,7 +231,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.Navigate().Refresh();
                 
                 //wait for the reload and verify package uploaded and notes set OK
-                this.VerifyReleaseNotesOnPkg(wait, notes);
+                this.VerifyReleaseNotesOnPkg( notes);
 
             }
             catch (Exception ex)
@@ -240,15 +240,27 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        private void VerifyReleaseNotesOnPkg(WebDriverWait wait, string expectedNotes)
+        private void VerifyReleaseNotesOnPkg(string expectedNotes)
         {
+            var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+
             var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
 
             var rows = table.FindElements(By.TagName("tr")).ToList();
             var id = rows[1].FindElements(By.TagName("td"))[0].Text;
 
 
-            var showBtn = wait.Until(ExpectedConditions.ElementToBeClickable(rows[1].FindElement(By.ClassName("expand"))));
+            var showBtn = this.TryFind(() => table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName("expand"))
+                , TimeSpan.FromSeconds(15));
+            Assert.IsNotNull(showBtn);
+            try
+            {
+                wait.Until(ExpectedConditions.ElementToBeClickable(showBtn));
+            }
+            catch (Exception ex)
+            {
+
+            }
             showBtn.Click();
             IWebElement notesSection =
                 this.TryFind(
@@ -260,20 +272,23 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
 
-        private void SetReleaseNotesOnExistingPkg(WebDriverWait wait, string notes)
+        private void SetReleaseNotesOnExistingPkg(string notes)
         {
+            var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
 
             var rows = table.FindElements(By.TagName("tr")).ToList();
+            var setBtn = wait.Until(ExpectedConditions.ElementToBeClickable(table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))));
 
-            var setBtn = wait.Until(ExpectedConditions.ElementToBeClickable(rows[1].FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))));
             setBtn.Click();
 
             this.FillInReleaseNotesModal(wait, notes);
         }
 
-        private void SetReleaseNotesOnPackageUpload(IWebElement form, WebDriverWait wait, string notes)
+        private void SetReleaseNotesOnPackageUpload(IWebElement form, string notes)
         {
+            var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+
             var btn = wait.Until(ExpectedConditions.ElementToBeClickable(
                 form.FindElement(By.ClassName(@Strings.Css.PrepareReleaseNotesButton))));
 
@@ -296,13 +311,13 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
 
-        [Test]
+        [Test, Order(5)]
         public void _05b_UploadPackageUpdateTestAppUpdate()
         {
             this.UploadUpdatePackage(TestAppProvider.PackageUpdaterTestAppName, "PackageTriggerUpdaterTestApp v.2.0.0.0.zip");
         }
 
-        [Test]
+        [Test, Order(6)]
         public void _06_SetUpdaterForPackageTriggerApp()
         { 
 
@@ -324,7 +339,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        [Test]
+        [Test, Order(7)]
         public void _07_SetNotesOnExistingPackage()
         {
             try
@@ -339,12 +354,12 @@ namespace Telimena.WebApp.UITests._01._Ui
                 link.Click();
                 var notes = "ManualNotes" + DateTimeOffset.UtcNow.ToString("O");
 
-                this.SetReleaseNotesOnExistingPkg(wait, notes);
+                this.SetReleaseNotesOnExistingPkg( notes);
 
                 this.Driver.Navigate().Refresh();
 
                 //wait for the reload and verify package uploaded and notes set OK
-                this.VerifyReleaseNotesOnPkg(wait, notes);
+                this.VerifyReleaseNotesOnPkg( notes);
 
             }
             catch (Exception ex)
