@@ -7,6 +7,7 @@ namespace Telimena.WebApp.UiStrings
         {
             public static string ProgramInfoElement { get; } = "programInfoElement";
             public static string TopAlertBox { get; } = "top-alert-box";
+            public static string PrepareReleaseNotesButton { get; } = "prepare-release-notes";
         }
     }
 }

@@ -93,10 +93,10 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             
             element.Click();
-            IWebElement link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id($"{appName}_manageLink")));
+            IWebElement link = wait.Until(ExpectedConditions.ElementIsVisible(By.Id($"{appName}_manageLink")));
 
             link.Click();
-            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DeleteProgramTab + "Id"))).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DeleteProgramTab + "Id"))).Click();
 
             var deleteBtn = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.DeleteProgramButton)));
             deleteBtn.Click();
@@ -167,7 +167,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 }
             }
 
-            IWebElement programTable = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
+            IWebElement programTable = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
 
             var infoElements = programTable.FindElements(By.ClassName(Strings.Css.ProgramInfoElement));
 
@@ -192,6 +192,8 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         }
 
+
+
         public void UploadUpdatePackage(string appName, string packageFileName)
         {
             try
@@ -202,7 +204,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
                 this.Driver.FindElement(By.Id(appName + "_menu")).Click();
-                IWebElement link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(appName + "_manageLink")));
+                IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_manageLink")));
                 link.Click();
                 IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateForm)));
 
@@ -217,11 +219,19 @@ namespace Telimena.WebApp.UITests._01._Ui
                 input.SendKeys(file.FullName);
 
                 wait.Until(x => form.FindElements(By.ClassName("info")).FirstOrDefault(e => e.Text.Contains(file.Name)));
-
+                var notes = DateTimeOffset.UtcNow.ToString("O");
+                this.SetReleaseNotesOnPackageUpload(form, wait, notes);
                 // ReSharper disable once PossibleNullReferenceException
-                form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "submit").Click();
 
-                WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Uploaded package with ID"));
+                var btn = wait.Until(ExpectedConditions.ElementToBeClickable(form.FindElements(By.TagName("input"))
+                    .FirstOrDefault(x => x.GetAttribute("type") == "submit")));
+
+                btn.Click();
+                this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Uploaded package with ID"));
+                this.Driver.Navigate().Refresh();
+                
+                //wait for the reload and verify package uploaded and notes set OK
+                this.VerifyReleaseNotesOnPkg(wait, notes);
 
             }
             catch (Exception ex)
@@ -229,6 +239,62 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.HandleError(ex);
             }
         }
+
+        private void VerifyReleaseNotesOnPkg(WebDriverWait wait, string expectedNotes)
+        {
+            var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
+
+            var rows = table.FindElements(By.TagName("tr")).ToList();
+            var id = rows[1].FindElements(By.TagName("td"))[0].Text;
+
+
+            var showBtn = wait.Until(ExpectedConditions.ElementToBeClickable(rows[1].FindElement(By.ClassName("expand"))));
+            showBtn.Click();
+            IWebElement notesSection =
+                this.TryFind(
+                    () => table.FindElements(By.TagName("pre")).ToList()
+                        .FirstOrDefault(x => x.GetAttribute("data-pkg-id") == id), TimeSpan.FromSeconds(1));
+
+
+            Assert.AreEqual(expectedNotes, notesSection.Text);
+        }
+
+
+        private void SetReleaseNotesOnExistingPkg(WebDriverWait wait, string notes)
+        {
+            var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
+
+            var rows = table.FindElements(By.TagName("tr")).ToList();
+
+            var setBtn = wait.Until(ExpectedConditions.ElementToBeClickable(rows[1].FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))));
+            setBtn.Click();
+
+            this.FillInReleaseNotesModal(wait, notes);
+        }
+
+        private void SetReleaseNotesOnPackageUpload(IWebElement form, WebDriverWait wait, string notes)
+        {
+            var btn = wait.Until(ExpectedConditions.ElementToBeClickable(
+                form.FindElement(By.ClassName(@Strings.Css.PrepareReleaseNotesButton))));
+
+            btn.Click();
+
+            this.FillInReleaseNotesModal(wait, notes);
+        }
+
+        private void FillInReleaseNotesModal(WebDriverWait wait, string notes)
+        {
+
+            var modal = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.SetReleaseNotesModal)));
+
+            var area = modal.FindElement(By.TagName("textarea"));
+            area.Clear();
+            area.SendKeys(notes);
+
+            var submit = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.SubmitReleaseNotesButton)));
+            submit.Click();
+        }
+
 
         [Test]
         public void _05b_UploadPackageUpdateTestAppUpdate()
@@ -258,6 +324,37 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
+        [Test]
+        public void _07_SetNotesOnExistingPackage()
+        {
+            try
+            {
+
+                this.LoginAdminIfNeeded();
+
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+
+                this.Driver.FindElement(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_menu")).Click();
+                IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_manageLink")));
+                link.Click();
+                var notes = "ManualNotes" + DateTimeOffset.UtcNow.ToString("O");
+
+                this.SetReleaseNotesOnExistingPkg(wait, notes);
+
+                this.Driver.Navigate().Refresh();
+
+                //wait for the reload and verify package uploaded and notes set OK
+                this.VerifyReleaseNotesOnPkg(wait, notes);
+
+            }
+            catch (Exception ex)
+            {
+                this.HandleError(ex);
+            }
+
+        }
+
+
         private string GetUpdaterForApp(string appName)
         {
             try
@@ -266,11 +363,11 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                IWebElement link = wait.Until( SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(appName + "_menu")));
+                IWebElement link = wait.Until( ExpectedConditions.ElementToBeClickable(By.Id(appName + "_menu")));
 
                 link.Click();
 
-                link = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Id(appName+ "_manageLink")));
+                link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName+ "_manageLink")));
                 link.Click();
                 IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
 
@@ -301,7 +398,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.Driver.FindElement(By.Id(appName+ "_menu")).Click();
                 IWebElement link =
-                    wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(appName+ "_manageLink")));
+                    wait.Until(ExpectedConditions.ElementIsVisible(By.Id(appName+ "_manageLink")));
                 link.Click();
                 IWebElement input = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UpdaterSelectList)));
 
@@ -313,7 +410,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 new SelectElement(input).SelectByText(updaterName);
                 this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).Click();
 
-                WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Updater set to "+ updaterName));
+                this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Updater set to "+ updaterName));
             }
             catch (Exception ex)
             {

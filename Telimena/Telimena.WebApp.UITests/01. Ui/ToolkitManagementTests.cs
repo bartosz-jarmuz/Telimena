@@ -15,7 +15,10 @@ namespace Telimena.WebApp.UITests._01._Ui
     using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
     [TestFixture]
-    [TestFixture(), Timeout(1 * 60 * 1000)]
+    [TestFixture()]
+#if !DEBUG
+    [Timeout(1 * 60 * 1000)]
+#endif
     public partial class _1_UiTests : UiTestBase
     {
 

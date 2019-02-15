@@ -47,6 +47,7 @@ namespace Telimena.WebApp.UiStrings
             public static string ViewTelemetryPivotTable { get; } = "ViewTelemetryPivotTable";
             public static string UpdaterPackagesTable { get; } = "UpdaterPackagesTable";
             public static string UploadProgramUpdateForm { get; } = "UploadProgramUpdateForm";
+            public static string UploadFullProgramPackageForm { get; } = "UploadFullProgramPackageForm";
             public static string UpdaterSelectList { get; } = "UpdaterSelectList";
             public static string SubmitUpdaterChange { get; } = "SubmitUpdaterChange";
             public static string UpdaterExecutableName { get; } = "UpdaterExecutableName";
@@ -56,6 +57,9 @@ namespace Telimena.WebApp.UiStrings
             public static string SequenceHistoryTable { get; } = "SequenceHistoryTable";
             public static string ManageProgramSettingsBox { get; } = "ManageProgramSettingsBox";
             public static string ProgramUpdatePackagesTable { get; } = "ProgramUpdatePackagesTable";
+            public static string SetReleaseNotesModal { get; } = "SetReleaseNotesModal";
+            public static string ReleaseNotesPkgId { get; } = "ReleaseNotesPkgId";
+            public static string SubmitReleaseNotesButton { get; } = "SubmitReleaseNotesButton";
         }
 
         public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";
