@@ -60,6 +60,8 @@ namespace Telimena.WebApp.UiStrings
             public static string SetReleaseNotesModal { get; } = "SetReleaseNotesModal";
             public static string ReleaseNotesPkgId { get; } = "ReleaseNotesPkgId";
             public static string SubmitReleaseNotesButton { get; } = "SubmitReleaseNotesButton";
+            public static string TopAlertBox { get; } = "TopAlertBox";
+
         }
 
         public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -11,6 +12,7 @@ using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 using TelimenaClient.Model;
+using static System.Reflection.MethodBase;
 
 namespace Telimena.WebApp.UITests._01._Ui
 {
@@ -219,7 +221,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 input.SendKeys(file.FullName);
 
                 wait.Until(x => form.FindElements(By.ClassName("info")).FirstOrDefault(e => e.Text.Contains(file.Name)));
-                var notes = DateTimeOffset.UtcNow.ToString("O");
+                var notes = GetCurrentMethod().Name + DateTimeOffset.UtcNow.ToString("O");
                 this.SetReleaseNotesOnPackageUpload(form,  notes);
                 // ReSharper disable once PossibleNullReferenceException
 
@@ -352,11 +354,13 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.FindElement(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_menu")).Click();
                 IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_manageLink")));
                 link.Click();
-                var notes = "ManualNotes" + DateTimeOffset.UtcNow.ToString("O");
+                var notes = GetCurrentMethod().Name + DateTimeOffset.UtcNow.ToString("O");
 
                 this.SetReleaseNotesOnExistingPkg( notes);
 
-                this.Driver.Navigate().Refresh();
+                this.WaitForSuccessConfirmationWithText(wait, z=>z.Contains("Updated release notes."));
+
+                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.Id(Strings.Id.TopAlertBox)));
 
                 //wait for the reload and verify package uploaded and notes set OK
                 this.VerifyReleaseNotesOnPkg( notes);

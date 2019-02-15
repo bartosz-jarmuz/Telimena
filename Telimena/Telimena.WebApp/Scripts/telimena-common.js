@@ -57,11 +57,11 @@ function showTopAlertBox(alertClass, iconClass, text, header) {
     $box.find('h4').text(header);
     $box.find('div.text').text(text);
     $box.find('i').css(iconClass);
-    $box.show().attr("class", "alert top-alert-box callout alert-dismissible " + alertClass);
+    $box.show().attr("class", "alert callout alert-dismissible " + alertClass);
 }
 
 function getTopAlertBox() {
-    return  $($('.top-alert-box')[0]);    
+    return $($('#TopAlertBox')[0]);    
 }
 
 function getTopAlertBoxTextElement($box) {

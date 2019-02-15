@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,17 +26,17 @@ namespace Telimena.WebApp.UITests.Base
 
         public void WaitForSuccessConfirmationWithText(WebDriverWait wait, Func<string, bool> validateText)
         {
-            this.WaitForSuccessConfirmationWithTextAndClass(wait, "success", validateText);
+            this.WaitForConfirmationWithTextAndClass(wait, "success", validateText);
         }
 
         public void WaitForErrorConfirmationWithText(WebDriverWait wait, Func<string, bool> validateText)
         {
-            this.WaitForSuccessConfirmationWithTextAndClass(wait, "danger", validateText);
+            this.WaitForConfirmationWithTextAndClass(wait, "danger", validateText);
         }
 
-        public void WaitForSuccessConfirmationWithTextAndClass(WebDriverWait wait, string cssPart, Func<string, bool> validateText)
+        public void WaitForConfirmationWithTextAndClass(WebDriverWait wait, string cssPart, Func<string, bool> validateText)
         {
-            var confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName(Strings.Css.TopAlertBox)));
+            var confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.TopAlertBox)));
 
             Assert.IsTrue(confirmationBox.GetAttribute("class").Contains(cssPart), "The alert has incorrect class: " + confirmationBox.GetAttribute("class"));
             Assert.IsTrue(validateText(confirmationBox.Text), "Incorrect message: " + confirmationBox.Text);
@@ -78,6 +79,63 @@ namespace Telimena.WebApp.UITests.Base
 
         internal IWebDriver Driver => RemoteDriver.Value;
         internal ITakesScreenshot Screenshooter => this.Driver as ITakesScreenshot;
+
+        public void WaitForPageLoad(int maxWaitTimeInSeconds)
+        {
+            string state = string.Empty;
+            try
+            {
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(maxWaitTimeInSeconds));
+
+                //Checks every 500 ms whether predicate returns true if returns exit otherwise keep trying till it returns ture
+                wait.Until(d =>
+                {
+
+                    try
+                    {
+                        state = ((IJavaScriptExecutor) this.Driver).ExecuteScript(@"return document.readyState").ToString();
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        //Ignore
+                    }
+                    catch (NoSuchWindowException)
+                    {
+                        //when popup is closed, switch to last windows
+                        this.Driver.SwitchTo().Window(this.Driver.WindowHandles.Last());
+                    }
+
+                    //In IE7 there are chances we may get state as loaded instead of complete
+                    return (state.Equals("complete", StringComparison.InvariantCultureIgnoreCase) ||
+                            state.Equals("loaded", StringComparison.InvariantCultureIgnoreCase));
+
+                });
+            }
+            catch (TimeoutException)
+            {
+                //sometimes Page remains in Interactive mode and never becomes Complete, then we can still try to access the controls
+                if (!state.Equals("interactive", StringComparison.InvariantCultureIgnoreCase))
+                    throw;
+            }
+            catch (NullReferenceException)
+            {
+                //sometimes Page remains in Interactive mode and never becomes Complete, then we can still try to access the controls
+                if (!state.Equals("interactive", StringComparison.InvariantCultureIgnoreCase))
+                    throw;
+            }
+            catch (WebDriverException)
+            {
+                if (this.Driver.WindowHandles.Count == 1)
+                {
+                    this.Driver.SwitchTo().Window(this.Driver.WindowHandles[0]);
+                }
+
+                state = ((IJavaScriptExecutor) this.Driver).ExecuteScript(@"return document.readyState").ToString();
+                if (!(state.Equals("complete", StringComparison.InvariantCultureIgnoreCase) ||
+                      state.Equals("loaded", StringComparison.InvariantCultureIgnoreCase)))
+                    throw;
+            }
+        }
 
         public void GoToAdminHomePage()
         {
