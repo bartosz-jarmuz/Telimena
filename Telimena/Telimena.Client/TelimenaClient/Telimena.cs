@@ -41,19 +41,30 @@ namespace TelimenaClient
         [MethodImpl(MethodImplOptions.NoInlining)]
         private Telimena(ITelimenaStartupInfo startupInfo)
         {
-            this.propertiesInternal= new TelimenaProperties(startupInfo);
-            this.Locator = new Locator(this.Properties.StaticProgramInfo);
-
-            this.telemetryModule = new TelemetryModule(this.Properties);
-            this.updates = new UpdatesModule(this);
-
-            this.httpClient = new TelimenaHttpClient(new HttpClient {BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl});
-            this.Messenger = new Messenger(this.Serializer, this.httpClient);
-
-            ((TelemetryModule) this.telemetryModule).InitializeTelemetryClient();
-            if (startupInfo.RegisterUnhandledExceptionsTracking)
+            try
             {
-                AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
+                this.propertiesInternal = new TelimenaProperties(startupInfo);
+                this.Locator = new Locator(this.Properties.StaticProgramInfo);
+
+                this.telemetryModule = new TelemetryModule(this.Properties);
+                this.updates = new UpdatesModule(this);
+
+                this.httpClient = new TelimenaHttpClient(new HttpClient
+                {
+                    BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl
+                });
+                this.Messenger = new Messenger(this.Serializer, this.httpClient);
+
+                ((TelemetryModule) this.telemetryModule).InitializeTelemetryClient();
+                if (startupInfo.RegisterUnhandledExceptionsTracking)
+                {
+                    AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
+                }
+            }
+            catch
+            {
+                //above all, we don't want to throw errors in client apps.
+                //No telemetry is better than boom.
             }
         }
 

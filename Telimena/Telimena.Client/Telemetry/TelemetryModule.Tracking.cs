@@ -16,30 +16,72 @@ namespace TelimenaClient
         /// <inheritdoc />
         public void View(string viewName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null)
         {
-            var tele = new PageViewTelemetry(viewName);
-            if (telemetryData != null)
+            try
             {
-                Utils.CopyDictionary(telemetryData, tele.Properties);
+
+                var tele = new PageViewTelemetry(viewName);
+                if (telemetryData != null)
+                {
+                    Utils.CopyDictionary(telemetryData, tele.Properties);
+                }
+
+                this.TelemetryClient.TrackPageView(tele);
             }
-            this.TelemetryClient.TrackPageView(tele);
+            catch
+            {
+                if (!this.properties.SuppressAllErrors)
+                {
+                    throw;
+                }
+            }
         }
 
         /// <inheritdoc />
         public void Event(string eventName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null)
         {
-            this.TelemetryClient.TrackEvent(eventName, telemetryData, metrics);
+            try
+            {
+                this.TelemetryClient.TrackEvent(eventName, telemetryData, metrics);
+            }
+            catch
+            {
+                if (!this.properties.SuppressAllErrors)
+                {
+                    throw;
+                }
+            }
         }
 
         /// <inheritdoc />
         public void Exception(Exception exception, Dictionary<string, string> telemetryData = null)
         {
-            this.TelemetryClient.TrackException(exception);
+            try
+            {
+                this.TelemetryClient.TrackException(exception);
+            }
+            catch
+            {
+                if (!this.properties.SuppressAllErrors)
+                {
+                    throw;
+                }
+            }
         }
 
         /// <inheritdoc />
         public void Log(LogLevel level,  string message)
         {
-            this.TelemetryClient.TrackTrace(message, LogSeverityMapper.Map(level));
+            try
+            {
+                this.TelemetryClient.TrackTrace(message, LogSeverityMapper.Map(level));
+            }
+            catch
+            {
+                if (!this.properties.SuppressAllErrors)
+                {
+                    throw;
+                }
+            }
         }
     }
 }
