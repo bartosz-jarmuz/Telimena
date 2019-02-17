@@ -18,7 +18,7 @@ namespace TelimenaClient
 #elif Dev
         internal static readonly Uri DefaultApiUri = new Uri("https://telimena-dev.azurewebsites.net/");
 #else
-        internal static readonly Uri DefaultApiUri = new Uri("https://telimena-test.azurewebsites.net/");
+        internal static readonly Uri DefaultApiUri = new Uri("https://telimena-alpha.azurewebsites.net/");
 #endif
 
         /// <summary>
