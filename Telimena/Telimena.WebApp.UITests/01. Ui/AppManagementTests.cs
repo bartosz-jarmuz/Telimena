@@ -23,7 +23,7 @@ namespace Telimena.WebApp.UITests._01._Ui
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_UiTests : UiTestBase
     {
-        [Test, Order(4)]
+        [Test, Order(4), Retry(3)]
         public void _04_RegisterAutomaticTestsClient()
         {
             try
@@ -36,7 +36,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        [Test, Order(4)]
+        [Test, Order(4), Retry(3)]
         public void _04b_RegisterAutomaticTestsClient_PackageUpdaterTest()
         {
             try
@@ -50,7 +50,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        [Test]
+        [Test, Retry(3)]
         public void RegisterTempTestApp()
         {
             try
@@ -187,7 +187,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             Assert.AreEqual(assemblyName, infoElements[3].Text);
         }
 
-        [Test, Order(5)]
+        [Test, Order(5), Retry(3)]
         public void _05_UploadTestAppUpdate()
         {
 
@@ -319,13 +319,13 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
 
-        [Test, Order(5)]
+        [Test, Order(5), Retry(3)]
         public void _05b_UploadPackageUpdateTestAppUpdate()
         {
             this.UploadUpdatePackage(TestAppProvider.PackageUpdaterTestAppName, "PackageTriggerUpdaterTestApp v.2.0.0.0.zip");
         }
 
-        [Test, Order(6)]
+        [Test, Order(6), Retry(3)]
         public void _06_SetUpdaterForPackageTriggerApp()
         { 
 
@@ -347,7 +347,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        [Test, Order(7)]
+        [Test, Order(7), Retry(3)]
         public void _07_SetNotesOnExistingPackage()
         {
             try

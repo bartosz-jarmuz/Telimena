@@ -15,7 +15,7 @@ namespace Telimena.WebApp.UITests._01._Ui
     public partial class _1_UiTests : UiTestBase
     {
 
-        [Test, Order(1)]
+        [Test, Order(1), Retry(3)]
         public void AdminLoginOk()
         {
             try
@@ -54,7 +54,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
 
-        [Test, Order(0)]
+        [Test, Order(0), Retry(3)]
         public void AdminLogin_Failed()
         {
             try

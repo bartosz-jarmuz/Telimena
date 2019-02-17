@@ -55,7 +55,7 @@ namespace Telimena.WebApp.UITests._01._Ui
   
 
 
-        [Test, Order(1)]
+        [Test, Order(1), Retry(3)]
         public void _01_UploadToolkit()
         {
             this.GoToAdminHomePage();
@@ -82,7 +82,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         }
 
-        [Test, Order(2)]
+        [Test, Order(2), Retry(3)]
         public void _02_UploadUpdaterExeTest()
         {
             try
@@ -96,7 +96,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
 
-        [Test, Order(3)]
+        [Test, Order(3), Retry(3)]
         public void _03_UploadUpdaterZipTest()
         {
             try
@@ -109,7 +109,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        [Test, Order(3)]
+        [Test, Order(3), Retry(3)]
         public void _03b_UploadPackageUpdaterZipTest()
         {
             try
@@ -122,13 +122,13 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        [Test, Order(4)]
+        [Test, Order(4), Retry(3)]
         public void _04a_SetDefaultUpdaterPublic()
         {
             this.SetUpdaterPublic(DefaultToolkitNames.UpdaterInternalName);
         }
 
-        [Test, Order(4)]
+        [Test, Order(4), Retry(3)]
         public void _04b_SetPackageTriggerUpdaterPublic()
         {
             this.SetUpdaterPublic(DefaultToolkitNames.PackageTriggerUpdaterInternalName);

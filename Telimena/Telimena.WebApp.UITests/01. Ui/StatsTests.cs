@@ -67,7 +67,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
         [Test]
-        [Timeout(3*60*1000)]
+        [Timeout(3*60*1000), Retry(3)]
         public async Task Test_AppUsageTable()
         {
             string viewName = nameof(this.Test_AppUsageTable);
