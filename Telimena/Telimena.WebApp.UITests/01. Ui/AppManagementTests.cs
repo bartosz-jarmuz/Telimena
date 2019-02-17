@@ -197,11 +197,24 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         private void ClickOnManageProgramMenu(string appName)
         {
-            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
-            var prgMenu = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_menu")));
-            prgMenu.Click();
-            IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_manageLink")));
-            link.Click();
+            Retrier.RetryAsync(() =>
+            {
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+                var prgMenu = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_menu")));
+
+                Actions actions = new Actions(this.Driver);
+                actions.MoveToElement(prgMenu);
+                actions.Perform();
+
+                prgMenu.Click();
+                IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_manageLink")));
+                actions = new Actions(this.Driver);
+                actions.MoveToElement(link);
+                actions.Perform();
+
+                link.Click();
+            }, TimeSpan.FromMilliseconds(500), 3).GetAwaiter().GetResult();
+           
 
         }
 
