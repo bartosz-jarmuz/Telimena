@@ -155,7 +155,6 @@
       <Link>Properties\TelimenaKey.snk</Link>
     </None>
     <None Include="Properties\addToZip.ps1" />
-    <None Include="packages.config" />
     <None Include="Properties\Telimena.Client.nuspec" />
   </ItemGroup>
   <ItemGroup>
