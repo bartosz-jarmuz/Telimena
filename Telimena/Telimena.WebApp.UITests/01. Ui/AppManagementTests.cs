@@ -195,6 +195,15 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         }
 
+        private void ClickOnManageProgramMenu(string appName)
+        {
+            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+            var prgMenu = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_menu")));
+            prgMenu.Click();
+            IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_manageLink")));
+            link.Click();
+
+        }
 
 
         public void UploadUpdatePackage(string appName, string packageFileName)
@@ -206,11 +215,9 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.Driver.FindElement(By.Id(appName + "_menu")).Click();
-                IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_manageLink")));
-                link.Click();
-                IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateForm)));
+                this.ClickOnManageProgramMenu(appName);
 
+                IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateForm)));
                 FileInfo file = TestAppProvider.GetFile(packageFileName);
 
                 IWebElement input = form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "file");
@@ -357,9 +364,9 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.Driver.FindElement(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_menu")).Click();
-                IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_manageLink")));
-                link.Click();
+            
+                this.ClickOnManageProgramMenu(TestAppProvider.AutomaticTestsClientAppName);
+
                 var notes = GetCurrentMethod().Name + DateTimeOffset.UtcNow.ToString("O");
 
                 this.SetReleaseNotesOnExistingPkg( notes);
@@ -388,13 +395,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                IWebElement link = wait.Until( ExpectedConditions.ElementToBeClickable(By.Id(appName + "_menu")));
-
-                link.Click();
-
-                link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName+ "_manageLink")));
-                link.Click();
-                IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramSummaryBox)));
+                this.ClickOnManageProgramMenu(appName);
 
                 IWebElement input = this.Driver.FindElement(By.Id(Strings.Id.UpdaterSelectList));
                 if (input == null)
@@ -421,10 +422,8 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.Driver.FindElement(By.Id(appName+ "_menu")).Click();
-                IWebElement link =
-                    wait.Until(ExpectedConditions.ElementIsVisible(By.Id(appName+ "_manageLink")));
-                link.Click();
+                this.ClickOnManageProgramMenu(appName);
+
                 IWebElement input = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UpdaterSelectList)));
 
                 if (input == null)
