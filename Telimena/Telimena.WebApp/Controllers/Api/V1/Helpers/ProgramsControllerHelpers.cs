@@ -94,7 +94,10 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
                 }
                 else
                 {
-                    maxVersionInPackages = (await unitOfWork.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id).ConfigureAwait(false)).SupportedToolkitVersion;
+                    var pkg = (await unitOfWork.ProgramPackages.FirstOrDefaultAsync(x => x.ProgramId == program.Id)
+                        .ConfigureAwait(false));
+
+                    maxVersionInPackages = pkg?.SupportedToolkitVersion??"0.0.0.0";
                 }
             }
 

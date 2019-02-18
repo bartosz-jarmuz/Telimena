@@ -200,7 +200,7 @@ namespace TelimenaClient.Tests
             packages.ForEach(x=>x.StoredFilePath = Locator.Static.BuildUpdatePackagePath(currentUpdateSubfolder, x).FullName);
 
             Tuple<XDocument, FileInfo> tuple = UpdateInstructionCreator.CreateXDoc(packages
-                , new ProgramInfo {PrimaryAssembly = new Model.AssemblyInfo {Location = @"C:\AppFolder\MyApp.exe"}});
+                , new ProgramInfo {PrimaryAssembly = new Model.AssemblyInfo {Location = @"C:\AppFolder\MyApp.exe"}}, "Program Display Name");
             XDocument xDoc = tuple.Item1;
             FileInfo file = tuple.Item2;
             Assert.AreEqual($@"{currentUpdateSubfolder.FullName}\UpdateInstructions.xml", file.FullName);
@@ -209,6 +209,7 @@ namespace TelimenaClient.Tests
 
             Assert.AreEqual(@"3.5", updaterInstructions.LatestVersion);
             Assert.AreEqual(@"C:\AppFolder\MyApp.exe", updaterInstructions.ProgramExecutableLocation);
+            Assert.AreEqual("Program Display Name", updaterInstructions.ProgramName);
 
             Assert.That(()=>updaterInstructions.Packages[0].Version, Is.EqualTo("1.0"));      
             Assert.That(()=>updaterInstructions.Packages[1].Version, Is.EqualTo("2.0"));      

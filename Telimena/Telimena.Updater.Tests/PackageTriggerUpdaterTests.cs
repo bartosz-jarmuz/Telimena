@@ -78,12 +78,13 @@ namespace TelimenaUpdaterTests
 
 
             Tuple<XDocument, FileInfo> tuple = UpdateInstructionCreator.CreateXDoc(packages
-                , new ProgramInfo { PrimaryAssembly = new AssemblyInfo { Location = @"C:\AppFolder\MyApp.exe" } });
+                , new ProgramInfo { PrimaryAssembly = new AssemblyInfo { Location = @"C:\AppFolder\MyApp.exe" } }, "Program Display Name");
             XDocument xDoc = tuple.Item1;
             FileInfo file = tuple.Item2;
             Assert.AreEqual($@"{this.Update12Folder.FullName}\UpdateInstructions.xml", file.FullName);
 
             UpdateInstructions instructions = UpdateInstructionsReader.DeserializeDocument(xDoc);
+            Assert.AreEqual("Program Display Name", instructions.ProgramName);
             Assert.That(()=> instructions.Packages.First().Version, Is.EqualTo("1.1.2"));
             Assert.That(()=> instructions.Packages.Last().Version, Is.EqualTo("1.2"));
             var worker = new PackageUpdaterWorker();

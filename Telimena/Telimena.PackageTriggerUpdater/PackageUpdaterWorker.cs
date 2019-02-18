@@ -10,7 +10,7 @@ namespace Telimena.PackageTriggerUpdater
 {
     public class PackageUpdaterWorker
     {
-        private readonly string[] nonExecutableExtensions = {".dll", ".txt", ".xml", ".docx"};
+        private readonly string[] nonExecutableExtensions = {".dll", ".txt", ".xml", ".docx", ".json"};
 
         public void TriggerUpdate(UpdaterStartupSettings settings, UpdateInstructions instructions)
         {

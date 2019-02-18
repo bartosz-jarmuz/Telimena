@@ -36,7 +36,7 @@ namespace TelimenaClient
                     FileInfo updaterFile = await this.InstallUpdater(updaterUpdate).ConfigureAwait(false);
                     await this.DownloadUpdatePackages(packagesToInstall).ConfigureAwait(false);
 
-                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo.Program);
+                    FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo.Program, this.programInfo.Program.Name);
                     string maxVersion = packagesToInstall.GetMaxVersion();
                     bool installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(maxVersion, this.programInfo);
                     if (installUpdatesNow)

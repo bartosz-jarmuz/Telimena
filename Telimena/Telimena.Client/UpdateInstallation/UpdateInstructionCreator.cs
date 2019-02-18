@@ -11,9 +11,9 @@ namespace TelimenaClient
 {
     internal static class UpdateInstructionCreator
     {
-        public static FileInfo CreateInstructionsFile(IEnumerable<UpdatePackageData> packages, ProgramInfo programInfo)
+        public static FileInfo CreateInstructionsFile(IEnumerable<UpdatePackageData> packages, ProgramInfo programInfo, string programName)
         {
-            Tuple<XDocument, FileInfo> tuple = CreateXDoc(packages, programInfo);
+            Tuple<XDocument, FileInfo> tuple = CreateXDoc(packages, programInfo, programName);
             XDocument xDoc = tuple.Item1;
             FileInfo file = tuple.Item2;
 
@@ -22,7 +22,8 @@ namespace TelimenaClient
             return file;
         }
 
-        internal static Tuple<XDocument, FileInfo> CreateXDoc(IEnumerable<UpdatePackageData> packages, ProgramInfo programInfo)
+        internal static Tuple<XDocument, FileInfo> CreateXDoc(IEnumerable<UpdatePackageData> packages
+            , ProgramInfo programInfo, string programName)
         {
             List<UpdatePackageData> sorted = Sort(packages);
             DirectoryInfo updatesFolder = new FileInfo(sorted.First().StoredFilePath).Directory.Parent;
@@ -30,6 +31,7 @@ namespace TelimenaClient
 
             UpdateInstructions instructions = new UpdateInstructions()
             {
+                ProgramName = programName,
                 LatestVersion = sorted.Last().Version,
                 ProgramExecutableLocation = programInfo.PrimaryAssemblyPath,
                 Packages = new List<UpdateInstructions.PackageData>(sorted.Select(data => new UpdateInstructions.PackageData()

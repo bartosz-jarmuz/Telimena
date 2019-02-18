@@ -20,13 +20,23 @@ namespace Telimena.Updater
             this.Instructions = instructions;
             this.InitializeComponent();
             this.UpdateVersionInfoLabel = this.Instructions.LatestVersion;
-            this.TitleLabel = "Updater v. " + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            this.titlePrefix = this.GetTitle();
+            this.TitleLabel = this.titlePrefix;
             this.PrepareReleaseNotes();
         }
+
+        private readonly string titlePrefix;
+
+        private string GetTitle()
+        {
+            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+            return $"{this.Instructions.ProgramName} Updater v. {version}";
+        }
+
         public MainWindow()
         {
             this.InitializeComponent();
-            MessageBox.Show("In order to check for updates, run the main app.\r\n" + "The updater is not a standalone application.", "Telimena Updater"
+            MessageBox.Show("In order to check for updates, run the main app.\r\n" + "The updater is not a standalone application.", this.titlePrefix
                 , MessageBoxButton.OK, MessageBoxImage.Information);
             Application.Current.Shutdown();
         }
@@ -38,7 +48,7 @@ namespace Telimena.Updater
 
         private void PrepareReleaseNotes()
         {
-            if (this.Instructions.Packages.Any(x => !string.IsNullOrEmpty(x.ReleaseNotes)))
+            if (this.Instructions.Packages != null && this.Instructions.Packages.Any(x => !string.IsNullOrEmpty(x.ReleaseNotes)))
             {
                 this.ReleaseNotesVisible = true;
                 this.ReleaseNotes = string.Join("\r\n", this.Instructions.Packages.Select(x => x.ReleaseNotes));
@@ -68,7 +78,7 @@ namespace Telimena.Updater
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while updating the program.\r\n{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"An error occurred while updating the program.\r\n{ex}", $"Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             Environment.Exit(0);
         }

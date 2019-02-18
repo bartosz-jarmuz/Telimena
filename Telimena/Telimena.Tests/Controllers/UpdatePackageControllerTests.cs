@@ -80,6 +80,24 @@ namespace Telimena.Tests
         }
 
         [Test]
+        public void NoPackagesAvailable_ShouldNotThrowErrors()
+        {
+            ProgramRepository prgRepo = new ProgramRepository(this.Context);
+            prgRepo.Add(new Program("prg", this.Program1Key) { Id = 1 });
+            this.Context.SaveChanges();
+            IProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new Mock<ITelimenaUserManager>().Object, TestingUtilities.GetMockVersionReader().Object);
+
+            ProgramsController sut = new ProgramsController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            UpdateRequest request = new UpdateRequest(this.Program1Key, new VersionData("", "1.2.0.0"), this.User1Guid, false, "0.7.0.0", "1.0.0.0");
+
+            UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
+
+            Assert.AreEqual(0, result.UpdatePackages.Count());
+            Assert.IsNull(result.Exception);
+
+        }
+
+        [Test]
         public void Beta_NonStandaloneUpdateAvailable()
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>

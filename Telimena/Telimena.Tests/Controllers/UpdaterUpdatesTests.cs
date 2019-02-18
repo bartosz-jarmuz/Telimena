@@ -146,6 +146,29 @@ namespace Telimena.Tests
         }
 
         [Test]
+        public void Test_MissingMinimumToolkitInfo()
+        {
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
+            var defaultUpdater = unit.UpdaterRepository.GetUpdater(DefaultToolkitNames.UpdaterInternalName).GetAwaiter().GetResult();
+            // assert that empty min version does not break the query
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "", GenerateStream("2.1.8.5"), this.saver).GetAwaiter().GetResult();
+            unit.CompleteAsync().GetAwaiter().GetResult();
+
+            UpdatersController controller = new UpdatersController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), 
+                userId: this.User1Guid, acceptBeta: false, 
+                updaterVersion: "1.0"
+                , toolkitVersion: "1.3.0");
+
+            UpdateResponse result = controller.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.AreEqual("2.1.8.5", result.UpdatePackages.Single().Version);
+            Assert.IsNull(result.Exception);
+        }
+
+
+
+
+        [Test]
         public void Test_LatestUpdaterIsCompatible()
         {
             ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);

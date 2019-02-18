@@ -297,8 +297,6 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             try
             {
-                //UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
-
                 Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey).ConfigureAwait(false);
                 if (program == null)
                 {

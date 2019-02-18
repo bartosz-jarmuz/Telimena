@@ -77,7 +77,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             if (newerOnes.Any())
             {
-                List<UpdaterPackageInfo> compatibleOnes = newerOnes.Where(x => toolkitVersion.IsNewerOrEqualVersion(x.MinimumRequiredToolkitVersion))
+                List<UpdaterPackageInfo> compatibleOnes = newerOnes.Where(x => string.IsNullOrEmpty(x.MinimumRequiredToolkitVersion) || toolkitVersion.IsNewerOrEqualVersion(x.MinimumRequiredToolkitVersion))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x => x.Id).ToList();
                 if (includingBeta)
                 {
@@ -142,6 +142,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             string actualVersion = await this.streamVersionReader.GetFileVersion(fileStream, updater.FileName, true).ConfigureAwait(false);
             fileStream.Position = 0;
             fileStream = await Utilities.EnsureStreamIsZipped(updater.FileName, fileStream).ConfigureAwait(false);
+
+            if (string.IsNullOrEmpty(minimumRequiredToolkitVersion))
+            {
+                minimumRequiredToolkitVersion = "0.0.0.0";
+            }
 
             UpdaterPackageInfo pkg = await this.TelimenaContext.UpdaterPackages.Where(x =>
                 x.FileName == updater.FileName && x.Version == actualVersion && x.MinimumRequiredToolkitVersion == minimumRequiredToolkitVersion &&

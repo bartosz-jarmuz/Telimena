@@ -8,6 +8,12 @@ namespace Telimena.Updater
     public class UpdateInstructions
     {
         /// <summary>
+        /// Gets or sets the name of the program.
+        /// </summary>
+        /// <value>The name of the program.</value>
+        public string ProgramName { get; set; }
+
+        /// <summary>
         /// Program exe location
         /// </summary>
         public string ProgramExecutableLocation { get; set; }
