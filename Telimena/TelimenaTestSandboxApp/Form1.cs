@@ -31,8 +31,8 @@ namespace TelimenaTestSandboxApp
                 : Properties.Settings.Default.telemetryKey;
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
-                this.teli =
-                    Telimena.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text)){UserInfo = new UserInfo(){UserId = this.userNameTextBox.Text}}) as Telimena;
+                this.Telimena =
+                    TelimenaFactory.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text)){UserInfo = new UserInfo(){UserId = this.userNameTextBox.Text}}) as Telimena;
             }
 
             this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
@@ -48,7 +48,7 @@ namespace TelimenaTestSandboxApp
             return JsonConvert.SerializeObject(response, settings);
         }
 
-        private ITelimena teli;
+        private ITelimena Telimena;
         private TelimenaHammer hammer;
 
         private void ThrowUnhandledButton_Click(object sender, EventArgs e)
@@ -67,7 +67,7 @@ namespace TelimenaTestSandboxApp
 
                 for (int index = 0; index < numberOfMessages; index++)
                 {
-                        this.teli.Tracking.View(viewName, new Dictionary<string, string>(){{"SomeViewMetric", $"{new Random().Next(100)}"}});
+                        this.Telimena.Track.View(viewName, new Dictionary<string, string>(){{"SomeViewMetric", $"{new Random().Next(100)}"}});
                 }
                 sw.Stop();
                 this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of view [{viewName}] access" + Environment.NewLine;
@@ -83,7 +83,7 @@ namespace TelimenaTestSandboxApp
             }
             catch (Exception ex)
             {
-                this.teli.Tracking.Exception(ex);
+                this.Telimena.Track.Exception(ex);
             }
 
                 this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Thrown error: {this.telemetryDataTextBox.Text}" + Environment.NewLine;
@@ -96,7 +96,7 @@ namespace TelimenaTestSandboxApp
 
         private async void checkForUpdateButton_Click(object sender, EventArgs e)
         {
-            var response = await this.teli.Updates.CheckForUpdatesAsync().ConfigureAwait(true);
+            var response = await this.Telimena.Update.CheckForUpdatesAsync().ConfigureAwait(true);
             this.UpdateText(this.PresentResponse(response));
         }
 
@@ -142,7 +142,7 @@ namespace TelimenaTestSandboxApp
                 si.TelemetryKey = key;
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
                 Properties.Settings.Default.Save();
-                this.teli = Telimena.Construct(si) as Telimena;
+                this.Telimena = TelimenaFactory.Construct(si) as Telimena;
                 ;
             }
             else
@@ -159,7 +159,7 @@ namespace TelimenaTestSandboxApp
             {
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
                 Properties.Settings.Default.Save();
-                this.teli = Telimena.Construct(new TelimenaStartupInfo(key
+                this.Telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(key
                     , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))) as Telimena;
             }
             else
@@ -178,7 +178,7 @@ namespace TelimenaTestSandboxApp
             {
                 Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
                 Properties.Settings.Default.Save();
-                this.teli = Telimena.Construct(new TelimenaStartupInfo(key
+                this.Telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(key
                     , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))) as Telimena;
             }
             else
@@ -219,7 +219,7 @@ namespace TelimenaTestSandboxApp
 
                 for (int index = 0; index < numberOfMessages; index++)
                 {
-                    this.teli.Tracking.Event(name, new Dictionary<string, string>()
+                    this.Telimena.Track.Event(name, new Dictionary<string, string>()
                     {
                         { "SomeEventMetric", $"{new Random().Next(100)}" },
                         {"WeekDay",$"{DateTime.Today.DayOfWeek}" }
@@ -242,7 +242,7 @@ namespace TelimenaTestSandboxApp
             var level = new Random().Next(0, 4);
             
 
-            this.teli.Tracking.Log((LogLevel)level, text);
+            this.Telimena.Track.Log((LogLevel)level, text);
         }
 
         private string GetRandomString()

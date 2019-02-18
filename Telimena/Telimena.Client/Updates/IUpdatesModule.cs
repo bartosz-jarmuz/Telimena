@@ -26,6 +26,7 @@ namespace TelimenaClient
         /// <returns></returns>
         Task<UpdateCheckResult> HandleUpdatesAsync(bool acceptBeta);
 
+
         /// <summary>
         ///     Performs an update check and returns the result which allows custom handling of the update process.
         ///     It will return info about beta versions as well.

@@ -63,8 +63,8 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 this.TelimenaContext.UpdatePackages.Add(pkg);
             }
 
-            pkg.ReleaseNotes = releaseNotes;
-            pkg.IsBeta = isBeta;
+            pkg.UpdateContentAndMetadata(isBeta, releaseNotes);
+         
             await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
 
             return pkg;

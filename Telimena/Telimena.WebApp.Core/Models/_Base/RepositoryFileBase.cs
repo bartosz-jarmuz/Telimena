@@ -16,7 +16,7 @@ namespace Telimena.WebApp.Core.Models
             this.UploadedDate = DateTime.UtcNow;
         }
 
-        public DateTime UploadedDate { get; set; }
+        public DateTime UploadedDate { get; set; } //todo - make it an offset
         public string FileName { get; protected set; }
 
         public string ZippedFileName

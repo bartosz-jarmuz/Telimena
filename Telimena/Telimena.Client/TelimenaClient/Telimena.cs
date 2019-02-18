@@ -11,25 +11,13 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
-
-        /// <summary>
-        ///     Creates a new instance of Telimena Client
-        /// </summary>
-        /// <param name="startupInfo">Data object which contains startup parameters for Telimena client</param>
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static ITelimena Construct(ITelimenaStartupInfo startupInfo)
-        {
-            Telimena instance = new Telimena(startupInfo);
-            return instance;
-        }
-
         /// <inheritdoc />
         // ReSharper disable once ConvertToAutoProperty
-        IUpdatesModule ITelimena.Updates => this.updates;
+        IUpdatesModule ITelimena.Update => this.updates;
 
         /// <inheritdoc />
         /// ReSharper disable once ConvertToAutoProperty
-        ITelemetryModule ITelimena.Tracking => this.telemetryModule;
+        ITelemetryModule ITelimena.Track => this.telemetryModule;
 
         /// <inheritdoc />
         public ITelimenaProperties Properties => this.propertiesInternal;
@@ -39,7 +27,7 @@ namespace TelimenaClient
         /// </summary>
         /// <param name="startupInfo">Data object which contains startup parameters for Telimena client</param>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private Telimena(ITelimenaStartupInfo startupInfo)
+        internal Telimena(ITelimenaStartupInfo startupInfo)
         {
             try
             {

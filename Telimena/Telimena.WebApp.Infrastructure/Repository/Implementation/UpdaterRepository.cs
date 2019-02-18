@@ -153,7 +153,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 this.TelimenaContext.UpdaterPackages.Add(pkg);
                 pkg.Updater = updater;
             }
-            pkg.UpdateWithNewContent(fileStream.Length);
+            pkg.UpdateContentAndMetadata(fileStream.Length);
 
             await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
 

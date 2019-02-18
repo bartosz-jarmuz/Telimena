@@ -28,5 +28,12 @@ namespace Telimena.WebApp.Core.Models
         public bool IsStandalone { get; set; }
 
         public string ReleaseNotes { get; set; }
+
+        public void UpdateContentAndMetadata(bool isBeta, string releaseNotes)
+        {
+            this.UploadedDate = DateTime.UtcNow;
+            this.ReleaseNotes = releaseNotes;
+            this.IsBeta = isBeta;
+        }
     }
 }

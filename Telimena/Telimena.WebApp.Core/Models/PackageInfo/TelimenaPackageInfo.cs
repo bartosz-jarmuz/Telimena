@@ -25,7 +25,7 @@ namespace Telimena.WebApp.Core.Models
         public bool IntroducesBreakingChanges { get; set; }
         public virtual TelimenaToolkitData TelimenaToolkitData { get; set; }
 
-        public void UpdateWithNewContent(bool isBeta, bool introducesBreakingChanges, string version, long fileSizeBytes)
+        public void UpdateContentAndMetadata(bool isBeta, bool introducesBreakingChanges, string version, long fileSizeBytes)
         {
             this.IsBeta = isBeta;
             this.IntroducesBreakingChanges = introducesBreakingChanges;

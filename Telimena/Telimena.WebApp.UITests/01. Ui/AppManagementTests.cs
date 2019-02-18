@@ -187,13 +187,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             Assert.AreEqual(assemblyName, infoElements[3].Text);
         }
 
-        [Test, Order(5), Retry(3)]
-        public void _05_UploadTestAppUpdate()
-        {
-
-            this.UploadUpdatePackage(TestAppProvider.AutomaticTestsClientAppName, "AutomaticTestsClientv2.zip");
-
-        }
+      
 
         private void ClickOnManageProgramMenu(string appName)
         {
@@ -270,7 +264,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
 
             var rows = table.FindElements(By.TagName("tr")).ToList();
-            var id = rows[1].FindElements(By.TagName("td"))[0].Text;
+            var id = rows[1].FindElements(By.TagName("td"))[1].Text;
 
 
             var showBtn = this.TryFind(() => table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName("expand"))
@@ -297,7 +291,6 @@ namespace Telimena.WebApp.UITests._01._Ui
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
 
-            var rows = table.FindElements(By.TagName("tr")).ToList();
 
             var setBtn = this.TryFind(() => table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))
                 , TimeSpan.FromSeconds(15));
@@ -338,15 +331,24 @@ namespace Telimena.WebApp.UITests._01._Ui
             submit.Click();
         }
 
-
         [Test, Order(5), Retry(3)]
-        public void _05b_UploadPackageUpdateTestAppUpdate()
+        public void _05_UploadTestAppUpdate()
+        {
+
+            this.UploadUpdatePackage(TestAppProvider.AutomaticTestsClientAppName, "AutomaticTestsClientv2.zip");
+
+        }
+
+        [Test, Order(6), Retry(3)]
+        public void _06_UploadPackageUpdateTestAppUpdate()
         {
             this.UploadUpdatePackage(TestAppProvider.PackageUpdaterTestAppName, "PackageTriggerUpdaterTestApp v.2.0.0.0.zip");
         }
 
-        [Test, Order(6), Retry(3)]
-        public void _06_SetUpdaterForPackageTriggerApp()
+
+
+        [Test, Order(7), Retry(3)]
+        public void _07_SetUpdaterForPackageTriggerApp()
         { 
 
             var app = TestAppProvider.PackageUpdaterTestAppName;
@@ -367,8 +369,8 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        [Test, Order(7), Retry(3)]
-        public void _07_SetNotesOnExistingPackage()
+        [Test, Order(8), Retry(3)]
+        public void _08_SetNotesOnExistingPackage()
         {
             try
             {

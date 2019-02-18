@@ -116,7 +116,7 @@ namespace TelimenaTestSandboxApp
                     }
                 };
                 this.apps.Add(programInfo);
-                ITelimena teli = Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = programInfo});
+                ITelimena teli = TelimenaFactory.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = programInfo});
 
                 await (teli as Telimena).Initialize().ConfigureAwait(false);
             }
@@ -146,11 +146,11 @@ namespace TelimenaTestSandboxApp
             while (this.timeoutStopwatch.IsRunning && this.timeoutStopwatch.ElapsedMilliseconds < this.duration.TotalMilliseconds)
             {
                 ProgramInfo prg = this.apps[random.Next(0, this.apps.Count)];
-                ITelimena teli = (Telimena) Telimena.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = prg});
+                ITelimena teli = (Telimena) TelimenaFactory.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = prg});
                 int operation = random.Next(4);
                 if (operation == 1)
                 {
-                     teli.Tracking.Event("SomeEvent");
+                     teli.Track.Event("SomeEvent");
                     this.progressReport("Done");
 
                 }
@@ -163,12 +163,12 @@ namespace TelimenaTestSandboxApp
                 {
                     if (random.Next(2) == 1)
                     {
-                          teli.Tracking. View(this.funcs[random.Next(0, this.funcs.Count)]) ;
+                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)]) ;
                         this.progressReport("Done");
                     }
                     else
                     {
-                          teli.Tracking. View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
+                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
                         this.progressReport("Done");
                     }
                 }

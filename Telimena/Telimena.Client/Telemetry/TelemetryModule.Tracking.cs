@@ -11,8 +11,6 @@ namespace TelimenaClient
     /// <inheritdoc />
     public partial class TelemetryModule : ITelemetryModule
     {
-     
-
         /// <inheritdoc />
         public void View(string viewName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null)
         {

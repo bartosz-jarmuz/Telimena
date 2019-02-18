@@ -13,12 +13,12 @@ namespace TelimenaClient
         /// <summary>
         /// Application updating related methods
         /// </summary>
-        IUpdatesModule Updates { get; }
+        IUpdatesModule Update { get; }
 
         /// <summary>
         /// Tracking related methods
         /// </summary>
-        ITelemetryModule Tracking { get; }
+        ITelemetryModule Track { get; }
        
         /// <summary>
         /// Telimena Client properties

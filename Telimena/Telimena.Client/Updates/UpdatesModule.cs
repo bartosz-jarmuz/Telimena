@@ -123,7 +123,7 @@ namespace TelimenaClient
 
             return "0.0.0.0";
         }
-         
+        
         /// <inheritdoc />
         public UpdateCheckResult CheckForUpdates()
         {

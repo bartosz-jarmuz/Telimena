@@ -26,7 +26,7 @@ namespace Telimena.WebApp.Core.Models
 
         public int UpdaterId { get; set; }
 
-        public void UpdateWithNewContent(long fileSizeBytes)
+        public void UpdateContentAndMetadata(long fileSizeBytes)
         {
             this.FileSizeBytes = fileSizeBytes;
             this.UploadedDate = DateTime.UtcNow;

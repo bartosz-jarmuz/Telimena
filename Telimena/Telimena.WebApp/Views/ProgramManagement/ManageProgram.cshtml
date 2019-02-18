@@ -250,12 +250,12 @@
                     <thead>
                         <tr>
                             <th></th>
+                            <th>Uploaded Date</th>
                             <th>Id</th>
                             <th>Is Beta</th>
                             <th>FileName</th>
                             <th>Version</th>
                             <th>Toolkit Version</th>
-                            <th>Uploaded Date</th>
                             <th>File Size</th>
                             <th>Release Notes</th>
                         </tr>
@@ -264,29 +264,29 @@
 
                         @foreach (ProgramUpdatePackageInfo pkg in Model.UpdatePackages)
                         {
-                            <tr>
-                                <td>@pkg.ReleaseNotes</td>
-                                <td>@pkg.Guid</td>
-                                <td style="text-align: center">
-                                    <input type="checkbox" data-pkg-id="@pkg.Guid" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "") />
-                                </td>
-                                <td>
-                                    <a href="@Url.LatestApiUrl(UpdatePackagesController.Routes.Get, new { id = pkg.Guid })">@pkg.FileName</a>
-                                </td>
-                                <td>@pkg.Version</td>
-                                <td>@pkg.SupportedToolkitVersion</td>
-                                <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
-                                <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
-                                <td>
-                                    
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default btn-sm expand">Show</button>
-                                        <button type="button"  data-toggle="modal" data-target="#@Strings.Id.SetReleaseNotesModal" data-pkg-id="@pkg.Guid" class="btn btn-default btn-sm @Strings.Css.PrepareReleaseNotesButton">Set</button>
-                                    </div>
+                        <tr>
+                            <td>@pkg.ReleaseNotes</td>
+                            <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
+                            <td>@pkg.Guid</td>
+                            <td style="text-align: center">
+                                <input type="checkbox" data-pkg-id="@pkg.Guid" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "") />
+                            </td>
+                            <td>
+                                <a href="@Url.LatestApiUrl(UpdatePackagesController.Routes.Get, new { id = pkg.Guid })">@pkg.FileName</a>
+                            </td>
+                            <td>@pkg.Version</td>
+                            <td>@pkg.SupportedToolkitVersion</td>
+                            <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
+                            <td>
 
-                                    
-                                </td>
-                            </tr>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-sm expand">Show</button>
+                                    <button type="button" data-toggle="modal" data-target="#@Strings.Id.SetReleaseNotesModal" data-pkg-id="@pkg.Guid" class="btn btn-default btn-sm @Strings.Css.PrepareReleaseNotesButton">Set</button>
+                                </div>
+
+
+                            </td>
+                        </tr>
                         }
                     </tbody>
 
@@ -336,9 +336,9 @@
                         "targets": [ 0 ],
                         "visible": false,
                         "searchable": false
-                    },
-                  
-                ]
+                    }
+                ],
+                "order": [[ 1, "desc" ]]
             });
 
 
@@ -425,7 +425,7 @@
 
             function format(d) {
 
-                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;" ><tr><td><pre data-pkg-id="' + d[1] +'">' +
+                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;" ><tr><td><pre data-pkg-id="' + d[2] +'">' +
                     d[0] +
                     '</pre></td></tr></table>';
             }

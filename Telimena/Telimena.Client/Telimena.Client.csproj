@@ -90,6 +90,11 @@
     <Compile Include="Messenger\ApiRoutes.cs" />
     <Compile Include="Model\DefaultToolkitNames.cs" />
     <Compile Include="Model\LogLevel.cs" />
+    <Compile Include="NullObjects\NullObjectTelemetryModule.cs" />
+    <Compile Include="NullObjects\NullObjectTelimena.cs" />
+    <Compile Include="NullObjects\NullObjectTelimenaProperties.cs" />
+    <Compile Include="NullObjects\NullObjectUpdatesModule.cs" />
+    <Compile Include="TelimenaClient\TelimenaFactory.cs" />
     <Compile Include="Utilities\LogSeverityMapper.cs" />
     <Compile Include="Telemetry\TelemetryModule.Tracking.cs" />
     <Compile Include="TelimenaClient\IFluentInterface.cs" />
@@ -122,7 +127,6 @@
     <Compile Include="Telemetry\TelemetryModule.cs" />
     <Compile Include="TelimenaClient\Static\Telimena.Static.Telemetry.cs" />
     <Compile Include="TelimenaClient\TelimenaProperties.cs" />
-    <Compile Include="Updates\Telimena.BlockingUpdatesHandler.cs" />
     <Compile Include="TelimenaClient\Telimena.Initialization.cs" />
     <Compile Include="TelimenaClient\TelimenaStartupInfo.cs" />
     <Compile Include="Updates\UpdatesModule.cs" />
@@ -141,8 +145,6 @@
     <Compile Include="TelimenaClient\Telimena.cs" />
     <Compile Include="TelimenaClient\Telimena.InternalMembers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Updates\IAsyncUpdatesHandler.cs" />
-    <Compile Include="Updates\IBlockingUpdatesHandler.cs" />
     <Compile Include="Updates\IUpdatesModule.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\VersionReading\TelimenaVersionReader.cs" />
@@ -164,7 +166,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FodyWeavers.xml" />
+    <None Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

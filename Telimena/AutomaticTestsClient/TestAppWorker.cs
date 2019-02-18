@@ -57,11 +57,11 @@ namespace AutomaticTestsClient
                     ProgramInfo = this.arguments.ProgramInfo
                     ,DeliveryInterval = TimeSpan.FromSeconds(3)
                 };
-                telimena = Telimena.Construct(si);
+                telimena = TelimenaFactory.Construct(si);
             }
             else
             {
-                telimena = Telimena.Construct(new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl))
+                telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(argumentsTelemetryKey, new Uri(this.arguments.ApiUrl))
                 {
                     DeliveryInterval = TimeSpan.FromSeconds(3)
                 });
@@ -87,11 +87,11 @@ namespace AutomaticTestsClient
             customData.Add("RandomNumber", new Random().Next(0, 10).ToString());
             if (this.arguments.ViewName != null)
             {
-                 telimena.Tracking.View(this.arguments.ViewName, customData);
+                 telimena.Track.View(this.arguments.ViewName, customData);
             }
             else
             {
-                 telimena.Tracking.View("DefaultView", customData);
+                 telimena.Track.View("DefaultView", customData);
             }
             Console.WriteLine("Received View usage response..");
 
@@ -103,7 +103,7 @@ namespace AutomaticTestsClient
         {
             Console.WriteLine("Starting update handling...");
 
-            UpdateCheckResult result = telimena.Updates.HandleUpdates(false);
+            UpdateCheckResult result = telimena.Update.HandleUpdatesAsync(false).GetAwaiter().GetResult();
             Console.WriteLine("Finished update handling...");
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto};
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));

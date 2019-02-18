@@ -68,9 +68,9 @@ namespace PackageTriggerUpdaterTestApp
         public static void Work(PackageUpdateTesterArguments arguments)
         {
             Console.WriteLine("Starting update handling...");
-            ITelimena teli = Telimena.Construct(new TelimenaStartupInfo(arguments.TelemetryKey, new Uri(arguments.ApiUrl)));
+            ITelimena teli = TelimenaFactory.Construct(new TelimenaStartupInfo(arguments.TelemetryKey, new Uri(arguments.ApiUrl)));
             Console.WriteLine("Telimena created... Handling updates");
-            UpdateCheckResult result = teli.Updates.HandleUpdates(false);
+            UpdateCheckResult result = teli.Update.HandleUpdates(false);
             Console.WriteLine("Finished update handling");
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver()};
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));

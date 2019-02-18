@@ -77,7 +77,7 @@ namespace TelimenaClient.Tests
             var si = new TelimenaStartupInfo(Guid.NewGuid()) {SuppressAllErrors = false};
             si.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
-            ITelimena sut = Telimena.Construct(si) ;
+            ITelimena sut = TelimenaFactory.Construct(si) ;
 
             Assert.AreEqual("Telimena.Client.Tests", sut.Properties.StaticProgramInfo.PrimaryAssembly.Name);
 
@@ -91,7 +91,7 @@ namespace TelimenaClient.Tests
             };
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, latestVersionResponse, new UpdateResponse()));
 
-            UpdateCheckResult response = sut.Updates.CheckForUpdatesAsync().GetAwaiter().GetResult();
+            UpdateCheckResult response = sut.Update.CheckForUpdatesAsync().GetAwaiter().GetResult();
             Assert.IsTrue(response.IsUpdateAvailable);
             Assert.AreEqual("MyUpdater.exe", sut.Properties.LiveProgramInfo.UpdaterName);
             Assert.AreEqual(2, response.ProgramUpdatesToInstall.Count);
@@ -107,7 +107,7 @@ namespace TelimenaClient.Tests
             var si = new TelimenaStartupInfo(Guid.NewGuid()) {SuppressAllErrors = false};
             si.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
-            ITelimena sut = Telimena.Construct(si) ;
+            ITelimena sut = TelimenaFactory.Construct(si) ;
 
             Assert.AreEqual("Telimena.Client.Tests", sut.Properties.StaticProgramInfo.PrimaryAssembly.Name);
             UpdateResponse latestVersionResponse = new UpdateResponse
@@ -123,7 +123,7 @@ namespace TelimenaClient.Tests
             };
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, latestVersionResponse, updaterResponse));
 
-            UpdateCheckResult response = sut.Updates.CheckForUpdatesAsync().GetAwaiter().GetResult();
+            UpdateCheckResult response = sut.Update.CheckForUpdatesAsync().GetAwaiter().GetResult();
             Assert.IsTrue(response.IsUpdateAvailable);
             Assert.AreEqual(1, response.ProgramUpdatesToInstall.Count);
             Assert.IsNotNull(response.ProgramUpdatesToInstall.SingleOrDefault(x => x.Version == "3.1.0.0" && x.IsBeta));
@@ -134,11 +134,11 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_NoUpdates()
         {
-            ITelimena sut = Telimena.Construct(new TelimenaStartupInfo(Guid.NewGuid()) { SuppressAllErrors = false });
+            ITelimena sut = TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.NewGuid()) { SuppressAllErrors = false });
 
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, new UpdateResponse(), new UpdateResponse()));
 
-            UpdateCheckResult response = sut.Updates.CheckForUpdatesAsync().GetAwaiter().GetResult();
+            UpdateCheckResult response = sut.Update.CheckForUpdatesAsync().GetAwaiter().GetResult();
             Assert.IsFalse(response.IsUpdateAvailable);
             Assert.AreEqual(0, response.ProgramUpdatesToInstall.Count);
             Assert.IsNull(response.UpdaterUpdate);
@@ -148,7 +148,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_OnlyUpdaterUpdates()
         {
-            ITelimena sut = Telimena.Construct(new TelimenaStartupInfo(Guid.NewGuid()) { SuppressAllErrors = false });
+            ITelimena sut = TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.NewGuid()) { SuppressAllErrors = false });
 
 
             UpdateResponse latestVersionResponse = new UpdateResponse
@@ -157,7 +157,7 @@ namespace TelimenaClient.Tests
             };
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, new UpdateResponse(), latestVersionResponse));
 
-            UpdateCheckResult response = sut.Updates.CheckForUpdatesAsync().GetAwaiter().GetResult();
+            UpdateCheckResult response = sut.Update.CheckForUpdatesAsync().GetAwaiter().GetResult();
             Assert.IsFalse(response.IsUpdateAvailable);
             Assert.AreEqual(0, response.ProgramUpdatesToInstall.Count);
             Assert.AreEqual("1.2", response.UpdaterUpdate.Version);
