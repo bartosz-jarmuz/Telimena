@@ -100,7 +100,7 @@ $(function () {
    */
   function setup() {
       //var tmp = get('skin') 
-      tmp = 'skin-green-light';
+      var tmp = 'skin-black-light';
     if (tmp && $.inArray(tmp, mySkins))
       changeSkin(tmp)
 
