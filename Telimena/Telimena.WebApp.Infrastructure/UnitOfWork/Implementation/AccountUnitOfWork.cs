@@ -39,7 +39,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
             if (registerResult.Succeeded)
             {
                 TelimenaUser addedUser = await this.UserManager.FindByIdAsync(user.Id).ConfigureAwait(false);
-
+                addedUser.IsActivated = true;
                 IdentityResult roleResult = await this.HandleRoleRegistrationAsync(roles, addedUser).ConfigureAwait(false);
 
                 return new Tuple<IdentityResult, IdentityResult>(registerResult, roleResult);
