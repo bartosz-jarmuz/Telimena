@@ -74,7 +74,10 @@ namespace TelimenaClient
             {
                 if (!UnhandledExceptionsReported.Contains(e.ExceptionObject))
                 {
-                    this.telemetryModule.Exception((Exception) e.ExceptionObject);
+                    this.telemetryModule.Exception((Exception) e.ExceptionObject,new Dictionary<string, string>()
+                    {
+                        { "UnhandledException", "True" }
+                    });
                     this.telemetryModule.SendAllDataNow();
                     UnhandledExceptionsReported.Add(e.ExceptionObject);
                 }
