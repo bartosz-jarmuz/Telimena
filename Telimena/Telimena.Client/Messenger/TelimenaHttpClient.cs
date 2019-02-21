@@ -18,13 +18,11 @@ namespace TelimenaClient
 
         public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent httpContent)
         {
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             return this.client.PostAsync(requestUri, httpContent);
         }
 
         public Task<HttpResponseMessage> GetAsync(string requestUri)
         {
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             return this.client.GetAsync(requestUri);
         }
     }

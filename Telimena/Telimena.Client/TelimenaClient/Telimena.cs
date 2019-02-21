@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 
@@ -31,6 +32,8 @@ namespace TelimenaClient
         {
             try
             {
+                this.SetConnectionSecurityProtocol();
+
                 this.propertiesInternal = new TelimenaProperties(startupInfo);
                 this.Locator = new Locator(this.Properties.StaticProgramInfo);
 
@@ -54,6 +57,12 @@ namespace TelimenaClient
                 //above all, we don't want to throw errors in client apps.
                 //No telemetry is better than boom.
             }
+        }
+
+        private void SetConnectionSecurityProtocol()
+        {
+            //without this, Azure App Service tends to throw a socket connection 'an existing connection was forcibly closed by the remote host'
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
         }
 
         private readonly object exceptionReportingLocker = new object();
