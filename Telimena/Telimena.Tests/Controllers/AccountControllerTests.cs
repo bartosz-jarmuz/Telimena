@@ -66,7 +66,7 @@ namespace Telimena.Tests
 
             Assert.AreEqual("Jim Beam", user.DisplayName);
             Assert.IsTrue(user.RegisteredDate.Date == DateTime.UtcNow.Date);
-            Assert.IsFalse(user.IsActivated);
+            //Assert.IsFalse(user.IsActivated);
             Assert.IsTrue(unit.UserManager.IsInRoleAsync(user.Id, TelimenaRoles.Developer).GetAwaiter().GetResult());
             Assert.IsTrue(unit.UserManager.IsInRoleAsync(user.Id, TelimenaRoles.Viewer).GetAwaiter().GetResult());
 
