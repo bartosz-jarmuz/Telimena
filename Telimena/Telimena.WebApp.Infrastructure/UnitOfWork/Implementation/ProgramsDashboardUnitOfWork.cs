@@ -356,8 +356,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
             else
             {
-                 query = this.context.EventTelemetryDetails.Where(x => x.TelemetrySummary.Event.ProgramId == program.Id);
-                 totalCount = await this.context.EventTelemetryDetails.CountAsync(x => x.TelemetrySummary.Event.ProgramId == program.Id).ConfigureAwait(false);
+                 query = this.context.EventTelemetryDetails.Where(x => x.TelemetrySummary.Event.ProgramId == program.Id && !string.IsNullOrEmpty(x.TelemetrySummary.Event.Name)); //todo remove this empty string check after dealing with heartbeat data
+                 totalCount = await this.context.EventTelemetryDetails.CountAsync(x => x.TelemetrySummary.Event.ProgramId == program.Id && !string.IsNullOrEmpty(x.TelemetrySummary.Event.Name)).ConfigureAwait(false);
             }
 
 
