@@ -20,6 +20,16 @@
         /// <summary>
         /// The exception
         /// </summary>
-        Exception
+        Exception,
+        /// <summary>
+        /// The metric
+        /// </summary>
+        Metric,
+        /// <summary>
+        /// The heartbeat
+        /// </summary>
+        Heartbeat
+
+
     }
 }

@@ -61,12 +61,31 @@ namespace Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel
         [JsonProperty("severityLevel")]
         public string SeverityLevel { get; set; }
 
+        [JsonProperty("metrics")]
+        public Metric[] Metrics { get; set; }
+
         [JsonProperty("properties")]
         public Dictionary<string, string> Properties { get; set; }
         [JsonProperty("exceptions")]
         public ExceptionElement[] Exceptions { get; set; }
 
     }
+
+    public partial class Metric
+    {
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("kind")]
+        public string Kind { get; set; }
+
+        [JsonProperty("value")]
+        public long Value { get; set; }
+
+        [JsonProperty("count")]
+        public long Count { get; set; }
+    }
+
 
     public partial class ExceptionElement
     {
@@ -120,6 +139,9 @@ namespace Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel
 
         [JsonProperty("ai.user.id")]
         public string AiUserId { get; set; }
+
+        [JsonProperty("ai.operation.syntheticSource")]
+        public string AiOperationSyntheticSource { get; set; }
 
         [JsonProperty("ai.user.authUserId")]
         public string AiUserAuthUserId { get; set; }

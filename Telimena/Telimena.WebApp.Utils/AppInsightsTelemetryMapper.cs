@@ -144,6 +144,12 @@ namespace Telimena.WebApp.Utils
                     return TelemetryItemTypes.Exception;
                 case "MessageData":
                     return TelemetryItemTypes.LogMessage;
+                case "MetricData":
+                    if (telemetry?.Tags != null && telemetry.Tags.AiOperationSyntheticSource == "HeartbeatState")
+                    {
+                        return TelemetryItemTypes.Heartbeat;
+                    }
+                    return TelemetryItemTypes.Metric;
                 default:
                     return TelemetryItemTypes.Event;
             }

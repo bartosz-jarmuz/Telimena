@@ -196,7 +196,7 @@ namespace Telimena.WebApp.Controllers
             }
             else
             {
-                result= await this.Work.GetProgramViewsUsageData(telemetryKey, itemType ,request.Start, request.Length, sorts, request.Search, searchableColumns).ConfigureAwait(false);
+                result= await this.Work.GetProgramUsageData(telemetryKey, itemType ,request.Start, request.Length, sorts, request.Search, searchableColumns).ConfigureAwait(false);
             }
 
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);

@@ -334,7 +334,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
         }
 
-        public async Task<UsageDataTableResult> GetProgramViewsUsageData(Guid telemetryKey, TelemetryItemTypes itemType
+        public async Task<UsageDataTableResult> GetProgramUsageData(Guid telemetryKey, TelemetryItemTypes itemType
             , int skip, int take, IEnumerable<Tuple<string, bool>> sortBy, ISearch requestSearch 
             , List<string> searchableColumns)
         {
