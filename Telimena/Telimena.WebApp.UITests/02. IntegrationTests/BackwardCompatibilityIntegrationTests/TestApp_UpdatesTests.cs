@@ -43,12 +43,57 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             return await this.GetVersionFromMsgBox(appWarning).ConfigureAwait(false);
         }
 
+        public string GetTextFromMsgBox(Window msgBox)
+        {
+            string text = msgBox.Get<Label>(SearchCriteria.Indexed(0)).Text;
+            try
+            {
+                msgBox.Get<Button>(SearchCriteria.ByText("OK")).Click();
+            }
+            catch (Exception ex)
+            {
+                if (!string.IsNullOrEmpty(text))
+                {
+                    if (ex.Message.Contains("Window didn't respond") && ex.InnerException != null &&
+                        ex.InnerException.Message.Contains("Process with an Id of"))
+                    {
+                        //that's weird but the message box got closed by something else
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return text;
+        }
+
         public async Task<VersionTuple> GetVersionFromMsgBox(Window msgBox)
         {
             string text = msgBox.Get<Label>(SearchCriteria.Indexed(0)).Text;
             string[] versions = text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            msgBox.Get<Button>(SearchCriteria.ByText("OK")).Click();
-            await Task.Delay(500).ConfigureAwait(false);
+            try
+            {
+                msgBox.Get<Button>(SearchCriteria.ByText("OK")).Click();
+                await Task.Delay(500).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                if (!string.IsNullOrEmpty(text))
+                {
+                    if (ex.Message.Contains("Window didn't respond") && ex.InnerException != null &&
+                        ex.InnerException.Message.Contains("Process with an Id of"))
+                    {
+                        //that's weird but the message box got closed by something else
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            
             return new VersionTuple() { AssemblyVersion = versions[0].Trim().Replace("AssemblyVersion: ",""), FileVersion = versions[1].Trim().Replace("FileVersion: ", "") };
         }
 
@@ -111,10 +156,8 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                 executed.Get<Button>(SearchCriteria.ByText("OK")).Click();
 
                 Window doneMsg = await TestHelpers.WaitForWindowAsync(x => x.Equals("Updater finished"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
-                var text = doneMsg.Get<Label>();
-                Assert.AreEqual("Killed other processes: True", text.Text);
-                var btn = doneMsg.Get<Button>(SearchCriteria.ByText("OK"));
-                btn.Click();
+                var text = GetTextFromMsgBox(doneMsg);
+                Assert.AreEqual("Killed other processes: True", text);
 
                 //do not check if app was updated, because we only care whether the updater was actually launched
 
@@ -125,5 +168,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             }
             
         }
+
+        
     }
 }
