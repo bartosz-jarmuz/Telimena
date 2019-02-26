@@ -283,8 +283,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
            {
                return new UsageDataTableResult { TotalCount = 0, FilteredCount = 0, UsageData = new List<DataTableTelemetryDataBase>()};
             }
-            IEnumerable<TelemetryDetail> viewQuery = (await this.telemetryContext.ViewTelemetryDetails.Where(x => x.TelemetrySummary.GetComponent().Program.ProgramId == program.Id && x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
-           IEnumerable<TelemetryDetail> eventQuery = (await this.telemetryContext.EventTelemetryDetails.Where(x => x.TelemetrySummary.GetComponent().Program.ProgramId == program.Id && x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
+            IEnumerable<TelemetryDetail> viewQuery = (await this.telemetryContext.ViewTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
+           IEnumerable<TelemetryDetail> eventQuery = (await this.telemetryContext.EventTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
            List<LogMessage> logsQuery = (await this.telemetryContext.LogMessages.Where(x =>x.ProgramId == program.Id && x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));
            List<ExceptionInfo> exceptionsQuery = (await this.telemetryContext.Exceptions.Where(x => x.ProgramId == program.Id && x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));
 

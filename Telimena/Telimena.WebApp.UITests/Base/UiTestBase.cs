@@ -4,12 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using DotNetLittleHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
@@ -23,6 +25,34 @@ namespace Telimena.WebApp.UITests.Base
     [TestFixture]
     public abstract class UiTestBase : IntegrationTestBase
     {
+        protected void ClickOnProgramMenuButton(string appName, string buttonSuffix)
+        {
+            Retrier.RetryAsync(() =>
+            {
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+                var prgMenu = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_menu")));
+
+                Actions actions = new Actions(this.Driver);
+                actions.MoveToElement(prgMenu);
+                actions.Perform();
+
+                prgMenu.Click();
+                IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + buttonSuffix)));
+                actions = new Actions(this.Driver);
+                actions.MoveToElement(link);
+                actions.Perform();
+
+                link.Click();
+            }, TimeSpan.FromMilliseconds(500), 3).GetAwaiter().GetResult();
+
+
+        }
+
+        protected void ClickOnManageProgramMenu(string appName)
+        {
+            this.ClickOnProgramMenuButton(appName, "_manageLink");
+
+        }
 
         public void WaitForSuccessConfirmationWithText(WebDriverWait wait, Func<string, bool> validateText)
         {
