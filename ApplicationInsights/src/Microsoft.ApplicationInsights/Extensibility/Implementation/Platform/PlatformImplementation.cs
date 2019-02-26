@@ -45,7 +45,7 @@ namespace Microsoft.ApplicationInsights.Extensibility.Implementation.Platform
         public string ReadConfigurationXml()
         {
             // Config file should be in the base directory of the app domain
-            string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ApplicationInsights.config");
+            string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TelimenaApplicationInsights.config");
 
             try
             {
