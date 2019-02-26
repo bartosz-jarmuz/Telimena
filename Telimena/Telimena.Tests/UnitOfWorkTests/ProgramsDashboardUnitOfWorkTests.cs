@@ -13,7 +13,7 @@ using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 namespace Telimena.Tests.UnitOfWorkTests
 {
     [TestFixture]
-    public class ProgramsDashboardUnitOfWorkTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
+    public class ProgramsDashboardUnitOfWorkTests 
     {
         private readonly Guid id_1 = Guid.Parse("a6beaaf7-3be2-4a12-b434-5efbd5f81eaf");
         private readonly Guid id_2 = Guid.Parse("e04b141e-4879-4346-9220-5d364992839d");
@@ -34,21 +34,24 @@ namespace Telimena.Tests.UnitOfWorkTests
             data.Add(new ViewTelemetryDetail(this.id_1)
             {
                 Timestamp = new DateTime(2000, 01, 01), UserId = "AAA", EntryKey = "ZZZ"
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))
+                , AssemblyVersion = "2.0"
+                ,FileVersion = null
             });
             data.Add(new ViewTelemetryDetail(this.id_2)
             {
                 Timestamp = new DateTime(2000, 01, 02),
                 UserId = "BBB",
                 EntryKey = "ZZZ"
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("6.0", null))
+                ,AssemblyVersion = "6.0"
+                ,FileVersion = null
             });
             data.Add(new ViewTelemetryDetail(this.id_3)
             {
                 Timestamp = new DateTime(2000, 01, 03)
                 ,
                 UserId = "CCC", EntryKey = "ZZZ"
-                , AssemblyVersion = new AssemblyVersionInfo(new VersionData("4.0", null))
+                ,AssemblyVersion = "4.0"
+                ,FileVersion = null
             });
 
             List<Tuple<string, bool>> sorts = new List<Tuple<string, bool>>();
@@ -152,14 +155,14 @@ namespace Telimena.Tests.UnitOfWorkTests
         {
             List<ViewTelemetryDetail> data = new List<ViewTelemetryDetail>();
 
-            data.Add(new ViewTelemetryDetail(this.id_1){Timestamp = new DateTime(2000, 01, 01), UserId = "AAA",EntryKey = "ZZZ", AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))});
-            data.Add(new ViewTelemetryDetail(this.id_2){Timestamp = new DateTime(2000, 01, 02), UserId = "BBB",EntryKey = "ZZZ", AssemblyVersion = new AssemblyVersionInfo(new VersionData("6.0", null))});
-            data.Add(new ViewTelemetryDetail(this.id_3){Timestamp = new DateTime(2000, 01, 03), UserId = "CCC",EntryKey = "ZZZ", AssemblyVersion = new AssemblyVersionInfo(new VersionData("4.0", null))});
-            data.Add(new ViewTelemetryDetail(this.id_4){Timestamp = new DateTime(2000, 01, 04), UserId = "CCC",EntryKey = "ZZZ", AssemblyVersion = new AssemblyVersionInfo(new VersionData("4.0", null))});
-            data.Add(new ViewTelemetryDetail(this.id_5){Timestamp = new DateTime(2000, 01, 05), UserId = "AAA",EntryKey = "XXX", AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))});
-            data.Add(new ViewTelemetryDetail(this.id_6){Timestamp = new DateTime(2000, 01, 06), UserId = "AAA",EntryKey = "YYY", AssemblyVersion = new AssemblyVersionInfo(new VersionData("2.0", null))});
-            data.Add(new ViewTelemetryDetail(this.id_7){Timestamp = new DateTime(2000, 01, 07), UserId = "BBB",EntryKey = "YYY", AssemblyVersion = new AssemblyVersionInfo(new VersionData("9.0", null))});
-            data.Add(new ViewTelemetryDetail(this.id_8){Timestamp = new DateTime(2000, 01, 08), UserId = "BBB",EntryKey = "XXX", AssemblyVersion = new AssemblyVersionInfo(new VersionData("1.0", null))});
+            data.Add(new ViewTelemetryDetail(this.id_1){Timestamp = new DateTime(2000, 01, 01), UserId = "AAA",EntryKey = "ZZZ", FileVersion = "2.0"});
+            data.Add(new ViewTelemetryDetail(this.id_2){Timestamp = new DateTime(2000, 01, 02), UserId = "BBB",EntryKey = "ZZZ", FileVersion = "6.0"});
+            data.Add(new ViewTelemetryDetail(this.id_3){Timestamp = new DateTime(2000, 01, 03), UserId = "CCC",EntryKey = "ZZZ", FileVersion = "4.0"});
+            data.Add(new ViewTelemetryDetail(this.id_4){Timestamp = new DateTime(2000, 01, 04), UserId = "CCC",EntryKey = "ZZZ", FileVersion = "4.0"});
+            data.Add(new ViewTelemetryDetail(this.id_5){Timestamp = new DateTime(2000, 01, 05), UserId = "AAA",EntryKey = "XXX", FileVersion = "2.0"});
+            data.Add(new ViewTelemetryDetail(this.id_6){Timestamp = new DateTime(2000, 01, 06), UserId = "AAA",EntryKey = "YYY", FileVersion = "2.0"});
+            data.Add(new ViewTelemetryDetail(this.id_7){Timestamp = new DateTime(2000, 01, 07), UserId = "BBB",EntryKey = "YYY", FileVersion = "9.0"});
+            data.Add(new ViewTelemetryDetail(this.id_8){Timestamp = new DateTime(2000, 01, 08), UserId = "BBB",EntryKey = "XXX", FileVersion = "1.0"});
 
 
             List<Tuple<string, bool>> sorts = new List<Tuple<string, bool>>();

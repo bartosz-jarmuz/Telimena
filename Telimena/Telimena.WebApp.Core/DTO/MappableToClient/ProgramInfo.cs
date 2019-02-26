@@ -20,11 +20,6 @@ namespace Telimena.WebApp.Core.DTO.MappableToClient
         public string Name { get; set; }
 
         /// <summary>
-        ///     An optional collection of helper assemblies data
-        /// </summary>
-        public List<AssemblyInfo> HelperAssemblies { get; set; }
-
-        /// <summary>
         /// Gets the primary assembly path.
         /// </summary>
         /// <value>The primary assembly path.</value>

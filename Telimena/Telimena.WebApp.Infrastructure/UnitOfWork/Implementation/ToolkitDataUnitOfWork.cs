@@ -11,7 +11,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
     public class ToolkitDataUnitOfWork : IToolkitDataUnitOfWork
     {
 
-        public ToolkitDataUnitOfWork(TelimenaContext context, IAssemblyStreamVersionReader versionReader)
+        public ToolkitDataUnitOfWork(TelimenaPortalContext context, IAssemblyStreamVersionReader versionReader)
         {
             this.context = context;
             this.UpdaterRepository = new UpdaterRepository(context,versionReader);
@@ -24,7 +24,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 
         public IUserRepository Users { get;  }
 
-        private readonly TelimenaContext context;
+        private readonly TelimenaPortalContext context;
 
         public IUpdaterRepository UpdaterRepository { get; }
         public IToolkitDataRepository ToolkitDataRepository { get; }

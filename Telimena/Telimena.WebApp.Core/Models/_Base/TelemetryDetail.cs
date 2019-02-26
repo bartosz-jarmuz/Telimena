@@ -18,8 +18,8 @@ namespace Telimena.WebApp.Core.Models
         public Guid Id { get; set; }
         public string Sequence { get; set; }
         public string IpAddress { get; set; }
-        public virtual AssemblyVersionInfo AssemblyVersion { get; set; }
-        public int? AssemblyVersionId { get; set; }
+        public string AssemblyVersion { get; set; }
+        public string FileVersion { get; set; }
         public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.UtcNow;
         public int TelemetrySummaryId { get; set; }
 

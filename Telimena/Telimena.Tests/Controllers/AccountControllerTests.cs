@@ -20,12 +20,12 @@ using Assert = NUnit.Framework.Assert;
 namespace Telimena.Tests
 {
     [TestClass]
-    public class AccountControllerTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
+    public class AccountControllerTests : IntegrationTestsContextSharedGlobally<TelimenaPortalContext>
     {
         protected override Action SeedAction =>
             () =>
             {
-                TelimenaDbInitializer.SeedUsers(this.Context);
+                TelimenaPortalDbInitializer.SeedUsers(this.Context);
                 //   this.Context.Users.Add(new TelimenaUser() {UserId = "aa", Email = "aa@b.com", CreatedDate = DateTime.UtcNow});
                 this.Context.SaveChanges();
             };

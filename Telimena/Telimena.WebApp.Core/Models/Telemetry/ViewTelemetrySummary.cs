@@ -2,6 +2,7 @@
 using System.Linq;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -11,11 +12,11 @@ namespace Telimena.WebApp.Core.Models
         public virtual View View { get; set; }
         public virtual RestrictedAccessList<ViewTelemetryDetail> TelemetryDetails { get; set; } = new RestrictedAccessList<ViewTelemetryDetail>();
 
-        public override void AddTelemetryDetail(string ipAddress, AssemblyVersionInfo versionInfo, TelemetryItem telemetryItem)
+        public override void AddTelemetryDetail(string ipAddress, VersionData versionInfo, TelemetryItem telemetryItem)
         {
             ViewTelemetryDetail detail = new ViewTelemetryDetail(telemetryItem.Id)
             {
-                Timestamp = telemetryItem.Timestamp, TelemetrySummary = this, AssemblyVersion = versionInfo, IpAddress = ipAddress,
+                Timestamp = telemetryItem.Timestamp, TelemetrySummary = this, AssemblyVersion = versionInfo.AssemblyVersion, FileVersion = versionInfo.FileVersion, IpAddress = ipAddress,
                 Sequence = telemetryItem.Sequence,
                 UserId = telemetryItem.UserId,
                 EntryKey = telemetryItem.EntryKey

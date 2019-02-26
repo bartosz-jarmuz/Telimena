@@ -68,7 +68,8 @@ namespace Telimena.WebApi
     {
         public override void Load()
         {
-            this.Bind<TelimenaContext>().ToSelf().InRequestScope();
+            this.Bind<TelimenaPortalContext>().ToSelf().InRequestScope();
+            this.Bind<TelimenaTelemetryContext>().ToSelf().InRequestScope();
             this.Bind<IFileSaver>().To<AzureFileSaver>();
             this.Bind<IFileRetriever>().To<AzureFileRetriever>();
             this.Bind<ILog>().ToMethod(context => LogManager.GetLogger(context.Request.Target.Member.ReflectedType));

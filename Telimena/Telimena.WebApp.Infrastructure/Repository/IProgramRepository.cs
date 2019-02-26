@@ -10,10 +10,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
 {
     public interface IProgramRepository 
     {
-        Task<IEnumerable<Program>> GetProgramsByDeveloperName(string developerName);
-
-        Task<IEnumerable<Program>> GetProgramsForUserAsync(TelimenaUser user);
-
         List<Program> GetProgramsVisibleToUser(TelimenaUser user, IPrincipal principal);
         Task<List<Program>> GetProgramsVisibleToUserAsync(TelimenaUser user, IPrincipal principal);
         void Add(Program objectToAdd);

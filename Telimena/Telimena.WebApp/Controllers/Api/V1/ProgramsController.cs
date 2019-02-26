@@ -205,12 +205,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 LatestVersionResponse info = new LatestVersionResponse
                 {
                     PrimaryAssemblyVersion = ProgramsControllerHelpers.ConstructVersionInfo(program.PrimaryAssembly),
-                    HelperAssemblyVersions = new List<VersionInfo>()
                 };
-                foreach (ProgramAssembly programAssembly in program.ProgramAssemblies.Where(x => x.PrimaryOf != program))
-                {
-                    info.HelperAssemblyVersions.Add(ProgramsControllerHelpers.ConstructVersionInfo(programAssembly));
-                }
 
                 return info;
             }

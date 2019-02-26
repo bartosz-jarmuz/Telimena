@@ -41,12 +41,10 @@ namespace Telimena.WebApp.Infrastructure
                 .ForMember(x => x.LatestVersion, o => o.Ignore())
                 .ForMember(x => x.Program, o => o.Ignore());
 
-            this.CreateMap<ProgramInfo, Program>().ForMember(x => x.ProgramAssemblies, o => o.Ignore())
+            this.CreateMap<ProgramInfo, Program>()
                 .ForMember(x => x.DeveloperAccount, o => o.Ignore())
                 .ForMember(x => x.TelemetryKey, o => o.Ignore())
                 .ForMember(x => x.RegisteredDate, o => o.Ignore())
-                .ForMember(x => x.Views, o => o.Ignore())
-                .ForMember(x => x.Events, o => o.Ignore())
                 .ForMember(x => x.Id, o => o.Ignore())
                 .ForMember(x => x.Updater, o => o.Ignore())
                 .ForMember(x => x.Description, o => o.Ignore());

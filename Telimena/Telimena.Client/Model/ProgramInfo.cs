@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TelimenaClient.Model
+﻿namespace TelimenaClient.Model
 {
     /// <summary>
     ///     A data about a program
@@ -18,11 +16,6 @@ namespace TelimenaClient.Model
         ///     The name of the application.
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        ///     An optional collection of helper assemblies data
-        /// </summary>
-        public List<AssemblyInfo> HelperAssemblies { get; set; }
 
         /// <summary>
         /// Gets the primary assembly path.

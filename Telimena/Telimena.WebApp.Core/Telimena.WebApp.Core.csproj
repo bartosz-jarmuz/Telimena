@@ -123,6 +123,7 @@
     <Compile Include="Models\Telemetry\ViewTelemetryUnit.cs" />
     <Compile Include="Models\Telemetry\ViewTelemetryDetail.cs" />
     <Compile Include="Models\Telemetry\ViewTelemetrySummary.cs" />
+    <Compile Include="Models\Users\TelemetryMonitoredProgram.cs" />
     <Compile Include="Models\_Base\ITelemetryAware.cs" />
     <Compile Include="Models\_Base\ProgramComponent.cs" />
     <Compile Include="Models\Versioning\AssemblyVersionInfo.cs" />

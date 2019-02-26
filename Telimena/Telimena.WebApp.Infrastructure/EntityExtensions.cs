@@ -10,7 +10,7 @@ namespace Telimena.WebApp.Infrastructure
 {
     public static class EntityExtensions
     {
-        public static IEnumerable<TelemetryDetail> GetTelemetryDetails(this Program program, TelimenaContext context, TelemetryItemTypes type)
+        public static IEnumerable<TelemetryDetail> GetTelemetryDetails(this Program program, TelimenaTelemetryContext context, TelemetryItemTypes type)
         {
             switch (type)
             {

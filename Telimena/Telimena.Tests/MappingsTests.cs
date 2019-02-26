@@ -151,7 +151,7 @@ namespace Telimena.Tests
                     if (targetMember == null)
                     {
                         errors.Add(
-                            $"Failed to find a counterpart of member [{sourceMember.Name}] in class [{target.FullName}]");
+                            $"Failed to find a counterpart of member [{sourceMember.Name}] from [{source.FullName}] in class [{target.FullName}]");
                         continue;
                     }
 
@@ -160,7 +160,7 @@ namespace Telimena.Tests
                 catch (Exception ex)
                 {
                     errors.Add(
-                        $"Error while validating member [{sourceMember.Name}] in class [{target.FullName}] {ex}");
+                        $"Error while validating member [{sourceMember.Name}] from [{source.FullName}]in class [{target.FullName}] {ex}");
 
                 }
             }

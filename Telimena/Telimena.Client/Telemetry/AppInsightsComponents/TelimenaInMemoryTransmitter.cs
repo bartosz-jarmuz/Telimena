@@ -50,15 +50,26 @@ namespace TelimenaClient
 
             if (this.DeliverySettings == null || this.DeliverySettings.AppInsightsEndpointEnabled)
             {
-                var transmission = new Transmission(this.endpointAddress, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
-                await transmission.SendAsync().ConfigureAwait(false);
+                Transmission transmission = new Transmission(this.endpointAddress, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
+                HttpWebResponseWrapper response = await transmission.SendAsync().ConfigureAwait(false);
+                this.LogResult(response);
+
             }
             if (this.DeliverySettings != null)
             {
-                var teliTransmission = new Transmission(this.DeliverySettings.TelimenaTelemetryEndpoint, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
-                await teliTransmission.SendAsync().ConfigureAwait(false);
+                Transmission teliTransmission = new Transmission(this.DeliverySettings.TelimenaTelemetryEndpoint, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
+                HttpWebResponseWrapper response = await teliTransmission.SendAsync().ConfigureAwait(false);
+                this.LogResult(response);
             }
 
+        }
+
+        private void LogResult(HttpWebResponseWrapper response)
+        {
+            if (response.StatusCode < 200 || response.StatusCode >= 300)
+            {
+                TelemetryDebugWriter.WriteLine($"Status code: {response.StatusCode}. Description: [{response.StatusDescription}]. {response.Content}" );
+            }
         }
     }
 }

@@ -164,10 +164,12 @@
     <Compile Include="AssemblyVersionReader\AssemblyVersionReaderTests.cs" />
     <Compile Include="Controllers\AccountControllerTests.cs" />
     <Compile Include="ApiTests.cs" />
+    <Compile Include="Controllers\GlobalContextTestBase.cs" />
+    <Compile Include="Controllers\DbContextService.cs" />
+    <Compile Include="Controllers\DropCreateDatabaseAlwaysWithConnectionClose.cs" />
     <Compile Include="Controllers\TelemetryControllerHelpersTests.cs" />
     <Compile Include="SequenceIdParserTests.cs" />
     <Compile Include="TsProDataParse.cs" />
-    <Compile Include="ReferencedAssembliesTests.cs" />
     <Compile Include="EntitiesTests.cs" />
     <Compile Include="MiscTests.cs" />
     <Compile Include="UnitOfWorkTests\AsyncQueryableExtensions.cs" />
@@ -176,7 +178,6 @@
     <Compile Include="UnitOfWorkTests\DbAsyncQueryProvider.cs" />
     <Compile Include="UnitOfWorkTests\ProgramsDashboardUnitOfWorkTests.cs" />
     <Compile Include="Controllers\Helpers.cs" />
-    <Compile Include="Controllers\ToolkitDataRegistrationTests.cs" />
     <Compile Include="Controllers\UpdaterUpdatesTests.cs" />
     <Compile Include="Controllers\UpdatePackageControllerTests.cs" />
     <Compile Include="MappingsTests.cs" />

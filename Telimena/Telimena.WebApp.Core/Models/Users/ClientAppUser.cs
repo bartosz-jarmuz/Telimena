@@ -10,7 +10,7 @@ namespace Telimena.WebApp.Core.Models
     {
         public Guid Guid { get; set; } = Guid.NewGuid();
 
-        public DateTime FirstSeenDate { get; set; }
+        public DateTimeOffset FirstSeenDate { get; set; } = DateTimeOffset.UtcNow;
         public int Id { get; set; }
         public string UserId { get; set; }
         public string Email { get; set; }

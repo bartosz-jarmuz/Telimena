@@ -22,7 +22,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     {
 
 
-        private static async Task<ITelemetryAware> GetTrackedComponent(ITelemetryUnitOfWork work, TelemetryItemTypes itemType, string key, Program program)
+        private static async Task<ITelemetryAware> GetTrackedComponent(ITelemetryUnitOfWork work, TelemetryItemTypes itemType, string key, TelemetryMonitoredProgram program)
         {
             switch (itemType)
             {
@@ -35,7 +35,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
         }
 
-        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, List<TelemetryItem> units, Program program, string ipAddress)
+        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, List<TelemetryItem> units, TelemetryMonitoredProgram program, string ipAddress)
         {
             if (units.Any())
             {
@@ -70,7 +70,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return null;
         }
 
-        private static async Task AddTelemetries(ITelemetryUnitOfWork work, Program program, string ipAddress
+        private static async Task AddTelemetries(ITelemetryUnitOfWork work, TelemetryMonitoredProgram program, string ipAddress
             , IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping, ClientAppUser clientAppUser, List<TelemetrySummary> summaries)
         {
             foreach (IGrouping<string, TelemetryItem> keyGroupings in typeGrouping.GroupBy(x => x.EntryKey))
@@ -78,18 +78,17 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 ITelemetryAware trackedComponent = await GetTrackedComponent(work, typeGrouping.Key, keyGroupings.Key, program)
                     .ConfigureAwait(false);
                 TelemetrySummary summary = GetTelemetrySummary(clientAppUser, trackedComponent);
-                AssemblyVersionInfo versionInfoInfo =
-                    GetAssemblyVersionInfoOrAddIfMissing(keyGroupings.First().VersionData, program);
+                //AssemblyVersionInfo versionInfoInfo = GetAssemblyVersionInfoOrAddIfMissing(keyGroupings.First().VersionData, program);
                 foreach (TelemetryItem telemetryItem in keyGroupings)
                 {
-                    summary.UpdateTelemetry(versionInfoInfo, ipAddress, telemetryItem);
+                    summary.UpdateTelemetry(keyGroupings.First().VersionData, ipAddress, telemetryItem);
                 }
 
                 summaries.Add(summary);
             }
         }
 
-        private static void AddLogs(ITelemetryUnitOfWork work, Program program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping)
+        private static void AddLogs(ITelemetryUnitOfWork work, TelemetryMonitoredProgram program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping)
         {
             foreach (TelemetryItem telemetryItem in typeGrouping)
             {
@@ -100,14 +99,14 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     , UserName = telemetryItem.UserId
                     , Sequence = telemetryItem.Sequence
                     , Message = telemetryItem.LogMessage
-                    , ProgramId = program.Id
+                    , ProgramId = program.ProgramId
                     , Level = telemetryItem.LogLevel
                 };
                 work.LogMessages.Add(logMsg);
             }
         }
 
-        private static void AddExceptions(ITelemetryUnitOfWork work, Program program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping
+        private static void AddExceptions(ITelemetryUnitOfWork work, TelemetryMonitoredProgram program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping
             , ClientAppUser clientAppUser)
         {
             foreach (TelemetryItem telemetryItem in typeGrouping)
@@ -117,7 +116,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     var exception = new ExceptionInfo
                     {
                         Timestamp = telemetryItem.Timestamp
-                        , ProgramId = program.Id
+                        , ProgramId = program.ProgramId
                         , ProgramVersion = telemetryItem.VersionData.FileVersion
                         , UserName = clientAppUser.UserId
                         , Sequence = telemetryItem.Sequence
@@ -176,41 +175,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             return user;
         }
-        private static void UpdateAssemblyInfo(ProgramAssembly existing, AssemblyInfo assemblyInfo)
-        {
-            existing.Company = assemblyInfo.Company;
-            existing.Copyright = assemblyInfo.Copyright;
-            existing.Description = assemblyInfo.Description;
-            existing.FullName = assemblyInfo.FullName;
-            existing.Product = assemblyInfo.Product;
-            existing.Title= assemblyInfo.Title;
-            existing.Trademark= assemblyInfo.Trademark;
-
-        }
 
         public static async Task RecordVersions(ITelemetryUnitOfWork work, Program program, TelemetryInitializeRequest request)
         {
             AssemblyInfo primaryAss = request.ProgramInfo.PrimaryAssembly;
             program.PrimaryAssembly.AddVersion(primaryAss.VersionData);
-
-            if (request.ProgramInfo.HelperAssemblies.AnyAndNotNull())
-            {
-                foreach (AssemblyInfo helperAssembly in request.ProgramInfo.HelperAssemblies)
-                {
-                    ProgramAssembly existingAssembly = program.ProgramAssemblies.FirstOrDefault(x => x.Name == helperAssembly.Name);
-                    if (existingAssembly == null)
-                    {
-                        existingAssembly = Mapper.Map<ProgramAssembly>(helperAssembly);
-                        program.ProgramAssemblies.Add(existingAssembly);
-                    }
-                    else
-                    {
-                        UpdateAssemblyInfo(existingAssembly, helperAssembly);
-                    }
-
-                    existingAssembly.AddVersion(helperAssembly.VersionData);
-                }
-            }
 
             await AssignToolkitVersion(work, program.PrimaryAssembly, primaryAss.VersionData , request.TelimenaVersion).ConfigureAwait(false);
         }
@@ -228,33 +197,16 @@ namespace Telimena.WebApp.Controllers.Api.V1
             assemblyVersionInfo.ToolkitData = toolkitData;
         }
 
-
-        public static AssemblyVersionInfo GetAssemblyVersionInfoOrAddIfMissing(VersionData versionData, Program program)
-        {
-            program.PrimaryAssembly.AddVersion(versionData);
-            AssemblyVersionInfo versionInfo = program.PrimaryAssembly.GetVersion(versionData);
-            return versionInfo;
-        }
+        //todo - decide whether the version data should be stored in telemetry program like that
+        //public static AssemblyVersionInfo GetAssemblyVersionInfoOrAddIfMissing(VersionData versionData, Program program)
+        //{
+        //    program.PrimaryAssembly.AddVersion(versionData);
+        //    AssemblyVersionInfo versionInfo = program.PrimaryAssembly.GetVersion(versionData);
+        //    return versionInfo;
+        //}
 
        
-        public static async Task<(bool isValid, TelemetryInitializeResponse response, Program program)> GetTelemetryInitializeActionItems(ITelemetryUnitOfWork work, TelemetryInitializeRequest request)
-        {
-            if (!ApiRequestsValidator.IsRequestValid(request))
-            {
-                return (false, new TelemetryInitializeResponse() { Exception = new BadRequestException("Request is not valid") }, null);
-            }
-
-            Program program = await work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false);
-            if (program == null)
-            {
-                {
-                    TelemetryInitializeResponse response = new TelemetryInitializeResponse { Exception = new InvalidOperationException($"Program [{request.TelemetryKey}] is null") };
-                    return (false, response, null);
-                }
-            }
-
-            return (true, null, program);
-        }
+     
 
         public static TelemetrySummary GetTelemetrySummary(ClientAppUser clientAppUser, ITelemetryAware component)
         {
@@ -267,42 +219,31 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return summary;
         }
 
-        public static async Task<ITelemetryAware> GetEventOrAddIfMissing(ITelemetryUnitOfWork work, string componentName, Program program)
+        public static async Task<ITelemetryAware> GetEventOrAddIfMissing(ITelemetryUnitOfWork work, string componentName, TelemetryMonitoredProgram program)
         {
-            Event obj = await work.Events.FirstOrDefaultAsync(x => x.Name == componentName && x.Program.Name == program.Name).ConfigureAwait(false);
+            Event obj = await work.Events.FirstOrDefaultAsync(x => x.Name == componentName && x.Program.ProgramId == program.ProgramId).ConfigureAwait(false);
             if (obj == null)
             {
-                obj = new Event() { Name = componentName, Program = program, ProgramId = program.Id };
+                obj = new Event() { Name = componentName, Program = program, ProgramId = program.ProgramId };
                 work.Events.Add(obj);
             }
 
             return obj;
         }
 
-        public static async Task<ITelemetryAware> GetViewOrAddIfMissing(ITelemetryUnitOfWork work, string viewName, Program program)
+        public static async Task<ITelemetryAware> GetViewOrAddIfMissing(ITelemetryUnitOfWork work, string viewName, TelemetryMonitoredProgram program)
         {
-            View view = await work.Views.FirstOrDefaultAsync(x => x.Name == viewName && x.Program.Name == program.Name).ConfigureAwait(false);
+            View view = await work.Views.FirstOrDefaultAsync(x => x.Name == viewName && x.Program.ProgramId == program.ProgramId).ConfigureAwait(false);
             if (view == null)
             {
-                view = new View { Name = viewName, Program = program, ProgramId = program.Id };
+                view = new View { Name = viewName, Program = program, ProgramId = program.ProgramId };
                 work.Views.Add(view);
             }
 
             return view;
         }
 
-        public static void SetPrimaryAssembly(Program program, TelemetryInitializeRequest request)
-        {
-            if (program.PrimaryAssembly == null)
-            {
-                program.PrimaryAssembly = Mapper.Map<ProgramAssembly>(request.ProgramInfo.PrimaryAssembly);
-                program.PrimaryAssembly.ProgramId = program.Id;
-            }
-            else
-            {
-                UpdateAssemblyInfo(program.PrimaryAssembly, request.ProgramInfo.PrimaryAssembly);
-            }
-        }
+   
 
     }
 }

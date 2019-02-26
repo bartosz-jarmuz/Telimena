@@ -22,10 +22,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public ToolkitDataRepository(DbContext dbContext, IAssemblyStreamVersionReader versionReader) : base(dbContext)
         {
             this.versionReader = versionReader;
-            this.TelimenaContext = dbContext as TelimenaContext;
+            this.TelimenaPortalContext = dbContext as TelimenaPortalContext;
         }
 
-        private TelimenaContext TelimenaContext { get; }
+        private TelimenaPortalContext TelimenaPortalContext { get; }
 
         public async Task<TelimenaToolkitData> StorePackageAsync(bool isBeta, bool introducesBreakingChanges, Stream fileStream, IFileSaver fileSaver)
         {
@@ -33,11 +33,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             fileStream.Position = 0;
             fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream).ConfigureAwait(false);
 
-            TelimenaToolkitData data = await this.TelimenaContext.TelimenaToolkitData.Where(x => x.Version == actualVersion).Include(nameof(TelimenaToolkitData.TelimenaPackageInfo)).FirstOrDefaultAsync().ConfigureAwait(false);
+            TelimenaToolkitData data = await this.TelimenaPortalContext.TelimenaToolkitData.Where(x => x.Version == actualVersion).Include(nameof(TelimenaToolkitData.TelimenaPackageInfo)).FirstOrDefaultAsync().ConfigureAwait(false);
             if (data == null)
             {
                 data = new TelimenaToolkitData(actualVersion);
-                this.TelimenaContext.TelimenaToolkitData.Add(data);
+                this.TelimenaPortalContext.TelimenaToolkitData.Add(data);
             }
 
             if (data.TelimenaPackageInfo == null)
@@ -56,7 +56,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<byte[]> GetPackage(int toolkitDataId, IFileRetriever fileRetriever)
         {
-            TelimenaToolkitData toolkitData = await this.TelimenaContext.TelimenaToolkitData.FirstOrDefaultAsync(x => x.Id == toolkitDataId).ConfigureAwait(false);
+            TelimenaToolkitData toolkitData = await this.TelimenaPortalContext.TelimenaToolkitData.FirstOrDefaultAsync(x => x.Id == toolkitDataId).ConfigureAwait(false);
 
             TelimenaPackageInfo pkg = toolkitData?.TelimenaPackageInfo;
             if (pkg != null)
@@ -71,16 +71,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             ObjectValidator.Validate(() => Version.TryParse(version, out _), new ArgumentException($"[{version}] is not a valid version string"));
 
-            TelimenaPackageInfo current = await this.TelimenaContext.ToolkitPackages.Where(x => x.Version == version).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false) ;
+            TelimenaPackageInfo current = await this.TelimenaPortalContext.ToolkitPackages.Where(x => x.Version == version).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false) ;
             List<TelimenaPackageInfo> packages;
             if (current != null)
             {
-                packages = (await this.TelimenaContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync().ConfigureAwait(false))
+                packages = (await this.TelimenaPortalContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync().ConfigureAwait(false))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x=>x.Id).ToList();
             }
             else
             {
-                packages = (await this.TelimenaContext.ToolkitPackages.ToListAsync().ConfigureAwait(false)).Where(x => Utils.VersionComparison.Extensions.IsNewerVersionThan(x.Version, version))
+                packages = (await this.TelimenaPortalContext.ToolkitPackages.ToListAsync().ConfigureAwait(false)).Where(x => Utils.VersionComparison.Extensions.IsNewerVersionThan(x.Version, version))
                 .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x => x.Id).ToList();
             }
 

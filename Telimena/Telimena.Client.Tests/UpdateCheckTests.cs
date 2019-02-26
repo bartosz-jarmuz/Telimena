@@ -75,7 +75,6 @@ namespace TelimenaClient.Tests
         {
 
             var si = new TelimenaStartupInfo(Guid.NewGuid()) {SuppressAllErrors = false};
-            si.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
             ITelimena sut = TelimenaFactory.Construct(si) ;
 
@@ -105,7 +104,6 @@ namespace TelimenaClient.Tests
         public void Test_CheckForUpdates_Program_AndUpdater()
         {
             var si = new TelimenaStartupInfo(Guid.NewGuid()) {SuppressAllErrors = false};
-            si.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
             ITelimena sut = TelimenaFactory.Construct(si) ;
 

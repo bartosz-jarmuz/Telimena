@@ -26,12 +26,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public UpdatePackageRepository(DbContext dbContext, IAssemblyStreamVersionReader streamVersionReader) : base(dbContext)
         {
             this.streamVersionReader = streamVersionReader;
-            this.TelimenaContext = dbContext as TelimenaContext;
+            this.TelimenaPortalContext = dbContext as TelimenaPortalContext;
         }
 
         private readonly string containerName = "update-packages";
 
-        protected TelimenaContext TelimenaContext { get; }
+        protected TelimenaPortalContext TelimenaPortalContext { get; }
 
         public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string packageName, Stream fileStream, string supportedToolkitVersion, bool isBeta, string releaseNotes, IFileSaver fileSaver)
         {
@@ -49,10 +49,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             ObjectValidator.Validate(() => Version.TryParse(supportedToolkitVersion, out Version _)
                 , new InvalidOperationException($"[{supportedToolkitVersion}] is not a valid version string"));
-            ObjectValidator.Validate(() => this.TelimenaContext.ToolkitPackages.Any(x => x.Version == supportedToolkitVersion)
+            ObjectValidator.Validate(() => this.TelimenaPortalContext.ToolkitPackages.Any(x => x.Version == supportedToolkitVersion)
                 , new ArgumentException($"There is no toolkit package with version [{supportedToolkitVersion}]"));
 
-            ProgramUpdatePackageInfo pkg = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == program.Id
+            ProgramUpdatePackageInfo pkg = await this.TelimenaPortalContext.UpdatePackages.Where(x => x.ProgramId == program.Id
                                                                                                 && x.Version == actualVersion
 #pragma warning disable 618
                                                                                                 && x.SupportedToolkitVersion == supportedToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
@@ -60,7 +60,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             if (pkg == null)
             {
                 pkg = new ProgramUpdatePackageInfo(packageName, program.Id, actualVersion, fileStream.Length, supportedToolkitVersion);
-                this.TelimenaContext.UpdatePackages.Add(pkg);
+                this.TelimenaPortalContext.UpdatePackages.Add(pkg);
             }
 
             pkg.UpdateContentAndMetadata(isBeta, releaseNotes);
@@ -84,13 +84,13 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public Task<List<ProgramUpdatePackageInfo>> GetAllPackages(int programId)
         {
-            return this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
+            return this.TelimenaPortalContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
         }
 
         public async Task<List<ProgramUpdatePackageInfo>> GetAllPackagesNewerThan( VersionData versionData, int programId)
         {
-            var program = await this.TelimenaContext.Programs.SingleOrDefaultAsync(x => x.Id == programId).ConfigureAwait(false);
-            List<ProgramUpdatePackageInfo> packages = await this.TelimenaContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync().ConfigureAwait(false);
+            var program = await this.TelimenaPortalContext.Programs.SingleOrDefaultAsync(x => x.Id == programId).ConfigureAwait(false);
+            List<ProgramUpdatePackageInfo> packages = await this.TelimenaPortalContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync().ConfigureAwait(false);
 
             var currentVersion = program.DetermineProgramVersion(versionData);
 #pragma warning disable 618
@@ -115,7 +115,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(Guid id)
         {
-            return this.TelimenaContext.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == id);
+            return this.TelimenaPortalContext.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == id);
         }
     }
 }

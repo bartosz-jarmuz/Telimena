@@ -12,7 +12,6 @@ using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Infrastructure.Database;
-using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
@@ -22,7 +21,7 @@ using TelimenaClient.Serializer;
 namespace Telimena.Tests
 {
     [TestFixture]
-    public class UpdatePackageControllerTests : IntegrationTestsContextNotShared<TelimenaContext>
+    public class UpdatePackageControllerTests : IntegrationTestsContextNotShared<TelimenaPortalContext>
     {
         private readonly ITelimenaSerializer serializer = new TelimenaSerializer();
 
@@ -58,7 +57,7 @@ namespace Telimena.Tests
 
 
 
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new Mock<ITelimenaUserManager>().Object, reader.Object);
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, reader.Object);
             return unit;
         }
 
@@ -85,7 +84,7 @@ namespace Telimena.Tests
             ProgramRepository prgRepo = new ProgramRepository(this.Context);
             prgRepo.Add(new Program("prg", this.Program1Key) { Id = 1 });
             this.Context.SaveChanges();
-            IProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, new Mock<ITelimenaUserManager>().Object, TestingUtilities.GetMockVersionReader().Object);
+            IProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, TestingUtilities.GetMockVersionReader().Object);
 
             ProgramsController sut = new ProgramsController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(this.Program1Key, new VersionData("", "1.2.0.0"), this.User1Guid, false, "0.7.0.0", "1.0.0.0");

@@ -18,20 +18,21 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
     internal class ProgramRepository : IProgramRepository
     {
-        public ProgramRepository(DbContext dbContext) 
+        public ProgramRepository(TelimenaPortalContext portalContext)
         {
-            this.telimenaContext = dbContext as TelimenaContext;
+            this.portalContext = portalContext;
         }
 
-        private readonly TelimenaContext telimenaContext ;
+        private readonly TelimenaPortalContext portalContext;
+
 
         public void Add(Program objectToAdd)
         {
             if (objectToAdd.Updater == null)
             {
-                objectToAdd.Updater = this.telimenaContext.Updaters.FirstOrDefault(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName);
+                objectToAdd.Updater = this.portalContext.Updaters.FirstOrDefault(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName);
             }
-            this.telimenaContext.Programs.Add(objectToAdd);
+            this.portalContext.Programs.Add(objectToAdd);
         }
 
         public async Task<Program> FirstOrDefaultAsync(Expression<Func<Program, bool>> predicate = null)
@@ -39,16 +40,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             Program prg;
             if (predicate == null)
             {
-                prg = await this.telimenaContext.Set<Program>().FirstOrDefaultAsync().ConfigureAwait(false);
+                prg = await this.portalContext.Set<Program>().FirstOrDefaultAsync().ConfigureAwait(false);
             }
             else
             {
-                prg = await this.telimenaContext.Set<Program>().FirstOrDefaultAsync(predicate).ConfigureAwait(false);
+                prg = await this.portalContext.Set<Program>().FirstOrDefaultAsync(predicate).ConfigureAwait(false);
             }
 
             if (prg != null && prg.Updater == null)
             {
-                prg.Updater = await this.telimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName).ConfigureAwait(false);
+                prg.Updater = await this.portalContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName).ConfigureAwait(false);
             }
 
             return prg;
@@ -62,39 +63,39 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             Program prg; 
             if (predicate == null)
             {
-                prg = await this.telimenaContext.Set<Program>().SingleOrDefaultAsync().ConfigureAwait(false);
+                prg = await this.portalContext.Set<Program>().SingleOrDefaultAsync().ConfigureAwait(false);
             }
             else
             {
-                prg = await this.telimenaContext.Set<Program>().SingleOrDefaultAsync(predicate).ConfigureAwait(false);
+                prg = await this.portalContext.Set<Program>().SingleOrDefaultAsync(predicate).ConfigureAwait(false);
             }
 
             if (prg != null && prg.Updater == null)
             {
-                prg.Updater = await this.telimenaContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName).ConfigureAwait(false);
+                prg.Updater = await this.portalContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName).ConfigureAwait(false);
             }
 
             return prg;
         }
         public void Remove(Program program)
         {
-            this.telimenaContext.ViewTelemetryDetails.RemoveRange(this.telimenaContext.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id));
-            this.telimenaContext.ViewTelemetrySummaries.RemoveRange(this.telimenaContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id));
-            this.telimenaContext.Views.RemoveRange(this.telimenaContext.Views.Where(x => x.ProgramId == program.Id));
+            //this.telemetryContext.ViewTelemetryDetails.RemoveRange(this.telemetryContext.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id));
+            //this.telemetryContext.ViewTelemetrySummaries.RemoveRange(this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id));
+            //this.telemetryContext.Views.RemoveRange(this.telemetryContext.Views.Where(x => x.ProgramId == program.Id));
 
-            this.telimenaContext.Versions.RemoveRange(this.telimenaContext.Versions.Where(x => x.ProgramAssembly.ProgramId == program.Id));
-            this.telimenaContext.ProgramAssemblies.RemoveRange(this.telimenaContext.ProgramAssemblies.Where(x => x.ProgramId == program.Id));
+            this.portalContext.Versions.RemoveRange(this.portalContext.Versions.Where(x => x.ProgramAssembly.ProgramId == program.Id));
+            this.portalContext.ProgramAssemblies.RemoveRange(this.portalContext.ProgramAssemblies.Where(x => x.ProgramId == program.Id));
 
-            this.telimenaContext.ProgramPackages.RemoveRange(this.telimenaContext.ProgramPackages.Where(x => x.ProgramId == program.Id));
+            this.portalContext.ProgramPackages.RemoveRange(this.portalContext.ProgramPackages.Where(x => x.ProgramId == program.Id));
 
-            this.telimenaContext.Programs.Remove(program);
+            this.portalContext.Programs.Remove(program);
 
         }
 
         public async Task<IEnumerable<Program>> GetAsync(Expression<Func<Program, bool>> filter = null
             , Func<IQueryable<Program>, IOrderedQueryable<Program>> orderBy = null, string includeProperties = "")
         {
-            IQueryable<Program> query = Repository<Program>.PrepareQuery(this.telimenaContext, filter, includeProperties);
+            IQueryable<Program> query = Repository<Program>.PrepareQuery(this.portalContext, filter, includeProperties);
 
             if (orderBy != null)
             {
@@ -102,19 +103,6 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
 
             return await query.ToListAsync().ConfigureAwait(false);
-        }
-
-        
-
-        public async Task<IEnumerable<Program>> GetProgramsByDeveloperName(string developerName)
-        {
-            return await this.telimenaContext.Programs.Include(x => x.DeveloperAccount)
-                .Where(x => x.DeveloperAccount != null && x.DeveloperAccount.Name == developerName).ToListAsync().ConfigureAwait(false);
-        }
-
-        public async Task<IEnumerable<Program>> GetProgramsForUserAsync(TelimenaUser user)
-        {
-            return await this.telimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id).ToListAsync().ConfigureAwait(false);
         }
 
         public List<Program> GetProgramsVisibleToUser(TelimenaUser user, IPrincipal principal)
@@ -131,10 +119,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             if (principal != null && principal.IsInRole(TelimenaRoles.Admin))
             {
-                return this.telimenaContext.Programs;
+                return this.portalContext.Programs;
             }
 
-            return this.telimenaContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id);
+            return this.portalContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id);
         }
     }
 }

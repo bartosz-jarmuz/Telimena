@@ -58,21 +58,6 @@ namespace TelimenaClient
         public bool SuppressAllErrors { get; set; } = true;
 
         /// <summary>
-        /// Loads the helper assembly infos
-        /// </summary>
-        /// <param name="assemblies"></param>
-        public void LoadHelperAssemblies(params Assembly[] assemblies)
-        {
-            this.LoadAssemblyInfos(assemblies);
-        }
-
-        /// <summary>
-        ///     Gets the helper assemblies infos.
-        /// </summary>
-        /// <value>The helper assemblies.</value>
-        public List<Model.AssemblyInfo> HelperAssemblies { get; private set; } = new List<Model.AssemblyInfo>();
-
-        /// <summary>
         /// Gets or sets the instrumentation key (if AppInsights is in use)
         /// </summary>
         /// <value>The instrumentation key.</value>
@@ -81,29 +66,6 @@ namespace TelimenaClient
         /// <inheritdoc />
         public bool RegisterUnhandledExceptionsTracking { get; set; } = true;
 
-        /// <summary>
-        /// Loads the helper assemblies based on Assembly Name
-        /// </summary>
-        /// <param name="assemblyNames"></param>
-        public void LoadHelperAssembliesByName(params string[] assemblyNames)
-        {
-            string path = AppDomain.CurrentDomain.BaseDirectory;
-            var assemblies = new List<Assembly>();
-            foreach (string assemblyName in assemblyNames)
-            {
-                assemblies.Add(Assembly.LoadFrom(Path.Combine(path, assemblyName)));
-            }
-            this.LoadAssemblyInfos(assemblies);
-        }
-
-        private void LoadAssemblyInfos(IEnumerable<Assembly> assemblies)
-        {
-            this.HelperAssemblies = new List<Model.AssemblyInfo>();
-            foreach (Assembly assembly in assemblies)
-            {
-                this.HelperAssemblies.Add(new Model.AssemblyInfo(assembly));
-            }
-        }
 
         private static Assembly GetProperCallingAssembly()
         {

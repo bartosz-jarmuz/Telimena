@@ -23,11 +23,11 @@ namespace Telimena.WebApp.Core.DTO
             }
             if (propertiesToInclude.Contains(nameof(this.AssemblyVersion)))
             {
-                this.AssemblyVersion = telemetryDetail.AssemblyVersion.AssemblyVersion;
+                this.AssemblyVersion = telemetryDetail.AssemblyVersion;
             }
             if (propertiesToInclude.Contains(nameof(this.FileVersion)))
             {
-                this.FileVersion = telemetryDetail.AssemblyVersion.FileVersion;
+                this.FileVersion = telemetryDetail.AssemblyVersion;
             }
         }
 

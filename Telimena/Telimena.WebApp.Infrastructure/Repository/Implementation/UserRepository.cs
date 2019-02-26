@@ -20,16 +20,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
         }
 
-        private TelimenaContext TelimenaContext => this.DbContext as TelimenaContext;
+        private TelimenaPortalContext TelimenaPortalContext => this.DbContext as TelimenaPortalContext;
 
         public async Task<TelimenaUser> GetByPrincipalAsync(IPrincipal userPrincipal)
         {
-            return await this.TelimenaContext.Users.FirstOrDefaultAsync(x => x.UserName == userPrincipal.Identity.Name).ConfigureAwait(false);
+            return await this.TelimenaPortalContext.Users.FirstOrDefaultAsync(x => x.UserName == userPrincipal.Identity.Name).ConfigureAwait(false);
         }
 
         public TelimenaUser GetByPrincipal(IPrincipal userPrincipal)
         {
-            return this.TelimenaContext.Users.FirstOrDefault(x => x.UserName == userPrincipal.Identity.Name);
+            return this.TelimenaPortalContext.Users.FirstOrDefault(x => x.UserName == userPrincipal.Identity.Name);
         }
     }
 }

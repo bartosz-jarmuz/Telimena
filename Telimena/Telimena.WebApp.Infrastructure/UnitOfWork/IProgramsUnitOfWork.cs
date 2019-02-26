@@ -9,11 +9,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
     {
         IRepository<AssemblyVersionInfo> Versions { get; }
         IUserRepository Users { get; }
-        ITelimenaUserManager TelimenaUserManager { get; set; }
-
         IProgramRepository Programs { get; }
-
-        IRepository<View> Views { get; }
         IToolkitDataRepository ToolkitData { get; set; }
         IUpdatePackageRepository UpdatePackages { get; set; }
         IUpdaterRepository UpdaterRepository { get; set; }

@@ -108,7 +108,7 @@ namespace Telimena.WebApp.Infrastructure.Identity
 
         public static TelimenaUserManager Create(IdentityFactoryOptions<TelimenaUserManager> options, IOwinContext context)
         {
-            TelimenaUserManager manager = new TelimenaUserManager(new UserStore<TelimenaUser>(context.Get<TelimenaContext>()));
+            TelimenaUserManager manager = new TelimenaUserManager(new UserStore<TelimenaUser>(context.Get<TelimenaPortalContext>()));
 
             return manager;
         }

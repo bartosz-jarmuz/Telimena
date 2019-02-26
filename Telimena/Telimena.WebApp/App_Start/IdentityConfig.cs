@@ -22,7 +22,7 @@ namespace Telimena.WebApp
         /// <param name="app">The application.</param>
         public void Configuration(IAppBuilder app)
         {
-            app.CreatePerOwinContext(() => new TelimenaContext());
+            app.CreatePerOwinContext(() => new TelimenaPortalContext());
             app.CreatePerOwinContext<TelimenaUserManager>(TelimenaUserManager.Create);
             LoadHangfire(app);
             app.UseCookieAuthentication(new CookieAuthenticationOptions

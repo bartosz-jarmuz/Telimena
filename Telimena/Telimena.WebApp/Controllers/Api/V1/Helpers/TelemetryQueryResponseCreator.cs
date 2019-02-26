@@ -13,7 +13,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// </summary>
     public static class TelemetryQueryResponseCreator
     {
-        private static IEnumerable<IEnumerable<ITelemetryAware>> GetCollections(IEnumerable<TelemetryItemTypes> types, Program program)
+        private static IEnumerable<IEnumerable<ITelemetryAware>> GetCollections(IEnumerable<TelemetryItemTypes> types, TelemetryMonitoredProgram program)
         {
             foreach (TelemetryItemTypes telemetryItemType in types)
             {
@@ -39,7 +39,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="request">The request.</param>
         /// <param name="program">The program.</param>
         /// <returns>TelemetryQueryResponse.</returns>
-        public static TelemetryQueryResponse Create(TelemetryQueryRequest request, Program program)
+        public static TelemetryQueryResponse Create(TelemetryQueryRequest request, TelemetryMonitoredProgram program)
         {
 
             TelemetryQueryResponse queryResult = new TelemetryQueryResponse();

@@ -14,13 +14,7 @@ namespace Telimena.WebApp.Core.Models
         public virtual Program PrimaryOf { get; set; }
         public string Name { get; set; }
         public string Extension { get; set; }
-        public string Product { get; set; }
-        public string Trademark { get; set; }
-        public string Description { get; set; }
-        public string Copyright { get; set; }
-        public string Title { get; set; }
-        public string Company { get; set; }
-        public string FullName { get; set; }
+        
         public virtual RestrictedAccessList<AssemblyVersionInfo> Versions { get; set; } = new RestrictedAccessList<AssemblyVersionInfo>();
 
         public string GetFileName()

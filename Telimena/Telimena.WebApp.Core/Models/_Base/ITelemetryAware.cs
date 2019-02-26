@@ -7,7 +7,7 @@ namespace Telimena.WebApp.Core.Models
     {
         int Id { get; set; }
         string Name { get; set; }
-        Program Program { get; set; }
+        TelemetryMonitoredProgram Program { get; set; }
         DateTimeOffset FirstReportedDate { get; set; }
         IReadOnlyList<TelemetrySummary> GetTelemetrySummaries();
         IReadOnlyList<TelemetryDetail> GetTelemetryDetails(int clientAppUserId);

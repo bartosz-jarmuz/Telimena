@@ -15,7 +15,7 @@ using static Telimena.Tests.TestingUtilities;
 namespace Telimena.Tests
 {
     [TestFixture]
-    public class UpdaterUpdatesTests : IntegrationTestsContextNotShared<TelimenaContext>
+    public class UpdaterUpdatesTests : IntegrationTestsContextNotShared<TelimenaPortalContext>
     {
         public Guid TestProgramTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
         public Guid TestProgramWithDifferentUpdaterTelemetryKey = Guid.Parse("14b6e9b2-7886-4e4b-ba55-3541155c29ee");
@@ -31,8 +31,8 @@ namespace Telimena.Tests
         protected override Action SeedAction =>
             () =>
             {
-                TelimenaDbInitializer.SeedUsers(this.Context);
-                TelimenaDbInitializer.SeedToolkit(this.Context);
+                TelimenaPortalDbInitializer.SeedUsers(this.Context);
+                TelimenaPortalDbInitializer.SeedToolkit(this.Context);
                 this.Prepare();
 
             };

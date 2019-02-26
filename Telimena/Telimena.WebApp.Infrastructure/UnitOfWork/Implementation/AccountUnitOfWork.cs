@@ -14,7 +14,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 {
     public class AccountUnitOfWork : IAccountUnitOfWork
     {
-        public AccountUnitOfWork(IAuthenticationManager authManager, ITelimenaUserManager userManager, TelimenaContext context)
+        public AccountUnitOfWork(IAuthenticationManager authManager, ITelimenaUserManager userManager, TelimenaPortalContext context)
         {
             this.AuthManager = authManager;
             this.UserManager = userManager;
@@ -22,7 +22,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
             this.DeveloperRepository = new Repository<DeveloperAccount>(context);
         }
 
-        private readonly TelimenaContext _context;
+        private readonly TelimenaPortalContext _context;
 
         public IAuthenticationManager AuthManager { get; }
         public ITelimenaUserManager UserManager { get; }

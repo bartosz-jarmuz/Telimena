@@ -11,27 +11,27 @@ using Telimena.WebApp.Core.Models;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
-    public class TelimenaContext : IdentityDbContext<TelimenaUser>
+    public class TelimenaPortalContext : IdentityDbContext<TelimenaUser>
     {
-        public TelimenaContext(string nameOrConnectionString) : base(nameOrConnectionString)
+        public TelimenaPortalContext(string nameOrConnectionString) : base(nameOrConnectionString)
         {
         }
 
-        public TelimenaContext() : base("name=DevelopmentDBContext")
+        public TelimenaPortalContext() : base("name=TelimenaPortalDb")
         {
-            System.Data.Entity.Database.SetInitializer(new TelimenaDbInitializer());
+            System.Data.Entity.Database.SetInitializer(new TelimenaPortalDbInitializer());
         }
 
-        public TelimenaContext(DbConnection conn) : base(conn, true)
+        public TelimenaPortalContext(DbConnection conn) : base(conn, true)
         {
-            System.Data.Entity.Database.SetInitializer(new TelimenaDbInitializer());
+            System.Data.Entity.Database.SetInitializer(new TelimenaPortalDbInitializer());
         }
 
-        public TelimenaContext(SqlConnection conn) : base(conn, true)
+        public TelimenaPortalContext(SqlConnection conn) : base(conn, true)
         {
             if (conn.State == ConnectionState.Closed)
             {
-                conn.ConnectionString = WebConfigurationManager.ConnectionStrings["DevelopmentDBContext"].ConnectionString;
+                conn.ConnectionString = WebConfigurationManager.ConnectionStrings["TelimenaPortalDb"].ConnectionString;
                 // DataSource != LocalDB means app is running in Azure with the SQLDB connection string you configured
                 if (!conn.DataSource.Equals("(localdb)\\MSSQLLocalDB", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -39,19 +39,13 @@ namespace Telimena.WebApp.Infrastructure.Database
                 }
             }
 
-            System.Data.Entity.Database.SetInitializer(new TelimenaDbInitializer());
+            System.Data.Entity.Database.SetInitializer(new TelimenaPortalDbInitializer());
         }
 
         private Type type = typeof(SqlProviderServices) ?? throw new Exception("Do not remove, ensures static reference to System.Data.Entity.SqlServer");
 
         public DbSet<Program> Programs { get; set; }
-        public DbSet<View> Views { get; set; }
-        public DbSet<Event> Events { get; set; }
-        public DbSet<ViewTelemetrySummary> ViewTelemetrySummaries { get; set; }
-        public DbSet<ViewTelemetryDetail> ViewTelemetryDetails { get; set; }
-        public DbSet<EventTelemetryDetail> EventTelemetryDetails { get; set; }
-        public DbSet<ViewTelemetryUnit> ViewTelemetryUnits { get; set; }
-        public DbSet<ClientAppUser> AppUsers { get; set; }
+        
         public DbSet<DeveloperAccount> Developers { get; set; }
         public DbSet<ProgramAssembly> ProgramAssemblies { get; set; }
         public DbSet<AssemblyVersionInfo> Versions { get; set; }
@@ -61,16 +55,12 @@ namespace Telimena.WebApp.Infrastructure.Database
         public DbSet<UpdaterPackageInfo> UpdaterPackages { get; set; }
         public DbSet<Updater> Updaters { get; set; }
 
-        public DbSet<ExceptionInfo> Exceptions{ get; set; }
-        public DbSet<LogMessage> LogMessages{ get; set; }
-
+        
         public DbSet<ProgramPackageInfo> ProgramPackages { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<ProgramAssembly>().HasRequired(a => a.Program).WithMany(c => c.ProgramAssemblies).HasForeignKey(a => a.ProgramId);
 
             modelBuilder.Entity<Program>().HasOptional(a => a.PrimaryAssembly).WithOptionalPrincipal(u => u.PrimaryOf);
 

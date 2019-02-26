@@ -113,7 +113,7 @@
     <Compile Include="UpdateCheckTests.cs" />
     <Compile Include="TestRegistrationRequests.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="TestConstructorAndHelperAssembliesLoad.cs" />
+    <Compile Include="TestConstructor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

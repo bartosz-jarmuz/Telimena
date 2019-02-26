@@ -24,7 +24,6 @@ namespace TelimenaClient.Tests
         public void Test_InitializeRequestCreation()
         {
             TelimenaStartupInfo si = new TelimenaStartupInfo(this.testTelemetryKey);
-            si.LoadHelperAssembliesByName("Telimena.Client.Tests.dll", "Moq.dll");
 
             Telimena telimena = TelimenaFactory.Construct(si) as Telimena ;
             telimena.Properties.SuppressAllErrors = false;

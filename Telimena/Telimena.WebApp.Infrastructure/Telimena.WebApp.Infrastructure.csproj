@@ -171,7 +171,9 @@
     <Compile Include="Audit\IAudit.cs" />
     <Compile Include="Audit\IAuditLogger.cs" />
     <Compile Include="AutoMapperDomainProfile.cs" />
-    <Compile Include="Database\TelimenaDbContext.cs" />
+    <Compile Include="Database\TelimenaTelemetryContext.cs" />
+    <Compile Include="Database\TelimenaPortalContext.cs" />
+    <Compile Include="Database\TelimenaTelemetryDbInitializer.cs" />
     <Compile Include="EntityExtensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
@@ -203,7 +205,7 @@
     <Compile Include="UnitOfWork\Implementation\AccountUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\ProgramsDashboardUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Database\TelimenaDbInitializer.cs" />
+    <Compile Include="Database\TelimenaPortalDbInitializer.cs" />
     <Compile Include="Security\TelimenaAuthorizeAttribute.cs" />
     <Compile Include="UnitOfWork\IAccountUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\ProgramsUnitOfWork.cs" />

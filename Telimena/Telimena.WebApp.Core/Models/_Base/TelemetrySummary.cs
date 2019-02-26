@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 
 namespace Telimena.WebApp.Core.Models
 {
@@ -29,9 +30,9 @@ namespace Telimena.WebApp.Core.Models
         public abstract List<TelemetryDetail> GetTelemetryDetails();
         public abstract ITelemetryAware GetComponent();
 
-        public abstract void AddTelemetryDetail(string ipAddress, AssemblyVersionInfo versionInfo, TelemetryItem telemetryItem);
+        public abstract void AddTelemetryDetail(string ipAddress, VersionData versionInfo, TelemetryItem telemetryItem);
 
-        public virtual void UpdateTelemetry(AssemblyVersionInfo versionInfo, string ipAddress, TelemetryItem telemetryItem)
+        public virtual void UpdateTelemetry(VersionData versionInfo, string ipAddress, TelemetryItem telemetryItem)
         {
             this.LastTelemetryUpdateTimestamp = DateTimeOffset.UtcNow;
             this.AddTelemetryDetail(ipAddress, versionInfo, telemetryItem);

@@ -48,15 +48,17 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
         }
 
-        public ProgramsDashboardUnitOfWork(TelimenaContext context)
+        public ProgramsDashboardUnitOfWork(TelimenaPortalContext portalContext, TelimenaTelemetryContext telemetryContext)
         {
-            this.context = context;
-            this.Programs = new ProgramRepository(this.context);
-            this.Views = new ViewRepository(this.context);
-            this.Users = new Repository<TelimenaUser>(this.context);
+            this.portalContext = portalContext;
+            this.telemetryContext = telemetryContext;
+            this.Programs = new ProgramRepository(this.portalContext);
+            this.Views = new ViewRepository(this.telemetryContext);
+            this.Users = new Repository<TelimenaUser>(this.portalContext);
         }
 
-        private readonly TelimenaContext context;
+        private readonly TelimenaPortalContext portalContext;
+        private readonly TelimenaTelemetryContext telemetryContext;
         public IRepository<View> Views { get; }
 
         public IRepository<TelimenaUser> Users { get; }
@@ -111,10 +113,10 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
             PortalSummaryData summary = new PortalSummaryData
             {
-                TotalUsersCount = await this.context.Users.CountAsync().ConfigureAwait(false)
-                , NewestUser = await this.context.Users.OrderByDescending(x => x.UserNumber).FirstAsync().ConfigureAwait(false)
-                , LastActiveUser = await this.context.Users.OrderByDescending(x => x.LastLoginDate).FirstAsync().ConfigureAwait(false)
-                , UsersActiveInLast24Hrs = await this.context.Users.CountAsync(x =>
+                TotalUsersCount = await this.portalContext.Users.CountAsync().ConfigureAwait(false)
+                , NewestUser = await this.portalContext.Users.OrderByDescending(x => x.UserNumber).FirstAsync().ConfigureAwait(false)
+                , LastActiveUser = await this.portalContext.Users.OrderByDescending(x => x.LastLoginDate).FirstAsync().ConfigureAwait(false)
+                , UsersActiveInLast24Hrs = await this.portalContext.Users.CountAsync(x =>
                     x.LastLoginDate != null && DbFunctions.DiffDays(DateTime.UtcNow, x.LastLoginDate.Value) < 1).ConfigureAwait(false)
             };
             return summary;
@@ -122,11 +124,21 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)
         {
-            IEnumerable<int> programIds = programs.Select(x => x.Id);
-            List<View> views = programs.SelectMany(x => x.Views).ToList();
+            List<TelemetryMonitoredProgram> telemetryMonitoredProgram = new List<TelemetryMonitoredProgram>();
+            foreach (Program program in programs)
+            {
+                var telePrg = await this.telemetryContext.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == program.TelemetryKey)
+                    .ConfigureAwait(false);
+                if (telePrg != null)
+                {
+                    telemetryMonitoredProgram.Add(telePrg);
+                }
+            }
+             
+            List<View> views = telemetryMonitoredProgram.SelectMany(x => x.Views).ToList();
             IEnumerable<int> viewIds = views.Select(x => x.Id);
             List<ViewTelemetrySummary> viewTelemetrySummaries =
-                await this.context.ViewTelemetrySummaries.Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync().ConfigureAwait(false);
+                await this.telemetryContext.ViewTelemetrySummaries.Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync().ConfigureAwait(false);
             //List<ClientAppUser> users = programUsageSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
             AllProgramsSummaryData summary = new AllProgramsSummaryData
             {
@@ -147,22 +159,22 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task CompleteAsync()
         {
-            await this.context.SaveChangesAsync().ConfigureAwait(false);
+            await this.portalContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<UsageDataTableResult> GetExceptions(Guid telemetryKey, TelemetryItemTypes itemType, int skip
             , int take, IEnumerable<Tuple<string, bool>> sortBy , ISearch requestSearch 
             , List<string> searchableColumns)
         {
-            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.portalContext.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
                 throw new ArgumentException($"Program with key {telemetryKey} does not exist");
             }
 
-            IQueryable<ExceptionInfo> query = this.context.Exceptions.Where(x => x.ProgramId == program.Id);
-            int totalCount = await this.context.Exceptions.CountAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+            IQueryable<ExceptionInfo> query = this.telemetryContext.Exceptions.Where(x => x.ProgramId == program.Id);
+            int totalCount = await this.telemetryContext.Exceptions.CountAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
 
             if (take == -1)
             {
@@ -208,15 +220,15 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<UsageDataTableResult> GetLogs(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy, string searchPhrase)
         {
-            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.portalContext.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
                 throw new ArgumentException($"Program with key {telemetryKey} does not exist");
             }
 
-            IQueryable<LogMessage> query = this.context.LogMessages.Where(x => x.ProgramId == program.Id);
-            int totalCount = await this.context.LogMessages.CountAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+            IQueryable<LogMessage> query = this.telemetryContext.LogMessages.Where(x => x.ProgramId == program.Id);
+            int totalCount = await this.telemetryContext.LogMessages.CountAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
 
             if (take == -1)
             {
@@ -259,7 +271,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         public async Task<UsageDataTableResult> GetSequenceHistory(Guid telemetryKey, string sequenceId, string searchValue)
         {
 
-            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.portalContext.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -271,10 +283,10 @@ namespace Telimena.WebApp.Infrastructure.Repository
            {
                return new UsageDataTableResult { TotalCount = 0, FilteredCount = 0, UsageData = new List<DataTableTelemetryDataBase>()};
             }
-            IEnumerable<TelemetryDetail> viewQuery = (await this.context.ViewTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
-           IEnumerable<TelemetryDetail> eventQuery = (await this.context.EventTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
-           List<LogMessage> logsQuery = (await this.context.LogMessages.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));
-           List<ExceptionInfo> exceptionsQuery = (await this.context.Exceptions.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));
+            IEnumerable<TelemetryDetail> viewQuery = (await this.telemetryContext.ViewTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
+           IEnumerable<TelemetryDetail> eventQuery = (await this.telemetryContext.EventTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
+           List<LogMessage> logsQuery = (await this.telemetryContext.LogMessages.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));
+           List<ExceptionInfo> exceptionsQuery = (await this.telemetryContext.Exceptions.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));
 
 
             List<object> allResults =  viewQuery.Concat(eventQuery).Cast<object>().ToList();
@@ -339,7 +351,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             , List<string> searchableColumns)
         {
 
-            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.portalContext.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -350,14 +362,14 @@ namespace Telimena.WebApp.Infrastructure.Repository
             int totalCount;
             if (itemType == TelemetryItemTypes.View)
             {
-                 query = this.context.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id);
-                 totalCount = await this.context.ViewTelemetryDetails.CountAsync(x => x.TelemetrySummary.View.ProgramId == program.Id).ConfigureAwait(false);
+                 query = this.telemetryContext.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id);
+                 totalCount = await this.telemetryContext.ViewTelemetryDetails.CountAsync(x => x.TelemetrySummary.View.ProgramId == program.Id).ConfigureAwait(false);
 
             }
             else
             {
-                 query = this.context.EventTelemetryDetails.Where(x => x.TelemetrySummary.Event.ProgramId == program.Id && !string.IsNullOrEmpty(x.TelemetrySummary.Event.Name)); //todo remove this empty string check after dealing with heartbeat data
-                 totalCount = await this.context.EventTelemetryDetails.CountAsync(x => x.TelemetrySummary.Event.ProgramId == program.Id && !string.IsNullOrEmpty(x.TelemetrySummary.Event.Name)).ConfigureAwait(false);
+                 query = this.telemetryContext.EventTelemetryDetails.Where(x => x.TelemetrySummary.Event.ProgramId == program.Id && !string.IsNullOrEmpty(x.TelemetrySummary.Event.Name)); //todo remove this empty string check after dealing with heartbeat data
+                 totalCount = await this.telemetryContext.EventTelemetryDetails.CountAsync(x => x.TelemetrySummary.Event.ProgramId == program.Id && !string.IsNullOrEmpty(x.TelemetrySummary.Event.Name)).ConfigureAwait(false);
             }
 
 
@@ -389,7 +401,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     , UserName = detail.UserId
                     , IpAddress = detail.IpAddress
                     , EntryKey = detail.EntryKey
-                    , ProgramVersion = detail.AssemblyVersion.AssemblyVersion
+                    , ProgramVersion = detail.FileVersion
                     , Sequence = detail.Sequence
                     ,Values = detail.GetTelemetryUnits().ToDictionary(x => x.Key,x=> x.ValueString)
                 };
@@ -401,14 +413,14 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
         {
-            Program program = await this.context.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.portalContext.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
                 throw new ArgumentException($"Program with key {telemetryKey} does not exist");
             }
 
-            List<TelemetryDetail> details = program.GetTelemetryDetails(this.context, type).ToList();
+            List<TelemetryDetail> details = program.GetTelemetryDetails(this.telemetryContext, type).ToList();
             List<TelemetryPivotTableRow> rows = new List<TelemetryPivotTableRow>();
 
             foreach (TelemetryDetail detail in details)
@@ -454,7 +466,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     }
                     else if (rule.Item1 == nameof(DataTableTelemetryDataBase.ProgramVersion))
                     {
-                        query = Order(query, x => x.AssemblyVersion.AssemblyVersion, rule.Item2, index);
+                        query = Order(query, x => x.FileVersion, rule.Item2, index);
                     }
                     else if (rule.Item1 == nameof(DataTableTelemetryDataBase.UserName))
                     {

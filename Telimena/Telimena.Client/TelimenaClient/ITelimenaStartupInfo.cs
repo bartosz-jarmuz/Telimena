@@ -46,12 +46,6 @@ namespace TelimenaClient
         bool SuppressAllErrors { get; }
 
         /// <summary>
-        ///     Gets the helper assemblies infos.
-        /// </summary>
-        /// <value>The helper assemblies.</value>
-        List<Model.AssemblyInfo> HelperAssemblies { get; }
-
-        /// <summary>
         /// Gets or sets the instrumentation key (if AppInsights is in use)
         /// </summary>
         /// <value>The instrumentation key.</value>
