@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
 
@@ -36,10 +38,15 @@ namespace TelimenaClient
         protected override  async Task Send(IEnumerable<ITelemetry> telemetryItems, TimeSpan timeout)
         {
             byte[] data = null;
-
-            if (telemetryItems != null)
+            IEnumerable<ITelemetry> filtered = telemetryItems;
+            if (!this.DeliverySettings.IsHeartbeatEnabled)
             {
-                data = JsonSerializer.Serialize(telemetryItems);
+                filtered = filtered?.Where(x => !(x is MetricTelemetry telemetry && telemetry.Name == "HeartbeatState"));
+            }
+            
+            if (filtered != null)
+            {
+                data = JsonSerializer.Serialize(filtered);
             }
 
             if (data == null || data.Length == 0)
