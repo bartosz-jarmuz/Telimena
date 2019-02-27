@@ -7,10 +7,10 @@
     {
 
         /// <summary>
-        /// Gets or sets the name of the user.
+        /// Gets or sets the name (or other identifier) of the user.
         /// </summary>
         /// <value>The name of the user.</value>
-        public string UserId { get; set; }
+        public string UserIdentifier { get; set; }
         /// <summary>
         /// Gets or sets the email.
         /// </summary>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -15,8 +14,8 @@ using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
-using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
@@ -26,9 +25,9 @@ using Telimena.WebApp.Utils.VersionComparison;
 namespace Telimena.WebApp.Controllers.Api.V1
 {
     /// <summary>
-    /// Controls program management related endpoints
-    /// </summary>
-    [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
+        /// Controls program management related endpoints
+        /// </summary>
+        [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
     [RoutePrefix("api/v{version:apiVersion}/programs")]
     public partial class ProgramsController : ApiController
     {
@@ -50,60 +49,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
         private IProgramsUnitOfWork Work { get; }
 
-        /// <summary>
-        /// Register a new program in Telimena
-        /// </summary>
-        /// <param name = "request" ></param>
-        /// <returns></returns>
-        [Audit]
-        [HttpPost, Route("", Name = Routes.Register)]
-        public async Task<RegisterProgramResponse> Register(RegisterProgramRequest request)
-        {
-            try
-            {
-                if (!ApiRequestsValidator.IsRequestValid(request, out List<string> errors))
-                {
-                    return new RegisterProgramResponse(new BadRequestException(string.Join(", ", errors)));
-                }
-
-                if (await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false) != null)
-                {
-                    return new RegisterProgramResponse(new BadRequestException($"Use different telemetry key"));
-                }
-
-                TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name).ConfigureAwait(false);
-                DeveloperAccount developerAccount = user.GetDeveloperAccountsLedByUser().FirstOrDefault();
-                if (developerAccount == null)
-                {
-                    return new RegisterProgramResponse(new BadRequestException($"Cannot find developer account associated with user [{user.UserName}]"));
-                }
-
-                Program program = new Program(request.Name, request.TelemetryKey)
-                {
-                    Description = request.Description
-                };
-                developerAccount.AddProgram(program);
-
-                var primaryAss = new ProgramAssembly()
-                {
-                    Name = Path.GetFileNameWithoutExtension(request.PrimaryAssemblyFileName),
-                    Extension = Path.GetExtension(request.PrimaryAssemblyFileName)
-                };
-                program.PrimaryAssembly = primaryAss;
-
-                this.Work.Programs.Add(program);
-
-                await this.Work.CompleteAsync().ConfigureAwait(false);
-
-                program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false);
-                var url = this.Url?.Link("Default", new { Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey });
-                return new RegisterProgramResponse(program.TelemetryKey, program.DeveloperAccount.Id, url);
-            }
-            catch (Exception ex)
-            {
-                return new RegisterProgramResponse(ex);
-            }
-        }
+     
 
 
         /// <summary>
@@ -192,26 +138,27 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
         [HttpGet, Route("{telemetryKey}/versions/latest", Name = Routes.GetLatestVersionInfo)]
-        public async Task<LatestVersionResponse> GetLatestVersionInfo(Guid telemetryKey)
+        public async Task<string> GetLatestVersionInfo(Guid telemetryKey)
         {
             try
             {
                 Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
                 if (program == null)
                 {
-                    return new LatestVersionResponse { Error = new InvalidOperationException($"Failed to find program by Key: [{telemetryKey}]") };
+                    return $"Failed to find program by Key: [{telemetryKey}]";
                 }
 
-                LatestVersionResponse info = new LatestVersionResponse
+                var version = program.PrimaryAssembly.GetLatestVersion();
+                if (version == null)
                 {
-                    PrimaryAssemblyVersion = ProgramsControllerHelpers.ConstructVersionInfo(program.PrimaryAssembly),
-                };
+                    return "0.0";
+                }
+                return program.DetermineProgramVersion(version);
 
-                return info;
             }
             catch (Exception ex)
             {
-                return new LatestVersionResponse { Error = new InvalidOperationException("Error while processing registration request", ex) };
+                return $"Error while processing registration request: {ex.Message}";
             }
         }
 
@@ -270,7 +217,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 return this.BadRequest($"Program with Key {telemetryKey} does not exist");
             }
 
-            var updater = await this.Work.UpdaterRepository.GetUpdater(updaterId).ConfigureAwait(false);
+            var updater = await this.Work.UpdaterRepository.GetUpdater( updaterId).ConfigureAwait(false);
             if (updater == null)
             {
                 return this.BadRequest($"Updater with Unique Id {updaterId} does not exist");

@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Telemetry
 {
     public abstract class ProgramComponent : ITelemetryAware
     {
-        public int Id { get; set; }
+        [Key,Index(IsUnique = true, IsClustered = false)]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), Index(IsUnique = true, IsClustered = true)]
+        public int ClusterId { get; set; }
         public string Name { get; set; }
-        public virtual TelemetryMonitoredProgram Program { get; set; }
+        public virtual TelemetryRootObject Program { get; set; }
         public int ProgramId { get; set; }
         public DateTimeOffset FirstReportedDate { get; set; } = DateTimeOffset.UtcNow;
 

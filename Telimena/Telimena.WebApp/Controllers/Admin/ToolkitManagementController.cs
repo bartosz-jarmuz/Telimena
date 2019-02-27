@@ -2,8 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using AutoMapper;
+using Telimena.Portal.Api.Models.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Models.Updater;
@@ -43,7 +46,7 @@ namespace Telimena.WebApp.Controllers.Admin
                 await this.work.ToolkitDataRepository.GetAsync(includeProperties: nameof(TelimenaToolkitData.TelimenaPackageInfo)).ConfigureAwait(false);
             ToolkitManagementViewModel model = new ToolkitManagementViewModel
             {
-                UpdaterPackages = updaterPackageInfos.ToList(), ToolkitPackages = toolkitData.ToList()
+                UpdaterPackages = Mapper.Map<List<UpdaterPackageInfoDto>>(updaterPackageInfos), ToolkitPackages = Mapper.Map<List<TelimenaToolkitDataDto>>(toolkitData)
             };
             return this.View(model);
         }

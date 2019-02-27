@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Telimena.WebApp.Core.Models;
+using Telimena.Portal.Api.Models.DTO;
 
 namespace Telimena.WebApp.Models.ProgramManagement
 {
@@ -13,10 +13,10 @@ namespace Telimena.WebApp.Models.ProgramManagement
         public string PrimaryAssemblyName { get; set; }
         public Guid TelemetryKey { get; set; }
 
-        public ICollection<ProgramUpdatePackageInfo> UpdatePackages { get; set; } = new List<ProgramUpdatePackageInfo>();  
+        public ICollection<ProgramUpdatePackageInfoDto> UpdatePackages { get; set; } = new List<ProgramUpdatePackageInfoDto>();  
 
         public string ProgramDownloadUrl { get; set; }
-        public ProgramPackageInfo ProgramPackageInfo { get; set; }
+        public ProgramPackageInfoDto ProgramPackageInfo { get; set; }
 
         public List<SelectListItem> UpdatersSelectList { get; set; }
         public string ProgramDescription { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Portal
 {
     public class ProgramUpdatePackageInfo : RepositoryFileBase, IRepositoryFile
     {
@@ -16,9 +16,13 @@ namespace Telimena.WebApp.Core.Models
             this.Version = version;
             this.SupportedToolkitVersion = supportedToolkitVersion;
         }
-        [Obsolete("Int ID is internal only. Use GUID property")]
-        public int Id { get; set; }
-        public Guid Guid { get; set; } = Guid.NewGuid();
+      
+        public int Id { get; set; } 
+
+        [Index(IsUnique = true, IsClustered =  false)]
+        public Guid PublicId { get; set; } = Guid.NewGuid();
+
+
         public int ProgramId { get; set; }
         public string Version { get; set; }
         public string SupportedToolkitVersion { get; set; }
@@ -31,7 +35,7 @@ namespace Telimena.WebApp.Core.Models
 
         public void UpdateContentAndMetadata(bool isBeta, string releaseNotes)
         {
-            this.UploadedDate = DateTime.UtcNow;
+            this.UploadedDate = DateTimeOffset.UtcNow;
             this.ReleaseNotes = releaseNotes;
             this.IsBeta = isBeta;
         }

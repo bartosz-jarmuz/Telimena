@@ -143,7 +143,7 @@ namespace Telimena.Tests
 
                 Assert.AreEqual(appInsightsItem.Timestamp, telimenaItem.Timestamp);
                 Assert.AreEqual(appInsightsItem.Sequence, telimenaItem.Sequence);
-                Assert.AreEqual(appInsightsItem.Context.User.Id, telimenaItem.UserId);
+                Assert.AreEqual(appInsightsItem.Context.User.Id, telimenaItem.UserIdentifier);
                 if (telimenaItem.TelemetryItemType != TelemetryItemTypes.LogMessage && telimenaItem.TelemetryItemType != TelemetryItemTypes.Exception)
                 {
                     Assert.AreEqual(appInsightsItem.GetPropertyValue<string>("Name"), telimenaItem.EntryKey);

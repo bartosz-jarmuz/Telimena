@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Telemetry;
 
 namespace Telimena.WebApp.Core.DTO
 {

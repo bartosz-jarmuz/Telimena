@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Telemetry
 {
     public abstract class TelemetrySummary
     {
-        public int Id { get; set; }
-        public DateTimeOffset LastTelemetryUpdateTimestamp { get; set; } = DateTime.UtcNow;
+        [Key, Index(IsUnique = true, IsClustered = false)]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), Index(IsUnique = true, IsClustered = true)]
+        public int ClusterId { get; set; }
+
+        public DateTimeOffset LastTelemetryUpdateTimestamp { get; set; } = DateTimeOffset.UtcNow;
 
         public virtual ClientAppUser ClientAppUser { get; set; }
         public int? ClientAppUserId { get; set; }

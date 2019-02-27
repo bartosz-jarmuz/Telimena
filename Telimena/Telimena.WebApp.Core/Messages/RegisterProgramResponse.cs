@@ -4,7 +4,7 @@ namespace Telimena.WebApp.Core.Messages
 {
     public class RegisterProgramResponse
     {
-        public RegisterProgramResponse(Guid telemetryKey, int developerId, string programPageUrl)
+        public RegisterProgramResponse(Guid telemetryKey, Guid developerId, string programPageUrl)
         {
             this.TelemetryKey = telemetryKey;
             this.DeveloperId = developerId;
@@ -19,7 +19,7 @@ namespace Telimena.WebApp.Core.Messages
         public Guid TelemetryKey { get; set; }
 
         public string ProgramPageUrl { get; set; }
-        public int DeveloperId { get; }
+        public Guid DeveloperId { get; }
 
         public Exception Exception { get; set; }
     }

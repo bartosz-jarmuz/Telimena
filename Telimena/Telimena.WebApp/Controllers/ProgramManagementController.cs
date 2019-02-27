@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
 using System.Web.Mvc;
+using AutoMapper;
 using MvcAuditLogger;
+using Telimena.Portal.Api.Models.DTO;
 using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
@@ -69,12 +72,12 @@ namespace Telimena.WebApp.Controllers
             };
 
             model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) +
-                                       this.Url.NeutralApiUrl(ProgramsController.Routes.DownloadApp, new {developerName = program.DeveloperAccount.Name, programName = model.ProgramName});
+                                       this.Url.NeutralApiUrl(ProgramsController.Routes.DownloadApp, new {developerName = program.DeveloperTeam.Name, programName = model.ProgramName});
 
             List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(program.Id).ConfigureAwait(false);
-            model.UpdatePackages = packages;
+            model.UpdatePackages = Mapper.Map<List<ProgramUpdatePackageInfoDto>>(packages);
 
-            model.ProgramPackageInfo = await this.Work.ProgramPackages.GetLatestProgramPackageInfo(program.Id).ConfigureAwait(false);
+            model.ProgramPackageInfo = Mapper.Map<ProgramPackageInfoDto>(await this.Work.ProgramPackages.GetLatestProgramPackageInfo(program.Id).ConfigureAwait(false));
 
             var publicUpdaters = await this.Work.UpdaterRepository.GetPublicUpdaters().ConfigureAwait(false);
             model.UpdatersSelectList = new List<SelectListItem>();
@@ -82,9 +85,9 @@ namespace Telimena.WebApp.Controllers
             {
                 var item = new SelectListItem() {
                     Text = publicUpdater.InternalName,
-                    Value = publicUpdater.Guid.ToString()
+                    Value = publicUpdater.PublicId.ToString()
                 };
-                if (publicUpdater.Id == program.Updater.Id)
+                if (publicUpdater.PublicId == program.Updater.PublicId)
                 {
                     item.Selected = true;
                 }

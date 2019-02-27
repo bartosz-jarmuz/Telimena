@@ -116,6 +116,13 @@ namespace Telimena.Tests
                     MemberInfo targetMember;
                     if (sourceMember.MemberType == MemberTypes.Method)
                     {
+                        if (sourceMember.Name.StartsWith("get_") 
+                            || sourceMember.Name.StartsWith("set_")
+                            || sourceMember.Name.EndsWith("k__BackingField"))
+                        {
+                            continue;
+                        }
+
                         targetMember = target.GetMember(sourceMember.Name, allFlags).Where(x =>
                         {
                             var sourceParams = (sourceMember as MethodInfo).GetParameters();

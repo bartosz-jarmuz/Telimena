@@ -11,6 +11,7 @@ using Telimena.WebApp.Controllers.Api;
 using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
@@ -28,6 +29,9 @@ namespace Telimena.Tests
         private readonly Guid Program1Key = Guid.Parse("2f680cbe-2d27-44c1-9c1f-1812fe550f9f");
         private readonly Guid User1Guid = Guid.Parse("0717a970-990c-40f8-a053-3ff90fe48580");
 
+        private readonly int Prg_1 = 1;
+        private readonly int Prg_2 = 2;
+
         protected internal Guid  PrgPkg_1 = Guid.Parse("525b3edd-fa47-47d9-81b6-c9d05a77bcb0");
         protected internal Guid  PrgPkg_2 = Guid.Parse("92a9bf8a-a9b2-4778-93c0-fde44eacece6");
         protected internal Guid  PrgPkg_3 = Guid.Parse("0d9dd99e-242b-4b6c-ba24-1ded4bb9d87d");
@@ -41,8 +45,8 @@ namespace Telimena.Tests
             UpdatePackageRepository pkgRepo = new UpdatePackageRepository(this.Context, new AssemblyStreamVersionReader());
             ProgramRepository prgRepo = new ProgramRepository(this.Context);
             ProgramPackageRepository prgPkgRepo = new ProgramPackageRepository(this.Context, new AssemblyStreamVersionReader());
-            prgPkgRepo.Add(new ProgramPackageInfo("Prg.zip", 1, 2222, "1.0.0.0"));
-            prgRepo.Add(new Program("prg", this.Program1Key) { Id = 1 });
+            prgPkgRepo.Add(new ProgramPackageInfo("Prg.zip", this.Prg_1, 2222, "1.0.0.0"));
+            prgRepo.Add(new Program("prg", this.Program1Key) { Id = this.Prg_1 });
 
             Mock<IAssemblyStreamVersionReader> reader = TestingUtilities.GetMockVersionReader();
             this.AddToolkits(reader.Object, toolkitPackages);
@@ -67,14 +71,14 @@ namespace Telimena.Tests
             var toolkitRepo = new ToolkitDataRepository(this.Context, reader);
             if (toolkitPackages == null)
             {
-                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("0.5.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().Guid);
-                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("0.7.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().Guid);
-                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("1.0.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().Guid);
-                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("1.2.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().Guid);
-                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: true, fileStream: TestingUtilities.GenerateStream("1.4.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().Guid);
-                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("1.6.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().Guid);
-                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: true, fileStream: TestingUtilities.GenerateStream("1.8.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().Guid);
-                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("2.0.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().Guid);
+                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("0.5.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().PublicId);
+                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("0.7.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().PublicId);
+                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("1.0.0.0"), fileSaver: new Mock<IFileSaver>().Object).GetAwaiter().GetResult().PublicId);
+                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("1.2.0.0"), fileSaver:  new Mock<IFileSaver>().Object).GetAwaiter().GetResult().PublicId);
+                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: false, introducesBreakingChanges: true, fileStream: TestingUtilities.GenerateStream("1.4.0.0"), fileSaver:  new Mock<IFileSaver>().Object).GetAwaiter().GetResult().PublicId);
+                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("1.6.0.0"), fileSaver:  new Mock<IFileSaver>().Object).GetAwaiter().GetResult().PublicId);
+                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: true, fileStream: TestingUtilities.GenerateStream("1.8.0.0"), fileSaver:   new Mock<IFileSaver>().Object).GetAwaiter().GetResult().PublicId);
+                toolkitPackageGuids .Add(toolkitRepo.StorePackageAsync(isBeta: true, introducesBreakingChanges: false, fileStream: TestingUtilities.GenerateStream("2.0.0.0"), fileSaver:  new Mock<IFileSaver>().Object).GetAwaiter().GetResult().PublicId);
             }
         }
 
@@ -82,7 +86,7 @@ namespace Telimena.Tests
         public void NoPackagesAvailable_ShouldNotThrowErrors()
         {
             ProgramRepository prgRepo = new ProgramRepository(this.Context);
-            prgRepo.Add(new Program("prg", this.Program1Key) { Id = 1 });
+            prgRepo.Add(new Program("prg", this.Program1Key) { Id = this.Prg_1 });
             this.Context.SaveChanges();
             IProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, TestingUtilities.GetMockVersionReader().Object);
 
@@ -101,34 +105,34 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true,    Guid = this.PrgPkg_1}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = false, Guid = this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, Guid = this.PrgPkg_3}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true, Guid = this.PrgPkg_4}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, Guid = this.PrgPkg_5}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_6}
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true,    PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = false,   PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false,   PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true, PublicId = this.PrgPkg_4}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false,   PublicId = this.PrgPkg_5}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, PublicId = this.PrgPkg_6}
             });
 
             ProgramsController sut = new ProgramsController(unit,  new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(this.Program1Key, new VersionData("", "1.2.0.0"), this.User1Guid, false, "0.7.0.0", "1.0.0.0");
-
+            var list = this.Context.UpdatePackages.ToList();
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
             Assert.AreEqual(5, result.UpdatePackages.Count());
 
             Assert.IsTrue(result.UpdatePackages.Last().Version == "1.0.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
-            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[0].Guid);
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].Guid);
-            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].Guid);
-            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].Guid);
+            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].PublicId);
+            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].PublicId);
 
 
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
-            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].Guid);
-            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].Guid);
-            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].Guid);
+            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].PublicId);
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].PublicId);
             //return the version that is higher than max supported, but does not introduce breaking changes
             Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
             //also check its the last package 
@@ -141,12 +145,12 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,    Guid = this.PrgPkg_1}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_3}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,  Guid = this.PrgPkg_4}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_5}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_6}
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,    PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true,   PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true,   PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,    PublicId = this.PrgPkg_4}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true,   PublicId = this.PrgPkg_5}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true,   PublicId = this.PrgPkg_6}
             });
 
              ProgramsController sut = new ProgramsController(unit,  new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
@@ -160,11 +164,11 @@ namespace Telimena.Tests
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
             Assert.AreEqual(3, result.UpdatePackages.Count());
-            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].Guid);
+            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].PublicId);
             Assert.AreEqual($"api/v1/update-packages/{this.PrgPkg_6}", result.UpdatePackages[0].DownloadUrl);
 
-            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].Guid);
-            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].Guid);
+            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].PublicId);
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].PublicId);
             //no update for toolkit, because its already maxed
             Assert.IsFalse(result.UpdatePackages.Any(x => x.FileName == "Telimena.Client.zip"));
 
@@ -179,10 +183,10 @@ namespace Telimena.Tests
             
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.0", 2222, "1.0.0.0") {IsStandalone = true,                  Guid = this.PrgPkg_1}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true,                Guid = this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true, Guid = this.PrgPkg_3}
-                , new ProgramUpdatePackageInfo("pkg.zip", 2, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true, Guid = this.PrgPkg_4} //different program
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.0", 2222, "1.0.0.0") {IsStandalone = true,                PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true,                PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true, PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_2, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true, PublicId = this.PrgPkg_4} //different program
             });
 
 
@@ -191,14 +195,14 @@ namespace Telimena.Tests
 
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
-            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[0].Guid);
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[0].PublicId);
             Assert.AreEqual(2, result.UpdatePackages.Count);
             //return the version that is higher than max supported, but does not introduce breaking changes
             Assert.IsTrue(result.UpdatePackages.Last().Version == "1.0.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
 
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].Guid);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
             Assert.AreEqual("api/v1/update-packages/0d9dd99e-242b-4b6c-ba24-1ded4bb9d87d", result.UpdatePackages[0].DownloadUrl);
             Assert.AreEqual(2, result.UpdatePackages.Count);
 
@@ -213,10 +217,10 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true,   Guid = this.PrgPkg_1}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_3}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_4}
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, PublicId = this.PrgPkg_4}
             });
 
              ProgramsController sut = new ProgramsController(unit,  new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
@@ -231,10 +235,10 @@ namespace Telimena.Tests
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
             Assert.AreEqual(5, result.UpdatePackages.Count());
 
-            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].Guid);
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].Guid);
-            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].Guid);
-            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].Guid);
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].PublicId);
+            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].PublicId);
 
             //return the version that is supported, because it does not introduce breaking changes
             Assert.AreEqual("2.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
@@ -251,17 +255,17 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true,   Guid = this.PrgPkg_1}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false,                Guid = this.PrgPkg_3}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, Guid = this.PrgPkg_4}
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false,                PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true, PublicId = this.PrgPkg_4}
             });
 
              ProgramsController sut = new ProgramsController(unit,  new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(this.Program1Key, new VersionData("2.0.0.0", "1.2.0.0"), this.User1Guid, false, "1.0.0.0", "1.0.0.0");
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages.Single().Guid);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages.Single().PublicId);
             //no toolkit update here, because 1.0 is the highest non beta that is already in use
             Assert.IsFalse(result.UpdatePackages.Any(x => x.FileName == "Telimena.Client.zip"));
 
@@ -272,10 +276,10 @@ namespace Telimena.Tests
 
             Assert.AreEqual(5, result.UpdatePackages.Count);
 
-            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].Guid);
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].Guid);
-            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].Guid);
-            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].Guid);
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].PublicId);
+            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].PublicId);
 
 
             //return the version that is higher than max supported, but does not introduce breaking changes
@@ -289,12 +293,12 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true,    Guid = this.PrgPkg_1}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true,  Guid = this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, Guid = this.PrgPkg_3}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true,  Guid = this.PrgPkg_4}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, Guid = this.PrgPkg_5}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, Guid = this.PrgPkg_6}
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true,  PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true,  PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true,  PublicId = this.PrgPkg_4}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, PublicId = this.PrgPkg_5}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, PublicId = this.PrgPkg_6}
             });
 
              ProgramsController sut = new ProgramsController(unit,  new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
@@ -304,9 +308,9 @@ namespace Telimena.Tests
 
             Assert.AreEqual(3, result.UpdatePackages.Count());
 
-            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].Guid);
-            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].Guid);
-            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].Guid);
+            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].PublicId);
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].PublicId);
 
 
             //no update here - the version 1.2 is beta, whereas 1.4 has breaking changes
@@ -318,9 +322,9 @@ namespace Telimena.Tests
 
             Assert.AreEqual(4, result.UpdatePackages.Count());
 
-            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].Guid);
-            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].Guid);
-            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].Guid);
+            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].PublicId);
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].PublicId);
 
             //return the version that is higher than max supported, but does not introduce breaking changes
             Assert.IsTrue(result.UpdatePackages.Last().Version == "1.2.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
@@ -377,9 +381,9 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0"){  IsStandalone = false, Guid = this.PrgPkg_1, ReleaseNotes = null}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.4", 2222, "1.0.0.0"){IsStandalone = false, Guid = this.PrgPkg_2, ReleaseNotes = ""}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.5", 2222, "1.0.0.0"){IsStandalone = false, Guid = this.PrgPkg_3, ReleaseNotes = "Version 1.2.0,5 notes"}
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0"){  IsStandalone = false, PublicId = this.PrgPkg_1, ReleaseNotes = null}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0"){IsStandalone = false,   PublicId = this.PrgPkg_2, ReleaseNotes = ""}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.5", 2222, "1.0.0.0"){IsStandalone = false,   PublicId = this.PrgPkg_3, ReleaseNotes = "Version 1.2.0,5 notes"}
             });
 
             ProgramsController sut = new ProgramsController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
@@ -398,10 +402,10 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false,   Guid = this.PrgPkg_1}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = false, Guid = this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, Guid = this.PrgPkg_3, ReleaseNotes = "Version 1.2.0,5 notes"}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.6", 2222, "1.6.0.0") {IsStandalone = false, Guid = this.PrgPkg_4}
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = false, PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.5", 2222, "1.0.0.0") {IsStandalone = false, PublicId = this.PrgPkg_3, ReleaseNotes = "Version 1.2.0,5 notes"}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.6", 2222, "1.6.0.0") {IsStandalone = false, PublicId = this.PrgPkg_4}
             });
 
              ProgramsController sut = new ProgramsController(unit,  new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
@@ -411,11 +415,11 @@ namespace Telimena.Tests
 
             Assert.AreEqual(5, result.UpdatePackages.Count());
 
-            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].Guid);
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].Guid);
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
             Assert.AreEqual("Version 1.2.0,5 notes", result.UpdatePackages[1].ReleaseNotes);
-            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].Guid);
-            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].Guid);
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].PublicId);
+            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].PublicId);
             //one of the packages supports version 1.6, however 1.6 is beta. It is higher than 1.4 though, so 1.4 is OK
             Assert.AreEqual("1.4.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
 
@@ -424,10 +428,10 @@ namespace Telimena.Tests
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
             Assert.AreEqual(5, result.UpdatePackages.Count());
 
-            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].Guid);
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].Guid);
-            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].Guid);
-            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].Guid);
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].PublicId);
+            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].PublicId);
 
             //one of the packages supports version 1.6
             Assert.AreEqual("1.6.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
@@ -439,9 +443,9 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true,   Guid =this.PrgPkg_1, ReleaseNotes = "A version 1.2.0.1"}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true, Guid =this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, Guid =this.PrgPkg_3, ReleaseNotes = "A version 1.2.0.3"}
+                new ProgramUpdatePackageInfo("pkg.zip",   this.Prg_1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true, PublicId =this.PrgPkg_1, ReleaseNotes = "A version 1.2.0.1"}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true, PublicId =this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, PublicId =this.PrgPkg_3, ReleaseNotes = "A version 1.2.0.3"}
             });
 
 
@@ -450,14 +454,14 @@ namespace Telimena.Tests
 
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].Guid);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
             Assert.AreEqual("A version 1.2.0.3", result.UpdatePackages[0].ReleaseNotes);
             Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
 
 
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].Guid);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
             Assert.AreEqual("A version 1.2.0.3", result.UpdatePackages[0].ReleaseNotes);
 
             Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
@@ -469,13 +473,13 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.1", 2222, "1.0.0.0") { IsStandalone  = false, Guid =this.PrgPkg_1}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = false, Guid =this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, Guid =Guid.NewGuid()}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, Guid =Guid.NewGuid()}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, Guid =Guid.NewGuid()}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, Guid =Guid.NewGuid()}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false, Guid =this.PrgPkg_3}
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.1", 2222, "1.0.0.0") { IsStandalone  = false, PublicId =this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = false,   PublicId =this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false,   PublicId =Guid.NewGuid()}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false,   PublicId =Guid.NewGuid()}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false,   PublicId =Guid.NewGuid()}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false,   PublicId =Guid.NewGuid()}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = false,   PublicId =this.PrgPkg_3}
             });
 
 
@@ -484,14 +488,14 @@ namespace Telimena.Tests
 
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].Guid);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
             Assert.AreEqual(3, result.UpdatePackages.Count);
             Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
 
 
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].Guid);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
 
             Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
 
@@ -502,10 +506,10 @@ namespace Telimena.Tests
         {
             IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
             {
-                new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true, Guid = this.PrgPkg_1}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true, Guid = this.PrgPkg_2}
-                , new ProgramUpdatePackageInfo("pkg.zip", 1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, Guid = this.PrgPkg_3}
-                , new ProgramUpdatePackageInfo("pkg.zip", 2, "1.2.0.4", 2222, "2.0.0.0") {IsStandalone = true, Guid = this.PrgPkg_4} //different program
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true, PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true, PublicId = this.PrgPkg_2, IsBeta = true}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_2, "1.2.0.4", 2222, "2.0.0.0") {IsStandalone = true, PublicId = this.PrgPkg_4} //different program
             });
 
 
@@ -514,12 +518,12 @@ namespace Telimena.Tests
 
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages.Single().Guid);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages.Single().PublicId);
             //one of the packages accepts a higher version, but its a package for different program, so no updater update here
 
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
-            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].Guid);
+            Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
 
             Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
         }

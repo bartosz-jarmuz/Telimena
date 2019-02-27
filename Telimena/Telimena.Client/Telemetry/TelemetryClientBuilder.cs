@@ -46,8 +46,8 @@ namespace TelimenaClient
         {
             if (string.IsNullOrEmpty(client.Context.User.AccountId))
             {
-                client.Context.User.AuthenticatedUserId = this.properties.UserInfo.UserId;
-                client.Context.User.Id = this.properties.UserInfo.UserId;
+                client.Context.User.AuthenticatedUserId = this.properties.UserInfo.UserIdentifier;
+                client.Context.User.Id = this.properties.UserInfo.UserIdentifier;
             }
             client.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
             client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.TelimenaVersion, this.properties.TelimenaVersion);

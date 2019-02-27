@@ -25,6 +25,8 @@ using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
+using Telimena.WebApp.Core.Models.Telemetry;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
@@ -72,17 +74,17 @@ namespace Telimena.Tests
 
         }
        
-        public static void AssertUpdateResponse(List<TelemetrySummary> response, TelemetryMonitoredProgram prg, ClientAppUser usr, int expectedSummariesCount, string funcName = null, int funcId = 0)
+        public static void AssertUpdateResponse(List<TelemetrySummary> response, TelemetryRootObject prg, ClientAppUser usr, int expectedSummariesCount, string funcName = null, Guid funcId = default(Guid))
         {
             Assert.AreEqual(expectedSummariesCount, response.Count);
             Assert.AreEqual(1, response.Count(x => x.GetComponent().Name == funcName));
-            if (funcId != 0)
+            if (funcId != Guid.Empty)
             {
                 Assert.AreEqual(1, response.Count(x => x.GetComponent().Id == funcId));
             }
 
             Assert.IsTrue(response.All(x=>x.GetComponent().Program.TelemetryKey == prg.TelemetryKey));
-            Assert.IsTrue(response.All(x=>x.ClientAppUser.Guid == usr.Guid));
+            Assert.IsTrue(response.All(x=>x.ClientAppUser.Id == usr.Id));
         }
 
         public static async Task<TelimenaUser> CreateTelimenaUser(TelimenaPortalContext context, string email, string displayName = null, [CallerMemberName] string caller = "")
@@ -104,7 +106,7 @@ namespace Telimena.Tests
             return $"{methodIdentifier}_{name}";
         }
 
-        public static void GetProgramAndUser(TelemetryUnitOfWork unit, string programName, string userName, out TelemetryMonitoredProgram prg, out ClientAppUser usr
+        public static void GetProgramAndUser(TelemetryUnitOfWork unit, string programName, string userName, out TelemetryRootObject prg, out ClientAppUser usr
             , [CallerMemberName] string methodIdentifier = "")
         {
             string prgName = GetName(programName, methodIdentifier);
@@ -118,36 +120,35 @@ namespace Telimena.Tests
         public static ClientAppUser GetUser(TelemetryUnitOfWork context, string name, [CallerMemberName] string methodIdentifier = "")
         {
             string usrName = GetName(name, methodIdentifier);
-            return context.ClientAppUsers.FirstOrDefault(x => x.UserId == usrName);
+            return context.ClientAppUsers.FirstOrDefault(x => x.UserIdentifier == usrName);
         }
 
         public static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(TelimenaPortalContext portalContext, TelimenaTelemetryContext telemetryContext, int prgCount, string getName, string[] userNames, string devName = "Some Developer", string devEmail = "some@dev.dev", [CallerMemberName] string caller = "")
         {
             Mock<HttpRequestContext> requestContext = await SetupUserIntoRequestContext(portalContext, devName, devEmail).ConfigureAwait(false);
 
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(portalContext, new AssemblyStreamVersionReader());
+            RegisterProgramUnitOfWork unit = new RegisterProgramUnitOfWork(telemetryContext, portalContext);
 
-            ProgramsController programsController = new ProgramsController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object) {RequestContext = requestContext.Object};
+            RegisterProgramController programsController = new RegisterProgramController(unit) {RequestContext = requestContext.Object};
 
 
            List<KeyValuePair<string, Guid>> list =  await SeedInitialPrograms(programsController, prgCount, GetName(getName, caller), userNames.Select(x=> GetName(x, caller)).ToList()).ConfigureAwait(false);
 
            foreach (string userName in userNames)
            {
-               telemetryContext.AppUsers.Add(new ClientAppUser() {UserId = GetName(userName, caller)});
+               telemetryContext.AppUsers.Add(new ClientAppUser() {UserIdentifier = GetName(userName, caller)});
            }
 
            telemetryContext.SaveChanges();
-            await unit.CompleteAsync().ConfigureAwait(false);
             return list;
         }
 
-        private static async Task<Mock<HttpRequestContext>> SetupUserIntoRequestContext(TelimenaPortalContext context, string devName, string devEmail)
+        public static async Task<Mock<HttpRequestContext>> SetupUserIntoRequestContext(TelimenaPortalContext context, string devName, string devEmail, [CallerMemberName] string caller = "")
         {
             TelimenaUser teliUsr = context.Users.FirstOrDefault(x => x.Email == devEmail);
             if (teliUsr == null)
             {
-                teliUsr = await CreateTelimenaUser(context, devEmail, devName).ConfigureAwait(false);
+                teliUsr = await CreateTelimenaUser(context, devEmail, devName, caller).ConfigureAwait(false);
             }
 
             GenericIdentity identity = new GenericIdentity(teliUsr.UserName);
@@ -159,7 +160,7 @@ namespace Telimena.Tests
             return requestContext;
         }
 
-        private static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(ProgramsController programsController, int prgCount, string prgName, IEnumerable<string> userNames)
+        private static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(RegisterProgramController programsController, int prgCount, string prgName, IEnumerable<string> userNames)
         {
             List<KeyValuePair<string, Guid>> list = new List<KeyValuePair<string, Guid>>();
             IEnumerable<string> enumerable = userNames as string[] ?? userNames.ToArray();
@@ -175,7 +176,7 @@ namespace Telimena.Tests
         }
 
 
-        public static async Task<KeyValuePair<string, Guid>> SeedProgramAsync(ProgramsController controller, string programName)
+        public static async Task<KeyValuePair<string, Guid>> SeedProgramAsync(RegisterProgramController controller, string programName)
         {
             RegisterProgramRequest register = new RegisterProgramRequest
             {

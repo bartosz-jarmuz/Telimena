@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using DotNetLittleHelpers;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Portal
 {
-    public class DeveloperAccount
+    public class DeveloperTeam
     {
         //EF Required constructor
         //ReSharper disable once UnusedMember.Local
-        protected DeveloperAccount()
+        protected DeveloperTeam()
         {
         }
 
-        public DeveloperAccount(TelimenaUser user)
+        public DeveloperTeam(TelimenaUser user)
         {
             this.MainUserId = user.Id;
             this.MainEmail = user.Email;
@@ -27,9 +26,14 @@ namespace Telimena.WebApp.Core.Models
         [StringLength(75)]
         [Index(IsUnique = true)]
         public string Name { get; set; }
+
         public string MainEmail { get; set; }
+
+        [Key]
         public int Id { get; set; }
-        public Guid  Guid { get; set; } = Guid.NewGuid();
+
+        [Index(IsUnique = true, IsClustered = false)]
+        public Guid  PublicId { get; set; } = Guid.NewGuid();
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local - EF required
         public string MainUserId { get; private set; }
         [ForeignKey("MainUserId")]

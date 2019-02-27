@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Telemetry
 {
     public class ViewTelemetrySummary : TelemetrySummary
     {
-        public int ViewId { get; set; }
+        public Guid ViewId { get; set; }
         public virtual View View { get; set; }
         public virtual RestrictedAccessList<ViewTelemetryDetail> TelemetryDetails { get; set; } = new RestrictedAccessList<ViewTelemetryDetail>();
 
@@ -18,7 +19,7 @@ namespace Telimena.WebApp.Core.Models
             {
                 Timestamp = telemetryItem.Timestamp, TelemetrySummary = this, AssemblyVersion = versionInfo.AssemblyVersion, FileVersion = versionInfo.FileVersion, IpAddress = ipAddress,
                 Sequence = telemetryItem.Sequence,
-                UserId = telemetryItem.UserId,
+                UserIdentifier = telemetryItem.UserIdentifier,
                 EntryKey = telemetryItem.EntryKey
             };
             if (telemetryItem.TelemetryData != null && telemetryItem.TelemetryData.Any())

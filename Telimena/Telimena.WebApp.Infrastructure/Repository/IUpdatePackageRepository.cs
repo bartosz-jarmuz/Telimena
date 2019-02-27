@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 
 namespace Telimena.WebApp.Infrastructure.Repository
@@ -15,7 +16,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<List<ProgramUpdatePackageInfo>> GetAllPackagesNewerThan(VersionData currentVersion, int programId);
 
         Task<byte[]> GetPackage(Guid packageId, IFileRetriever fileRetriever);
-        Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(Guid id);
+        Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(int id);
         Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string packageName, Stream fileStream, string supportedToolkitVersion, bool isBeta, string releaseNotes, IFileSaver fileSaver);
+        Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(Guid id);
     }
 }

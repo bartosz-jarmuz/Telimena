@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation

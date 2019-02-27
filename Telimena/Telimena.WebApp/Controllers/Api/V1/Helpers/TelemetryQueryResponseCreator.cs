@@ -5,6 +5,7 @@ using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Telemetry;
 
 namespace Telimena.WebApp.Controllers.Api.V1
 {
@@ -13,7 +14,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     /// </summary>
     public static class TelemetryQueryResponseCreator
     {
-        private static IEnumerable<IEnumerable<ITelemetryAware>> GetCollections(IEnumerable<TelemetryItemTypes> types, TelemetryMonitoredProgram program)
+        private static IEnumerable<IEnumerable<ITelemetryAware>> GetCollections(IEnumerable<TelemetryItemTypes> types, TelemetryRootObject program)
         {
             foreach (TelemetryItemTypes telemetryItemType in types)
             {
@@ -39,7 +40,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="request">The request.</param>
         /// <param name="program">The program.</param>
         /// <returns>TelemetryQueryResponse.</returns>
-        public static TelemetryQueryResponse Create(TelemetryQueryRequest request, TelemetryMonitoredProgram program)
+        public static TelemetryQueryResponse Create(TelemetryQueryRequest request, TelemetryRootObject program)
         {
 
             TelemetryQueryResponse queryResult = new TelemetryQueryResponse();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Telemetry;
 
 namespace Telimena.WebApp.Core.DTO
 {

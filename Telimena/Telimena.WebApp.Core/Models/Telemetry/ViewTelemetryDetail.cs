@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using DotNetLittleHelpers;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Telemetry
 {
     public class ViewTelemetryDetail : TelemetryDetail
     {

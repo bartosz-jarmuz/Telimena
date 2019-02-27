@@ -28,7 +28,7 @@ namespace Telimena.WebApp.Core.DTO.MappableToClient
         /// Gets or sets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
-        public Guid Guid { get; set; }
+        public Guid PublicId { get; set; }
         /// <summary>
         /// Gets or sets the version.
         /// </summary>

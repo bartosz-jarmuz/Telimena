@@ -37,7 +37,7 @@ namespace MvcAuditLogger
         ///     Gets or sets the timestamp.
         /// </summary>
         /// <value>The timestamp.</value>
-        public DateTime Timestamp { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
         /// <summary>
         ///     Gets or sets the name of the user.
         /// </summary>

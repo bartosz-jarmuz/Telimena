@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DotNetLittleHelpers;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Portal
 {
     public class Updater
     {
@@ -30,13 +24,16 @@ namespace Telimena.WebApp.Core.Models
         [Required]
         public string InternalName { get; set; }
 
-        public int Id { get; set; }
-        public Guid Guid { get; set; } = Guid.NewGuid();
+        [Key]
+        public int Id { get; set; }  
+
+        [Index(IsUnique = true, IsClustered = false)]
+        public Guid PublicId { get; set; } = Guid.NewGuid();
         public virtual RestrictedAccessList<UpdaterPackageInfo> Packages{ get; set; } = new RestrictedAccessList<UpdaterPackageInfo>();
 
         public virtual RestrictedAccessList<Program> Programs { get; set; } = new RestrictedAccessList<Program>();
 
-        public virtual DeveloperAccount DeveloperAccount { get; set; }
+        public virtual DeveloperTeam DeveloperTeam { get; set; }
 
         public bool IsPublic { get; set; }
     }

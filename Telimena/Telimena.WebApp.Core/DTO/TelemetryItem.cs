@@ -74,7 +74,7 @@ namespace Telimena.WebApp.Core.DTO
         /// Gets or sets the user identifier.
         /// </summary>
         /// <value>The user identifier.</value>
-        public string UserId { get; set; }
+        public string UserIdentifier { get; set; }
 
         /// <summary>
         /// When an event occurred

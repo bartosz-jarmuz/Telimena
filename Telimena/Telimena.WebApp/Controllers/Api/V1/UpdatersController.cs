@@ -14,6 +14,7 @@ using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
@@ -94,10 +95,10 @@ namespace Telimena.WebApp.Controllers.Api.V1
                         updater = this.work.UpdaterRepository.Add(uploadedFile.FileName, request.UpdaterInternalName, user);
                     }
 
-                    if (user.AssociatedDeveloperAccounts.All(x => x.Id != updater.DeveloperAccount.Id))
+                    if (user.AssociatedDeveloperAccounts.All(x => x.Id != updater.DeveloperTeam.Id))
                     {
                         return this.BadRequest(
-                            $"Updater '{updater.InternalName}' is managed by a team that you don't belong to - '{updater.DeveloperAccount.Name}'");
+                            $"Updater '{updater.InternalName}' is managed by a team that you don't belong to - '{updater.DeveloperTeam.Name}'");
                     }
 
                     if (uploadedFile.FileName != updater.FileName && !uploadedFile.FileName.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase))

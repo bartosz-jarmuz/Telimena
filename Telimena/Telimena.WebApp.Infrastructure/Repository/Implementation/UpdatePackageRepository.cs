@@ -10,6 +10,7 @@ using DotNetLittleHelpers;
 using Telimena.WebApp.Core;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 
@@ -94,7 +95,8 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             var currentVersion = program.DetermineProgramVersion(versionData);
 #pragma warning disable 618
-            var newerOnes = packages.Where(x => Utils.VersionComparison.Extensions.IsNewerVersionThan(x.Version, currentVersion)).OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id);
+            var newerOnes = packages.Where(x => Utils.VersionComparison.Extensions.IsNewerVersionThan(x.Version, currentVersion))
+                .OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id);
 #pragma warning restore 618
             List<ProgramUpdatePackageInfo> uniquePackages = this.GetUniquePackages(newerOnes);
             return uniquePackages;
@@ -113,9 +115,13 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return uniquePackages;
         }
 
+        public Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(int id)
+        {
+            return this.TelimenaPortalContext.UpdatePackages.FirstOrDefaultAsync(x => x.Id == id);
+        }
         public Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(Guid id)
         {
-            return this.TelimenaPortalContext.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == id);
+            return this.TelimenaPortalContext.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == id);
         }
     }
 }

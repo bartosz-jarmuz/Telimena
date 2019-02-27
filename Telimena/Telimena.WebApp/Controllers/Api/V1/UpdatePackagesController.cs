@@ -16,6 +16,7 @@ using Telimena.Portal.Api.Models.RequestMessages;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
@@ -61,7 +62,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
-            ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id).ConfigureAwait(false);
+            ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo( id).ConfigureAwait(false);
 
             if (packageInfo == null)
             {
@@ -118,7 +119,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPut, Route("{packageId}/release-notes", Name = Routes.SetReleaseNotes)]
         public async Task<IHttpActionResult> SetReleaseNotes(Guid packageId, ReleaseNotesRequest request)
         {
-            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == packageId).ConfigureAwait(false);
+            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == packageId).ConfigureAwait(false);
             pkg.ReleaseNotes = request.Notes;
             await this.work.CompleteAsync().ConfigureAwait(false);
             return this.Ok("");
@@ -133,7 +134,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{packageId}/release-notes/", Name = Routes.GetReleaseNotes)]
         public async Task<string> GetReleaseNotes(Guid packageId)
         {
-            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == packageId).ConfigureAwait(false);
+            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == packageId).ConfigureAwait(false);
             return pkg.ReleaseNotes;
         }
 
@@ -147,7 +148,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPut, Route("{packageId}/is-beta/{isBeta}", Name = Routes.ToggleBetaSetting)]
         public async Task<bool> ToggleBetaSetting(Guid packageId, bool isBeta)
         {
-            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.Guid == packageId).ConfigureAwait(false);
+            ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == packageId).ConfigureAwait(false);
             pkg.IsBeta = isBeta;
             await this.work.CompleteAsync().ConfigureAwait(false);
             return pkg.IsBeta;

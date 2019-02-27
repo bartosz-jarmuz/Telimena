@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
@@ -29,7 +30,7 @@ namespace Telimena.WebApp.Infrastructure.Database
             if (!portalContext.Updaters.Any(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName))
             {
                 var updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
-                updater.DeveloperAccount = portalContext.Developers.FirstOrDefault(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
+                updater.DeveloperTeam = portalContext.Developers.FirstOrDefault(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
                 portalContext.Updaters.AddOrUpdate(updater);
             }
        
@@ -63,7 +64,7 @@ namespace Telimena.WebApp.Infrastructure.Database
                 userManager.Create(user, "123456");
                 userManager.AddToRole(user.Id, TelimenaRoles.Admin);
 
-                var developer = new DeveloperAccount(user);
+                var developer = new DeveloperTeam(user);
                 developer.Name = DefaultToolkitNames.TelimenaSystemDevTeam;
                 portalContext.Developers.AddOrUpdate(developer);
 

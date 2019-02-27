@@ -1,4 +1,8 @@
-﻿namespace Telimena.WebApp.Core.Models
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Telimena.WebApp.Core.Models.Portal
 {
     public class ProgramPackageInfo : RepositoryFileBase, IRepositoryFile
     {
@@ -12,7 +16,12 @@
             this.SupportedToolkitVersion = supportedToolkitVersion;
         }
 
+        [Key]
         public int Id { get; set; }
+
+        [Index(IsUnique = true, IsClustered = false)]
+        public Guid PublicId { get; set; }
+
         public int ProgramId { get; set; }
         public string SupportedToolkitVersion { get; set; }
     }

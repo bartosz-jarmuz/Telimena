@@ -11,6 +11,7 @@ using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
@@ -20,20 +21,6 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
 {
     internal static class ProgramsControllerHelpers
     {
-        public static VersionInfo ConstructVersionInfo(ProgramAssembly assemblyInfo)
-        {
-            return new VersionInfo
-            {
-                AssemblyId = assemblyInfo.Id
-                ,
-                AssemblyName = assemblyInfo.Name
-                ,
-                LatestVersion = assemblyInfo.GetLatestVersion()?.AssemblyVersion
-                ,
-                LatestVersionId = assemblyInfo.GetLatestVersion()?.Id ?? 0
-            };
-        }
-
         public static List<ProgramUpdatePackageInfo> FilterPackagesSet(List<ProgramUpdatePackageInfo> updatePackages, UpdateRequest request)
         {
             if (updatePackages.IsNullOrEmpty())

@@ -97,7 +97,7 @@ namespace TelimenaTestSandboxApp
             {
                 UserInfo user = new UserInfo
                 {
-                    Email = this.GetRandomName("Email@", i), UserId = this.GetRandomName("User", i), MachineName = this.GetRandomName("Machine", i)
+                    Email = this.GetRandomName("Email@", i), UserIdentifier = this.GetRandomName("User", i), MachineName = this.GetRandomName("Machine", i)
                 };
                 this.users.Add(user);
             }

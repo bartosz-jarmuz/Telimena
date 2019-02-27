@@ -2,9 +2,10 @@
 @using DotNetLittleHelpers
 @using Telimena.Portal.Api.Models.RequestMessages
 @using Telimena.WebApp
+@using Telimena.Portal.Api.Models
+@using Telimena.Portal.Api.Models.DTO
 @using Telimena.WebApp.Controllers.Api.V1
 @using Telimena.WebApp.Core.Messages
-@using Telimena.WebApp.Core.Models
 @using Telimena.WebApp.Models.Shared
 @using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.ProgramManagement.ProgramManagementViewModel
@@ -262,17 +263,17 @@
                     </thead>
                     <tbody>
 
-                        @foreach (ProgramUpdatePackageInfo pkg in Model.UpdatePackages)
+                        @foreach (ProgramUpdatePackageInfoDto pkg in Model.UpdatePackages)
                         {
                         <tr>
                             <td>@pkg.ReleaseNotes</td>
                             <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
-                            <td>@pkg.Guid</td>
+                            <td>@pkg.Id</td>
                             <td style="text-align: center">
-                                <input type="checkbox" data-pkg-id="@pkg.Guid" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "") />
+                                <input type="checkbox" data-pkg-id="@pkg.Id" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "") />
                             </td>
                             <td>
-                                <a href="@Url.LatestApiUrl(UpdatePackagesController.Routes.Get, new { id = pkg.Guid })">@pkg.FileName</a>
+                                <a href="@Url.LatestApiUrl(UpdatePackagesController.Routes.Get, new { id = pkg.Id })">@pkg.FileName</a>
                             </td>
                             <td>@pkg.Version</td>
                             <td>@pkg.SupportedToolkitVersion</td>
@@ -281,7 +282,7 @@
 
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-sm expand">Show</button>
-                                    <button type="button" data-toggle="modal" data-target="#@Strings.Id.SetReleaseNotesModal" data-pkg-id="@pkg.Guid" class="btn btn-default btn-sm @Strings.Css.PrepareReleaseNotesButton">Set</button>
+                                    <button type="button" data-toggle="modal" data-target="#@Strings.Id.SetReleaseNotesModal" data-pkg-id="@pkg.Id" class="btn btn-default btn-sm @Strings.Css.PrepareReleaseNotesButton">Set</button>
                                 </div>
 
 
@@ -612,8 +613,8 @@
                 url:
                     '@Url.LatestApiUrl(ProgramsController.Routes.GetLatestVersionInfo, new {telemetryKey = @Model.TelemetryKey})',
                 success: function(response) {
-                    if (response.PrimaryAssemblyVersion !== undefined) {
-                        $('#latestVersion').html(response.PrimaryAssemblyVersion.LatestVersion);
+                    if (response !== undefined) {
+                        $('#latestVersion').html(response);
                     }
                 }
             });

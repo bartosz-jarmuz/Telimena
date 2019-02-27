@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using NUnit.Framework;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Telemetry;
 
 namespace Telimena.Tests
 {

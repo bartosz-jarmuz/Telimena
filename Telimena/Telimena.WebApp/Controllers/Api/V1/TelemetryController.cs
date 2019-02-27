@@ -15,6 +15,7 @@ using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Telemetry;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
@@ -55,7 +56,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 return this.BadRequest("Empty telemetry key");
             }
 
-            TelemetryMonitoredProgram prg = await this.work.GetMonitoredProgram(request.TelemetryKey).ConfigureAwait(false);
+            TelemetryRootObject prg = await this.work.GetMonitoredProgram(request.TelemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program with key [{request.TelemetryKey}] not found");
@@ -83,7 +84,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     return new TelemetryInitializeResponse() { Exception = new BadRequestException("Request is not valid") };
                 }
 
-                TelemetryMonitoredProgram program = await work.GetMonitoredProgram(request.TelemetryKey).ConfigureAwait(false);
+                TelemetryRootObject program = await work.GetMonitoredProgram(request.TelemetryKey).ConfigureAwait(false);
                 if (program == null)
                 {
                     {
@@ -101,7 +102,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
 
                 await this.work.CompleteAsync().ConfigureAwait(false);
-                TelemetryInitializeResponse response = new TelemetryInitializeResponse {UserId = clientAppUser.Guid};
+                TelemetryInitializeResponse response = new TelemetryInitializeResponse {UserId = clientAppUser.PublicId};
                 return response;
             }
             catch (Exception ex)
@@ -118,7 +119,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="items"></param>
         /// <returns></returns>
         [NonAction]
-        public Task InsertDataInternal(IEnumerable<TelemetryItem> items, TelemetryMonitoredProgram program, string ip)
+        public Task InsertDataInternal(IEnumerable<TelemetryItem> items, TelemetryRootObject program, string ip)
         {
             return TelemetryControllerHelpers.InsertData(this.work, items.ToList(), program, ip);
         }
@@ -132,7 +133,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [Route("{telemetryKey}", Name = Routes.Post)]
         public async Task<IHttpActionResult> Post(Guid telemetryKey)
         {
-            TelemetryMonitoredProgram program = await this.work.GetMonitoredProgram(telemetryKey).ConfigureAwait(false);
+            TelemetryRootObject program = await this.work.GetMonitoredProgram(telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 throw new InvalidOperationException($"Program with telemetry key [{telemetryKey}] does not exist");

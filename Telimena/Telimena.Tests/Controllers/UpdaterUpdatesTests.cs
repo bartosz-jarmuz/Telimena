@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
@@ -125,7 +126,7 @@ namespace Telimena.Tests
             return unit;
         }
 
-        private void InsertPrograms(ToolkitDataUnitOfWork unit, WebApp.Core.Models.Updater updaterOther)
+        private void InsertPrograms(ToolkitDataUnitOfWork unit, WebApp.Core.Models.Portal.Updater updaterOther)
         {
             this.testProgram = new Program("Test Program", this.TestProgramTelemetryKey);
             unit.Programs.Add(this.testProgram);
@@ -178,15 +179,15 @@ namespace Telimena.Tests
 
             UpdateResponse result = controller.UpdateCheck(request).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
-            Assert.AreEqual($"api/v1/updaters/{result.UpdatePackages.Single().Guid}", result.UpdatePackages.Single().DownloadUrl);
+            Assert.AreEqual($"api/v1/updaters/{result.UpdatePackages.Single().PublicId}", result.UpdatePackages.Single().DownloadUrl);
 
             request = new UpdateRequest(telemetryKey: this.TestProgramWithDifferentUpdaterTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false
                 , updaterVersion: "1.0", toolkitVersion: "1.3.0");
 
             result = controller.UpdateCheck(request).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.5", result.UpdatePackages.Single().Version);
-            Assert.AreNotEqual(Guid.Empty, result.UpdatePackages[0].Guid);
-            Assert.AreEqual($"api/v1/updaters/{result.UpdatePackages[0].Guid}", result.UpdatePackages[0].DownloadUrl);
+            Assert.AreNotEqual(Guid.Empty, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual($"api/v1/updaters/{result.UpdatePackages[0].PublicId}", result.UpdatePackages[0].DownloadUrl);
         }
 
 

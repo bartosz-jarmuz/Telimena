@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
+using Telimena.WebApp.Core.Models.Telemetry;
 using Telimena.WebApp.Infrastructure;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using LogLevel = Telimena.WebApp.Core.DTO.MappableToClient.LogLevel;
@@ -22,7 +24,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     {
 
 
-        private static async Task<ITelemetryAware> GetTrackedComponent(ITelemetryUnitOfWork work, TelemetryItemTypes itemType, string key, TelemetryMonitoredProgram program)
+        private static async Task<ITelemetryAware> GetTrackedComponent(ITelemetryUnitOfWork work, TelemetryItemTypes itemType, string key, TelemetryRootObject program)
         {
             switch (itemType)
             {
@@ -35,13 +37,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
         }
 
-        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, List<TelemetryItem> units, TelemetryMonitoredProgram program, string ipAddress)
+        public static async Task<List<TelemetrySummary>> InsertData(ITelemetryUnitOfWork work, List<TelemetryItem> units, TelemetryRootObject program, string ipAddress)
         {
             if (units.Any())
             {
 
                 ClientAppUser clientAppUser =
-                    await GetUserOrAddIfMissing(work, units.First().UserId, ipAddress).ConfigureAwait(false);
+                    await GetUserOrAddIfMissing(work, units.First().UserIdentifier, ipAddress).ConfigureAwait(false);
 
                 IEnumerable<IGrouping<TelemetryItemTypes, TelemetryItem>> typeGroupings =
                     units.GroupBy(x => x.TelemetryItemType);
@@ -70,7 +72,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return null;
         }
 
-        private static async Task AddTelemetries(ITelemetryUnitOfWork work, TelemetryMonitoredProgram program, string ipAddress
+        private static async Task AddTelemetries(ITelemetryUnitOfWork work, TelemetryRootObject program, string ipAddress
             , IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping, ClientAppUser clientAppUser, List<TelemetrySummary> summaries)
         {
             foreach (IGrouping<string, TelemetryItem> keyGroupings in typeGrouping.GroupBy(x => x.EntryKey))
@@ -88,7 +90,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
         }
 
-        private static void AddLogs(ITelemetryUnitOfWork work, TelemetryMonitoredProgram program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping)
+        private static void AddLogs(ITelemetryUnitOfWork work, TelemetryRootObject program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping)
         {
             foreach (TelemetryItem telemetryItem in typeGrouping)
             {
@@ -96,7 +98,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 {
                     Timestamp = telemetryItem.Timestamp
                     , Id = Guid.NewGuid()
-                    , UserName = telemetryItem.UserId
+                    , UserName = telemetryItem.UserIdentifier
                     , Sequence = telemetryItem.Sequence
                     , Message = telemetryItem.LogMessage
                     , ProgramId = program.ProgramId
@@ -106,7 +108,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
         }
 
-        private static void AddExceptions(ITelemetryUnitOfWork work, TelemetryMonitoredProgram program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping
+        private static void AddExceptions(ITelemetryUnitOfWork work, TelemetryRootObject program, IGrouping<TelemetryItemTypes, TelemetryItem> typeGrouping
             , ClientAppUser clientAppUser)
         {
             foreach (TelemetryItem telemetryItem in typeGrouping)
@@ -118,7 +120,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                         Timestamp = telemetryItem.Timestamp
                         , ProgramId = program.ProgramId
                         , ProgramVersion = telemetryItem.VersionData.FileVersion
-                        , UserName = clientAppUser.UserId
+                        , UserName = clientAppUser.UserIdentifier
                         , Sequence = telemetryItem.Sequence
                         , ExceptionId = telemetryItemException.Id
                         , ExceptionOuterId = telemetryItemException.OuterId
@@ -137,7 +139,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
         public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, UserInfo userDto, string ip)
         {
-            ClientAppUser user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserId == userDto.UserId).ConfigureAwait(false);
+            ClientAppUser user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserIdentifier == userDto.UserIdentifier).ConfigureAwait(false);
             if (user == null)
             {
                 user = Mapper.Map<ClientAppUser>(userDto);
@@ -157,11 +159,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
         public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, string userId, string ip)
         {
-            ClientAppUser user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserId == userId).ConfigureAwait(false);
+            ClientAppUser user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserIdentifier == userId).ConfigureAwait(false);
             if (user == null)
             {
                 user = new ClientAppUser();
-                user.UserId = userId;
+                user.UserIdentifier = userId;
                 user.FirstSeenDate = DateTime.UtcNow;
                 user.IpAddresses.Add(ip);
                 work.ClientAppUsers.Add(user);
@@ -219,19 +221,19 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return summary;
         }
 
-        public static async Task<ITelemetryAware> GetEventOrAddIfMissing(ITelemetryUnitOfWork work, string componentName, TelemetryMonitoredProgram program)
+        public static async Task<ITelemetryAware> GetEventOrAddIfMissing(ITelemetryUnitOfWork work, string componentName, TelemetryRootObject root)
         {
-            Event obj = await work.Events.FirstOrDefaultAsync(x => x.Name == componentName && x.Program.ProgramId == program.ProgramId).ConfigureAwait(false);
+            Event obj = await work.Events.FirstOrDefaultAsync(x => x.Name == componentName && x.Program.ProgramId == root.ProgramId).ConfigureAwait(false);
             if (obj == null)
             {
-                obj = new Event() { Name = componentName, Program = program, ProgramId = program.ProgramId };
+                obj = new Event() { Name = componentName, Program = root, ProgramId = root.ProgramId };
                 work.Events.Add(obj);
             }
 
             return obj;
         }
 
-        public static async Task<ITelemetryAware> GetViewOrAddIfMissing(ITelemetryUnitOfWork work, string viewName, TelemetryMonitoredProgram program)
+        public static async Task<ITelemetryAware> GetViewOrAddIfMissing(ITelemetryUnitOfWork work, string viewName, TelemetryRootObject program)
         {
             View view = await work.Views.FirstOrDefaultAsync(x => x.Name == viewName && x.Program.ProgramId == program.ProgramId).ConfigureAwait(false);
             if (view == null)

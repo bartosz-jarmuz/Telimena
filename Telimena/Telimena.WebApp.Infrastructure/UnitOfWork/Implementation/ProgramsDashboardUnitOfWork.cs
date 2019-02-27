@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
+using Telimena.WebApp.Core.Models.Telemetry;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using Telimena.WebApp.Utils;
@@ -77,7 +79,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     summary = new ProgramSummary
                     {
                         ProgramName = program.Name
-                        , DeveloperName = program.DeveloperAccount?.Name ?? "N/A"
+                        , DeveloperName = program.DeveloperTeam?.Name ?? "N/A"
                         , LatestVersion = program.PrimaryAssembly?.GetLatestVersion()?.AssemblyVersion
                         , AssociatedToolkitVersion = program.PrimaryAssembly?.GetLatestVersion()?.ToolkitData?.Version
                         , TelemetryKey = program.TelemetryKey
@@ -124,10 +126,10 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)
         {
-            List<TelemetryMonitoredProgram> telemetryMonitoredProgram = new List<TelemetryMonitoredProgram>();
+            List<TelemetryRootObject> telemetryMonitoredProgram = new List<TelemetryRootObject>();
             foreach (Program program in programs)
             {
-                var telePrg = await this.telemetryContext.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == program.TelemetryKey)
+                var telePrg = await this.telemetryContext.TelemetryRootObjects.FirstOrDefaultAsync(x => x.TelemetryKey == program.TelemetryKey)
                     .ConfigureAwait(false);
                 if (telePrg != null)
                 {
@@ -136,7 +138,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
              
             List<View> views = telemetryMonitoredProgram.SelectMany(x => x.Views).ToList();
-            IEnumerable<int> viewIds = views.Select(x => x.Id);
+            IEnumerable<Guid> viewIds = views.Select(x => x.Id);
             List<ViewTelemetrySummary> viewTelemetrySummaries =
                 await this.telemetryContext.ViewTelemetrySummaries.Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync().ConfigureAwait(false);
             //List<ClientAppUser> users = programUsageSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
@@ -380,7 +382,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 {
                     {x=>x.Sequence },
                     {x=>x.IpAddress },
-                    {x=>x.UserId },
+                    {x=>x.UserIdentifier },
                     {x=>x.EntryKey },
                 });
 
@@ -398,7 +400,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 DataTableTelemetryData data = new DataTableTelemetryData
                 {
                     Timestamp = detail.Timestamp
-                    , UserName = detail.UserId
+                    , UserName = detail.UserIdentifier
                     , IpAddress = detail.IpAddress
                     , EntryKey = detail.EntryKey
                     , ProgramVersion = detail.FileVersion
@@ -470,7 +472,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     }
                     else if (rule.Item1 == nameof(DataTableTelemetryDataBase.UserName))
                     {
-                        query = Order(query, x => x.UserId, rule.Item2, index);
+                        query = Order(query, x => x.UserIdentifier, rule.Item2, index);
                     }
                     else if (rule.Item1 == nameof(DataTableTelemetryDataBase.EntryKey) )
                     {

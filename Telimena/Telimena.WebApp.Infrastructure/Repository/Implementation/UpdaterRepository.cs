@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Utils.VersionComparison;
@@ -30,16 +31,21 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         protected TelimenaPortalContext TelimenaPortalContext { get; }
         private readonly string containerName = "toolkit-packages";
 
-        public Task<Updater> GetUpdater(Guid id)
+        public Task<Updater> GetUpdater(int id)
         {
-            return this.TelimenaPortalContext.Updaters.FirstOrDefaultAsync(x => x.Guid == id);
+            return this.TelimenaPortalContext.Updaters.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public Task<Updater> GetUpdater(Guid publicId)
+        {
+            return this.TelimenaPortalContext.Updaters.FirstOrDefaultAsync(x => x.PublicId == publicId);
         }
 
         public Updater Add(string fileName, string internalName, TelimenaUser user)
         {
            var updater = new Updater(fileName, internalName);
             this.TelimenaPortalContext.Updaters.Add(updater);
-            updater.DeveloperAccount = user.AssociatedDeveloperAccounts.FirstOrDefault(x => x.MainUserId == user.Id);
+            updater.DeveloperTeam = user.AssociatedDeveloperAccounts.FirstOrDefault(x => x.MainUserId == user.Id);
             return updater;
         }
 
@@ -51,7 +57,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public Task<UpdaterPackageInfo> GetPackageInfo(Guid packageGuid)
         {
-            return this.TelimenaPortalContext.UpdaterPackages.SingleOrDefaultAsync(x => x.Guid == packageGuid);
+            return this.TelimenaPortalContext.UpdaterPackages.SingleOrDefaultAsync(x => x.PublicId == packageGuid);
         }
 
         public async Task<IEnumerable<UpdaterPackageInfo>> GetPackages(string updaterInternalName)
@@ -101,17 +107,17 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             if (updater == null && updaterInternalName == DefaultToolkitNames.UpdaterInternalName) //create the default updater
             {
                 updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
-                updater.DeveloperAccount = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
+                updater.DeveloperTeam = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
             else if (updater == null && updaterInternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName) //create the default package  updater
             {
                 updater = new Updater(DefaultToolkitNames.PackageTriggerUpdaterFileName, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
-                updater.DeveloperAccount = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
+                updater.DeveloperTeam = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
 
-            if (updater != null && updater.DeveloperAccount == null)
+            if (updater != null && updater.DeveloperTeam == null)
             {
-                updater.DeveloperAccount = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
+                updater.DeveloperTeam = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
 
             return updater;

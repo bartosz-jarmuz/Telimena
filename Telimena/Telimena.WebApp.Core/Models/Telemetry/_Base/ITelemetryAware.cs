@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Telemetry
 {
     public interface ITelemetryAware
     {
-        int Id { get; set; }
+        Guid Id { get; set; }
+        int ClusterId { get; set; }
         string Name { get; set; }
-        TelemetryMonitoredProgram Program { get; set; }
+        TelemetryRootObject Program { get; set; }
         DateTimeOffset FirstReportedDate { get; set; }
         IReadOnlyList<TelemetrySummary> GetTelemetrySummaries();
         IReadOnlyList<TelemetryDetail> GetTelemetryDetails(int clientAppUserId);

@@ -16,6 +16,7 @@ using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Models.ProgramStatistics;

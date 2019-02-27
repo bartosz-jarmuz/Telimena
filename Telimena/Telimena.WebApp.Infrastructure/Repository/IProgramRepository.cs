@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 
 namespace Telimena.WebApp.Infrastructure.Repository
 {

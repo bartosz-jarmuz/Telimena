@@ -9,6 +9,7 @@ using Microsoft.Owin.Security;
 using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 using Telimena.WebApp.Models.Account;

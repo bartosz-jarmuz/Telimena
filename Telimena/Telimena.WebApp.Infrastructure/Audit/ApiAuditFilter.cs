@@ -47,7 +47,7 @@ namespace MvcAuditLogger
                     UserName = (actionContext.RequestContext.Principal.Identity.IsAuthenticated) ? actionContext.RequestContext.Principal.Identity.Name : "Anonymous",
                     IPAddress = actionContext.Request.GetClientIp(),
                     AreaAccessed = actionContext.Request.RequestUri.ToString(),
-                    Timestamp = DateTime.UtcNow,
+                    Timestamp = DateTimeOffset.UtcNow,
                     Data = ""
                 };
                 AuditingModes mode = AuditingModes.DatabaseAndLogger;

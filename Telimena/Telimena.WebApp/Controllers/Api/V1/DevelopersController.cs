@@ -8,6 +8,7 @@ using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 
@@ -43,7 +44,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{developerId}/programs", Name = Routes.GetPrograms)]
         public async Task<IEnumerable<Program>> GetPrograms(Guid developerId)
         {
-            return await this.Work.Programs.GetAsync(x => x.DeveloperAccount.Guid == developerId).ConfigureAwait(false);
+            return await this.Work.Programs.GetAsync(x => x.DeveloperTeam.PublicId == developerId).ConfigureAwait(false);
         }
     }
 }

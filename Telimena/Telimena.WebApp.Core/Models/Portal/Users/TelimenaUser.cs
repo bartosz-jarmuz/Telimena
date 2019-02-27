@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using DotNetLittleHelpers;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Portal
 {
     public class TelimenaUser : IdentityUser
     {
@@ -24,8 +23,8 @@ namespace Telimena.WebApp.Core.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserNumber { get; private set; }
 
-        public DateTime RegisteredDate { get; private set; }
-        public DateTime? LastLoginDate { get; set; }
+        public DateTimeOffset RegisteredDate { get; private set; }
+        public DateTimeOffset? LastLoginDate { get; set; }
         public string DisplayName { get; private set; }
         public bool IsActivated { get; set; }
         public bool MustChangePassword { get; set; }
@@ -33,13 +32,13 @@ namespace Telimena.WebApp.Core.Models
         /// <summary>
         ///     Returns developer accounts associated with this user (e.g. dev accounts which main user is set to this user)
         /// </summary>
-        public virtual RestrictedAccessList<DeveloperAccount> AssociatedDeveloperAccounts { get; set; } = new RestrictedAccessList<DeveloperAccount>();
+        public virtual RestrictedAccessList<DeveloperTeam> AssociatedDeveloperAccounts { get; set; } = new RestrictedAccessList<DeveloperTeam>();
 
-        public void AssociateWithDeveloperAccount(DeveloperAccount developer)
+        public void AssociateWithDeveloperAccount(DeveloperTeam developer)
         {
             if (!this.AssociatedDeveloperAccounts.Contains(developer))
             {
-                ((List<DeveloperAccount>) this.AssociatedDeveloperAccounts).Add(developer);
+                ((List<DeveloperTeam>) this.AssociatedDeveloperAccounts).Add(developer);
             }
         }
 
@@ -47,14 +46,14 @@ namespace Telimena.WebApp.Core.Models
         ///     Returns the developer accounts where the current user is the main user
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<DeveloperAccount> GetDeveloperAccountsLedByUser()
+        public IEnumerable<DeveloperTeam> GetDeveloperAccountsLedByUser()
         {
             return this.AssociatedDeveloperAccounts.Where(x => x.MainUser == this);
         }
 
         private void SetAttributes(string email, string displayName)
         {
-            this.RegisteredDate = DateTime.UtcNow;
+            this.RegisteredDate = DateTimeOffset.UtcNow;
             this.Email = email;
             this.UserName = email;
             this.DisplayName = displayName;

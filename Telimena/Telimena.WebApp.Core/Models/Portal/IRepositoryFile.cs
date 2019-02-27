@@ -1,4 +1,4 @@
-﻿namespace Telimena.WebApp.Core.Models
+﻿namespace Telimena.WebApp.Core.Models.Portal
 {
     public interface IRepositoryFile
     {

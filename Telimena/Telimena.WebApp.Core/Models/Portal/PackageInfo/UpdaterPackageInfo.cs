@@ -1,7 +1,8 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Portal
 {
     public class UpdaterPackageInfo : RepositoryFileBase, IRepositoryFile
     {
@@ -14,10 +15,13 @@ namespace Telimena.WebApp.Core.Models
             this.Version = version;
             this.MinimumRequiredToolkitVersion = minimumRequiredToolkitVersion;
         }
-        public int Id { get; set; }
-        public Guid Guid { get; set; } = Guid.NewGuid();
-        public string Version { get; set; }
 
+        [Key]
+        public int Id { get; set; }
+
+        [Index(IsUnique = true, IsClustered = false)]
+        public Guid PublicId { get; set; } = Guid.NewGuid();
+        public string Version { get; set; }
         public string MinimumRequiredToolkitVersion { get; set; }
 
         public bool IsBeta { get; set; }
@@ -29,7 +33,7 @@ namespace Telimena.WebApp.Core.Models
         public void UpdateContentAndMetadata(long fileSizeBytes)
         {
             this.FileSizeBytes = fileSizeBytes;
-            this.UploadedDate = DateTime.UtcNow;
+            this.UploadedDate = DateTimeOffset.UtcNow;
         }
     }
 }

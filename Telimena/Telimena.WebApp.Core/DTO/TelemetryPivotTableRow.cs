@@ -1,5 +1,6 @@
 ﻿using System;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Telemetry;
 
 namespace Telimena.WebApp.Core.DTO
 {
@@ -11,7 +12,7 @@ namespace Telimena.WebApp.Core.DTO
             this.Date = detail.Timestamp.ToString("O");
             this.Time = detail.Timestamp.TimeOfDay.TotalSeconds;
             this.Sequence = detail.Sequence;
-            this.UserName = detail.UserId;
+            this.UserName = detail.UserIdentifier;
         }
 
         public TelemetryPivotTableRow()

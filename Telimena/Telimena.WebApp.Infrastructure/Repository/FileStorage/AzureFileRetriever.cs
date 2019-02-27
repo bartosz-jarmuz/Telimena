@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 
 namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 {

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Telemetry
 {
     public class ExceptionInfo
     {
@@ -19,8 +20,11 @@ namespace Telimena.WebApp.Core.Models
 
         public string Sequence { get; set; }
 
-        [Key]
+        [Key,Index(IsUnique = true, IsClustered = false)]
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), Index(IsUnique = true, IsClustered = true)]
+        public int ClusterId { get; set; }
 
         public int ProgramId { get; set; }
 

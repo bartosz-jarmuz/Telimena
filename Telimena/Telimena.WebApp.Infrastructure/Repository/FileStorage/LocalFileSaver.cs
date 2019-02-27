@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 
 namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 {

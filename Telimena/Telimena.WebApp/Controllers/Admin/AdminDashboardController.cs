@@ -14,6 +14,7 @@ using Telimena.WebApp.Controllers.Developer;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Telemetry;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Security;
 

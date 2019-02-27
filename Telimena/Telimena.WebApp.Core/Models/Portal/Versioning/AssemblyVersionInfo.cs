@@ -1,9 +1,10 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Portal
 {
     public class AssemblyVersionInfo
     {
@@ -16,7 +17,11 @@ namespace Telimena.WebApp.Core.Models
             this.FileVersion = versionData.FileVersion;
         }
 
+        [Key]
         public int Id { get; set; }
+
+        [Index(IsUnique = true, IsClustered = false)]
+        public Guid PublicId { get; set; }
 
         /// <summary>
         /// Gets or sets the version from the [assembly: AssemblyVersion("1.0")] attribute
@@ -31,7 +36,7 @@ namespace Telimena.WebApp.Core.Models
         /// </summary>
         public string FileVersion { get; set; }
 
-        public DateTime? ReleaseDate { get; set; }
+        public DateTimeOffset? ReleaseDate { get; set; }
 
         [JsonIgnore]
         public virtual ProgramAssembly ProgramAssembly { get; set; }

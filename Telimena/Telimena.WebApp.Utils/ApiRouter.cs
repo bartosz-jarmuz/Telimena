@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 
 namespace Telimena.WebApp.Infrastructure
 {
@@ -17,17 +18,17 @@ namespace Telimena.WebApp.Infrastructure
 
             public static string DownloadProgramUpdate(ProgramUpdatePackageInfo pkg)
             {
-                return $"{DownloadProgramUpdatePackage}/{pkg.Guid}";
+                return $"{DownloadProgramUpdatePackage}/{pkg.PublicId}";
             }
 
             public static string DownloadUpdaterUpdate(UpdaterPackageInfo pkg)
             {
-                return $"{DownloadUpdaterUpdatePackage}/{pkg.Guid}";
+                return $"{DownloadUpdaterUpdatePackage}/{pkg.PublicId}";
             }
 
             public static string DownloadToolkitUpdate(TelimenaPackageInfo pkg)
             {
-                return $"{DownloadToolkitUpdatePackage}/{pkg.Guid}";
+                return $"{DownloadToolkitUpdatePackage}/{pkg.PublicId}";
             }
         }
     }

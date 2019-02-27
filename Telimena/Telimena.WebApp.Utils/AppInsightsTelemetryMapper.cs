@@ -36,7 +36,7 @@ namespace Telimena.WebApp.Utils
             {
                 Timestamp = appInsightsTelemetry.Time,
                 VersionData = GetVersionData(appInsightsProperties),
-                UserId = appInsightsTelemetry.Tags.AiUserId,
+                UserIdentifier = appInsightsTelemetry.Tags.AiUserId,
                 TelemetryData = GetFilteredProperties(appInsightsProperties),
                 TelemetryItemType = GetItemType(appInsightsTelemetry),
                 EntryKey = appInsightsTelemetry.Data.BaseData.Name,
@@ -134,6 +134,7 @@ namespace Telimena.WebApp.Utils
         /// <returns>TelemetryItemTypes.</returns>
         private static TelemetryItemTypes GetItemType(AppInsightsTelemetry telemetry)
         {
+
 
             string baseType = telemetry?.Data?.BaseType;
             switch (baseType)

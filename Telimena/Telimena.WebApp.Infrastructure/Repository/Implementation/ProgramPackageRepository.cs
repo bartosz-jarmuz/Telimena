@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 

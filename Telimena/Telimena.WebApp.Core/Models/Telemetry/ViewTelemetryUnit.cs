@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Telimena.WebApp.Core.Models
+﻿namespace Telimena.WebApp.Core.Models.Telemetry
 {
 
     public class ViewTelemetryUnit : TelemetryUnit

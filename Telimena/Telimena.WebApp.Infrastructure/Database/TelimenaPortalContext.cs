@@ -8,6 +8,7 @@ using System.Web.Configuration;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Azure.Services.AppAuthentication;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
@@ -46,7 +47,7 @@ namespace Telimena.WebApp.Infrastructure.Database
 
         public DbSet<Program> Programs { get; set; }
         
-        public DbSet<DeveloperAccount> Developers { get; set; }
+        public DbSet<DeveloperTeam> Developers { get; set; }
         public DbSet<ProgramAssembly> ProgramAssemblies { get; set; }
         public DbSet<AssemblyVersionInfo> Versions { get; set; }
         public DbSet<TelimenaToolkitData> TelimenaToolkitData { get; set; }
@@ -62,11 +63,8 @@ namespace Telimena.WebApp.Infrastructure.Database
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Program>().HasOptional(a => a.PrimaryAssembly).WithOptionalPrincipal(u => u.PrimaryOf);
 
             modelBuilder.Entity<AssemblyVersionInfo>().HasRequired(a => a.ProgramAssembly).WithMany(c => c.Versions).HasForeignKey(a => a.ProgramAssemblyId);
-
-            modelBuilder.Entity<ProgramAssembly>().HasOptional(a => a.LatestVersion).WithOptionalPrincipal(u => u.LatestVersionOf);
 
             modelBuilder.Entity<TelimenaUser>().HasMany(s => s.AssociatedDeveloperAccounts).WithMany(c => c.AssociatedUsers).Map(cs =>
             {
@@ -75,7 +73,7 @@ namespace Telimena.WebApp.Infrastructure.Database
                 cs.ToTable("TelimenaUserDeveloperAccountAssociations");
             });
 
-            modelBuilder.Entity<DeveloperAccount>().HasMany(s => s.AssociatedUsers).WithMany(c => c.AssociatedDeveloperAccounts).Map(cs =>
+            modelBuilder.Entity<DeveloperTeam>().HasMany(s => s.AssociatedUsers).WithMany(c => c.AssociatedDeveloperAccounts).Map(cs =>
             {
                 cs.MapRightKey("TelimenaUser_Id");
                 cs.MapLeftKey("DeveloperAccount_Id");

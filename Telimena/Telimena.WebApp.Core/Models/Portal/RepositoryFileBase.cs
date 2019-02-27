@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Portal
 {
     public abstract class RepositoryFileBase : IRepositoryFile
     {
@@ -13,10 +13,10 @@ namespace Telimena.WebApp.Core.Models
         {
             this.FileName = fileName;
             this.FileSizeBytes = fileSizeBytes;
-            this.UploadedDate = DateTime.UtcNow;
+            this.UploadedDate = DateTimeOffset.UtcNow;
         }
 
-        public DateTime UploadedDate { get; set; } //todo - make it an offset
+        public DateTimeOffset UploadedDate { get; set; } 
         public string FileName { get; protected set; }
 
         public string ZippedFileName

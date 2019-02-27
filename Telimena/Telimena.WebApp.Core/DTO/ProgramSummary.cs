@@ -21,7 +21,7 @@ namespace Telimena.WebApp.Core.DTO
 
         public DateTimeOffset? LastUsage { get; set; }
 
-        public DateTime RegisteredDate { get; set; }
+        public DateTimeOffset RegisteredDate { get; set; }
         public int TotalTodayViewsUsageCount { get; set; }
     }
 }

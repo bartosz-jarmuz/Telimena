@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 
 namespace Telimena.WebApp.Infrastructure.Repository.Implementation
@@ -122,7 +123,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 return this.portalContext.Programs;
             }
 
-            return this.portalContext.Programs.Where(x => x.DeveloperAccount != null && x.DeveloperAccount.MainUserId == user.Id);
+            return this.portalContext.Programs.Where(x => x.DeveloperTeam != null && x.DeveloperTeam.MainUserId == user.Id);
         }
     }
 }

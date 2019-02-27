@@ -9,6 +9,7 @@ using log4net;
 using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Models.PortalUsers;
 

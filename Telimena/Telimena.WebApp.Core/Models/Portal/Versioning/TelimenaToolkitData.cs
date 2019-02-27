@@ -1,7 +1,8 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Telimena.WebApp.Core.Models
+namespace Telimena.WebApp.Core.Models.Portal
 {
     public class TelimenaToolkitData
     {
@@ -14,9 +15,12 @@ namespace Telimena.WebApp.Core.Models
             this.Version = version;
         }
 
-        public int Id { get; set; }
         public string Version { get; set; }
         public virtual TelimenaPackageInfo TelimenaPackageInfo { get; set; }
-        public Guid Guid { get; set; } = Guid.NewGuid();
+        [Key]
+        public int Id { get; set; }  
+
+        [Index(IsUnique = true, IsClustered = false)]
+        public Guid PublicId { get; set; } = Guid.NewGuid();
     }
 }

@@ -84,8 +84,8 @@ namespace TelimenaClient.Tests
             {
                 UpdatePackages = new List<UpdatePackageData>
                 {
-                    new UpdatePackageData {FileSizeBytes = 666, Guid = Guid.NewGuid(), IsBeta = true, Version = "3.1.0.0"}
-                    , new UpdatePackageData {FileSizeBytes = 666, Guid = Guid.NewGuid(), Version = "3.0.0.0"}
+                    new UpdatePackageData {FileSizeBytes = 666, PublicId = Guid.NewGuid(), IsBeta = true, Version = "3.1.0.0"}
+                    , new UpdatePackageData {FileSizeBytes = 666, PublicId = Guid.NewGuid(), Version = "3.0.0.0"}
                 }
             };
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, latestVersionResponse, new UpdateResponse()));
@@ -112,7 +112,7 @@ namespace TelimenaClient.Tests
             {
                 UpdatePackages = new List<UpdatePackageData>
                 {
-                    new UpdatePackageData {FileSizeBytes = 666, Guid = Guid.NewGuid(), IsBeta = true, Version = "3.1.0.0"}
+                    new UpdatePackageData {FileSizeBytes = 666, PublicId = Guid.NewGuid(), IsBeta = true, Version = "3.1.0.0"}
                 }
             };
             UpdateResponse updaterResponse = new UpdateResponse
@@ -167,17 +167,17 @@ namespace TelimenaClient.Tests
         {
             List<UpdatePackageData> packages = new List<UpdatePackageData>
             {
-                new UpdatePackageData {Guid = this.PrgPkg_4, Version = "3.5"}
-                , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0"}
-                , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0"}
-                , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0"}
+                new UpdatePackageData {PublicId = this.PrgPkg_4, Version = "3.5"}
+                , new UpdatePackageData {PublicId = this.PrgPkg_2, Version = "2.0"}
+                , new UpdatePackageData {PublicId = this.PrgPkg_1, Version = "1.0"}
+                , new UpdatePackageData {PublicId = this.PrgPkg_3, Version = "3.0"}
             };
 
             List<UpdatePackageData> ordered = UpdateInstructionCreator.Sort(packages);
-            Assert.AreEqual(this.PrgPkg_1, ordered[0].Guid);
-            Assert.AreEqual(this.PrgPkg_2, ordered[1].Guid);
-            Assert.AreEqual(this.PrgPkg_3, ordered[2].Guid);
-            Assert.AreEqual(this.PrgPkg_4, ordered[3].Guid);
+            Assert.AreEqual(this.PrgPkg_1, ordered[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_2, ordered[1].PublicId);
+            Assert.AreEqual(this.PrgPkg_3, ordered[2].PublicId);
+            Assert.AreEqual(this.PrgPkg_4, ordered[3].PublicId);
         }
 
         [Test]
@@ -187,10 +187,10 @@ namespace TelimenaClient.Tests
 
             List<UpdatePackageData> packages = new List<UpdatePackageData>
             {
-                new UpdatePackageData   {Guid =   this.PrgPkg_4, Version = "3.5", FileName="Updates v 3.5.zip", ReleaseNotes = "Features for 3.5"  }
-                , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0",   FileName="Updates v 2.0.zip", ReleaseNotes = "Features for 2.0"  }
-                , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0",   FileName="Updates v 1.0.zip", ReleaseNotes = "Features for 1.0"  }
-                , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0",   FileName="Updates v 3.0.zip", ReleaseNotes = "Features for 3.0"  }
+                new UpdatePackageData   {PublicId =   this.PrgPkg_4, Version = "3.5", FileName="Updates v 3.5.zip", ReleaseNotes = "Features for 3.5"  }
+                , new UpdatePackageData {PublicId = this.PrgPkg_2, Version = "2.0",   FileName="Updates v 2.0.zip", ReleaseNotes = "Features for 2.0"  }
+                , new UpdatePackageData {PublicId = this.PrgPkg_1, Version = "1.0",   FileName="Updates v 1.0.zip", ReleaseNotes = "Features for 1.0"  }
+                , new UpdatePackageData {PublicId = this.PrgPkg_3, Version = "3.0",   FileName="Updates v 3.0.zip", ReleaseNotes = "Features for 3.0"  }
             };
             DirectoryInfo currentUpdateSubfolder = locator.GetCurrentUpdateSubfolder(packages);
 
@@ -267,10 +267,10 @@ namespace TelimenaClient.Tests
         {
             List<UpdatePackageData> packages = new List<UpdatePackageData>
             {
-                new UpdatePackageData   {Guid = this.PrgPkg_4, Version = "3.5", FileName = "Updates.zip"}
-                , new UpdatePackageData {Guid = this.PrgPkg_2, Version = "2.0", FileName = "Updates.zip"}
-                , new UpdatePackageData {Guid = this.PrgPkg_1, Version = "1.0", FileName = "Updates.zip"}
-                , new UpdatePackageData {Guid = this.PrgPkg_3, Version = "3.0", FileName = "Updates.zip"}
+                new UpdatePackageData   {PublicId = this.PrgPkg_4, Version = "3.5", FileName = "Updates.zip"}
+                , new UpdatePackageData {PublicId = this.PrgPkg_2, Version = "2.0", FileName = "Updates.zip"}
+                , new UpdatePackageData {PublicId = this.PrgPkg_1, Version = "1.0", FileName = "Updates.zip"}
+                , new UpdatePackageData {PublicId = this.PrgPkg_3, Version = "3.0", FileName = "Updates.zip"}
             };
             string temp = Path.GetTempPath();
 

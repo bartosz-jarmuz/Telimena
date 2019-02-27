@@ -2,8 +2,11 @@
 @using Telimena.WebApp
 @using Telimena.WebApp.Controllers.Api.V1
 @using Telimena.WebApp.Core.DTO.MappableToClient
+
+@using Telimena.Portal.Api.Models
 @using Telimena.WebApp.Core.Messages
-@using Telimena.WebApp.Core.Models
+@using Telimena.Portal.Api.Models
+@using Telimena.Portal.Api.Models.DTO
 @using Telimena.WebApp.UiStrings
 @model global::Telimena.WebApp.Models.Updater.ToolkitManagementViewModel
 @{
@@ -101,14 +104,14 @@
                         </thead>
                         <tbody>
 
-                        @foreach (TelimenaToolkitData toolkitData in Model.ToolkitPackages)
+                        @foreach (TelimenaToolkitDataDto toolkitData in Model.ToolkitPackages)
                         {
                             <tr>
-                                <td>@(toolkitData.Guid)</td>
-                                <td>@(toolkitData.TelimenaPackageInfo?.Guid)</td>
+                                <td>@(toolkitData.Id)</td>
+                                <td>@(toolkitData.TelimenaPackageInfo?.Id)</td>
 
                                 <td>
-                                    <a href="@(Url.LatestApiUrl(ToolkitController.Routes.Get, new {id = toolkitData?.TelimenaPackageInfo?.Guid}))">@toolkitData.Version</a>
+                                    <a href="@(Url.LatestApiUrl(ToolkitController.Routes.Get, new {id = toolkitData?.TelimenaPackageInfo?.Id}))">@toolkitData.Version</a>
                                 </td>
                                 @if (toolkitData.TelimenaPackageInfo != null)
                                 {
@@ -222,18 +225,18 @@
                         </thead>
                         <tbody>
 
-                            @foreach (UpdaterPackageInfo pkg in Model.UpdaterPackages)
+                            @foreach (UpdaterPackageInfoDto pkg in Model.UpdaterPackages)
                             {
                                 <tr>
-                                    <td>@pkg.Updater.Guid</td>
+                                    <td>@pkg.Updater.Id</td>
                                     <td>@pkg.Updater.InternalName</td>
                                     <td style="text-align: center">
-                                        <input type="checkbox" name="@Strings.Name.ToggleIsPublic" data-updater-id="@pkg.Updater.Guid" onchange="ToggleIsPublic(this)" @(pkg.Updater.IsPublic ? "checked" : "") />
+                                        <input type="checkbox" name="@Strings.Name.ToggleIsPublic" data-updater-id="@pkg.Updater.Id" onchange="ToggleIsPublic(this)" @(pkg.Updater.IsPublic ? "checked" : "") />
                                     </td>
-                                    <td>@pkg.Updater.DeveloperAccount.Name</td>
+                                    <td>@pkg.Updater.DeveloperTeamName</td>
                                     <td>@pkg.Updater.FileName</td>
                                     <td>
-                                        <a href="@(Url.LatestApiUrl(UpdatersController.Routes.Get, new {id = pkg.Guid}))">@pkg.Version</a>
+                                        <a href="@(Url.LatestApiUrl(UpdatersController.Routes.Get, new {id = pkg.Id}))">@pkg.Version</a>
                                     </td>
                                     <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
                                     <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>

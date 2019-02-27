@@ -9,6 +9,7 @@ using MvcAuditLogger;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
@@ -60,7 +61,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
-            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.Guid == id).ConfigureAwait(false);
+            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.PublicId == id).ConfigureAwait(false);
             if (toolkitData == null)
             {
                 return this.BadRequest($"Toolkit id [{id}] does not exist");

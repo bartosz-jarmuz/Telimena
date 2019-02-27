@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Utils.VersionComparison;
@@ -75,7 +76,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             List<TelimenaPackageInfo> packages;
             if (current != null)
             {
-                packages = (await this.TelimenaPortalContext.ToolkitPackages.Where(x => x.Id > current.Id).ToListAsync().ConfigureAwait(false))
+                packages = (await this.TelimenaPortalContext.ToolkitPackages.Where(x => x.UploadedDate > current.UploadedDate).ToListAsync().ConfigureAwait(false))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ThenByDescending(x=>x.Id).ToList();
             }
             else

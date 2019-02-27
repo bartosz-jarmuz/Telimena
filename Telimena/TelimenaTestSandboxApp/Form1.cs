@@ -32,7 +32,7 @@ namespace TelimenaTestSandboxApp
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
                 this.Telimena =
-                    TelimenaFactory.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text)){UserInfo = new UserInfo(){UserId = this.userNameTextBox.Text}}) as Telimena;
+                    TelimenaFactory.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text)){UserInfo = new UserInfo(){UserIdentifier = this.userNameTextBox.Text}}) as Telimena;
             }
 
             this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
@@ -132,7 +132,7 @@ namespace TelimenaTestSandboxApp
 
             if (!string.IsNullOrEmpty(this.userNameTextBox.Text))
             {   
-                si.UserInfo = new UserInfo { UserId = this.userNameTextBox.Text };
+                si.UserInfo = new UserInfo { UserIdentifier = this.userNameTextBox.Text };
             }
 
 

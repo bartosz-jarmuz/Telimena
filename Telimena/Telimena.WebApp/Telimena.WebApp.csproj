@@ -282,9 +282,11 @@
     <Compile Include="Controllers\Admin\AdminDashboardController.cs" />
     <Compile Include="Controllers\Admin\ToolkitManagementController.cs" />
     <Compile Include="Controllers\Api\V1\DevelopersController.cs" />
+    <Compile Include="Controllers\Api\V1\RegisterProgramController.cs" />
     <Compile Include="Controllers\Api\V1\Routes\DevelopersController.Routes.cs" />
     <Compile Include="Controllers\Api\V1\Helpers\ProgramsControllerHelpers.cs" />
     <Compile Include="Controllers\Api\V1\Routes\ProgramsController.Routes.cs" />
+    <Compile Include="Controllers\Api\V1\Routes\RegisterProgramController.Routes.cs" />
     <Compile Include="Controllers\Api\V1\Routes\TelemetryController.Routes.cs" />
     <Compile Include="Controllers\Api\V1\Routes\ToolkitController.Routes.cs" />
     <Compile Include="Controllers\Api\V1\Helpers\TelemetryQueryResponseCreator.cs" />

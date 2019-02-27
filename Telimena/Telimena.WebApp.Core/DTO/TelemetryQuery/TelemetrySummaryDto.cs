@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Telemetry;
 
 namespace Telimena.WebApp.Core.DTO
 {
@@ -15,11 +16,11 @@ namespace Telimena.WebApp.Core.DTO
         {
             if (propertiesToInclude.Contains(nameof(this.UserName)))
             {
-                this.UserName = telemetrySummary.ClientAppUser.UserId;
+                this.UserName = telemetrySummary.ClientAppUser.UserIdentifier;
             }
             if (propertiesToInclude.Contains(nameof(this.UserGuid)))
             {
-                this.UserGuid = telemetrySummary.ClientAppUser.Guid;
+                this.UserGuid = telemetrySummary.ClientAppUser.PublicId;
             }
             if (propertiesToInclude.Contains(nameof(this.LastReported)))
             {
