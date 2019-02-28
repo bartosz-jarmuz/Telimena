@@ -32,16 +32,18 @@ namespace Microsoft.ApplicationInsights.Extensibility.Implementation
             var output = PlatformSingleton.Current.GetDebugOutput();
             if (output.IsAttached() && output.IsLogging())
             {
-                string prefix = "***TELIMENA*** (AppInsights) Telemetry: ";
-                if (string.IsNullOrEmpty(telemetry.Context.InstrumentationKey))
+                string prefix = "***TELIMENA*** (AppInsights) Telemetry";
+                if (!string.IsNullOrEmpty(telemetry.Context.InstrumentationKey))
                 {
-                    prefix = "***TELIMENA*** (AppInsights) Telemetry (unconfigured): ";
+                    prefix = "***TELIMENA*** (AppInsights) Telemetry (with AppInsights)";
                 }
 
                 if (!string.IsNullOrEmpty(filteredBy))
                 {
-                    prefix = "***TELIMENA*** (AppInsights) Telemetry (filtered by " + filteredBy + "): ";
+                    prefix += " (filtered by " + filteredBy + ")";
                 }
+
+                prefix += ": ";
 
                 string serializedTelemetry = JsonSerializer.SerializeAsString(telemetry);
                 output.WriteLine(prefix + serializedTelemetry);
