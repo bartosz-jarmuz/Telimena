@@ -22,7 +22,6 @@
   </PropertyGroup>
   
   <ItemGroup Condition="$(OS) == 'Windows_NT'">
-    <ProjectReference Include="..\..\..\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
     <ProjectReference Include="..\..\..\Test\Microsoft.ApplicationInsights.Test\ApplicationInsightsTypes\ApplicationInsightsTypes.csproj" />
     <PackageReference Include="Microsoft.Web.Xdt" Version="2.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
@@ -43,6 +42,10 @@
     <EmbeddedResource Include="..\..\..\src\ServerTelemetryChannel\ApplicationInsights.config.uninstall.xdt">
       <Link>Resources\ApplicationInsights.config.uninstall.xdt</Link>
     </EmbeddedResource>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Microsoft.ApplicationInsights\Telimena.Microsoft.ApplicationInsights.csproj" />
   </ItemGroup>
   
   <ItemGroup>

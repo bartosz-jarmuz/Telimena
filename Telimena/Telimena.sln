@@ -46,7 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppInsights", "AppInsights"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppInsights", "AppInsights", "{9A7AD745-4569-4853-B277-D50B692C93B0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ApplicationInsights", "..\ApplicationInsights\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj", "{2D753566-8ECA-4A34-8DC9-DE0C2A55ED88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telimena.Microsoft.ApplicationInsights", "..\ApplicationInsights\src\Microsoft.ApplicationInsights\Telimena.Microsoft.ApplicationInsights.csproj", "{2D753566-8ECA-4A34-8DC9-DE0C2A55ED88}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelemetryChannel", "..\ApplicationInsights\src\ServerTelemetryChannel\TelemetryChannel.csproj", "{81089D91-50BF-42C0-BF28-C4B8EF24C2B9}"
 EndProject
@@ -82,7 +82,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ApplicationInsigh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp.Utils", "Telimena.WebApp.Utils\Telimena.WebApp.Utils.csproj", "{1F08CB36-09F1-4134-A921-E8162F820383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Portal.Api.Models", "Telimena.Portal.Api.Models\Telimena.Portal.Api.Models.csproj", "{45F7FC02-25D4-4F2A-93B5-FCCBC7B608A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telimena.Portal.Api.Models", "Telimena.Portal.Api.Models\Telimena.Portal.Api.Models.csproj", "{45F7FC02-25D4-4F2A-93B5-FCCBC7B608A4}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

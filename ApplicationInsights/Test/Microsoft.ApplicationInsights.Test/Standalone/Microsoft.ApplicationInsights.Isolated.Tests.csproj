@@ -21,7 +21,6 @@
   </PropertyGroup>
   
   <ItemGroup Condition="$(OS) == 'Windows_NT'">
-    <ProjectReference Include="..\..\..\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
     <ProjectReference Include="..\..\..\Test\Microsoft.ApplicationInsights.Test\ApplicationInsightsTypes\ApplicationInsightsTypes.csproj" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="2.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.0.0" />
@@ -62,6 +61,10 @@
     <PackageReference Include="System.Xml.XPath.XDocument" Version="4.3.0" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />  
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Microsoft.ApplicationInsights\Telimena.Microsoft.ApplicationInsights.csproj" />
   </ItemGroup>
   
   <ItemGroup>

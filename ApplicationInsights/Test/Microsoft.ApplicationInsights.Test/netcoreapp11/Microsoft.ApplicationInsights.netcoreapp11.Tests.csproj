@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
+    <ProjectReference Include="..\..\..\src\Microsoft.ApplicationInsights\Telimena.Microsoft.ApplicationInsights.csproj" />
     <ProjectReference Include="..\..\..\Test\Microsoft.ApplicationInsights.Test\ApplicationInsightsTypes\ApplicationInsightsTypes.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="15.9.0" />

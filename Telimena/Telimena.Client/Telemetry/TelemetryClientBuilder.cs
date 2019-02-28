@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using TelimenaClient.Model;
 
 namespace TelimenaClient
@@ -20,25 +21,34 @@ namespace TelimenaClient
        
         public TelemetryClient GetClient()
         {
-            lock (this.telemetryClientBuildingLock)
+            try
             {
-                TelemetryConfiguration config = TelemetryConfiguration.Active;
 
-                this.LoadTelemetryChannel(config);
-
-                this.LoadInitializers(config);
-
-                var client = new TelemetryClient(config);
-
-                this.InitializeContext(client);
-
-                if (this.properties.InstrumentationKey != null)
+                lock (this.telemetryClientBuildingLock)
                 {
-                    config.InstrumentationKey = this.properties.InstrumentationKey;
-                    client.InstrumentationKey = this.properties.InstrumentationKey;
-                }
+                    TelemetryConfiguration config = TelemetryConfiguration.Active;
 
-                return client;
+                    this.LoadTelemetryChannel(config);
+
+                    this.LoadInitializers(config);
+
+                    var client = new TelemetryClient(config);
+
+                    this.InitializeContext(client);
+
+                    if (this.properties.InstrumentationKey != null)
+                    {
+                        config.InstrumentationKey = this.properties.InstrumentationKey;
+                        client.InstrumentationKey = this.properties.InstrumentationKey;
+                    }
+
+                    return client;
+                }
+            }
+            catch(Exception e)
+            {
+                TelemetryDebugWriter.WriteLine($"Failed to load {nameof(TelemetryClient)}. Error: {e}");
+                return null;
             }
         }
 

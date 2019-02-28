@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 
 namespace TelimenaClient
 {
@@ -52,8 +54,9 @@ namespace TelimenaClient
                     AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
                 }
             }
-            catch
+            catch (Exception e)
             {
+                TelemetryDebugWriter.WriteLine($"Error while initializing {nameof(Telimena)}. Error: {e}");
                 //above all, we don't want to throw errors in client apps.
                 //No telemetry is better than boom.
             }

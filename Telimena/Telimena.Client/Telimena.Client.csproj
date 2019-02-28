@@ -160,15 +160,14 @@
     <None Include="Properties\Telimena.Client.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ApplicationInsights\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj">
-      <Project>{2d753566-8eca-4a34-8dc9-de0c2a55ed88}</Project>
-      <Name>Microsoft.ApplicationInsights</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="FodyWeavers.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\ApplicationInsights\src\Microsoft.ApplicationInsights\Telimena.Microsoft.ApplicationInsights.csproj">
+      <Project>{2d753566-8eca-4a34-8dc9-de0c2a55ed88}</Project>
+      <Name>Telimena.Microsoft.ApplicationInsights</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>powershell -NoProfile -ExecutionPolicy RemoteSigned -file $(ProjectDir)\Properties\addToZip.ps1 -SolutionDir $(SolutionDir) -TargetPath $(TargetPath)</PostBuildEvent>

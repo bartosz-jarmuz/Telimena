@@ -29,7 +29,17 @@ namespace TelimenaClient
 
         public void SendAllDataNow()
         {
-            this.TelemetryClient.Flush();
+            try
+            {
+                this.TelemetryClient.Flush();
+            }
+            catch (Exception)
+            {
+                if (!this.properties.SuppressAllErrors)
+                {
+                    throw;
+                }
+            }
         }
 
         /// <summary>

@@ -12,6 +12,8 @@
     <PackageId>Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel</PackageId>
     <Title>Application Insights Telemetry Channel for Windows Server Applications</Title>
     <Description>This nuget provides a telemetry channel to Application Insights Windows Server SDK that will preserve telemetry in offline scenarios. This is a dependent package, for the best experience please install the platform specific package. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156</Description>
+    <AssemblyName>Telimena.Microsoft.AI.ServerTelemetryChannel</AssemblyName>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -44,7 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj" />
     <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net45'" />
     <Reference Include="System.Net.Http" />
   </ItemGroup>
@@ -85,6 +86,10 @@
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.ApplicationInsights\Telimena.Microsoft.ApplicationInsights.csproj" />
   </ItemGroup>
   
   <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), 'Common.targets'))\Common.targets" />

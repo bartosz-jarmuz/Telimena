@@ -197,9 +197,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ApplicationInsights\src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj">
+    <ProjectReference Include="..\..\ApplicationInsights\src\Microsoft.ApplicationInsights\Telimena.Microsoft.ApplicationInsights.csproj">
       <Project>{2D753566-8ECA-4A34-8DC9-DE0C2A55ED88}</Project>
-      <Name>Microsoft.ApplicationInsights</Name>
+      <Name>Telimena.Microsoft.ApplicationInsights</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ApplicationInsights\Test\Microsoft.ApplicationInsights.Test\Net46\Microsoft.ApplicationInsights.Net46.Tests.csproj">
       <Project>{0927E682-4A56-46B6-8125-94FA066B2F57}</Project>
