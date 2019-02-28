@@ -17,6 +17,7 @@
       For the release notes please follow http://go.microsoft.com/fwlink/?LinkId=535037
 </PackageReleaseNotes>
     <AssemblyName>Telimena.Microsoft.ApplicationInsights</AssemblyName>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Configuration)' == 'Release' And $(OS) == 'Windows_NT'">
