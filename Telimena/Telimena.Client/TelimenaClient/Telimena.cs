@@ -14,7 +14,17 @@ namespace TelimenaClient
     ///     <para>This is a client SDK that allows handling application telemetryModule and lifecycle</para>
     /// </summary>
     public partial class Telimena : ITelimena
-    {
+    {  
+        /// <summary>
+        ///     Creates a new instance of Telimena Client. Equivalent to TelimenaFactory.Construct();
+        /// </summary>
+        /// <param name="startupInfo">Data object which contains startup parameters for Telimena client</param>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static ITelimena Construct(ITelimenaStartupInfo startupInfo)
+        {
+            return TelimenaFactory.Construct(startupInfo);
+        }
+        
         /// <inheritdoc />
         // ReSharper disable once ConvertToAutoProperty
         IUpdatesModule ITelimena.Update => this.updates;

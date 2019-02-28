@@ -8,7 +8,7 @@ namespace TelimenaClient
     public static class TelimenaFactory
     {
         /// <summary>
-        ///     Creates a new instance of Telimena Client
+        ///     Creates a new instance of Telimena Client. Equivalent to Telimena.Construct();
         /// </summary>
         /// <param name="startupInfo">Data object which contains startup parameters for Telimena client</param>
         [MethodImpl(MethodImplOptions.NoInlining)]
