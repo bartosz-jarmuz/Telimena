@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 		Signing.props = Signing.props
 		Signing.targets = Signing.targets
-		Test.props = Test.props
+		Test.props = Test.props 
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServerTelemetryChannel", "ServerTelemetryChannel", "{E7B0521E-DA4D-40EA-B55D-ADCBDA69027C}"
@@ -50,7 +50,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared.Tests", "Test\Server
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TelemetryChannel.Nuget.Tests", "Test\ServerTelemetryChannel.Test\TelemetryChannel.Nuget.Tests\TelemetryChannel.Nuget.Tests.csproj", "{21CB9A8A-F25B-4DEB-92CB-ACB6920EB8BC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ApplicationInsights", "src\Microsoft.ApplicationInsights\Microsoft.ApplicationInsights.csproj", "{E9ECEE96-DD50-42F6-9F33-0978CDFA15ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telimena.Microsoft.ApplicationInsights", "src\Microsoft.ApplicationInsights\Telimena.Microsoft.ApplicationInsights.csproj", "{E9ECEE96-DD50-42F6-9F33-0978CDFA15ED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.ApplicationInsights.Isolated.Tests", "Test\Microsoft.ApplicationInsights.Test\Standalone\Microsoft.ApplicationInsights.Isolated.Tests.csproj", "{2759BC71-7F47-44DA-8579-AE2D8C8C684D}"
 EndProject
