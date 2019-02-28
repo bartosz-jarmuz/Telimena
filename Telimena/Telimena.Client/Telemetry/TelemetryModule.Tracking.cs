@@ -12,22 +12,24 @@ namespace TelimenaClient
     public partial class TelemetryModule : ITelemetryModule
     {
         /// <inheritdoc />
-        public void View(string viewName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null)
+        public void View(string viewName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
         {
             try
             {
-
-                var tele = new PageViewTelemetry(viewName);
-                if (telemetryData != null)
+                PageViewTelemetry tele = new PageViewTelemetry(viewName);
+                if (properties != null)
                 {
-                    Utils.CopyDictionary(telemetryData, tele.Properties);
+                    Utils.CopyDictionary(properties, tele.Properties);
                 }
-
+                if (metrics != null)
+                {
+                    Utils.CopyDictionary(metrics, tele.Metrics);
+                }
                 this.TelemetryClient.TrackPageView(tele);
             }
             catch
             {
-                if (!this.properties.SuppressAllErrors)
+                if (!this.telimenaProperties.SuppressAllErrors)
                 {
                     throw;
                 }
@@ -35,15 +37,15 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public void Event(string eventName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null)
+        public void Event(string eventName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
         {
             try
             {
-                this.TelemetryClient.TrackEvent(eventName, telemetryData, metrics);
+                this.TelemetryClient.TrackEvent(eventName, properties, metrics);
             }
             catch
             {
-                if (!this.properties.SuppressAllErrors)
+                if (!this.telimenaProperties.SuppressAllErrors)
                 {
                     throw;
                 }
@@ -51,15 +53,28 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public void Exception(Exception exception, Dictionary<string, string> telemetryData = null)
+        public void Exception(Exception exception, string note = null, Dictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             try
             {
-                this.TelemetryClient.TrackException(exception);
+                if (!string.IsNullOrEmpty(note))
+                {
+                    if (properties == null)
+                    {
+                        properties = new Dictionary<string, string>();
+                        properties.Add(DefaultToolkitNames.TelimenaCustomExceptionNoteKey, note);
+                    }
+                    else
+                    {
+                        properties.Add(DefaultToolkitNames.TelimenaCustomExceptionNoteKey, note);
+                    }
+                }
+                
+                this.TelemetryClient.TrackException(exception, properties, metrics);
             }
             catch
             {
-                if (!this.properties.SuppressAllErrors)
+                if (!this.telimenaProperties.SuppressAllErrors)
                 {
                     throw;
                 }
@@ -75,7 +90,7 @@ namespace TelimenaClient
             }
             catch
             {
-                if (!this.properties.SuppressAllErrors)
+                if (!this.telimenaProperties.SuppressAllErrors)
                 {
                     throw;
                 }

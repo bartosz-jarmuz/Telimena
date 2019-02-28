@@ -44,14 +44,15 @@ namespace Telimena.WebApp.Core.DTO
                 public long Line { get; set; }
 
             }
+
         }
 
-       
+
 
         /// <summary>
-            /// Type of telemetry item
-            /// </summary>
-            public TelemetryItemTypes TelemetryItemType { get; set; }
+        /// Type of telemetry item
+        /// </summary>
+        public TelemetryItemTypes TelemetryItemType { get; set; }
 
         /// <summary>
         /// FROM APP INSIGHTS
@@ -94,7 +95,13 @@ namespace Telimena.WebApp.Core.DTO
         /// <summary>
         /// Custom telemetry data
         /// </summary>
-        public Dictionary<string, string> TelemetryData { get; set; }
+        public Dictionary<string, string> Properties { get; set; }
+
+        /// <summary>
+        /// Measurable telemetry data.
+        /// </summary>
+        /// <value>The measurements.</value>
+        public Dictionary<string, double> Measurements { get; set; }
 
         /// <summary>
         /// Gets or sets the log message.

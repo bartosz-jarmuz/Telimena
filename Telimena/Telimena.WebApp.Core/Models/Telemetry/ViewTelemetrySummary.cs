@@ -22,15 +22,22 @@ namespace Telimena.WebApp.Core.Models.Telemetry
                 UserIdentifier = telemetryItem.UserIdentifier,
                 EntryKey = telemetryItem.EntryKey
             };
-            if (telemetryItem.TelemetryData != null && telemetryItem.TelemetryData.Any())
+            if (telemetryItem.Properties != null && telemetryItem.Properties.Any())
             {
-                foreach (KeyValuePair<string, string> unit in telemetryItem.TelemetryData)
+                foreach (KeyValuePair<string, string> unit in telemetryItem.Properties)
                 {
                     ViewTelemetryUnit telemetryUnit = new ViewTelemetryUnit {Key = unit.Key, ValueString = unit.Value?.ToString()};
                     ((List<ViewTelemetryUnit>) detail.TelemetryUnits).Add(telemetryUnit);
                 }
             }
-
+            if (telemetryItem.Measurements != null && telemetryItem.Measurements.Any())
+            {
+                foreach (KeyValuePair<string, double> unit in telemetryItem.Measurements)
+                {
+                    ViewTelemetryUnit telemetryUnit = new ViewTelemetryUnit() { Key = unit.Key, ValueDouble = unit.Value };
+                    ((List<ViewTelemetryUnit>)detail.TelemetryUnits).Add(telemetryUnit);
+                }
+            }
             ((List<ViewTelemetryDetail>) this.TelemetryDetails).Add(detail);
         }
 

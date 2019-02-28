@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
+using TelimenaClient.Model;
 
 namespace TelimenaClient
 {
@@ -77,9 +78,9 @@ namespace TelimenaClient
             {
                 if (!UnhandledExceptionsReported.Contains(e.ExceptionObject))
                 {
-                    this.telemetryModule.Exception((Exception) e.ExceptionObject,new Dictionary<string, string>()
+                    this.telemetryModule.Exception((Exception) e.ExceptionObject, null,new Dictionary<string, string>()
                     {
-                        { "UnhandledException", "True" }
+                        { DefaultToolkitNames.ExceptionUnhandledByUserCodeKey, true.ToString() }
                     });
                     this.telemetryModule.SendAllDataNow();
                     UnhandledExceptionsReported.Add(e.ExceptionObject);

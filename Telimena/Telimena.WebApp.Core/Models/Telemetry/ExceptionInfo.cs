@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DotNetLittleHelpers;
 
 namespace Telimena.WebApp.Core.Models.Telemetry
 {
@@ -13,6 +14,7 @@ namespace Telimena.WebApp.Core.Models.Telemetry
         public string TypeName { get; set; }
 
         public string Message { get; set; }
+        public virtual RestrictedAccessList<ExceptionTelemetryUnit> TelemetryUnits { get; set; } = new RestrictedAccessList<ExceptionTelemetryUnit>();
 
         public bool HasFullStack { get; set; }
 
@@ -25,6 +27,8 @@ namespace Telimena.WebApp.Core.Models.Telemetry
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Index(IsUnique = true, IsClustered = true)]
         public int ClusterId { get; set; }
+
+        public string Note { get; set; }
 
         public int ProgramId { get; set; }
 

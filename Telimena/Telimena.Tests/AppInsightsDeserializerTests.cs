@@ -48,9 +48,9 @@ namespace Telimena.Tests
             List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
 
             Assert.AreEqual(TelemetryItemTypes.Event, mapped.Single().TelemetryItemType);
-            Assert.AreEqual("AValue", mapped[0].TelemetryData["AKey"]);
-            Assert.AreEqual("AValue2", mapped[0].TelemetryData["AKey2"]);
-            Assert.AreEqual(2, mapped[0].TelemetryData.Count);
+            Assert.AreEqual("AValue", mapped[0].Properties["AKey"]);
+            Assert.AreEqual("AValue2", mapped[0].Properties["AKey2"]);
+            Assert.AreEqual(2, mapped[0].Properties.Count);
         }
 
         [Test]
@@ -102,8 +102,8 @@ namespace Telimena.Tests
             List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
 
             Assert.AreEqual(TelemetryItemTypes.View, mapped.Single().TelemetryItemType);
-            Assert.AreEqual("AValue", mapped[0].TelemetryData["AKey"]);
-            Assert.AreEqual(1, mapped[0].TelemetryData.Count);
+            Assert.AreEqual("AValue", mapped[0].Properties["AKey"]);
+            Assert.AreEqual(1, mapped[0].Properties.Count);
         }
 
 
@@ -125,10 +125,11 @@ namespace Telimena.Tests
             List<ITelemetry> sentTelemetry = new List<ITelemetry>();
             TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
 
-                telemetryModule.Event("TestEvent", new Dictionary<string, string>(){{"AKey", $"AValue"}});
-                telemetryModule.View("TestView");
-                telemetryModule.Log(LogLevel.Warn, "A log message");
-                telemetryModule.Exception(new Exception("An error that happened"));
+            telemetryModule.Event("TestEvent", new Dictionary<string, string>() { { "AKey", $"AValue" } });
+            telemetryModule.View("TestView");
+            telemetryModule.Log(LogLevel.Warn, "A log message");
+            telemetryModule.Exception(new Exception("An error that happened"));
+            telemetryModule.Exception(new Exception("An error that happened with note"), "A note for error");
 
             byte[] serialized = JsonSerializer.Serialize(sentTelemetry, true);
 
@@ -153,9 +154,10 @@ namespace Telimena.Tests
                     var props = typeof(TelimenaContextPropertyKeys).GetProperties().Select(x => x.Name);
                     if (!props.Contains(keyValuePair.Key))
                     {
-                        Assert.AreEqual(keyValuePair.Value, telimenaItem.TelemetryData[keyValuePair.Key]);
+                        Assert.AreEqual(keyValuePair.Value, telimenaItem.Properties[keyValuePair.Key]);
                     }
                 }
+
             }
         }
 

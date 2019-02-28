@@ -79,6 +79,10 @@ namespace Telimena.WebApp.Infrastructure.Database
             modelBuilder.Entity<ViewTelemetryUnit>().HasKey(x => x.Id, cfg => cfg.IsClustered(false));
             modelBuilder.Entity<ViewTelemetryUnit>().HasIndex(x => x.ClusterId).IsClustered(true);
 
+
+            modelBuilder.Entity<ExceptionTelemetryUnit>().HasKey(x => x.Id, cfg => cfg.IsClustered(false));
+            modelBuilder.Entity<ExceptionTelemetryUnit>().HasIndex(x => x.ClusterId).IsClustered(true);
+
             modelBuilder.Entity<TelemetryRootObject>().HasIndex(x => x.TelemetryKey).IsClustered(false);
 
 

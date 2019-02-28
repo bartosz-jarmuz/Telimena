@@ -66,6 +66,10 @@ namespace Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel
 
         [JsonProperty("properties")]
         public Dictionary<string, string> Properties { get; set; }
+
+        [JsonProperty("measurements")]
+        public Dictionary<string, double> Measurements { get; set; }
+
         [JsonProperty("exceptions")]
         public ExceptionElement[] Exceptions { get; set; }
 

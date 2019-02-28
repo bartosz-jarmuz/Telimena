@@ -80,7 +80,6 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 ITelemetryAware trackedComponent = await GetTrackedComponent(work, typeGrouping.Key, keyGroupings.Key, program)
                     .ConfigureAwait(false);
                 TelemetrySummary summary = GetTelemetrySummary(clientAppUser, trackedComponent);
-                //AssemblyVersionInfo versionInfoInfo = GetAssemblyVersionInfoOrAddIfMissing(keyGroupings.First().VersionData, program);
                 foreach (TelemetryItem telemetryItem in keyGroupings)
                 {
                     summary.UpdateTelemetry(keyGroupings.First().VersionData, ipAddress, telemetryItem);
@@ -117,7 +116,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 {
                     var exception = new ExceptionInfo
                     {
-                        Timestamp = telemetryItem.Timestamp
+                          Timestamp = telemetryItem.Timestamp
                         , ProgramId = program.ProgramId
                         , ProgramVersion = telemetryItem.VersionData.FileVersion
                         , UserName = clientAppUser.UserIdentifier
@@ -126,16 +125,44 @@ namespace Telimena.WebApp.Controllers.Api.V1
                         , ExceptionOuterId = telemetryItemException.OuterId
                         , HasFullStack = telemetryItemException.HasFullStack
                         , Message = telemetryItemException.Message
+                        , Note = GetExceptionNote(telemetryItem.Properties)
                         , TypeName = telemetryItemException.TypeName
                         , ParsedStack = JsonConvert.SerializeObject(telemetryItemException.ParsedStack)
                     };
+                    if (telemetryItem.Properties != null && telemetryItem.Properties.Any())
+                    {
+                        foreach (KeyValuePair<string, string> unit in telemetryItem.Properties)
+                        {
+                            ExceptionTelemetryUnit telemetryUnit = new ExceptionTelemetryUnit { Key = unit.Key, ValueString = unit.Value?.ToString() };
+                            ((List<ExceptionTelemetryUnit>)exception.TelemetryUnits).Add(telemetryUnit);
+                        }
+                    }
+                    if (telemetryItem.Measurements != null && telemetryItem.Measurements.Any())
+                    {
+                        foreach (KeyValuePair<string, double> unit in telemetryItem.Measurements)
+                        {
+                            ExceptionTelemetryUnit telemetryUnit = new ExceptionTelemetryUnit { Key = unit.Key, ValueDouble = unit.Value };
+                            ((List<ExceptionTelemetryUnit>)exception.TelemetryUnits).Add(telemetryUnit);
+                        }
+                    }
+
                     work.Exceptions.Add(exception);
                 }
             }
         }
 
+        private static string GetExceptionNote(Dictionary<string, string> properties)
+        {
+            if (properties != null && properties.ContainsKey(DefaultToolkitNames.TelimenaCustomExceptionNoteKey))
+            {
+                var value = properties[DefaultToolkitNames.TelimenaCustomExceptionNoteKey];
+                properties.Remove(DefaultToolkitNames.TelimenaCustomExceptionNoteKey);
+                return value;
+            }
 
-        
+            return null;
+
+        }
 
         public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, UserInfo userDto, string ip)
         {

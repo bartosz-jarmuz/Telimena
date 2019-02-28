@@ -21,26 +21,29 @@ namespace TelimenaClient
         ///     Reports an occurence of an event
         /// </summary>
         /// <param name="eventName">Name of the event</param>
-        /// <param name="telemetryData">Custom telemetry data</param>
+        /// <param name="properties">Custom telemetry data</param>
         /// <param name="metrics">Event related metrics</param>
         /// <returns></returns>
-        void Event(string eventName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null);
+        void Event(string eventName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null);
 
         /// <summary>
         ///     Report the usage of the application view.
         /// </summary>
         /// <param name="viewName">The name of the view. If left blank, it will report the name of the invoked method</param>
-        /// <param name="telemetryData"></param>
+        /// <param name="properties"></param>
         /// <param name="metrics">View access related metrics</param>
         /// <returns></returns>
-        void View(string viewName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null);
+        void View(string viewName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null);
 
         /// <summary>
         /// Tracks the occurence of the given exception
         /// </summary>
         /// <param name="exception">The exception.</param>
-        /// <param name="telemetryData">The telemetry data.</param>
-        void Exception(Exception exception, Dictionary<string, string> telemetryData = null);
+        /// <param name="note"></param>
+        /// <param name="properties">The telemetry data.</param>
+        /// <param name="metrics"></param>
+        void Exception(Exception exception, string note = null, Dictionary<string, string> properties = null
+            , IDictionary<string, double> metrics = null);
 
         /// <summary>
         /// Sends all the accumulated data now.

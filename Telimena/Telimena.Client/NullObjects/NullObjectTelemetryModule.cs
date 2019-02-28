@@ -14,17 +14,18 @@ namespace TelimenaClient
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
         }
 
-        public void Event(string eventName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null)
+        public void Event(string eventName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
         }
 
-        public void View(string viewName, Dictionary<string, string> telemetryData = null, Dictionary<string, double> metrics = null)
+        public void View(string viewName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
         }
 
-        public void Exception(Exception exception, Dictionary<string, string> telemetryData = null)
+        public void Exception(Exception exception, string note = null, Dictionary<string, string> properties = null
+            , IDictionary<string, double> metrics = null)
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
         }

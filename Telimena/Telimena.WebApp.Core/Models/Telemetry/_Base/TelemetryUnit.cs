@@ -16,6 +16,6 @@ namespace Telimena.WebApp.Core.Models.Telemetry
 
         public string ValueString { get; set; }
 
-        public bool ValueBoolean { get; set; }
+        public double ValueDouble { get; set; }
     }
 }

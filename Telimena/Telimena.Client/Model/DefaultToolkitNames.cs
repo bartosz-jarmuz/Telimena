@@ -39,5 +39,16 @@
         /// </summary>
         public static string TelimenaSystemDevTeam {get;} =  "TelimenaSystemDevTeam";
 
+        /// <summary>
+        /// Gets the telimena custom exception note key (added to telemetry item)
+        /// </summary>
+        /// <value>The telimena custom exception note.</value>
+        public static string TelimenaCustomExceptionNoteKey {get;} =  "TelimenaCustomExceptionNote";
+
+        /// <summary>
+        /// Gets or sets the exception unhandled by user code key (added to telemetry item).
+        /// </summary>
+        /// <value>The exception unhandled by user code key.</value>
+        public static string ExceptionUnhandledByUserCodeKey { get; } = "ExceptionUnhandledByUserCode";
     }
 }

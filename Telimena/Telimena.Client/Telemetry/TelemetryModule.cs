@@ -10,20 +10,18 @@ namespace TelimenaClient
         /// <summary>
         ///     Asynchronous Telimena methods
         /// </summary>
-        public TelemetryModule(ITelimenaProperties properties)
+        public TelemetryModule(ITelimenaProperties telimenaProperties)
         {
-            this.properties = properties;
+            this.telimenaProperties = telimenaProperties;
         }
 
-        private readonly ITelimenaProperties properties;
+        private readonly ITelimenaProperties telimenaProperties;
 
         /// <summary>
         /// Gets the telemetry client.
         /// </summary>
         /// <value>The telemetry client.</value>
         public TelemetryClient TelemetryClient { get; private set; }
-
-
 
         /// <inheritdoc />
 
@@ -35,7 +33,7 @@ namespace TelimenaClient
             }
             catch (Exception)
             {
-                if (!this.properties.SuppressAllErrors)
+                if (!this.telimenaProperties.SuppressAllErrors)
                 {
                     throw;
                 }
@@ -47,7 +45,7 @@ namespace TelimenaClient
         /// </summary>
         public void InitializeTelemetryClient()
         {
-            TelemetryClientBuilder builder = new TelemetryClientBuilder(this.properties);
+            TelemetryClientBuilder builder = new TelemetryClientBuilder(this.telimenaProperties);
             this.TelemetryClient = builder.GetClient();
         }
 
@@ -57,7 +55,7 @@ namespace TelimenaClient
         [Obsolete("For tests only")]
         internal void InitializeTelemetryClient(ITelemetryChannel channel)
         {
-            TelemetryClientBuilder builder = new TelemetryClientBuilder(this.properties);
+            TelemetryClientBuilder builder = new TelemetryClientBuilder(this.telimenaProperties);
 #pragma warning disable 618
             this.TelemetryClient = builder.GetClient(channel);
 #pragma warning restore 618

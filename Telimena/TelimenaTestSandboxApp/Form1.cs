@@ -67,7 +67,10 @@ namespace TelimenaTestSandboxApp
 
                 for (int index = 0; index < numberOfMessages; index++)
                 {
-                        this.Telimena.Track.View(viewName, new Dictionary<string, string>(){{"SomeViewMetric", $"{new Random().Next(100)}"}});
+                        this.Telimena.Track.View(viewName, metrics: new Dictionary<string, double>()
+                        {
+                            {"SomeViewMetric", rand.Next(100)}
+                        });
                 }
                 sw.Stop();
                 this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of view [{viewName}] access" + Environment.NewLine;
@@ -83,7 +86,15 @@ namespace TelimenaTestSandboxApp
             }
             catch (Exception ex)
             {
-                this.Telimena.Track.Exception(ex);
+                this.Telimena.Track.Exception(ex, "A custom telemetry note", metrics: new Dictionary<string, double>()
+                {
+                    {"AnExceptionProperty", 66.6}
+                }
+               , properties: new Dictionary<string, string>()
+                {
+                    {"AnExceptionProperty", DateTime.Today.DayOfWeek.ToString()} //same key as above. Should not matter
+                });
+
             }
 
                 this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Thrown error: {this.telemetryDataTextBox.Text}" + Environment.NewLine;

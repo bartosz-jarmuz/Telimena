@@ -14,7 +14,8 @@ namespace Telimena.WebApp.Core.Models.Telemetry
 
         public virtual RestrictedAccessList<EventTelemetryDetail> TelemetryDetails { get; set; } = new RestrictedAccessList<EventTelemetryDetail>();
 
-        public override void AddTelemetryDetail(string ipAddress, VersionData versionInfo, TelemetryItem telemetryItem)
+        public override void 
+            AddTelemetryDetail(string ipAddress, VersionData versionInfo, TelemetryItem telemetryItem)
         {
             EventTelemetryDetail detail = new EventTelemetryDetail(telemetryItem.Id)
             {
@@ -27,14 +28,23 @@ namespace Telimena.WebApp.Core.Models.Telemetry
                 UserIdentifier = telemetryItem.UserIdentifier,
                 EntryKey = telemetryItem.EntryKey
             };
-            if (telemetryItem.TelemetryData != null && telemetryItem.TelemetryData.Any())
+            if (telemetryItem.Properties != null && telemetryItem.Properties.Any())
             {
-                foreach (KeyValuePair<string, string> unit in telemetryItem.TelemetryData)
+                foreach (KeyValuePair<string, string> unit in telemetryItem.Properties)
                 {
                     EventTelemetryUnit telemetryUnit = new EventTelemetryUnit {Key = unit.Key, ValueString = unit.Value?.ToString()};
                     ((List<EventTelemetryUnit>) detail.TelemetryUnits).Add(telemetryUnit);
                 }
             }
+            if (telemetryItem.Measurements != null && telemetryItem.Measurements.Any())
+            {
+                foreach (KeyValuePair<string, double> unit in telemetryItem.Measurements)
+                {
+                    EventTelemetryUnit telemetryUnit = new EventTelemetryUnit { Key = unit.Key, ValueDouble = unit.Value };
+                    ((List<EventTelemetryUnit>)detail.TelemetryUnits).Add(telemetryUnit);
+                }
+            }
+
 
             ((List<EventTelemetryDetail>) this.TelemetryDetails).Add(detail);
         }

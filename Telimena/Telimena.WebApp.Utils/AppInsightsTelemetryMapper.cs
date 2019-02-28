@@ -37,9 +37,10 @@ namespace Telimena.WebApp.Utils
                 Timestamp = appInsightsTelemetry.Time,
                 VersionData = GetVersionData(appInsightsProperties),
                 UserIdentifier = appInsightsTelemetry.Tags.AiUserId,
-                TelemetryData = GetFilteredProperties(appInsightsProperties),
+                Properties = GetFilteredProperties(appInsightsProperties),
+                Measurements= appInsightsTelemetry.Data?.BaseData?.Measurements,
                 TelemetryItemType = GetItemType(appInsightsTelemetry),
-                EntryKey = appInsightsTelemetry.Data.BaseData.Name,
+                EntryKey = appInsightsTelemetry.Data?.BaseData?.Name??"MissingKey",
                 Sequence = appInsightsTelemetry.Seq,
                 LogMessage = appInsightsTelemetry.Data.BaseData.Message
                 

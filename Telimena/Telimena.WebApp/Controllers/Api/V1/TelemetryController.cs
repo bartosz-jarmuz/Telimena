@@ -92,14 +92,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     }
                 }
 
-               
                 string ip = this.Request.GetClientIp();
                 ClientAppUser clientAppUser = await TelemetryControllerHelpers.GetUserOrAddIfMissing(this.work, request.UserInfo, ip).ConfigureAwait(false);
-
-                //todo - is that needed ?await TelemetryControllerHelpers.RecordVersions(this.work, program, request).ConfigureAwait(false);
-
-                //todo - is that needed ?TelemetryControllerHelpers.GetAssemblyVersionInfoOrAddIfMissing(request.ProgramInfo.PrimaryAssembly.VersionData, actionItems.program);
-
 
                 await this.work.CompleteAsync().ConfigureAwait(false);
                 TelemetryInitializeResponse response = new TelemetryInitializeResponse {UserId = clientAppUser.PublicId};

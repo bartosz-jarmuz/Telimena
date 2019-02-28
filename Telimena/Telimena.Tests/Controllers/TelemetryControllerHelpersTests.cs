@@ -86,7 +86,7 @@ namespace Telimena.Tests
                 Sequence = "aaa:1",
                 VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
                 Timestamp = new DateTimeOffset(DateTime.UtcNow),
-                TelemetryData = new Dictionary<string, string> { { "AKey", "AValue" }, { "AKey2", "AValue2" } },
+                Properties = new Dictionary<string, string> { { "AKey", "AValue" }, { "AKey2", "AValue2" } },
                 UserIdentifier = usr.UserIdentifier
             };
 
@@ -110,7 +110,7 @@ namespace Telimena.Tests
                 Sequence = "aaa:1",
                 VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
                 Timestamp = new DateTimeOffset(DateTime.UtcNow),
-                TelemetryData = new Dictionary<string, string> { { "AKey", "AValue" }, { "AKey2", "AValue2" } },
+                Properties = new Dictionary<string, string> { { "AKey", "AValue" }, { "AKey2", "AValue2" } },
                 UserIdentifier = usr.UserIdentifier
             };
             response = await TelemetryControllerHelpers.InsertData(unit, (new[] { telemetryItem }).ToList(), prg, "127.1.1.1");
@@ -146,7 +146,7 @@ namespace Telimena.Tests
                 Sequence = "aaa:1",
                 VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
                 Timestamp = new DateTimeOffset(DateTime.UtcNow),
-                TelemetryData = new Dictionary<string, string> { { "AKey", "AValue" }, { "AKey2", "AValue2" } },
+                Properties = new Dictionary<string, string> { { "AKey", "AValue" }, { "AKey2", "AValue2" } },
                 UserIdentifier = usr.UserIdentifier
             };
 
@@ -187,7 +187,7 @@ namespace Telimena.Tests
                 Sequence = "aaa:1",
                 VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
                 Timestamp = new DateTimeOffset(DateTime.UtcNow),
-                TelemetryData = new Dictionary<string, string> { { "AKey3", "AValue3" }, { "AKey4", "AValue4" }, { "AKey5", "AValue5" } },
+                Properties = new Dictionary<string, string> { { "AKey3", "AValue3" }, { "AKey4", "AValue4" }, { "AKey5", "AValue5" } },
                 UserIdentifier = otherUser.UserIdentifier
             };
 
@@ -225,7 +225,7 @@ namespace Telimena.Tests
                 Sequence = "aaa:1",
                 VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
                 Timestamp = new DateTimeOffset(DateTime.UtcNow),
-                TelemetryData = new Dictionary<string, string> { { "AKey", "AValue" }, { "AKey2", "AValue2" } },
+                Properties = new Dictionary<string, string> { { "AKey", "AValue" }, { "AKey2", "AValue2" } },
                 UserIdentifier = usr.UserIdentifier
             };
 
