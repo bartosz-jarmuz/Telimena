@@ -70,6 +70,10 @@ namespace TelimenaTestSandboxApp
                         this.Telimena.Track.View(viewName, metrics: new Dictionary<string, double>()
                         {
                             {"SomeViewMetric", rand.Next(100)}
+                        }, properties: new Dictionary<string, string>()
+                        {
+                            {"SomeViewProp", DateTime.Today.DayOfWeek.ToString()},
+                            {"SomeConstantViewProp", "Hello"},
                         });
                 }
                 sw.Stop();

@@ -208,17 +208,20 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     Timestamp = exception.Timestamp
                     ,UserName = exception.UserName
                     ,EntryKey = exception.TypeName
+                    ,Note = exception.Note
                     ,ProgramVersion = exception.ProgramVersion
                     ,Sequence = exception.Sequence
                     ,ErrorMessage = exception.Message
                     ,StackTrace = GetStackTrace(exception.ParsedStack)
-                    ,
+                    ,Properties = exception.TelemetryUnits.Where(x=>x.UnitType == TelemetryUnit.UnitTypes.Property).ToDictionary(x => x.Key, x => x.ValueString)
+                    ,Metrics = exception.TelemetryUnits.Where(x => x.UnitType == TelemetryUnit.UnitTypes.Metric).ToDictionary(x => x.Key, x => x.ValueDouble)
                 };
                 result.Add(data);
             }
 
             return new UsageDataTableResult { TotalCount = totalCount, FilteredCount = totalCount, UsageData = result };
         }
+
 
         public async Task<UsageDataTableResult> GetLogs(Guid telemetryKey, int skip, int take, IEnumerable<Tuple<string, bool>> sortBy, string searchPhrase)
         {
@@ -405,7 +408,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     , EntryKey = detail.EntryKey
                     , ProgramVersion = detail.FileVersion
                     , Sequence = detail.Sequence
-                    ,Values = detail.GetTelemetryUnits().ToDictionary(x => x.Key,x=> x.ValueString)
+                    ,Properties = detail.GetTelemetryUnits().Where(x => x.UnitType == TelemetryUnit.UnitTypes.Property).ToDictionary(x => x.Key,x=> x.ValueString)
+                    ,Metrics = detail.GetTelemetryUnits().Where(x => x.UnitType == TelemetryUnit.UnitTypes.Metric).ToDictionary(x => x.Key,x=> x.ValueDouble)
                 };
                 result.Add(data);
             }

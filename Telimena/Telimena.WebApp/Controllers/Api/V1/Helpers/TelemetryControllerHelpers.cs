@@ -133,7 +133,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     {
                         foreach (KeyValuePair<string, string> unit in telemetryItem.Properties)
                         {
-                            ExceptionTelemetryUnit telemetryUnit = new ExceptionTelemetryUnit { Key = unit.Key, ValueString = unit.Value?.ToString() };
+                            ExceptionTelemetryUnit telemetryUnit = new ExceptionTelemetryUnit { Key = unit.Key, ValueString = unit.Value?.ToString(), UnitType = TelemetryUnit.UnitTypes.Property};
                             ((List<ExceptionTelemetryUnit>)exception.TelemetryUnits).Add(telemetryUnit);
                         }
                     }
@@ -141,7 +141,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     {
                         foreach (KeyValuePair<string, double> unit in telemetryItem.Measurements)
                         {
-                            ExceptionTelemetryUnit telemetryUnit = new ExceptionTelemetryUnit { Key = unit.Key, ValueDouble = unit.Value };
+                            ExceptionTelemetryUnit telemetryUnit = new ExceptionTelemetryUnit { Key = unit.Key, ValueDouble = unit.Value, UnitType = TelemetryUnit.UnitTypes.Metric };
                             ((List<ExceptionTelemetryUnit>)exception.TelemetryUnits).Add(telemetryUnit);
                         }
                     }

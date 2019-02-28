@@ -32,7 +32,7 @@ namespace Telimena.WebApp.Core.Models.Telemetry
             {
                 foreach (KeyValuePair<string, string> unit in telemetryItem.Properties)
                 {
-                    EventTelemetryUnit telemetryUnit = new EventTelemetryUnit {Key = unit.Key, ValueString = unit.Value?.ToString()};
+                    EventTelemetryUnit telemetryUnit = new EventTelemetryUnit {Key = unit.Key, ValueString = unit.Value?.ToString(), UnitType = TelemetryUnit.UnitTypes.Property};
                     ((List<EventTelemetryUnit>) detail.TelemetryUnits).Add(telemetryUnit);
                 }
             }
@@ -40,7 +40,7 @@ namespace Telimena.WebApp.Core.Models.Telemetry
             {
                 foreach (KeyValuePair<string, double> unit in telemetryItem.Measurements)
                 {
-                    EventTelemetryUnit telemetryUnit = new EventTelemetryUnit { Key = unit.Key, ValueDouble = unit.Value };
+                    EventTelemetryUnit telemetryUnit = new EventTelemetryUnit { Key = unit.Key, ValueDouble = unit.Value, UnitType = TelemetryUnit.UnitTypes.Metric };
                     ((List<EventTelemetryUnit>)detail.TelemetryUnits).Add(telemetryUnit);
                 }
             }

@@ -103,7 +103,8 @@ namespace Telimena.WebApp.Core.DTO
 
     public class DataTableTelemetryData : DataTableTelemetryDataBase
     {
-        public Dictionary<string, string> Values { get; set; } =new Dictionary<string, string>();
+        public Dictionary<string, string> Properties { get; set; } =new Dictionary<string, string>();
+        public Dictionary<string, double> Metrics { get; set; } =new Dictionary<string, double>();
     }
 
     public class LogMessageData : DataTableTelemetryDataBase
@@ -112,9 +113,11 @@ namespace Telimena.WebApp.Core.DTO
         public string LogLevel{ get; set; }
     }
 
-    public class ExceptionData : DataTableTelemetryDataBase
+    public class ExceptionData : DataTableTelemetryData
     {
         public string ErrorMessage { get; set; }
+
+        public string Note { get; set; }
         public List<TelemetryItem.ExceptionInfo.ParsedStackTrace> StackTrace { get; set; } = new List<TelemetryItem.ExceptionInfo.ParsedStackTrace>();
     }
 }
