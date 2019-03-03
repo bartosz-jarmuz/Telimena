@@ -235,7 +235,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             List<ExceptionInfo> exceptions =
                 await this.telemetryContext.Exceptions.Where(ex=> programIds.Contains(ex.ProgramId)).ToListAsync().ConfigureAwait(false);
             var recentExceptions = exceptions.Where(x => (DateTime.UtcNow - x.Timestamp).TotalDays <= 7).ToList();
-            string mostPopularException = recentExceptions.GroupBy(x => x.TypeName).OrderByDescending(x => x.Count()).Max().Key;
+                string mostPopularException = recentExceptions.GroupBy(x => x.TypeName).OrderByDescending(x => x.Count()).Max()?.Key;
 
             AllProgramsSummaryData summary = new AllProgramsSummaryData
             {

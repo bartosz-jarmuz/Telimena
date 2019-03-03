@@ -114,5 +114,11 @@ namespace Telimena.WebApp.Core.DTO
         /// </summary>
         /// <value>The log level.</value>
         public LogLevel LogLevel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the authenticated user identifier.
+        /// </summary>
+        /// <value>The authenticated user identifier.</value>
+        public string AuthenticatedUserIdentifier { get; set; }
     }
 }

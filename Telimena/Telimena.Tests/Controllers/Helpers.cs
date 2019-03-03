@@ -125,16 +125,19 @@ namespace Telimena.Tests
 
         public static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(TelimenaPortalContext portalContext, TelimenaTelemetryContext telemetryContext, int prgCount, string getName, string[] userNames, string devName = "Some Developer", string devEmail = "some@dev.dev", [CallerMemberName] string caller = "")
         {
-            Mock<HttpRequestContext> requestContext = await SetupUserIntoRequestContext(portalContext, devName, devEmail).ConfigureAwait(false);
+            Mock<HttpRequestContext> requestContext =
+                await SetupUserIntoRequestContext(portalContext, devName, devEmail).ConfigureAwait(false);
 
             RegisterProgramUnitOfWork unit = new RegisterProgramUnitOfWork(telemetryContext, portalContext);
 
-            RegisterProgramController programsController = new RegisterProgramController(unit) {RequestContext = requestContext.Object};
+            RegisterProgramController programsController =
+                new RegisterProgramController(unit) { RequestContext = requestContext.Object };
 
 
-           List<KeyValuePair<string, Guid>> list =  await SeedInitialPrograms(programsController, prgCount, GetName(getName, caller), userNames.Select(x=> GetName(x, caller)).ToList()).ConfigureAwait(false);
+            List<KeyValuePair<string, Guid>> list = await SeedInitialPrograms(programsController, prgCount
+                , GetName(getName, caller), userNames.Select(x => GetName(x, caller)).ToList()).ConfigureAwait(false);
 
-           foreach (string userName in userNames)
+            foreach (string userName in userNames)
            {
                telemetryContext.AppUsers.Add(new ClientAppUser() {UserIdentifier = GetName(userName, caller)});
            }
@@ -142,6 +145,7 @@ namespace Telimena.Tests
            telemetryContext.SaveChanges();
             return list;
         }
+
 
         public static async Task<Mock<HttpRequestContext>> SetupUserIntoRequestContext(TelimenaPortalContext context, string devName, string devEmail, [CallerMemberName] string caller = "")
         {

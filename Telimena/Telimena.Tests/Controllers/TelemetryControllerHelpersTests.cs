@@ -66,7 +66,40 @@ namespace Telimena.Tests
         {
             return this.TelemetryContext.AppUsers.FirstOrDefault(x => x.Id == id);
         }
-      
+
+        [Test]
+        public async Task Test_AuthUserId()
+        {
+            //prepare context
+            TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.TelemetryContext, this.PortalContext, new AssemblyStreamVersionReader());
+            await Helpers.SeedInitialPrograms(this.PortalContext, this.TelemetryContext, 4, "TestApp", new string[0]  );
+            Helpers.GetProgramAndUser(unit, "TestApp3", "Jim Beam", out TelemetryRootObject prg, out ClientAppUser usr);
+            Assert.IsTrue(prg.ProgramId > 0);
+
+            //prepare requests
+            TelemetryItem telemetryItem = new TelemetryItem()
+
+            {
+                EntryKey = Helpers.GetName("SomeView"),
+                TelemetryItemType = TelemetryItemTypes.View,
+                Sequence = "aaa:1",
+                VersionData = new VersionData("1.2.3.4", "2.0.0.0"),
+                Timestamp = new DateTimeOffset(DateTime.UtcNow),
+                Properties = new Dictionary<string, string> { { "AKey", "AValue" }, { "AKey2", "AValue2" } },
+                AuthenticatedUserIdentifier = Helpers.GetName("Jim Beam")
+            };
+
+            //send
+            List<TelemetrySummary> response = await TelemetryControllerHelpers.InsertData(unit, (new[] { telemetryItem }).ToList(), prg, "127.1.1.1");
+
+            View view = prg.Views.FirstOrDefault(x => x.Name == Helpers.GetName("SomeView"));
+            Assert.AreEqual(1, view.TelemetrySummaries.Count);
+            ViewTelemetrySummary summary = view.TelemetrySummaries.SingleOrDefault(x => x.ClientAppUser.AuthenticatedUserIdentifier== Helpers.GetName("Jim Beam"));
+            Assert.AreEqual(1, summary.SummaryCount);
+            Assert.AreEqual("", summary.ClientAppUser.UserIdentifier);
+            Assert.IsTrue(response.Single().ClientAppUserId > 0);
+        }
+
 
         [Test]
         public async Task TestUpdateAction()
@@ -98,6 +131,7 @@ namespace Telimena.Tests
             Assert.AreEqual(1, view.TelemetrySummaries.Count);
             ViewTelemetrySummary summary = view.TelemetrySummaries.SingleOrDefault(x => x.ClientAppUser.UserIdentifier == Helpers.GetName("Jim Beam"));
             Assert.AreEqual(1, summary.SummaryCount);
+            Assert.IsNull(summary.ClientAppUser.AuthenticatedUserIdentifier);
             Assert.AreEqual(summary.GetTelemetryDetails().Last().AssemblyVersion, "1.2.3.4");
             Assert.AreEqual(summary.GetTelemetryDetails().Last().FileVersion, "2.0.0.0");
 

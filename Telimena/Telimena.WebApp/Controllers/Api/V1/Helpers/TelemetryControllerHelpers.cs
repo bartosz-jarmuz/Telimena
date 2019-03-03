@@ -43,7 +43,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             {
 
                 ClientAppUser clientAppUser =
-                    await GetUserOrAddIfMissing(work, units.First().UserIdentifier, ipAddress).ConfigureAwait(false);
+                    await GetUserOrAddIfMissing(work, units.First(), ipAddress).ConfigureAwait(false);
 
                 IEnumerable<IGrouping<TelemetryItemTypes, TelemetryItem>> typeGroupings =
                     units.GroupBy(x => x.TelemetryItemType);
@@ -184,13 +184,24 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return user;
         }
 
-        public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, string userId, string ip)
+        public static async Task<ClientAppUser> GetUserOrAddIfMissing(ITelemetryUnitOfWork work, TelemetryItem item, string ip)
         {
-            ClientAppUser user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserIdentifier == userId).ConfigureAwait(false);
+            ClientAppUser user = null;
+            if (!string.IsNullOrEmpty(item.AuthenticatedUserIdentifier))
+            {
+                user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.AuthenticatedUserIdentifier == item.AuthenticatedUserIdentifier).ConfigureAwait(false);
+            }
+
+            if (user == null)
+            {
+                user = await work.ClientAppUsers.FirstOrDefaultAsync(x => x.UserIdentifier == item.UserIdentifier).ConfigureAwait(false);
+            }
+
             if (user == null)
             {
                 user = new ClientAppUser();
-                user.UserIdentifier = userId;
+                user.UserIdentifier = item.UserIdentifier??"";
+                user.AuthenticatedUserIdentifier = item.AuthenticatedUserIdentifier;
                 user.FirstSeenDate = DateTime.UtcNow;
                 user.IpAddresses.Add(ip);
                 work.ClientAppUsers.Add(user);

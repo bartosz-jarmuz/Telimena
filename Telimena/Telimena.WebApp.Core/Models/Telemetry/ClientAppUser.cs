@@ -17,6 +17,12 @@ namespace Telimena.WebApp.Core.Models.Telemetry
         /// </summary>
         /// <value>The user identifier.</value>
         public string UserIdentifier { get; set; }
+
+        /// <summary>
+        /// Gets or sets the authenticated user identifier if the user was authenticated within an app
+        /// </summary>
+        /// <value>The authenticated user identifier.</value>
+        public string AuthenticatedUserIdentifier { get; set; }
         public string Email { get; set; }
         public string MachineName { get; set; }
 

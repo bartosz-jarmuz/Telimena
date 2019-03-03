@@ -37,6 +37,7 @@ namespace Telimena.WebApp.Utils
                 Timestamp = appInsightsTelemetry.Time,
                 VersionData = GetVersionData(appInsightsProperties),
                 UserIdentifier = appInsightsTelemetry.Tags.AiUserId,
+                AuthenticatedUserIdentifier = appInsightsTelemetry.Tags.AiUserAuthUserId,
                 Properties = GetFilteredProperties(appInsightsProperties),
                 Measurements= appInsightsTelemetry.Data?.BaseData?.Measurements,
                 TelemetryItemType = GetItemType(appInsightsTelemetry),
