@@ -12,7 +12,6 @@ namespace Telimena.WebApp.UiStrings
             public static string SubmitLogin { get; } = "SubmitLogin";
             public static string PortalSummary { get; } = "PortalSummary";
             public static string PortalAdminDashboardLink { get; } = "PortalAdminDashboardLink";
-            public static string AppsAdminDashboardLink { get; } = "AppsAdminDashboardLink";
             public static string LogsLink { get; } = "LogsLink";
             public static string PortalUsersLink { get; } = "PortalUsersLink";
             public static string ToolkitManagementLink { get; } = "ToolkitManagementLink";
@@ -64,6 +63,7 @@ namespace Telimena.WebApp.UiStrings
 
         }
 
-        public static string DateTimeFormat { get; } = "dd.MM.yyyy HH:mm:ss";
+        public static string DateTimeFormat { get; } = "dd/MM/yyyy HH:mm:ss";
+        public static string MomentJsDateTimeFormat { get; } = "DD/MM/YYYY HH:mm:ss";
     }
 }

@@ -56,46 +56,49 @@ namespace Telimena.WebApp.Infrastructure.Repository
             this.telemetryContext = telemetryContext;
             this.Programs = new ProgramRepository(this.portalContext);
             this.Views = new ViewRepository(this.telemetryContext);
+            this.Events = new Repository<Event>(this.telemetryContext);
+            this.UpdatePackages = new UpdatePackageRepository(this.portalContext, null);
             this.Users = new Repository<TelimenaUser>(this.portalContext);
         }
+
+        public IUpdatePackageRepository UpdatePackages { get; set; }
 
         private readonly TelimenaPortalContext portalContext;
         private readonly TelimenaTelemetryContext telemetryContext;
         public IRepository<View> Views { get; }
+        public IRepository<Event> Events { get; }
 
         public IRepository<TelimenaUser> Users { get; }
         public IProgramRepository Programs { get; }
 
-        public async Task<IEnumerable<ProgramSummary>> GetProgramsSummary(List<Program> programs)
+
+        public async Task<IEnumerable<ProgramSummary>> GetProgramSummary(List<Program> programs)
         {
             List<ProgramSummary> returnData = new List<ProgramSummary>();
 
             foreach (Program program in programs)
             {
-                List<View> views = await this.Views.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+
                 ProgramSummary summary;
                 try
                 {
+                    List<View> views = await this.Views.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+                    List<ViewTelemetrySummary> viewSummaries = views.SelectMany(x => x.TelemetrySummaries).ToList();
+                    List<Event> events = await this.Events.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+                    List<EventTelemetrySummary> eventSummaries = events.SelectMany(x => x.TelemetrySummaries).ToList();
+
+                    List<TelemetrySummary> allSummaries = viewSummaries.Cast<TelemetrySummary>().Concat(eventSummaries).ToList();
+                    var latestPkg = await this.UpdatePackages.GetLatestPackage(program.Id).ConfigureAwait(false);
                     summary = new ProgramSummary
                     {
                         ProgramName = program.Name
-                        , DeveloperName = program.DeveloperTeam?.Name ?? "N/A"
-                        , LatestVersion = program.PrimaryAssembly?.GetLatestVersion()?.AssemblyVersion
-                        , AssociatedToolkitVersion = program.PrimaryAssembly?.GetLatestVersion()?.ToolkitData?.Version
-                        , TelemetryKey = program.TelemetryKey
-                        , RegisteredDate = program.RegisteredDate
-                        //todo - program usage remoed, this should then be caluclated some other way
-                        //, LastUsage = program.TelemetrySummaries.MaxOrNull(x => x.LastTelemetryUpdateTimestamp)
-                        //, UsersCount = program.TelemetrySummaries.Count
-                        //, TodayUsageCount =
-                        //    program.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
-                        //        smr.GetTelemetryDetails().Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24))
-                        //, TotalUsageCount = program.TelemetrySummaries.Sum(x => x.SummaryCount)
-                        , ViewsCount = views.Count
-                        , TotalViewsUsageCount = views.Sum(f => f.TelemetrySummaries.Sum(s => s.SummaryCount))
-                        , TotalTodayViewsUsageCount = views.Sum(f =>
-                            f.TelemetrySummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
-                                smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24)))
+                        ,DeveloperName = program.DeveloperTeam?.Name ?? "N/A"
+                        ,TelemetryKey = program.TelemetryKey
+                        ,RegisteredDate = program.RegisteredDate
+                        ,UsersCount = allSummaries.DistinctBy(x => x.ClientAppUserId).Count()
+                        ,LastUpdateDate = latestPkg?.UploadedDate
+                        ,LatestVersion = latestPkg?.SupportedToolkitVersion??"?"
+                        ,ToolkitVersion = latestPkg?.SupportedToolkitVersion??"?"
                     };
                 }
                 catch (Exception)
@@ -106,6 +109,53 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 }
 
                 returnData.Add(summary);
+            }
+
+            return returnData;
+        }
+
+        public async Task<IEnumerable<ProgramUsageSummary>> GetProgramUsagesSummary(List<Program> programs)
+        {
+            List<ProgramUsageSummary> returnData = new List<ProgramUsageSummary>();
+
+            foreach (Program program in programs)
+            {
+                
+                ProgramUsageSummary usageSummary;
+                try
+                {
+                    List<View> views = await this.Views.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+                    List<ViewTelemetrySummary> viewSummaries = views.SelectMany(x => x.TelemetrySummaries).ToList();
+                    List<Event> events = await this.Events.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+                    List<EventTelemetrySummary> eventSummaries = events.SelectMany(x => x.TelemetrySummaries).ToList();
+
+                    List<TelemetrySummary> allSummaries = viewSummaries.Cast<TelemetrySummary>().Concat(eventSummaries).ToList();
+
+                    usageSummary = new ProgramUsageSummary
+                    {
+                        ProgramName = program.Name
+                        , LastUsage = allSummaries.MaxOrNull(x => x.LastTelemetryUpdateTimestamp)
+                        , TodayUsageCount = allSummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
+                                smr.GetTelemetryDetails().Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24))
+                        , TotalUsageCount = allSummaries.Sum(x => x.SummaryCount)
+                        , ViewsCount = views.Count
+                        , TotalViewsUsageCount = viewSummaries.Sum(s => s.SummaryCount)
+                        , TotalTodayViewsUsageCount = viewSummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
+                                smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24))
+                        , EventsCount = events.Count
+                        , TotalEventsUsageCount = eventSummaries.Sum(x=>x.SummaryCount)
+                        , TotalTodayEventsUsageCount = eventSummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
+                            smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24))
+                        
+                    };
+                }
+                catch (Exception)
+                {
+                    usageSummary = new ProgramUsageSummary();
+                    usageSummary.ProgramName = program?.Name ?? "Error while loading summary";
+                }
+
+                returnData.Add(usageSummary);
             }
 
             return returnData;
@@ -124,39 +174,113 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return summary;
         }
 
-        public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)
+        public async Task<List<AppUsersSummaryData>> GetAppUsersSummary(List<Program> programs)
         {
-            List<TelemetryRootObject> telemetryMonitoredProgram = new List<TelemetryRootObject>();
+            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
+
+            var viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+            var eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+
+            var allData = viewData.summaries.Cast<TelemetrySummary>().Concat(eventData.summaries).ToList();
+            List<ClientAppUser> allUsers = GetClientAppUsers(viewData.summaries, eventData.summaries);
+
+            
+
+            var list = new List<AppUsersSummaryData>();
+            foreach (ClientAppUser clientAppUser in allUsers)
+            {
+                var userData = allData.Where(x => x.ClientAppUserId == clientAppUser.Id).ToList();
+                var cmps = userData.DistinctBy(x => x.GetComponent().Program.ProgramId).Select(x=>x.GetComponent().Program).ToList();
+
+                list.Add(new AppUsersSummaryData()
+                {
+                    FirstSeenDate = clientAppUser.FirstSeenDate,
+                    UserName = clientAppUser.UserIdentifier,
+                    LastActiveDate = userData.OrderByDescending(x=>x.LastTelemetryUpdateTimestamp).FirstOrDefault()?.LastTelemetryUpdateTimestamp??new DateTimeOffset(),
+                    ActivityScore = userData.Sum(x =>x.SummaryCount),
+                    NumberOfApps = userData.DistinctBy(x=>x.GetComponent().Program.ProgramId).Count()
+
+                });
+            }
+
+            return list;
+        }
+
+        private async Task<List<TelemetryRootObject>> GetTelemetryRootObjects(List<Program> programs)
+        {
+            List<TelemetryRootObject> telemetryRootObjects = new List<TelemetryRootObject>();
             foreach (Program program in programs)
             {
-                var telePrg = await this.telemetryContext.TelemetryRootObjects.FirstOrDefaultAsync(x => x.TelemetryKey == program.TelemetryKey)
-                    .ConfigureAwait(false);
+                var telePrg = await this.telemetryContext.TelemetryRootObjects
+                    .FirstOrDefaultAsync(x => x.TelemetryKey == program.TelemetryKey).ConfigureAwait(false);
                 if (telePrg != null)
                 {
-                    telemetryMonitoredProgram.Add(telePrg);
+                    telemetryRootObjects.Add(telePrg);
                 }
             }
-             
-            List<View> views = telemetryMonitoredProgram.SelectMany(x => x.Views).ToList();
-            IEnumerable<Guid> viewIds = views.Select(x => x.Id);
-            List<ViewTelemetrySummary> viewTelemetrySummaries =
-                await this.telemetryContext.ViewTelemetrySummaries.Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync().ConfigureAwait(false);
-            //List<ClientAppUser> users = programUsageSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
+
+            return telemetryRootObjects;
+        }
+
+        public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)
+        {
+            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
+
+            var viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+            var eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+
+            List<ClientAppUser> allUsers = GetClientAppUsers(viewData.summaries, eventData.summaries);
+
+            IEnumerable<int> programIds = telemetryRootObjects.Select(x => x.ProgramId);
+            List<ExceptionInfo> exceptions =
+                await this.telemetryContext.Exceptions.Where(ex=> programIds.Contains(ex.ProgramId)).ToListAsync().ConfigureAwait(false);
+            var recentExceptions = exceptions.Where(x => (DateTime.UtcNow - x.Timestamp).TotalDays <= 7).ToList();
+            string mostPopularException = recentExceptions.GroupBy(x => x.TypeName).OrderByDescending(x => x.Count()).Max().Key;
+
             AllProgramsSummaryData summary = new AllProgramsSummaryData
             {
                 TotalProgramsCount = programs.Count()
-                //, TotalAppUsersCount = users.Count()
-                //, AppUsersRegisteredLast7DaysCount = users.Count(x => (DateTime.UtcNow - x.FirstSeenDate).TotalDays <= 7)
-                , TotalViewsCount = views.Count()
+                , TotalAppUsersCount = allUsers.Count()
+                , AppUsersRegisteredLast7DaysCount = allUsers.Count(x => (DateTime.UtcNow - x.FirstSeenDate).TotalDays <= 7)
+                , TotalViewsCount = viewData.views.Count()
+                , TotalViewsUsageCount = viewData.summaries.Sum(x=>x.SummaryCount)
+                , TotalEventUsageCount = eventData.summaries.Sum(x=>x.SummaryCount)
+                , TotalEventsCount = eventData.events.Count()
+                , TotalExceptionsInLast7Days = recentExceptions.Count
+                , MostPopularExceptionInLast7Days = mostPopularException
             };
-            //int? value = programUsageSummaries.Sum(x => (int?) x.GetTelemetryDetails().Count()) ?? 0;
-            //summary.TotalProgramUsageCount = value ?? 0;
-            //value = viewTelemetrySummaries.Sum(x => (int?) x.TelemetryDetails.Count) ?? 0;
-            //summary.TotalViewsUsageCount = value ?? 0;
 
             summary.NewestProgram = programs.OrderByDescending(x => x.Id) /*.Include(x=>x.Developer)*/.FirstOrDefault();
 
             return summary;
+        }
+
+        private static List<ClientAppUser> GetClientAppUsers(List<ViewTelemetrySummary> viewSummaries, List<EventTelemetrySummary> eventSummaries)
+        {
+            List<ClientAppUser> viewUsers =
+                viewSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
+            List<ClientAppUser> eventUsers =
+                eventSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
+            var allUsers = viewUsers.Concat(eventUsers).DistinctBy(x => x.Id).ToList();
+            return allUsers;
+        }
+
+        private async Task<(List<View> views, List<ViewTelemetrySummary> summaries)> GetViewsAndSummaries(List<TelemetryRootObject> telemetryRootObjects)
+        {
+            List<View> views = telemetryRootObjects.SelectMany(x => x.Views).ToList();
+            IEnumerable<Guid> viewIds = views.Select(x => x.Id);
+            var viewTelemetrySummaries = await this.telemetryContext.ViewTelemetrySummaries
+                .Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync().ConfigureAwait(false);
+            return (views, viewTelemetrySummaries);
+        }
+
+        private async Task<(List<Event> events, List<EventTelemetrySummary> summaries)> GetEventsAndSummaries(List<TelemetryRootObject> telemetryRootObjects)
+        {
+            List<Event> events = telemetryRootObjects.SelectMany(x => x.Events).ToList();
+            IEnumerable<Guid> ids = events.Select(x => x.Id);
+            var telemetrySummaries = await this.telemetryContext.EventTelemetrySummaries
+                .Where(usg => ids.Contains(usg.EventId)).ToListAsync().ConfigureAwait(false);
+            return (events, telemetrySummaries);
         }
 
         public async Task CompleteAsync()

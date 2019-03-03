@@ -94,28 +94,22 @@
                 <div class="box-body">
                     <table class="table table-bordered table-hover dataTable">
                         <thead>
-                        <tr>
-                            <th>Toolkit Data Id</th>
-                            <th>Package Id</th>
-                            <th>Toolkit Version</th>
-                            <th>Uploaded Date</th>
-                            <th>File Size</th>
-                        </tr>
+                            <tr>
+                                <th>Uploaded Date</th>
+                                <th>Toolkit Data Id</th>
+                                <th>Package Id</th>
+                                <th>Toolkit Version</th>
+                                <th>File Size</th>
+                            </tr>
                         </thead>
                         <tbody>
 
                         @foreach (TelimenaToolkitDataDto toolkitData in Model.ToolkitPackages)
                         {
                             <tr>
-                                <td>@(toolkitData.Id)</td>
-                                <td>@(toolkitData.TelimenaPackageInfo?.Id)</td>
-
-                                <td>
-                                    <a href="@(Url.LatestApiUrl(ToolkitController.Routes.Get, new {id = toolkitData?.TelimenaPackageInfo?.Id}))">@toolkitData.Version</a>
-                                </td>
                                 @if (toolkitData.TelimenaPackageInfo != null)
                                 {
-                                    <td class="utcdate-tolocaldate">@(toolkitData.TelimenaPackageInfo?.UploadedDate.ToString(Strings.DateTimeFormat))</td>
+                                    <td class="@Strings.Css.DateTimeConversion">@(toolkitData.TelimenaPackageInfo?.UploadedDate.ToString(Strings.DateTimeFormat))</td>
                                 }
                                 else
                                 {
@@ -123,6 +117,13 @@
                                         <label class="label label-danger">Package not uploaded</label>
                                     </td>
                                 }
+                                <td>@(toolkitData.Id)</td>
+                                <td>@(toolkitData.TelimenaPackageInfo?.Id)</td>
+
+                                <td>
+                                    <a href="@(Url.LatestApiUrl(ToolkitController.Routes.Get, new {id = toolkitData?.TelimenaPackageInfo?.Id}))">@toolkitData.Version</a>
+                                </td>
+
                                 <td>@(toolkitData.TelimenaPackageInfo?.FileSizeBytes.ConvertBytesToMegabytes()) MB</td>
                             </tr>
                         }
@@ -211,37 +212,37 @@
                 <div class="box-body">
                     <table class="table table-bordered table-hover dataTable" id="@Strings.Id.UpdaterPackagesTable">
                         <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Internal name</th>
-                                <th>Is public</th>
-                                <th>Owner</th>
-                                <th>File</th>
-                                <th>Version</th>
-                                <th>Uploaded Date</th>
-                                <th>File Size</th>
-                                <th>Minimum toolkit Version</th>
-                            </tr>
+                        <tr>
+                            <th>Uploaded Date</th>
+                            <th>Id</th>
+                            <th>Internal name</th>
+                            <th>Is public</th>
+                            <th>Owner</th>
+                            <th>File</th>
+                            <th>Version</th>
+                            <th>File Size</th>
+                            <th>Minimum toolkit Version</th>
+                        </tr>
                         </thead>
                         <tbody>
 
                             @foreach (UpdaterPackageInfoDto pkg in Model.UpdaterPackages)
                             {
-                                <tr>
-                                    <td>@pkg.Updater.Id</td>
-                                    <td>@pkg.Updater.InternalName</td>
-                                    <td style="text-align: center">
-                                        <input type="checkbox" name="@Strings.Name.ToggleIsPublic" data-updater-id="@pkg.Updater.Id" onchange="ToggleIsPublic(this)" @(pkg.Updater.IsPublic ? "checked" : "") />
-                                    </td>
-                                    <td>@pkg.Updater.DeveloperTeamName</td>
-                                    <td>@pkg.Updater.FileName</td>
-                                    <td>
-                                        <a href="@(Url.LatestApiUrl(UpdatersController.Routes.Get, new {id = pkg.Id}))">@pkg.Version</a>
-                                    </td>
-                                    <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
-                                    <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
-                                    <td>@(pkg.MinimumRequiredToolkitVersion)</td>
-                                </tr>
+                            <tr>
+                                <td class="@Strings.Css.DateTimeConversion">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
+                                <td>@pkg.Updater.Id</td>
+                                <td>@pkg.Updater.InternalName</td>
+                                <td style="text-align: center">
+                                    <input type="checkbox" name="@Strings.Name.ToggleIsPublic" data-updater-id="@pkg.Updater.Id" onchange="ToggleIsPublic(this)" @(pkg.Updater.IsPublic ? "checked" : "") />
+                                </td>
+                                <td>@pkg.Updater.DeveloperTeamName</td>
+                                <td>@pkg.Updater.FileName</td>
+                                <td>
+                                    <a href="@(Url.LatestApiUrl(UpdatersController.Routes.Get, new {id = pkg.Id}))">@pkg.Version</a>
+                                </td>
+                                <td>@pkg.FileSizeBytes.ConvertBytesToMegabytes() MB</td>
+                                <td>@(pkg.MinimumRequiredToolkitVersion)</td>
+                            </tr>
                             }
                         </tbody>
 
@@ -257,12 +258,13 @@
 {
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
+            globalUtcConversion();
+            $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
             $('.dataTable').DataTable(
                 {
                     order: [[0, 'desc']]
                 });
-            globalUtcConversion();
 
             $('.uploadedPackage').change(function(e) { SingleFileSelected(e, $(this).find('input')) });
             $('#uploadUpdaterUpdatePackageForm').submit(function(e) {

@@ -26,34 +26,40 @@
         </div>
     </div>
 </section>
+<div class="col-md-8">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">All programs overview</h3>
+                </div>
+                <div class="box-body">
+                    <table id="allProgramsSummaryReport" class="table table-condensed table-bordered table-hover"></table>
+                </div>
+            </div>
+        </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">All programs report</h3>
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">All programs usages</h3>
+                </div>
+                <div class="box-body">
+                    <table id="allProgramsUsageReport" class="table table-condensed table-bordered table-hover"></table>
+                </div>
             </div>
-            <div class="box-body">
-                <table id="allProgramsReport" class="table table-condensed table-bordered table-hover" data-url="@Url.Action("GetAllPrograms")">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Developer</th>
-                            <th>@nameof(ProgramSummary.LatestVersion)</th>
-                            <th># Views</th>
-                            <th># Views usages today</th>
-                            <th># Views usages</th>
-                            <th># Users</th>
-                            <th># Usage today</th>
-                            <th># Usage total</th>
-                            <th>@nameof(ProgramSummary.LastUsage)</th>
-                            <th>Registered</th>
-                            <th>Telimena Version</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
+        </div>
+
+    </div>
+
+</div>
+<div class="col-md-4">
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">Users overview</h3>
+        </div>
+        <div class="box-body">
+            <table id="appUsersSummaryReport" class="table table-condensed table-bordered table-hover"></table>
         </div>
     </div>
 </div>
@@ -61,41 +67,155 @@
 @section scripts
 {
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
+            $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
+
             $(".apps-summary").load($(".apps-summary").data("url"));
 
-            $('#allProgramsReport').DataTable({
+            $('#allProgramsSummaryReport').DataTable({
+                order: [[0, 'desc']],
                 "ajax": {
-                    url: "@Url.Action("GetAllPrograms")",
+                    url: "@Url.Action("GetAllProgramsSummary")",
                     method: "post",
                     dataSrc: ""
                 },
                 "columns": [
-                    { "data": "@nameof(ProgramSummary.TelemetryKey)" },
-                    { "data": "@nameof(ProgramSummary.ProgramName)" },
-                    { "data": "@nameof(ProgramSummary.DeveloperName)" },
-                    { "data": "@nameof(ProgramSummary.LatestVersion)" },
-                    { "data": "@nameof(ProgramSummary.ViewsCount)" },
-                    { "data": "@nameof(ProgramSummary.TotalTodayViewsUsageCount)" },
-                    { "data": "@nameof(ProgramSummary.TotalViewsUsageCount)" },
-                    { "data": "@nameof(ProgramSummary.UsersCount)" },
-                    { "data": "@nameof(ProgramSummary.TodayUsageCount)" },
-                    { "data": "@nameof(ProgramSummary.TotalUsageCount)" },
                     {
-                        "data": "@nameof(ProgramSummary.LastUsage)",
-                        render: function(data, type, row, meta) {
-                            var datetime = new Date(data);
-                            return datetime.toLocaleString();
+                        title: 'Registered',
+                        "data": "@nameof(ProgramSummary.RegisteredDate)" 
+                        , render: function (data, type, row, meta) {
+                            return toFormattedTimestamp(new Date(data));
                         }
                     },
                     {
-                        "data": "@nameof(ProgramSummary.RegisteredDate)",
-                        render: function(data, type, row, meta) {
-                            var datetime = new Date(data);
-                            return datetime.toLocaleString();
+                        title: 'Name',
+                        "data": "@nameof(ProgramSummary.ProgramName)" 
+
+                    },
+                    {
+                        title: '# Users',
+                        "data": "@nameof(ProgramSummary.UsersCount)",
+                    },
+                    {
+                        title: 'Developer',
+                        "data": "@nameof(ProgramSummary.DeveloperName)",
+                    },
+                    {
+                        title: 'Latest version',
+                        "data": "@nameof(ProgramSummary.LatestVersion)",
+                    },
+                    {
+                        title: 'Last updated',
+                        "data": "@nameof(ProgramSummary.LastUpdateDate)",
+                        render: function (data, type, row, meta) {
+                            return toFormattedTimestamp(new Date(data));
                         }
                     },
-                    { "data": "@nameof(ProgramSummary.AssociatedToolkitVersion)" },
+                    {
+                        title: 'Toolkit version',
+                        "data": "@nameof(ProgramSummary.ToolkitVersion)",
+                    },
+                    {
+                        title: 'Telemetry Key',
+                        "data": "@nameof(ProgramSummary.TelemetryKey)",
+                    },
+
+                ]
+            });
+
+            $('#appUsersSummaryReport').DataTable({
+                order: [[2, 'desc']],
+                "ajax": {
+                    url: "@Url.Action("GetAppUsersSummary")",
+                    method: "post",
+                    dataSrc: ""
+                },
+                "columns": [
+                    {
+                        title: 'Name',
+                        "data": "@nameof(AppUsersSummaryData.UserName)" 
+
+                    },
+                    {
+                        title: '# Apps',
+                        "data": "@nameof(AppUsersSummaryData.NumberOfApps)" 
+
+                    },
+                    {
+                        title: 'Activity score',
+                        "data": "@nameof(AppUsersSummaryData.ActivityScore)" 
+
+                    },
+                    {
+                        title: 'First seen',
+                        "data": "@nameof(AppUsersSummaryData.FirstSeenDate)",
+                        render: function(data, type, row, meta) {
+                            return toFormattedTimestamp(new Date(data));
+                        }
+                    },
+                    {
+                        title: 'Last active',
+                        "data": "@nameof(AppUsersSummaryData.LastActiveDate)",
+                        render: function(data, type, row, meta) {
+                            return toFormattedTimestamp(new Date(data));
+                        }
+                    },
+                ]
+            });
+
+            $('#allProgramsUsageReport').DataTable({
+                order: [[1, 'desc']],
+                "ajax": {
+                    url: "@Url.Action("GetAllProgramsUsages")",
+                    method: "post",
+                    dataSrc: ""
+                },
+                "columns": [
+                    {
+                        title: 'Name',
+                        "data": "@nameof(ProgramUsageSummary.ProgramName)" 
+
+                    },
+                    {
+                        title: 'Last usage',
+                        "data": "@nameof(ProgramUsageSummary.LastUsage)",
+                        render: function(data, type, row, meta) {
+                            return toFormattedTimestamp(new Date(data));
+                        }
+                    },
+                    {
+                        title: 'Usage today',
+                         "data": "@nameof(ProgramUsageSummary.TodayUsageCount)"
+                    },
+                    {
+
+                        title: 'Total usage',
+                        "data": "@nameof(ProgramUsageSummary.TotalUsageCount)"
+                    },
+                    {
+                        title: '# Views',
+                        "data": "@nameof(ProgramUsageSummary.ViewsCount)"
+                    },
+                    {
+                        title: 'View usage today',
+                       "data": "@nameof(ProgramUsageSummary.TotalTodayViewsUsageCount)"
+                    },
+                    {
+                        title: 'Total view usage',
+                       "data": "@nameof(ProgramUsageSummary.TotalViewsUsageCount)"
+                    },
+                    {
+                        title: '# Events',
+                       "data": "@nameof(ProgramUsageSummary.EventsCount)"
+                    },
+                    {
+                        title: 'Events today',
+                       "data": "@nameof(ProgramUsageSummary.TotalTodayEventsUsageCount)"
+                    },
+                    {
+                        title: 'Events total',
+                       "data": "@nameof(ProgramUsageSummary.TotalEventsUsageCount)"
+                    },
                 ]
             });
         });

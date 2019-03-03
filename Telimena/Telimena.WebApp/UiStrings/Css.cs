@@ -7,6 +7,7 @@ namespace Telimena.WebApp.UiStrings
         {
             public static string ProgramInfoElement { get; } = "programInfoElement";
             public static string PrepareReleaseNotesButton { get; } = "prepare-release-notes";
+            public static string DateTimeConversion { get; } = "utcdate-to-localdate";
         }
     }
 }

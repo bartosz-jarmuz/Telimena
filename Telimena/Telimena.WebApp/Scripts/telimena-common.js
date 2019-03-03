@@ -99,7 +99,7 @@ Number.prototype.padLeft = function (base, chr) {
 }
 
 function globalUtcConversion() {
-    $('.utcdate-tolocaldate').each(function () {
+    $('.utcdate-to-localdate').each(function () {
         try {
             $(this).html(toFormattedTimestamp($(this).text()));
         }

@@ -24,9 +24,6 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.Driver.FindElement(By.Id(Strings.Id.AppsAdminDashboardLink)).Click();
-                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.AppsSummary)));
-
                 this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).Click();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.ToolkitManagementForm)));
 

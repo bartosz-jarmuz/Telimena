@@ -94,6 +94,7 @@ namespace Telimena.WebApp.Infrastructure.Database
         public DbSet<View> Views { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<ViewTelemetrySummary> ViewTelemetrySummaries { get; set; }
+        public DbSet<EventTelemetrySummary> EventTelemetrySummaries { get; set; }
         public DbSet<ViewTelemetryDetail> ViewTelemetryDetails { get; set; }
         public DbSet<EventTelemetryDetail> EventTelemetryDetails { get; set; }
         public DbSet<ViewTelemetryUnit> ViewTelemetryUnits { get; set; }

@@ -2023,7 +2023,6 @@
     <Content Include="Views\AdminDashboard\_PortalSummaryBoxes.cshtml" />
     <Content Include="Views\Shared\_AllProgramsSummaryBoxes.cshtml" />
     <Content Include="Views\AdminDashboard\_SmallBox.cshtml" />
-    <Content Include="Views\AdminDashboard\Apps.cshtml" />
     <Content Include="Views\Shared\_InfoBox.cshtml" />
     <Content Include="Views\RegisterProgram\Register.cshtml" />
     <Content Include="Views\Shared\_ProgramsList.cshtml" />

@@ -18,7 +18,7 @@ namespace Telimena.WebApp.Controllers.Developer
     public class DeveloperDashboardController : Controller
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DeveloperDashboardController"/> class.
+        /// Initializes a new instance of the <see cref="DeveloperDashboardController" /> class.
         /// </summary>
         /// <param name="unitOfWork">The unit of work.</param>
         public DeveloperDashboardController(IProgramsDashboardUnitOfWork unitOfWork)
@@ -41,11 +41,35 @@ namespace Telimena.WebApp.Controllers.Developer
         /// </summary>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
-        public async Task<ActionResult> GetAllPrograms()
+        public async Task<ActionResult> GetAllProgramsUsages()
         {
-            List<ProgramSummary> programs = await this.dashboardBase.GetAllPrograms(this.User).ConfigureAwait(false);
+            List<ProgramUsageSummary> programs = await this.dashboardBase.GetAllProgramsUsages(this.User).ConfigureAwait(false);
             return this.Content(JsonConvert.SerializeObject(programs));
         }
+
+        /// <summary>
+        /// Gets all programs summary.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpPost]
+        public async Task<ActionResult> GetAllProgramsSummary()
+        {
+            List<ProgramSummary> programs = await this.dashboardBase.GetAllProgramsSummary(this.User).ConfigureAwait(false);
+            return this.Content(JsonConvert.SerializeObject(programs));
+        }
+
+
+        /// <summary>
+        /// Gets the application users summary.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpPost]
+        public async Task<ActionResult> GetAppUsersSummary()
+        {
+            List<AppUsersSummaryData> programs = await this.dashboardBase.GetAppUsersSummary(this.User).ConfigureAwait(false);
+            return this.Content(JsonConvert.SerializeObject(programs));
+        }
+
 
         /// <summary>
         /// Gets all programs summary counts.

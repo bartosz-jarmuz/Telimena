@@ -104,7 +104,7 @@
                         <b>Supported toolkit version</b> <a class="pull-right">@(Model.ProgramPackageInfo?.SupportedToolkitVersion)</a>
                     </li>
                     <li class="list-group-item">
-                        <b>Uploaded date</b> <a class="pull-right utcdate-tolocaldate">@(Model.ProgramPackageInfo?.UploadedDate.ToString(Strings.DateTimeFormat))</a>
+                        <b>Uploaded date</b> <a class="pull-right @Strings.Css.DateTimeConversion">@(Model.ProgramPackageInfo?.UploadedDate.ToString(Strings.DateTimeFormat))</a>
                     </li>
                 </ul>
             </div>
@@ -267,7 +267,7 @@
                         {
                         <tr>
                             <td>@pkg.ReleaseNotes</td>
-                            <td class="utcdate-tolocaldate">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
+                            <td class="@Strings.Css.DateTimeConversion">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
                             <td>@pkg.Id</td>
                             <td style="text-align: center">
                                 <input type="checkbox" data-pkg-id="@pkg.Id" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "") />
@@ -326,8 +326,10 @@
 {
    
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
+            globalUtcConversion();
 
+            $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
 
             $('#@Strings.Id.ProgramUpdatePackagesTable').DataTable({
                 "columnDefs": [
@@ -335,13 +337,12 @@
                         "targets": [ 0 ],
                         "visible": false,
                         "searchable": false
-                    }
+                    },
                 ],
                 "order": [[ 1, "desc" ]]
             });
 
 
-            globalUtcConversion();
             LoadCurrentVersion();
             $('#@Strings.Id.DeleteProgramButton').click(function() {
                 DeleteProgram(this);

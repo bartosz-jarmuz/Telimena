@@ -33,11 +33,37 @@ namespace Telimena.WebApp.Controllers.Developer
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>Task&lt;List&lt;ProgramSummary&gt;&gt;.</returns>
-        public async Task<List<ProgramSummary>> GetAllPrograms(IPrincipal user)
+        public async Task<List<ProgramUsageSummary>> GetAllProgramsUsages(IPrincipal user)
         {
             TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == user.Identity.Name);
             List<Program> programs = await this.unitOfWork.Programs.GetProgramsVisibleToUserAsync(telimenaUser, user).ConfigureAwait(false);
-            List<ProgramSummary> summary = (await this.unitOfWork.GetProgramsSummary(programs).ConfigureAwait(false)).ToList();
+            List<ProgramUsageSummary> summary = (await this.unitOfWork.GetProgramUsagesSummary(programs).ConfigureAwait(false)).ToList();
+            return summary;
+        }
+
+        /// <summary>
+        /// Gets all programs.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>Task&lt;List&lt;ProgramSummary&gt;&gt;.</returns>
+        public async Task<List<ProgramSummary>> GetAllProgramsSummary(IPrincipal user)
+        {
+            TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == user.Identity.Name);
+            List<Program> programs = await this.unitOfWork.Programs.GetProgramsVisibleToUserAsync(telimenaUser, user).ConfigureAwait(false);
+            List<ProgramSummary> summary = (await this.unitOfWork.GetProgramSummary(programs).ConfigureAwait(false)).ToList();
+            return summary;
+        }
+
+        /// <summary>
+        /// Gets all programs.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>Task&lt;List&lt;ProgramSummary&gt;&gt;.</returns>
+        public async Task<List<AppUsersSummaryData>> GetAppUsersSummary(IPrincipal user)
+        {
+            TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == user.Identity.Name);
+            List<Program> programs = await this.unitOfWork.Programs.GetProgramsVisibleToUserAsync(telimenaUser, user).ConfigureAwait(false);
+            var summary = (await this.unitOfWork.GetAppUsersSummary(programs).ConfigureAwait(false)).ToList();
             return summary;
         }
 

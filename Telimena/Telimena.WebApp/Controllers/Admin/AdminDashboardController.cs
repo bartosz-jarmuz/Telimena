@@ -75,7 +75,7 @@ namespace Telimena.WebApp.Controllers.Admin
         [HttpPost]
         public async Task<ActionResult> GetAllPrograms()
         {
-            List<ProgramSummary> programs = await this.dashboardBase.GetAllPrograms(this.User).ConfigureAwait(false);
+            List<ProgramUsageSummary> programs = await this.dashboardBase.GetAllProgramsUsages(this.User).ConfigureAwait(false);
             return this.Content(JsonConvert.SerializeObject(programs));
         }
 

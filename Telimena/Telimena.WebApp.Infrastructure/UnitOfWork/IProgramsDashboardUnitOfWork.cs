@@ -19,7 +19,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs);
         Task<PortalSummaryData> GetPortalSummary();
-        Task<IEnumerable<ProgramSummary>> GetProgramsSummary(List<Program> programs);
+        Task<IEnumerable<ProgramUsageSummary>> GetProgramUsagesSummary(List<Program> programs);
         Task<UsageDataTableResult> GetProgramUsageData(Guid telemetryKey, TelemetryItemTypes itemType, int skip
             , int take, IEnumerable<Tuple<string, bool>> sortBy , ISearch requestSearch 
             , List<string> searchableColumns);
@@ -33,6 +33,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         Task<UsageDataTableResult> GetSequenceHistory(Guid telemetryKey, string sequenceId, string searchValue);
 
+        Task<IEnumerable<ProgramSummary>> GetProgramSummary(List<Program> programs);
+        Task<List<AppUsersSummaryData>> GetAppUsersSummary(List<Program> programs);
     }
 
 
