@@ -28,7 +28,7 @@ namespace Telimena.WebApp.Core.Models.Telemetry
 
         public TelemetrySummary GetTelemetrySummary(int clientAppUserId)
         {
-            return this.GetTelemetrySummaries().FirstOrDefault(x => x.ClientAppUser.Id == clientAppUserId);
+            return this.GetTelemetrySummaries().FirstOrDefault(x => x.ClientAppUserId == clientAppUserId);
         }
 
         public abstract TelemetrySummary AddTelemetrySummary(int clientAppUserId);
