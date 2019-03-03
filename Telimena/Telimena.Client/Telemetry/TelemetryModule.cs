@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Security.AccessControl;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 
 namespace TelimenaClient
 {
@@ -16,6 +19,7 @@ namespace TelimenaClient
         }
 
         private readonly ITelimenaProperties telimenaProperties;
+        private static readonly string SessionStartedEventKey = "TelimenaSessionStarted";
 
         /// <summary>
         /// Gets the telemetry client.
@@ -47,6 +51,26 @@ namespace TelimenaClient
         {
             TelemetryClientBuilder builder = new TelemetryClientBuilder(this.telimenaProperties);
             this.TelemetryClient = builder.GetClient();
+            this.InitializeSession();
+        }
+
+        private void InitializeSession()
+        {
+            if (!isSessionStarted)
+            {
+                lock (SyncRoot)
+                {
+                    if (!isSessionStarted)
+                    {
+                        if (this.TelemetryClient != null)
+                        {
+                            this.Event(SessionStartedEventKey);
+                            this.SendAllDataNow();
+                            isSessionStarted = true;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -59,9 +83,14 @@ namespace TelimenaClient
 #pragma warning disable 618
             this.TelemetryClient = builder.GetClient(channel);
 #pragma warning restore 618
+            this.InitializeSession();
         }
 
+        private static readonly object SyncRoot = new object();
 
-     
+        private static bool isSessionStarted;
+        
+
+
     }
 }

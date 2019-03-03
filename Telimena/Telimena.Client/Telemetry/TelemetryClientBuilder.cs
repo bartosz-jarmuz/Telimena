@@ -41,7 +41,6 @@ namespace TelimenaClient
                         config.InstrumentationKey = this.properties.InstrumentationKey;
                         client.InstrumentationKey = this.properties.InstrumentationKey;
                     }
-
                     return client;
                 }
             }
