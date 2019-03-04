@@ -19,7 +19,7 @@ namespace Telimena.WebApp.Core.DTO
         }
 
 
-        public List<ExceptionInfo> Exceptions { get; set; }
+        public List<ExceptionInfo> Exceptions { get; set; }= new List<ExceptionInfo>();
 
         public class ExceptionInfo
         {

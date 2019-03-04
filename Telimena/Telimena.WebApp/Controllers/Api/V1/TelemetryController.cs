@@ -8,6 +8,7 @@ using System.Web.Http;
 using DotNetLittleHelpers;
 using Hangfire;
 using Newtonsoft.Json;
+using Telimena.Portal.Api.Models.RequestMessages;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel;
@@ -130,7 +131,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             TelemetryRootObject program = await this.work.GetMonitoredProgram(telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
-                throw new InvalidOperationException($"Program with telemetry key [{telemetryKey}] does not exist");
+                throw new BadRequestException($"Program with telemetry key [{telemetryKey}] does not exist");
             }
 
             IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
@@ -141,10 +142,52 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
             await this.InsertDataInternal(telemetryItems, program, ip).ConfigureAwait(false);
 
-            return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
-
-        
+            return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);     
         }
+
+        /// <summary>
+        ///     Report a program view access
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("{telemetryKey}/basic", Name = Routes.PostBasic)]
+        public async Task<IHttpActionResult> PostBasic(Guid telemetryKey, BasicTelemetryItem request)
+        {
+            if (request == null)
+            {
+                request = new BasicTelemetryItem();
+            }
+
+            TelemetryRootObject program = await this.work.GetMonitoredProgram(telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                throw new BadRequestException($"Program with telemetry key [{telemetryKey}] does not exist");
+            }
+
+            if (!Version.TryParse(request.ProgramVersion, out _))
+            {
+                request.ProgramVersion = "0.0.0.0";
+            }
+
+            TelemetryItem item = new TelemetryItem
+            {
+                UserIdentifier = request.UserIdentifier
+                , EntryKey = request.EventName
+                , Properties = request.Properties
+                , Measurements = request.Metrics
+                , VersionData = new VersionData(request.ProgramVersion, request.ProgramVersion)
+                , Timestamp = request.Timestamp
+            };
+
+
+            string ip = this.Request.GetClientIp();
+
+            await this.InsertDataInternal(new []{item}, program, ip).ConfigureAwait(false);
+
+            return await Task.FromResult(this.StatusCode(HttpStatusCode.OK)).ConfigureAwait(false);
+        }
+
 
 
 
