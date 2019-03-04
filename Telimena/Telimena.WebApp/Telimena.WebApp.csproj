@@ -307,6 +307,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProgramStatisticsController.cs" />
     <Compile Include="Controllers\ProgramManagementController.cs" />
+    <Compile Include="Controllers\TeamController.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -324,6 +325,7 @@
     <Compile Include="Models\Shared\BoxViewModel.cs" />
     <Compile Include="Models\Shared\ProgramHeaderMenuViewModel.cs" />
     <Compile Include="Models\Shared\ProgramsListViewModel.cs" />
+    <Compile Include="Models\Team\TeamViewModel.cs" />
     <Compile Include="Models\ToolkitManagement\ToolkitManagementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UiStrings\Css.cs" />
@@ -2034,6 +2036,7 @@
     <Content Include="Views\Shared\_ProgramHeaderMenu.cshtml" />
     <Content Include="Views\ProgramStatistics\SequenceHistory.cshtml" />
     <Content Include="Views\Shared\_TopAlertBox.cshtml" />
+    <Content Include="Views\Team\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

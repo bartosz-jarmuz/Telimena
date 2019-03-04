@@ -37,7 +37,9 @@ function getXhrErrorMessage(xhr) {
     var text = "Something went wrong";
     if (xhr) {
         if (xhr.responseJSON && xhr.responseJSON.Message) {
-            text = xhr.responseJSON.Message;
+            return xhr.responseJSON.Message;
+        } else if (xhr.statusText) {
+            return xhr.statusText;
         }
     }
     return text;

@@ -48,7 +48,10 @@ namespace Telimena.WebApp.UiStrings
             public static string UploadProgramUpdateForm { get; } = "UploadProgramUpdateForm";
             public static string UploadFullProgramPackageForm { get; } = "UploadFullProgramPackageForm";
             public static string UpdaterSelectList { get; } = "UpdaterSelectList";
+            public static string TeamMembersList { get; } = "TeamMembersList";
             public static string SubmitUpdaterChange { get; } = "SubmitUpdaterChange";
+            public static string SubmitAddTeamMember { get; } = "SubmitAddTeamMember";
+            public static string SubmitRemoveTeamMember { get; } = "SubmitRemoveTeamMember";
             public static string UpdaterExecutableName { get; } = "UpdaterExecutableName";
             public static string EventsTable { get; } = "EventsTable";
             public static string ExceptionsTable { get; } = "ExceptionsTable";
@@ -60,7 +63,8 @@ namespace Telimena.WebApp.UiStrings
             public static string ReleaseNotesPkgId { get; } = "ReleaseNotesPkgId";
             public static string SubmitReleaseNotesButton { get; } = "SubmitReleaseNotesButton";
             public static string TopAlertBox { get; } = "TopAlertBox";
-
+            public static string TeamManagementLink { get; } = "TeamManagementLink";
+            public static string SubmitTeamRename { get; } = "SubmitTeamRename";
         }
 
         public static string DateTimeFormat { get; } = "dd/MM/yyyy HH:mm:ss";

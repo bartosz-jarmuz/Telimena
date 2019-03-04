@@ -36,8 +36,13 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.FindElement(By.Id(Strings.Id.DeveloperDashboardLink)).Click();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.DeveloperDashboard)));
 
+                this.Driver.FindElement(By.Id(Strings.Id.TeamManagementLink)).Click();
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.TeamMembersList)));
+
                 this.Driver.FindElement(By.Id(Strings.Id.RegisterApplicationLink)).Click();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
+
+                
 
                 this.ValidateAppPages(TestAppProvider.AutomaticTestsClientAppName, wait);
 

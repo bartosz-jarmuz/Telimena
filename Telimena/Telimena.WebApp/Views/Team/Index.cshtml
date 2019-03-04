@@ -1,0 +1,132 @@
+﻿@using DotNetLittleHelpers
+@using Telimena.WebApp
+@using Telimena.WebApp.Controllers.Api.V1
+@using Telimena.WebApp.Core.DTO.MappableToClient
+
+@using Telimena.Portal.Api.Models
+@using Telimena.WebApp.Core.Messages
+@using Telimena.Portal.Api.Models
+@using Telimena.Portal.Api.Models.DTO
+@using Telimena.WebApp.UiStrings
+@model global::Telimena.WebApp.Models.Team.TeamViewModel
+@{
+    ViewBag.Title = "Manage your teams";
+}
+
+@section styles{
+
+}
+@Html.Partial("_TopAlertBox")
+
+
+<div class="row">
+<div class="col-md-6 form-horizontal">
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">Manage @Model.Name members</h3>
+        </div>
+        <div class="box-body">
+            <form>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-4">Current team members: </label>
+                    <div class="col-sm-8">
+                        @Html.ListBox("TeamMembersList", Model.TeamMembers, new { id = @Strings.Id.TeamMembersList, @class = "form-control" })
+                        <input type='button' value='Remove selected members' id="@Strings.Id.SubmitRemoveTeamMember" class="btn btn-sm btn-danger form-control" />
+                    </div>
+                </div>
+                <div class="box-footer">
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">Add new member: </label>
+                        <div class="col-sm-8">
+                            <input class="form-control" placeholder="Provide email" type="email" name="newUserEmail" />
+                            <input type='button' id="@Strings.Id.SubmitAddTeamMember" value='Add' class="btn btn-block btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        </div>
+    </div>
+
+    
+    <div class="col-md-6">
+        <form class="form-horizontal">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Rename team - @Model.Name</h3>
+                </div>
+                <div class="box-body">
+                    <p class="">Setting the new team name affects the download URL for your apps, e.g. https://telimena.com/MyTeam/MyApp/download</p>
+                    <div class="form-group">
+                        <label class="control-label col-sm-4">New name: </label>
+                        <div class="col-sm-8">
+                            <input class="form-control" placeholder="Name must be free" type="text" name="newTeamName"/>
+                            <input type='button' id="@Strings.Id.SubmitTeamRename" value='Set new name' class="btn btn-block btn-primary"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        
+    </div>
+
+</div>
+
+
+@section scripts
+{
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            globalUtcConversion();
+            $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
+
+            $('#@Strings.Id.SubmitAddTeamMember').click(function() {
+                var box = $(this).closest('.form-group').find('input');
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("AddMember")' + '?email=' + $(box).val(),
+                    error: function(xhr) {
+                        showDangerTopAlert(getXhrErrorMessage(xhr));
+                    },
+                    success: function(data, result, xhr) {
+                        showSuccessTopAlertAndRefresh(getXhrErrorMessage(xhr));
+                    },
+                });
+            });
+
+            $('#@Strings.Id.SubmitRemoveTeamMember').click(function() {
+                var values = $('#@Strings.Id.TeamMembersList').val();
+                if (confirm('Are you sure you want to remove ' + values + '?')) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: '@Url.Action("RemoveMember")' + '?email=' + values,
+                        error: function(xhr) {
+                            showDangerTopAlert(getXhrErrorMessage(xhr));
+                        },
+                        success: function(data, result,xhr) {
+                            showSuccessTopAlertAndRefresh(getXhrErrorMessage(xhr));
+
+                        },
+                    });
+                }
+            });
+            $('#@Strings.Id.SubmitTeamRename').click(function() {
+                var box = $(this).closest('.form-group').find('input');
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("RenameTeam")' + '?newName=' + $(box).val(),
+                    error: function(xhr) {
+                        showDangerTopAlert(getXhrErrorMessage(xhr));
+                    },
+                    success: function(data, result, xhr) {
+                        showSuccessTopAlertAndRefresh(getXhrErrorMessage(xhr));
+                    },
+                });
+            });
+        });
+    </script>
+
+}
