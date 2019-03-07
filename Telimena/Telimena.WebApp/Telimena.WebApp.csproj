@@ -2037,6 +2037,7 @@
     <Content Include="Views\ProgramStatistics\SequenceHistory.cshtml" />
     <Content Include="Views\Shared\_TopAlertBox.cshtml" />
     <Content Include="Views\Team\Index.cshtml" />
+    <Content Include="Views\ProgramStatistics\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

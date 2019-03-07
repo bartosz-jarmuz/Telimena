@@ -187,9 +187,46 @@ namespace Telimena.WebApp.UITests._01._Ui
             Assert.AreEqual(assemblyName, infoElements[3].Text);
         }
 
-      
+        public void UploadProgramPackage(string appName, string packageFileName)
+        {
+            try
+            {
 
-     
+                this.LoginAdminIfNeeded();
+
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+
+                this.ClickOnManageProgramMenu(appName);
+
+                IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadFullProgramPackageForm)));
+                FileInfo file = TestAppProvider.GetFile(packageFileName);
+
+                IWebElement input = form.FindElements(By.TagName("input")).FirstOrDefault(x => x.GetAttribute("type") == "file");
+                if (input == null)
+                {
+                    Assert.Fail("Input box not found");
+                }
+
+                input.SendKeys(file.FullName);
+
+                wait.Until(x => form.FindElements(By.ClassName("info")).FirstOrDefault(e => e.Text.Contains(file.Name)));
+
+                var btn = wait.Until(ExpectedConditions.ElementToBeClickable(form.FindElements(By.TagName("input"))
+                    .FirstOrDefault(x => x.GetAttribute("type") == "submit")));
+
+                btn.Click();
+                this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Uploaded package with ID"));
+                this.Driver.Navigate().Refresh();
+
+            }
+            catch (Exception ex)
+            {
+                this.HandleError(ex);
+            }
+        }
+
+
+
 
         public void UploadUpdatePackage(string appName, string packageFileName)
         {
@@ -316,6 +353,14 @@ namespace Telimena.WebApp.UITests._01._Ui
             this.UploadUpdatePackage(TestAppProvider.AutomaticTestsClientAppName, "AutomaticTestsClientv2.zip");
 
         }
+
+
+        [Test, Order(5), Retry(3)]
+        public void _05c_UploadTestAppPackage()
+        {
+            this.UploadProgramPackage(TestAppProvider.AutomaticTestsClientAppName, "TestApp v1.0.0.0.zip");
+        }
+
 
         [Test, Order(6), Retry(3)]
         public void _06_UploadPackageUpdateTestAppUpdate()

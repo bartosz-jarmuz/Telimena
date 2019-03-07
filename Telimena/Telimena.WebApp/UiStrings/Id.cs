@@ -65,6 +65,7 @@ namespace Telimena.WebApp.UiStrings
             public static string TopAlertBox { get; } = "TopAlertBox";
             public static string TeamManagementLink { get; } = "TeamManagementLink";
             public static string SubmitTeamRename { get; } = "SubmitTeamRename";
+            public static string ProgramDashboard { get; } = "ProgramDashboard";
         }
 
         public static string DateTimeFormat { get; } = "dd/MM/yyyy HH:mm:ss";

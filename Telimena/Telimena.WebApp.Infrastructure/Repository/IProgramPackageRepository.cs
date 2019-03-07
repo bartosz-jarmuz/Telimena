@@ -11,7 +11,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
     {
         Task<ProgramPackageInfo> GetLatestProgramPackageInfo(int programId);
         Task<byte[]> GetPackage(int packageId, IFileRetriever fileRetriever);
-        Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName
+        Task<ProgramPackageInfo> StorePackageAsync(Program program, Stream fileStream, string fileName
             , IFileSaver fileManager);
     }
 }

@@ -101,6 +101,9 @@
                         <b>File Size</b> <a class="pull-right">@(Model.ProgramPackageInfo?.FileSizeBytes.GetSizeString())</a>
                     </li>
                     <li class="list-group-item">
+                        <b>Version</b> <a class="pull-right">@(Model.ProgramPackageInfo?.Version)</a>
+                    </li>
+                    <li class="list-group-item">
                         <b>Supported toolkit version</b> <a class="pull-right">@(Model.ProgramPackageInfo?.SupportedToolkitVersion)</a>
                     </li>
                     <li class="list-group-item">
@@ -356,7 +359,7 @@
             $('#@Strings.Id.UploadFullProgramPackageForm').submit(function(e) {
                 e.preventDefault();
                 var form = $(this);
-                var formData = new FormData(form);
+                var formData = new FormData(form[0]);
                 UploadFile(formData,
                     '@Url.LatestApiUrl(ProgramsController.Routes.Upload, new {telemetryKey = @Model.TelemetryKey})',
                     $(this).find('input'));

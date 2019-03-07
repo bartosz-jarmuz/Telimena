@@ -4,8 +4,15 @@
         @Model.ProgramName
         <small>
             <span >
-                <a class="headerMenuLink" href="@Url.Action("Index", "ProgramManagement", new {telemetryKey = Model.TelemetryKey})" id="headerMenuManageLink">
+                <a class="headerMenuLink" href="@Url.Action("Dashboard", "ProgramStatistics", new {telemetryKey = Model.TelemetryKey})" id="headerMenuDashboardLink">
                     @*<i class="fa fa-cog"></i>*@ 
+                    <span>Dashboard</span>
+                </a>
+            </span>
+            <span>&nbsp;|&nbsp;</span>
+            <span >
+                <a class="headerMenuLink" href="@Url.Action("Index", "ProgramManagement", new {telemetryKey = Model.TelemetryKey})" id="headerMenuManageLink">
+                    @*<i class="fa fa-cog"></i>*@
                     <span>Manage</span>
                 </a>
             </span>
@@ -26,7 +33,7 @@
             <span>&nbsp;|&nbsp;</span>
             <span>
                 <a class="headerMenuLink" href="@Url.Action("Logs", "ProgramStatistics", new {telemetryKey = Model.TelemetryKey})" id="headerMenuLogsLink">
-                    @*<i class="fa fa-file-text"></i>*@ 
+                    @*<i class="fa fa-file-text"></i>*@
                     <span>Logs</span>
                 </a>
             </span>

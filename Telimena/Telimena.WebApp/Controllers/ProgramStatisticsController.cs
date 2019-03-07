@@ -67,6 +67,29 @@ namespace Telimena.WebApp.Controllers
         }
 
         /// <summary>
+        /// Indexes the specified telemetry key.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [Audit]
+        [HttpGet]
+        public async Task<ActionResult> Dashboard(Guid telemetryKey)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            ProgramStatisticsViewModel model = new ProgramStatisticsViewModel() { TelemetryKey = program.TelemetryKey, ProgramName = program.Name };
+
+            return this.View("Dashboard", model);
+        }
+
+
+
+        /// <summary>
         /// Pivots the table.
         /// </summary>
         /// <param name="telemetryKey">The telemetry key.</param>
@@ -224,6 +247,79 @@ namespace Telimena.WebApp.Controllers
             DataTablesResponse response = DataTablesResponse.Create(request, result.TotalCount, result.FilteredCount, result.UsageData);
 
             return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
+        }
+
+
+        /// <summary>
+        /// Gets the application users summary.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpPost]
+        public async Task<ActionResult> GetAppUsersSummary(Guid telemetryKey)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            List<AppUsersSummaryData> programs = await this.Work.GetAppUsersSummary(new List<Program>(){program} ).ConfigureAwait(false);
+            return this.Content(JsonConvert.SerializeObject(programs));
+        }
+
+        /// <summary>
+        /// Gets the program usages.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpPost]
+        public async Task<ActionResult> GetProgramUsages(Guid telemetryKey)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            List<ProgramUsageSummary> programs = (await this.Work.GetProgramUsagesSummary(new List<Program>() { program }).ConfigureAwait(false)).ToList();
+            return this.Content(JsonConvert.SerializeObject(programs));
+        }
+
+        /// <summary>
+        /// Gets all programs summary counts.
+        /// </summary>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        public async Task<ActionResult> GetSummaryCounts(Guid telemetryKey)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            AllProgramsSummaryData summary = await this.Work.GetAllProgramsSummaryCounts(new List<Program>() { program }).ConfigureAwait(false);
+            return this.PartialView("_AllProgramsSummaryBoxes", summary);
+        }
+
+        public JsonResult HierachyChart(int id)
+        {
+            var hierarchyChart = new ChartData()
+            {
+                cols = new object[]
+                {
+                    new {id = "task", type = "string", label = "Employee Name"}
+                    , new {id = "startDate", type = "date", label = "Start Date"}
+                }
+                , rows = new object[]
+                {
+                    new {c = new object[] {new {v = "Bob"}, new {v = 35000}}}
+                    , new {c = new object[] {new {v = "Alice"}, new {v = 44000}}}
+                    , new {c = new object[] {new {v = "Frank"}, new {v = 28000}}}
+                    , new {c = new object[] {new {v = "Floyd"}, new {v = 92000}}}
+                    , new {c = new object[] {new {v = "Fritz"}, new {v = 18500}}}
+                }
+            };
+            return this.Json(hierarchyChart, JsonRequestBehavior.AllowGet);
         }
     }
 }

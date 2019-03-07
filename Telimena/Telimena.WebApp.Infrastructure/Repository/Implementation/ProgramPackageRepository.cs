@@ -26,12 +26,28 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         private readonly TelimenaPortalContext telimenaPortalContext;
         private readonly string containerName = "program-packages";
 
-        public async Task<ProgramPackageInfo> StorePackageAsync(int programId, Stream fileStream, string fileName, IFileSaver fileSaver)
+        public async Task<ProgramPackageInfo> StorePackageAsync(Program program, Stream fileStream, string fileName, IFileSaver fileSaver)
         {
-            string toolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, true).ConfigureAwait(false);
-          
-            ProgramPackageInfo pkg = new ProgramPackageInfo(fileName, programId, fileStream.Length, toolkitVersion);
-            this.telimenaPortalContext.ProgramPackages.Add(pkg);
+
+            string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream, true).ConfigureAwait(false);
+            fileStream.Position = 0;
+            ObjectValidator.Validate(() => Version.TryParse(actualVersion, out Version _)
+                , new InvalidOperationException($"[{actualVersion}] is not a valid version string"));
+
+            string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, false).ConfigureAwait(false);
+            fileStream.Position = 0;
+            fileStream = await Utilities.EnsureStreamIsZipped(fileName, fileStream).ConfigureAwait(false);
+
+            ProgramPackageInfo pkg = await this.telimenaPortalContext.ProgramPackages.Where(x => x.ProgramId == program.Id
+                                                                                                && x.Version == actualVersion
+#pragma warning disable 618
+                                                                                                && x.SupportedToolkitVersion == actualToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
+#pragma warning restore 618
+            if (pkg == null)
+            {
+                pkg = new ProgramPackageInfo(fileName, program.Id, actualVersion, fileStream.Length, actualToolkitVersion);
+                this.telimenaPortalContext.ProgramPackages.Add(pkg);
+            }
 
             await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
 

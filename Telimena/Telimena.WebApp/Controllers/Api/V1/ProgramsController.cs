@@ -99,9 +99,9 @@ namespace Telimena.WebApp.Controllers.Api.V1
                         return this.BadRequest("Failed to find corresponding program");
                     }
 
-                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(program.Id, uploadedFile.InputStream, uploadedFile.FileName, this.fileSaver).ConfigureAwait(false);
+                    ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(program, uploadedFile.InputStream, uploadedFile.FileName, this.fileSaver).ConfigureAwait(false);
                     await this.Work.CompleteAsync().ConfigureAwait(false);
-                    return this.Ok(pkg.Id);
+                    return this.Ok(pkg.PublicId);
                 }
 
                 return this.BadRequest("Empty attachment");

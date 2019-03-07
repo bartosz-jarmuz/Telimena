@@ -7,11 +7,12 @@ using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
+using Telimena.WebApp.Infrastructure.Migrations;
 
 namespace Telimena.WebApp.Infrastructure.Database
 {
-    public class TelimenaPortalDbInitializer : DropCreateDatabaseIfModelChanges<TelimenaPortalContext>
-    //public class TelimenaDbInitializer : MigrateDatabaseToLatestVersion<TelimenaContext, Configuration>
+    //public class TelimenaPortalDbInitializer : DropCreateDatabaseIfModelChanges<TelimenaPortalContext>
+    public class TelimenaPortalDbInitializer : MigrateDatabaseToLatestVersion<TelimenaPortalContext, Configuration>
     {
         public static void SeedUsers(TelimenaPortalContext portalContext)
         {
@@ -36,13 +37,15 @@ namespace Telimena.WebApp.Infrastructure.Database
        
         }
 
-        protected override void Seed(TelimenaPortalContext portalContext)
-        {
-            TelimenaPortalDbInitializer.SeedUsers(portalContext);
-            TelimenaPortalDbInitializer.SeedToolkit(portalContext);
-            portalContext.SaveChanges();
+        
 
-        }
+        //protected override void Seed(TelimenaPortalContext portalContext)
+        //{
+        //    TelimenaPortalDbInitializer.SeedUsers(portalContext);
+        //    TelimenaPortalDbInitializer.SeedToolkit(portalContext);
+        //    portalContext.SaveChanges();
+
+        //}
 
         private static void CreateAdmin(TelimenaPortalContext portalContext)
         {
