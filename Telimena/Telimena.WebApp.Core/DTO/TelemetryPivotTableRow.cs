@@ -25,6 +25,7 @@ namespace Telimena.WebApp.Core.DTO
         public string UserName { get; set; }
         public string ComponentName { get; set; }
         public string Key { get; set; }
-        public string Value { get; set; }
+        public string PropertyValue { get; set; }
+        public double MetricValue { get; set; }
     }
 }

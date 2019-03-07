@@ -129,25 +129,33 @@
 
             function formatDetails(d) {
 
-                var rows = '';
+                var propsRows = '';
 
-                for (var property in d.values) {
-                    if (d.values.hasOwnProperty(property)) {
+                for (var property in d.properties) {
+                    if (d.properties.hasOwnProperty(property)) {
                         var key = property;
-                        var value = d.values[property];
+                        var value = d.properties[property];
 
-                        rows += '<tr><td style="font-weight: bold; padding: 2px;">' +
-                            key +
-                            '</td><td style="padding: 2px;">' +
-                            value +
-                            '</td></tr>';
+                        propsRows += '<tr><td style="font-weight: bold; padding: 2px;">' + key + '</td><td style="padding: 2px;">'+value+'</td></tr>';
                     }
                 }
 
+                var metricRows = '';
 
-                return '<table cellpadding="0" cellspacing="0" border="1" style="padding-left:50px;">' +
-                    rows +
-                    '</table>';
+                for (var property in d.metrics) {
+                    if (d.metrics.hasOwnProperty(property)) {
+                        var key = property;
+                        var value = d.metrics[property];
+
+                        metricRows+= '<tr><td style="font-weight: bold; padding: 2px;">' + key + '</td><td style="padding: 2px;">' + value + '</td></tr>';
+                    }
+                }               
+
+                var propsTable = '<table   cellpadding="0" cellspacing="0" border="1" style="display: inline-block; margin: 0px 15px;"><thead><tr><th colspan="2">Properties</th></tr></thead><tbody>' + propsRows + '</tbody></table>';
+                var metricsTable = '<table cellpadding="0" cellspacing="0" border="1" style="display: inline-block; margin: 0px 15px;"><thead><tr><th colspan="2">Metrics</th></tr></thead><tbody>' + metricRows + '</tbody></table>';
+
+
+                return '<span >'+propsTable +'</span>' + '<span>'+ metricsTable + '</span>';
             }
 
             function formatStackTrace(d) {

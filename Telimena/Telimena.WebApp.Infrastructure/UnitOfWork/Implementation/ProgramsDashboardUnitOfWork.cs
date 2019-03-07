@@ -558,11 +558,20 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 List<TelemetryUnit> units = detail.GetTelemetryUnits().ToList();
                 if (units.Any())
                 {
-                    foreach (TelemetryUnit detailTelemetryUnit in units)
+                    foreach (TelemetryUnit detailTelemetryUnit in units.Where(x=>x.UnitType == TelemetryUnit.UnitTypes.Property))
                     {
                         TelemetryPivotTableRow row = new TelemetryPivotTableRow(detail)
                         {
-                            Value = detailTelemetryUnit.ValueString,
+                            PropertyValue = detailTelemetryUnit.ValueString,
+                            Key = detailTelemetryUnit.Key,
+                        };
+                        rows.Add(row);
+                    }
+                    foreach (TelemetryUnit detailTelemetryUnit in units.Where(x => x.UnitType == TelemetryUnit.UnitTypes.Metric))
+                    {
+                        TelemetryPivotTableRow row = new TelemetryPivotTableRow(detail)
+                        {
+                            MetricValue = detailTelemetryUnit.ValueDouble,
                             Key = detailTelemetryUnit.Key,
                         };
                         rows.Add(row);

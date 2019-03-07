@@ -236,9 +236,12 @@ namespace TelimenaTestSandboxApp
                 {
                     this.Telimena.Track.Event(name, new Dictionary<string, string>()
                     {
-                        { "SomeEventMetric", $"{new Random().Next(100)}" },
                         {"WeekDay",$"{DateTime.Today.DayOfWeek}" }
-                    });
+                    },
+                        new Dictionary<string, double>()
+                        {
+                            { "RandomNumberBetween0And100", new Random().Next(100) },
+                        });
             }
                 sw.Stop();
             this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of event [{name}]" + Environment.NewLine;
