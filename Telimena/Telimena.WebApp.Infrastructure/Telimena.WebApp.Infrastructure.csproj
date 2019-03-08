@@ -176,15 +176,6 @@
     <Compile Include="Database\TelimenaTelemetryDbInitializer.cs" />
     <Compile Include="EntityExtensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
-    <Compile Include="Migrations\201903072251125_initial.cs" />
-    <Compile Include="Migrations\201903072251125_initial.Designer.cs">
-      <DependentUpon>201903072251125_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903072256481_AddVersionToProgramPackageInfo.cs" />
-    <Compile Include="Migrations\201903072256481_AddVersionToProgramPackageInfo.Designer.cs">
-      <DependentUpon>201903072256481_AddVersionToProgramPackageInfo.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\AzureFileSaver.cs" />
@@ -239,14 +230,6 @@
       <Project>{1F08CB36-09F1-4134-A921-E8162F820383}</Project>
       <Name>Telimena.WebApp.Utils</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201903072251125_initial.resx">
-      <DependentUpon>201903072251125_initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903072256481_AddVersionToProgramPackageInfo.resx">
-      <DependentUpon>201903072256481_AddVersionToProgramPackageInfo.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />

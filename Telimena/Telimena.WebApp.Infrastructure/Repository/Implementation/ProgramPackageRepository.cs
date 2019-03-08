@@ -39,7 +39,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             fileStream = await Utilities.EnsureStreamIsZipped(fileName, fileStream).ConfigureAwait(false);
 
             ProgramPackageInfo pkg = await this.telimenaPortalContext.ProgramPackages.Where(x => x.ProgramId == program.Id
-                                                                                                && x.Version == actualVersion
+                                                                                              //  && x.Version == actualVersion
 #pragma warning disable 618
                                                                                                 && x.SupportedToolkitVersion == actualToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
 #pragma warning restore 618
