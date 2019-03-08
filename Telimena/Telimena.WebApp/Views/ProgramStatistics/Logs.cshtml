@@ -38,18 +38,18 @@
 
                 columns: [
                     {
-                        name: "@nameof(DataTableTelemetryDataBase.Timestamp)",
-                        data: "@nameof(DataTableTelemetryDataBase.Timestamp).ToLowerFirstChar()",
+                        name: "@nameof(DataTableTelemetryData.Timestamp)",
+                        data: "@nameof(DataTableTelemetryData.Timestamp).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
                             return toFormattedTimestamp(new Date(data));                        },
-                        title:"@nameof(DataTableTelemetryDataBase.Timestamp)",
+                        title:"@nameof(DataTableTelemetryData.Timestamp)",
                         sortable: true,
                         searchable: false
                     },
                     {
-                        name:  "@nameof(DataTableTelemetryDataBase.Sequence)",
-                        data:  "@nameof(DataTableTelemetryDataBase.Sequence).ToLowerFirstChar()",
-                        title: "@nameof(DataTableTelemetryDataBase.Sequence)",
+                        name:  "@nameof(DataTableTelemetryData.Sequence)",
+                        data:  "@nameof(DataTableTelemetryData.Sequence).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.Sequence)",
                         sortable: true,
                         searchable: true,
                         render: function (data, type, row, meta) {
@@ -57,9 +57,9 @@
                         }
                     },
                     {
-                        name:  "@nameof(DataTableTelemetryDataBase.UserName)",
-                        data:  "@nameof(DataTableTelemetryDataBase.UserName).ToLowerFirstChar()",
-                        title: "@nameof(DataTableTelemetryDataBase.UserName)",
+                        name:  "@nameof(DataTableTelemetryData.UserName)",
+                        data:  "@nameof(DataTableTelemetryData.UserName).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.UserName)",
                         sortable: true,
                         searchable: true
                     },

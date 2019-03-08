@@ -45,7 +45,7 @@ namespace Telimena.Tests
             UpdatePackageRepository pkgRepo = new UpdatePackageRepository(this.Context, new AssemblyStreamVersionReader());
             ProgramRepository prgRepo = new ProgramRepository(this.Context);
             ProgramPackageRepository prgPkgRepo = new ProgramPackageRepository(this.Context, new AssemblyStreamVersionReader());
-            prgPkgRepo.Add(new ProgramPackageInfo("Prg.zip", this.Prg_1, 2222, "1.0.0.0"));
+            prgPkgRepo.Add(new ProgramPackageInfo("Prg.zip", this.Prg_1, "1.0.0.0", 2222, "1.0.0.0"));
             prgRepo.Add(new Program("prg", this.Program1Key) { Id = this.Prg_1 });
 
             Mock<IAssemblyStreamVersionReader> reader = TestingUtilities.GetMockVersionReader();

@@ -8,7 +8,7 @@ using Telimena.WebApp.Core.Models.Telemetry;
 
 namespace Telimena.WebApp.Core.DTO
 {
-    public class DataTableTelemetryDataBase
+    public class DataTableTelemetryData
     {
         public DateTimeOffset Timestamp { get; set; }
         public string UserName { get; set; }
@@ -16,10 +16,12 @@ namespace Telimena.WebApp.Core.DTO
         public string ProgramVersion { get; set; }
         public string Sequence { get; set; }
         public string IpAddress { get; set; }
+        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, double> Metrics { get; set; } = new Dictionary<string, double>();
 
     }
 
-    public class SequenceHistoryData : DataTableTelemetryDataBase
+    public class SequenceHistoryData : DataTableTelemetryData
     {
         public SequenceHistoryData()
         {
@@ -36,7 +38,10 @@ namespace Telimena.WebApp.Core.DTO
         public SequenceHistoryData(TelemetryDetail detail)
         {
             this.LoadBaseItems(detail.Timestamp, detail.EntryKey, GetTypeName(detail));
-            this.Values = detail.GetTelemetryUnits().ToDictionary(x => x.Key, x => x.ValueString);
+            this.Properties = detail.GetTelemetryUnits().Where(x => x.UnitType == TelemetryUnit.UnitTypes.Property)
+                .ToDictionary(x => x.Key, x => x.ValueString);
+            this.Metrics = detail.GetTelemetryUnits().Where(x => x.UnitType == TelemetryUnit.UnitTypes.Metric)
+                .ToDictionary(x => x.Key, x => x.ValueDouble);
         }
 
         public SequenceHistoryData(LogMessage item)
@@ -97,17 +102,12 @@ namespace Telimena.WebApp.Core.DTO
         public string DataType { get; set; }
         public string Message { get; set; }
         public List<TelemetryItem.ExceptionInfo.ParsedStackTrace> StackTrace { get; set; } = new List<TelemetryItem.ExceptionInfo.ParsedStackTrace>();
-        public Dictionary<string, string> Values { get; set; } = new Dictionary<string, string>();
 
     }
 
-    public class DataTableTelemetryData : DataTableTelemetryDataBase
-    {
-        public Dictionary<string, string> Properties { get; set; } =new Dictionary<string, string>();
-        public Dictionary<string, double> Metrics { get; set; } =new Dictionary<string, double>();
-    }
+   
 
-    public class LogMessageData : DataTableTelemetryDataBase
+    public class LogMessageData : DataTableTelemetryData
     {
         public string Message { get; set; }
         public string LogLevel{ get; set; }
