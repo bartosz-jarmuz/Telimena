@@ -176,6 +176,11 @@
     <Compile Include="Database\TelimenaTelemetryDbInitializer.cs" />
     <Compile Include="EntityExtensions.cs" />
     <Compile Include="Identity\TelimenaUserManager.cs" />
+    <Compile Include="Migrations\201902272220276_InitialCreate.cs" />
+    <Compile Include="Migrations\201902272220276_InitialCreate.Designer.cs">
+      <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\AzureFileSaver.cs" />
@@ -230,6 +235,11 @@
       <Project>{1F08CB36-09F1-4134-A921-E8162F820383}</Project>
       <Name>Telimena.WebApp.Utils</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201902272220276_InitialCreate.resx">
+      <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />
