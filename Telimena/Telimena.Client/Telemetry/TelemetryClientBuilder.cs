@@ -95,6 +95,7 @@ namespace TelimenaClient
                 AppInsightsEndpointEnabled = !string.IsNullOrEmpty(this.properties.InstrumentationKey)
                 , TelimenaTelemetryEndpoint = GetTelimenaTelemetryEndpoint(this.properties)
                 , DeliveryInterval = this.properties.StartupInfo.DeliveryInterval
+                , TelimenaTelemetryKey = this.properties.TelemetryKey
             };
             TelimenaInMemoryTransmitter transmitter = new TelimenaInMemoryTransmitter(buffer, deliverySettings);
 

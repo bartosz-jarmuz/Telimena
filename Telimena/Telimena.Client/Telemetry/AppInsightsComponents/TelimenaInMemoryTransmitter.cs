@@ -62,7 +62,7 @@ namespace TelimenaClient
                 this.LogResult(response);
 
             }
-            if (this.DeliverySettings != null)
+            if (this.DeliverySettings != null && this.DeliverySettings.TelimenaTelemetryKey != Guid.Empty)
             {
                 Transmission teliTransmission = new Transmission(this.DeliverySettings.TelimenaTelemetryEndpoint, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
                 HttpWebResponseWrapper response = await teliTransmission.SendAsync().ConfigureAwait(false);

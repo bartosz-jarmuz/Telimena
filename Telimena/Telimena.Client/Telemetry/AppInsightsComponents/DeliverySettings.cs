@@ -10,6 +10,8 @@ namespace TelimenaClient
 
         public Uri TelimenaTelemetryEndpoint { get; set; }
 
+        public Guid TelimenaTelemetryKey { get; set; }
+
         public TimeSpan DeliveryInterval { get; set; }
     }
 }
