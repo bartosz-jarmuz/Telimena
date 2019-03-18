@@ -13,7 +13,7 @@ namespace Telimena.WebApp.Core.Models.Portal
         public ProgramPackageInfo(string fileName, int programId, string version, long fileSizeBytes, string supportedToolkitVersion) : base(fileName, fileSizeBytes)
         {
             this.ProgramId = programId;
-            //this.Version = version;
+            this.Version = version;
             this.SupportedToolkitVersion = supportedToolkitVersion;
         }
 
@@ -26,6 +26,6 @@ namespace Telimena.WebApp.Core.Models.Portal
         public int ProgramId { get; set; }
         public string SupportedToolkitVersion { get; set; }
 
-        //public string Version { get; set; }
+        public string Version { get; set; }
     }
 }

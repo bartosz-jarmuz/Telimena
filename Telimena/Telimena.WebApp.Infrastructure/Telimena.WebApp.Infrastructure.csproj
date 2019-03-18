@@ -180,6 +180,10 @@
     <Compile Include="Migrations\201902272220276_InitialCreate.Designer.cs">
       <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903182009408_AddedVersionToPackageInfo.cs" />
+    <Compile Include="Migrations\201903182009408_AddedVersionToPackageInfo.Designer.cs">
+      <DependentUpon>201903182009408_AddedVersionToPackageInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
@@ -239,6 +243,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201902272220276_InitialCreate.resx">
       <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903182009408_AddedVersionToPackageInfo.resx">
+      <DependentUpon>201903182009408_AddedVersionToPackageInfo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
