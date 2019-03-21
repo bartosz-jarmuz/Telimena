@@ -26,6 +26,6 @@ namespace Telimena.WebApp.Core.Models.Portal
         public int ProgramId { get; set; }
         public string SupportedToolkitVersion { get; set; }
 
-        //public string Version { get; set; }
+        public string Version { get; set; }
     }
 }

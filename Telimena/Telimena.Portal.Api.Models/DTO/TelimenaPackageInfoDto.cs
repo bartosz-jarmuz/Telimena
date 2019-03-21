@@ -16,7 +16,7 @@ namespace Telimena.Portal.Api.Models.DTO
         public Guid Id { get; set; }
         public string FileName { get; set; }
         public string SupportedToolkitVersion { get; set; }
-       // public string Version { get; set; }
+        public string Version { get; set; }
 
         public long FileSizeBytes { get; set; }
         public DateTimeOffset UploadedDate { get; set; }
