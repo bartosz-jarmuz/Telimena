@@ -180,9 +180,9 @@
     <Compile Include="Migrations\201902272220276_InitialCreate.Designer.cs">
       <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201903182009408_AddedVersionToPackageInfo.cs" />
-    <Compile Include="Migrations\201903182009408_AddedVersionToPackageInfo.Designer.cs">
-      <DependentUpon>201903182009408_AddedVersionToPackageInfo.cs</DependentUpon>
+    <Compile Include="Migrations\201903211358303_AddedVersionToProgramPackageInfo.cs" />
+    <Compile Include="Migrations\201903211358303_AddedVersionToProgramPackageInfo.Designer.cs">
+      <DependentUpon>201903211358303_AddedVersionToProgramPackageInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\PortalMigrationsConfiguration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
@@ -244,8 +244,8 @@
     <EmbeddedResource Include="Migrations\201902272220276_InitialCreate.resx">
       <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903182009408_AddedVersionToPackageInfo.resx">
-      <DependentUpon>201903182009408_AddedVersionToPackageInfo.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201903211358303_AddedVersionToProgramPackageInfo.resx">
+      <DependentUpon>201903211358303_AddedVersionToProgramPackageInfo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
