@@ -184,7 +184,7 @@
     <Compile Include="Migrations\201903182009408_AddedVersionToPackageInfo.Designer.cs">
       <DependentUpon>201903182009408_AddedVersionToPackageInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\PortalMigrationsConfiguration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\AzureFileSaver.cs" />
