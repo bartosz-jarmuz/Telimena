@@ -180,7 +180,7 @@
     <Compile Include="Migrations\201902272220276_InitialCreate.Designer.cs">
       <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\PortalMigrationsConfiguration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\AzureFileSaver.cs" />

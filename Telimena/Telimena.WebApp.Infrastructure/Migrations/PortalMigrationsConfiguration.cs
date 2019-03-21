@@ -1,3 +1,5 @@
+using Telimena.WebApp.Infrastructure.Database;
+
 namespace Telimena.WebApp.Infrastructure.Migrations
 {
     using System;
@@ -5,9 +7,9 @@ namespace Telimena.WebApp.Infrastructure.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Telimena.WebApp.Infrastructure.Database.TelimenaPortalContext>
+    public sealed class PortalMigrationsConfiguration : DbMigrationsConfiguration<Telimena.WebApp.Infrastructure.Database.TelimenaPortalContext>
     {
-        public Configuration()
+        public PortalMigrationsConfiguration()
         {
             AutomaticMigrationsEnabled = false;
             ContextKey = "Telimena.WebApp.Infrastructure.Database.TelimenaPortalContext";
@@ -19,6 +21,14 @@ namespace Telimena.WebApp.Infrastructure.Migrations
 
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
+
+            //protected override void Seed(TelimenaPortalContext portalContext)
+            //{
+            TelimenaPortalDbInitializer.SeedUsers(context);
+            TelimenaPortalDbInitializer.SeedToolkit(context);
+            context.SaveChanges();
+
+            //}
         }
     }
 }
