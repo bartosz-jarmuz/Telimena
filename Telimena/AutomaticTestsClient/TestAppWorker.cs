@@ -103,7 +103,7 @@ namespace AutomaticTestsClient
         {
             Console.WriteLine("Starting update handling...");
 
-            UpdateCheckResult result = telimena.Update.HandleUpdatesAsync(false).GetAwaiter().GetResult();
+            UpdateCheckResult result = telimena.Update.HandleUpdates(false);
             Console.WriteLine("Finished update handling...");
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto};
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));
