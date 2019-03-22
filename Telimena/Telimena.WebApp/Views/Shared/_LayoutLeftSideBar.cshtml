@@ -17,7 +17,37 @@
             ;
         }
         <ul class="sidebar-menu" data-widget="tree">
-            <li class="header">ABOUT</li>
+            <li class="header">DOCUMENTATION</li>
+            <li class="treeview menu-open">
+                <a href="#">
+                    <i class="fa fa-book"></i> <span>Telimena Docs</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu" style="display: block;">
+                    <li>
+                        <a href="@Url.Action("Index", "Help")" id="@(Strings.Id.Help.LinkHelpOverview)">
+                            <i class="fa fa-file-text"></i> <span>Overview</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("GettingStarted", "Help")" id="@(Strings.Id.Help.LinkGettingStarted)">
+                            <i class="fa fa-file-text"></i> <span>Getting started</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Telemetry", "Help")" id="@(Strings.Id.Help.LinkTelemetry)">
+                            <i class="fa fa-file-text"></i> <span>Telemetry</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("LifecycleManagement", "Help")" id="@(Strings.Id.Help.LinkLifecycleManagement)">
+                            <i class="fa fa-file-text"></i> <span>Application Lifecycle</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li>
                 <a href="/swagger" id="@Strings.Id.ApiDocsLink">
                     <i class="fa fa-book"></i> <span>API Docs</span>

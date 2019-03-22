@@ -1,0 +1,47 @@
+﻿@using Telimena.WebApp.Core.Interfaces
+@using Telimena.WebApp.Models.PortalUsers
+@using Telimena.WebApp.UiStrings
+@{
+    ViewBag.Title = "Telimena help";
+}
+<style>
+    li.L0, li.L1, li.L2, li.L3,
+    li.L5, li.L6, li.L7, li.L8 {
+        list-style-type: decimal !important;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="box box-default" id="@Strings.Id.Help.HelpOverview">
+            <div class="box-header with-border">
+                <h3 class="box-title">Overview</h3>
+            </div>
+            <div class="box-body">
+                <p>
+                    Telimena is a platform which provides two types of services
+                    <ol>
+                        <li>Telemetry</li>
+                        <li>Lifecycle management</li>
+                    </ol>
+                    The primary objective is to keep it as easy-to-use as possible, i.e. to minimize the learning effort and on-boarding time.
+                    It is possible to use either just Telemetry or Lifecycle Management services for an application.
+                </p>
+                <h4>Lifecycle management</h4>
+                <p>This service predominantly focuses on managing application 'self-update' process in a way that is as user friendly as possible and requires minimum effort from the developer.</p>
+
+                <h4>Telemetry</h4>
+                <p>The telemetry services focuses on seamless gathering of usage data from the application. 
+                    This data can be analyzed and used to assess which aspects of the application are the most used ones, as well as help understand how the users use the application, monitor possible exceptions (expected or not) etc.</p>
+            </div>
+        </div>
+    </div>
+
+
+    @Html.Partial("_HelpTableOfContents")
+</div>
+
+@section scripts
+{
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+}
