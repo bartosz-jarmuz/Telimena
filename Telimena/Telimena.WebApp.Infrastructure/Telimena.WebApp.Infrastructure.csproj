@@ -180,10 +180,15 @@
     <Compile Include="Migrations\201902272220276_InitialCreate.Designer.cs">
       <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Telemetry\201903032034593_InitialCreate.cs" />
+    <Compile Include="Migrations\Telemetry\201903032034593_InitialCreate.Designer.cs">
+      <DependentUpon>201903032034593_InitialCreate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201903211358303_AddedVersionToProgramPackageInfo.cs" />
     <Compile Include="Migrations\201903211358303_AddedVersionToProgramPackageInfo.Designer.cs">
       <DependentUpon>201903211358303_AddedVersionToProgramPackageInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Telemetry\TelemetryMigrationsConfiguration.cs" />
     <Compile Include="Migrations\PortalMigrationsConfiguration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
@@ -243,6 +248,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201902272220276_InitialCreate.resx">
       <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\Telemetry\201903032034593_InitialCreate.resx">
+      <DependentUpon>201903032034593_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903211358303_AddedVersionToProgramPackageInfo.resx">
       <DependentUpon>201903211358303_AddedVersionToProgramPackageInfo.cs</DependentUpon>

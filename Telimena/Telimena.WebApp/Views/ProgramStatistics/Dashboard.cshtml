@@ -8,8 +8,7 @@
 
 @Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model.ProgramName, TelemetryKey = Model.TelemetryKey })
 
-
-<section class="apps-summary" data-url="@Url.Action("GetSummaryCounts")?telemetryKey=@Model.TelemetryKey">
+<section class="apps-summary" data-url="@Url.Action("GetSummaryCounts")?telemetryKey=@Model.TelemetryKey" id="@Strings.Id.ProgramDashboard">
     <div class="box box-default col-md-12">
         <div class="box-header">
             <h3 class="box-title">Loading</h3>

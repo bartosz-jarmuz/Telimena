@@ -105,6 +105,9 @@ namespace Telimena.WebApp.UITests._01._Ui
             this.ClickOnProgramMenuButton(appName, "_pivotTableLink");
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.EventTelemetryPivotTable)));
 
+            this.ClickOnProgramMenuButton(appName, "_dashboardLink");
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramDashboard)));
+
         }
     }
 }
