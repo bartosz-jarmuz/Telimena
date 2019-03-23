@@ -1,0 +1,131 @@
+﻿@using Telimena.WebApp.Core.Interfaces
+@using Telimena.WebApp.Models.PortalUsers
+@using Telimena.WebApp.UiStrings
+@{
+    ViewBag.Title = "Installing Telimena";
+}
+<style>
+    li.L0, li.L1, li.L2, li.L3,
+    li.L5, li.L6, li.L7, li.L8 { list-style-type: decimal !important; }
+</style>
+
+<div class="row">
+<div class="col-md-8">
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title">Installation help</h3>
+        </div>
+        <div class="box-body">
+            <div class="box-group" id="accordion">
+                
+                <div class="panel box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.AppRegistrationPanel" aria-expanded="true">
+                                App registration
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="@Strings.Id.Help.AppRegistrationPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                        <div class="box-body">
+                            <p>
+                                The first step in order to start using Telimena with an application is to
+                                <a href="@Url.Action("Register", "RegisterProgram")" target="_blank">register the application in the Portal.</a>
+                                The registration form asks for the minimum required info to support the telemetry and lifecycle management:
+                                <dl>
+                                    <dt>Telemetry Key</dt>
+                                    <dd>
+                                        A unique key which identifies your application within the system. The form generates a new GUID on each refresh, however you can provide one yourself (as long as it's a valid GUID).<br />
+                                        This key will need to be provided in your application when initializing Telimena.
+                                    </dd>
+                                    <dt>Application Name</dt>
+                                    <dd>This is the name of your application. You cannot have more than one application with the same name, because the name will be used to generate a user-friendly download url.</dd>
+                                    
+                                    <dt>Primary assembly file name</dt>
+                                    <dd>This is the name of the primary assembly of your application (e.g. it's entry point, such as 'MyApp.exe').
+                                        This is the file which version is evaluated during the 'check for updates' procedure. 
+                                        This file needs to be present in each of the update packages, because the version of the program (and the update package) is determined based on the 'Assembly File Version' of this file.
+                                        <br/>This does not need to be unique.</dd>
+                                </dl>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.InstallationPanel" aria-expanded="true">
+                                Adding a nuget package
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="@Strings.Id.Help.InstallationPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                        <div class="box-body">
+                            <p>
+                                Telimena Client is a class library that needs to be added to the project as a reference.
+                                The Client is available as <a href="https://www.nuget.org/packages/TelimenaClient.Alpha/" target="_blank">a Nuget package.</a>
+                            </p>
+
+                            <p>For information on how to install Nuget packages, see the following: <a href="https://docs.microsoft.com/en-us/nuget/consume-packages/ways-to-install-a-package" target="_blank"></a></p>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+
+                <div class="panel box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.InitializationPanel" aria-expanded="true">
+                                Client initialization
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="@Strings.Id.Help.InitializationPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                        <div class="box-body">
+                            <div class="box-body">
+                                <p>
+                                    There are a few ways to initialize the Telimena Client after <a href="#@Strings.Id.Help.InstallationPanel">installing the class library</a>.
+                                </p>
+                                <p>
+                                    In any case the basic requirement is to create an instance of the TelimenaStartupInfo class, which at minimum requires specifying the 'Telemetry Key' of the application. (See more <a href="@Url.Action("GettingStarted")#@Strings.Id.Help.InitializationPanel">in the 'Initialization' section</a>).
+                                    Apart from that, this class allows specifying some settings for the Telimena Client, such as the telemetry data delivery interval. It should be quite self-explanatory.
+                                </p>
+                                <pre class="prettyprint lang-cs linenums">
+public class TestApplication
+{
+    private static TelimenaStartupInfo telimenaStartupInfo = new TelimenaStartupInfo(Guid.Parse("4a998a59-e96b-4444-8e01-8432af5c4b7e"));
+
+    public static void Main(params string[] args)
+    {
+        ITelimena telimena = TelimenaFactory.Construct(telimenaStartupInfo);
+        telimena.Track.Event("It is (already) alive!");
+    }
+}</pre>
+                                
+                                <p>It is not recommended to create a new instance of Telimena client each time before sending telemetry - instead, it's better to create a property and instantiate it only once.</p>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+    @Html.Partial("_HelpTableOfContents")
+</div>
+
+@section scripts
+{
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+}

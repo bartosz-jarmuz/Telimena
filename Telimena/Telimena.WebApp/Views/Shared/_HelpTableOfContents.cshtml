@@ -1,0 +1,125 @@
+﻿@using Telimena.WebApp.UiStrings
+
+@{
+    string itemIcon = "fa fa-bookmark-o";
+}
+
+<style>
+.bottomless {
+    margin-bottom: 3px;
+}
+</style>
+
+<div class="col-md-3 pull-right"  style="position: fixed; right:30px;">
+
+    <div class="box box-solid box-default bottomless" >
+        <div class="box-header ">
+            <h3 class="box-title">Documentation Table Of Contents</h3>
+        </div>
+    </div>
+
+    <div class="box bottomless box-default ">
+        <div class="box-header with-border">
+            <h3 class="box-title">Getting started</h3>
+
+            <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body no-padding" style="">
+            <ul class="nav nav-pills nav-stacked ">
+                <li>
+                    <a href="@Url.Action("Index", "Help")">
+                        <i class="@itemIcon"></i>Overview
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("GettingStarted", "Help")#@Strings.Id.Help.AppRegistrationPanel">
+                        <i class="@itemIcon"></i>Registering application
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("GettingStarted", "Help")#@Strings.Id.Help.InstallationPanel">
+                        <i class="@itemIcon"></i>Installing Telimena Client
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("GettingStarted", "Help")#@Strings.Id.Help.InitializationPanel">
+                        <i class="@itemIcon"></i>Initializing Telimena Client
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="box box-default bottomless">
+        <div class="box-header with-border">
+            <h3 class="box-title">Telemetry</h3>
+
+            <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body no-padding" style="">
+            <ul class="nav nav-pills nav-stacked ">
+                <li>
+                    <a href="@Url.Action("Telemetry", "Help")#@Strings.Id.Help.TelemetryOverviewPanel">
+                        <i class="@itemIcon"></i>Telemetry overview
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Telemetry", "Help")#@Strings.Id.Help.EventsPanel">
+                        <i class="@itemIcon"></i>Events
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Telemetry", "Help")#@Strings.Id.Help.ViewsPanel">
+                        <i class="@itemIcon"></i>Views
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Telemetry", "Help")#@Strings.Id.Help.ExceptionsPanel">
+                        <i class="@itemIcon"></i>Exceptions
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Telemetry", "Help")#@Strings.Id.Help.LogsPanel">
+                        <i class="@itemIcon"></i>Logs
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+
+    <div class="box box-default bottomless">
+        <div class="box-header with-border">
+            <h3 class="box-title">Application Lifecycle Management</h3>
+
+            <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body no-padding" style="">
+            <ul class="nav nav-pills nav-stacked ">
+                <li>
+                    <a href="@Url.Action("LifecycleManagement", "Help")#@Strings.Id.Help.UploadingUpdatesPanel">
+                        <i class="@itemIcon"></i>Uploading updates to Telimena portal
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("LifecycleManagement", "Help")#@Strings.Id.Help.CheckingForUpdatesPanel">
+                        <i class="@itemIcon"></i>Checking for updates in client applications
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</div>

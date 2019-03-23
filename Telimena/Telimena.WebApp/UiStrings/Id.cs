@@ -4,7 +4,7 @@ namespace Telimena.WebApp.UiStrings
     public static partial class Strings
     {
 
-        public static class Id
+        public static partial class Id
         {
             public static string LoginForm { get; } = "LoginForm";
             public static string Email { get; } = "Email";
@@ -66,6 +66,10 @@ namespace Telimena.WebApp.UiStrings
             public static string TeamManagementLink { get; } = "TeamManagementLink";
             public static string SubmitTeamRename { get; } = "SubmitTeamRename";
             public static string ProgramDashboard { get; } = "ProgramDashboard";
+
+            public static partial class Help
+            {
+            }
         }
 
         public static string DateTimeFormat { get; } = "dd/MM/yyyy HH:mm:ss";

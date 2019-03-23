@@ -31,6 +31,6 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.20.18271.3")]
-[assembly: AssemblyFileVersion("1.20.18271.3")]
+[assembly: AssemblyVersion("1.21.0.0")]
+[assembly: AssemblyFileVersion("19.3.22.0")]
 [assembly: InternalsVisibleTo("Telimena.Tests")]

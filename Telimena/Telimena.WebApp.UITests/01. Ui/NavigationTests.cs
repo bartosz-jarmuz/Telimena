@@ -42,9 +42,9 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.FindElement(By.Id(Strings.Id.RegisterApplicationLink)).Click();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
 
-                
-
                 this.ValidateAppPages(TestAppProvider.AutomaticTestsClientAppName, wait);
+
+                this.ValidateHelpPages(wait);
 
                 //api should be last
                 this.Driver.FindElement(By.Id(Strings.Id.ApiDocsLink)).Click();
@@ -107,6 +107,22 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             this.ClickOnProgramMenuButton(appName, "_dashboardLink");
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramDashboard)));
+
+        }
+
+        private void ValidateHelpPages(WebDriverWait wait)
+        {
+            this.Driver.FindElement(By.Id(Strings.Id.Help.LinkHelpOverview)).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.HelpOverview)));
+
+            this.Driver.FindElement(By.Id(Strings.Id.Help.LinkGettingStarted)).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.AppRegistrationPanel)));
+
+            this.Driver.FindElement(By.Id(Strings.Id.Help.LinkTelemetry)).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.TelemetryOverviewPanel)));
+
+            this.Driver.FindElement(By.Id(Strings.Id.Help.LinkLifecycleManagement)).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.CheckingForUpdatesPanel)));
 
         }
     }

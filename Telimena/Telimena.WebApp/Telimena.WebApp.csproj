@@ -304,6 +304,7 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\Admin\PortalUsersController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\HelpController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProgramStatisticsController.cs" />
     <Compile Include="Controllers\ProgramManagementController.cs" />
@@ -329,6 +330,7 @@
     <Compile Include="Models\ToolkitManagement\ToolkitManagementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UiStrings\Css.cs" />
+    <Compile Include="UiStrings\Help.cs" />
     <Compile Include="UiStrings\Id.cs" />
     <Compile Include="UiStrings\Name.cs" />
   </ItemGroup>
@@ -2038,6 +2040,11 @@
     <Content Include="Views\Shared\_TopAlertBox.cshtml" />
     <Content Include="Views\Team\Index.cshtml" />
     <Content Include="Views\ProgramStatistics\Dashboard.cshtml" />
+    <Content Include="Views\Help\Telemetry.cshtml" />
+    <Content Include="Views\Help\Index.cshtml" />
+    <Content Include="Views\Shared\_HelpTableOfContents.cshtml" />
+    <Content Include="Views\Help\GettingStarted.cshtml" />
+    <Content Include="Views\Help\LifecycleManagement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
