@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
@@ -114,6 +115,61 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return returnData;
         }
 
+        public async Task<DataTable> GetDailyActivityScore(List<Program> programs, DateTime startDate, DateTime endDate)
+        {
+            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
+
+            (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+
+            List<TelemetrySummary> summaries = viewData.summaries.Cast<TelemetrySummary>().Concat(eventData.summaries).ToList();
+
+            return this.CreateDailyActivityTable(summaries, startDate, endDate);
+        }
+
+        private DataTable CreateDailyActivityTable(List<TelemetrySummary> summaries, DateTime startDate, DateTime endDate)
+        {
+            IEnumerable<TelemetryDetail> details = summaries.SelectMany(x => x.GetTelemetryDetails()).ToList();
+
+            List<IGrouping<DateTime, TelemetryDetail>> grouped = details.Where(x => x.Timestamp.Date >= startDate && x.Timestamp.Date <= endDate).GroupBy(x => x.Timestamp.Date).OrderBy(x => x.Key).ToList();
+
+            var data = new DataTable();
+
+            data.Columns.Add("Date");
+            data.Columns.Add("ActivityScore");
+            if (!grouped.Any())
+            {
+                return data;
+            }
+
+            DateTime dateRecord = grouped.First().Key;
+
+            foreach (var telemetryDetails in grouped)
+            {
+                while (dateRecord.Date <= telemetryDetails.Key.Date) //include empty days
+                {
+                    DataRow row = data.NewRow();
+                    row["Date"] = dateRecord.ToString("dd MM");
+                    if (dateRecord.Date == telemetryDetails.Key.Date)
+                    {
+                        row["ActivityScore"] = telemetryDetails.Count();
+                    }
+                    else
+                    {
+                        row["ActivityScore"] = 0;
+                    }
+
+                    data.Rows.Add(row);
+                    dateRecord = dateRecord.AddDays(1);
+                }
+
+            }
+
+
+            return data;
+        }
+
+
         public async Task<IEnumerable<ProgramUsageSummary>> GetProgramUsagesSummary(List<Program> programs)
         {
             List<ProgramUsageSummary> returnData = new List<ProgramUsageSummary>();
@@ -212,7 +268,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             foreach (Program program in programs)
             {
                 var telePrg = await this.telemetryContext.TelemetryRootObjects
-                    .FirstOrDefaultAsync(x => x.TelemetryKey == program.TelemetryKey).ConfigureAwait(false);
+                    .FirstOrDefaultAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
                 if (telePrg != null)
                 {
                     telemetryRootObjects.Add(telePrg);

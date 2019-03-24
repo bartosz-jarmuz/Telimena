@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using DataTables.AspNet.Core;
 using Telimena.WebApp.Core;
@@ -35,6 +36,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         Task<IEnumerable<ProgramSummary>> GetProgramSummary(List<Program> programs);
         Task<List<AppUsersSummaryData>> GetAppUsersSummary(List<Program> programs);
+        Task<DataTable> GetDailyActivityScore(List<Program> programs, DateTime startDate, DateTime endDate);
     }
 
 

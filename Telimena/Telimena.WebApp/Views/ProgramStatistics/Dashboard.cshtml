@@ -21,9 +21,28 @@
         </div>
     </div>
 </section>
+
+<div class="row" >
+    <div class="col-md-12" >
+        <div class="box box-primary" >
+            <div class="box-header">
+                <h3 class="box-title">Overall daily activity</h3>
+            </div>
+            <div class="box-body">
+                <div class="chart">
+                    <canvas id="dailyActivityScoreChart" style="display: none;" height="250"></canvas>
+                </div>
+            </div>
+            <div class="overlay">
+                <i class="fa fa-refresh fa-spin"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="col-md-8">
     <div class="row">
-        
+
         <div class="col-md-12">
             <div class="box box-primary">
                 <div class="box-header">
@@ -39,14 +58,7 @@
 
 </div>
 <div class="col-md-4">
-    @*<div class="box box-primary">
-        <div class="box-header">
-            <h3 class="box-title">Users overview</h3>
-        </div>
-        <div class="box-body">
-            <div id="chart_div"></div>
-        </div>
-    </div>*@
+    
     <div class="box box-primary">
         <div class="box-header">
             <h3 class="box-title">Users list</h3>
@@ -59,37 +71,55 @@
 
 @section scripts
 {
+
     <script type="text/javascript">
 
-        // Load the Visualization API and the corechart package.
-        google.charts.load('current', {'packages':['corechart']});
 
-        // Set a callback to run when the Google Visualization API is loaded.
-        google.charts.setOnLoadCallback(drawChart);
-
-
-
-        function drawChart() {
-            var jsonData = $.ajax({
-                url: '@Url.Action("HierachyChart")' +"?id=1",
-                dataType: "json",
-                async: false
-            }).responseText;
-          
-            // Create our data table out of JSON data loaded from server.
-            var data = new google.visualization.DataTable(jsonData);
-
-            // Instantiate and draw our chart, passing in some options.
-            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-            chart.draw(data, {width: 400, height: 240});
-        }
     </script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
 
             $(".apps-summary").load($(".apps-summary").data("url"));
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetDailyUsages")?telemetryKey=@Model.TelemetryKey',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(chData) {
+
+                    var dataT = {
+                        labels: chData[0],
+                        datasets: [
+                            {
+                                data: chData[1],
+                                fill: false,
+                            }
+                        ]
+                    };
+                    var ctx = $('#dailyActivityScoreChart')[0].getContext('2d');
+                    $('#dailyActivityScoreChart').show();
+                    $('#dailyActivityScoreChart').closest('.box').find('.overlay').hide();
+                    var chart = new Chart(ctx,
+                        {
+                            type: 'line',
+                            data: dataT,
+                            options: {
+                                plugins: {
+                                    colorschemes: {
+                                        scheme: 'tableau.RedBlueBrown12'
+                                    }
+                                },
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        });
+                }
+            });
+
 
             $('#appUsersSummaryReport').DataTable({
                 order: [[2, 'desc']],
@@ -153,10 +183,9 @@
                     },
                     {
                         title: 'Usage today',
-                         "data": "@nameof(ProgramUsageSummary.TodayUsageCount)"
+                        "data": "@nameof(ProgramUsageSummary.TodayUsageCount)"
                     },
                     {
-
                         title: 'Total usage',
                         "data": "@nameof(ProgramUsageSummary.TotalUsageCount)"
                     },
@@ -166,23 +195,23 @@
                     },
                     {
                         title: 'View usage today',
-                       "data": "@nameof(ProgramUsageSummary.TotalTodayViewsUsageCount)"
+                        "data": "@nameof(ProgramUsageSummary.TotalTodayViewsUsageCount)"
                     },
                     {
                         title: 'Total view usage',
-                       "data": "@nameof(ProgramUsageSummary.TotalViewsUsageCount)"
+                        "data": "@nameof(ProgramUsageSummary.TotalViewsUsageCount)"
                     },
                     {
                         title: '# Events',
-                       "data": "@nameof(ProgramUsageSummary.EventsCount)"
+                        "data": "@nameof(ProgramUsageSummary.EventsCount)"
                     },
                     {
                         title: 'Events today',
-                       "data": "@nameof(ProgramUsageSummary.TotalTodayEventsUsageCount)"
+                        "data": "@nameof(ProgramUsageSummary.TotalTodayEventsUsageCount)"
                     },
                     {
                         title: 'Events total',
-                       "data": "@nameof(ProgramUsageSummary.TotalEventsUsageCount)"
+                        "data": "@nameof(ProgramUsageSummary.TotalEventsUsageCount)"
                     },
                 ]
             });

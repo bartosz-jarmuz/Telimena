@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IdentityModel;
 using System.Linq;
 using System.Text;
@@ -301,25 +302,27 @@ namespace Telimena.WebApp.Controllers
             return this.PartialView("_AllProgramsSummaryBoxes", summary);
         }
 
-        public JsonResult HierachyChart(int id)
+        [HttpGet]
+        public async Task<ActionResult> GetDailyUsages(Guid telemetryKey)
         {
-            var hierarchyChart = new ChartData()
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            if (program == null)
             {
-                cols = new object[]
-                {
-                    new {id = "task", type = "string", label = "Employee Name"}
-                    , new {id = "startDate", type = "date", label = "Start Date"}
-                }
-                , rows = new object[]
-                {
-                    new {c = new object[] {new {v = "Bob"}, new {v = 35000}}}
-                    , new {c = new object[] {new {v = "Alice"}, new {v = 44000}}}
-                    , new {c = new object[] {new {v = "Frank"}, new {v = 28000}}}
-                    , new {c = new object[] {new {v = "Floyd"}, new {v = 92000}}}
-                    , new {c = new object[] {new {v = "Fritz"}, new {v = 18500}}}
-                }
-            };
-            return this.Json(hierarchyChart, JsonRequestBehavior.AllowGet);
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            var dt = await this.Work.GetDailyActivityScore(new List<Program>() {program}, DateTime.Today.AddDays(-30), DateTime.Today).ConfigureAwait(false);
+
+            List<object> iData = new List<object>();
+            foreach (DataColumn dc in dt.Columns)
+            {
+                List<object> x = new List<object>();
+                x = (from DataRow drr in dt.Rows select drr[dc.ColumnName]).ToList();
+                iData.Add(x);
+            }
+
+            return this.Json(iData, JsonRequestBehavior.AllowGet);
         }
+
     }
 }
