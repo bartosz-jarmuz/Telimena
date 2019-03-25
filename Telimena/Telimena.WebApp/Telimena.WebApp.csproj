@@ -323,6 +323,7 @@
     <Compile Include="Models\PortalUsers\TelimenaUserViewModel.cs" />
     <Compile Include="Models\ProgramStatistics\ProgramStatisticsViewModel.cs" />
     <Compile Include="Models\ProgramManagement\ProgramManagementViewModel.cs" />
+    <Compile Include="Models\ProgramStatistics\SequenceHistoryViewModel.cs" />
     <Compile Include="Models\Shared\BoxViewModel.cs" />
     <Compile Include="Models\Shared\ProgramHeaderMenuViewModel.cs" />
     <Compile Include="Models\Shared\ProgramsListViewModel.cs" />

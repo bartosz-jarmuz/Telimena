@@ -1,7 +1,6 @@
 ﻿@using Telimena.WebApp.Models.Shared
 @model Telimena.WebApp.Core.DTO.AllProgramsSummaryData
 <!-- Small boxes (Stat box) -->
-<div class="row">
     <!-- ./col -->
     @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-yellow", IconClass = "fa-users", Label = "Total Applications Users",
         Value = Model.TotalAppUsersCount.ToString(), SecondaryLabel = "Users registered in last 7 days: " + Model.AppUsersRegisteredLast7DaysCount})
@@ -15,4 +14,3 @@
     @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-red", IconClass = "fa-exclamation-triangle", Label = "Most common exception",
         Value = Model.MostPopularExceptionInLast7Days, SecondaryLabel = "Exceptions in last 7 days: " + Model.TotalExceptionsInLast7Days})
 
-</div>

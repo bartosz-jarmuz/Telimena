@@ -8,8 +8,23 @@
 
 @Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model.ProgramName, TelemetryKey = Model.TelemetryKey })
 
-<section class="apps-summary" data-url="@Url.Action("GetSummaryCounts")?telemetryKey=@Model.TelemetryKey" id="@Strings.Id.ProgramDashboard">
-    <div class="box box-default col-md-12">
+<div class="row">
+
+<div class="col-md-6">
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">Program summary</h3>
+        </div>
+        <div class="box-body">
+            <table id="allProgramsUsageReport" class="table table-condensed table-bordered table-hover"></table>
+        </div>
+    </div>
+</div>
+
+
+<span class="apps-summary col-md-6" data-url="@Url.Action("GetSummaryCounts")?telemetryKey=@Model.TelemetryKey" id="@Strings.Id.ProgramDashboard">
+    
+    <div class="box box-default">
         <div class="box-header">
             <h3 class="box-title">Loading</h3>
         </div>
@@ -20,16 +35,15 @@
             <i class="fa fa-refresh fa-spin"></i>
         </div>
     </div>
-</section>
+</span>
+</div>
 
-<section class="content-header">
 
-    <strong >Dashboard date range</strong>
-    <span id="DashboardDateRange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%;">
-        <i class="fa fa-calendar"></i>&nbsp;
-        <span></span> <i class="fa fa-caret-down"></i>
-    </span>
-</section>
+<strong>Dashboard date range</strong>
+<span id="DashboardDateRange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%;">
+    <i class="fa fa-calendar"></i>&nbsp;
+    <span></span> <i class="fa fa-caret-down"></i>
+</span>
 
 <section class="content">
     <div class="row">
@@ -64,25 +78,33 @@
             </div>
         </div>
     </div>
+    <div class="row">
 
-    <div class="col-md-8">
-        <div class="row">
+        <div class="col-md-8">
+            <div class="row">
 
-            <div class="col-md-12">
-                <div class="box box-primary">
-                    <div class="box-header">
-                        <h3 class="box-title">All programs usages</h3>
-                    </div>
-                    <div class="box-body">
-                        <table id="allProgramsUsageReport" class="table table-condensed table-bordered table-hover"></table>
+                <div class="col-md-12">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h3 class="box-title">Active users</h3>
+                        </div>
+                        <div class="box-body">
+                            <div class="chart">
+                                <canvas id="dailyUsersCountChart" style="display: none;" height="250"></canvas>
+                            </div>
+                        </div>
+                        <div class="overlay">
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </div>
                     </div>
                 </div>
+
+
+            
             </div>
 
         </div>
-
-    </div>
-    <div class="col-md-4">
+        <div class="col-md-4">
 
         <div class="box box-primary">
             <div class="box-header">
@@ -93,6 +115,8 @@
             </div>
         </div>
     </div>
+    </div>
+    
 </section>
 @section scripts
 {
@@ -104,11 +128,12 @@
         $(document).ready(function() {
             $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
 
-            $(".apps-summary").load($(".apps-summary").data("url"));
+            $(".apps-summary").load($(".apps-summary").data("url"), function() {
+                $(".apps-summary").removeClass("col-md-6");
+            });
 
-            
-            var start = moment().subtract(29, 'days');
-            var end = moment();
+            var start = moment().subtract(29, 'days').startOf('day');
+            var end = moment().endOf('day');
 
             function onDateRangeChanged(start, end) {
                 $('#DashboardDateRange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
@@ -138,6 +163,9 @@
 
             $('#allProgramsUsageReport').DataTable({
                 order: [[1, 'desc']],
+                "paging": false,   
+                "searching": false,   
+                "bInfo": false,
                 "ajax": {
                     url: "@Url.Action("GetProgramUsages")" + '?telemetryKey=@Model.TelemetryKey',
                     method: "post",
@@ -148,13 +176,6 @@
                         title: 'Name',
                         "data": "@nameof(ProgramUsageSummary.ProgramName)"
 
-                    },
-                    {
-                        title: 'Last usage',
-                        "data": "@nameof(ProgramUsageSummary.LastUsage)",
-                        render: function(data, type, row, meta) {
-                            return toFormattedTimestamp(new Date(data));
-                        }
                     },
                     {
                         title: 'Usage today',
@@ -169,20 +190,12 @@
                         "data": "@nameof(ProgramUsageSummary.ViewsCount)"
                     },
                     {
-                        title: 'View usage today',
-                        "data": "@nameof(ProgramUsageSummary.TotalTodayViewsUsageCount)"
-                    },
-                    {
                         title: 'Total view usage',
                         "data": "@nameof(ProgramUsageSummary.TotalViewsUsageCount)"
                     },
                     {
                         title: '# Events',
                         "data": "@nameof(ProgramUsageSummary.EventsCount)"
-                    },
-                    {
-                        title: 'Events today',
-                        "data": "@nameof(ProgramUsageSummary.TotalTodayEventsUsageCount)"
                     },
                     {
                         title: 'Events total',
@@ -231,6 +244,43 @@
                         });
                 }
             });
+
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("GetDailyUsersCount")?telemetryKey=@Model.TelemetryKey&startDate=' + startDate.toISOString() + '&endDate=' + endDate.toISOString(),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(chData) {
+                        var dataT = {
+                            labels: chData[0],
+                            datasets: [
+                                {
+                                    data: chData[1],
+                                    fill: true,
+                                }
+                            ]
+                        };
+                        var ctx = $('#dailyUsersCountChart')[0].getContext('2d');
+                        $('#dailyUsersCountChart').show();
+                        $('#dailyUsersCountChart').closest('.box').find('.overlay').hide();
+                        var chart = new Chart(ctx,
+                            {
+                                type: 'bar',
+                                data: dataT,
+                                options: {
+                                    plugins: {
+                                        colorschemes: {
+                                            scheme: 'tableau.ClassicBlue7'
+                                        }
+                                    },
+                                    legend: {
+                                        display: false
+                                    }
+                                }
+                            });
+                    }
+                });
+
 
             $.ajax({
                 type: 'GET',

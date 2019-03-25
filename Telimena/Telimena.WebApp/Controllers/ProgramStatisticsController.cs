@@ -63,7 +63,8 @@ namespace Telimena.WebApp.Controllers
             }
 
             ProgramStatisticsViewModel model = new ProgramStatisticsViewModel() {TelemetryKey = program.TelemetryKey, ProgramName = program.Name};
-
+            model.EventNames = (await this.Work.GetEventNames(program).ConfigureAwait(false));
+            model.ViewsNames = await this.Work.GetViewNames(program).ConfigureAwait(false);
             return this.View("Index", model);
         }
 
@@ -314,6 +315,28 @@ namespace Telimena.WebApp.Controllers
             }
 
             var dt = await this.Work.GetDailyActivityScore(new List<Program>() {program}, startDate, endDate).ConfigureAwait(false);
+
+            List<object> iData = new List<object>();
+            foreach (DataColumn dc in dt.Columns)
+            {
+                List<object> x = new List<object>();
+                x = (from DataRow drr in dt.Rows select drr[dc.ColumnName]).ToList();
+                iData.Add(x);
+            }
+
+            return this.Json(iData, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> GetDailyUsersCount(Guid telemetryKey, DateTime startDate, DateTime endDate)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            var dt = await this.Work.GetDailyUsersCount(new List<Program>() { program }, startDate, endDate).ConfigureAwait(false);
 
             List<object> iData = new List<object>();
             foreach (DataColumn dc in dt.Columns)

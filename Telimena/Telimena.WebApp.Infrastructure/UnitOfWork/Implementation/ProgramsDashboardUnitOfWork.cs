@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Castle.Components.DictionaryAdapter;
 using DataTables.AspNet.Core;
 using DotNetLittleHelpers;
 using Newtonsoft.Json;
@@ -90,7 +91,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     List<EventTelemetrySummary> eventSummaries = events.SelectMany(x => x.TelemetrySummaries).ToList();
 
                     List<TelemetrySummary> allSummaries = viewSummaries.Cast<TelemetrySummary>().Concat(eventSummaries).ToList();
-                    var latestPkg = await this.UpdatePackages.GetLatestPackage(program.Id).ConfigureAwait(false);
+                    ProgramUpdatePackageInfo latestPkg = await this.UpdatePackages.GetLatestPackage(program.Id).ConfigureAwait(false);
                     summary = new ProgramSummary
                     {
                         ProgramName = program.Name
@@ -119,7 +120,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         public async Task<DataTable> GetDailyActivityScore(List<Program> programs, DateTime startDate, DateTime endDate)
         {
             List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
-            var programIds = programs.Select(x => x.Id);
+            IEnumerable<int> programIds = programs.Select(x => x.Id);
 
             (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false); ;
             (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
@@ -135,19 +136,19 @@ namespace Telimena.WebApp.Infrastructure.Repository
         public async Task<DataTable> GetVersionDistribution(List<Program> programs, DateTime startDate, DateTime endDate)
         {
             List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
-            var programIds = programs.Select(x => x.Id);
+            IEnumerable<int> programIds = programs.Select(x => x.Id);
 
             List<Event> events = telemetryRootObjects.SelectMany(x => x.Events.Where(ev=>ev.Name == "TelimenaSessionStarted")).ToList();
             IEnumerable<Guid> ids = events.Select(x => x.Id);
-            var telemetrySummaries = await this.telemetryContext.EventTelemetrySummaries
+            List<EventTelemetrySummary> telemetrySummaries = await this.telemetryContext.EventTelemetrySummaries
                 .Where(usg => ids.Contains(usg.EventId)).ToListAsync().ConfigureAwait(false);
 
-            var details = telemetrySummaries.SelectMany(x =>
+            List<EventTelemetryDetail> details = telemetrySummaries.SelectMany(x =>
                 x.TelemetryDetails.Where(d => d.Timestamp >= startDate && d.Timestamp <= endDate)).ToList();
 
-            var grouped = details.GroupBy(x => x.FileVersion).ToList();
+            List<IGrouping<string, EventTelemetryDetail>> grouped = details.GroupBy(x => x.FileVersion).ToList();
 
-            var data = new DataTable();
+            DataTable data = new DataTable();
 
             data.Columns.Add("Version");
             data.Columns.Add("Count", typeof(int));
@@ -163,10 +164,56 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return data;
         }
 
+        public async Task<DataTable> GetDailyUsersCount(List<Program> programs, DateTime startDate, DateTime endDate)
+        {
+            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
+
+            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+
+            List<EventTelemetryDetail> details = eventData.summaries.SelectMany(x => x.TelemetryDetails).ToList();
+
+            DataTable data = new DataTable();
+            data.Columns.Add("Date");
+            data.Columns.Add("Users", typeof(int));
+
+            DateTime dateRecord = startDate;
+
+            while (dateRecord.Date <= endDate.Date) //include empty days
+            {
+                DataRow row = data.NewRow();
+                row["Date"] = ToDashboardDateString(dateRecord);
+                var detailsForDay = details.Where(detail => detail.Timestamp.Date == dateRecord.Date).ToList();
+                var distinct = detailsForDay.DistinctBy(x => x.TelemetrySummary.ClientAppUserId).ToList();
+                row["Users"] = details.Where(detail=>detail.Timestamp.Date == dateRecord.Date).DistinctBy(x => x.TelemetrySummary.ClientAppUserId).Count();
+                data.Rows.Add(row);
+                dateRecord = dateRecord.AddDays(1);
+            }
+
+            return data;
+
+
+        }
+
+        public async Task<Dictionary<string, int>> GetEventNames(Program program)
+        {
+            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(new List<Program>{program}).ConfigureAwait(false);
+            List<Event> events = telemetryRootObjects.SelectMany(x => x.Events).ToList();
+
+            return events.ToDictionary(x => x.Name, x => x.TelemetrySummaries.Sum(s => s.SummaryCount)).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+        }
+
+        public async Task<Dictionary<string, int>> GetViewNames(Program program)
+        {
+            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(new List<Program> { program }).ConfigureAwait(false);
+            List<View> views = telemetryRootObjects.SelectMany(x => x.Views).ToList();
+
+            return views.ToDictionary(x => x.Name, x => x.TelemetrySummaries.Sum(s => s.SummaryCount)).OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+        }
+
         internal static DataTable PrepareDailyActivityScoreTable(DateTime startDate, DateTime endDate
             , List<EventTelemetrySummary> eventDataSummaries, List<ViewTelemetrySummary> viewDataSummaries, List<ExceptionInfo> errorData)
         {
-            var data = new DataTable();
+            DataTable data = new DataTable();
 
             data.Columns.Add("Date");
             data.Columns.Add("Events", typeof(int));
@@ -266,12 +313,12 @@ namespace Telimena.WebApp.Infrastructure.Repository
             (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false); ;
             (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
 
-            var allData = viewData.summaries.Cast<TelemetrySummary>().Concat(eventData.summaries).ToList();
+            List<TelemetrySummary> allData = viewData.summaries.Cast<TelemetrySummary>().Concat(eventData.summaries).ToList();
             List<ClientAppUser> allUsers = GetClientAppUsers(viewData.summaries, eventData.summaries);
 
            
 
-            var list = new List<AppUsersSummaryData>();
+            List<AppUsersSummaryData> list = new List<AppUsersSummaryData>();
             foreach (ClientAppUser clientAppUser in allUsers)
             {
                 List<TelemetrySummary> userData = allData.Where(x => x.ClientAppUserId == clientAppUser.Id).ToList();
@@ -305,7 +352,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             List<TelemetryRootObject> telemetryRootObjects = new List<TelemetryRootObject>();
             foreach (Program program in programs)
             {
-                var telePrg = await this.telemetryContext.TelemetryRootObjects
+                TelemetryRootObject telePrg = await this.telemetryContext.TelemetryRootObjects
                     .FirstOrDefaultAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
                 if (telePrg != null)
                 {
@@ -320,15 +367,15 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
             List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
 
-            var viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
-            var eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+            (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
 
             List<ClientAppUser> allUsers = GetClientAppUsers(viewData.summaries, eventData.summaries);
 
             IEnumerable<int> programIds = telemetryRootObjects.Select(x => x.ProgramId);
             List<ExceptionInfo> exceptions =
                 await this.telemetryContext.Exceptions.Where(ex=> programIds.Contains(ex.ProgramId)).ToListAsync().ConfigureAwait(false);
-            var recentExceptions = exceptions.Where(x => (DateTime.UtcNow - x.Timestamp).TotalDays <= 7).ToList();
+            List<ExceptionInfo> recentExceptions = exceptions.Where(x => (DateTime.UtcNow - x.Timestamp).TotalDays <= 7).ToList();
                 string mostPopularException = recentExceptions.GroupBy(x => x.TypeName).OrderByDescending(x => x.Count()).FirstOrDefault()?.Key;
 
             AllProgramsSummaryData summary = new AllProgramsSummaryData
@@ -355,7 +402,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 viewSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
             List<ClientAppUser> eventUsers =
                 eventSummaries.DistinctBy(x => x.ClientAppUserId).Select(x => x.ClientAppUser).ToList();
-            var allUsers = viewUsers.Concat(eventUsers).DistinctBy(x => x.Id).ToList();
+            List<ClientAppUser> allUsers = viewUsers.Concat(eventUsers).DistinctBy(x => x.Id).ToList();
             return allUsers;
         }
 
@@ -363,7 +410,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
             List<View> views = telemetryRootObjects.SelectMany(x => x.Views).ToList();
             IEnumerable<Guid> viewIds = views.Select(x => x.Id);
-            var viewTelemetrySummaries = await this.telemetryContext.ViewTelemetrySummaries
+            List<ViewTelemetrySummary> viewTelemetrySummaries = await this.telemetryContext.ViewTelemetrySummaries
                 .Where(usg => viewIds.Contains(usg.ViewId)).ToListAsync().ConfigureAwait(false);
             return (views, viewTelemetrySummaries);
         }
@@ -372,7 +419,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
             List<Event> events = telemetryRootObjects.SelectMany(x => x.Events).ToList();
             IEnumerable<Guid> ids = events.Select(x => x.Id);
-            var telemetrySummaries = await this.telemetryContext.EventTelemetrySummaries
+            List<EventTelemetrySummary> telemetrySummaries = await this.telemetryContext.EventTelemetrySummaries
                 .Where(usg => ids.Contains(usg.EventId)).ToListAsync().ConfigureAwait(false);
             return (events, telemetrySummaries);
         }
