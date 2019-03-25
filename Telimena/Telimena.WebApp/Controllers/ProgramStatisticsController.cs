@@ -63,8 +63,8 @@ namespace Telimena.WebApp.Controllers
             }
 
             ProgramStatisticsViewModel model = new ProgramStatisticsViewModel() {TelemetryKey = program.TelemetryKey, ProgramName = program.Name};
-            model.EventNames = (await this.Work.GetEventNames(program).ConfigureAwait(false));
-            model.ViewsNames = await this.Work.GetViewNames(program).ConfigureAwait(false);
+            //model.EventNames = (await this.Work.GetEventNames(program).ConfigureAwait(false));
+            //model.ViewsNames = await this.Work.GetViewNames(program).ConfigureAwait(false);
             return this.View("Index", model);
         }
 
