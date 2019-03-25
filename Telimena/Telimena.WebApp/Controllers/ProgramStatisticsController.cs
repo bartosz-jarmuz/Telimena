@@ -311,7 +311,7 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            var dt = await this.Work.GetDailyActivityScore(new List<Program>() {program}, DateTime.Today.AddDays(-30), DateTime.Today).ConfigureAwait(false);
+            var dt = await this.Work.GetDailyActivityScore(new List<Program>() {program}, DateTime.Today.AddDays(-30), DateTime.Today.AddDays(1)).ConfigureAwait(false);
 
             List<object> iData = new List<object>();
             foreach (DataColumn dc in dt.Columns)

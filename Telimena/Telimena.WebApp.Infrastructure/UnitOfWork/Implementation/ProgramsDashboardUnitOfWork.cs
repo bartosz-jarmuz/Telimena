@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -118,57 +119,55 @@ namespace Telimena.WebApp.Infrastructure.Repository
         public async Task<DataTable> GetDailyActivityScore(List<Program> programs, DateTime startDate, DateTime endDate)
         {
             List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
+            var programIds = programs.Select(x => x.Id);
 
-            (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+            (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false); ;
             (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
 
-            List<TelemetrySummary> summaries = viewData.summaries.Cast<TelemetrySummary>().Concat(eventData.summaries).ToList();
+            List<ExceptionInfo> errorData = await this.telemetryContext.Exceptions.Where(x =>
+                    programIds.Contains(x.ProgramId) && x.Timestamp >= startDate &&
+                    x.Timestamp <= endDate)
+                .ToListAsync().ConfigureAwait(false);
 
-            return this.CreateDailyActivityTable(summaries, startDate, endDate);
+            return PrepareDailyActivityScoreTable(startDate, endDate, eventData.summaries, viewData.summaries, errorData);
         }
 
-        private DataTable CreateDailyActivityTable(List<TelemetrySummary> summaries, DateTime startDate, DateTime endDate)
+        internal static DataTable PrepareDailyActivityScoreTable(DateTime startDate, DateTime endDate
+            , List<EventTelemetrySummary> eventDataSummaries, List<ViewTelemetrySummary> viewDataSummaries, List<ExceptionInfo> errorData)
         {
-            IEnumerable<TelemetryDetail> details = summaries.SelectMany(x => x.GetTelemetryDetails()).ToList();
-
-            List<IGrouping<DateTime, TelemetryDetail>> grouped = details.Where(x => x.Timestamp.Date >= startDate && x.Timestamp.Date <= endDate).GroupBy(x => x.Timestamp.Date).OrderBy(x => x.Key).ToList();
-
             var data = new DataTable();
 
             data.Columns.Add("Date");
-            data.Columns.Add("ActivityScore");
-            if (!grouped.Any())
+            data.Columns.Add("Events", typeof(int));
+            data.Columns.Add("Views", typeof(int));
+            data.Columns.Add("Errors", typeof(int));
+            
+            DateTime dateRecord = startDate;
+
+            while (dateRecord.Date <= endDate.Date) //include empty days
             {
-                return data;
+                DataRow row = data.NewRow();
+                row["Date"] = ToDashboardDateString(dateRecord);
+
+                row["Events"] =
+                    eventDataSummaries?.Sum(s => s.TelemetryDetails?.Count(d => d.Timestamp.Date == dateRecord.Date));
+                row["Views"] =
+                    viewDataSummaries?.Sum(x => x.TelemetryDetails?.Count(d => d.Timestamp.Date == dateRecord.Date));
+
+                row["Errors"] = errorData?.Count(x => x.Timestamp.Date == dateRecord);
+
+                data.Rows.Add(row);
+                dateRecord = dateRecord.AddDays(1);
             }
-
-            DateTime dateRecord = grouped.First().Key;
-
-            foreach (var telemetryDetails in grouped)
-            {
-                while (dateRecord.Date <= telemetryDetails.Key.Date) //include empty days
-                {
-                    DataRow row = data.NewRow();
-                    row["Date"] = dateRecord.ToString("dd MM");
-                    if (dateRecord.Date == telemetryDetails.Key.Date)
-                    {
-                        row["ActivityScore"] = telemetryDetails.Count();
-                    }
-                    else
-                    {
-                        row["ActivityScore"] = 0;
-                    }
-
-                    data.Rows.Add(row);
-                    dateRecord = dateRecord.AddDays(1);
-                }
-
-            }
-
 
             return data;
         }
 
+        internal static string ToDashboardDateString(DateTime date)
+        {
+            return date.ToString("ddd, dd.MM", new CultureInfo("en-US"));
+        }
+        
 
         public async Task<IEnumerable<ProgramUsageSummary>> GetProgramUsagesSummary(List<Program> programs)
         {
@@ -233,9 +232,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
         public async Task<List<AppUsersSummaryData>> GetAppUsersSummary(List<Program> programs)
         {
             List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
-
-            var viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
-            var eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+            (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false); ;
+            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
 
             var allData = viewData.summaries.Cast<TelemetrySummary>().Concat(eventData.summaries).ToList();
             List<ClientAppUser> allUsers = GetClientAppUsers(viewData.summaries, eventData.summaries);
