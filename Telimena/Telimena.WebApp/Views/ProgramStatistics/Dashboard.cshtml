@@ -205,8 +205,9 @@
             });
         });
 
-        
-            function drawCharts(startDate, endDate) {
+        function drawCharts(startDate, endDate) {
+
+                $('#versionDistributionChart').closest('.box').find('.overlay').show();
                 $.ajax({
                 type: 'GET',
                     url: '@Url.Action("GetVersionDistribution")?telemetryKey=@Model.TelemetryKey&startDate=' + startDate.toISOString() + '&endDate=' + endDate.toISOString(),
@@ -245,6 +246,7 @@
                 }
             });
 
+                $('#dailyUsersCountChart').closest('.box').find('.overlay').show();
                 $.ajax({
                     type: 'GET',
                     url: '@Url.Action("GetDailyUsersCount")?telemetryKey=@Model.TelemetryKey&startDate=' + startDate.toISOString() + '&endDate=' + endDate.toISOString(),
@@ -282,6 +284,7 @@
                 });
 
 
+            $('#dailyActivityScoreChart').closest('.box').find('.overlay').show();
             $.ajax({
                 type: 'GET',
                 url: '@Url.Action("GetDailyUsages")?telemetryKey=@Model.TelemetryKey&startDate=' + startDate.toISOString() + '&endDate=' + endDate.toISOString(),
