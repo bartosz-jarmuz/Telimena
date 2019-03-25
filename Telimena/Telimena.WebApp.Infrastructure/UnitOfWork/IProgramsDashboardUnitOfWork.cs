@@ -35,8 +35,10 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<UsageDataTableResult> GetSequenceHistory(Guid telemetryKey, string sequenceId, string searchValue);
 
         Task<IEnumerable<ProgramSummary>> GetProgramSummary(List<Program> programs);
-        Task<List<AppUsersSummaryData>> GetAppUsersSummary(List<Program> programs);
+        Task<List<AppUsersSummaryData>> GetAppUsersSummary(List<Program> programs, DateTime? startDate, DateTime? endDate);
         Task<DataTable> GetDailyActivityScore(List<Program> programs, DateTime startDate, DateTime endDate);
+
+        Task<DataTable> GetVersionDistribution(List<Program> programs, DateTime startDate, DateTime endDate);
     }
 
 

@@ -132,6 +132,37 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return PrepareDailyActivityScoreTable(startDate, endDate, eventData.summaries, viewData.summaries, errorData);
         }
 
+        public async Task<DataTable> GetVersionDistribution(List<Program> programs, DateTime startDate, DateTime endDate)
+        {
+            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
+            var programIds = programs.Select(x => x.Id);
+
+            List<Event> events = telemetryRootObjects.SelectMany(x => x.Events.Where(ev=>ev.Name == "TelimenaSessionStarted")).ToList();
+            IEnumerable<Guid> ids = events.Select(x => x.Id);
+            var telemetrySummaries = await this.telemetryContext.EventTelemetrySummaries
+                .Where(usg => ids.Contains(usg.EventId)).ToListAsync().ConfigureAwait(false);
+
+            var details = telemetrySummaries.SelectMany(x =>
+                x.TelemetryDetails.Where(d => d.Timestamp >= startDate && d.Timestamp <= endDate)).ToList();
+
+            var grouped = details.GroupBy(x => x.FileVersion).ToList();
+
+            var data = new DataTable();
+
+            data.Columns.Add("Version");
+            data.Columns.Add("Count", typeof(int));
+            foreach (IGrouping<string, EventTelemetryDetail> eventTelemetryDetails in grouped)
+            {
+                DataRow row = data.NewRow();
+                row["Version"] = eventTelemetryDetails.Key;
+                row["Count"] = eventTelemetryDetails.Count();
+                
+                data.Rows.Add(row);
+            }
+
+            return data;
+        }
+
         internal static DataTable PrepareDailyActivityScoreTable(DateTime startDate, DateTime endDate
             , List<EventTelemetrySummary> eventDataSummaries, List<ViewTelemetrySummary> viewDataSummaries, List<ExceptionInfo> errorData)
         {
@@ -229,7 +260,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return summary;
         }
 
-        public async Task<List<AppUsersSummaryData>> GetAppUsersSummary(List<Program> programs)
+        public async Task<List<AppUsersSummaryData>> GetAppUsersSummary(List<Program> programs, DateTime? startDate, DateTime? endDate)
         {
             List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
             (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false); ;
@@ -238,13 +269,22 @@ namespace Telimena.WebApp.Infrastructure.Repository
             var allData = viewData.summaries.Cast<TelemetrySummary>().Concat(eventData.summaries).ToList();
             List<ClientAppUser> allUsers = GetClientAppUsers(viewData.summaries, eventData.summaries);
 
-            
+           
 
             var list = new List<AppUsersSummaryData>();
             foreach (ClientAppUser clientAppUser in allUsers)
             {
-                var userData = allData.Where(x => x.ClientAppUserId == clientAppUser.Id).ToList();
-                var cmps = userData.DistinctBy(x => x.GetComponent().Program.ProgramId).Select(x=>x.GetComponent().Program).ToList();
+                List<TelemetrySummary> userData = allData.Where(x => x.ClientAppUserId == clientAppUser.Id).ToList();
+              
+                if (startDate != null && endDate != null)
+                 {
+                     if (userData.All(summary =>
+                         summary.GetTelemetryDetails().All(detail =>
+                             detail.Timestamp < startDate || detail.Timestamp > endDate)))
+                     {
+                         continue; //this user was not active in our timeframe
+                     }
+                }
 
                 list.Add(new AppUsersSummaryData()
                 {

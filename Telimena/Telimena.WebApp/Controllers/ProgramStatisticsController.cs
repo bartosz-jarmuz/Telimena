@@ -256,7 +256,7 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
-        public async Task<ActionResult> GetAppUsersSummary(Guid telemetryKey)
+        public async Task<ActionResult> GetAppUsersSummary(Guid telemetryKey, DateTime startDate, DateTime endDate)
         {
             Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
             if (program == null)
@@ -264,7 +264,7 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            List<AppUsersSummaryData> programs = await this.Work.GetAppUsersSummary(new List<Program>(){program} ).ConfigureAwait(false);
+            List<AppUsersSummaryData> programs = await this.Work.GetAppUsersSummary(new List<Program>(){program}, startDate,endDate).ConfigureAwait(false);
             return this.Content(JsonConvert.SerializeObject(programs));
         }
 
@@ -272,6 +272,8 @@ namespace Telimena.WebApp.Controllers
         /// Gets the program usages.
         /// </summary>
         /// <param name="telemetryKey">The telemetry key.</param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         public async Task<ActionResult> GetProgramUsages(Guid telemetryKey)
@@ -303,7 +305,7 @@ namespace Telimena.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetDailyUsages(Guid telemetryKey)
+        public async Task<ActionResult> GetDailyUsages(Guid telemetryKey, DateTime startDate, DateTime endDate)
         {
             Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
             if (program == null)
@@ -311,7 +313,36 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            var dt = await this.Work.GetDailyActivityScore(new List<Program>() {program}, DateTime.Today.AddDays(-30), DateTime.Today.AddDays(1)).ConfigureAwait(false);
+            var dt = await this.Work.GetDailyActivityScore(new List<Program>() {program}, startDate, endDate).ConfigureAwait(false);
+
+            List<object> iData = new List<object>();
+            foreach (DataColumn dc in dt.Columns)
+            {
+                List<object> x = new List<object>();
+                x = (from DataRow drr in dt.Rows select drr[dc.ColumnName]).ToList();
+                iData.Add(x);
+            }
+
+            return this.Json(iData, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// Gets the version distribution.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <param name="startDate">The start date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpGet]
+        public async Task<ActionResult> GetVersionDistribution(Guid telemetryKey, DateTime startDate, DateTime endDate)
+        {
+            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            var dt = await this.Work.GetVersionDistribution(new List<Program>() { program }, startDate, endDate).ConfigureAwait(false);
 
             List<object> iData = new List<object>();
             foreach (DataColumn dc in dt.Columns)

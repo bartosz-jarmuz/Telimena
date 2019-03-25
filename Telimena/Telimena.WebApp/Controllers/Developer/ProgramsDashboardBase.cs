@@ -63,7 +63,7 @@ namespace Telimena.WebApp.Controllers.Developer
         {
             TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == user.Identity.Name);
             List<Program> programs = await this.unitOfWork.Programs.GetProgramsVisibleToUserAsync(telimenaUser, user).ConfigureAwait(false);
-            var summary = (await this.unitOfWork.GetAppUsersSummary(programs).ConfigureAwait(false)).ToList();
+            var summary = (await this.unitOfWork.GetAppUsersSummary(programs, null, null).ConfigureAwait(false)).ToList();
             return summary;
         }
 
