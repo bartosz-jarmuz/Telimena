@@ -24,6 +24,26 @@ namespace Telimena.WebApp.UITests.Base
     [TestFixture]
     public abstract class IntegrationTestBase : TestBase
     {
+
+
+        public static bool ShowBrowser
+        {
+            get
+            {
+                try
+                {
+#if DEBUG
+                    return true;
+#endif
+                    return GetSetting<bool>(ConfigKeys.ShowBrowser);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+
         public readonly string AdminName = GetSetting<string>(ConfigKeys.AdminName);
         public readonly string UserName = GetSetting(ConfigKeys.UserName);
         public readonly string AdminPassword = GetSetting(ConfigKeys.AdminPassword);

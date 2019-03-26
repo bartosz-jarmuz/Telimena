@@ -8,5 +8,6 @@
         public const string UserPassword = "DevPassword";
         public const string PortalUrl = "PortalUrl";
         public const string IsLocalTest = "IsLocalTest";
+        public const string ShowBrowser = "ShowBrowser";
     }
 }
