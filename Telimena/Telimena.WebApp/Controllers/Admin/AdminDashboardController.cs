@@ -59,16 +59,6 @@ namespace Telimena.WebApp.Controllers.Admin
         private readonly ProgramsDashboardBase dashboardBase;
 
         /// <summary>
-        /// Appses this instance.
-        /// </summary>
-        /// <returns>ActionResult.</returns>
-        [Audit]
-        public ActionResult Apps()
-        {
-            return this.View();
-        }
-
-        /// <summary>
         /// Gets all programs.
         /// </summary>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
@@ -89,9 +79,9 @@ namespace Telimena.WebApp.Controllers.Admin
         {
             List<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending)).ToList();
 
-
-            var totalCount = await this.auditingContext.AuditRecords.CountAsync().ConfigureAwait(false);
-            var query = this.auditingContext.AuditRecords.AsQueryable();
+            string userName = this.User.Identity.Name;
+            var totalCount = await this.auditingContext.AuditRecords.Where(x => x.UserName != userName).CountAsync().ConfigureAwait(false);
+            var query = this.auditingContext.AuditRecords.Where(x=>x.UserName != userName).AsQueryable();
             var take = request.Length;
             if (take == -1)
             {

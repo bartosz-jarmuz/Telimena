@@ -87,12 +87,10 @@ namespace Telimena.WebApp.UITests.Base
             {
                 case "Chrome":
                     ChromeOptions opt = new ChromeOptions();
-               //     opt.AddArgument("--headless");
-
 #if DEBUG
 
 #else
-              //  opt.AddArgument("--headless");
+                opt.AddArgument("--headless");
 #endif
                     return new ChromeDriver(opt);
                 case "Firefox":

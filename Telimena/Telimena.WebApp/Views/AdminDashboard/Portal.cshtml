@@ -91,7 +91,14 @@
                     },
                     {
                         name:  "@nameof(Audit.AreaAccessed)",
-                        data:  "@nameof(Audit.AreaAccessed).ToLowerFirstChar()",
+                        data: "@nameof(Audit.AreaAccessed).ToLowerFirstChar()",
+                        render: function(data, type, row, meta){
+                            if(type === 'display'){
+                                data = '<a href="' + data + '">' + data + '</a>';
+                            }
+
+                            return data;
+                        },
                         title: "@nameof(Audit.AreaAccessed)",
                         sortable: true,
                         searchable: true
