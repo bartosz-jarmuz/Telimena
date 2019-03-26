@@ -48,6 +48,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 pkg = new ProgramPackageInfo(fileName, program.Id, actualVersion, fileStream.Length, actualToolkitVersion);
                 this.telimenaPortalContext.ProgramPackages.Add(pkg);
             }
+            else
+            {
+                pkg.UploadedDate = DateTimeOffset.UtcNow;
+            }
 
             await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
 
@@ -69,7 +73,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         public async Task<ProgramPackageInfo> GetLatestProgramPackageInfo(int programId)
         {
             List<ProgramPackageInfo> packages =
-                await this.telimenaPortalContext.ProgramPackages.Where(x => x.ProgramId == programId).OrderByDescending(x => x.Id).ToListAsync().ConfigureAwait(false);
+                await this.telimenaPortalContext.ProgramPackages.Where(x => x.ProgramId == programId).OrderByDescending(x => x.UploadedDate).ToListAsync().ConfigureAwait(false);
             return packages.FirstOrDefault();
         }
     }

@@ -90,7 +90,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramUpdatePackageInfo> GetLatestPackage(int programId)
         {
-            return (await this.TelimenaPortalContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync()).OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id).FirstOrDefault();
+            return (await this.TelimenaPortalContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync().ConfigureAwait(false)).OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id).FirstOrDefault();
         }
 
         public async Task<List<ProgramUpdatePackageInfo>> GetAllPackagesNewerThan( VersionData versionData, int programId)

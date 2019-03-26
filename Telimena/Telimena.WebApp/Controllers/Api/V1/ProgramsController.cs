@@ -148,13 +148,14 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     return $"Failed to find program by Key: [{telemetryKey}]";
                 }
 
-                var version = program.PrimaryAssembly.GetLatestVersion();
-                if (version == null)
+                var packageInfo = await this.Work.UpdatePackages.GetLatestPackage(program.Id).ConfigureAwait(false);
+
+                if (packageInfo == null)
                 {
                     return "0.0";
                 }
-                return program.DetermineProgramVersion(version);
 
+                return packageInfo.Version;
             }
             catch (Exception ex)
             {
@@ -176,7 +177,9 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 return this.BadRequest($"Program key [{telemetryKey}] not found");
             }
 
-            return this.Ok(prg.PrimaryAssembly?.Versions.Count);
+            List<ProgramUpdatePackageInfo> packages = await this.Work.UpdatePackages.GetAllPackages(prg.Id).ConfigureAwait(false);
+
+            return this.Ok(packages?.Count);
         }
 
         /// <summary>

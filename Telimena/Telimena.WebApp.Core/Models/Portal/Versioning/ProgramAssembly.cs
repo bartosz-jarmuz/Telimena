@@ -23,30 +23,8 @@ namespace Telimena.WebApp.Core.Models.Portal
             return this.Name + this.Extension;
         }
 
-        public void AddVersion(VersionData version)
-        {
-            var existingOne = this.GetVersion(version);
-            if (existingOne == null)
-            {
-                ((List<AssemblyVersionInfo>) this.Versions).Add(new AssemblyVersionInfo(version));
-            }
-        }
-
-        public AssemblyVersionInfo GetVersion(VersionData version)
-        {
-            IEnumerable<AssemblyVersionInfo> matches = this.Versions.Where(x => x.AssemblyVersion == version.AssemblyVersion);
-
-            if (!string.IsNullOrEmpty(version.FileVersion))
-            {
-                matches = matches.Where(x => x.FileVersion == version.FileVersion);
-            }
-            return matches.FirstOrDefault();
-        }
-
-        public AssemblyVersionInfo GetLatestVersion()
-        {
-            return this.Versions?.OrderByDescending(x => x.AssemblyVersion, new VersionStringComparer())?.FirstOrDefault();
-        }
+      
+     
 
     }
 }

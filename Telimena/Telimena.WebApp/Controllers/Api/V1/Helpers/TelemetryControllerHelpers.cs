@@ -216,37 +216,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return user;
         }
 
-        public static async Task RecordVersions(ITelemetryUnitOfWork work, Program program, TelemetryInitializeRequest request)
-        {
-            AssemblyInfo primaryAss = request.ProgramInfo.PrimaryAssembly;
-            program.PrimaryAssembly.AddVersion(primaryAss.VersionData);
 
-            await AssignToolkitVersion(work, program.PrimaryAssembly, primaryAss.VersionData , request.TelimenaVersion).ConfigureAwait(false);
-        }
-
-        private static  async Task AssignToolkitVersion(ITelemetryUnitOfWork work, ProgramAssembly programAssembly, VersionData versionData, string toolkitVersion)
-        {
-            TelimenaToolkitData toolkitData = await work.ToolkitData.FirstOrDefaultAsync(x => x.Version == toolkitVersion).ConfigureAwait(false);
-
-            AssemblyVersionInfo assemblyVersionInfo = programAssembly.GetVersion(versionData);
-            if (toolkitData == null)
-            {
-                toolkitData = new TelimenaToolkitData(toolkitVersion);
-            }
-
-            assemblyVersionInfo.ToolkitData = toolkitData;
-        }
-
-        //todo - decide whether the version data should be stored in telemetry program like that
-        //public static AssemblyVersionInfo GetAssemblyVersionInfoOrAddIfMissing(VersionData versionData, Program program)
-        //{
-        //    program.PrimaryAssembly.AddVersion(versionData);
-        //    AssemblyVersionInfo versionInfo = program.PrimaryAssembly.GetVersion(versionData);
-        //    return versionInfo;
-        //}
-
-       
-     
 
         public static TelemetrySummary GetTelemetrySummary(ClientAppUser clientAppUser, ITelemetryAware component)
         {
