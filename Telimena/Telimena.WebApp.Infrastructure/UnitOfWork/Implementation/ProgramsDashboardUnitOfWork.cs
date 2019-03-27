@@ -120,14 +120,14 @@ namespace Telimena.WebApp.Infrastructure.Repository
         public async Task<DataTable> GetDailyActivityScore(List<Program> programs, DateTime startDate, DateTime endDate)
         {
             List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
-            IEnumerable<int> programIds = programs.Select(x => x.Id);
+            IEnumerable<int> programIds = telemetryRootObjects.Select(x => x.ProgramId);
 
             (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false); ;
             (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
 
             List<ExceptionInfo> errorData = await this.telemetryContext.Exceptions.Where(x =>
-                    programIds.Contains(x.ProgramId) && x.Timestamp >= startDate &&
-                    x.Timestamp <= endDate)
+                    programIds.Contains(x.ProgramId) && x.Timestamp >= startDate.Date &&
+                    x.Timestamp <= endDate.Date)
                 .ToListAsync().ConfigureAwait(false);
 
             return PrepareDailyActivityScoreTable(startDate, endDate, eventData.summaries, viewData.summaries, errorData);
