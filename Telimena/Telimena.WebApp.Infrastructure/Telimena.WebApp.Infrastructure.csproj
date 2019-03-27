@@ -180,6 +180,10 @@
     <Compile Include="Migrations\201902272220276_InitialCreate.Designer.cs">
       <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903271258445_AddedDescriptionFieldToUpdater.cs" />
+    <Compile Include="Migrations\201903271258445_AddedDescriptionFieldToUpdater.Designer.cs">
+      <DependentUpon>201903271258445_AddedDescriptionFieldToUpdater.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Telemetry\201903032034593_InitialCreate.cs" />
     <Compile Include="Migrations\Telemetry\201903032034593_InitialCreate.Designer.cs">
       <DependentUpon>201903032034593_InitialCreate.cs</DependentUpon>
@@ -248,6 +252,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201902272220276_InitialCreate.resx">
       <DependentUpon>201902272220276_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903271258445_AddedDescriptionFieldToUpdater.resx">
+      <DependentUpon>201903271258445_AddedDescriptionFieldToUpdater.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\Telemetry\201903032034593_InitialCreate.resx">
       <DependentUpon>201903032034593_InitialCreate.cs</DependentUpon>

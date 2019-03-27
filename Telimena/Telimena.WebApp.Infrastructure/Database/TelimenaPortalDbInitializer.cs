@@ -31,6 +31,7 @@ namespace Telimena.WebApp.Infrastructure.Database
             if (!portalContext.Updaters.Any(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName))
             {
                 var updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
+                updater.Description = DefaultToolkitNames.UpdaterDescription;
                 updater.DeveloperTeam = portalContext.Developers.FirstOrDefault(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
                 portalContext.Updaters.AddOrUpdate(updater);
             }

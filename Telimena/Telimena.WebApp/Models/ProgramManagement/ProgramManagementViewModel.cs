@@ -20,5 +20,7 @@ namespace Telimena.WebApp.Models.ProgramManagement
 
         public List<SelectListItem> UpdatersSelectList { get; set; }
         public string ProgramDescription { get; set; }
+
+        public Dictionary<string, string> UpdaterInfo { get; set; }= new Dictionary<string, string>();
     }
 }

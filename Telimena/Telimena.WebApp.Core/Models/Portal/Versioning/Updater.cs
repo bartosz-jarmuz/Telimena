@@ -19,6 +19,8 @@ namespace Telimena.WebApp.Core.Models.Portal
         [Required]
         public string FileName { get; set; }
 
+        public string Description { get; set; }
+
         [StringLength(255)]
         [Index(IsUnique = true)]
         [Required]

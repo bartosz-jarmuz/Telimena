@@ -86,13 +86,18 @@ namespace Telimena.WebApp.Controllers
                 var item = new SelectListItem() {
                     Text = publicUpdater.InternalName,
                     Value = publicUpdater.PublicId.ToString()
+
                 };
                 if (publicUpdater.PublicId == program.Updater.PublicId)
                 {
                     item.Selected = true;
                 }
                 model.UpdatersSelectList.Add(item);
-               
+
+                if (!model.UpdaterInfo.ContainsKey(publicUpdater.InternalName))
+                {
+                    model.UpdaterInfo.Add(publicUpdater.InternalName, publicUpdater.Description);
+                }
             }
 
             return this.View("ManageProgram", model);

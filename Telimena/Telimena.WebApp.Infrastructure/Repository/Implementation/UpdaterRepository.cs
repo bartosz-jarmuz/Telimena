@@ -107,17 +107,31 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             if (updater == null && updaterInternalName == DefaultToolkitNames.UpdaterInternalName) //create the default updater
             {
                 updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
+                updater.Description = DefaultToolkitNames.UpdaterDescription;
                 updater.DeveloperTeam = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
             else if (updater == null && updaterInternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName) //create the default package  updater
             {
                 updater = new Updater(DefaultToolkitNames.PackageTriggerUpdaterFileName, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
+                updater.Description = DefaultToolkitNames.PackageTriggerUpdaterDescription;
                 updater.DeveloperTeam = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
 
             if (updater != null && updater.DeveloperTeam == null)
             {
                 updater.DeveloperTeam = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
+            }
+
+            if (updater != null && updater.Description == null)
+            {
+                if (updater.InternalName == DefaultToolkitNames.UpdaterInternalName)
+                {
+                    updater.Description = DefaultToolkitNames.UpdaterDescription;
+                }
+                else if (updater.InternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
+                {
+                    updater.Description = DefaultToolkitNames.PackageTriggerUpdaterDescription;
+                }
             }
 
             return updater;

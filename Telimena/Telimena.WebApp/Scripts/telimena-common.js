@@ -141,3 +141,7 @@ function toFormattedTimestamp(utcDate) {
         d.getSeconds().padLeft()].join(':');
     return formatted;
 }
+
+function htmlDecode(value) {
+    return $('<div/>').html(value).text();
+}
