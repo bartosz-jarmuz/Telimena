@@ -232,7 +232,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 row["Views"] =
                     viewDataSummaries?.Sum(x => x.TelemetryDetails?.Count(d => d.Timestamp.Date == dateRecord.Date));
 
-                row["Errors"] = errorData?.Count(x => x.Timestamp.Date == dateRecord);
+                row["Errors"] = errorData?.Count(x => x.Timestamp.Date == dateRecord.Date);
 
                 data.Rows.Add(row);
                 dateRecord = dateRecord.AddDays(1);
