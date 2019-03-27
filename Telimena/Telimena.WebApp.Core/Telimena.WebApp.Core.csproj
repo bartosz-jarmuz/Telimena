@@ -87,6 +87,7 @@
     <Compile Include="DTO\ChartData.cs" />
     <Compile Include="DTO\MappableToClient\AssemblyInfo.cs" />
     <Compile Include="DTO\MappableToClient\DefaultToolkitNames.cs" />
+    <Compile Include="DTO\DefaultUpdaterDescriptions.cs" />
     <Compile Include="DTO\MappableToClient\LogLevel.cs" />
     <Compile Include="DTO\MappableToClient\ProgramInfo.cs" />
     <Compile Include="DTO\MappableToClient\TelemetryInitializeRequest.cs" />

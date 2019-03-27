@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
+using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
@@ -107,13 +108,13 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             if (updater == null && updaterInternalName == DefaultToolkitNames.UpdaterInternalName) //create the default updater
             {
                 updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
-                updater.Description = DefaultToolkitNames.UpdaterDescription;
+                updater.Description = DefaultUpdaterDescriptions.UpdaterDescription;
                 updater.DeveloperTeam = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
             else if (updater == null && updaterInternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName) //create the default package  updater
             {
                 updater = new Updater(DefaultToolkitNames.PackageTriggerUpdaterFileName, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
-                updater.Description = DefaultToolkitNames.PackageTriggerUpdaterDescription;
+                updater.Description = DefaultUpdaterDescriptions.PackageTriggerUpdaterDescription;
                 updater.DeveloperTeam = await this.TelimenaPortalContext.Developers.SingleOrDefaultAsync(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam).ConfigureAwait(false);
             }
 
@@ -126,11 +127,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             {
                 if (updater.InternalName == DefaultToolkitNames.UpdaterInternalName)
                 {
-                    updater.Description = DefaultToolkitNames.UpdaterDescription;
+                    updater.Description = DefaultUpdaterDescriptions.UpdaterDescription;
                 }
                 else if (updater.InternalName == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
                 {
-                    updater.Description = DefaultToolkitNames.PackageTriggerUpdaterDescription;
+                    updater.Description = DefaultUpdaterDescriptions.PackageTriggerUpdaterDescription;
                 }
             }
 

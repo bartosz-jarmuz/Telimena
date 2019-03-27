@@ -3,6 +3,7 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
@@ -31,7 +32,7 @@ namespace Telimena.WebApp.Infrastructure.Database
             if (!portalContext.Updaters.Any(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName))
             {
                 var updater = new Updater(DefaultToolkitNames.UpdaterFileName, DefaultToolkitNames.UpdaterInternalName);
-                updater.Description = DefaultToolkitNames.UpdaterDescription;
+                updater.Description = DefaultUpdaterDescriptions.UpdaterDescription;
                 updater.DeveloperTeam = portalContext.Developers.FirstOrDefault(x => x.Name == DefaultToolkitNames.TelimenaSystemDevTeam);
                 portalContext.Updaters.AddOrUpdate(updater);
             }
