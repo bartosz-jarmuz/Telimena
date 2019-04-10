@@ -240,6 +240,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LessMsi.Core\LessMsi.Core.csproj">
+      <Project>{1fd916f2-1df6-42f6-9ad4-83565fbf8e5c}</Project>
+      <Name>LessMsi.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Telimena.WebApp.Core\Telimena.WebApp.Core.csproj">
       <Project>{ffd85253-874c-41cb-9242-9267bfa3647b}</Project>
       <Name>Telimena.WebApp.Core</Name>

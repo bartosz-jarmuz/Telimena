@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using LessMsi.Msi;
 using Telimena.WebApp.Utils.VersionComparison;
 
 namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
@@ -40,15 +41,27 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 
             fileStream.Seek(0, SeekOrigin.Begin);
 
-            ZipFile.ExtractToDirectory(zipPath, Path.GetDirectoryName(zipPath));
-
-            foreach (string file in Directory.GetFiles(Path.GetDirectoryName(zipPath), "*", SearchOption.AllDirectories))
+            string version = GetFromZip(nameOfFileToCheck, zipPath, out Exception zipError);
+            if (version != null)
             {
-                if (Path.GetFileName(file).Equals(nameOfFileToCheck, StringComparison.InvariantCultureIgnoreCase))
+                return version;
+            }
+
+            Exception msiError = null;
+            if (zipError != null)
+            {
+                version = GetFromMsi(nameOfFileToCheck, zipPath, out msiError);
+                if (version != null)
                 {
-                    return TelimenaVersionReader.Read(file, VersionTypes.FileVersion);
+                    return version;
                 }
             }
+
+            if (zipError != null)
+            {
+                throw new AggregateException($"An error occurred while trying to determine a version of file [{nameOfFileToCheck}] in a package.", zipError, msiError);
+            }
+
 
             if (required)
             {
@@ -58,6 +71,53 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             return null;
         }
 
+        private static string GetFromMsi(string nameOfFileToCheck, string zipPath, out Exception e)
+        {
+            e = null;
+            try
+            {
+                Wixtracts.ExtractFiles(zipPath, Path.GetDirectoryName(zipPath));
+                foreach (string file in Directory.GetFiles(Path.GetDirectoryName(zipPath), "*", SearchOption.AllDirectories))
+                {
+                    if (Path.GetFileName(file).Equals(nameOfFileToCheck, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        {
+                            return TelimenaVersionReader.Read(file, VersionTypes.FileVersion);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                e = ex;
+            }
+
+            return null;
+        }
+
+        private static string GetFromZip(string nameOfFileToCheck, string zipPath, out Exception e)
+        {
+            e = null;
+            try
+            {
+                ZipFile.ExtractToDirectory(zipPath, Path.GetDirectoryName(zipPath));
+                foreach (string file in Directory.GetFiles(Path.GetDirectoryName(zipPath), "*", SearchOption.AllDirectories))
+                {
+                    if (Path.GetFileName(file).Equals(nameOfFileToCheck, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        {
+                            return TelimenaVersionReader.Read(file, VersionTypes.FileVersion);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                e = ex;
+            }
+
+            return null;
+        }
 
         private string GetUnzippedPath(string maybeZipPath, string expectedFileName, bool expectSingleFile)
         {

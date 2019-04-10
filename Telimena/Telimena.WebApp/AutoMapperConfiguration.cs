@@ -12,7 +12,7 @@ namespace Telimena.WebApp
         /// Configures this instance.
         /// </summary>
         public static void Configure()
-        {
+        { 
             Mapper.Initialize(cfg => cfg.AddProfiles(typeof(AutoMapperWebProfile), typeof(AutoMapperDomainProfile)));
         }
 
