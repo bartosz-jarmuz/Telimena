@@ -47,11 +47,12 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="wix">
-      <HintPath>..\..\lib\wix.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="wix, Version=2.0.2110.0, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\wix.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Msi\ColumnInfo.cs" />
@@ -70,6 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="mspack.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wix.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
