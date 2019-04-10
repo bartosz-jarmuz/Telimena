@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -35,6 +36,9 @@ namespace AutomaticTestsClient
                     case Actions.HandleUpdates:
                         this.HandleUpdates(telimena);
                         break;
+                    case Actions.CheckAndInstallUpdates:
+                        this.CheckAndInstallUpdates(telimena);
+                        break;
                 }
                 Thread.Sleep(7*1000);
             }
@@ -44,6 +48,22 @@ namespace AutomaticTestsClient
             }
 
             Console.WriteLine("Done");
+        }
+
+        private void CheckAndInstallUpdates(ITelimena telimena)
+        {
+            Console.WriteLine($"Starting {MethodBase.GetCurrentMethod().Name}...");
+
+            UpdateCheckResult result = telimena.Update.CheckForUpdates();
+            Console.WriteLine($"Finished update check. Update available: {result.IsUpdateAvailable}...");
+
+            JsonSerializerSettings settings = new JsonSerializerSettings { ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto };
+            Console.WriteLine(JsonConvert.SerializeObject(result, settings));
+
+            telimena.Update.InstallUpdates(result);
+
+
+            Console.WriteLine($"Finished {MethodBase.GetCurrentMethod().Name}");
         }
 
         private ITelimena GetTelimena(Guid argumentsTelemetryKey)

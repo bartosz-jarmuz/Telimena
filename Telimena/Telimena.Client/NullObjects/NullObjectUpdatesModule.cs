@@ -31,6 +31,19 @@ namespace TelimenaClient
             return this.Result;
         }
 
+        public void InstallUpdates(UpdateCheckResult checkResult)
+        {
+            // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
+        }
+
+        public Task InstallUpdatesAsync(UpdateCheckResult checkResult)
+        {
+
+            // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
+            return Task.FromResult(this.Result);
+
+        }
+
         public UpdateCheckResult HandleUpdates(bool acceptBeta)
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!

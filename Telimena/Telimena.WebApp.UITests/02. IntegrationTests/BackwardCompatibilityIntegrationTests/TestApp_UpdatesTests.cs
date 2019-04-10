@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using AutomaticTestsClient;
 using NUnit.Framework;
@@ -97,7 +98,50 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             return new VersionTuple() { AssemblyVersion = versions[0].Trim().Replace("AssemblyVersion: ",""), FileVersion = versions[1].Trim().Replace("FileVersion: ", "") };
         }
 
-         [Test]
+        [Test]
+        public async Task _03_CheckAndInstallUpdatesNonBetaTests()
+        {
+            try
+            {
+
+                VersionTuple initialVersions = await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name).ConfigureAwait(false);
+
+                FileInfo appFile;
+
+                this.LaunchTestsAppAndGetResult<UpdateCheckResult>(out appFile, Actions.CheckAndInstallUpdates, TestAppProvider.FileNames.TestAppV1
+                    , MethodBase.GetCurrentMethod().Name, waitForExit: false);
+
+                Window updater = await TestHelpers.WaitForWindowAsync(x => x.Contains("AutomaticTestsClient Updater"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
+                updater.Get<Button>(SearchCriteria.ByText("Install now!")).Click();
+
+                Window doneMsg = await TestHelpers.WaitForMessageBoxAsync(updater, "Update complete", TimeSpan.FromMinutes(1)).ConfigureAwait(false);
+                doneMsg.Get<Button>(SearchCriteria.ByText("Yes")).Click();
+
+                Window appWarning = await TestHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient - This app requires arguments to run")
+                    , TimeSpan.FromMinutes(2)).ConfigureAwait(false);
+                VersionTuple newVersions = await this.GetVersionFromMsgBox(appWarning).ConfigureAwait(false);
+
+                Assert.IsTrue(newVersions.AssemblyVersion.IsNewerVersionThan(initialVersions.AssemblyVersion));
+                Assert.IsTrue(newVersions.FileVersion.IsNewerVersionThan(initialVersions.FileVersion));
+                VersionTuple postUpdateVersions = await this.GetVersionsFromApp(appFile).ConfigureAwait(false);
+                Assert.AreEqual(postUpdateVersions.AssemblyVersion, newVersions.AssemblyVersion);
+                Assert.AreEqual(postUpdateVersions.FileVersion, newVersions.FileVersion);
+
+                //now just assert that the update check result is empty next time
+                var result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.CheckAndInstallUpdates, waitForExit: true);
+
+                Assert.IsFalse(result.IsUpdateAvailable);
+                Assert.IsNull(result.Exception);
+            }
+            catch (Exception ex)
+            {
+                throw this.CleanupAndRethrow(ex);
+            }
+        }
+
+
+
+        [Test]
         public async Task _02_HandleUpdatesNonBetaTests()
         {
             try

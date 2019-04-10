@@ -27,7 +27,7 @@ namespace TelimenaClient
         private readonly IInstallUpdates updateInstaller;
         private readonly Locator locator;
 
-        public async Task HandleUpdates(IReadOnlyList<UpdatePackageData> packagesToInstall, UpdatePackageData updaterUpdate)
+        public async Task HandleUpdates(bool askForConfirmation, IReadOnlyList<UpdatePackageData> packagesToInstall, UpdatePackageData updaterUpdate)
         {
             try
             {
@@ -37,8 +37,13 @@ namespace TelimenaClient
                     await this.DownloadUpdatePackages(packagesToInstall).ConfigureAwait(false);
 
                     FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo.Program, this.programInfo.Program.Name);
-                    string maxVersion = packagesToInstall.GetMaxVersion();
-                    bool installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(maxVersion, this.programInfo);
+                    bool installUpdatesNow = true;
+                    if (askForConfirmation)
+                    {
+                        string maxVersion = packagesToInstall.GetMaxVersion();
+                        installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(maxVersion, this.programInfo);
+                    }
+
                     if (installUpdatesNow)
                     { 
                         this.updateInstaller.InstallUpdates(instructionsFile, updaterFile);

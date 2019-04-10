@@ -4,6 +4,7 @@
     {
         Initialize,
         ReportViewUsage,
-        HandleUpdates
+        HandleUpdates,
+        CheckAndInstallUpdates
     }
 }

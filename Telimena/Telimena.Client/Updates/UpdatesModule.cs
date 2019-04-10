@@ -82,7 +82,7 @@ namespace TelimenaClient
                 {
                     UpdateHandler handler = new UpdateHandler(this.telimena.Messenger, this.telimena.Properties.LiveProgramInfo, new DefaultWpfInputReceiver()
                         , new UpdateInstaller(), this.telimena.Locator);
-                    await handler.HandleUpdates(checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate).ConfigureAwait(false);
+                    await handler.HandleUpdates(true, checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate).ConfigureAwait(false);
                 }
                 else
                 {
@@ -128,6 +128,34 @@ namespace TelimenaClient
         public UpdateCheckResult CheckForUpdates()
         {
             return Task.Run(() => this.CheckForUpdatesAsync()).GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc />
+        public void InstallUpdates(UpdateCheckResult checkResult)
+        {
+            Task.Run(() => this.InstallUpdatesAsync(checkResult)).GetAwaiter().GetResult();
+        }
+
+        /// <inheritdoc />
+        public Task InstallUpdatesAsync(UpdateCheckResult checkResult)
+        {
+            try
+            {
+                UpdateHandler handler = new UpdateHandler(this.telimena.Messenger, this.telimena.Properties.LiveProgramInfo, new DefaultWpfInputReceiver()
+                    , new UpdateInstaller(), this.telimena.Locator);
+                return handler.HandleUpdates(false, checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate);
+            }
+            catch (Exception ex)
+            {
+                TelimenaException exception = new TelimenaException("Error occurred while installing updates", this.telimena.Properties, ex);
+                if (!this.telimena.Properties.SuppressAllErrors)
+                {
+                    throw exception;
+                }
+
+                return Task.FromResult(false);
+            }
+        
         }
 
         /// <inheritdoc />
