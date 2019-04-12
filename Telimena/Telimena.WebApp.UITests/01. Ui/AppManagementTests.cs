@@ -224,13 +224,15 @@ namespace Telimena.WebApp.UITests._01._Ui
                 }
 
                 input.SendKeys(file.FullName);
-
+                Log($"Uploading {file.FullName}");
                 wait.Until(x => form.FindElements(By.ClassName("info")).FirstOrDefault(e => e.Text.Contains(file.Name)));
 
                 var btn = wait.Until(ExpectedConditions.ElementToBeClickable(form.FindElements(By.TagName("input"))
                     .FirstOrDefault(x => x.GetAttribute("type") == "submit")));
 
                 btn.Click();
+                Log($"Submitted upload of {file.FullName}");
+
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Uploaded package with ID"));
                 this.Driver.Navigate().Refresh();
 
