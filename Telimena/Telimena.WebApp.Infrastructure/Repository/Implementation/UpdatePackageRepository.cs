@@ -36,12 +36,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string packageName, Stream fileStream, string supportedToolkitVersion, bool isBeta, string releaseNotes, IFileSaver fileSaver)
         {
-            string actualVersion = await this.streamVersionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  true).ConfigureAwait(false);
+            string actualVersion = await this.streamVersionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  packageName, true).ConfigureAwait(false);
             fileStream.Position = 0;
 
-            string actualToolkitVersion = await this.streamVersionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, false).ConfigureAwait(false);
+            string actualToolkitVersion = await this.streamVersionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, packageName, false).ConfigureAwait(false);
             fileStream.Position = 0;
-            fileStream = await Utilities.EnsureStreamIsZipped(packageName, fileStream).ConfigureAwait(false);
+            fileStream = await Utilities.ZipTheStreamIfNeeded(packageName, fileStream).ConfigureAwait(false);
 
             if (actualToolkitVersion != null)
             {

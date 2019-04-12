@@ -60,10 +60,10 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             string viewName = nameof(this.ReportView);
             //seed the data
             DateTimeOffset timestamp = DateTimeOffset.UtcNow;
-            FileInfo app = this.LaunchTestsAppNewInstance(out _, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, "", viewName: viewName);
+            FileInfo app = this.LaunchTestsAppNewInstance(out _, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1, "", viewName: viewName);
 
 
-            TelemetryQueryRequest request = TelemetryQueryRequest.CreateFull(new Guid(AutomaticTestsClientTelemetryKey));
+            TelemetryQueryRequest request = TelemetryQueryRequest.CreateFull(Apps.Keys.AutomaticTestsClient);
             TelemetryQueryResponse queryResponse = await this.CheckTelemetry(request);
             TelemetrySummaryDto summary = null;
             TelemetryAwareComponentDto viewComponent = null;
@@ -75,7 +75,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
 
 
             timestamp = DateTimeOffset.UtcNow;
-            app= this.LaunchTestsAppNewInstance(out _, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, "", viewName: viewName);
+            app= this.LaunchTestsAppNewInstance(out _, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1, "", viewName: viewName);
             //Assert.IsNull(response.Exception);
             //Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
 

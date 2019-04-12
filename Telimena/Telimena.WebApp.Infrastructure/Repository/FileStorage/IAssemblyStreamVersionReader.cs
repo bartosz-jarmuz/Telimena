@@ -6,6 +6,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
     public interface IAssemblyStreamVersionReader
     {
         Task<string> GetFileVersion(Stream stream, string expectedFileName, bool expectSingleFile);
-        Task<string> GetVersionFromPackage(string nameOfFileToCheck, Stream fileStream, bool required = true);
+        Task<string> GetVersionFromPackage(string nameOfFileToCheck, Stream fileStream, string packageFileName
+            , bool required = true);
     }
 }

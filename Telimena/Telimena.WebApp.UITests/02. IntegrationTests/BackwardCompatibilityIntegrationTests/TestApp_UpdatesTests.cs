@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using AutomaticTestsClient;
 using NUnit.Framework;
@@ -34,14 +35,32 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName);
             return await this.GetVersionsFromApp(exe).ConfigureAwait(false);
         }
+
+        public VersionTuple GetVersionsFromMsiApp(string installerName, FileInfo expectedProgramPath, Guid productCode)
+        {
+            this.UninstallMsi(productCode, expectedProgramPath);
+
+            this.InstallMsi(TestAppProvider.GetFile(installerName), expectedProgramPath);
+            Thread.Sleep(500);
+            return this.GetVersionsFromFile(expectedProgramPath);
+        }
+
         public async Task<VersionTuple> GetVersionsFromApp(FileInfo exe)
         {
             this.Log($"Starting process [{exe.FullName}]");
-            var process = Process.Start(exe.FullName);
+            Process process = Process.Start(exe.FullName);
             Application app = TestStack.White.Application.Attach(process);
 
             Window appWarning = await TestHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient - This app requires arguments to run"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
             return await this.GetVersionFromMsgBox(appWarning).ConfigureAwait(false);
+        }
+
+        public VersionTuple GetVersionsFromFile(FileInfo exe)
+        {
+           string ass = TelimenaVersionReader.Read(exe, VersionTypes.AssemblyVersion);
+           string file = TelimenaVersionReader.Read(exe, VersionTypes.FileVersion);
+            return new VersionTuple() { AssemblyVersion = ass, FileVersion = file };
+
         }
 
         public string GetTextFromMsgBox(Window msgBox)
@@ -104,11 +123,11 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             try
             {
 
-                VersionTuple initialVersions = await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1, MethodBase.GetCurrentMethod().Name).ConfigureAwait(false);
+                VersionTuple initialVersions = await this.GetVersionsFromApp(Apps.PackageNames.AutomaticTestsClientAppV1, MethodBase.GetCurrentMethod().Name).ConfigureAwait(false);
 
                 FileInfo appFile;
 
-                this.LaunchTestsAppAndGetResult<UpdateCheckResult>(out appFile, Actions.CheckAndInstallUpdates, TestAppProvider.FileNames.TestAppV1
+                this.LaunchTestsAppNewInstanceAndGetResult<UpdateCheckResult>(out appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient,  Apps.PackageNames.AutomaticTestsClientAppV1
                     , MethodBase.GetCurrentMethod().Name, waitForExit: false);
 
                 Window updater = await TestHelpers.WaitForWindowAsync(x => x.Contains("AutomaticTestsClient Updater"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
@@ -128,10 +147,46 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                 Assert.AreEqual(postUpdateVersions.FileVersion, newVersions.FileVersion);
 
                 //now just assert that the update check result is empty next time
-                var result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.CheckAndInstallUpdates, waitForExit: true);
+                UpdateCheckResult result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: true);
 
                 Assert.IsFalse(result.IsUpdateAvailable);
                 Assert.IsNull(result.Exception);
+            }
+            catch (Exception ex)
+            {
+                throw this.CleanupAndRethrow(ex);
+            }
+        }
+
+       [Test]
+        public async Task _03_MsiCheckAndInstallUpdatesTests()
+        {
+            try
+            {
+                this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
+
+                 VersionTuple initialVersions = this.GetVersionsFromMsiApp(Apps.PackageNames.InstallersTestAppMsi3V1, Apps.Paths.InstallersTestAppMsi3, Apps.ProductCodes.InstallersTestAppMsi3V1);
+
+                 this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Apps.Paths.InstallersTestAppMsi3, Actions.CheckAndInstallUpdates, Apps.Keys.InstallersTestAppMsi3);
+
+                Window updater = await TestHelpers.WaitForWindowAsync(x => x.Contains("InstallersTestApp.Msi3Installer"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
+                updater.Get<Button>(SearchCriteria.ByText("OK")).Click();
+
+                Thread.Sleep(1000);
+                VersionTuple newVersions = this.GetVersionsFromFile(Apps.Paths.InstallersTestAppMsi3);
+
+                Assert.IsTrue(newVersions.AssemblyVersion.IsNewerVersionThan(initialVersions.AssemblyVersion));
+                Assert.IsTrue(newVersions.FileVersion.IsNewerVersionThan(initialVersions.FileVersion));
+               
+
+                //now just assert that the update check result is empty next time
+                UpdateCheckResult result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Apps.Paths.InstallersTestAppMsi3, Actions.CheckAndInstallUpdates, Apps.Keys.InstallersTestAppMsi3);
+
+                Assert.IsFalse(result.IsUpdateAvailable);
+                Assert.IsNull(result.Exception);
+
+                this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
+
             }
             catch (Exception ex)
             {
@@ -147,11 +202,11 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             try
             {
 
-                VersionTuple initialVersions = await this.GetVersionsFromApp(TestAppProvider.FileNames.TestAppV1, nameof(this._02_HandleUpdatesNonBetaTests)).ConfigureAwait(false);
+                VersionTuple initialVersions = await this.GetVersionsFromApp(Apps.PackageNames.AutomaticTestsClientAppV1, nameof(this._02_HandleUpdatesNonBetaTests)).ConfigureAwait(false);
 
                 FileInfo appFile;
 
-                this.LaunchTestsAppAndGetResult<UpdateCheckResult>(out appFile, Actions.HandleUpdates, TestAppProvider.FileNames.TestAppV1
+                this.LaunchTestsAppNewInstanceAndGetResult<UpdateCheckResult>(out appFile, Actions.HandleUpdates, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1
                     , nameof(this._02_HandleUpdatesNonBetaTests), waitForExit: false);
                 Window updateNowMsgBox =
                     await TestHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient update installation"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
@@ -174,7 +229,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                 Assert.AreEqual(postUpdateVersions.FileVersion, newVersions.FileVersion);
 
                 //now just assert that the update check result is empty next time
-                var result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.HandleUpdates, waitForExit:true);
+                UpdateCheckResult result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.HandleUpdates, Apps.Keys.AutomaticTestsClient, waitForExit:true);
 
                 Assert.IsFalse(result.IsUpdateAvailable);
                 Assert.IsNull(result.Exception);
@@ -190,7 +245,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         {
             try
             {
-                this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, TestAppProvider.FileNames.PackageUpdaterTestAppV1, nameof(this._01_HandlePackageUpdatesNonBetaTests), waitForExit: false);
+                this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, Apps.PackageNames.PackageUpdaterTestAppV1, nameof(this._01_HandlePackageUpdatesNonBetaTests), waitForExit: false);
 
                 Window updateNowMsgBox =
                     await TestHelpers.WaitForWindowAsync(x => x.Equals("PackageTriggerUpdaterTestApp update installation"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
@@ -200,7 +255,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                 executed.Get<Button>(SearchCriteria.ByText("OK")).Click();
 
                 Window doneMsg = await TestHelpers.WaitForWindowAsync(x => x.Equals("Updater finished"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
-                var text = GetTextFromMsgBox(doneMsg);
+                string text = GetTextFromMsgBox(doneMsg);
                 Assert.AreEqual("Killed other processes: True", text);
 
                 //do not check if app was updated, because we only care whether the updater was actually launched

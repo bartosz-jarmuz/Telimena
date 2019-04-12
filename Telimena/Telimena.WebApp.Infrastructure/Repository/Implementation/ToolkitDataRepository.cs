@@ -32,7 +32,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             string actualVersion = await this.versionReader.GetFileVersion(fileStream, DefaultToolkitNames.TelimenaAssemblyName, true).ConfigureAwait(false);
             fileStream.Position = 0;
-            fileStream = await Utilities.EnsureStreamIsZipped(DefaultToolkitNames.TelimenaAssemblyName, fileStream).ConfigureAwait(false);
+            fileStream = await Utilities.ZipTheStreamIfNeeded(DefaultToolkitNames.TelimenaAssemblyName, fileStream).ConfigureAwait(false);
 
             TelimenaToolkitData data = await this.TelimenaPortalContext.TelimenaToolkitData.Where(x => x.Version == actualVersion).Include(nameof(TelimenaToolkitData.TelimenaPackageInfo)).FirstOrDefaultAsync().ConfigureAwait(false);
             if (data == null)

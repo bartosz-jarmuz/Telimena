@@ -42,7 +42,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.FindElement(By.Id(Strings.Id.RegisterApplicationLink)).Click();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
 
-                this.ValidateAppPages(TestAppProvider.AutomaticTestsClientAppName, wait);
+                this.ValidateAppPages(Apps.Names.AutomaticTestsClient, wait);
 
                 this.ValidateHelpPages(wait);
 

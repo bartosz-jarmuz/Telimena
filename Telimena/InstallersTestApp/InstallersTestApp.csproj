@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8C7395CF-1C86-4C66-BF55-B254AB1EA6F3}</ProjectGuid>
+    <ProjectGuid>{AE42CC85-651B-4404-9D3B-992A141D6AE6}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>AutomaticTestsClient</RootNamespace>
-    <AssemblyName>AutomaticTestsClient</AssemblyName>
+    <RootNamespace>InstallersTestApp</RootNamespace>
+    <AssemblyName>InstallersTestApp</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -37,7 +38,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,23 +47,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestClientProgram.cs" />
+    <Compile Include="InstallersTestAppProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="addToZip.ps1" />
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
-      <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
+      <Project>{8bc1dd73-2520-4361-9845-282e87442339}</Project>
       <Name>Telimena.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\TestAppsSharedLogic\TestAppsSharedLogic.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>powershell -NoProfile -ExecutionPolicy RemoteSigned -file $(ProjectDir)\addToZip.ps1 -SolutionDir $(SolutionDir) -TargetPath $(TargetPath)</PostBuildEvent>
-  </PropertyGroup>
 </Project>

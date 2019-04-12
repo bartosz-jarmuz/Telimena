@@ -30,8 +30,8 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.Driver.FindElement(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_menu")).Click();
-                IWebElement statLink = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(TestAppProvider.AutomaticTestsClientAppName + "_statsLink")));
+                this.Driver.FindElement(By.Id(Apps.Names.AutomaticTestsClient + "_menu")).Click();
+                IWebElement statLink = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Apps.Names.AutomaticTestsClient + "_statsLink")));
 
                 statLink.Click();
 
@@ -71,13 +71,13 @@ namespace Telimena.WebApp.UITests._01._Ui
         public async Task Test_AppUsageTable()
         {
             string viewName = nameof(this.Test_AppUsageTable);
-            FileInfo app = this.LaunchTestsAppNewInstanceAndGetResult(out _, out TelemetryItem first, Actions.ReportViewUsage, TestAppProvider.FileNames.TestAppV1, nameof(this.Test_AppUsageTable)
+            FileInfo app = this.LaunchTestsAppNewInstanceAndGetResult(out _, out TelemetryItem first, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1, nameof(this.Test_AppUsageTable)
                 , viewName: viewName);
             Task.Delay(1000).GetAwaiter().GetResult();
             DateTime previous = await this.GetLatestUsageFromTable().ConfigureAwait(false);
             Task.Delay(1500).GetAwaiter().GetResult();
 
-            var second = this.LaunchTestsAppAndGetResult<TelemetryItem>(app, Actions.ReportViewUsage, viewName: viewName);
+            var second = this.LaunchTestsAppAndGetResult<TelemetryItem>(app, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, viewName: viewName);
 
             DateTime current = await this.GetLatestUsageFromTable().ConfigureAwait(false);
 

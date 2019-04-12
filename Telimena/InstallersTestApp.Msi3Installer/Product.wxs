@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="8a33af7c-a8df-4321-b4c5-c5fe0b48b1ec" Name="InstallersTestApp.Msi3Installer" Language="1033" Version="!(bind.FileVersion.InstallersTestApp.exe)" Manufacturer="TelimenaDevTeam" UpgradeCode="11cd844e-0203-4268-8917-cda481978422">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine"  />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <Media Id='1' Cabinet='cab1.cab' EmbedCab='yes' />
+
+
+    <Feature Id="ProductFeature" Title="InstallersTestApp.Msi3Installer" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+        <Directory Id="TelimenaTestApps" Name="TelimenaTestsApps">
+          <Directory Id="INSTALLFOLDER" Name="InstallersTestApp.Msi3Installer App" />
+        </Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			 <Component Id="ProductComponent" Guid="62e2604c-e4f8-43cf-bf66-f6f63f1b3759">
+         <File Source="$(var.InstallersTestApp.TargetPath)" KeyPath="yes"  />
+         <File Source="$(var.InstallersTestApp.TargetDir)\Telimena.Client.dll"  />
+         <File Source="$(var.InstallersTestApp.TargetDir)\Newtonsoft.Json.dll"  />
+       </Component> 
+		</ComponentGroup>
+	</Fragment>
+</Wix>

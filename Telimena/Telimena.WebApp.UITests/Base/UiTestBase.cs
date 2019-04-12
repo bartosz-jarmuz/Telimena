@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using DotNetLittleHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
@@ -25,6 +27,62 @@ namespace Telimena.WebApp.UITests.Base
     [TestFixture]
     public abstract class UiTestBase : IntegrationTestBase
     {
+
+        /// <summary>
+        /// Start a download and wait for a file to appear
+        /// https://stackoverflow.com/a/46440261/1141876
+        /// </summary>
+        /// <param name="expectedName">If we don't know the extension, Chrome creates a temp file in download folder and we think we have the file already</param>
+        protected FileInfo ActAndWaitForFileDownload(
+            Action action
+            , string expectedName
+            , TimeSpan maximumWaitTime
+            , string downloadDirectory)
+        {
+            var expectedPath = Path.Combine(downloadDirectory, expectedName);
+            try
+            {
+                File.Delete(expectedPath);
+            }
+            catch (Exception ex)
+            {
+                Log($"Could not delete file {expectedPath }, error: {ex}");
+            }
+            var stopwatch = Stopwatch.StartNew();
+            Assert.IsFalse(File.Exists(expectedPath));
+            action();
+
+            var isTimedOut = false;
+            string filePath = null;
+            Func<bool> fileAppearedOrTimedOut = () =>
+            {
+                isTimedOut = stopwatch.Elapsed > maximumWaitTime;
+                filePath = Directory.GetFiles(downloadDirectory)
+                    .FirstOrDefault(x => Path.GetFileName(x) == expectedName);
+
+                return filePath != null || isTimedOut;
+            };
+
+            do
+            {
+                Thread.Sleep(500);
+            }
+            while (!fileAppearedOrTimedOut());
+
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                Assert.AreEqual(expectedPath, filePath);
+                return new FileInfo(filePath);
+            }
+            if (isTimedOut)
+            {
+                Assert.Fail("Failed to download");
+            }
+
+            return null;
+
+        }
+
         protected void ClickOnProgramMenuButton(string appName, string buttonSuffix)
         {
             Retrier.RetryAsync(() =>
@@ -87,6 +145,8 @@ namespace Telimena.WebApp.UITests.Base
             {
                 case "Chrome":
                     ChromeOptions opt = new ChromeOptions();
+                    opt.AddArgument("--safebrowsing-disable-download-protection");
+                    opt.AddUserProfilePreference("safebrowsing", "enabled");
                     if (!ShowBrowser)
                     {
                       opt.AddArgument("--headless");

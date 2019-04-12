@@ -18,8 +18,13 @@ namespace Telimena.WebApp.Infrastructure
         /// <param name="fileName">Name of the file.</param>
         /// <param name="fileStream">The file stream.</param>
         /// <returns>Task&lt;Stream&gt;.</returns>
-        public static async Task<Stream> EnsureStreamIsZipped(string fileName, Stream fileStream)
+        public static async Task<Stream> ZipTheStreamIfNeeded(string fileName, Stream fileStream)
         {
+            if (fileName.EndsWith(".msi", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return fileStream;
+            }
+
             if (ZipHelpers.IsZipCompressedData(fileStream))
             {
                 return fileStream;

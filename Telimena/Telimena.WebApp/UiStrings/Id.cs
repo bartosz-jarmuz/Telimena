@@ -66,6 +66,7 @@ namespace Telimena.WebApp.UiStrings
             public static string TeamManagementLink { get; } = "TeamManagementLink";
             public static string SubmitTeamRename { get; } = "SubmitTeamRename";
             public static string ProgramDashboard { get; } = "ProgramDashboard";
+            public static string DownloadProgramLink { get; } = "DownloadProgramLink";
 
             public static partial class Help
             {

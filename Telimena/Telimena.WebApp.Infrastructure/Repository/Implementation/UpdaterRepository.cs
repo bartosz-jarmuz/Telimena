@@ -162,7 +162,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             string actualVersion = await this.streamVersionReader.GetFileVersion(fileStream, updater.FileName, true).ConfigureAwait(false);
             fileStream.Position = 0;
-            fileStream = await Utilities.EnsureStreamIsZipped(updater.FileName, fileStream).ConfigureAwait(false);
+            fileStream = await Utilities.ZipTheStreamIfNeeded(updater.FileName, fileStream).ConfigureAwait(false);
 
             if (string.IsNullOrEmpty(minimumRequiredToolkitVersion))
             {

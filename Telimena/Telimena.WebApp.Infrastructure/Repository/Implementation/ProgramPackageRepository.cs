@@ -26,17 +26,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         private readonly TelimenaPortalContext telimenaPortalContext;
         private readonly string containerName = "program-packages";
 
-        public async Task<ProgramPackageInfo> StorePackageAsync(Program program, Stream fileStream, string fileName, IFileSaver fileSaver)
+        public async Task<ProgramPackageInfo> StorePackageAsync(Program program, Stream fileStream, string packageFileName, IFileSaver fileSaver)
         {
-
-            string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream, true).ConfigureAwait(false);
+            string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream, packageFileName, true).ConfigureAwait(false);
             fileStream.Position = 0;
             ObjectValidator.Validate(() => Version.TryParse(actualVersion, out Version _)
                 , new InvalidOperationException($"[{actualVersion}] is not a valid version string"));
 
-            string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, false).ConfigureAwait(false);
+            string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, packageFileName, false).ConfigureAwait(false);
             fileStream.Position = 0;
-            fileStream = await Utilities.EnsureStreamIsZipped(fileName, fileStream).ConfigureAwait(false);
+            fileStream = await Utilities.ZipTheStreamIfNeeded(packageFileName, fileStream).ConfigureAwait(false);
 
             ProgramPackageInfo pkg = await this.telimenaPortalContext.ProgramPackages.Where(x => x.ProgramId == program.Id
                                                                                                 && x.Version == actualVersion
@@ -45,7 +44,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 #pragma warning restore 618
             if (pkg == null)
             {
-                pkg = new ProgramPackageInfo(fileName, program.Id, actualVersion, fileStream.Length, actualToolkitVersion);
+                pkg = new ProgramPackageInfo(packageFileName, program.Id, actualVersion, fileStream.Length, actualToolkitVersion);
                 this.telimenaPortalContext.ProgramPackages.Add(pkg);
             }
             else

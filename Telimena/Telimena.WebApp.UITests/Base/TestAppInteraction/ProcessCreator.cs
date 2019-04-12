@@ -10,7 +10,11 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
     {
         private static ProcessStartInfo CreateStartInfo(FileInfo testAppFile, object arguments)
         {
-            var serialized = JsonConvert.SerializeObject(arguments);
+            string serialized = "";
+            if (arguments != null)
+            {
+                serialized = JsonConvert.SerializeObject(arguments);
+            }
             var encoded = Base64Encode(serialized);
             Log($"Starting app {testAppFile.FullName}");
             Log($"Start info Arguments {serialized}");

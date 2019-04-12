@@ -67,6 +67,7 @@
       <HintPath>..\packages\HtmlAgilityPack.1.8.13\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Deployment.WindowsInstaller, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.2.1\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
     </Reference>
@@ -135,6 +136,12 @@
     <Compile Include="UITestsInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="02. IntegrationTests\Apps\v1.0.0.2_InstallersTestApp.Msi3Installer.msi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="02. IntegrationTests\Apps\v2.0.0.2_InstallersTestApp.Msi3Installer.msi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="app.config" />
     <None Include="02. IntegrationTests\Apps\AutomaticTestsClientv2.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

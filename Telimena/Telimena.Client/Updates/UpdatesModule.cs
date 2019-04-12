@@ -164,4 +164,28 @@ namespace TelimenaClient
             return Task.Run(() => this.HandleUpdatesAsync(acceptBeta)).GetAwaiter().GetResult();
         }
     }
+
+
+    /// <summary>
+    /// How should the 'update opportunity' be communicated to the user
+    /// </summary>
+    public enum UserConfirmationModes
+    {
+        /// <summary>
+        /// Present the 'there is update available, would you like to continue' notification before downloading the update packages.
+        /// <para>This is good for quick updates right after app start. User 'starts the update' before they start using the app, and they need to wait for the download to complete</para>
+        /// </summary>
+        AskBeforeDownload,
+
+        /// <summary>
+        /// Download the update packages before presenting the 'there is update available, would you like to continue' notification.
+        /// <para>This is good for large updates. The User don't need to wait for the download to complete, however the update interrupts their work.</para>
+        /// </summary>
+        AskAfterDownload,
+
+        /// <summary>
+        /// The user is not given a choice at all.
+        /// </summary>
+        DontAsk
+    }
 }

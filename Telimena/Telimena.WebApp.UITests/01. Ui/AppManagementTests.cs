@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Microsoft.Deployment.WindowsInstaller;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
@@ -28,7 +30,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.RegisterApp(TestAppProvider.AutomaticTestsClientAppName, AutomaticTestsClientTelemetryKey, "Telimena system tests app", "AutomaticTestsClient.exe", true, false);
+                this.RegisterApp(Apps.Names.AutomaticTestsClient, Apps.Keys.AutomaticTestsClient, "Telimena system tests app", "AutomaticTestsClient.exe", true, false);
             }
             catch (Exception ex)
             {
@@ -41,8 +43,22 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.RegisterApp(TestAppProvider.PackageUpdaterTestAppName, PackageUpdaterClientTelemetryKey, 
+                this.RegisterApp(Apps.Names.PackageUpdaterTest, Apps.Keys.PackageUpdaterClient, 
                     "Telimena package updater test app (for apps where update package is an actual installer)", "PackageTriggerUpdaterTestApp.exe", true, false);
+            }
+            catch (Exception ex)
+            {
+                this.HandleError(ex);
+            }
+        }
+
+        [Test, Order(4), Retry(3)]
+        public void _04c_RegisterInstallerTestApp_Msi3()
+        {
+            try
+            {
+                this.RegisterApp(Apps.Names.InstallersTestAppMsi3, Apps.Keys.InstallersTestAppMsi3,
+                    "Telimena MSI installer test app", "InstallersTestApp.exe", true, false);
             }
             catch (Exception ex)
             {
@@ -116,7 +132,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.PortalSummary)));
         }
 
-        private void RegisterApp(string name, string key, string description, string assemblyName, bool canAlreadyExist, bool hasToExistAlready)
+        private void RegisterApp(string name, Guid? key, string description, string assemblyName, bool canAlreadyExist, bool hasToExistAlready)
         {
             this.GoToAdminHomePage();
 
@@ -128,7 +144,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             if (key != null)
             {
                 this.Driver.FindElement(By.Id(Strings.Id.TelemetryKeyInputBox)).Clear();
-                this.Driver.FindElement(By.Id(Strings.Id.TelemetryKeyInputBox)).SendKeys(key);
+                this.Driver.FindElement(By.Id(Strings.Id.TelemetryKeyInputBox)).SendKeys(key.ToString());
             }
             else
             {
@@ -225,8 +241,60 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
+        public void DownloadAndInstallMsiProgramPackage(string appName, string packageFileName)
+        {
+            try
+            {
+
+                this.LoginAdminIfNeeded();
+
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+
+                this.ClickOnManageProgramMenu(appName);
+
+                IWebElement link = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DownloadProgramLink)));
 
 
+                string path = Environment.GetEnvironmentVariable("USERPROFILE") + "\\Downloads";
+
+                FileInfo file = this.ActAndWaitForFileDownload(() => link.Click(), packageFileName, TimeSpan.FromSeconds(60)
+                    , path);
+                this.InstallMsi3AndVerify(file);
+
+                file.Delete();
+            }
+            catch (Exception ex)
+            {
+                this.HandleError(ex);
+            }
+        }
+
+        public void InstallMsi3AndVerify(FileInfo msi)
+        {
+            this.UninstallMsi(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.Paths.InstallersTestAppMsi3);
+
+            Assert.IsFalse(File.Exists(Apps.Paths.InstallersTestAppMsi3.FullName));
+
+            this.InstallMsi(msi, Apps.Paths.InstallersTestAppMsi3);
+
+            Assert.IsTrue(File.Exists(Apps.Paths.InstallersTestAppMsi3.FullName));
+            this.UninstallMsi(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.Paths.InstallersTestAppMsi3);
+           Assert.IsFalse(File.Exists(Apps.Paths.InstallersTestAppMsi3.FullName));
+
+
+        }
+
+        [Test]
+        public void ProductCodesTest_InstallersTestAppMsi3()
+        {
+            var code1 = this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V1);
+            Assert.AreEqual(code1, Apps.ProductCodes.InstallersTestAppMsi3V1);
+
+            var code2 = this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V2);
+            Assert.AreEqual(code2,Apps.ProductCodes.InstallersTestAppMsi3V2);
+
+            Assert.AreNotEqual(code1, code2);
+        }
 
         public void UploadUpdatePackage(string appName, string packageFileName)
         {
@@ -350,7 +418,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         public void _05_UploadTestAppUpdate()
         {
 
-            this.UploadUpdatePackage(TestAppProvider.AutomaticTestsClientAppName, "AutomaticTestsClientv2.zip");
+            this.UploadUpdatePackage(Apps.Names.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV2);
 
         }
 
@@ -358,14 +426,16 @@ namespace Telimena.WebApp.UITests._01._Ui
         [Test, Order(5), Retry(3)]
         public void _05c_UploadTestAppPackage()
         {
-            this.UploadProgramPackage(TestAppProvider.AutomaticTestsClientAppName, "TestApp v1.0.0.0.zip");
+            this.UploadProgramPackage(Apps.Names.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1);
         }
+
+       
 
 
         [Test, Order(6), Retry(3)]
         public void _06_UploadPackageUpdateTestAppUpdate()
         {
-            this.UploadUpdatePackage(TestAppProvider.PackageUpdaterTestAppName, "PackageTriggerUpdaterTestApp v.2.0.0.0.zip");
+            this.UploadUpdatePackage(Apps.Names.PackageUpdaterTest, "PackageTriggerUpdaterTestApp v.2.0.0.0.zip");
         }
 
 
@@ -374,7 +444,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         public void _07_SetUpdaterForPackageTriggerApp()
         { 
 
-            var app = TestAppProvider.PackageUpdaterTestAppName;
+            var app = Apps.Names.PackageUpdaterTest;
             var currentUpdater = this.GetUpdaterForApp(app);
 
             if (currentUpdater == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
@@ -403,7 +473,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
             
-                this.ClickOnManageProgramMenu(TestAppProvider.AutomaticTestsClientAppName);
+                this.ClickOnManageProgramMenu(Apps.Names.AutomaticTestsClient);
 
                 var notes = GetCurrentMethod().Name + DateTimeOffset.UtcNow.ToString("O");
 
@@ -424,6 +494,48 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         }
 
+        [Test, Order(9), Retry(3)]
+        public void _09_UploadInstallerTestAppMsi3Package()
+        {
+            Assert.AreEqual(Apps.ProductCodes.InstallersTestAppMsi3V1, GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V1));
+            this.UploadProgramPackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V1);
+        }
+
+        [Test, Order(10), Retry(3)]
+        public void _10_DownloadInstallerTestAppMsi3Package()
+        {
+            this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
+            this.DownloadAndInstallMsiProgramPackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V1);
+            this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
+
+        }
+
+
+
+        [Test, Order(11), Retry(3)]
+        public void _11_UploadInstallerMsi3TestAppUpdate()
+        {
+            Assert.AreEqual(Apps.ProductCodes.InstallersTestAppMsi3V2, GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V2));
+            this.UploadUpdatePackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V2);
+        }
+
+        [Test, Order(12), Retry(3)]
+        public void _12_SetUpdaterForMsiInstallerApp()
+        {
+
+            var app = Apps.Names.InstallersTestAppMsi3;
+            var currentUpdater = this.GetUpdaterForApp(app);
+
+            if (currentUpdater == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
+            {
+                //ok
+            }
+            else
+            {
+                this.SetUpdaterForApp(app, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
+                Assert.AreEqual(DefaultToolkitNames.PackageTriggerUpdaterInternalName, this.GetUpdaterForApp(app));
+            }
+        }
 
         private string GetUpdaterForApp(string appName)
         {

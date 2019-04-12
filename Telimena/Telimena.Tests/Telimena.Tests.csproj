@@ -30,6 +30,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -191,7 +192,13 @@
     <None Include="AssemblyVersionReader\ImproperPackage.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="AssemblyVersionReader\ImproperMsi3Installer.msi">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="AssemblyVersionReader\ProperPackage.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="AssemblyVersionReader\ProperMsi3Installer.msi">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
@@ -204,6 +211,10 @@
     <ProjectReference Include="..\..\ApplicationInsights\Test\Microsoft.ApplicationInsights.Test\Net46\Microsoft.ApplicationInsights.Net46.Tests.csproj">
       <Project>{0927E682-4A56-46B6-8125-94FA066B2F57}</Project>
       <Name>Microsoft.ApplicationInsights.Net46.Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LessMsi.Core\LessMsi.Core.csproj">
+      <Project>{1fd916f2-1df6-42f6-9ad4-83565fbf8e5c}</Project>
+      <Name>LessMsi.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
       <Project>{8bc1dd73-2520-4361-9845-282e87442339}</Project>

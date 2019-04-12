@@ -30,90 +30,60 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             return version;
         }
 
-        public async Task<string> GetVersionFromPackage(string nameOfFileToCheck, Stream fileStream, bool required = true)
+        public async Task<string> GetVersionFromPackage(string nameOfFileToCheck, Stream fileStream
+            , string packageFileName, bool required = true)
         {
-            var zipPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), "package.zip");
-            Directory.CreateDirectory(Path.GetDirectoryName(zipPath));
-            using (FileStream fs = new FileStream(zipPath, FileMode.Create))
+            string tempFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), "package");
+            Directory.CreateDirectory(Path.GetDirectoryName(tempFilePath));
+            using (FileStream fs = new FileStream(tempFilePath, FileMode.Create))
             {
                 await fileStream.CopyToAsync(fs).ConfigureAwait(false);
             }
 
             fileStream.Seek(0, SeekOrigin.Begin);
 
-            string version = GetFromZip(nameOfFileToCheck, zipPath, out Exception zipError);
-            if (version != null)
+            string version = null;
+            if (packageFileName.EndsWith(".msi", StringComparison.InvariantCultureIgnoreCase))
             {
-                return version;
+                version = GetFromMsi(nameOfFileToCheck, tempFilePath);
             }
-
-            Exception msiError = null;
-            if (zipError != null)
+            else
             {
-                version = GetFromMsi(nameOfFileToCheck, zipPath, out msiError);
-                if (version != null)
-                {
-                    return version;
-                }
+                version = GetFromZip(nameOfFileToCheck, tempFilePath);
             }
-
-            if (zipError != null)
-            {
-                throw new AggregateException($"An error occurred while trying to determine a version of file [{nameOfFileToCheck}] in a package.", zipError, msiError);
-            }
-
-
-            if (required)
+            
+            if (version == null && required)
             {
                 throw new FileNotFoundException( $"Failed to find the required assembly in the uploaded package. [{nameOfFileToCheck}] should be present.", nameOfFileToCheck);
             }
 
+            return version;
+        }
+
+        private static string GetFromMsi(string nameOfFileToCheck, string zipPath)
+        {
+            Wixtracts.ExtractFiles(zipPath, Path.GetDirectoryName(zipPath));
+            foreach (string file in Directory.GetFiles(Path.GetDirectoryName(zipPath), "*", SearchOption.AllDirectories))
+            {
+                if (Path.GetFileName(file).Equals(nameOfFileToCheck, StringComparison.InvariantCultureIgnoreCase))
+                {
+                       return TelimenaVersionReader.Read(file, VersionTypes.FileVersion);
+                }
+            }
             return null;
         }
 
-        private static string GetFromMsi(string nameOfFileToCheck, string zipPath, out Exception e)
+        private static string GetFromZip(string nameOfFileToCheck, string zipPath)
         {
-            e = null;
-            try
+            ZipFile.ExtractToDirectory(zipPath, Path.GetDirectoryName(zipPath));
+            foreach (string file in Directory.GetFiles(Path.GetDirectoryName(zipPath), "*", SearchOption.AllDirectories))
             {
-                Wixtracts.ExtractFiles(zipPath, Path.GetDirectoryName(zipPath));
-                foreach (string file in Directory.GetFiles(Path.GetDirectoryName(zipPath), "*", SearchOption.AllDirectories))
+                if (Path.GetFileName(file).Equals(nameOfFileToCheck, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (Path.GetFileName(file).Equals(nameOfFileToCheck, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        {
-                            return TelimenaVersionReader.Read(file, VersionTypes.FileVersion);
-                        }
+                        return TelimenaVersionReader.Read(file, VersionTypes.FileVersion);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                e = ex;
-            }
-
-            return null;
-        }
-
-        private static string GetFromZip(string nameOfFileToCheck, string zipPath, out Exception e)
-        {
-            e = null;
-            try
-            {
-                ZipFile.ExtractToDirectory(zipPath, Path.GetDirectoryName(zipPath));
-                foreach (string file in Directory.GetFiles(Path.GetDirectoryName(zipPath), "*", SearchOption.AllDirectories))
-                {
-                    if (Path.GetFileName(file).Equals(nameOfFileToCheck, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        {
-                            return TelimenaVersionReader.Read(file, VersionTypes.FileVersion);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                e = ex;
             }
 
             return null;
