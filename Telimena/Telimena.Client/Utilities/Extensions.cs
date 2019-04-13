@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using TelimenaClient.Model;
@@ -110,6 +111,36 @@ namespace TelimenaClient
         public static string GetMaxVersion(this IEnumerable<UpdatePackageData> packages)
         {
             return packages.OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).FirstOrDefault()?.Version;
+        }
+
+        private static readonly string[] SizeSuffixes = new string[9]
+        {
+            "bytes",
+            "KB",
+            "MB",
+            "GB",
+            "TB",
+            "PB",
+            "EB",
+            "ZB",
+            "YB"
+        };
+
+        /// <summary>
+        /// Gets the file / folder size string in largest unit (KB, MB, GB etc)
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="decimalPlaces">The decimal places.</param>
+        /// <returns>System.String.</returns>
+        public static string GetSizeString(this long value, int decimalPlaces = 1)
+        {
+            if (value < 0L)
+                return "-" + (-value).GetSizeString(1);
+            int index = 0;
+            Decimal d;
+            for (d = (Decimal)value; Math.Round(d, decimalPlaces) >= new Decimal(1000) && index < 5; ++index)
+                d /= new Decimal(1024);
+            return string.Format((IFormatProvider)CultureInfo.InvariantCulture, "{0:n" + (object)decimalPlaces + "} {1}", (object)d, (object)SizeSuffixes[index]);
         }
 
         /// <summary>

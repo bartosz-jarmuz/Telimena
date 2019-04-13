@@ -13,7 +13,13 @@ namespace TelimenaClient
         ///     If true, then Telimena will swallow any errors. Otherwise, it will rethrow
         /// </summary>
         bool SuppressAllErrors { get; set; }
-        
+
+        /// <summary>
+        /// Determines whether and when should the user be prompted about an update
+        /// </summary>
+        /// <value>The update prompting mode.</value>
+        UpdatePromptingModes UpdatePromptingMode {get;set; }
+
         /// <summary>
         ///     The unique key for this program's telemetry service
         /// </summary>

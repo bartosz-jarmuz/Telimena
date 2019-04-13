@@ -69,6 +69,7 @@ namespace PackageTriggerUpdaterTestApp
         {
             Console.WriteLine("Starting update handling...");
             ITelimena teli = TelimenaFactory.Construct(new TelimenaStartupInfo(arguments.TelemetryKey, new Uri(arguments.ApiUrl)));
+            teli.Properties.UpdatePromptingMode = UpdatePromptingModes.PromptBeforeDownload;
             Console.WriteLine("Telimena created... Handling updates");
             UpdateCheckResult result = teli.Update.HandleUpdates(false);
             Console.WriteLine("Finished update handling");

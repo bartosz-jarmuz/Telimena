@@ -95,6 +95,8 @@
     <Compile Include="NullObjects\NullObjectTelimenaProperties.cs" />
     <Compile Include="NullObjects\NullObjectUpdatesModule.cs" />
     <Compile Include="TelimenaClient\TelimenaFactory.cs" />
+    <Compile Include="UpdateInstallation\InputReceivers\DefaultConsoleInputReceiver.cs" />
+    <Compile Include="Updates\UpdatePromptingModes.cs" />
     <Compile Include="Utilities\LogSeverityMapper.cs" />
     <Compile Include="Telemetry\TelemetryModule.Tracking.cs" />
     <Compile Include="TelimenaClient\IFluentInterface.cs" />
@@ -132,7 +134,7 @@
     <Compile Include="Model\TelimenaContextPropertyKeys.cs" />
     <Compile Include="TelimenaException.cs" />
     <Compile Include="UpdateInstallation\UpdateInstructions.cs" />
-    <Compile Include="UpdateInstallation\DefaultWpfInputReceiver.cs" />
+    <Compile Include="UpdateInstallation\InputReceivers\DefaultWpfInputReceiver.cs" />
     <Compile Include="UpdateInstallation\IInstallUpdates.cs" />
     <Compile Include="UpdateInstallation\IReceiveUserInput.cs" />
     <Compile Include="UpdateInstallation\StartInfoCreator.cs" />

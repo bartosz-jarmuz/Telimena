@@ -8,6 +8,7 @@ namespace TelimenaClient
     internal class NullObjectTelimenaProperties : ITelimenaProperties
     {
         public bool SuppressAllErrors { get; set; } = true;
+        public UpdatePromptingModes UpdatePromptingMode { get; set; } = UpdatePromptingModes.DontPrompt;
         public Guid TelemetryKey { get; }
         public UserInfo UserInfo { get; } = new UserInfo();
         public ProgramInfo StaticProgramInfo { get; } = new ProgramInfo();

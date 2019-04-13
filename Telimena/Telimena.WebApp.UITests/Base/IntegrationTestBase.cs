@@ -242,6 +242,7 @@ namespace Telimena.WebApp.UITests.Base
         {
              appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
             PackageUpdateTesterArguments args = new PackageUpdateTesterArguments { ApiUrl = this.BaseUrl };
+
             args.TelemetryKey = Apps.Keys.PackageUpdaterClient;
 
             Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);

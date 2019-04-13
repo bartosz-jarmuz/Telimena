@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
 using TelimenaClient.Model;
 using TelimenaClient.Model.Internal;
 
@@ -27,27 +28,22 @@ namespace TelimenaClient
         private readonly IInstallUpdates updateInstaller;
         private readonly Locator locator;
 
-        public async Task HandleUpdates(bool askForConfirmation, IReadOnlyList<UpdatePackageData> packagesToInstall, UpdatePackageData updaterUpdate)
+        public async Task HandleUpdates(UpdatePromptingModes confirmationMode, IReadOnlyList<UpdatePackageData> packagesToInstall, UpdatePackageData updaterUpdate)
         {
             try
             {
                 if (packagesToInstall != null && packagesToInstall.Any())
                 {
-                    FileInfo updaterFile = await this.InstallUpdater(updaterUpdate).ConfigureAwait(false);
-                    await this.DownloadUpdatePackages(packagesToInstall).ConfigureAwait(false);
+                    var shouldInstallNow = await this.DownloadUpdatesIfNeeded(confirmationMode, packagesToInstall, updaterUpdate).ConfigureAwait(false);
+
+                    if (!shouldInstallNow.Item1)
+                    {
+                        return;
+                    }
 
                     FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo.Program, this.programInfo.Program.Name);
-                    bool installUpdatesNow = true;
-                    if (askForConfirmation)
-                    {
-                        string maxVersion = packagesToInstall.GetMaxVersion();
-                        installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(maxVersion, this.programInfo);
-                    }
 
-                    if (installUpdatesNow)
-                    { 
-                        this.updateInstaller.InstallUpdates(instructionsFile, updaterFile);
-                    }
+                    this.updateInstaller.InstallUpdates(instructionsFile, shouldInstallNow.Item2);
                 }
             }
                 catch (Exception ex)
@@ -56,25 +52,52 @@ namespace TelimenaClient
                 }
         }
 
+        private async Task<Tuple<bool, FileInfo>> DownloadUpdatesIfNeeded(UpdatePromptingModes confirmationMode, IReadOnlyList<UpdatePackageData> packagesToInstall
+            , UpdatePackageData updaterUpdate)
+        {
+            string maxVersion = packagesToInstall.GetMaxVersion();
+
+            bool installUpdatesNow;
+            FileInfo updaterFile = null;
+            switch (confirmationMode)
+            {
+                case UpdatePromptingModes.PromptAfterDownload:
+                    updaterFile = await this.InstallUpdater(updaterUpdate).ConfigureAwait(false);
+                    await this.DownloadUpdatePackages(packagesToInstall).ConfigureAwait(false);
+
+                    installUpdatesNow = this.inputReceiver.ShowInstallUpdatesNowQuestion(maxVersion, packagesToInstall.Sum(x => x.FileSizeBytes), this.programInfo);
+                    return new Tuple<bool, FileInfo>(installUpdatesNow, updaterFile);
+
+                case UpdatePromptingModes.PromptBeforeDownload:
+                    installUpdatesNow = this.inputReceiver.ShowDownloadAndInstallUpdatesQuestion(maxVersion, packagesToInstall.Sum(x => x.FileSizeBytes), this.programInfo);
+                    break;
+
+                case UpdatePromptingModes.DontPrompt:
+                    installUpdatesNow = true;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(confirmationMode), confirmationMode, null);
+            }
+
+            if (installUpdatesNow)
+            {
+                updaterFile = await this.InstallUpdater(updaterUpdate).ConfigureAwait(false);
+                await this.DownloadUpdatePackages(packagesToInstall).ConfigureAwait(false);
+            }
+
+            return new Tuple<bool, FileInfo>(installUpdatesNow, updaterFile);
+            
+        }
+
         protected async Task StoreUpdatePackage(UpdatePackageData pkgData, DirectoryInfo updatesFolder)
         {
             FileDownloadResult result = await this.messenger.DownloadFile(pkgData.DownloadUrl).ConfigureAwait(false);
             FileInfo pkgFile = this.locator.BuildUpdatePackagePath(updatesFolder, pkgData);
             Trace.WriteLine($"{result.FileName} to be stored into {pkgFile.FullName}");
             
-            // this.DeleteFileIfExists(pkgFile);
 
             await SaveStreamToPath(pkgData, pkgFile, result.Stream).ConfigureAwait(false);
-        }
-
-        private void DeleteFileIfExists(FileInfo pkgFile)
-        {
-            try
-            {
-                pkgFile.Delete();
-            }
-            catch (Exception) { //
-                                }
         }
 
         private static async Task SaveStreamToPath(UpdatePackageData pkgData, FileInfo pkgFile, Stream stream)

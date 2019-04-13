@@ -28,7 +28,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
     {
 
         [Test]
-        public async Task _01_HandlePackageUpdatesNonBetaTests()
+        public async Task _01_HandlePackageUpdates_NonBeta()
         {
             try
             {
@@ -36,7 +36,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                 this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, Apps.PackageNames.PackageUpdaterTestAppV1, TestHelpers.GetMethodName(), waitForExit: false);
 
                 Window updateNowMsgBox =
-                    await TestHelpers.WaitForWindowAsync(x => x.Equals("PackageTriggerUpdaterTestApp update installation"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
+                    await TestHelpers.WaitForWindowAsync(x => x.Equals("PackageTriggerUpdaterTestApp update download"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
                 updateNowMsgBox.Get<Button>(SearchCriteria.ByText("Yes")).Click();
 
                 Window executed = await TestHelpers.WaitForWindowAsync(x => x.Equals("Updater executed"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
@@ -57,7 +57,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         }
 
         [Test]
-        public async Task _02_HandleUpdatesNonBetaTests()
+        public async Task _02_HandleUpdates_NonBeta()
         {
             try
             {
@@ -96,7 +96,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         }
 
         [Test]
-        public async Task _03_CheckAndInstallUpdatesNonBetaTests()
+        public async Task _03_CheckAndInstallUpdates_NonBeta()
         {
             try
             {
@@ -133,7 +133,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
      
 
         [Test]
-        public async Task _04_MsiCheckAndInstallUpdatesTests()
+        public async Task _04_MsiCheckAndInstallUpdates()
         {
             try
             {
@@ -168,7 +168,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         }
 
         [Test]
-        public async Task _05_CheckAndInstallUpdatesBetaTests()
+        public async Task _05_CheckAndInstallUpdates_Beta()
         {
             try
             {
