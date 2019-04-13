@@ -261,7 +261,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.Log($"Clicking on download URL to store file in {path}");
 
-                FileInfo file = this.ActAndWaitForFileDownload(() => link.Click(), packageFileName, TimeSpan.FromSeconds(65)
+                FileInfo file = this.ActAndWaitForFileDownload(() => link.Click(), packageFileName, TimeSpan.FromSeconds(80)
                     , path);
 
                 this.Log($"File downloaded {file.FullName}. ");

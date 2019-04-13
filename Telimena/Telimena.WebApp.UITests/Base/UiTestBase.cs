@@ -60,6 +60,14 @@ namespace Telimena.WebApp.UITests.Base
                 isTimedOut = stopwatch.Elapsed > maximumWaitTime;
                 filePath = Directory.GetFiles(downloadDirectory)
                     .FirstOrDefault(x => Path.GetFileName(x) == expectedName);
+                if (filePath != null)
+                {
+                    Log($"File stored at {filePath}");
+                }
+                else
+                {
+                    this.Log($"File not ready yet. Elapsed: {stopwatch.Elapsed}");
+                }
 
                 return filePath != null || isTimedOut;
             };
