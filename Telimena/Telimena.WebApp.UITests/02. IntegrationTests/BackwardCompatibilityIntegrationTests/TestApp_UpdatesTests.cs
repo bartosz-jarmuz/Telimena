@@ -32,7 +32,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         {
             try
             {
-                this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, Apps.PackageNames.PackageUpdaterTestAppV1, nameof(this._01_HandlePackageUpdatesNonBetaTests), waitForExit: false);
+                this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, Apps.PackageNames.PackageUpdaterTestAppV1, MethodInfo.GetCurrentMethod().Name, waitForExit: false);
 
                 Window updateNowMsgBox =
                     await TestHelpers.WaitForWindowAsync(x => x.Equals("PackageTriggerUpdaterTestApp update installation"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);

@@ -190,7 +190,7 @@ namespace Telimena.WebApp.UITests.Base
         protected FileInfo LaunchTestsAppNewInstance(out Process process, Actions action, Guid telemetryKey, string appName, string testSubfolderName, ProgramInfo pi = null
             , string viewName = null, bool waitForExit = true)
         {
-            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
+            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
 
             process = this.LaunchTestsApp(appFile, action,telemetryKey, pi, waitForExit, viewName);
             return appFile;
@@ -199,7 +199,7 @@ namespace Telimena.WebApp.UITests.Base
         protected FileInfo LaunchTestsAppNewInstanceAndGetResult<T>(out Process process, out T result, Actions action, Guid telemetryKey, string appName, string testSubfolderName, ProgramInfo pi = null
             , string viewName = null, bool waitForExit = true) where T : class
         {
-            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
+            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
 
 
             this.outputs.Clear();
@@ -240,68 +240,12 @@ namespace Telimena.WebApp.UITests.Base
 
         protected Process LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, string appName, string testSubfolderName, bool waitForExit)
         {
-             appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
+             appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
             PackageUpdateTesterArguments args = new PackageUpdateTesterArguments { ApiUrl = this.BaseUrl };
             args.TelemetryKey = Apps.Keys.PackageUpdaterClient;
 
             Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);
             Log($"Started process: {appFile.FullName}");
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            if (waitForExit)
-            {
-                process.WaitForExit();
-                Log($"Finished process: {appFile.FullName}");
-            }
-
-            return process;
-        }
-
-        protected T LaunchPackageUpdaterTestsAppAndGetResult<T>(string appName, string testSubfolderName, bool waitForExit) where T : class
-        {
-            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
-            PackageUpdateTesterArguments args = new PackageUpdateTesterArguments { ApiUrl = this.BaseUrl };
-            args.TelemetryKey = Apps.Keys.PackageUpdaterClient;
-
-
-            Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);
-            Log($"Started process: {appFile.FullName}");
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            if (waitForExit)
-            {
-                process.WaitForExit();
-                Log($"Finished process: {appFile.FullName}");
-            }
-
-            T result = this.ParseOutput<T>();
-            this.outputs.Clear();
-            this.errors.Clear();
-
-            return result;
-        }
-
-        protected Process LaunchPackageUpdaterTestsAppNoArgs(string appName, string testSubfolderName, bool waitForExit)
-        {
-            this.outputs.Clear();
-            this.errors.Clear();
-
-            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName);
-
-            Process process = new Process();
-            process.EnableRaisingEvents = true;
-            process.OutputDataReceived += (sender, args) => this.outputs.Add(args.Data);
-            process.ErrorDataReceived += (sender, args) => this.errors.Add(args.Data);
-            process.StartInfo = new ProcessStartInfo
-            {
-                FileName = appFile.FullName,
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false
-            };
-            Log($"Started process with no args: {appFile.FullName}");
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();

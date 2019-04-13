@@ -69,10 +69,12 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
 
 
 
-        public static FileInfo ExtractApp(string fileName, string testSubfolderName)
+        public static FileInfo ExtractApp(string fileName, string testSubfolderName, Action<string> log)
         {
             var compressedFile = GetFile(fileName);
             var targetDir = new DirectoryInfo(Path.Combine(compressedFile.DirectoryName, testSubfolderName, compressedFile.Name + "_Extracted"));
+            log($"Extracting file {compressedFile} to {targetDir.FullName}");
+
             try
             {
                 if (targetDir.Exists)

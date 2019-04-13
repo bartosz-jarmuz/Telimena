@@ -33,7 +33,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
     {
         public async Task<VersionTuple> GetVersionsFromApp(string appName, string testSubfolderName)
         {
-            FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName);
+            FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
             return await this.GetVersionsFromApp(exe).ConfigureAwait(false);
         }
         private void AssertNoNonBetaUpdatesToInstall(UpdateCheckResult result, bool betaUpdateMightStillBeAvailable)
@@ -49,7 +49,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         }
         public VersionTuple GetVersionsFromExtractedAppFile(string appName, string testSubfolderName)
         {
-            FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName);
+            FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
             return this.GetVersionsFromFile(exe);
         }
 
