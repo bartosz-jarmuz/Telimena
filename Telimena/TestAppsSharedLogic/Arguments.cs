@@ -18,5 +18,6 @@ namespace AutomaticTestsClient
         public string ViewName { get; set; }
 
         public Guid TelemetryKey { get; set; }
+
     }
 }

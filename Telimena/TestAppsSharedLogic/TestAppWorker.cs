@@ -34,10 +34,13 @@ namespace AutomaticTestsClient
                         this.HandleReportViewUsage(telimena);
                         break;
                     case Actions.HandleUpdates:
-                        this.HandleUpdates(telimena);
+                        this.HandleUpdates(telimena, false);
                         break;
                     case Actions.CheckAndInstallUpdates:
-                        this.CheckAndInstallUpdates(telimena);
+                        this.CheckAndInstallUpdates(telimena, false);
+                        break;
+                    case Actions.HandleUpdatesWithBeta:
+                        this.HandleUpdates(telimena, true);
                         break;
                 }
                 Thread.Sleep(7*1000);
@@ -50,7 +53,7 @@ namespace AutomaticTestsClient
             Console.WriteLine("Done");
         }
 
-        private void CheckAndInstallUpdates(ITelimena telimena)
+        private void CheckAndInstallUpdates(ITelimena telimena, bool takeBeta)
         {
             Console.WriteLine($"Starting {MethodBase.GetCurrentMethod().Name}...");
 
@@ -60,7 +63,7 @@ namespace AutomaticTestsClient
             JsonSerializerSettings settings = new JsonSerializerSettings { ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto };
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));
 
-            telimena.Update.InstallUpdates(result);
+            telimena.Update.InstallUpdates(result, takeBeta);
 
 
             Console.WriteLine($"Finished {MethodBase.GetCurrentMethod().Name}");
@@ -119,11 +122,11 @@ namespace AutomaticTestsClient
             //todo - some result - Console.WriteLine(JsonConvert.SerializeObject(result, settings));
         }
 
-        private void HandleUpdates(ITelimena telimena)
+        private void HandleUpdates(ITelimena telimena, bool takeBeta)
         {
             Console.WriteLine("Starting update handling...");
 
-            UpdateCheckResult result = telimena.Update.HandleUpdates(false);
+            UpdateCheckResult result = telimena.Update.HandleUpdates(takeBeta);
             Console.WriteLine("Finished update handling...");
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto};
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));

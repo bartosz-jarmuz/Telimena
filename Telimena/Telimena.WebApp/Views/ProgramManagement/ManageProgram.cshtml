@@ -279,7 +279,7 @@
                             <td class="@Strings.Css.DateTimeConversion">@pkg.UploadedDate.ToString(Strings.DateTimeFormat)</td>
                             <td>@pkg.Id</td>
                             <td style="text-align: center">
-                                <input type="checkbox" data-pkg-id="@pkg.Id" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "") />
+                                <input type="checkbox" data-pkg-id="@pkg.Id" class="@Strings.Css.PackageBetaToggle" onchange="TogglePackageBeta(this)" @(pkg.IsBeta ? "checked" : "") />
                             </td>
                             <td>
                                 <a href="@Url.LatestApiUrl(UpdatePackagesController.Routes.Get, new { id = pkg.Id })">@pkg.FileName</a>
@@ -520,7 +520,7 @@
                 .replace("__packageId__", id);
 
             $.ajax({
-                type: 'POST',
+                type: 'PUT',
                 url: url,
                 success: function(result) {
                     showSuccessTopAlert('Set package with ID: [' + id + '] Beta flag to: ' + result);

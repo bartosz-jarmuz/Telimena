@@ -5,6 +5,7 @@
         Initialize,
         ReportViewUsage,
         HandleUpdates,
-        CheckAndInstallUpdates
+        CheckAndInstallUpdates,
+        HandleUpdatesWithBeta,
     }
 }

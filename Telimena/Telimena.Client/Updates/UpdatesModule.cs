@@ -131,16 +131,20 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public void InstallUpdates(UpdateCheckResult checkResult)
+        public void InstallUpdates(UpdateCheckResult checkResult, bool acceptBeta)
         {
-            Task.Run(() => this.InstallUpdatesAsync(checkResult)).GetAwaiter().GetResult();
+            Task.Run(() => this.InstallUpdatesAsync(checkResult, acceptBeta)).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
-        public Task InstallUpdatesAsync(UpdateCheckResult checkResult)
+        public Task InstallUpdatesAsync(UpdateCheckResult checkResult, bool takeBeta)
         {
             try
             {
+                if (!takeBeta)
+                {
+                    checkResult.ProgramUpdatesToInstall = checkResult.ProgramUpdatesToInstall.Where(x => x.IsBeta == false).ToList();
+                }
                 UpdateHandler handler = new UpdateHandler(this.telimena.Messenger, this.telimena.Properties.LiveProgramInfo, new DefaultWpfInputReceiver()
                     , new UpdateInstaller(), this.telimena.Locator);
                 return handler.HandleUpdates(false, checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate);

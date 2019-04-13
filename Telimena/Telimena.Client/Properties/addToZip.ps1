@@ -11,16 +11,17 @@ $testAppsFolder = "$SolutionDir\Telimena.WebApp.UITests\02. IntegrationTests\App
 Copy-Item $TargetPath -Destination $testAppsFolder
 
 
-$zipPath1 = "$testAppsFolder\TestApp v1.0.0.0.zip"
-$zipPath2 = "$testAppsFolder\AutomaticTestsClientv2.zip"
-$zipPath3 = "$testAppsFolder\PackageTriggerUpdaterTestApp v.1.0.0.0.zip"
-$zipPath4 = "$testAppsFolder\PackageTriggerUpdaterTestApp v.2.0.0.0.zip"
+$zips = @(
+"$testAppsFolder\TestApp v1.0.0.0.zip"
+,"$testAppsFolder\AutomaticTestsClientv2.zip"
+,"$testAppsFolder\AutomaticTestsClientv3Beta.zip"
+,"$testAppsFolder\PackageTriggerUpdaterTestApp v.1.0.0.0.zip"
+,"$testAppsFolder\PackageTriggerUpdaterTestApp v.2.0.0.0.zip"
+)
 
 
-
-$zipPath1, $zipPath2, $zipPath3, $zipPath4| ForEach-Object {
-	$zipPath = $_
-
+foreach ($zipPath in $zips)
+{
 	try { 
 	[Reflection.Assembly]::LoadWithPartialName('System.IO.Compression.FileSystem') | Out-Null
 	$zip = [System.IO.Compression.ZipFile]::Open($zipPath, "Update")

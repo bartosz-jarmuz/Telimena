@@ -15,12 +15,15 @@ Write-Host
 $testAppsFolder = "$SolutionDir\Telimena.WebApp.UITests\02. IntegrationTests\Apps"
 $zipPath1 = "$testAppsFolder\TestApp v1.0.0.0.zip"
 $zipPath2 = "$testAppsFolder\AutomaticTestsClientv2.zip"
+$zipPath3 = "$testAppsFolder\AutomaticTestsClientv3Beta.zip"
 
 
 if ($Assemblyversion.ToString().StartsWith("1.")){
 	$zipPath = $zipPath1
-} else {
+} elseif ($Assemblyversion.ToString().StartsWith("2.")) {
 	$zipPath = $zipPath2
+} else {
+	$zipPath = $zipPath3
 }
 
 

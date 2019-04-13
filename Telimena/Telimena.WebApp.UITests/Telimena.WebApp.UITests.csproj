@@ -111,9 +111,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="01. Ui\AppManagementTests.Uploads.cs" />
+    <Compile Include="01. Ui\AppManagementTests.Helpers.cs" />
     <Compile Include="01. Ui\AppManagementTests.cs" />
     <Compile Include="01. Ui\ToolkitManagementTests.cs" />
     <Compile Include="01. Ui\LoginTests.cs" />
+    <Compile Include="02. IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.Helpers.cs" />
     <Compile Include="Base\ConfigKeys.cs" />
     <Compile Include="Base\DeployedTestEngine.cs" />
     <Compile Include="Base\IntegrationTestBase.cs" />
@@ -136,6 +139,9 @@
     <Compile Include="UITestsInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="02. IntegrationTests\Apps\AutomaticTestsClientv3Beta.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="02. IntegrationTests\Apps\v1.0.0.2_InstallersTestApp.Msi3Installer.msi">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

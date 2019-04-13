@@ -28,6 +28,7 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
         {
             public static string AutomaticTestsClientAppV1 { get; } = "TestApp v1.0.0.0.zip";
             public static string AutomaticTestsClientAppV2 { get; } = "AutomaticTestsClientv2.zip";
+            public static string AutomaticTestsClientAppV3Beta { get; } = "AutomaticTestsClientv3Beta.zip";
             public static string InstallersTestAppMsi3V1 { get; } = "v1.0.0.2_InstallersTestApp.Msi3Installer.msi";
             public static string InstallersTestAppMsi3V2 { get; } = "v2.0.0.2_InstallersTestApp.Msi3Installer.msi";
             public static string PackageUpdaterTestAppV1 { get; } = "PackageTriggerUpdaterTestApp v.1.0.0.0.zip";

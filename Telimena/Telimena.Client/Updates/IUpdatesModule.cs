@@ -45,16 +45,18 @@ namespace TelimenaClient
         ///         to use async method and handle awaiting properly
         ///     </para>
         /// </summary>
-        /// <param name="checkResult">The result contains info about packages to be installed. You can modify it (e.g. exclude beta ones)</param>
+        /// <param name="checkResult">The result contains info about packages to be installed. You can modify it (e.g. exclude certain ones)</param>
+        /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
         /// <returns></returns>
-        void InstallUpdates(UpdateCheckResult checkResult);
+        void InstallUpdates(UpdateCheckResult checkResult, bool acceptBeta);
 
         /// <summary>
         ///     Installs the updates specified in the input parameter. It will not ask any questions.
         /// </summary>
-        /// <param name="checkResult">The result contains info about packages to be installed. You can modify it (e.g. exclude beta ones)</param>
+        /// <param name="checkResult">The result contains info about packages to be installed. You can modify it (e.g. exclude certain ones)</param>
+        /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
         /// <returns></returns>
-        Task InstallUpdatesAsync(UpdateCheckResult checkResult);
+        Task InstallUpdatesAsync(UpdateCheckResult checkResult, bool acceptBeta);
 
 
         /// <summary>
