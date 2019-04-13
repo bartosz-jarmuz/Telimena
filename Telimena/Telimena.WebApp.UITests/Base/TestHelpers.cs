@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
@@ -110,6 +111,31 @@ namespace Telimena.WebApp.UITests.Base
 
             return sb.ToString();
         }
+
+        public static string GetMethodName()
+        {
+            StackTrace stackTrace = new System.Diagnostics.StackTrace();
+            var frames = stackTrace.GetFrames();
+            for (int index = 1; index < frames.Length; index++)
+            {
+                StackFrame stackFrame = frames[index];
+                var methodBase = stackFrame.GetMethod();
+                if (methodBase.Name == "MoveNext")
+                {
+                    continue;
+                }
+                if (methodBase.DeclaringType != null && !methodBase.DeclaringType.Assembly.FullName.StartsWith("mscorlib"))
+                {
+                    return methodBase.Name;
+                }
+            }
+
+
+            StackFrame frame = stackTrace.GetFrames()[3];
+            var method = frame.GetMethod();
+            return method.Name;
+        }
+
 
         public static async Task<Window> WaitForMessageBoxAsync(Window parent, string title, TimeSpan timeout, string errorMessage = "")
         {

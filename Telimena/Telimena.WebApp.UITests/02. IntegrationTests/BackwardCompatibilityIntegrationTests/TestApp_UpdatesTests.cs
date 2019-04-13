@@ -32,7 +32,8 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         {
             try
             {
-                this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, Apps.PackageNames.PackageUpdaterTestAppV1, MethodInfo.GetCurrentMethod().Name, waitForExit: false);
+              
+                this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, Apps.PackageNames.PackageUpdaterTestAppV1, TestHelpers.GetMethodName(), waitForExit: false);
 
                 Window updateNowMsgBox =
                     await TestHelpers.WaitForWindowAsync(x => x.Equals("PackageTriggerUpdaterTestApp update installation"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
@@ -61,7 +62,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             try
             {
 
-                VersionTuple initialVersions = await this.GetVersionsFromApp(Apps.PackageNames.AutomaticTestsClientAppV1, MethodBase.GetCurrentMethod().Name).ConfigureAwait(false);
+                VersionTuple initialVersions = await this.GetVersionsFromApp(Apps.PackageNames.AutomaticTestsClientAppV1, TestHelpers.GetMethodName()).ConfigureAwait(false);
 
                 this.LaunchTestsAppNewInstanceAndGetResult<UpdateCheckResult>(out FileInfo appFile, Actions.HandleUpdates, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1
                     , MethodBase.GetCurrentMethod().Name, waitForExit: false);
@@ -100,7 +101,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             try
             {
 
-                VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, MethodBase.GetCurrentMethod().Name);
+                VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, TestHelpers.GetMethodName());
 
                 this.LaunchTestsAppNewInstanceAndGetResult<UpdateCheckResult>(out FileInfo appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient,  Apps.PackageNames.AutomaticTestsClientAppV1
                     , MethodBase.GetCurrentMethod().Name, waitForExit: false);
@@ -171,7 +172,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         {
             try
             {
-                VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, MethodBase.GetCurrentMethod().Name);
+                VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, TestHelpers.GetMethodName());
 
                 this.LaunchTestsAppNewInstanceAndGetResult<UpdateCheckResult>(out FileInfo appFile, Actions.HandleUpdatesWithBeta, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1
                     , MethodBase.GetCurrentMethod().Name, waitForExit: false);
