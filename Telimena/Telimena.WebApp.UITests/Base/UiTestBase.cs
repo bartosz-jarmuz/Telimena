@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -171,7 +174,11 @@ namespace Telimena.WebApp.UITests.Base
                     {
                       opt.AddArgument("--headless");
                     }
-                    return new ChromeDriver(opt);
+                    var driverService = ChromeDriverService.CreateDefaultService();
+                    var driver = new ChromeDriver(driverService, opt);
+
+                    Task.Run(() => AllowHeadlessDownload(driver, driverService));
+                    return driver;
                 case "Firefox":
                     FirefoxOptions options = new FirefoxOptions();
              //       options.AddArguments("--headless");
@@ -181,6 +188,29 @@ namespace Telimena.WebApp.UITests.Base
                     return new InternetExplorerDriver();
                 default:
                     return new ChromeDriver();
+            }
+        }
+
+        protected static string DownloadPath => Environment.GetEnvironmentVariable("USERPROFILE") + "\\Downloads";
+
+
+        static async Task AllowHeadlessDownload(IWebDriver driver,  ChromeDriverService driverService)
+        {
+            var jsonContent = new JObject(
+                new JProperty("cmd", "Page.setDownloadBehavior"),
+                new JProperty("params",
+                    new JObject(new JObject(
+                        new JProperty("behavior", "allow"),
+                        new JProperty("downloadPath", DownloadPath)))));
+            var content = new StringContent(jsonContent.ToString(), Encoding.UTF8, "application/json");
+            var sessionIdProperty = typeof(ChromeDriver).GetProperty("SessionId");
+            var sessionId = sessionIdProperty.GetValue(driver, null) as SessionId;
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = driverService.ServiceUrl;
+                var result = await client.PostAsync("session/" + sessionId.ToString() + "/chromium/send_command", content);
+                var resultContent = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
         }
 

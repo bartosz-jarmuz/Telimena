@@ -257,12 +257,11 @@ namespace Telimena.WebApp.UITests._01._Ui
                 IWebElement link = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DownloadProgramLink)));
 
 
-                string path = Environment.GetEnvironmentVariable("USERPROFILE") + "\\Downloads";
 
-                this.Log($"Clicking on download URL to store file in {path}");
+                this.Log($"Clicking on download URL to store file in {DownloadPath}");
 
                 FileInfo file = this.ActAndWaitForFileDownload(() => link.Click(), packageFileName, TimeSpan.FromSeconds(80)
-                    , path);
+                    , DownloadPath);
 
                 this.Log($"File downloaded {file.FullName}. ");
 
