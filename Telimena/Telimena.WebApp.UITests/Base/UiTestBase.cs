@@ -85,25 +85,32 @@ namespace Telimena.WebApp.UITests.Base
 
         protected void ClickOnProgramMenuButton(string appName, string buttonSuffix)
         {
-            Retrier.RetryAsync(() =>
+            try
             {
-                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
-                var prgMenu = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + "_menu")));
 
-                Actions actions = new Actions(this.Driver);
-                actions.MoveToElement(prgMenu);
-                actions.Perform();
-
-                prgMenu.Click();
-                IWebElement link = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(appName + buttonSuffix)));
-                actions = new Actions(this.Driver);
-                actions.MoveToElement(link);
-                actions.Perform();
-
-                link.Click();
-            }, TimeSpan.FromMilliseconds(500), 3).GetAwaiter().GetResult();
+                Retrier.RetryAsync(() =>
+                {
+                    WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+                    IWebElement element = this.TryFind(By.Id($"{appName}_menu"));
 
 
+                    var prgMenu = wait.Until(ExpectedConditions.ElementToBeClickable(element));
+
+
+                    prgMenu.Click();
+
+                    IWebElement link = this.TryFind(By.Id(appName + buttonSuffix));
+
+                    link = wait.Until(ExpectedConditions.ElementToBeClickable(link));
+
+                    link.Click();
+                }, TimeSpan.FromMilliseconds(500), 3).GetAwaiter().GetResult();
+
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to click on button {buttonSuffix} for app {appName}.", ex);
+            }
         }
 
         protected void ClickOnManageProgramMenu(string appName)
@@ -273,7 +280,11 @@ namespace Telimena.WebApp.UITests.Base
             try
             {
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(timeoutSeconds));
-                return wait.Until(x => x.FindElement(by));
+                var element = wait.Until(x => x.FindElement(by));
+                Actions actions = new Actions(this.Driver);
+                actions.MoveToElement(element);
+                actions.Perform();
+                return element;
             }
             catch
             {
