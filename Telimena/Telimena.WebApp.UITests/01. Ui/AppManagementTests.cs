@@ -259,9 +259,16 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 string path = Environment.GetEnvironmentVariable("USERPROFILE") + "\\Downloads";
 
-                FileInfo file = this.ActAndWaitForFileDownload(() => link.Click(), packageFileName, TimeSpan.FromSeconds(60)
+                this.Log($"Clicking on download URL to store file in {path}");
+
+                FileInfo file = this.ActAndWaitForFileDownload(() => link.Click(), packageFileName, TimeSpan.FromSeconds(65)
                     , path);
+
+                this.Log($"File downloaded {file.FullName}. ");
+
                 this.InstallMsi3AndVerify(file);
+
+                this.Log($"Deleting downloaded file {file.FullName}. ");
 
                 file.Delete();
             }
@@ -276,8 +283,10 @@ namespace Telimena.WebApp.UITests._01._Ui
             this.UninstallMsi(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.Paths.InstallersTestAppMsi3);
 
             Assert.IsFalse(File.Exists(Apps.Paths.InstallersTestAppMsi3.FullName));
+            this.Log($"Installing {msi.FullName}.");
 
             this.InstallMsi(msi, Apps.Paths.InstallersTestAppMsi3);
+            this.Log($"Finished installing {msi.FullName}.");
 
             Assert.IsTrue(File.Exists(Apps.Paths.InstallersTestAppMsi3.FullName));
             this.UninstallMsi(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.Paths.InstallersTestAppMsi3);
@@ -507,9 +516,13 @@ namespace Telimena.WebApp.UITests._01._Ui
         public void _10_DownloadInstallerTestAppMsi3Package()
         {
             this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
-            this.DownloadAndInstallMsiProgramPackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V1);
-            this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
 
+            this.Log("Proceeding to download");
+
+            this.DownloadAndInstallMsiProgramPackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V1);
+
+            this.Log("Uninstalling packages after test");
+            this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
         }
 
 

@@ -156,6 +156,8 @@ namespace Telimena.WebApp.UITests.Base
             try
             {
                 Installer.ConfigureProduct("{" + productCode + "}", 0, InstallState.Absent, "");
+                this.Log($"Uninstalled package {productCode}.");
+
                 if (expectedProgramPath != null)
                 {
                     var sw = Stopwatch.StartNew();
@@ -163,6 +165,7 @@ namespace Telimena.WebApp.UITests.Base
                     {
                         if (!File.Exists(expectedProgramPath.FullName))
                         {
+
                             break;
                         }
                     }

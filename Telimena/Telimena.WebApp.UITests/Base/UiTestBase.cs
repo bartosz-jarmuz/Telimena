@@ -51,6 +51,7 @@ namespace Telimena.WebApp.UITests.Base
             var stopwatch = Stopwatch.StartNew();
             Assert.IsFalse(File.Exists(expectedPath));
             action();
+            this.Log($"Action executed");
 
             var isTimedOut = false;
             string filePath = null;
@@ -93,13 +94,17 @@ namespace Telimena.WebApp.UITests.Base
                     WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
                     IWebElement element = this.TryFind(By.Id($"{appName}_menu"));
 
+                    this.Log($"Found { appName}_menu button");
 
                     var prgMenu = wait.Until(ExpectedConditions.ElementToBeClickable(element));
 
 
                     prgMenu.Click();
+                    this.Log($"Clicked { appName}_menu button");
+
 
                     IWebElement link = this.TryFind(By.Id(appName + buttonSuffix));
+                    this.Log($"Found { appName}{buttonSuffix} button");
 
                     link = wait.Until(ExpectedConditions.ElementToBeClickable(link));
 
