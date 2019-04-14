@@ -77,17 +77,15 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
 
             try
             {
-                if (targetDir.Exists)
-                {
-                    targetDir.Delete(true);
-                }
+                TestHelpers.DeleteDirectory(targetDir.FullName);
+
             }
             catch (UnauthorizedAccessException)
             {
                 KillTestApps();
 
+                TestHelpers.DeleteDirectory(targetDir.FullName);
 
-                targetDir.Delete(true);
             }
             targetDir.Create();
 
