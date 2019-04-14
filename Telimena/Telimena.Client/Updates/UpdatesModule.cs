@@ -147,7 +147,7 @@ namespace TelimenaClient
                 }
                 UpdateHandler handler = new UpdateHandler(this.telimena.Messenger, this.telimena.Properties.LiveProgramInfo, new DefaultWpfInputReceiver()
                     , new UpdateInstaller(), this.telimena.Locator);
-                return handler.HandleUpdates(this.telimena.Properties.UpdatePromptingMode, checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate);
+                return handler.HandleUpdates(UpdatePromptingModes.DontPrompt, checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate);
             }
             catch (Exception ex)
             {
