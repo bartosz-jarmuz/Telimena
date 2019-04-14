@@ -91,17 +91,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        [Test]
-        public void ProductCodesTest_InstallersTestAppMsi3()
-        {
-            var code1 = this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V1);
-            Assert.AreEqual(code1, Apps.ProductCodes.InstallersTestAppMsi3V1);
-
-            var code2 = this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V2);
-            Assert.AreEqual(code2,Apps.ProductCodes.InstallersTestAppMsi3V2);
-
-            Assert.AreNotEqual(code1, code2);
-        }
+        
 
    
 

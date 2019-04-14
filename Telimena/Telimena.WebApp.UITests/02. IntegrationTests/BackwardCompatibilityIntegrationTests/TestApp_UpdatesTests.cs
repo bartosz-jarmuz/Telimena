@@ -16,7 +16,6 @@ using TestStack.White;
 using TestStack.White.UIItems;
 using TestStack.White.UIItems.Finders;
 using TestStack.White.UIItems.WindowItems;
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityIntegrationTests
 {
@@ -26,6 +25,17 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
     [TestFixture(), Timeout(3*60*1000)]
     public partial class _2_NonUiTests : IntegrationTestBase
     {
+        [Test]
+        public void ProductCodesTest_InstallersTestAppMsi3()
+        {
+            var code1 = this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V1);
+            NUnit.Framework.Assert.AreEqual(code1, Apps.ProductCodes.InstallersTestAppMsi3V1);
+
+            var code2 = this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V2);
+            NUnit.Framework.Assert.AreEqual(code2, Apps.ProductCodes.InstallersTestAppMsi3V2);
+
+            NUnit.Framework.Assert.AreNotEqual(code1, code2);
+        }
 
         [Test]
         public async Task _01_HandlePackageUpdates_NonBeta()
@@ -129,19 +139,19 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             }
         }
 
-     
-
+       
         [Test]
         public async Task _04_MsiCheckAndInstallUpdates()
         {
+            this.ProductCodesTest_InstallersTestAppMsi3(); //sanity check to save time
             try
             {
                 this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
 
                  VersionTuple initialVersions = this.GetVersionsFromMsiApp(Apps.PackageNames.InstallersTestAppMsi3V1, Apps.Paths.InstallersTestAppMsi3, Apps.ProductCodes.InstallersTestAppMsi3V1);
 
-                 this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Apps.Paths.InstallersTestAppMsi3, Actions.CheckAndInstallUpdates, Apps.Keys.InstallersTestAppMsi3);
-
+                 UpdateCheckResult result=  this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Apps.Paths.InstallersTestAppMsi3, Actions.CheckAndInstallUpdates, Apps.Keys.InstallersTestAppMsi3);
+                Assert.IsNull(result.Exception);
                 Window updater = await TestHelpers.WaitForWindowAsync(x => x.Contains("InstallersTestApp.Msi3Installer"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
                 updater.Get<Button>(SearchCriteria.ByText("OK")).Click();
 
@@ -153,7 +163,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                
 
                 //now just assert that the update check result is empty next time
-                UpdateCheckResult result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Apps.Paths.InstallersTestAppMsi3, Actions.CheckAndInstallUpdates, Apps.Keys.InstallersTestAppMsi3);
+                 result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Apps.Paths.InstallersTestAppMsi3, Actions.CheckAndInstallUpdates, Apps.Keys.InstallersTestAppMsi3);
 
                 this.AssertNoNonBetaUpdatesToInstall(result, false);
 
