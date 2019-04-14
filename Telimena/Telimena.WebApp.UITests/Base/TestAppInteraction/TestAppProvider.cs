@@ -90,6 +90,7 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             targetDir.Create();
 
             ZipFile.ExtractToDirectory(compressedFile.FullName, targetDir.FullName);
+            log($"FINISHED Extracting file {compressedFile} to {targetDir.FullName}");
 
             return targetDir.GetFiles().FirstOrDefault(x => x.Name.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase));
         }

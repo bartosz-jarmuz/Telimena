@@ -47,9 +47,9 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             }
 
         }
-        public VersionTuple GetVersionsFromExtractedAppFile(string appName, string testSubfolderName)
+        public VersionTuple GetVersionsFromExtractedAppFile(string appName, string testSubfolderName, out FileInfo exe)
         {
-            FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
+            exe = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
             return this.GetVersionsFromFile(exe);
         }
 

@@ -101,10 +101,9 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             try
             {
 
-                VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, TestHelpers.GetMethodName());
+                VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, TestHelpers.GetMethodName(), out FileInfo appFile);
 
-                this.LaunchTestsAppNewInstanceAndGetResult<UpdateCheckResult>(out FileInfo appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient,  Apps.PackageNames.AutomaticTestsClientAppV1
-                    , TestHelpers.GetMethodName(), waitForExit: false);
+                this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: false);
 
                 Window updater = await TestHelpers.WaitForWindowAsync(x => x.Contains("AutomaticTestsClient Updater"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
                 updater.Get<Button>(SearchCriteria.ByText("Install now!")).Click();
@@ -172,10 +171,9 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
         {
             try
             {
-                VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, TestHelpers.GetMethodName());
+                VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, TestHelpers.GetMethodName(), out FileInfo appFile);
 
-                this.LaunchTestsAppNewInstanceAndGetResult<UpdateCheckResult>(out FileInfo appFile, Actions.HandleUpdatesWithBeta, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1
-                    , TestHelpers.GetMethodName(), waitForExit: false);
+                this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.HandleUpdatesWithBeta, Apps.Keys.AutomaticTestsClient, waitForExit: false);
 
                 Window updateNowMsgBox =
                     await TestHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient update installation"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);

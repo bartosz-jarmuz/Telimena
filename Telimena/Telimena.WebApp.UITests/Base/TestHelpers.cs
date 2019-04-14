@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using TestStack.White;
@@ -33,10 +34,12 @@ namespace Telimena.WebApp.UITests.Base
             }
             catch (IOException)
             {
+                Thread.Sleep(50);
                 Directory.Delete(path, true);
             }
             catch (UnauthorizedAccessException)
             {
+                Thread.Sleep(50);
                 Directory.Delete(path, true);
             }
         }
