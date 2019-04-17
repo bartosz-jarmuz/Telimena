@@ -123,7 +123,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 return this.portalContext.Programs;
             }
 
-            return this.portalContext.Programs.Where(x => x.DeveloperTeam != null && x.DeveloperTeam.MainUserId == user.Id);
+            return this.portalContext.Programs.Where(x => x.DeveloperTeam != null && (x.DeveloperTeam.MainUserId == user.Id || x.DeveloperTeam.AssociatedUsers.Any(a=>a.Id == user.Id)));
         }
     }
 }
