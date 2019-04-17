@@ -21,22 +21,28 @@ namespace TelimenaClient
             }
             catch
             {
-                //something went wrong when building telimena
-                //return something that will not break client's code
-                ITelimenaProperties props;
-                try
-                {
-                    //try at least building properties if possible
-                    props = new TelimenaProperties(startupInfo);
-                }
-                catch
-                {
-                    //ok, even that failed, return fail safe thing
-                    props = new NullObjectTelimenaProperties();
-                }
-                return new NullObjectTelimena(props);
+                return GetNullObjectTeli(startupInfo);
             }
             
+        }
+
+        internal static ITelimena GetNullObjectTeli(ITelimenaStartupInfo startupInfo)
+        {
+//something went wrong when building telimena
+            //return something that will not break client's code
+            ITelimenaProperties props;
+            try
+            {
+                //try at least building properties if possible
+                props = new TelimenaProperties(startupInfo);
+            }
+            catch
+            {
+                //ok, even that failed, return fail safe thing
+                props = new NullObjectTelimenaProperties();
+            }
+
+            return new NullObjectTelimena(props);
         }
     }
 }

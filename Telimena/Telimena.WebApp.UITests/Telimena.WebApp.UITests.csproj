@@ -123,6 +123,7 @@
     <Compile Include="Base\ITestEngine.cs" />
     <Compile Include="Base\LocalHostTestEngine.cs" />
     <Compile Include="Base\MyJsonContractResolver.cs" />
+    <Compile Include="Base\TestAppInteraction\Apps.cs" />
     <Compile Include="Base\TestBase.cs" />
     <Compile Include="Base\UiTestBase.cs" />
     <Compile Include="Base\TestFileNames.cs" />
@@ -140,6 +141,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="02. IntegrationTests\Apps\AutomaticTestsClientv3Beta.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="02. IntegrationTests\Apps\EmbeddedAssemblyTestApp.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="02. IntegrationTests\Apps\v1.0.0.2_InstallersTestApp.Msi3Installer.msi">

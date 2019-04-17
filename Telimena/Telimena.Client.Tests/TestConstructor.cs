@@ -5,10 +5,12 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Reflection;
 using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 
 namespace TelimenaClient.Tests
 {
@@ -101,5 +103,50 @@ namespace TelimenaClient.Tests
             }
             
         }
+
+        [Test]
+        public void TestNullObject_AssertItDoesNotExplode()
+        {
+            var teli = Telimena.Construct(new ExplodingITelimenaStartupInfo());
+            this.ValidateFaultyTeli(teli);
+
+            teli = TelimenaFactory.Construct(new ExplodingITelimenaStartupInfo());
+            this.ValidateFaultyTeli(teli);
+
+
+
+
+        }
+
+        private void ValidateFaultyTeli(ITelimena teli)
+        {
+            Assert.IsTrue(teli.GetType() == typeof(NullObjectTelimena));
+            teli.Track.Event("There should be no error here even though it is not working");
+            teli.Track.View("There should be no error here even though it is not working");
+            teli.Track.Log(LogLevel.Warn, "There should be no error here even though it is not working");
+            teli.Track.SendAllDataNow();
+
+            var result = teli.Update.CheckForUpdates();
+
+            Assert.AreEqual("Update check handled by NullObjectTelemetryModule", result.Exception.Message);
+            result = teli.Update.HandleUpdatesAsync(true).Result;
+
+            Assert.IsNotNull(teli.Properties);
+        }
+
+
+        private class ExplodingITelimenaStartupInfo : ITelimenaStartupInfo
+        {
+            public Guid TelemetryKey { get; }
+            public Uri TelemetryApiBaseUrl { get; }
+            public Assembly MainAssembly => throw new InvalidOperationException("BOOM");
+            public ProgramInfo ProgramInfo { get; }
+            public UserInfo UserInfo { get; }
+            public bool SuppressAllErrors { get; }
+            public string InstrumentationKey { get; }
+            public bool RegisterUnhandledExceptionsTracking { get; }
+            public TimeSpan DeliveryInterval { get; set; }
+        }
+
     }
 }

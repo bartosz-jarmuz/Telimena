@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Web.UI.HtmlControls;
-using AutomaticTestsClient;
+using SharedLogic;
 using HtmlAgilityPack;
 using Microsoft.Deployment.WindowsInstaller;
 using Newtonsoft.Json;

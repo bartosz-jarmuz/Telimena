@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using TelimenaClient;
 
-namespace AutomaticTestsClient
+namespace SharedLogic
 {
     class TestClientProgram
     {
@@ -32,40 +32,11 @@ namespace AutomaticTestsClient
                 MessageBox.Show(msg, "AutomaticTestsClient - This app requires arguments to run");
                 return;
             }
-            
-
-            Arguments arguments;
-            Console.WriteLine("Loading Arguments...");
-            string decoded = "";
-            try
-            {
-                 decoded = Base64Decode(args[0]);
-                arguments = JsonConvert.DeserializeObject<Arguments>(decoded);
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException($"Error while deserializing [{args[0]}], decoded: {decoded}", ex);
-            }
-
-            Console.WriteLine($"Args: {decoded}");
-            Console.WriteLine("Arguments loaded OK");
-#if DEBUG
-            if (arguments.ApiUrl == null)
-            {
-                arguments.ApiUrl = "http://localhost:7757";
-            }
-#endif
 
 
+            var arguments = SharedUtils.LoadArguments(args);
             new TestAppWorker(arguments).Work();
         }
-        public static string Base64Decode(string base64EncodedData)
-        {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
-            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-        }
-
-
 
     }
 }

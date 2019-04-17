@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
-using AutomaticTestsClient;
+using SharedLogic;
 using DotNetLittleHelpers;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -51,6 +51,21 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             {
                 serializer.Serialize(writer, value);
             }
+        }
+
+        [Test]
+        public void TestAppWithEmbeddedTeli()
+        {
+            this.outputs.Clear();
+            this.errors.Clear();
+
+            this.LaunchTestsAppNewInstance(out _, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, 
+                Apps.PackageNames.EmbeddedAssemblyTestApp, TestHelpers.GetMethodName());
+
+            Assert.IsTrue(this.outputs.Any(x=>x == "Ended with no errors"));
+            this.outputs.Clear();
+            this.errors.Clear();
+
         }
 #if DEBUG
         [Test]
@@ -97,5 +112,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             Assert.That(summaryAfterUpdate.Details.OrderByDescending(x => x.Timestamp).First().Timestamp, Is.EqualTo(timestamp).Within(TimeSpan.FromSeconds(3.0)));
 
         }
+
+
     }
 }

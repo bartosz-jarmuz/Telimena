@@ -70,6 +70,7 @@ namespace TelimenaClient
                 TelemetryDebugWriter.WriteLine($"Error while initializing {nameof(Telimena)}. Error: {e}");
                 //above all, we don't want to throw errors in client apps.
                 //No telemetry is better than boom.
+                throw;
             }
         }
 

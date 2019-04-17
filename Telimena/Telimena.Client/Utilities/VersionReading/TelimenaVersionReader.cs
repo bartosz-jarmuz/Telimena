@@ -81,11 +81,43 @@ namespace TelimenaClient
                 case VersionTypes.AssemblyVersion:
                     return assembly.GetName().Version.ToString();
                 case VersionTypes.FileVersion:
-                    return FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion;
+                    return GetFileVersionFromAssembly(assembly);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(versionType), versionType, null);
             }
         }
+
+        private static string GetFileVersionFromAssembly(Assembly assembly)
+        {
+            if (!string.IsNullOrWhiteSpace(assembly.Location))
+            {
+                try
+                {
+                    return FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion;
+                }
+                catch
+                {
+                    //ok, try another way
+                }
+            }
+
+            try
+            {
+
+                var attribute = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>();
+                if (attribute != null)
+                {
+                    return attribute.Version;
+                }
+
+                return "0.0.0.0";
+            }
+            catch
+            {
+                return "0.0.0.0";
+            }
+        }
+
 
         private static string GetVersionFromFile(FileInfo file, VersionTypes versionType)
         {

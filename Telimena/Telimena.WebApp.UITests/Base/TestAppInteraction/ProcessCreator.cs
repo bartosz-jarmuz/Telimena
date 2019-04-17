@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using AutomaticTestsClient;
+using SharedLogic;
 using Newtonsoft.Json;
 
 namespace Telimena.WebApp.UITests.Base.TestAppInteraction

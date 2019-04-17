@@ -1,4 +1,4 @@
-﻿using AutomaticTestsClient;
+﻿using SharedLogic;
 using Newtonsoft.Json;
 using NUnit.Framework;
 

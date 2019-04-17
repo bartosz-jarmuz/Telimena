@@ -94,6 +94,8 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "InstallersTestApp.Msi3Insta
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TestAppsSharedLogic", "TestAppsSharedLogic\TestAppsSharedLogic.shproj", "{BEA9956A-2BC0-406B-81D1-AF2D5A48772B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbeddedAssemblyTestApp", "EmbeddedAssemblyTest\EmbeddedAssemblyTestApp.csproj", "{F862D668-8E59-49E9-9968-39FF9A2348C3}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{8c7395cf-1c86-4c66-bf55-b254ab1ea6f3}*SharedItemsImports = 4
@@ -103,6 +105,7 @@ Global
 		..\ApplicationInsights\Test\ServerTelemetryChannel.Test\net45.Shared.Tests\net45.Shared.Tests.projitems*{c5a3f18d-1426-4941-9d81-d21062a2b8f2}*SharedItemsImports = 13
 		..\ApplicationInsights\Test\ServerTelemetryChannel.Test\Shared.Tests\Shared.Tests.projitems*{c5a3f18f-1426-4941-9d81-d21062a2b8f2}*SharedItemsImports = 13
 		..\ApplicationInsights\Test\TestFramework\Shared\TestFramework.Shared.projitems*{f76c6cbd-29b0-4564-bdcb-c969f8fec136}*SharedItemsImports = 13
+		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{f862d668-8e59-49e9-9968-39ff9a2348c3}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -432,6 +435,18 @@ Global
 		{A0BDE48C-85AE-4F25-B5CE-7B7D9E6241BD}.ReleaseDev|Any CPU.Build.0 = Release|x86
 		{A0BDE48C-85AE-4F25-B5CE-7B7D9E6241BD}.ReleaseDev|x86.ActiveCfg = Release|x86
 		{A0BDE48C-85AE-4F25-B5CE-7B7D9E6241BD}.ReleaseDev|x86.Build.0 = Release|x86
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.Debug|x86.Build.0 = Debug|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.Release|x86.ActiveCfg = Release|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.Release|x86.Build.0 = Release|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|Any CPU.ActiveCfg = Release|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|x86.ActiveCfg = Release|Any CPU
+		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -477,6 +492,7 @@ Global
 		{AE42CC85-651B-4404-9D3B-992A141D6AE6} = {1C9284FC-2E59-4F5C-8151-407B200B09BB}
 		{A0BDE48C-85AE-4F25-B5CE-7B7D9E6241BD} = {1C9284FC-2E59-4F5C-8151-407B200B09BB}
 		{BEA9956A-2BC0-406B-81D1-AF2D5A48772B} = {1C9284FC-2E59-4F5C-8151-407B200B09BB}
+		{F862D668-8E59-49E9-9968-39FF9A2348C3} = {1C9284FC-2E59-4F5C-8151-407B200B09BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4AE5AB23-7640-4456-8051-8AC946EFBA9B}

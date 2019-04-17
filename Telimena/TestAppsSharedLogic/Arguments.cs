@@ -1,8 +1,8 @@
 ﻿using System;
-using TelimenaClient;
+using System.Text;
 using TelimenaClient.Model;
 
-namespace AutomaticTestsClient
+namespace SharedLogic
 {
     public class Arguments
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using AutomaticTestsClient;
+using SharedLogic;
 using NUnit.Framework;
 using Telimena.WebApp.UITests.Base;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;

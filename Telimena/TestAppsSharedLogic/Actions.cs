@@ -1,4 +1,4 @@
-﻿namespace AutomaticTestsClient
+﻿namespace SharedLogic
 {
     public enum Actions
     {

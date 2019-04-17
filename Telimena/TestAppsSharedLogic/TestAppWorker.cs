@@ -8,7 +8,7 @@ using TelimenaClient;
 using TelimenaClient.Model;
 using TelimenaClient.Model.Internal;
 
-namespace AutomaticTestsClient
+namespace SharedLogic
 {
     public class TestAppWorker
     {

@@ -23,7 +23,18 @@ namespace Telimena.WebApp.UITests.Base
         /// </summary>
         public static void DeleteDirectory(string path)
         {
-            foreach (string directory in Directory.GetDirectories(path))
+
+            string[] subDirs = new string[0];
+
+            try
+            {
+
+             subDirs = Directory.GetDirectories(path);
+            }
+            catch { //ok, maybe the dir does not exist
+                    }
+
+            foreach (string directory in subDirs)
             {
                 DeleteDirectory(directory);
             }
@@ -31,6 +42,11 @@ namespace Telimena.WebApp.UITests.Base
             try
             {
                 Directory.Delete(path, true);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                //very well
+                return;
             }
             catch (IOException)
             {
