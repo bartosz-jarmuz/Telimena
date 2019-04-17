@@ -71,16 +71,20 @@ namespace Telimena.WebApp.UITests.Base
 
         public Guid GetCodeFromMsi(string  msiName)
         {
+                var msi = TestAppProvider.GetFile(msiName);
+                return this.GetCodeFromMsi(msi);
+        }
+
+        public Guid GetCodeFromMsi(FileInfo msi)
+        {
             try
 
             {
-
-                var msi = TestAppProvider.GetFile(msiName);
                 string productCode = "xxx";
                 using (var db = new Database(msi.FullName, DatabaseOpenMode.ReadOnly))
                 {
-                    productCode = (string) db.ExecuteScalar("SELECT `Value` FROM " +
-                                                            "`Property` WHERE `Property` = 'ProductCode'");
+                    productCode = (string)db.ExecuteScalar("SELECT `Value` FROM " +
+                                                           "`Property` WHERE `Property` = 'ProductCode'");
                 }
 
                 return Guid.Parse(productCode);
@@ -124,7 +128,12 @@ namespace Telimena.WebApp.UITests.Base
 
         public void InstallMsi(FileInfo msi, FileInfo expectedProgramPath)
         {
+            var productCode = this.GetCodeFromMsi(msi);
+            this.Log($"Installing product {productCode}. Installer path: {msi.FullName}.");
+
             Process.Start(msi.FullName);
+
+
             var sw = Stopwatch.StartNew();
 
             while (sw.ElapsedMilliseconds < 1000 * 60)
@@ -155,6 +164,12 @@ namespace Telimena.WebApp.UITests.Base
         {
             try
             {
+                Installer.SetExternalUI(
+                    delegate(InstallMessage type, string message, MessageButtons buttons, MessageIcon icon
+                        , MessageDefaultButton button)
+                    {
+                        return MessageResult.OK;
+                    }, InstallLogModes.None);
                 Installer.ConfigureProduct("{" + productCode + "}", 0, InstallState.Absent, "");
                 this.Log($"Uninstalled package {productCode}.");
 
@@ -172,9 +187,12 @@ namespace Telimena.WebApp.UITests.Base
                 }
              
             }
-            catch (ArgumentException e) when (e.Message.Contains("This action is only valid for products that are currently installed."))
+            catch (ArgumentException e)
             {
-                //ok
+                if (e.Message.Contains("This action is only valid for products that are currently installed."))
+                {
+                    this.Log($"Product {productCode} cannot be uninstalled because it is not installed at the moment.");
+                }
             }
         }
 

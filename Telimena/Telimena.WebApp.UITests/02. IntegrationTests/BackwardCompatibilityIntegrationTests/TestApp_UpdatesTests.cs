@@ -155,12 +155,9 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
                 Window updater = await TestHelpers.WaitForWindowAsync(x => x.Contains("InstallersTestApp.Msi3Installer"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
                 updater.Get<Button>(SearchCriteria.ByText("OK")).Click();
 
-                Thread.Sleep(1000);
-                VersionTuple newVersions = this.GetVersionsFromFile(Apps.Paths.InstallersTestAppMsi3);
 
-                Assert.IsTrue(newVersions.AssemblyVersion.IsNewerVersionThan(initialVersions.AssemblyVersion));
-                Assert.IsTrue(newVersions.FileVersion.IsNewerVersionThan(initialVersions.FileVersion));
-               
+                this.VerifyVersionsAreUpdatedAfterInstallation(initialVersions);
+
 
                 //now just assert that the update check result is empty next time
                  result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Apps.Paths.InstallersTestAppMsi3, Actions.CheckAndInstallUpdates, Apps.Keys.InstallersTestAppMsi3);
@@ -174,6 +171,35 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             {
                 throw this.CleanupAndRethrow(ex);
             }
+        }
+
+        private void VerifyVersionsAreUpdatedAfterInstallation(VersionTuple initialVersions)
+        {
+            int i = 0;
+            while (true)
+            {
+                i++;
+                Thread.Sleep(1000 * i * 2);
+                VersionTuple newVersions = this.GetVersionsFromFile(Apps.Paths.InstallersTestAppMsi3);
+
+                try
+                {
+
+                    Assert.IsTrue(newVersions.AssemblyVersion.IsNewerVersionThan(initialVersions.AssemblyVersion)
+                        , $"Version don't match. Initial AssVer: {initialVersions.AssemblyVersion}. New {newVersions.AssemblyVersion}");
+                    Assert.IsTrue(newVersions.FileVersion.IsNewerVersionThan(initialVersions.FileVersion), 
+                        $"Version don't match. Initial FileVer: {initialVersions.AssemblyVersion}. New {newVersions.AssemblyVersion}");
+                    return;
+                }
+                catch (Exception)
+                {
+                    if (i > 4)
+                    {
+                        throw;
+                    }
+                }
+            }
+           
         }
 
         [Test]
