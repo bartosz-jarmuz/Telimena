@@ -58,10 +58,12 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="id"></param>
         /// <returns></returns>
         [Audit]
+        [AllowAnonymous]
         [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
-            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x => x.PublicId == id).ConfigureAwait(false);
+            TelimenaToolkitData toolkitData = await this.work.ToolkitDataRepository.FirstOrDefaultAsync(x
+                => x.TelimenaPackageInfo != null && x.TelimenaPackageInfo.PublicId == id).ConfigureAwait(false);
             if (toolkitData == null)
             {
                 return this.BadRequest($"Toolkit id [{id}] does not exist");
