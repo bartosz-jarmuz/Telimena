@@ -1,4 +1,6 @@
-﻿namespace Microsoft.ApplicationInsights.Extensibility
+﻿using System;
+
+namespace Microsoft.ApplicationInsights.Extensibility
 {
     using System.Diagnostics;
     using Implementation;
@@ -23,78 +25,86 @@
         /// <param name="telemetryItem">Target telemetry item to add operation id.</param>
         public void Initialize(ITelemetry telemetryItem)
         {
-            var itemContext = telemetryItem.Context.Operation;
-            var telemetryProp = telemetryItem as ISupportProperties;
-            bool isActivityAvailable = false;
-            isActivityAvailable = ActivityExtensions.TryRun(() =>
-            { 
-                var currentActivity = Activity.Current;
-                if (currentActivity != null)
+            try
+            {
+                var itemContext = telemetryItem.Context.Operation;
+                var telemetryProp = telemetryItem as ISupportProperties;
+                bool isActivityAvailable = false;
+                isActivityAvailable = ActivityExtensions.TryRun(() =>
                 {
-                    if (string.IsNullOrEmpty(itemContext.Id))
+                    var currentActivity = Activity.Current;
+                    if (currentActivity != null)
                     {
-                        itemContext.Id = currentActivity.RootId;
-
-                        if (string.IsNullOrEmpty(itemContext.ParentId))
+                        if (string.IsNullOrEmpty(itemContext.Id))
                         {
-                            itemContext.ParentId = currentActivity.Id;
-                        }
+                            itemContext.Id = currentActivity.RootId;
 
-                        foreach (var baggage in currentActivity.Baggage)
-                        {
-                            if (telemetryProp != null && !telemetryProp.Properties.ContainsKey(baggage.Key))
+                            if (string.IsNullOrEmpty(itemContext.ParentId))
                             {
-                                telemetryProp.Properties.Add(baggage);
+                                itemContext.ParentId = currentActivity.Id;
+                            }
+
+                            foreach (var baggage in currentActivity.Baggage)
+                            {
+                                if (telemetryProp != null && !telemetryProp.Properties.ContainsKey(baggage.Key))
+                                {
+                                    telemetryProp.Properties.Add(baggage);
+                                }
                             }
                         }
+
+                        string operationName = currentActivity.GetOperationName();
+
+                        if (string.IsNullOrEmpty(itemContext.Name) && !string.IsNullOrEmpty(operationName))
+                        {
+                            itemContext.Name = operationName;
+                        }
                     }
+                });
 
-                    string operationName = currentActivity.GetOperationName();
-
-                    if (string.IsNullOrEmpty(itemContext.Name) && !string.IsNullOrEmpty(operationName))
-                    {
-                        itemContext.Name = operationName;
-                    }
-                }
-            });
-
-            if (!isActivityAvailable)
-            {
-                if (string.IsNullOrEmpty(itemContext.ParentId) || string.IsNullOrEmpty(itemContext.Id) || string.IsNullOrEmpty(itemContext.Name))
+                if (!isActivityAvailable)
                 {
-                    var parentContext = CallContextHelpers.GetCurrentOperationContext();
-                    if (parentContext != null)
+                    if (string.IsNullOrEmpty(itemContext.ParentId) || string.IsNullOrEmpty(itemContext.Id) ||
+                        string.IsNullOrEmpty(itemContext.Name))
                     {
-                        if (string.IsNullOrEmpty(itemContext.ParentId)
-                            && !string.IsNullOrEmpty(parentContext.ParentOperationId))
+                        var parentContext = CallContextHelpers.GetCurrentOperationContext();
+                        if (parentContext != null)
                         {
-                            itemContext.ParentId = parentContext.ParentOperationId;
-                        }
-
-                        if (string.IsNullOrEmpty(itemContext.Id)
-                            && !string.IsNullOrEmpty(parentContext.RootOperationId))
-                        {
-                            itemContext.Id = parentContext.RootOperationId;
-                        }
-
-                        if (string.IsNullOrEmpty(itemContext.Name)
-                            && !string.IsNullOrEmpty(parentContext.RootOperationName))
-                        {
-                            itemContext.Name = parentContext.RootOperationName;
-                        }
-
-                        if (parentContext.CorrelationContext != null)
-                        {
-                            foreach (var item in parentContext.CorrelationContext)
+                            if (string.IsNullOrEmpty(itemContext.ParentId) &&
+                                !string.IsNullOrEmpty(parentContext.ParentOperationId))
                             {
-                                if (telemetryProp != null && !telemetryProp.Properties.ContainsKey(item.Key))
+                                itemContext.ParentId = parentContext.ParentOperationId;
+                            }
+
+                            if (string.IsNullOrEmpty(itemContext.Id) &&
+                                !string.IsNullOrEmpty(parentContext.RootOperationId))
+                            {
+                                itemContext.Id = parentContext.RootOperationId;
+                            }
+
+                            if (string.IsNullOrEmpty(itemContext.Name) &&
+                                !string.IsNullOrEmpty(parentContext.RootOperationName))
+                            {
+                                itemContext.Name = parentContext.RootOperationName;
+                            }
+
+                            if (parentContext.CorrelationContext != null)
+                            {
+                                foreach (var item in parentContext.CorrelationContext)
                                 {
-                                    telemetryProp.Properties.Add(item);
+                                    if (telemetryProp != null && !telemetryProp.Properties.ContainsKey(item.Key))
+                                    {
+                                        telemetryProp.Properties.Add(item);
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                TelemetryDebugWriter.WriteLine($"Something went wrong when initializing [{this.GetType().Name}]. This initializer will be ignored.\r\n{ex}");
             }
         }
     }
