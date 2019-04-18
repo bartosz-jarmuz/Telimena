@@ -30,29 +30,48 @@ namespace Telimena.WebApp.Utils
 
         private static TelemetryItem Build(AppInsightsTelemetry appInsightsTelemetry)
         {
-            Dictionary<string, string> appInsightsProperties = appInsightsTelemetry.Data.BaseData.Properties;
-
+            Dictionary<string, string> appInsightsProperties = appInsightsTelemetry.Data?.BaseData?.Properties;
+            //bear in mind - if something goes wrong, properties might be null
             TelemetryItem item = new TelemetryItem()
             {
                 Timestamp = appInsightsTelemetry.Time,
                 VersionData = GetVersionData(appInsightsProperties),
-                UserIdentifier = appInsightsTelemetry.Tags.AiUserId,
-                AuthenticatedUserIdentifier = appInsightsTelemetry.Tags.AiUserAuthUserId,
+                UserIdentifier = appInsightsTelemetry.Tags?.AiUserId,
+                AuthenticatedUserIdentifier = appInsightsTelemetry.Tags?.AiUserAuthUserId,
                 Properties = GetFilteredProperties(appInsightsProperties),
                 Measurements= appInsightsTelemetry.Data?.BaseData?.Measurements,
                 TelemetryItemType = GetItemType(appInsightsTelemetry),
                 EntryKey = appInsightsTelemetry.Data?.BaseData?.Name??"MissingKey",
                 Sequence = appInsightsTelemetry.Seq,
-                LogMessage = appInsightsTelemetry.Data.BaseData.Message
-                
+                LogMessage = appInsightsTelemetry.Data?.BaseData?.Message
             };
             MapLogLevel(appInsightsTelemetry, item);
 
             MapExceptionProperties(appInsightsTelemetry, item);
 
+            HandleNullPropertiesError(appInsightsTelemetry, appInsightsProperties, item);
+
             return item;
         }
 
+        private static void HandleNullPropertiesError(AppInsightsTelemetry appInsightsTelemetry
+            , Dictionary<string, string> appInsightsProperties, TelemetryItem item)
+        {
+            if (appInsightsProperties == null)
+            {
+                item.TelemetryItemType = TelemetryItemTypes.Exception;
+                item.Exceptions = new List<TelemetryItem.ExceptionInfo>();
+                item.Exceptions.Add(new TelemetryItem.ExceptionInfo()
+                {
+                    Message = appInsightsTelemetry.Data?.BaseData?.Message
+                    ,HasFullStack = false,
+                    Id = 0,
+                    OuterId = 0,
+                    ParsedStack = new List<TelemetryItem.ExceptionInfo.ParsedStackTrace>(),
+                    TypeName = "TelimenaClientInternalError"
+                });
+            }
+        }
 
         private static void MapLogLevel(AppInsightsTelemetry appInsightsTelemetry, TelemetryItem item)
         {
@@ -97,14 +116,17 @@ namespace Telimena.WebApp.Utils
         }
         private static Dictionary<string, string> GetFilteredProperties(Dictionary<string, string> properties)
         {
+
             var propNames = typeof(TelimenaContextPropertyKeys).GetProperties().Select(x => x.Name).ToList();
             Dictionary<string, string> result = new Dictionary<string, string>();
-
-            foreach (KeyValuePair<string, string> keyValuePair in properties)
+            if (properties != null)
             {
-                if (!propNames.Contains(keyValuePair.Key))
+                foreach (KeyValuePair<string, string> keyValuePair in properties)
                 {
-                    result.Add(keyValuePair.Key, keyValuePair.Value);
+                    if (!propNames.Contains(keyValuePair.Key))
+                    {
+                        result.Add(keyValuePair.Key, keyValuePair.Value);
+                    }
                 }
             }
 
@@ -113,19 +135,25 @@ namespace Telimena.WebApp.Utils
 
         private static VersionData GetVersionData(Dictionary<string, string> properties)
         {
-            if (!properties.TryGetValue(TelimenaContextPropertyKeys.ProgramFileVersion, out string file))
+            if (properties != null)
             {
-                file = "0.0.0.0";
+
+                if (!properties.TryGetValue(TelimenaContextPropertyKeys.ProgramFileVersion, out string file))
+                {
+                    file = "0.0.0.0";
+                }
+
+                if (!properties.TryGetValue(TelimenaContextPropertyKeys.ProgramAssemblyVersion, out string ass))
+                {
+                    ass = "0.0.0.0";
+                }
+                return new VersionData(ass, file);
+
             }
-
-            if (!properties.TryGetValue(TelimenaContextPropertyKeys.ProgramAssemblyVersion, out string ass))
-            {
-                ass = "0.0.0.0";
-            }
+            return new VersionData("0.0.0.0", "0.0.0.0");
 
 
 
-            return new VersionData(ass, file);
 
         }
 
