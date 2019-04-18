@@ -253,8 +253,9 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
 
                 List<ProgramUpdatePackageInfo> filteredPackages = ProgramsControllerHelpers.FilterPackagesSet(allUpdatePackages, requestModel);
-                string supportedToolkitVersion = await ProgramsControllerHelpers.GetMaximumSupportedToolkitVersion(this.Work, filteredPackages, program, requestModel).ConfigureAwait(false);
-                TelimenaPackageInfo toolkitPackage = await ProgramsControllerHelpers.GetToolkitUpdateInfo(this.Work, program, requestModel, supportedToolkitVersion).ConfigureAwait(false);
+                //todo - for now updating the package is disabled - update packagaces are expected to contain the toolkit package
+                //  string supportedToolkitVersion = await ProgramsControllerHelpers.GetMaximumSupportedToolkitVersion(this.Work, filteredPackages, program, requestModel).ConfigureAwait(false);
+                // TelimenaPackageInfo toolkitPackage = await ProgramsControllerHelpers.GetToolkitUpdateInfo(this.Work, program, requestModel, supportedToolkitVersion).ConfigureAwait(false);
 
                 List<UpdatePackageData> packageDataSets = new List<UpdatePackageData>();
                 foreach (ProgramUpdatePackageInfo programUpdatePackageInfo in filteredPackages)
@@ -263,14 +264,14 @@ namespace Telimena.WebApp.Controllers.Api.V1
                         , options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadProgramUpdate(info))));
                 }
 
-                if (packageDataSets.Any())
-                {
-                    if (toolkitPackage != null)
-                    {
-                        packageDataSets.Add(Mapper.Map<TelimenaPackageInfo, UpdatePackageData>(toolkitPackage
-                            , options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadToolkitUpdate(info))));
-                    }
-                }
+                //if (packageDataSets.Any()) //disabled for now (lets see when I look at this comment next time - it's 18.04.2019...)
+                //{
+                //    if (toolkitPackage != null)
+                //    {
+                //        packageDataSets.Add(Mapper.Map<TelimenaPackageInfo, UpdatePackageData>(toolkitPackage
+                //            , options => options.AfterMap((info, data) => data.DownloadUrl = Router.Api.DownloadToolkitUpdate(info))));
+                //    }
+                //}
 
 
                 UpdateResponse response = new UpdateResponse { UpdatePackages = packageDataSets };

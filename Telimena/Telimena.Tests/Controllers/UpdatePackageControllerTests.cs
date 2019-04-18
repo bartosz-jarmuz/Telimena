@@ -118,9 +118,10 @@ namespace Telimena.Tests
             var list = this.Context.UpdatePackages.ToList();
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
-            Assert.AreEqual(5, result.UpdatePackages.Count());
+            Assert.AreEqual(4, result.UpdatePackages.Count());
 
-            Assert.IsTrue(result.UpdatePackages.Last().Version == "1.0.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence Assert.IsTrue(result.UpdatePackages.Last().Version == "1.0.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
+           Assert.IsTrue(result.UpdatePackages.All(x=> x.FileName != "Telimena.Client.zip"));
             Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[0].PublicId);
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
             Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].PublicId);
@@ -134,9 +135,9 @@ namespace Telimena.Tests
             Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].PublicId);
             Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].PublicId);
             //return the version that is higher than max supported, but does not introduce breaking changes
-            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence - Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
             //also check its the last package 
-            Assert.IsTrue(result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence - Assert.IsTrue(result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
 
         }
 
@@ -196,19 +197,20 @@ namespace Telimena.Tests
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
             Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[0].PublicId);
-            Assert.AreEqual(2, result.UpdatePackages.Count);
+            Assert.AreEqual(1, result.UpdatePackages.Count);
             //return the version that is higher than max supported, but does not introduce breaking changes
-            Assert.IsTrue(result.UpdatePackages.Last().Version == "1.0.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence - Assert.IsTrue(result.UpdatePackages.Last().Version == "1.0.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
+            Assert.IsTrue(result.UpdatePackages.All(x => x.FileName != "Telimena.Client.zip"));
 
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
             Assert.AreEqual("api/v1/update-packages/0d9dd99e-242b-4b6c-ba24-1ded4bb9d87d", result.UpdatePackages[0].DownloadUrl);
-            Assert.AreEqual(2, result.UpdatePackages.Count);
+            Assert.AreEqual(1, result.UpdatePackages.Count);
 
             //return the version that is higher than max supported, but does not introduce breaking changes
-            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip"
-                                                                         && x.DownloadUrl.Contains($"api/v1/toolkit/")).Version);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence -  Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip"
+              //                                                           && x.DownloadUrl.Contains($"api/v1/toolkit/")).Version);
 
         }
 
@@ -233,7 +235,7 @@ namespace Telimena.Tests
             request.AcceptBeta = true;
 
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
-            Assert.AreEqual(5, result.UpdatePackages.Count());
+            Assert.AreEqual(4, result.UpdatePackages.Count());
 
             Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].PublicId);
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
@@ -241,8 +243,8 @@ namespace Telimena.Tests
             Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].PublicId);
 
             //return the version that is supported, because it does not introduce breaking changes
-            Assert.AreEqual("2.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
-
+           //todo - toolkit updating temporarily disabled - update package requires toolkit presence Assert.AreEqual("2.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+           Assert.IsTrue(result.UpdatePackages.All(x=> x.FileName != "Telimena.Client.zip"));
 
             request.VersionData.FileVersion = "3.0.0.0"; //version too high
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
@@ -274,7 +276,7 @@ namespace Telimena.Tests
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
 
-            Assert.AreEqual(5, result.UpdatePackages.Count);
+            Assert.AreEqual(4, result.UpdatePackages.Count);
 
             Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].PublicId);
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
@@ -283,7 +285,8 @@ namespace Telimena.Tests
 
 
             //return the version that is higher than max supported, but does not introduce breaking changes
-            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            Assert.IsTrue(result.UpdatePackages.All(x => x.FileName != "Telimena.Client.zip"));
 
 
         }
@@ -320,14 +323,15 @@ namespace Telimena.Tests
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
-            Assert.AreEqual(4, result.UpdatePackages.Count());
+            Assert.AreEqual(3, result.UpdatePackages.Count());
 
             Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].PublicId);
             Assert.AreEqual(this.PrgPkg_5, result.UpdatePackages[1].PublicId);
             Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[2].PublicId);
 
             //return the version that is higher than max supported, but does not introduce breaking changes
-            Assert.IsTrue(result.UpdatePackages.Last().Version == "1.2.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence -        Assert.IsTrue(result.UpdatePackages.Last().Version == "1.2.0.0" && result.UpdatePackages.Last().FileName == "Telimena.Client.zip");
+            Assert.IsTrue(result.UpdatePackages.All(x => x.FileName != "Telimena.Client.zip"));
 
         }
 
@@ -413,7 +417,7 @@ namespace Telimena.Tests
 
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
-            Assert.AreEqual(5, result.UpdatePackages.Count());
+            Assert.AreEqual(4, result.UpdatePackages.Count());
 
             Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].PublicId);
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
@@ -421,12 +425,13 @@ namespace Telimena.Tests
             Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].PublicId);
             Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].PublicId);
             //one of the packages supports version 1.6, however 1.6 is beta. It is higher than 1.4 though, so 1.4 is OK
-            Assert.AreEqual("1.4.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence -      Assert.AreEqual("1.4.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            Assert.IsTrue(result.UpdatePackages.All(x => x.FileName != "Telimena.Client.zip"));
 
 
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
-            Assert.AreEqual(5, result.UpdatePackages.Count());
+            Assert.AreEqual(4, result.UpdatePackages.Count());
 
             Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[0].PublicId);
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[1].PublicId);
@@ -434,7 +439,8 @@ namespace Telimena.Tests
             Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].PublicId);
 
             //one of the packages supports version 1.6
-            Assert.AreEqual("1.6.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence - Assert.AreEqual("1.6.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            Assert.IsTrue(result.UpdatePackages.All(x => x.FileName != "Telimena.Client.zip"));
 
         }
 
@@ -456,7 +462,8 @@ namespace Telimena.Tests
 
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
             Assert.AreEqual("A version 1.2.0.3", result.UpdatePackages[0].ReleaseNotes);
-            Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence -   Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            Assert.IsTrue(result.UpdatePackages.All(x => x.FileName != "Telimena.Client.zip"));
 
 
             request.AcceptBeta = true;
@@ -464,7 +471,7 @@ namespace Telimena.Tests
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
             Assert.AreEqual("A version 1.2.0.3", result.UpdatePackages[0].ReleaseNotes);
 
-            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence -      Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
 
         }
 
@@ -489,15 +496,16 @@ namespace Telimena.Tests
             UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
 
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
-            Assert.AreEqual(3, result.UpdatePackages.Count);
-            Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            Assert.AreEqual(2, result.UpdatePackages.Count);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence -   Assert.AreEqual("1.0.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            Assert.IsTrue(result.UpdatePackages.All(x => x.FileName != "Telimena.Client.zip"));
 
 
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
 
-            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence -  Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
 
         }
 
@@ -525,7 +533,9 @@ namespace Telimena.Tests
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
 
-            Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            //todo - toolkit updating temporarily disabled - update package requires toolkit presence -             Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip").Version);
+            Assert.IsTrue(result.UpdatePackages.All(x => x.FileName != "Telimena.Client.zip"));
+
         }
     }
 }
