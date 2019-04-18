@@ -104,7 +104,8 @@ namespace Microsoft.ApplicationInsights.Extensibility
             }
             catch (Exception ex)
             {
-                TelemetryDebugWriter.WriteLine(string.Format("Something went wrong when initializing [{0}]. This initializer will be ignored.\r\n{1}", this.GetType().Name, ex));
+                TelemetryDebugWriter.WriteLine(
+                    "Something went wrong when initializing [" + this.GetType().Name+ "]. This initializer will be ignored." + ex);
             }
         }
     }
