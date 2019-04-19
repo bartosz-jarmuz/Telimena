@@ -63,7 +63,7 @@ namespace SharedLogic
             JsonSerializerSettings settings = new JsonSerializerSettings { ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto };
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));
 
-            telimena.Update.InstallUpdates(result, takeBeta);
+            UpdateInstallationResult installationResult = telimena.Update.InstallUpdates(result, takeBeta);
 
 
             Console.WriteLine($"Finished {MethodBase.GetCurrentMethod().Name}");
@@ -126,7 +126,7 @@ namespace SharedLogic
         {
             Console.WriteLine("Starting update handling...");
 
-            UpdateCheckResult result = telimena.Update.HandleUpdates(takeBeta);
+            UpdateInstallationResult result = telimena.Update.HandleUpdates(takeBeta);
             Console.WriteLine("Finished update handling...");
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto};
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));

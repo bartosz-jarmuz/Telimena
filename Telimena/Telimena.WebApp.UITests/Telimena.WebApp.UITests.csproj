@@ -111,11 +111,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="01. Ui\AppManagementTests.Uploads.cs" />
+    <Compile Include="01. Ui\AppManagementTests.Uploads.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="01. Ui\AppManagementTests.Helpers.cs" />
     <Compile Include="01. Ui\AppManagementTests.cs" />
     <Compile Include="01. Ui\ToolkitManagementTests.cs" />
     <Compile Include="01. Ui\LoginTests.cs" />
+    <Compile Include="01. Ui\UsersAndTeamsTests.cs" />
     <Compile Include="02. IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.Helpers.cs" />
     <Compile Include="Base\ConfigKeys.cs" />
     <Compile Include="Base\DeployedTestEngine.cs" />
@@ -146,10 +149,10 @@
     <None Include="02. IntegrationTests\Apps\EmbeddedAssemblyTestApp.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="02. IntegrationTests\Apps\v1.0.0.2_InstallersTestApp.Msi3Installer.msi">
+    <None Include="02. IntegrationTests\Apps\v1.1.2.9_InstallersTestApp.Msi3Installer.msi">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="02. IntegrationTests\Apps\v2.0.0.2_InstallersTestApp.Msi3Installer.msi">
+    <None Include="02. IntegrationTests\Apps\v2.1.2.9_InstallersTestApp.Msi3Installer.msi">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="app.config" />
@@ -177,10 +180,6 @@
     <ProjectReference Include="..\AutomaticTestsClient\AutomaticTestsClient.csproj">
       <Project>{8C7395CF-1C86-4C66-BF55-B254AB1EA6F3}</Project>
       <Name>AutomaticTestsClient</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PackageTriggerUpdaterTestApp\PackageTriggerUpdaterTestApp.csproj">
-      <Project>{090cd12d-79fd-421d-b26f-05cb1a496458}</Project>
-      <Name>PackageTriggerUpdaterTestApp</Name>
     </ProjectReference>
     <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
       <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>

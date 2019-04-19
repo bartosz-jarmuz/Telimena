@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PackageUpdateTesterArguments.cs" />
     <Compile Include="PackageTriggerUpdaterTestProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,6 +60,7 @@
       <Name>Telimena.Client</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\TestAppsSharedLogic\TestAppsSharedLogic.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>powershell -NoProfile -ExecutionPolicy RemoteSigned -file $(ProjectDir)\addToZip.ps1 -SolutionDir $(SolutionDir) -TargetPath $(TargetPath)</PostBuildEvent>

@@ -126,10 +126,10 @@ namespace TelimenaClient.Tests
             teli.Track.Log(LogLevel.Warn, "There should be no error here even though it is not working");
             teli.Track.SendAllDataNow();
 
-            var result = teli.Update.CheckForUpdates();
+            UpdateCheckResult result = teli.Update.CheckForUpdates();
 
             Assert.AreEqual("Update check handled by NullObjectTelemetryModule", result.Exception.Message);
-            result = teli.Update.HandleUpdatesAsync(true).Result;
+            UpdateInstallationResult result2 = teli.Update.HandleUpdatesAsync(true).Result;
 
             Assert.IsNotNull(teli.Properties);
         }

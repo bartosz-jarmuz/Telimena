@@ -73,11 +73,12 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public async Task<UpdateCheckResult> HandleUpdatesAsync(bool acceptBeta)
+        public async Task<UpdateInstallationResult> HandleUpdatesAsync(bool acceptBeta)
         {
+            UpdateCheckResult checkResult = null;
             try
             {
-                UpdateCheckResult checkResult = await this.CheckForUpdatesAsync(acceptBeta).ConfigureAwait(false);
+                checkResult = await this.CheckForUpdatesAsync(acceptBeta).ConfigureAwait(false);
                 if (checkResult.Exception == null)
                 {
                     UpdateHandler handler = new UpdateHandler(this.telimena.Messenger, this.telimena.Properties.LiveProgramInfo, new DefaultWpfInputReceiver()
@@ -89,7 +90,10 @@ namespace TelimenaClient
                     throw checkResult.Exception;
                 }
 
-                return checkResult;
+                return new UpdateInstallationResult()
+                {
+                    CheckResult = checkResult
+                };
             }
             catch (Exception ex)
             {
@@ -99,7 +103,11 @@ namespace TelimenaClient
                     throw exception;
                 }
 
-                return new UpdateCheckResult { Exception = exception };
+                return new UpdateInstallationResult()
+                {
+                    CheckResult = checkResult
+                    ,Exception = exception
+                };
             }
         }
 
@@ -131,13 +139,13 @@ namespace TelimenaClient
         }
 
         /// <inheritdoc />
-        public void InstallUpdates(UpdateCheckResult checkResult, bool acceptBeta)
+        public UpdateInstallationResult InstallUpdates(UpdateCheckResult checkResult, bool acceptBeta)
         {
-            Task.Run(() => this.InstallUpdatesAsync(checkResult, acceptBeta)).GetAwaiter().GetResult();
+            return Task.Run(() => this.InstallUpdatesAsync(checkResult, acceptBeta)).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc />
-        public Task InstallUpdatesAsync(UpdateCheckResult checkResult, bool takeBeta)
+        public async Task<UpdateInstallationResult> InstallUpdatesAsync(UpdateCheckResult checkResult, bool takeBeta)
         {
             try
             {
@@ -147,7 +155,12 @@ namespace TelimenaClient
                 }
                 UpdateHandler handler = new UpdateHandler(this.telimena.Messenger, this.telimena.Properties.LiveProgramInfo, new DefaultWpfInputReceiver()
                     , new UpdateInstaller(), this.telimena.Locator);
-                return handler.HandleUpdates(UpdatePromptingModes.DontPrompt, checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate);
+                await handler.HandleUpdates(UpdatePromptingModes.DontPrompt, checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate).ConfigureAwait(false);
+
+                return new UpdateInstallationResult()
+                {
+                    CheckResult = checkResult
+                };
             }
             catch (Exception ex)
             {
@@ -156,14 +169,17 @@ namespace TelimenaClient
                 {
                     throw exception;
                 }
-
-                return Task.FromResult(false);
+                return new UpdateInstallationResult()
+                {
+                    CheckResult = checkResult
+                    ,Exception = exception
+                };
             }
         
         }
 
         /// <inheritdoc />
-        public UpdateCheckResult HandleUpdates(bool acceptBeta)
+        public UpdateInstallationResult HandleUpdates(bool acceptBeta)
         {
             return Task.Run(() => this.HandleUpdatesAsync(acceptBeta)).GetAwaiter().GetResult();
         }

@@ -24,7 +24,7 @@ namespace TelimenaClient
         /// </summary>
         /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
         /// <returns></returns>
-        Task<UpdateCheckResult> HandleUpdatesAsync(bool acceptBeta);
+        Task<UpdateInstallationResult> HandleUpdatesAsync(bool acceptBeta);
 
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace TelimenaClient
         /// <param name="checkResult">The result contains info about packages to be installed. You can modify it (e.g. exclude certain ones)</param>
         /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
         /// <returns></returns>
-        void InstallUpdates(UpdateCheckResult checkResult, bool acceptBeta);
+        UpdateInstallationResult InstallUpdates(UpdateCheckResult checkResult, bool acceptBeta);
 
         /// <summary>
         ///     Installs the updates specified in the input parameter. It will not ask any questions.
@@ -56,8 +56,7 @@ namespace TelimenaClient
         /// <param name="checkResult">The result contains info about packages to be installed. You can modify it (e.g. exclude certain ones)</param>
         /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
         /// <returns></returns>
-        Task InstallUpdatesAsync(UpdateCheckResult checkResult, bool acceptBeta);
-
+        Task<UpdateInstallationResult> InstallUpdatesAsync(UpdateCheckResult checkResult, bool acceptBeta);
 
         /// <summary>
         ///     Handles the updating process from start to end
@@ -68,6 +67,6 @@ namespace TelimenaClient
         /// </summary>
         /// <param name="acceptBeta">Determines whether update packages marked as 'beta' version should be used</param>
         /// <returns></returns>
-        UpdateCheckResult HandleUpdates(bool acceptBeta);
+        UpdateInstallationResult HandleUpdates(bool acceptBeta);
     }
 }

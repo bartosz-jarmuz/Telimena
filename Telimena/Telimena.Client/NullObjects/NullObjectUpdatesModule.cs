@@ -6,48 +6,55 @@ namespace TelimenaClient
 {
     internal class NullObjectUpdatesModule : IUpdatesModule
     {
-        private UpdateCheckResult Result =>
+        private UpdateCheckResult CheckResult =>
             new UpdateCheckResult()
             {
                 Exception = new TelimenaException($"Update check handled by {nameof(NullObjectTelemetryModule)}")
             };
 
+        private UpdateInstallationResult InstallationResult =>
+            new UpdateInstallationResult()
+            {
+                Exception = new TelimenaException($"Update installation handled by {nameof(NullObjectTelemetryModule)}")
+            };
+
         public Task<UpdateCheckResult> CheckForUpdatesAsync(bool acceptBeta = true)
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
-            return Task.FromResult(this.Result);
+            return Task.FromResult(this.CheckResult);
         }
 
-        public Task<UpdateCheckResult> HandleUpdatesAsync(bool acceptBeta)
+        public Task<UpdateInstallationResult> HandleUpdatesAsync(bool acceptBeta)
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
-            return Task.FromResult(this.Result);
+            return Task.FromResult(this.InstallationResult);
 
         }
 
         public UpdateCheckResult CheckForUpdates()
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
-            return this.Result;
+            return this.CheckResult;
         }
 
-        public void InstallUpdates(UpdateCheckResult checkResult, bool acceptBeta)
+        public UpdateInstallationResult InstallUpdates(UpdateCheckResult checkResult, bool acceptBeta)
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
+            return this.InstallationResult;
         }
 
-        public Task InstallUpdatesAsync(UpdateCheckResult checkResult, bool acceptBeta)
+        public Task<UpdateInstallationResult> InstallUpdatesAsync(UpdateCheckResult checkResult, bool acceptBeta)
         {
 
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
-            return Task.FromResult(this.Result);
+            return Task.FromResult(this.InstallationResult);
 
         }
 
-        public UpdateCheckResult HandleUpdates(bool acceptBeta)
+        public UpdateInstallationResult HandleUpdates(bool acceptBeta)
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
-            return this.Result;
+            return this.InstallationResult;
         }
     }
 }

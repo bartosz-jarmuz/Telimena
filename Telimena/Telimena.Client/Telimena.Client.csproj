@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Messenger\ApiRoutes.cs" />
     <Compile Include="Model\DefaultToolkitNames.cs" />
+    <Compile Include="Model\Internal\UpdateInstallationResult.cs" />
     <Compile Include="Model\LogLevel.cs" />
     <Compile Include="NullObjects\NullObjectTelemetryModule.cs" />
     <Compile Include="NullObjects\NullObjectTelimena.cs" />

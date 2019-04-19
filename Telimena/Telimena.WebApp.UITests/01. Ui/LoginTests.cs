@@ -47,12 +47,6 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         }
 
-        private void LogOut()
-        {
-            this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/LogOff"));
-            this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
-        }
-
 
         [Test, Order(0), Retry(3)]
         public void AdminLogin_Failed()

@@ -17,6 +17,7 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             public static string PackageUpdaterTest { get; } = "PackageTriggerUpdaterTestApp";
 
             public static string InstallersTestAppMsi3 { get; } = "InstallersTestAppMsi3";
+            public static string User3TestApp { get; } = "User3TestApp";
         }
 
         public static class PackageNames
@@ -24,8 +25,8 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             public static string AutomaticTestsClientAppV1 { get; } = "TestApp v1.0.0.0.zip";
             public static string AutomaticTestsClientAppV2 { get; } = "AutomaticTestsClientv2.zip";
             public static string AutomaticTestsClientAppV3Beta { get; } = "AutomaticTestsClientv3Beta.zip";
-            public static string InstallersTestAppMsi3V1 { get; } = "v1.0.0.2_InstallersTestApp.Msi3Installer.msi";
-            public static string InstallersTestAppMsi3V2 { get; } = "v2.0.0.2_InstallersTestApp.Msi3Installer.msi";
+            public static string InstallersTestAppMsi3V1 { get; } = "v1.1.2.9_InstallersTestApp.Msi3Installer.msi";
+            public static string InstallersTestAppMsi3V2 { get; } = "v2.1.2.9_InstallersTestApp.Msi3Installer.msi";
             public static string PackageUpdaterTestAppV1 { get; } = "PackageTriggerUpdaterTestApp v.1.0.0.0.zip";
             public static string EmbeddedAssemblyTestApp { get; } = "EmbeddedAssemblyTestApp.zip";
         }
@@ -35,6 +36,7 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
             public static Guid AutomaticTestsClient { get; } = Guid.Parse("efacd375-d746-48de-9882-b7ca4426d1e2");
             public static Guid PackageUpdaterClient { get; } = Guid.Parse("43808405-afca-4abb-a92a-519489d62290");
             public static Guid InstallersTestAppMsi3 { get; } = Guid.Parse("637df89e-50bc-4bb2-aa90-1c664b056510");
+            public static Guid User3TestApp { get; } = Guid.Parse("24c34206-0486-4251-91d6-c5314b720f61");
         }
 
         public static class Paths

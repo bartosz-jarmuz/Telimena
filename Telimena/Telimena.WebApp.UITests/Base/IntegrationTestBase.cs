@@ -12,7 +12,6 @@ using HtmlAgilityPack;
 using Microsoft.Deployment.WindowsInstaller;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using PackageTriggerUpdaterTestApp;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Models.Account;
 using Telimena.WebApp.UITests.Base.TestAppInteraction;
@@ -44,9 +43,13 @@ namespace Telimena.WebApp.UITests.Base
         }
 
         public readonly string AdminName = GetSetting<string>(ConfigKeys.AdminName);
-        public readonly string UserName = GetSetting(ConfigKeys.UserName);
+        public readonly string User1Name = GetSetting(ConfigKeys.User1Name);
+        public readonly string User2Name = GetSetting(ConfigKeys.User2Name);
+        public readonly string User3Name = GetSetting(ConfigKeys.User3Name);
         public readonly string AdminPassword = GetSetting(ConfigKeys.AdminPassword);
-        public readonly string UserPassword = GetSetting(ConfigKeys.UserPassword);
+        public readonly string User1Password = GetSetting(ConfigKeys.User1Password);
+        public readonly string User2Password = GetSetting(ConfigKeys.User2Password);
+        public readonly string User3Password = GetSetting(ConfigKeys.User3Password);
 
         
         protected List<string> errors = new List<string>();
@@ -259,7 +262,7 @@ namespace Telimena.WebApp.UITests.Base
         protected Process LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, string appName, string testSubfolderName, bool waitForExit)
         {
              appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
-            PackageUpdateTesterArguments args = new PackageUpdateTesterArguments { ApiUrl = this.BaseUrl };
+            Arguments args = new Arguments { ApiUrl = this.BaseUrl };
 
             args.TelemetryKey = Apps.Keys.PackageUpdaterClient;
 

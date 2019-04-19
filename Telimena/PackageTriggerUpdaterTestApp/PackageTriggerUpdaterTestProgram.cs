@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SharedLogic;
 using TelimenaClient;
 using TelimenaClient.Model;
 using TelimenaClient.Model.Internal;
@@ -65,13 +66,13 @@ namespace PackageTriggerUpdaterTestApp
             MessageBox.Show($"Killed other processes: {killed}", "Updater finished");
         }
 
-        public static void Work(PackageUpdateTesterArguments arguments)
+        public static void Work(Arguments arguments)
         {
             Console.WriteLine("Starting update handling...");
             ITelimena teli = TelimenaFactory.Construct(new TelimenaStartupInfo(arguments.TelemetryKey, new Uri(arguments.ApiUrl)));
             teli.Properties.UpdatePromptingMode = UpdatePromptingModes.PromptBeforeDownload;
             Console.WriteLine("Telimena created... Handling updates");
-            UpdateCheckResult result = teli.Update.HandleUpdates(false);
+            UpdateInstallationResult result = teli.Update.HandleUpdates(false);
             Console.WriteLine("Finished update handling");
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver()};
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));
@@ -95,13 +96,13 @@ namespace PackageTriggerUpdaterTestApp
                 return;
             }
 
-            PackageUpdateTesterArguments arguments;
+            Arguments arguments;
             Console.WriteLine("Loading Arguments...");
             string decoded = "";
             try
             {
                 decoded = Base64Decode(args[0]);
-                arguments = JsonConvert.DeserializeObject<PackageUpdateTesterArguments>(decoded);
+                arguments = JsonConvert.DeserializeObject<Arguments>(decoded);
             }
             catch (Exception ex)
             {
