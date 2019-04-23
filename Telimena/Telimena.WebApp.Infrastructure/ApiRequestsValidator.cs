@@ -1,24 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using DotNetLittleHelpers;
-using Telimena.Client;
+using System.IO;
+using System.Linq;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Messages;
 
 namespace Telimena.WebApp.Infrastructure
 {
     public static class ApiRequestsValidator
     {
-        public static bool IsRequestValid(RegistrationRequest request)
-        {
-            return request != null;
-        }
-
-        public static bool IsRequestValid(StatisticsUpdateRequest request)
-        {
-            return request != null;
-        }
-
-        public static bool IsRequestValid(SetLatestVersionRequest request)
+        public static bool IsRequestValid(TelemetryInitializeRequest request)
         {
             return request != null;
         }
@@ -27,21 +18,9 @@ namespace Telimena.WebApp.Infrastructure
         {
             bool valid = false;
             errorMessages = new List<string>();
-            if (request != null && request.ProgramId > 0 && !string.IsNullOrEmpty(request.PackageVersion) && !string.IsNullOrEmpty(request.ToolkitVersionUsed))
+            if (request != null && request.TelemetryKey != Guid.Empty)
             {
-                valid = true;
-                if (!Version.TryParse(request.PackageVersion, out Version _) && Version.TryParse(request.PackageVersion, out Version _))
-                {
-                    errorMessages.Add($"String [{request.PackageVersion}] is not a valid version format!");
-                    valid = false;
-                }
-                if (!Version.TryParse(request.PackageVersion, out Version _) && Version.TryParse(request.PackageVersion, out Version _))
-                {
-                    errorMessages.Add($"String [{request.ToolkitVersionUsed}] is not a valid version format!");
-                    valid = false;
-                }
-
-                return valid;
+                return true;
             }
             else
             {
@@ -51,24 +30,37 @@ namespace Telimena.WebApp.Infrastructure
             return valid;
         }
 
-        public static bool IsRequestValid(CreateProgramPackageRequest request, out List<string> errorMessages)
+        public static bool IsRequestValid(RegisterProgramRequest request, out List<string> errorMessages)
         {
             errorMessages = new List<string>();
-            if (request != null && request.ProgramId > 0 && !string.IsNullOrEmpty(request.ToolkitVersionUsed))
+            if (request == null)
             {
-                if (Version.TryParse(request.ToolkitVersionUsed, out Version _))
-                {
-                    return true;
-                }
-
-                errorMessages.Add($"String [{request.ToolkitVersionUsed}] is not a valid version format!");
+                errorMessages.Add("Request is null!");
             }
             else
             {
-                errorMessages.Add("Required request property is null!");
+                if (string.IsNullOrWhiteSpace(request.Name))
+                {
+                    errorMessages.Add("Program name is missing!");
+                }
+                if (request.TelemetryKey == Guid.Empty)
+                {
+                    errorMessages.Add("Invalid telemetry key!");
+                }
+                if (string.IsNullOrWhiteSpace(request.PrimaryAssemblyFileName))
+                {
+                    errorMessages.Add("Primary assembly name is empty!");
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(Path.GetExtension(request.PrimaryAssemblyFileName)))
+                    {
+                        errorMessages.Add("Primary assembly name is missing extension!");
+                    }
+                }
             }
 
-            return false;
+            return !errorMessages.Any();
         }
     }
 }

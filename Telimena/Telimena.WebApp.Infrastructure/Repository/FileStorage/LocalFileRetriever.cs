@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 
 namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 {
@@ -20,7 +21,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             using (FileStream stream = File.Open(repositoryFile.FileLocation, FileMode.Open))
             {
                 result = new byte[stream.Length];
-                await stream.ReadAsync(result, 0, (int) stream.Length);
+                await stream.ReadAsync(result, 0, (int) stream.Length).ConfigureAwait(false);
             }
 
             return result;

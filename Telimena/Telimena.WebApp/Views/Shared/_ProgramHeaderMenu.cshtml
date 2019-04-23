@@ -1,0 +1,51 @@
+﻿@model Telimena.WebApp.Models.Shared.ProgramHeaderMenuViewModel
+<section class="content-header">
+    <h1>
+        @Model.ProgramName
+        <small>
+            <span >
+                <a class="headerMenuLink" href="@Url.Action("Dashboard", "ProgramStatistics", new {telemetryKey = Model.TelemetryKey})" id="headerMenuDashboardLink">
+                    @*<i class="fa fa-cog"></i>*@ 
+                    <span>Dashboard</span>
+                </a>
+            </span>
+            <span>&nbsp;|&nbsp;</span>
+            <span >
+                <a class="headerMenuLink" href="@Url.Action("Index", "ProgramManagement", new {telemetryKey = Model.TelemetryKey})" id="headerMenuManageLink">
+                    @*<i class="fa fa-cog"></i>*@
+                    <span>Manage</span>
+                </a>
+            </span>
+            <span>&nbsp;|&nbsp;</span>
+            <span>
+                <a class="headerMenuLink" href="@Url.Action("Index", "ProgramStatistics", new {telemetryKey = Model.TelemetryKey})" id="headerMenuStatsLink">
+                    @*<i class="fa fa-bar-chart"></i>*@
+                    <span>Events and views</span>
+                </a>
+            </span>
+            <span>&nbsp;|&nbsp;</span>
+            <span>
+                <a class="headerMenuLink" href="@Url.Action("Exceptions", "ProgramStatistics", new {telemetryKey = Model.TelemetryKey})" id="headerMenuExceptionsLink">
+                    @*<i class="fa fa-exclamation-triangle"></i>*@
+                    <span>Exceptions</span>
+                </a>
+            </span>
+            <span>&nbsp;|&nbsp;</span>
+            <span>
+                <a class="headerMenuLink" href="@Url.Action("Logs", "ProgramStatistics", new {telemetryKey = Model.TelemetryKey})" id="headerMenuLogsLink">
+                    @*<i class="fa fa-file-text"></i>*@
+                    <span>Logs</span>
+                </a>
+            </span>
+            <span>&nbsp;|&nbsp;</span>
+            <span>
+                <a class="headerMenuLink" href="@Url.Action("PivotTable", "ProgramStatistics", new {telemetryKey = Model.TelemetryKey})" id="headerMenuPivotTableLink">
+                    @*<i class="fa fa-table"></i>*@
+                    <span>Pivot table reports</span>
+                </a>
+            </span>
+
+        </small>
+    </h1>
+</section>
+<br/>

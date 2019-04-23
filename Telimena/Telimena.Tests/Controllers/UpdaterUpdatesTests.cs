@@ -3,22 +3,40 @@ using System.Linq;
 using DbIntegrationTestHelpers;
 using Moq;
 using NUnit.Framework;
-using Telimena.Client;
-using Telimena.WebApp.Controllers.Api;
+using Telimena.WebApp.Controllers.Api.V1;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
+using static Telimena.Tests.TestingUtilities;
 
 namespace Telimena.Tests
 {
     [TestFixture]
-    public class UpdaterUpdatesTests : IntegrationTestsContextNotShared<TelimenaContext>
+    public class UpdaterUpdatesTests : IntegrationTestsContextNotShared<TelimenaPortalContext>
     {
+        public Guid TestProgramTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
+        public Guid TestProgramWithDifferentUpdaterTelemetryKey = Guid.Parse("14b6e9b2-7886-4e4b-ba55-3541155c29ee");
+        public Guid ProgramWhichChangesUpdaterTelemetryKey = Guid.Parse("ae21e6c3-131c-46ca-a91a-ee51f90d44cb");
 
-        private ITelimenaSerializer serializer = new TelimenaSerializer();
-        protected override Action SeedAction => () => this.Prepare();
+        private IFileSaver saver = new Mock<IFileSaver>().Object;
+        private IAssemblyStreamVersionReader assemblyStreamVersionReader;
+        private string otherUpdaterInternalName = "SomeUpdater";
+        private Program programWhichChangesUpdater;
+        private Program programWithDifferentUpdater;
+        private Program testProgram;
+
+        protected override Action SeedAction =>
+            () =>
+            {
+                TelimenaPortalDbInitializer.SeedUsers(this.Context);
+                TelimenaPortalDbInitializer.SeedToolkit(this.Context);
+                this.Prepare();
+
+            };
         //The updater  can evolve independently of the Toolkit - some changes might be breaking the contracts, but most - should not
         //there were several updater updates (maybe changing UI?)
         //first two have no breaking changes - compatible with toolkit 0.0
@@ -40,79 +58,208 @@ namespace Telimena.Tests
 
         //todo - how to automatically check if an updater is compatible with certain toolkit versions?
 
+            private readonly Guid User1Guid = Guid.Parse("4e80652e-d0ba-4742-a78c-3a63de4a63f0");
+
         private IToolkitDataUnitOfWork Prepare()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyVersionReader());
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.0.0", 1000, "0.0.0.0"));
+            this.assemblyStreamVersionReader = GetMockVersionReader().Object;
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
+
+            var defaultUpdater = unit.UpdaterRepository.GetUpdater(DefaultToolkitNames.UpdaterInternalName).GetAwaiter().GetResult();
+            var user = unit.Users.FirstOrDefault();
+            var updaterOther = unit.UpdaterRepository.Add("Updater.msi", this.otherUpdaterInternalName, user);
+
+            var ultraNewest = unit.UpdaterRepository.Add("UltraNewest", "UltraNewest", user);
+
             unit.CompleteAsync().GetAwaiter().GetResult();
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.1.0", 1000, "0.0.0.0") {IsBeta = true});
+            defaultUpdater = unit.UpdaterRepository.GetUpdater(DefaultToolkitNames.UpdaterInternalName).GetAwaiter().GetResult();
+            Assert.IsTrue(defaultUpdater.Id > 0);
+
+            this.InsertPrograms(unit, updaterOther);
+
+
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.0.0.0", GenerateStream("1.0.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.2.0", 1000, "0.5.0.0"));
+            Assert.AreEqual(1, defaultUpdater.Packages.Count);
+
+            var pkg = unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.0.0.0", GenerateStream("1.1.0"), this.saver).GetAwaiter().GetResult();
+            pkg.IsBeta = true;
             unit.CompleteAsync().GetAwaiter().GetResult();
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.3.0", 1000, "0.9.0.0"));
+            Assert.AreEqual(2, defaultUpdater.Packages.Count);
+
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.5.0.0", GenerateStream("1.2.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.4.0", 1000, "0.9.0.0"));
+            Assert.AreEqual(3, defaultUpdater.Packages.Count);
+
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.9.0.0", GenerateStream("1.3.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.5.0", 1000, "0.9.0.0"));
+
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.9.0.0", GenerateStream("1.4.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.6.0", 1000, "1.3.0.0"));
+
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.9.0.0", GenerateStream("1.5.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
-            unit.UpdaterRepository.Add(new UpdaterPackageInfo("1.7.0", 1000, "1.3.0.0") {IsBeta = true});
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "0.9.0.0", GenerateStream("1.5.0"), this.saver).GetAwaiter().GetResult();
             unit.CompleteAsync().GetAwaiter().GetResult();
+
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "1.3.0.0", GenerateStream("1.6.0"), this.saver).GetAwaiter().GetResult();
+            unit.CompleteAsync().GetAwaiter().GetResult();
+
+
+            unit.UpdaterRepository.StorePackageAsync(updaterOther, "0.0.2.0", GenerateStream("1.6.5"), this.saver).GetAwaiter().GetResult();
+            unit.CompleteAsync().GetAwaiter().GetResult();
+
+            pkg = unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "1.3.0.0", GenerateStream("1.7.0"), this.saver).GetAwaiter().GetResult();
+            pkg.IsBeta = true;
+            unit.CompleteAsync().GetAwaiter().GetResult();
+
+
+            pkg = unit.UpdaterRepository.StorePackageAsync(updaterOther, "0.0.2.0", GenerateStream("1.8.5"), this.saver).GetAwaiter().GetResult();
+            pkg.IsBeta = true;
+            unit.CompleteAsync().GetAwaiter().GetResult();
+
+
+            unit.UpdaterRepository.StorePackageAsync(ultraNewest, "0.0.0.0", GenerateStream("9.8.5"), this.saver).GetAwaiter().GetResult();
+            unit.CompleteAsync().GetAwaiter().GetResult();
+
+            Assert.IsTrue(defaultUpdater.Packages.Count > 4);
             return unit;
         }
+
+        private void InsertPrograms(ToolkitDataUnitOfWork unit, WebApp.Core.Models.Portal.Updater updaterOther)
+        {
+            this.testProgram = new Program("Test Program", this.TestProgramTelemetryKey);
+            unit.Programs.Add(this.testProgram);
+
+            this.programWithDifferentUpdater = new Program("Program with different updater", this.TestProgramWithDifferentUpdaterTelemetryKey);
+            this.programWithDifferentUpdater.Updater = updaterOther;
+            unit.Programs.Add(this.programWithDifferentUpdater);
+
+            this.programWhichChangesUpdater = new Program("Program which changes updater", this.ProgramWhichChangesUpdaterTelemetryKey);
+            unit.Programs.Add(this.programWhichChangesUpdater);
+
+            unit.CompleteAsync().GetAwaiter().GetResult();
+
+            this.testProgram = this.Context.Programs.First(x => x.Name == this.testProgram.Name);
+            this.programWithDifferentUpdater = this.Context.Programs.First(x => x.Name == this.programWithDifferentUpdater.Name);
+            this.programWhichChangesUpdater = this.Context.Programs.First(x => x.Name == this.programWhichChangesUpdater.Name);
+
+        }
+
+        [Test]
+        public void Test_MissingMinimumToolkitInfo()
+        {
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
+            var defaultUpdater = unit.UpdaterRepository.GetUpdater(DefaultToolkitNames.UpdaterInternalName).GetAwaiter().GetResult();
+            // assert that empty min version does not break the query
+            unit.UpdaterRepository.StorePackageAsync(defaultUpdater, "", GenerateStream("2.1.8.5"), this.saver).GetAwaiter().GetResult();
+            unit.CompleteAsync().GetAwaiter().GetResult();
+
+            UpdatersController controller = new UpdatersController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), 
+                userId: this.User1Guid, acceptBeta: false, 
+                updaterVersion: "1.0"
+                , toolkitVersion: "1.3.0");
+
+            UpdateResponse result = controller.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.AreEqual("2.1.8.5", result.UpdatePackages.Single().Version);
+            Assert.IsNull(result.Exception);
+        }
+
+
+
 
         [Test]
         public void Test_LatestUpdaterIsCompatible()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyVersionReader());
-            UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0", toolkitVersion: "1.3.0");
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
+            UpdatersController controller = new UpdatersController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.0"
+                , toolkitVersion: "1.3.0");
 
-            UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+            UpdateResponse result = controller.UpdateCheck(request).GetAwaiter().GetResult();
             Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
-            //   Assert.AreEqual("1.7.0", result.UpdatePackagesIncludingBeta.Single().Version);
+            Assert.AreEqual($"api/v1/updaters/{result.UpdatePackages.Single().PublicId}", result.UpdatePackages.Single().DownloadUrl);
+
+            request = new UpdateRequest(telemetryKey: this.TestProgramWithDifferentUpdaterTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false
+                , updaterVersion: "1.0", toolkitVersion: "1.3.0");
+
+            result = controller.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.AreEqual("1.6.5", result.UpdatePackages.Single().Version);
+            Assert.AreNotEqual(Guid.Empty, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual($"api/v1/updaters/{result.UpdatePackages[0].PublicId}", result.UpdatePackages[0].DownloadUrl);
+        }
+
+
+        [Test]
+        public void Test_UpdaterChange()
+        {
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, this.assemblyStreamVersionReader);
+            UpdatersController controller = new UpdatersController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            var request = new UpdateRequest(telemetryKey: this.ProgramWhichChangesUpdaterTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false
+                , updaterVersion: "1.0", toolkitVersion: "1.3.0");
+
+            UpdateResponse result = controller.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.AreEqual("1.6.0", result.UpdatePackages.Single().Version);
+            this.programWhichChangesUpdater.Updater = unit.UpdaterRepository.GetUpdater("UltraNewest").GetAwaiter().GetResult();
+            unit.CompleteAsync().GetAwaiter().GetResult();
+            request = new UpdateRequest(telemetryKey: this.ProgramWhichChangesUpdaterTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false
+                , updaterVersion: "1.0", toolkitVersion: "1.3.0");
+
+            result = controller.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.AreEqual("9.8.5", result.UpdatePackages.Single().Version);
         }
 
         [Test]
         public void Test_LatestUpdaterIsNotCompatible_BreakingChanges()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context, versionReader: new AssemblyVersionReader());
-            UpdaterController controller = new UpdaterController(work: unit, serializer: this.serializer, fileSaver: new Mock<IFileSaver>().Object, fileRetriever: new Mock<IFileRetriever>().Object);
-            var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.0", toolkitVersion: "0.2.0");
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(context: this.Context, versionReader: new AssemblyStreamVersionReader());
+            UpdatersController controller = new UpdatersController(work: unit, fileSaver: new Mock<IFileSaver>().Object
+                , fileRetriever: new Mock<IFileRetriever>().Object);
+            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.0"
+                , toolkitVersion: "0.2.0");
 
-            UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+            UpdateResponse result = controller.UpdateCheck(request).GetAwaiter().GetResult();
 
             Assert.AreEqual(expected: 0, actual: result.UpdatePackages.Count);
-            //Assert.AreEqual("1.1.0", result.UpdatePackagesIncludingBeta.Single().Version);
-             request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.1.0", toolkitVersion: "0.9.0");
+            request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.1.0"
+                , toolkitVersion: "0.9.0");
 
-            result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+            result = controller.UpdateCheck(request).GetAwaiter().GetResult();
 
             Assert.AreEqual(expected: "1.5.0", actual: result.UpdatePackages.Single().Version);
-            //  Assert.AreEqual("1.5.0", result.UpdatePackagesIncludingBeta.Single().Version);
         }
+
+
+
 
         [Test]
         public void Test_LatestUpdaterIsUsed()
         {
-            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyVersionReader());
-            UpdaterController controller = new UpdaterController(unit, this.serializer, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            var request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.1", toolkitVersion: "0.2.0");
+            ToolkitDataUnitOfWork unit = new ToolkitDataUnitOfWork(this.Context, new AssemblyStreamVersionReader());
+            UpdatersController controller = new UpdatersController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.1"
+                , toolkitVersion: "0.2.0");
 
-            UpdateResponse result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
-
-            Assert.AreEqual(0, result.UpdatePackages.Count);
-            request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.5", toolkitVersion: "1.0");
-
-            result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
-            Assert.AreEqual(0, result.UpdatePackages.Count);
-
-            request = new UpdateRequest(programId: 1, programVersion: "0.0", userId: 1, acceptBeta: false, updaterVersion: "1.7", toolkitVersion: "2.0");
-
-            result = controller.GetUpdateInfo(this.serializer.SerializeAndEncode(request)).GetAwaiter().GetResult();
+            UpdateResponse result = controller.UpdateCheck(request).GetAwaiter().GetResult();
 
             Assert.AreEqual(0, result.UpdatePackages.Count);
+            Assert.IsNull(result.Exception);
+            request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.5"
+                , toolkitVersion: "1.0");
+
+            result = controller.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.AreEqual(0, result.UpdatePackages.Count);
+            Assert.IsNull(result.Exception);
+
+            request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), userId: this.User1Guid, acceptBeta: false, updaterVersion: "1.7"
+                , toolkitVersion: "2.0");
+
+            result = controller.UpdateCheck(request).GetAwaiter().GetResult();
+
+            Assert.IsNull(result.Exception);
+            Assert.AreEqual(0, result.UpdatePackages.Count);
+
         }
     }
 }

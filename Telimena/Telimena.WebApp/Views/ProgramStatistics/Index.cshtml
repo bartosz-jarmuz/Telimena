@@ -1,143 +1,187 @@
 ﻿@using DotNetLittleHelpers
 @using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.Models.Shared
+@using Telimena.WebApp.UiStrings
 @model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
 @{
     ViewBag.Title = "Admin Dashboard";
 }
 
 @section styles{
-    @Styles.Render("//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css")
+    <style type="text/css">
+        td.details-control {
+            background: url('../../Content/Ionicons/png/512/plus-circled.png') no-repeat center center;
+            background-size: 24px 24px;
+            cursor: pointer;
+        }
+
+        tr.shown td.details-control {
+            background: url('../../Content/Ionicons/png/512/minus-circled.png') no-repeat center center;
+            background-size: 24px 24px;
+        }
+    </style>
 }
 
-<section class="content-header">
-    <h1>
-        @Model.ProgramName
-        <small>Program statistics</small>
-    </h1>
-</section>
-<br />
+@Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model.ProgramName, TelemetryKey = Model.TelemetryKey})
+
 
 <div class="row">
     <div class="col-md-12">
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Function Usages</h3>
-                @Html.ActionLink("Export custom data", "ExportFunctionUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = false }, new {@class = "btn btn-primary"})
-                @Html.ActionLink("Export custom data with generic data", "ExportFunctionUsageCustomData", "ProgramStatistics", new {programId = @Model.ProgramId, includeGenericData = true}, new {@class = "btn btn-primary"})
+                <h3 class="box-title">Events</h3>
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="functionUsageTable" class="table table-bordered table-hover ">
-                </table>
+                <table id="@Strings.Id.EventsTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
             </div>
         </div>
     </div>
+</div>
+<div class="row">
     <div class="col-md-12">
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Program Usages</h3>
+                <h3 class="box-title">View Usages</h3>
             </div>
             <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="programUsageTable" class="table table-bordered table-hover ">
-                </table>
+                <table id="@Strings.Id.ViewUsageTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
             </div>
         </div>
     </div>
-
 </div>
 
 @section scripts
 {
-    @Scripts.Render("//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js")
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
+    <script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#functionUsageTable').DataTable({
-                serverSide: true,
-                searching: false,
-                processing: true,
-                ajax:  "@Url.Action("GetProgramFunctionsUsageData")" + "?programId=" + @Model.ProgramId,
-              
-                columns: [
-                    {
-                        name: "@nameof(UsageData.DateTime)",
-                        data: "@nameof(UsageData.DateTime).ToLowerFirstChar()",
-                        render: function(data, type, row, meta) {
-                            var datetime = new Date(data);
-                            return datetime.toLocaleString();
-                        },
-                        title:"@nameof(UsageData.DateTime)",
-                        sortable: true,
-                        searchable: false
-                    },
-                    {
-                        name:  "@nameof(UsageData.FunctionName)",
-                        data:  "@nameof(UsageData.FunctionName).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.FunctionName)",
-                        sortable: true,
-                        searchable: true
-                    },
-                    {
-                        name:  "@nameof(UsageData.ProgramVersion)",
-                        data:  "@nameof(UsageData.ProgramVersion).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.ProgramVersion)",
-                        sortable: true,
-                        searchable: true
-                    },
-                    {
-                        name:  "@nameof(UsageData.UserName)",
-                        data:  "@nameof(UsageData.UserName).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.UserName)",
-                        sortable: true,
-                        searchable: true
-                    },
-                    {
-                        name:  "@nameof(UsageData.CustomData)",
-                        data:  "@nameof(UsageData.CustomData).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.CustomData)",
-                        sortable: true,
-                        searchable: false
-                    },
-                  
-                ]
-             
-            });
+            $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
 
-            $('#programUsageTable').DataTable({
+            function format(d) {
+
+                var propsRows = '';
+
+                for (var property in d.properties) {
+                    if (d.properties.hasOwnProperty(property)) {
+                        var key = property;
+                        var value = d.properties[property];
+
+                        propsRows += '<tr><td style="font-weight: bold; padding: 2px;">' + key + '</td><td style="padding: 2px;">'+value+'</td></tr>';
+                    }
+                }
+
+                var metricRows = '';
+
+                for (var property in d.metrics) {
+                    if (d.metrics.hasOwnProperty(property)) {
+                        var key = property;
+                        var value = d.metrics[property];
+
+                        metricRows+= '<tr><td style="font-weight: bold; padding: 2px;">' + key + '</td><td style="padding: 2px;">' + value + '</td></tr>';
+                    }
+                }               
+
+                var propsTable = '<table   cellpadding="0" cellspacing="0" border="1" style="display: inline-block; margin: 0px 15px;"><thead><tr><th colspan="2">Properties</th></tr></thead><tbody>' + propsRows + '</tbody></table>';
+                var metricsTable = '<table cellpadding="0" cellspacing="0" border="1" style="display: inline-block; margin: 0px 15px;"><thead><tr><th colspan="2">Metrics</th></tr></thead><tbody>' + metricRows + '</tbody></table>';
+
+
+                return '<span >'+propsTable +'</span>' + '<span>'+ metricsTable + '</span>';
+            }
+
+            function loadUsageTable(url) {
+                return {
                 serverSide: true,
-                searching: false,
+                searching: true,
                 processing: true,
-                ajax:  "@Url.Action("GetProgramUsageData")" + "?programId=" + @Model.ProgramId,
-              
+                lengthMenu: [[15, 25, 70, -1], [15, 25, 70, "All"]],
+                pageLength: 15,
+                order: [[ 0, 'desc' ]],
+                ajax: url,
+
                 columns: [
                     {
-                        name: "@nameof(UsageData.DateTime)",
-                        data: "@nameof(UsageData.DateTime).ToLowerFirstChar()",
+                        name: "@nameof(DataTableTelemetryData.Timestamp)",
+                        data: "@nameof(DataTableTelemetryData.Timestamp).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
-                            var datetime = new Date(data);
-                            return datetime.toLocaleString();
-                        },
-                        title:"@nameof(UsageData.DateTime)",
+                            return toFormattedTimestamp(new Date(data));                        },
+                        title:"@nameof(DataTableTelemetryData.Timestamp)",
                         sortable: true,
                         searchable: false
                     },
                     {
-                        name:  "@nameof(UsageData.ProgramVersion)",
-                        data:  "@nameof(UsageData.ProgramVersion).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.ProgramVersion)",
+                        name:  "@nameof(DataTableTelemetryData.Sequence)",
+                        data:  "@nameof(DataTableTelemetryData.Sequence).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.Sequence)",
+                        sortable: true,
+                        searchable: true,
+                        render: function (data, type, row, meta) {
+                            return renderSequenceHistoryUrl(data, type, "@Url.Action("SequenceHistory")?telemetryKey=@Model.TelemetryKey&sequenceId=" + encodeURIComponent(data));
+                        }
+                    },
+                    {   
+                        name:  "@nameof(DataTableTelemetryData.EntryKey)",
+                        data:  "@nameof(DataTableTelemetryData.EntryKey).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.EntryKey)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(UsageData.UserName)",
-                        data:  "@nameof(UsageData.UserName).ToLowerFirstChar()",
-                        title: "@nameof(UsageData.UserName)",
+                        name:  "@nameof(DataTableTelemetryData.ProgramVersion)",
+                        data:  "@nameof(DataTableTelemetryData.ProgramVersion).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.ProgramVersion)",
                         sortable: true,
                         searchable: true
                     },
-                  
-                ]
-             
-            });
+                    {
+                        name:  "@nameof(DataTableTelemetryData.UserName)",
+                        data:  "@nameof(DataTableTelemetryData.UserName).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.UserName)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(DataTableTelemetryData.IpAddress)",
+                        data:  "@nameof(DataTableTelemetryData.IpAddress).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.IpAddress)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        title: "Details",
+                        "className":      'details-control',
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ''
+                    },
+
+                 ]
+            }
+            }
+
+            $('#@Strings.Id.EventsTable').DataTable(loadUsageTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.Event"));
+            $('#@Strings.Id.ViewUsageTable').DataTable(loadUsageTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.View"));
+
+            
+            $('tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var table = $(this).closest('table').DataTable({ "bRetrieve": true });
+                var row = table.row( tr );
+ 
+                if ( row.child.isShown() ) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    // Open this row
+                    row.child( format(row.data()) ).show();
+                    tr.addClass('shown');
+                }
+            } );
+
+
         });
     </script>
 

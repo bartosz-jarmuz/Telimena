@@ -1,23 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
+using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork;
 using Telimena.WebApp.Models.Shared;
 
 namespace Telimena.WebApp.Controllers
 {
+    /// <summary>
+    /// Class HomeController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [TelimenaAuthorize]
     public class HomeController : Controller
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomeController"/> class.
+        /// </summary>
+        /// <param name="work">The work.</param>
         public HomeController(IProgramsUnitOfWork work)
         {
-            this._work = work;
+            this.work = work;
         }
 
-        private readonly IProgramsUnitOfWork _work;
+        /// <summary>
+        /// The work
+        /// </summary>
+        private readonly IProgramsUnitOfWork work;
 
+        /// <summary>
+        /// Indexes this instance.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
+        [Audit]
         public ActionResult Index()
         {
             if (this.User.IsInRole(TelimenaRoles.Admin))
@@ -28,18 +47,22 @@ namespace Telimena.WebApp.Controllers
             return this.RedirectToAction("Index", "DeveloperDashboard");
         }
 
+        /// <summary>
+        /// Programses the list.
+        /// </summary>
+        /// <returns>PartialViewResult.</returns>
         [ChildActionOnly]
         public PartialViewResult ProgramsList()
         {
-            TelimenaUser user = this._work.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
-            IEnumerable<Program> programs = this._work.Programs.GetProgramsVisibleToUser(user, this.User);
+            TelimenaUser user =  this.work.Users.GetByPrincipal(this.User);
+            IEnumerable<Program> programs = this.work.Programs.GetProgramsVisibleToUser(user, this.User);
 
             ProgramsListViewModel model = new ProgramsListViewModel();
             foreach (Program program in programs)
             {
-                if (!model.Programs.ContainsKey(program.Id))
+                if (!model.Programs.ContainsKey(program.TelemetryKey))
                 {
-                    model.Programs.Add(program.Id, program.Name);
+                    model.Programs.Add(program.TelemetryKey, program.Name);
                 }
             }
 

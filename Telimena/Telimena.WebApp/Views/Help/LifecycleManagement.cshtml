@@ -1,0 +1,106 @@
+﻿@using Telimena.WebApp.Core.Interfaces
+@using Telimena.WebApp.Models.PortalUsers
+@using Telimena.WebApp.UiStrings
+@{
+    ViewBag.Title = "Application lifecycle management";
+}
+<style>
+    li.L0, li.L1, li.L2, li.L3,
+    li.L5, li.L6, li.L7, li.L8 { list-style-type: decimal !important; }
+</style>
+
+<div class="row">
+<div class="col-md-8">
+    <div class="box box-default">
+        <div class="box-header with-border">
+            <h3 class="box-title">Application lifecycle management help</h3>
+        </div>
+        <div class="box-body">
+            <div class="box-group" id="accordion">
+                
+                <div class="panel box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.UploadingUpdatesPanel" aria-expanded="true">
+                                Uploading updates to Telimena Portal
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="@Strings.Id.Help.UploadingUpdatesPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                        <div class="box-body">
+                            <p>
+                                Applications and their update packages can have different forms. Telimena currently supports two scenarios:<br />
+                                <ul>
+                                    <li>Standalone executable application</li>
+                                    <li>Self-installing packages</li>
+                                </ul>
+                                <h4>Standalone executables</h4>
+                                This is a basic scenario for an application that runs independently. 
+                                The update package for this type of application is a zip file which contains all the files (potentially in a subfolder structure) which should be replaced with a newer version. <br />
+                                The content of the package will be unpacked and distributed into proper folders by the Telimena updater during the update installation.
+
+                                <h4>Self-installing packages</h4>
+                                This is a scenario for plugins and programs which act as self-installing packages.<br />
+                                The update package for this type of application is a file, which upon executing should trigger an installation process for the user to follow. The package itself is responsible for performing the update.
+                                In this scenario, the Telimena updater is only responsible for executing the updater package<br />
+                                
+                                <h4>Uploading packages</h4>
+                                The update packages need to be uploaded to the portal on the 'Manage' page for a program. <br />
+                                The 'Version' of the update (and the whole program) will be read from the 'FileVersion' property of the main program assembly (see <a href="@Url.Action("GettingStarted")#@Strings.Id.Help.AppRegistrationPanel">more about 'main program assembly'</a>)
+                                Bear in mind - it is not reading the 'Assembly Version'
+                                <br/>
+                                Upon uploading, it is possible to specify the release notes which will be presented during the update installation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+          
+                <div class="panel box box-default">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.CheckingForUpdatesPanel" aria-expanded="true">
+                                Checking for updates in application
+                            </a>
+                        </h3>
+                    </div>
+                    <div id="@Strings.Id.Help.CheckingForUpdatesPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                        <div class="box-body">
+                            <p>
+                                Regardless of type of application, a basic scenario for handing update checks is to execute the 'HandleUpdates' method.
+                                Since this method is sending a web request to Telimena API, it is naturally an async operation.
+                                This is the recommended approach which allows the developer to handle asynchrony and application responsiveness.
+                            </p>
+                            <pre class="prettyprint lang-cs linenums">
+public async Task DoSomethingAsync()
+{
+    await this.telimena.Update.HandleUpdatesAsync(acceptBeta: false);
+}</pre>
+                            
+                            <p>
+                                There is however a synchronous (blocking) wrapper for this method, in case a thread-blocking approach is needed.
+                            </p>
+                            <pre class="prettyprint lang-cs linenums">
+public void DoSomething()
+{
+    this.telimena.Update.HandleUpdates(acceptBeta: true);
+}</pre>
+                            <p>Regardless of the approach, this method will check whether there is an update available, and if so, guide the user through the process of it's installation.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    @Html.Partial("_HelpTableOfContents")
+</div>
+
+@section scripts
+{
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+}

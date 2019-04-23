@@ -2,9 +2,16 @@
 
 namespace Telimena.WebApp
 {
+    /// <summary>
+    /// Class BundleConfig.
+    /// </summary>
     public class BundleConfig
     {
         // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
+        /// <summary>
+        /// Registers the bundles.
+        /// </summary>
+        /// <param name="bundles">The bundles.</param>
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include("~/Scripts/jquery-{version}.js"));
@@ -22,8 +29,8 @@ namespace Telimena.WebApp
                 "~/Content/site.css",
                 "~/Content/font-awesome.css"
                 ,"~/Content/Ionicons/css/ionicons.min.css",
-                "~/admin-lte/css/AdminLTE.css", 
-                "~/admin-lte/css/skins/_all-skins.min.css"
+                "~/admin-lte/css/AdminLTE.css" 
+                //"~/admin-lte/css/skins/_all-skins.min.css"
                 ,"~/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css", 
                 "~/admin-lte/plugins/iCheck/all.min.css"));
 
@@ -32,6 +39,10 @@ namespace Telimena.WebApp
                 , "~/admin-lte/js/control-menu.js"
                 , "~/admin-lte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"
                 , "~/admin-lte/plugins/iCheck/icheck.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/telimena").Include(
+                 "~/Scripts/telimena-common.js"));
+
         }
     }
 }

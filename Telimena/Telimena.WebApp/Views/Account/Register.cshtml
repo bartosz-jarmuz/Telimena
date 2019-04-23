@@ -1,4 +1,5 @@
-﻿@model Telimena.WebApp.Models.Account.RegisterViewModel
+﻿@using Telimena.WebApp.UiStrings
+@model Telimena.WebApp.Models.Account.RegisterViewModel
 @{
     ViewBag.Title = "Register";
     Layout = null;
@@ -27,41 +28,41 @@
     </div>
 
     <div class="register-box-body">
-        <p class="login-box-msg">Register a new membership</p>
+        <p class="register-box-msg">Register a new membership</p>
 
         @using (Html.BeginForm("Register", "Account", FormMethod.Post, new {role = "form"}))
         {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true, "", new {@class = "text-danger"})
             <div class="form-group has-feedback">
-                @Html.TextBoxFor(m => m.Name, new {@class = "form-control", placeholder = "Display Name"})
+                @Html.TextBoxFor(m => m.Name, new {@class = "form-control", placeholder = "Display Name", id = @Strings.Id.Name})
                 @Html.ValidationMessageFor(m => m.Name, "", new {@class = "text-danger"})
                 <span class="glyphicon glyphicon-user form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                @Html.TextBoxFor(m => m.Email, new {@class = "form-control", placeholder = "Email (used as login)"})
+                @Html.TextBoxFor(m => m.Email, new {@class = "form-control", placeholder = "Email (used as login)", id = @Strings.Id.Email })
                 @Html.ValidationMessageFor(m => m.Email, "", new {@class = "text-danger"})
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                @Html.PasswordFor(m => m.Password, new {@class = "form-control", placeholder = "Password"})
+                @Html.PasswordFor(m => m.Password, new {@class = "form-control", placeholder = "Password", id = @Strings.Id.Password })
                 @Html.ValidationMessageFor(m => m.Password, "", new {@class = "text-danger"})
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                @Html.PasswordFor(m => m.ConfirmPassword, new {@class = "form-control", placeholder = "Confirm password"})
+                @Html.PasswordFor(m => m.ConfirmPassword, new {@class = "form-control", placeholder = "Confirm password", id = @Strings.Id.ConfirmPassword })
                 @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new {@class = "text-danger"})
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
-                @Html.DropDownListFor(m => m.Role, Model.RoleList, new {@class = "form-control"})
+                @Html.DropDownListFor(m => m.Role, Model.RoleList, new {@class = "form-control", id = @Strings.Id.UserTypeList })
                 @Html.ValidationMessageFor(m => m.Role, "", new {@class = "text-danger"})
                 <span class="glyphicon form-control-feedback"></span>
             </div>
             <div class="row">
                 <!-- /.col -->
                 <div class="col-xs-4">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat">Register</button>
+                    <button type="submit" id="@Strings.Id.Register" class="btn btn-primary btn-block btn-flat">Register</button>
                 </div>
                 <!-- /.col -->
             </div>

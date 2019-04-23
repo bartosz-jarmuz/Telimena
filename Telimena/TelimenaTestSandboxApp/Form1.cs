@@ -1,9 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
-using Telimena.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using TelimenaClient;
+using TelimenaClient.Model;
+using TelimenaClient.Model.Internal;
 
 namespace TelimenaTestSandboxApp
 {
@@ -12,63 +19,89 @@ namespace TelimenaTestSandboxApp
         public Form1()
         {
             this.InitializeComponent();
-            this.apiUrlTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.baseUri) ? "http://localhost:7757/" : Properties.Settings.Default.baseUri;
-            this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
-            this.Text = $"Sandbox v. {Assembly.GetExecutingAssembly().GetName().Version}";
+
+            Random rnd = new Random();
+            var randomName = new []{ "Jess", "Anastasia", "Bobby", "Steven", "Bonawentura" }.OrderBy(a => rnd.NextDouble()).First();
+            this.userNameTextBox.Text = randomName;
+            this.apiUrlTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.baseUri)
+                ? "http://localhost:7757/"
+                : Properties.Settings.Default.baseUri;
+            this.apiKeyTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.telemetryKey)
+                ? ""
+                : Properties.Settings.Default.telemetryKey;
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                this.Telimena =
+                    TelimenaFactory.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text)){UserInfo = new UserInfo(){UserIdentifier = this.userNameTextBox.Text}}) as Telimena;
+            }
+
+            this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
         }
 
-        private string PresentResponse(TelimenaResponseBase response)
-        {
-            if (response.Exception != null)
-            {
-                return response.Exception.ToString();
-            }
-            return new JavaScriptSerializer().Serialize(response);
-        }
+
+        
+
 
         private string PresentResponse(UpdateCheckResult response)
         {
-            if (response.Exception != null)
-            {
-                return response.Exception.ToString();
-            }
-            return new JavaScriptSerializer().Serialize(response);
+            JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyContractResolver(),};
+            return JsonConvert.SerializeObject(response, settings);
         }
 
-        private Telimena.Client.Telimena teli;
+        private ITelimena Telimena;
         private TelimenaHammer hammer;
 
-        private async void InitializeButton_Click(object sender, EventArgs e)
+        private void ThrowUnhandledButton_Click(object sender, EventArgs e)
         {
-            RegistrationResponse response = await this.teli.Initialize();
-
-            this.resultTextBox.Text += this.teli.ProgramInfo.Name + " - " + this.PresentResponse(response) + Environment.NewLine;
+            throw new NotImplementedException(this.telemetryDataTextBox.Text, new AbandonedMutexException("Mutex soo lonely"));
         }
 
-        private async void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
+        private void SendUpdateAppUsageButton_Click(object sender, EventArgs e)
         {
-            StatisticsUpdateResponse result;
+            Stopwatch sw = Stopwatch.StartNew();
+            var rand = new Random();
+            var numberOfMessages = 1;
+            string viewName = string.IsNullOrEmpty(this.telemetryDataTextBox.Text)
+                ? "DefaultView"
+                : this.telemetryDataTextBox.Text;
+
+                for (int index = 0; index < numberOfMessages; index++)
+                {
+                        this.Telimena.Track.View(viewName, metrics: new Dictionary<string, double>()
+                        {
+                            {"SomeViewMetric", rand.Next(100)}
+                        }, properties: new Dictionary<string, string>()
+                        {
+                            {"SomeViewProp", DateTime.Today.DayOfWeek.ToString()},
+                            {"SomeConstantViewProp", "Hello"},
+                        });
+                }
+                sw.Stop();
+                this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of view [{viewName}] access" + Environment.NewLine;
+        }
+
+        private void reportErrorButtonClick(object sender, EventArgs e)
+        {
             Stopwatch sw = Stopwatch.StartNew();
 
-            if (!string.IsNullOrEmpty(this.functionNameTextBox.Text))
+            try
             {
-                result = await this.teli.ReportUsage(string.IsNullOrEmpty(this.functionNameTextBox.Text) ? null : this.functionNameTextBox.Text);
-                sw.Stop();
+                throw new DivideByZeroException(this.telemetryDataTextBox.Text);
             }
-            else
+            catch (Exception ex)
             {
-                result = await this.teli.ReportUsage();
-                sw.Stop();
+                this.Telimena.Track.Exception(ex, "A custom telemetry note", metrics: new Dictionary<string, double>()
+                {
+                    {"AnExceptionProperty", 66.6}
+                }
+               , properties: new Dictionary<string, string>()
+                {
+                    {"AnExceptionProperty", DateTime.Today.DayOfWeek.ToString()} //same key as above. Should not matter
+                });
+
             }
 
-            if (result.Exception == null)
-            {
-                this.resultTextBox.Text += $@"INSTANCE: {sw.ElapsedMilliseconds}ms " + this.teli.ProgramInfo.Name + " - " + this.PresentResponse(result) + Environment.NewLine;
-            }
-            else
-            {
-                MessageBox.Show(result.Exception.ToString());
-            }
+                this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Thrown error: {this.telemetryDataTextBox.Text}" + Environment.NewLine;
         }
 
         private void UpdateText(string text)
@@ -78,89 +111,106 @@ namespace TelimenaTestSandboxApp
 
         private async void checkForUpdateButton_Click(object sender, EventArgs e)
         {
-            var response = await this.teli.CheckForUpdates();
+            var response = await this.Telimena.Update.CheckForUpdatesAsync().ConfigureAwait(true);
             this.UpdateText(this.PresentResponse(response));
         }
 
-        private async void handleUpdatesButton_Click(object sender, EventArgs e)
+        private void handleUpdatesButton_Click(object sender, EventArgs e)
         {
-            this.UpdateText("Handling updates...");
-            await this.teli.HandleUpdates(false);
-            this.UpdateText("Finished handling updates...");
+
+
+
+            throw new InvalidOperationException("I wanted this");
+            //this.UpdateText("Handling updates...");
+            //var suppressAllErrors = this.teli.Properties.SuppressAllErrors;
+            //this.teli.Properties.SuppressAllErrors = false;
+            //try
+            //{
+            //    await this.teli.Updates.Async.HandleUpdatesAsync(false).ConfigureAwait(true);
+            //}
+            //catch (Exception ex)
+            //{
+            //    this.UpdateText(ex.ToString());
+            //}
+
+            //this.teli.Properties.SuppressAllErrors = suppressAllErrors;
+            //this.UpdateText("Finished handling updates...");
         }
 
         private void setAppButton_Click(object sender, EventArgs e)
         {
-            this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
-            if (!string.IsNullOrEmpty(this.appNameTextBox.Text))
+
+            var si = new TelimenaStartupInfo(Guid.Empty, telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))
             {
-                this.teli.ProgramInfo = new ProgramInfo
-                {
-                    Name = this.appNameTextBox.Text
-                    , PrimaryAssembly = new AssemblyInfo {Company = "Comp A Ny", Name = this.appNameTextBox.Text + ".dll", Version = "1.0.0.0"}
-                };
-            }
+                InstrumentationKey = "1a14064b-d326-4ce3-939e-8cba4d08c255"
+            };
 
             if (!string.IsNullOrEmpty(this.userNameTextBox.Text))
-            {
-                this.teli.UserInfo = new UserInfo {UserName = this.userNameTextBox.Text};
+            {   
+                si.UserInfo = new UserInfo { UserIdentifier = this.userNameTextBox.Text };
             }
 
+
+
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                si.TelemetryKey = key;
+                Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
+                Properties.Settings.Default.Save();
+                this.Telimena = TelimenaFactory.Construct(si) as Telimena;
+                ;
+            }
+            else
+            {
+                MessageBox.Show("Api key missing, cannot run teli");
+            }
             Properties.Settings.Default.baseUri = this.apiUrlTextBox.Text;
             Properties.Settings.Default.Save();
-            
         }
 
         private void useCurrentAppButton_Click(object sender, EventArgs e)
         {
-            this.teli = new Telimena.Client.Telimena(telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text));
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
+                Properties.Settings.Default.Save();
+                this.Telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(key
+                    , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))) as Telimena;
+            }
+            else
+            {
+                MessageBox.Show("Api key missing, cannot run teli");
+            }
+
             Properties.Settings.Default.baseUri = this.apiUrlTextBox.Text;
             Properties.Settings.Default.Save();
-        }
-
-        private async void static_sendUsageReportButton_Click(object sender, EventArgs e)
-        {
-            StatisticsUpdateResponse result;
-            Stopwatch sw = Stopwatch.StartNew();
-
-            if (!string.IsNullOrEmpty(this.static_functionNameTextBox.Text))
-            {
-                result = await Telimena.Client.Telimena.ReportUsageStatic(string.IsNullOrEmpty(this.static_functionNameTextBox.Text)
-                    ? null
-                    : this.static_functionNameTextBox.Text);
-                sw.Stop();
-            }
-            else
-            {
-                result = await Telimena.Client.Telimena.ReportUsageStatic();
-                sw.Stop();
-            }
-
-            if (result.Exception == null)
-            {
-                this.resultTextBox.Text += $@"STATIC: {sw.ElapsedMilliseconds}ms " + this.PresentResponse(result) + Environment.NewLine;
-            }
-            else
-            {
-                MessageBox.Show(result.Exception.ToString());
-            }
         }
 
         private async void hammer_StartButton_Click(object sender, EventArgs e)
         {
             this.hammer?.Stop();
-            this.hammer = new TelimenaHammer(this.apiUrlTextBox.Text,
-                Convert.ToInt32(this.hammer_AppNumberSeedBox.Text),
-                Convert.ToInt32(this.hammer_numberOfApps_TextBox.Text),
-                 Convert.ToInt32(this.hammer_numberOfFuncs_TextBox.Text),
-                 Convert.ToInt32(this.hammer_numberOfUsers_TextBox.Text),
-                 Convert.ToInt32(this.hammer_delayMinTextBox.Text),
-                 Convert.ToInt32(this.hammer_delayMaxTextBox.Text),
-                 Convert.ToInt32(this.hammer_DurationTextBox.Text),
-                this.UpdateText
-                );
+            if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
+            {
+                Properties.Settings.Default.telemetryKey = this.apiKeyTextBox.Text;
+                Properties.Settings.Default.Save();
+                this.Telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(key
+                    , telemetryApiBaseUrl: new Uri(this.apiUrlTextBox.Text))) as Telimena;
+            }
+            else
+            {
+                MessageBox.Show("Api key missing, cannot run hammer");
+                return;
+            }
 
-           await this.hammer.Hit();
+            this.hammer = new TelimenaHammer(key, this.apiUrlTextBox.Text
+                , Convert.ToInt32(this.hammer_AppNumberSeedBox.Text)
+                , Convert.ToInt32(this.hammer_numberOfApps_TextBox.Text)
+                , Convert.ToInt32(this.hammer_numberOfFuncs_TextBox.Text)
+                , Convert.ToInt32(this.hammer_numberOfUsers_TextBox.Text)
+                , Convert.ToInt32(this.hammer_delayMinTextBox.Text), Convert.ToInt32(this.hammer_delayMaxTextBox.Text)
+                , Convert.ToInt32(this.hammer_DurationTextBox.Text), this.UpdateText);
+
+            await this.hammer.Hit().ConfigureAwait(true);
         }
 
         private void hammer_StopBtn_Click(object sender, EventArgs e)
@@ -168,6 +218,81 @@ namespace TelimenaTestSandboxApp
             this.hammer?.Stop();
         }
 
-     
+        private void throwErrorButton_Click(object sender, EventArgs e)
+        {
+            throw new InvalidOperationException("Manual error");
+        }
+
+        private void sendEvent_Button_Click(object sender, EventArgs e)
+        {
+            Stopwatch sw = Stopwatch.StartNew();
+            var rand = new Random();
+            var numberOfMessages = 1;
+            string name = string.IsNullOrEmpty(this.telemetryDataTextBox.Text)
+                ? "DefaultEvent"
+                : this.telemetryDataTextBox.Text;
+
+                for (int index = 0; index < numberOfMessages; index++)
+                {
+                    this.Telimena.Track.Event(name, new Dictionary<string, string>()
+                    {
+                        {"WeekDay",$"{DateTime.Today.DayOfWeek}" }
+                    },
+                        new Dictionary<string, double>()
+                        {
+                            { "RandomNumberBetween0And100", new Random().Next(100) },
+                        });
+            }
+                sw.Stop();
+            this.resultTextBox.Text += $@"{sw.ElapsedMilliseconds}ms - Reported {numberOfMessages} occurrences of event [{name}]" + Environment.NewLine;
+
+        }
+
+        private void sendLog_Button_Click(object sender, EventArgs e)
+        {
+            string text = this.telemetryDataTextBox.Text;
+            if (string.IsNullOrEmpty(this.telemetryDataTextBox.Text))
+            {
+                text = this.GetRandomString();
+            }
+
+
+            var level = new Random().Next(0, 4);
+            
+
+            this.Telimena.Track.Log((LogLevel)level, text);
+        }
+
+        private string GetRandomString()
+        {
+            string[] words = { "anemone", "wagstaff", "man", "the", "for",
+                "and", "a", "with", "bird", "fox",  "apple", "mango", "papaya",
+                "banana", "guava", "pineapple" ,"the", "a", "one", "some",
+                "to", "from", "over", "under", "on",
+                "any","drove", "jumped", "ran", "walked", "skipped", };
+            RandomText text = new RandomText(words); 
+
+            var rnd = new Random();
+            text.AddContentParagraphs(rnd.Next(1,2), rnd.Next(1,5), rnd.Next(1, 5), rnd.Next(4,50), rnd.Next(50,150));
+
+            return text.Content;
+        }
+    }
+
+
+
+    class MyContractResolver : DefaultContractResolver
+    {
+        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        {
+            var list = base.CreateProperties(type, memberSerialization);
+
+            foreach (var prop in list)
+            {
+                prop.Ignored = false; // Don't ignore any property
+            }
+
+            return list;
+        }
     }
 }

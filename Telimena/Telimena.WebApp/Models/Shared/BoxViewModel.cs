@@ -1,4 +1,5 @@
-﻿namespace Telimena.WebApp.Models.Shared
+﻿#pragma warning disable 1591
+namespace Telimena.WebApp.Models.Shared
 {
     public class BoxViewModel
     {

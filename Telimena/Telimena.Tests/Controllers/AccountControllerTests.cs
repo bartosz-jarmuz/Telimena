@@ -11,6 +11,7 @@ using NUnit.Framework;
 using Telimena.WebApp.Controllers;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
@@ -20,13 +21,13 @@ using Assert = NUnit.Framework.Assert;
 namespace Telimena.Tests
 {
     [TestClass]
-    public class AccountControllerTests : IntegrationTestsContextSharedGlobally<TelimenaContext>
+    public class AccountControllerTests : IntegrationTestsContextSharedGlobally<TelimenaPortalContext>
     {
         protected override Action SeedAction =>
             () =>
             {
-                TelimenaDbInitializer.SeedUsers(this.Context);
-                //   this.Context.Users.Add(new TelimenaUser() {UserName = "aa", Email = "aa@b.com", CreatedDate = DateTime.UtcNow});
+                TelimenaPortalDbInitializer.SeedUsers(this.Context);
+                //   this.Context.Users.Add(new TelimenaUser() {UserId = "aa", Email = "aa@b.com", CreatedDate = DateTime.UtcNow});
                 this.Context.SaveChanges();
             };
 
@@ -66,15 +67,15 @@ namespace Telimena.Tests
 
             Assert.AreEqual("Jim Beam", user.DisplayName);
             Assert.IsTrue(user.RegisteredDate.Date == DateTime.UtcNow.Date);
-            Assert.IsFalse(user.IsActivated);
+            //Assert.IsFalse(user.IsActivated);
             Assert.IsTrue(unit.UserManager.IsInRoleAsync(user.Id, TelimenaRoles.Developer).GetAwaiter().GetResult());
             Assert.IsTrue(unit.UserManager.IsInRoleAsync(user.Id, TelimenaRoles.Viewer).GetAwaiter().GetResult());
 
-            DeveloperAccount developerAccount = unit.DeveloperRepository.SingleOrDefault(x => x.MainUser.Id == user.Id);
-            Assert.AreEqual(user.DisplayName, developerAccount.MainUser.DisplayName);
-            Assert.AreEqual(user.Email, developerAccount.MainEmail);
+            DeveloperTeam developerTeam = unit.DeveloperRepository.SingleOrDefault(x => x.MainUser.Id == user.Id);
+            Assert.AreEqual(user.DisplayName, developerTeam.MainUser.DisplayName);
+            Assert.AreEqual(user.Email, developerTeam.MainEmail);
 
-            Assert.AreEqual(developerAccount, user.GetDeveloperAccountsLedByUser().Single());
+            Assert.AreEqual(developerTeam, user.GetDeveloperAccountsLedByUser().Single());
         }
 
         [Test]
@@ -90,9 +91,9 @@ namespace Telimena.Tests
 
             Assert.AreEqual(jim.Email, jim.AssociatedDeveloperAccounts.Single().MainEmail);
 
-            DeveloperAccount jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+            DeveloperTeam jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
             Assert.AreEqual(jackDev.Id, jack.AssociatedDeveloperAccounts.Single().Id);
-            DeveloperAccount jimDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jim.Id);
+            DeveloperTeam jimDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jim.Id);
             Assert.AreEqual(jackDev.Id, jack.AssociatedDeveloperAccounts.Single().Id);
 
             jackDev.AssociateUser(jim);
@@ -128,7 +129,7 @@ namespace Telimena.Tests
             TelimenaUser jack = unit.UserManager.FindByNameAsync(Helpers.GetName("Jack@Daniels.com")).GetAwaiter().GetResult();
 
 
-            DeveloperAccount jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+            DeveloperTeam jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
 
             jackDev.AssociateUser(jim);
             unit.Complete();
@@ -149,7 +150,7 @@ namespace Telimena.Tests
             TelimenaUser jack = unit.UserManager.FindByNameAsync(Helpers.GetName("Jack@Daniels.com")).GetAwaiter().GetResult();
             TelimenaUser jim = unit.UserManager.FindByNameAsync(Helpers.GetName("Jim@Beam.com")).GetAwaiter().GetResult();
 
-            DeveloperAccount jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+            DeveloperTeam jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
             jackDev.AssociateUser(jim);
 
             unit.DeveloperRepository.Remove(jackDev);
@@ -168,8 +169,8 @@ namespace Telimena.Tests
             GetTwoUsers(unit);
             TelimenaUser jack = unit.UserManager.FindByNameAsync(Helpers.GetName("Jack@Daniels.com")).GetAwaiter().GetResult();
 
-            DeveloperAccount jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
-            int jackDevId = jackDev.Id;
+            DeveloperTeam jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+            var jackDevId = jackDev.Id;
             Assert.AreEqual(jackDevId, jack.AssociatedDeveloperAccounts.Single().Id);
 
             unit.UserManager.DeleteAsync(jack).GetAwaiter().GetResult();
@@ -193,7 +194,7 @@ namespace Telimena.Tests
             TelimenaUser jim = unit.UserManager.FindByNameAsync(Helpers.GetName("Jim@Beam.com")).GetAwaiter().GetResult();
             TelimenaUser jack = unit.UserManager.FindByNameAsync(Helpers.GetName("Jack@Daniels.com")).GetAwaiter().GetResult();
 
-            DeveloperAccount jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+            DeveloperTeam jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
         }
 
         [Test]
@@ -207,8 +208,8 @@ namespace Telimena.Tests
             TelimenaUser jim = unit.UserManager.FindByNameAsync(Helpers.GetName("Jim@Beam.com")).GetAwaiter().GetResult();
             TelimenaUser jack = unit.UserManager.FindByNameAsync(Helpers.GetName("Jack@Daniels.com")).GetAwaiter().GetResult();
 
-            DeveloperAccount jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
-            DeveloperAccount jimDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jim.Id);
+            DeveloperTeam jackDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jack.Id);
+            DeveloperTeam jimDev = unit.DeveloperRepository.FirstOrDefault(x => x.MainUser.Id == jim.Id);
             Assert.AreEqual(jackDev.Id, jack.GetDeveloperAccountsLedByUser().Single().Id);
             Assert.AreEqual(jimDev.Id, jim.GetDeveloperAccountsLedByUser().Single().Id);
 

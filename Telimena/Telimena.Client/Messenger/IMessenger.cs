@@ -1,12 +1,12 @@
-﻿using System.IO;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using TelimenaClient.Model.Internal;
 
-namespace Telimena.Client
+namespace TelimenaClient
 {
     internal interface IMessenger
     {
-        Task<Stream> DownloadFile(string requestUri);
-        Task<string> SendGetRequest(string requestUri);
-        Task<string> SendPostRequest(string requestUri, object objectToPost);
+        Task<FileDownloadResult> DownloadFile(string requestUri);
+        Task<T> SendGetRequest<T>(string requestUri);
+        Task<T> SendPostRequest<T>(string requestUri, object objectToPost);
     }
 }

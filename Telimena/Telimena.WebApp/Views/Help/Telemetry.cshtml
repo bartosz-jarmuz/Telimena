@@ -1,0 +1,231 @@
+﻿@using Telimena.WebApp.Core.Interfaces
+@using Telimena.WebApp.Models.PortalUsers
+@using Telimena.WebApp.UiStrings
+@{
+    ViewBag.Title = "Telemetry help";
+}
+<style>
+    li.L0, li.L1, li.L2, li.L3,
+    li.L5, li.L6, li.L7, li.L8 {
+        list-style-type: decimal !important;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="box box-default">
+            <div class="box-header with-border">
+                <h3 class="box-title">Gathering telemetry data</h3>
+            </div>
+            <div class="box-body">
+                <div class="box-group" id="accordion">
+
+                    <div class="panel box box-default">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.TelemetryOverviewPanel" aria-expanded="true">
+                                    General info
+                                </a>
+                            </h3>
+                        </div>
+                        <div id="@Strings.Id.Help.TelemetryOverviewPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                            <div class="box-body">
+                                <p>
+                                    Telemetry data is gathered and sent by accessing the methods under the 'Track' interface of Telimena Client. <br />
+                                    The data is sent on a separate thread, in order to minimize the impact on the client app. Each call to a tracking method, such as
+                                    <pre class="prettyprint lang-cs linenums">this.Telimena.Track.View("SettingsPanel");</pre>
+                                    takes less than 1 milisecond.
+                                </p>
+
+                                <p>
+                                    In order to minimize the resource consumption, the data is sent in batches. <br />
+                                    The interval on which the data is sent is configurable during the <a href="@Url.Action("GettingStarted")#@Strings.Id.Help.InitializationPanel">Telimena Client initialization.</a>
+                                </p><br />
+                                By default the interval is 30 seconds. This means that if you application run time might be less than 30 seconds, your data might not be sent. In order to prevent that, ensure to call the 'SendAllData()' method during your application shutdown event, e.g.:
+                                <pre class="prettyprint lang-cs linenums">
+protected override void OnClosing(CancelEventArgs e)
+{
+    this.Telimena.Track.SendAllDataNow();
+    base.OnClosing(e);
+}
+</pre>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel box box-default">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.EventsPanel" aria-expanded="true">
+                                    Events
+                                </a>
+                            </h3>
+                        </div>
+                        <div id="@Strings.Id.Help.EventsPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                            <div class="box-body">
+                                <p>Sending telemetry data is very simple. There are several self-descriptive methods in Telimena's fluent API.</p>
+                                <p> Each of the methods has a couple of overloads which allow sending additional data if needed.</p>
+                                <p>The simplest method will send the name of the 'event' (or other monitored component such as 'view' etc) along with some configured info about the user, version of the program and session:</p>
+
+                                <pre class="prettyprint lang-cs linenums">
+private void DoSomethingSimple()
+{
+    this.Telimena.Track.Event("SomethingImportantHappened");
+}</pre>
+
+                                <p>A request with additional properties</p>
+                                <pre class="prettyprint lang-cs linenums">
+private void DoSomethingBitMoreComplex()
+{
+    this.Telimena.Track.Event("SomethingComplexHappened", 
+        new Dictionary&lt;string, string&gt;()
+        {
+            { "Weekday", DateTime.Today.DayOfWeek.ToString() },
+            { "SomeMagicStringProperty", "And it's magic string value" }
+        });
+}</pre>
+                                <p>Metrics are the type of properties on which mathematical operations (sum, average, max etc.) can be performed - therefore, the value is a 'double'.</p>
+                                <p>A request with additional properties and metrics. You can send either metrics or properties or both:</p>
+                                <pre class="prettyprint lang-cs linenums">
+private void DoSomethingBitComplex()
+{
+    this.Telimena.Track.Event("SomethingComplexHappened", 
+        new Dictionary&lt;string, string&gt;()
+        {
+            { "Weekday", DateTime.Today.DayOfWeek.ToString() },
+            { "SomeMagicStringProperty", "And it's magic string value" }
+        },
+        new Dictionary&lt;string, double&gt;()
+        {
+            { "TimeElapsed", this.TimeElapsed },
+            { "NumberOfItemsProcessed", this.numberOfItems }
+        },
+);
+}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="panel box box-default">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.ViewsPanel" aria-expanded="true">
+                                    Views
+                                </a>
+                            </h3>
+                        </div>
+                        <div id="@Strings.Id.Help.ViewsPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                            <div class="box-body">
+                                <div class="box-body">
+                                    <p>
+                                        Views telemetry can be used to monitor how often and in what circumstances certain views/pages are accessed.
+                                    </p>
+                                    <pre class="prettyprint lang-cs linenums">
+private void SettingsPanel_OnLoad(object sender, EventArgs e)
+{
+    this.Telimena.Track.View("SettingsPanel");
+}</pre>
+                                    <p>
+                                        Additionally, it can help analyzing user's action flow - e.g. that a typical user first sees the main menu, then opens up the 'Load file' screen, then sees the 'Editor' screen etc.
+                                    </p>
+                                    <p>
+                                        The same overloads as with <a href="#eventsPanel">Events</a> are available.
+                                    </p>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel box box-default">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.ExceptionsPanel" aria-expanded="true">
+                                    Exceptions
+                                </a>
+                            </h3>
+                        </div>
+                        <div id="@Strings.Id.Help.ExceptionsPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                            <div class="box-body">
+                                <div class="box-body">
+                                    <p>
+                                        Exceptions telemetry can be used to monitor how often and where an application fails, as well as what are the circumstances of the failures (stack traces etc).
+                                        The same properties and metrics as in case of <a href="#@Strings.Id.Help.EventsPanel">events </a>can be sent.
+                                    </p>
+                                    <pre class="prettyprint lang-cs linenums">
+public void DoDangerousStuff()
+{
+    try
+    {
+        //do somethig that might fail
+    }
+    catch (Exception ex)
+    {
+        this.telimena.Track.Exception(ex);
+        //alternatively, you can add a note
+        this.telimena.Track.Exception(ex, "Custom note to help distinguishing exception")
+    }
+}</pre>
+                                    <p>
+                                        By default, Telimena will also catch and send all unhandled exceptions, so that you are notified if your application fails where you don't expect (or catch) it.<br />
+                                        This setting is controlled during the <a href="@Url.Action("GettingStarted", "Help")#@Strings.Id.Help.InitializationPanel">client initialization</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel box box-default">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#@Strings.Id.Help.LogsPanel" aria-expanded="true">
+                                    Logs
+                                </a>
+                            </h3>
+                        </div>
+                        <div id="@Strings.Id.Help.LogsPanel" class="panel-collapse collapse in" aria-expanded="true">
+
+                            <div class="box-body">
+                                <div class="box-body">
+                                    <p>
+                                        Telimena allows centralized logging mechanism. Developers can use logs to track what is happening inside their application. <br />
+                                        The logging methods require specifing the LogLevel at which a given message should be stored.
+                                        The logged messages are available for viewing and filtering in the Telimena Portal.
+                                    </p>
+                                    <pre class="prettyprint lang-cs linenums">
+ public void DoSomething()
+{
+    this.telimena.Track.Log(LogLevel.Debug, "Something has happened");
+}</pre>
+                                    <p>
+
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    @Html.Partial("_HelpTableOfContents")
+</div>
+
+@section scripts
+{
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    
+
+}

@@ -1,4 +1,5 @@
-﻿<header class="main-header">
+﻿@using Telimena.WebApp.UiStrings
+<header class="main-header" id="@Strings.Id.MainHeader">
 
     <!-- Logo -->
     <a href="@Url.Action("Index", "Home")" class="logo">
@@ -128,8 +129,12 @@
                 <li class="dropdown user user-menu">
                     <!-- Menu Toggle Button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+
+
+                        <i class="fa fa-user-o"></i>
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
                         <span class="hidden-xs"> @User.Identity.Name</span>
+
                     </a>
                     <ul class="dropdown-menu">
                         <!-- The user image in the menu -->
@@ -142,24 +147,24 @@
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                @Html.ActionLink("Change Password", "ChangePassword", "Account")
+                                @Html.ActionLink("Change Password", "ChangePassword", "Account",null, new {@class= "btn btn-default btn-flat" })
                             </div>
                             <div class="pull-right">
                                 @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new {id = "logoutForm"}))
                                 {
                                     @Html.AntiForgeryToken()
                                 }
-                                <a href="javascript:document.getElementById('logoutForm').submit()" id="logoffLink"><i class="fa fa-sign-out fa-fw"></i> Log out</a>
+                                <a href="javascript:document.getElementById('logoutForm').submit()" id="logoffLink" class="btn btn-default btn-flat"><i class="fa fa-sign-out fa-fw"></i> Log out</a>
                             </div>
                         </li>
                     </ul>
                 </li>
                 <!-- Control Sidebar Toggle Button -->
-                <li>
+                @*<li>
                     <a href="#" data-toggle="control-sidebar">
                         <i class="fa fa-gears"></i>
                     </a>
-                </li>
+                </li>*@
             </ul>
         </div>
     </nav>

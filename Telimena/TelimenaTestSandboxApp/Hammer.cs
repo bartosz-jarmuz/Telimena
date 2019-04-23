@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
-using Telimena.Client;
+using TelimenaClient;
+using TelimenaClient.Model;
 
 namespace TelimenaTestSandboxApp
 {
-    internal class TelimenaHammer
+    public class TelimenaHammer
     {
         public class CustomData
         {
@@ -17,9 +18,10 @@ namespace TelimenaTestSandboxApp
             public TimeSpan TimeElapsed { get; set; }
         }
 
-        public TelimenaHammer(string url, int appIndexSeed, int numberOfApps, int numberOfFuncs, int numberOfUsers, int delayMin, int delayMax, int durationMinutes
-            , Action<string> progressReport)
+        public TelimenaHammer(Guid telemetryKey, string url, int appIndexSeed, int numberOfApps, int numberOfFuncs, int numberOfUsers, int delayMin
+            , int delayMax, int durationMinutes, Action<string> progressReport)
         {
+            this.telemetryKey = telemetryKey;
             this.url = url;
             this.appIndexSeed = appIndexSeed;
             this.numberOfApps = numberOfApps;
@@ -31,6 +33,7 @@ namespace TelimenaTestSandboxApp
             this.duration = TimeSpan.FromMinutes(durationMinutes);
         }
 
+        private readonly Guid telemetryKey;
         private readonly string url;
         private readonly int appIndexSeed;
         private readonly int numberOfApps;
@@ -45,19 +48,22 @@ namespace TelimenaTestSandboxApp
         private Stopwatch timeoutStopwatch;
         private List<string> funcs;
 
-        public CustomData GetRandomData()
+        public Dictionary<string, string> GetRandomData()
         {
-            var random = new Random();
-            return new CustomData
+            Random random = new Random();
+
+            return new Dictionary<string, string>
             {
-                PageCount = random.Next(1, 100), WordCount = random.Next(1, 99999), TimeElapsed = TimeSpan.FromMilliseconds(random.Next(1, 99999999))
+                {"PageCount", random.Next(1, 100).ToString()}
+                , {"WordCount", random.Next(1, 100).ToString()}
+                , {"TimeElapsed", random.Next(1, 100).ToString()}
             };
         }
 
         public async Task Hit()
         {
             this.progressReport("HAMMER STARTING...\r\n\r\n");
-            await this.Initialize();
+            await this.Initialize().ConfigureAwait(false);
             this.progressReport("HAMMER Apps Initialized. Start hitting...\r\n\r\n");
 
             this.timeoutStopwatch = new Stopwatch();
@@ -68,7 +74,7 @@ namespace TelimenaTestSandboxApp
                 tasks.Add(this.StartReporting(userInfo));
             }
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
             this.progressReport("\r\nHAMMER FINISHED...\r\n\r\n");
         }
 
@@ -91,7 +97,7 @@ namespace TelimenaTestSandboxApp
             {
                 UserInfo user = new UserInfo
                 {
-                    Email = this.GetRandomName("Email@", i), UserName = this.GetRandomName("User", i), MachineName = this.GetRandomName("Machine", i)
+                    Email = this.GetRandomName("Email@", i), UserIdentifier = this.GetRandomName("User", i), MachineName = this.GetRandomName("Machine", i)
                 };
                 this.users.Add(user);
             }
@@ -99,22 +105,31 @@ namespace TelimenaTestSandboxApp
             this.apps = new List<ProgramInfo>();
             for (int i = this.appIndexSeed; i < this.numberOfApps + this.appIndexSeed; i++)
             {
-                ProgramInfo programInfo = new ProgramInfo {Name = "Program_" + i, PrimaryAssembly = new AssemblyInfo {Name = "PrimaryAssembly_Program_" + i, Version = $"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}" }};
+                ProgramInfo programInfo = new ProgramInfo
+                {
+                    Name = "Program_" + i
+                    , PrimaryAssembly = new AssemblyInfo
+                    {
+                        Name = "PrimaryAssembly_Program_" + i
+                        , VersionData = new VersionData($"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}"
+                            , $"{1 + 1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}")
+                    }
+                };
                 this.apps.Add(programInfo);
-                Telimena.Client.Telimena teli = new Telimena.Client.Telimena(programInfo, new Uri(this.url));
-                await teli.RegisterClient();
+                ITelimena teli = TelimenaFactory.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = programInfo});
 
+                await (teli as Telimena).Initialize().ConfigureAwait(false);
             }
 
             this.funcs = new List<string>();
 
             for (int i = 0; i < this.numberOfFuncs; i++)
             {
-                this.funcs.Add(this.GetRandomName("Function", i));
+                this.funcs.Add(this.GetRandomName("View", i));
             }
         }
 
-        private string PresentResponse(TelimenaResponseBase response)
+        private string PresentResponse(TelemetryInitializeResponse response)
         {
             if (response.Exception != null)
             {
@@ -124,38 +139,41 @@ namespace TelimenaTestSandboxApp
             return new JavaScriptSerializer().Serialize(response);
         }
 
+
         private async Task StartReporting(UserInfo userInfo)
         {
             Random random = new Random();
             while (this.timeoutStopwatch.IsRunning && this.timeoutStopwatch.ElapsedMilliseconds < this.duration.TotalMilliseconds)
             {
                 ProgramInfo prg = this.apps[random.Next(0, this.apps.Count)];
-                Telimena.Client.Telimena teli = new Telimena.Client.Telimena(prg, new Uri(this.url));
-
-                TelimenaResponseBase result;
-                var operation = random.Next(4);
+                ITelimena teli = (Telimena) TelimenaFactory.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = prg});
+                int operation = random.Next(4);
                 if (operation == 1)
                 {
-                    result = await teli.ReportUsage();
+                     teli.Track.Event("SomeEvent");
+                    this.progressReport("Done");
+
                 }
                 else if (operation == 2)
                 {
-                    result = await teli.Initialize();
+                    var result = await (teli as Telimena).Initialize().ConfigureAwait(false);
+                    this.progressReport(this.PresentResponse(result));
                 }
                 else
                 {
                     if (random.Next(2) == 1)
                     {
-                        result = await teli.ReportUsage(this.funcs[random.Next(0, this.funcs.Count)]);
+                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)]) ;
+                        this.progressReport("Done");
                     }
                     else
                     {
-                        result = await teli.ReportUsageWithCustomData(this.GetRandomData(), this.funcs[random.Next(0, this.funcs.Count)]);
+                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
+                        this.progressReport("Done");
                     }
                 }
 
-                this.progressReport(this.PresentResponse(result));
-                await Task.Delay(random.Next(this.delayMin, this.delayMax));
+                await Task.Delay(random.Next(this.delayMin, this.delayMax)).ConfigureAwait(false);
             }
         }
     }

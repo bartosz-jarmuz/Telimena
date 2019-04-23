@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-
-namespace Telimena.Client
+﻿namespace TelimenaClient.Model
 {
     /// <summary>
     ///     A data about a program
     /// </summary>
     public class ProgramInfo
     {
+
         /// <summary>
         ///     A typical program has a primary assembly or an 'entry point'.
         ///     This is where it's info should be defined
@@ -19,15 +18,10 @@ namespace Telimena.Client
         public string Name { get; set; }
 
         /// <summary>
-        ///     The ID of the developer-owner of the application. Only provide if you have an ID.
+        /// Gets the primary assembly path.
         /// </summary>
-        public int? DeveloperId { get; set; }
-
-        /// <summary>
-        ///     An optional collection of helper assemblies data
-        /// </summary>
-        public List<AssemblyInfo> HelperAssemblies { get; set; }
-
+        /// <value>The primary assembly path.</value>
         public string PrimaryAssemblyPath => this.PrimaryAssembly?.Location;
+
     }
 }

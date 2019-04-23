@@ -1,5 +1,21 @@
 ﻿<!DOCTYPE html>
 <html>
+@{
+    string leftBarCollapsedState = "";
+
+    if (Request?.Cookies["toggleState"]?.Value == "closed")
+    {
+        leftBarCollapsedState = "sidebar-collapse";
+    }
+
+    //string currentSkin = Request?.Cookies["currentSkin"]?.Value;
+
+    //if (string.IsNullOrEmpty(currentSkin))
+    //{
+    string   currentSkin = "skin-black-light";
+    //}
+}
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +23,10 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/admin-lte/css/skins/skin-black-light.min.css")
     @Scripts.Render("~/bundles/modernizr")
+    @Styles.Render("~/Content/dataTables.bootstrap.min.css")
+
 
     @RenderSection("styles", false)
 
@@ -21,66 +40,82 @@
     <!-- Google Font -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-    <link rel="icon" href="@Url.Content("~/Content/favicon.ico")" />
+    <link rel="icon" type="image/png" sizes="32x32" href="@Url.Content("~/Content/favicon-32x32.png")">
+    <link rel="icon" type="image/png" sizes="96x96" href="@Url.Content("~/Content/favicon-96x96.png")">
+    <link rel="icon" type="image/png" sizes="16x16" href="@Url.Content("~/Content/favicon-16x16.png")">
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://unpkg.com/chartjs-plugin-colorschemes@latest/dist/chartjs-plugin-colorschemes.min.js"></script>
+
+
     <script type='text/javascript'>
-        var appInsights = window.appInsights || function (config) {
-            function r(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } }
-            var t = { config: config }, u = document, e = window, o = 'script', s = u.createElement(o), i, f; for (s.src = config.url || '//az416426.vo.msecnd.net/scripts/a/ai.0.js', u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i = ['Event', 'Exception', 'Metric', 'PageView', 'Trace', 'Ajax']; i.length;)r('track' + i.pop()); return r('setAuthenticatedUserContext'), r('clearAuthenticatedUserContext'), config.disableExceptionTracking || (i = 'onerror', r('_' + i), f = e[i], e[i] = function (config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t['_' + i](config, r, u, e, o), s }), t
-        }({
-            instrumentationKey: '67c2019a-ad33-44fe-8ee9-cce4e7034be0'
-        });
+        var appInsights = window.appInsights ||
+            function (config) {
+                function r(config) {
+                    t[config] = function () {
+                        var i = arguments;
+                        t.queue.push(function () { t[config].apply(t, i) })
+                    }
+                }
+
+                var t = { config: config }, u = document, e = window, o = 'script', s = u.createElement(o), i, f;
+                for (s.src =
+                    config.url || '//az416426.vo.msecnd.net/scripts/a/ai.0.js',
+                    u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i =
+                    ['Event', 'Exception', 'Metric', 'PageView', 'Trace', 'Ajax'];
+                    i.length;
+                ) r('track' + i.pop());
+                return r('setAuthenticatedUserContext'), r('clearAuthenticatedUserContext'),
+                    config.disableExceptionTracking ||
+                    (i = 'onerror', r('_' + i), f = e[i], e[i] = function (config, r, u, e, o) {
+                        var s = f && f(config, r, u, e, o);
+                        return s !== !0 && t['_' + i](config, r, u, e, o), s
+                    }), t
+            }({
+                instrumentationKey: '67c2019a-ad33-44fe-8ee9-cce4e7034be0'
+            });
 
         window.appInsights = appInsights;
         appInsights.trackPageView();
     </script>
-    @{
-        string leftBarCollapsedState = "";
-
-        if (Request?.Cookies["toggleState"]?.Value == "closed")
-        {
-            leftBarCollapsedState = "sidebar-collapse";
-        }
-
-        string currentSkin = Request?.Cookies["currentSkin"]?.Value;
-
-        if (string.IsNullOrEmpty(currentSkin))
-        {
-            currentSkin = "skin-blue";
-        }
-    }
 
 </head>
 
 <body class="hold-transition @currentSkin sidebar-mini @leftBarCollapsedState">
-<div class="wrapper">
+    <div class="wrapper">
 
-    @if (User.Identity.IsAuthenticated)
-    {
-        @Html.Partial("_LayoutLeftSideBar")
-        @Html.Partial("_LayoutHeader")
-    }
-    else
-    {
-        <header class="main-header"></header>
-    }
-    <div class="content-wrapper">
-        <section class="content container-fluid">
-            @RenderBody()
-        </section>
+        @if (User.Identity.IsAuthenticated)
+        {
+            @Html.Partial("_LayoutLeftSideBar")
+            @Html.Partial("_LayoutHeader")
+        }
+        else
+        {
+            <header class="main-header"></header>
+        }
+        <div class="content-wrapper">
+            <section class="content container-fluid">
+                @RenderBody()
+            </section>
+        </div>
+
+
+        @Html.Partial("_LayoutFooter")
+
     </div>
 
-    @if (User.Identity.IsAuthenticated)
-    {
-        @Html.Partial("_LayoutRightSideBar")
-    }
-    @Html.Partial("_LayoutFooter")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/adminlte/js")
+    @Scripts.Render("~/bundles/telimena")
+    <script src='https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js'></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src='https://cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js'></script>
 
-</div>
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/bootstrap")
-@Scripts.Render("~/adminlte/js")
-@RenderSection("scripts", required: false)
+    @RenderSection("scripts", required: false)
 
 </body>
 </html>

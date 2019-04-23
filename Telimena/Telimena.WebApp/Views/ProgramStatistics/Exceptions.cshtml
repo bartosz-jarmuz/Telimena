@@ -1,0 +1,161 @@
+﻿@using DotNetLittleHelpers
+@using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.Models.Shared
+@using Telimena.WebApp.UiStrings
+@model Telimena.WebApp.Models.ProgramStatistics.ProgramStatisticsViewModel
+
+@section styles{
+    <style type="text/css">
+        td.details-control {
+            background: url('../../Content/Ionicons/png/512/plus-circled.png') no-repeat center center;
+            background-size: 24px 24px;
+            cursor: pointer;
+        }
+
+        tr.shown td.details-control {
+            background: url('../../Content/Ionicons/png/512/minus-circled.png') no-repeat center center;
+            background-size: 24px 24px;
+        }
+    </style>
+}
+
+@Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model?.ProgramName, TelemetryKey = Model?.TelemetryKey })
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Exceptions details</h3>
+            </div>
+            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
+                <table id="@Strings.Id.ExceptionsTable" class="table table-bordered table-hover table-condensed" style="width: 100%;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            function format(d) {
+
+                var rows = '';
+                for (var i = 0; i < d.stackTrace.length; i++) {
+                    var method = d.stackTrace[i].method;
+                    var file = d.stackTrace[i].fileName;
+                    var line = d.stackTrace[i].line;
+
+                    rows += '<p style="margin: 0px;">' +
+                        '   at <span style="font-weight: bold;">' + method + '()</span>' +
+                        ' in <span class="font-weight-light">[' + file + ']</span>.' +
+                        ' Line: <span style="font-weight: bold;">' + line +'</span>' +
+                        '</p>';
+                }
+
+                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"><tr><td>' + rows + '</td></tr></table>';
+            }
+
+            function loadTable(url) {
+                return {
+                serverSide: true,
+                searching: true,
+                processing: true,
+                lengthMenu: [[15, 25, 70, -1], [15, 25, 70, "All"]],
+                pageLength: 15,
+                order: [[ 0, 'desc' ]],
+                ajax: url,
+
+                    columns: [
+
+                    {
+                        name: "@nameof(DataTableTelemetryData.Timestamp)",
+                        data: "@nameof(DataTableTelemetryData.Timestamp).ToLowerFirstChar()",
+                        render: function(data, type, row, meta) {
+                            return toFormattedTimestamp(new Date(data));                        },
+                        title:"@nameof(DataTableTelemetryData.Timestamp)",
+                        sortable: true,
+                        searchable: false
+                    },
+                    {
+                        name:  "@nameof(DataTableTelemetryData.Sequence)",
+                        data:  "@nameof(DataTableTelemetryData.Sequence).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.Sequence)",
+                        sortable: true,
+                        searchable: true,
+                        render: function (data, type, row, meta) {
+                            return renderSequenceHistoryUrl(data, type, "@Url.Action("SequenceHistory")?telemetryKey=@Model.TelemetryKey&sequenceId=" + encodeURIComponent(data));
+                        }
+                    },
+                    {
+                        name:  "@nameof(DataTableTelemetryData.EntryKey)",
+                        data:  "@nameof(DataTableTelemetryData.EntryKey).ToLowerFirstChar()",
+                        title: "Type",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(DataTableTelemetryData.ProgramVersion)",
+                        data:  "@nameof(DataTableTelemetryData.ProgramVersion).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.ProgramVersion)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(DataTableTelemetryData.UserName)",
+                        data:  "@nameof(DataTableTelemetryData.UserName).ToLowerFirstChar()",
+                        title: "@nameof(DataTableTelemetryData.UserName)",
+                        sortable: true,
+                        searchable: true
+                    },
+
+                    {
+                        name:  "@nameof(ExceptionData.ErrorMessage)",
+                        data:  "@nameof(ExceptionData.ErrorMessage).ToLowerFirstChar()",
+                        title: "@nameof(ExceptionData.ErrorMessage)",
+                        sortable: false,
+                        searchable: true
+                        },
+                        {
+                            name:  "@nameof(ExceptionData.Note)",
+                            data:  "@nameof(ExceptionData.Note).ToLowerFirstChar()",
+                            title: "@nameof(ExceptionData.Note)",
+                            sortable: false,
+                            searchable: true
+                        },
+                        {
+                        title: "Call Stack",
+                        "className":      'details-control',
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ''
+                        },
+                 ]
+            }
+            }
+
+            var table = $('#@Strings.Id.ExceptionsTable').DataTable(loadTable("@Url.Action("GetProgramUsageData")" + "?telemetryKey=@Model.TelemetryKey&itemType=@TelemetryItemTypes.Exception"));
+
+
+            $('#@Strings.Id.ExceptionsTable tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = table.row( tr );
+
+                if ( row.child.isShown() ) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                }
+                else {
+                    // Open this row
+                    row.child( format(row.data()) ).show();
+                    tr.addClass('shown');
+                }
+            } );
+
+        });
+    </script>
+
+}

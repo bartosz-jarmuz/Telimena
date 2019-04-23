@@ -1,4 +1,52 @@
-﻿.label-sm {
+﻿
+/*.btn-primary:focus,
+.btn-primary.focus {
+    color: #fff;
+    background-color: #2f336f;
+    border-color: #122b40;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #2f336f;
+    border-color: #191876;
+}
+
+.btn-primary:active,
+.btn-primary.active,
+.open > .dropdown-toggle.btn-primary {
+    color: #fff;
+    background-color: #2f336f;
+    border-color: #191876;
+}
+
+    .btn-primary:active:hover,
+    .btn-primary.active:hover,
+    .open > .dropdown-toggle.btn-primary:hover,
+    .btn-primary:active:focus,
+    .btn-primary.active:focus,
+    .open > .dropdown-toggle.btn-primary:focus,
+    .btn-primary:active.focus,
+    .btn-primary.active.focus,
+    .open > .dropdown-toggle.btn-primary.focus {
+        color: #fff;
+        background-color: #191876;
+        border-color: #121640;
+    }
+
+a.headerMenuLink {
+    color: rgb(97, 96, 96)
+}
+    */
+.btn {
+    border-radius: 0 !important;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border-width: 1px;
+}
+
+.label-sm {
     font-size: 75% !important;
 }
 
@@ -10,3 +58,7 @@
     font-size: 125% !important;
 }
 
+/* ReSharper disable once DeclarationIsEmpty */
+.utcdate-to-localdate {
+    /*handles conversion of date to local in elements text*/
+}

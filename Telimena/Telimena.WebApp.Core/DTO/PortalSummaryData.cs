@@ -1,4 +1,5 @@
 ﻿using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 
 namespace Telimena.WebApp.Core.DTO
 {

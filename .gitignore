@@ -29,6 +29,7 @@ bld/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
+Tests/
 [Bb]uild[Ll]og.*
 
 # NUNIT
@@ -260,3 +261,5 @@ paket-files/
 __pycache__/
 *.pyc
 /Telimena/Telimena.WebApp/App_Data/FileRepo
+/AppInsights/Test/Microsoft.ApplicationInsights.Test/ApplicationInsightsTypes/Generated/bonddefaultcodegen.in
+/AppInsights/Test/Microsoft.ApplicationInsights.Test/ApplicationInsightsTypes/Generated/bondcodegen.done

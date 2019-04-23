@@ -1,8 +1,9 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Telimena.Client
+namespace TelimenaClient
 {
     internal class TelimenaHttpClient : ITelimenaHttpClient
     {
@@ -11,22 +12,18 @@ namespace Telimena.Client
             this.client = client;
         }
 
-        private readonly HttpClient client; 
+        public Uri BaseUri => this.client.BaseAddress;
 
-        #region Implementation of IHttpClient
+        private readonly HttpClient client;
 
         public Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent httpContent)
         {
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             return this.client.PostAsync(requestUri, httpContent);
         }
 
         public Task<HttpResponseMessage> GetAsync(string requestUri)
         {
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             return this.client.GetAsync(requestUri);
         }
-
-        #endregion
     }
 }

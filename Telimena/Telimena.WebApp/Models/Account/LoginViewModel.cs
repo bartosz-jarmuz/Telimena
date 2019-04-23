@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#pragma warning disable 1591
+using System.ComponentModel.DataAnnotations;
 
 namespace Telimena.WebApp.Models.Account
 {

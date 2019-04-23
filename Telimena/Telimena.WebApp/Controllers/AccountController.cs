@@ -6,8 +6,10 @@ using DotNetLittleHelpers;
 using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
+using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Security;
 using Telimena.WebApp.Infrastructure.UnitOfWork.Implementation;
 using Telimena.WebApp.Models.Account;
@@ -18,24 +20,51 @@ namespace Telimena.WebApp.Controllers
 
     #endregion
     //dev branch test...
+    /// <summary>
+    /// Class AccountController.
+    /// </summary>
+    /// <seealso cref="System.Web.Mvc.Controller" />
     [TelimenaAuthorize]
     public class AccountController : Controller 
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountController"/> class.
+        /// </summary>
+        /// <param name="unitOfWork">The unit of work.</param>
+        /// <param name="logger">The logger.</param>
         public AccountController(IAccountUnitOfWork unitOfWork, ILog logger)
         {
             this.unitOfWork = unitOfWork;
             this.logger = logger;
         }
 
+        /// <summary>
+        /// The unit of work
+        /// </summary>
         private readonly IAccountUnitOfWork unitOfWork;
+        /// <summary>
+        /// The logger
+        /// </summary>
         private readonly ILog logger;
 
+
+        /// <summary>
+        /// Changes the password.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
+        [Audit]
         [HttpGet]
         public ActionResult ChangePassword()
         {
             return this.View();
         }
 
+        /// <summary>
+        /// Changes the password.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [Audit]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -52,15 +81,15 @@ namespace Telimena.WebApp.Controllers
                 }
                 else
                 {
-                    TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(this.User.Identity.Name, model.OldPassword);
+                    TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(this.User.Identity.Name, model.OldPassword).ConfigureAwait(false);
                     if (user != null)
                     {
                         IdentityResult result =
-                            await this.unitOfWork.UserManager.ChangePasswordAsync(this.User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+                            await this.unitOfWork.UserManager.ChangePasswordAsync(this.User.Identity.GetUserId(), model.OldPassword, model.NewPassword).ConfigureAwait(false);
                         if (result.Succeeded)
                         {
                             user.MustChangePassword = false;
-                            await this.unitOfWork.UserManager.UpdateAsync(user);
+                            await this.unitOfWork.UserManager.UpdateAsync(user).ConfigureAwait(false);
                             model.IsSuccess = true;
                             this.logger.Info($"[{this.User.Identity.Name}] password changed");
                             return this.View(model);
@@ -81,21 +110,38 @@ namespace Telimena.WebApp.Controllers
             return this.View(model);
         }
 
+        /// <summary>
+        /// Forgots the password.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
+        [Audit]
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
             return this.Content("<label class=\"warning\">Contact the administrator</label>");
         }
 
+        /// <summary>
+        /// Logins this instance.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
         [HttpGet]
+        [Audit]
         [AllowAnonymous]
         public ActionResult Login()
         {
             return this.View();
         }
 
+        /// <summary>
+        /// Logins the specified model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <param name="returnUrl">The return URL.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
+        [Audit]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
@@ -103,15 +149,15 @@ namespace Telimena.WebApp.Controllers
             {
                 this.logger.Info($"[{model.Email}] login attempt");
 
-                TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(model.Email, model.Password);
+                TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(model.Email, model.Password).ConfigureAwait(false);
                 if (user != null)
                 {
                     if (user.IsActivated)
                     {
                         this.logger.Info($"[{model.Email}] logged in.");
                         user.LastLoginDate = DateTime.UtcNow;
-                        await this.unitOfWork.UserManager.UpdateAsync(user);
-                        ClaimsIdentity ident = await this.unitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+                        await this.unitOfWork.UserManager.UpdateAsync(user).ConfigureAwait(false);
+                        ClaimsIdentity ident = await this.unitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie).ConfigureAwait(false);
                         this.unitOfWork.AuthManager.SignIn(new AuthenticationProperties {IsPersistent = false}, ident);
                         if (user.MustChangePassword)
                         {
@@ -131,7 +177,7 @@ namespace Telimena.WebApp.Controllers
         }
 
         /// <summary>
-        ///     Logs the off.
+        /// Logs the off.
         /// </summary>
         /// <returns>ActionResult.</returns>
         public ActionResult LogOff()
@@ -142,6 +188,11 @@ namespace Telimena.WebApp.Controllers
             return this.RedirectToAction("Index", "Home");
         }
 
+        /// <summary>
+        /// Registers this instance.
+        /// </summary>
+        /// <returns>ActionResult.</returns>
+        [Audit]
         [HttpGet]
         [AllowAnonymous]
         public ActionResult Register()
@@ -149,8 +200,14 @@ namespace Telimena.WebApp.Controllers
             return this.View(new RegisterViewModel());
         }
 
+        /// <summary>
+        /// Registers the specified model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
+        [Audit]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
@@ -163,8 +220,8 @@ namespace Telimena.WebApp.Controllers
 
                 TelimenaUser user = new TelimenaUser(model.Email, model.Name);
 
-                Tuple<IdentityResult, IdentityResult> results = await this.unitOfWork.RegisterUserAsync(user, model.Password, TelimenaRoles.Viewer, model.Role);
-                await this.unitOfWork.CompleteAsync();
+                Tuple<IdentityResult, IdentityResult> results = await this.unitOfWork.RegisterUserAsync(user, model.Password, TelimenaRoles.Viewer, model.Role).ConfigureAwait(false);
+                await this.unitOfWork.CompleteAsync().ConfigureAwait(false);
 
                 if (results.Item1.Succeeded)
                 {
@@ -198,6 +255,11 @@ namespace Telimena.WebApp.Controllers
             return this.View(model);
         }
 
+        /// <summary>
+        /// Validates the registration model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         private bool ValidateRegistrationModel(RegisterViewModel model)
         {
             bool valid = true;

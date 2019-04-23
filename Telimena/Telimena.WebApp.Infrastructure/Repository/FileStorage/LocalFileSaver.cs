@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 
 namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 {
@@ -21,7 +22,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
             Directory.CreateDirectory(Path.GetDirectoryName(fileLocation));
             using (Stream file = File.Create(fileLocation))
             {
-                await fileStream.CopyToAsync(file);
+                await fileStream.CopyToAsync(file).ConfigureAwait(false);
             }
 
             repositoryFile.FileLocation = fileLocation;

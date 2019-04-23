@@ -1,14 +1,17 @@
-﻿@{
+﻿@using DotNetLittleHelpers
+@using MvcAuditLogger
+@using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.UiStrings
+@{
     ViewBag.Title = "Admin Dashboard";
 }
-
 <section class="content-header">
     <h1>
         Admin Dashboard
         <small>Telimena Portal summary</small>
     </h1>
 </section>
-<section class="content portal-summary" data-url="@Url.Action("GetPortalSummary")">
+<section id="@Strings.Id.PortalSummary" class="content portal-summary" data-url="@Url.Action("GetPortalSummary")">
     <div class="box box-default col-md-12">
         <div class="box-header">
             <h3 class="box-title">Loading</h3>
@@ -20,14 +23,91 @@
             <i class="fa fa-refresh fa-spin"></i>
         </div>
     </div>
+  
+
 </section>
+
+<div class="row ">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Portal usage audit</h3>
+            </div>
+            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
+                <table id="auditSummaryTable" class="table table-bordered table-hover "></table>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section scripts
 {
+
     <script type="text/javascript">
-        $(document).ready(function() {
+
+
+        $(document).ready(function () {
+            $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
+
+
+
             var url = $(".portal-summary").data("url");
             $(".portal-summary").load(url);
+
+            $('#auditSummaryTable').DataTable({
+                serverSide: true,
+                searching: true,
+                processing: true,
+                lengthMenu: [[15, 30, 70, -1], [15, 30, 70, "All"]],
+                pageLength: 15,
+                order: [[ 0, 'desc' ]],
+                ajax:  "@Url.Action("GetLastAuditData")",
+
+                columns: [
+                    {
+                        name: "@nameof(Audit.Timestamp)",
+                        data: "@nameof(Audit.Timestamp).ToLowerFirstChar()",
+                        render: function(data, type, row, meta) {
+                            return toFormattedTimestamp(new Date(data));
+                        },
+                        title:"@nameof(Audit.Timestamp)",
+                        sortable: true,
+                        searchable: false
+                    },
+                    {
+                        name:  "@nameof(Audit.UserName)",
+                        data:  "@nameof(Audit.UserName).ToLowerFirstChar()",
+                        title: "@nameof(Audit.UserName)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(Audit.IPAddress)",
+                        data:  "ipAddress",
+                        title: "@nameof(Audit.IPAddress)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(Audit.AreaAccessed)",
+                        data: "@nameof(Audit.AreaAccessed).ToLowerFirstChar()",
+                        render: function(data, type, row, meta){
+                            if(type === 'display'){
+                                data = '<a href="' + data + '">' + data + '</a>';
+                            }
+
+                            return data;
+                        },
+                        title: "@nameof(Audit.AreaAccessed)",
+                        sortable: true,
+                        searchable: true
+                    },
+
+                ]
+
+            });
+
         });
     </script>
 

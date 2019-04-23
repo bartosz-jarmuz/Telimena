@@ -1,4 +1,5 @@
-﻿@model Telimena.WebApp.Models.Account.LoginViewModel
+﻿@using Telimena.WebApp.UiStrings
+@model Telimena.WebApp.Models.Account.LoginViewModel
 @{
     ViewBag.Title = "Log in";
     Layout = null;
@@ -27,8 +28,7 @@
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
-        <p class="login-box-msg">Contact the system administrator</p>
-        <p class="login-box-msg">Your account needs to be activated, before you can use the system.</p>
+        <p class="@Strings.Css.UserCreatedMessage">Account created successfully.</p>
 
         @Html.ActionLink("Forgot your password?", "ForgotPassword")
         <br>

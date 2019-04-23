@@ -1,9 +1,0 @@
-﻿@model Tuple<Telimena.WebApp.Core.Models.ProgramUpdatePackageInfo, string>
-
-@{
-    bool isBeta = Model.Item1.IsBeta;
-    string buttonText = isBeta ? "" : "Add";
-}
-<input type="checkbox" disabled @(isBeta ? "checked" : "")/>@Model.Item2 - 
-                    
-

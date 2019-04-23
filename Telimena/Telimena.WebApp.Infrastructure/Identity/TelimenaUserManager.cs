@@ -8,6 +8,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
 
 namespace Telimena.WebApp.Infrastructure.Identity
@@ -106,41 +107,9 @@ namespace Telimena.WebApp.Infrastructure.Identity
         {
         }
 
-        //#region Overrides of UserManager<TelimenaUser,string>
-        //public override async Task<TelimenaUser> FindByIdAsync(string userId)
-        //{
-        //    var user = await base.FindByIdAsync(userId);
-        //    await this.LoadRoles(user);
-        //    return user;
-        //}
-
-        //private async Task LoadRoles(TelimenaUser user)
-        //{
-        //    if (user != null)
-        //    {
-        //        var roleStore = this.Store as IUserRoleStore<TelimenaUser, string>;
-        //        user.RoleNames = await roleStore.GetRolesAsync(user);
-        //    }
-        //}
-
-        //public override async Task<TelimenaUser> FindByNameAsync(string userName)
-        //{
-        //    var user = await base.FindByNameAsync(userName);
-        //    await this.LoadRoles(user);
-        //    return user;
-        //}
-
-        //public override async Task<TelimenaUser> FindByEmailAsync(string email)
-        //{
-        //    var user = await base.FindByEmailAsync(email);
-        //    await this.LoadRoles(user);
-        //    return user;
-        //}
-        // #endregion
-
         public static TelimenaUserManager Create(IdentityFactoryOptions<TelimenaUserManager> options, IOwinContext context)
         {
-            TelimenaUserManager manager = new TelimenaUserManager(new UserStore<TelimenaUser>(context.Get<TelimenaContext>()));
+            TelimenaUserManager manager = new TelimenaUserManager(new UserStore<TelimenaUser>(context.Get<TelimenaPortalContext>()));
 
             return manager;
         }

@@ -31,22 +31,20 @@
             this.apiUrlTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.functionNameTextBox = new System.Windows.Forms.TextBox();
+            this.sendLog_Button = new System.Windows.Forms.Button();
+            this.sendEvent_Button = new System.Windows.Forms.Button();
+            this.reportError_Button = new System.Windows.Forms.Button();
+            this.throwUnhandledError = new System.Windows.Forms.Button();
+            this.telemetryDataTextBox = new System.Windows.Forms.TextBox();
             this.F = new System.Windows.Forms.Label();
-            this.SendUpdateAppUsageButton = new System.Windows.Forms.Button();
+            this.SendViewUsage_Button = new System.Windows.Forms.Button();
             this.resultTextBox = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.appNameTextBox = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.userNameTextBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.setAppButton = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.static_functionNameTextBox = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.static_sendUsageReportButton = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.handleUpdatesButton = new System.Windows.Forms.Button();
             this.checkForUpdateButton = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.hammer_AppNumberSeedBox = new System.Windows.Forms.TextBox();
@@ -66,11 +64,12 @@
             this.hammer_numberOfApps_TextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.hammer_StartButton = new System.Windows.Forms.Button();
-            this.handleUpdatesButton = new System.Windows.Forms.Button();
             this.useCurrentAppButton = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.apiKeyTextBox = new System.Windows.Forms.TextBox();
+            this.throwErrorButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.SuspendLayout();
@@ -79,7 +78,7 @@
             // 
             this.apiUrlTextBox.Location = new System.Drawing.Point(93, 9);
             this.apiUrlTextBox.Name = "apiUrlTextBox";
-            this.apiUrlTextBox.Size = new System.Drawing.Size(196, 20);
+            this.apiUrlTextBox.Size = new System.Drawing.Size(134, 20);
             this.apiUrlTextBox.TabIndex = 0;
             // 
             // label1
@@ -93,52 +92,85 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Controls.Add(this.functionNameTextBox);
+            this.groupBox1.Controls.Add(this.sendLog_Button);
+            this.groupBox1.Controls.Add(this.sendEvent_Button);
+            this.groupBox1.Controls.Add(this.reportError_Button);
+            this.groupBox1.Controls.Add(this.throwUnhandledError);
+            this.groupBox1.Controls.Add(this.telemetryDataTextBox);
             this.groupBox1.Controls.Add(this.F);
-            this.groupBox1.Controls.Add(this.SendUpdateAppUsageButton);
+            this.groupBox1.Controls.Add(this.SendViewUsage_Button);
             this.groupBox1.Location = new System.Drawing.Point(20, 46);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(318, 90);
+            this.groupBox1.Size = new System.Drawing.Size(551, 90);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "INSTANCE CLIENT - Update app usage";
+            this.groupBox1.Text = "INSTANCE CLIENT - Updates app usage";
             // 
-            // button1
+            // sendLog_Button
             // 
-            this.button1.Location = new System.Drawing.Point(14, 46);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(114, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Call \'Initialize\'";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.InitializeButton_Click);
+            this.sendLog_Button.Location = new System.Drawing.Point(398, 48);
+            this.sendLog_Button.Name = "sendLog_Button";
+            this.sendLog_Button.Size = new System.Drawing.Size(75, 23);
+            this.sendLog_Button.TabIndex = 14;
+            this.sendLog_Button.Text = "Send log";
+            this.sendLog_Button.UseVisualStyleBackColor = true;
+            this.sendLog_Button.Click += new System.EventHandler(this.sendLog_Button_Click);
             // 
-            // functionNameTextBox
+            // sendEvent_Button
             // 
-            this.functionNameTextBox.Location = new System.Drawing.Point(100, 22);
-            this.functionNameTextBox.Name = "functionNameTextBox";
-            this.functionNameTextBox.Size = new System.Drawing.Size(212, 20);
-            this.functionNameTextBox.TabIndex = 2;
+            this.sendEvent_Button.Location = new System.Drawing.Point(317, 48);
+            this.sendEvent_Button.Name = "sendEvent_Button";
+            this.sendEvent_Button.Size = new System.Drawing.Size(75, 23);
+            this.sendEvent_Button.TabIndex = 6;
+            this.sendEvent_Button.Text = "Send Event";
+            this.sendEvent_Button.UseVisualStyleBackColor = true;
+            this.sendEvent_Button.Click += new System.EventHandler(this.sendEvent_Button_Click);
+            // 
+            // reportError_Button
+            // 
+            this.reportError_Button.Location = new System.Drawing.Point(156, 48);
+            this.reportError_Button.Name = "reportError_Button";
+            this.reportError_Button.Size = new System.Drawing.Size(75, 23);
+            this.reportError_Button.TabIndex = 5;
+            this.reportError_Button.Text = "Report error";
+            this.reportError_Button.UseVisualStyleBackColor = true;
+            this.reportError_Button.Click += new System.EventHandler(this.reportErrorButtonClick);
+            // 
+            // throwUnhandledError
+            // 
+            this.throwUnhandledError.Location = new System.Drawing.Point(14, 48);
+            this.throwUnhandledError.Name = "throwUnhandledError";
+            this.throwUnhandledError.Size = new System.Drawing.Size(136, 23);
+            this.throwUnhandledError.TabIndex = 4;
+            this.throwUnhandledError.Text = "Throw unhandled error";
+            this.throwUnhandledError.UseVisualStyleBackColor = true;
+            this.throwUnhandledError.Click += new System.EventHandler(this.ThrowUnhandledButton_Click);
+            // 
+            // telemetryDataTextBox
+            // 
+            this.telemetryDataTextBox.Location = new System.Drawing.Point(51, 22);
+            this.telemetryDataTextBox.Name = "telemetryDataTextBox";
+            this.telemetryDataTextBox.Size = new System.Drawing.Size(422, 20);
+            this.telemetryDataTextBox.TabIndex = 2;
             // 
             // F
             // 
             this.F.AutoSize = true;
             this.F.Location = new System.Drawing.Point(17, 25);
             this.F.Name = "F";
-            this.F.Size = new System.Drawing.Size(77, 13);
+            this.F.Size = new System.Drawing.Size(28, 13);
             this.F.TabIndex = 1;
-            this.F.Text = "Function name";
+            this.F.Text = "Text";
             // 
-            // SendUpdateAppUsageButton
+            // SendViewUsage_Button
             // 
-            this.SendUpdateAppUsageButton.Location = new System.Drawing.Point(237, 48);
-            this.SendUpdateAppUsageButton.Name = "SendUpdateAppUsageButton";
-            this.SendUpdateAppUsageButton.Size = new System.Drawing.Size(75, 23);
-            this.SendUpdateAppUsageButton.TabIndex = 0;
-            this.SendUpdateAppUsageButton.Text = "Send";
-            this.SendUpdateAppUsageButton.UseVisualStyleBackColor = true;
-            this.SendUpdateAppUsageButton.Click += new System.EventHandler(this.SendUpdateAppUsageButton_Click);
+            this.SendViewUsage_Button.Location = new System.Drawing.Point(236, 48);
+            this.SendViewUsage_Button.Name = "SendViewUsage_Button";
+            this.SendViewUsage_Button.Size = new System.Drawing.Size(75, 23);
+            this.SendViewUsage_Button.TabIndex = 0;
+            this.SendViewUsage_Button.Text = "Send View";
+            this.SendViewUsage_Button.UseVisualStyleBackColor = true;
+            this.SendViewUsage_Button.Click += new System.EventHandler(this.SendUpdateAppUsageButton_Click);
             // 
             // resultTextBox
             // 
@@ -165,25 +197,9 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Result";
             // 
-            // appNameTextBox
-            // 
-            this.appNameTextBox.Location = new System.Drawing.Point(356, 9);
-            this.appNameTextBox.Name = "appNameTextBox";
-            this.appNameTextBox.Size = new System.Drawing.Size(126, 20);
-            this.appNameTextBox.TabIndex = 5;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(295, 12);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(55, 13);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "App name";
-            // 
             // userNameTextBox
             // 
-            this.userNameTextBox.Location = new System.Drawing.Point(546, 9);
+            this.userNameTextBox.Location = new System.Drawing.Point(401, 9);
             this.userNameTextBox.Name = "userNameTextBox";
             this.userNameTextBox.Size = new System.Drawing.Size(84, 20);
             this.userNameTextBox.TabIndex = 7;
@@ -191,7 +207,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(482, 12);
+            this.label3.Location = new System.Drawing.Point(337, 13);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(58, 13);
             this.label3.TabIndex = 6;
@@ -199,51 +215,13 @@
             // 
             // setAppButton
             // 
-            this.setAppButton.Location = new System.Drawing.Point(636, 7);
+            this.setAppButton.Location = new System.Drawing.Point(491, 7);
             this.setAppButton.Name = "setAppButton";
             this.setAppButton.Size = new System.Drawing.Size(54, 23);
             this.setAppButton.TabIndex = 5;
             this.setAppButton.Text = "Set App ";
             this.setAppButton.UseVisualStyleBackColor = true;
             this.setAppButton.Click += new System.EventHandler(this.setAppButton_Click);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.static_functionNameTextBox);
-            this.groupBox4.Controls.Add(this.label4);
-            this.groupBox4.Controls.Add(this.static_sendUsageReportButton);
-            this.groupBox4.Location = new System.Drawing.Point(366, 46);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(318, 90);
-            this.groupBox4.TabIndex = 8;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "STATIC CLIENT - Update app usage";
-            // 
-            // static_functionNameTextBox
-            // 
-            this.static_functionNameTextBox.Location = new System.Drawing.Point(100, 22);
-            this.static_functionNameTextBox.Name = "static_functionNameTextBox";
-            this.static_functionNameTextBox.Size = new System.Drawing.Size(212, 20);
-            this.static_functionNameTextBox.TabIndex = 2;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(17, 25);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(77, 13);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Function name";
-            // 
-            // static_sendUsageReportButton
-            // 
-            this.static_sendUsageReportButton.Location = new System.Drawing.Point(237, 48);
-            this.static_sendUsageReportButton.Name = "static_sendUsageReportButton";
-            this.static_sendUsageReportButton.Size = new System.Drawing.Size(75, 23);
-            this.static_sendUsageReportButton.TabIndex = 0;
-            this.static_sendUsageReportButton.Text = "Send Usage Report";
-            this.static_sendUsageReportButton.UseVisualStyleBackColor = true;
-            this.static_sendUsageReportButton.Click += new System.EventHandler(this.static_sendUsageReportButton_Click);
             // 
             // groupBox3
             // 
@@ -255,6 +233,16 @@
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "App Updating";
+            // 
+            // handleUpdatesButton
+            // 
+            this.handleUpdatesButton.Location = new System.Drawing.Point(6, 58);
+            this.handleUpdatesButton.Name = "handleUpdatesButton";
+            this.handleUpdatesButton.Size = new System.Drawing.Size(75, 36);
+            this.handleUpdatesButton.TabIndex = 1;
+            this.handleUpdatesButton.Text = "Handle updates";
+            this.handleUpdatesButton.UseVisualStyleBackColor = true;
+            this.handleUpdatesButton.Click += new System.EventHandler(this.handleUpdatesButton_Click);
             // 
             // checkForUpdateButton
             // 
@@ -443,16 +431,6 @@
             this.hammer_StartButton.UseVisualStyleBackColor = true;
             this.hammer_StartButton.Click += new System.EventHandler(this.hammer_StartButton_Click);
             // 
-            // handleUpdatesButton
-            // 
-            this.handleUpdatesButton.Location = new System.Drawing.Point(6, 58);
-            this.handleUpdatesButton.Name = "handleUpdatesButton";
-            this.handleUpdatesButton.Size = new System.Drawing.Size(75, 36);
-            this.handleUpdatesButton.TabIndex = 1;
-            this.handleUpdatesButton.Text = "Handle updates";
-            this.handleUpdatesButton.UseVisualStyleBackColor = true;
-            this.handleUpdatesButton.Click += new System.EventHandler(this.handleUpdatesButton_Click);
-            // 
             // useCurrentAppButton
             // 
             this.useCurrentAppButton.Location = new System.Drawing.Point(696, 7);
@@ -463,20 +441,46 @@
             this.useCurrentAppButton.UseVisualStyleBackColor = true;
             this.useCurrentAppButton.Click += new System.EventHandler(this.useCurrentAppButton_Click);
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(233, 13);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(25, 13);
+            this.label13.TabIndex = 12;
+            this.label13.Text = "Key";
+            // 
+            // apiKeyTextBox
+            // 
+            this.apiKeyTextBox.Location = new System.Drawing.Point(264, 10);
+            this.apiKeyTextBox.Name = "apiKeyTextBox";
+            this.apiKeyTextBox.Size = new System.Drawing.Size(67, 20);
+            this.apiKeyTextBox.TabIndex = 11;
+            // 
+            // throwErrorButton
+            // 
+            this.throwErrorButton.Location = new System.Drawing.Point(551, 7);
+            this.throwErrorButton.Name = "throwErrorButton";
+            this.throwErrorButton.Size = new System.Drawing.Size(75, 23);
+            this.throwErrorButton.TabIndex = 13;
+            this.throwErrorButton.Text = "Throw ex";
+            this.throwErrorButton.UseVisualStyleBackColor = true;
+            this.throwErrorButton.Click += new System.EventHandler(this.throwErrorButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1056, 441);
+            this.Controls.Add(this.throwErrorButton);
+            this.Controls.Add(this.label13);
+            this.Controls.Add(this.apiKeyTextBox);
             this.Controls.Add(this.useCurrentAppButton);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.setAppButton);
             this.Controls.Add(this.userNameTextBox);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.appNameTextBox);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
@@ -487,8 +491,6 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
@@ -503,20 +505,14 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label F;
-        private System.Windows.Forms.Button SendUpdateAppUsageButton;
+        private System.Windows.Forms.Button SendViewUsage_Button;
         private System.Windows.Forms.TextBox resultTextBox;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox functionNameTextBox;
-        private System.Windows.Forms.TextBox appNameTextBox;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox telemetryDataTextBox;
+        private System.Windows.Forms.Button throwUnhandledError;
         private System.Windows.Forms.TextBox userNameTextBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button setAppButton;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox static_functionNameTextBox;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button static_sendUsageReportButton;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button checkForUpdateButton;
         private System.Windows.Forms.GroupBox groupBox5;
@@ -539,6 +535,12 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button handleUpdatesButton;
         private System.Windows.Forms.Button useCurrentAppButton;
+        private System.Windows.Forms.Button reportError_Button;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox apiKeyTextBox;
+        private System.Windows.Forms.Button throwErrorButton;
+        private System.Windows.Forms.Button sendLog_Button;
+        private System.Windows.Forms.Button sendEvent_Button;
     }
 }
 

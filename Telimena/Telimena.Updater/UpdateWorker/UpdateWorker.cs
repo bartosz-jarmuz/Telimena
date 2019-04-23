@@ -10,53 +10,61 @@ namespace Telimena.Updater
     {
         public void PerformUpdate(UpdateInstructions instructions)
         {
-            foreach (string packagePath in instructions.PackagePaths)
+            foreach (UpdateInstructions.PackageData packageData in instructions.Packages)
             {
-                this.ProcessPackage(new FileInfo(packagePath));
+                this.ProcessPackage(instructions.ProgramExecutableLocation, new FileInfo(packageData.Path));
             }
         }
-
+        
         private static bool PrepareAndValidatePackage(FileInfo package, string updDirPath)
         {
-            if (Directory.Exists(updDirPath))
+            for (int i = 0; i < 4; i++)
             {
-                Directory.Delete(updDirPath, true);
-            }
-
-            try
-            {
-                ZipFile.ExtractToDirectory(package.FullName, updDirPath);
-            }
-            catch (Exception ex)
-            {
-                //MoveTheWindowUp();
-                MessageBox.Show(
-                    "Error occurred while unpacking update package. Exception:\n" + ex.Message + "\nUpdate package will be removed and re-downloaded."
-                    , "Update problem");
-                // TopInfoLabel = "Updater - error - update canceled";
                 try
                 {
-                    File.Delete(package.FullName);
-                    // TopInfoLabel = "Updater - error - update canceled. Package deleted.";
+                    if (Directory.Exists(updDirPath))
+                    {
+                        Directory.Delete(updDirPath, true);
+                    }
+                    ZipFile.ExtractToDirectory(package.FullName, updDirPath);
                 }
-                catch (Exception ex2)
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Error occurred while deleting update package. Exception:\n" + ex2.Message, "Update problem");
-                }
+                    Thread.Sleep(1500);
 
-                Thread.Sleep(1500);
-                return false;
+                    if (i >= 4)
+                    {
+
+                        //MoveTheWindowUp();
+                        MessageBox.Show(
+                            "Error occurred while unpacking update package. Exception:\n" + ex.Message + "\nUpdate package will be removed and re-downloaded."
+                            , "Update problem");
+                        // TopInfoLabel = "Updater - error - update canceled";
+                        try
+                        {
+                            File.Delete(package.FullName);
+                            // TopInfoLabel = "Updater - error - update canceled. Package deleted.";
+                        }
+                        catch (Exception ex2)
+                        {
+                            MessageBox.Show("Error occurred while deleting update package. Exception:\n" + ex2.Message, "Update problem");
+                        }
+                        return false;
+
+                    }
+
+                }
             }
 
             return true;
         }
 
-        private void ProcessPackage(FileInfo package)
+        private void ProcessPackage(string programExecutableLocation, FileInfo package)
         {
             // TopInfoLabel = "Updater - unpacking...";
             // Thread.Sleep(700);
-            string updatePackageFolderPath = package.FullName.Replace(".zip", "");
-            DirectoryInfo programFolder = Directory.GetParent(updatePackageFolderPath).Parent.Parent;
+            string updatePackageFolderPath = Path.Combine(package.DirectoryName, Path.GetFileNameWithoutExtension(package.Name));
+            DirectoryInfo programFolder = new DirectoryInfo(Path.GetDirectoryName(programExecutableLocation));
             if (!PrepareAndValidatePackage(package, updatePackageFolderPath))
             {
                 return;

@@ -1,13 +1,17 @@
-﻿// -----------------------------------------------------------------------
-//  <copyright file="TestRegistrationRequests.cs" company="SDL plc">
-//   Copyright (c) SDL plc. All rights reserved.
-//  </copyright>
-// -----------------------------------------------------------------------
-
+﻿using System;
+using FluentAssertions;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using DotNetLittleHelpers;
+using Newtonsoft.Json;
 using NUnit.Framework;
+using TelimenaClient.Model;
+using TelimenaClient.Serializer;
 
-namespace Telimena.Client.Tests
+namespace TelimenaClient.Tests
 {
     #region Using
 
@@ -16,26 +20,17 @@ namespace Telimena.Client.Tests
     [TestFixture]
     public class TestSerializer
     {
+
         [Test]
         public void Test_Serializer()
         {
-            UpdateRequest model = new UpdateRequest(23, "1.2.0", 99, true, "3.2.1.3");
+            UpdateRequest model = new UpdateRequest(Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95"), new VersionData("1.2.0", "2.0.0"), Guid.Parse("4e80652e-d0ba-4742-a78c-3a63de4a63f0"), true, "3.2.1.3", "1.0.0.0");
 
             ITelimenaSerializer sut = new TelimenaSerializer();
             string stringified = sut.Serialize(model);
-            string escaped = sut.UrlEncodeJson(stringified);
 
-            Assert.AreEqual("{\"ProgramId\":23,\"UserId\":99,\"ProgramVersion\":\"1.2.0\",\"ToolkitVersion\":\"3.2.1.3\",\"AcceptBeta\":true}", stringified);
-            Assert.AreEqual(
-                "%7B%22ProgramId%22%3A23%2C%22UserId%22%3A99%2C%22ProgramVersion%22%3A%221.2.0%22%2C%22ToolkitVersion%22%3A%223.2.1.3%22%2C%22AcceptBeta%22%3Atrue%7D"
-                , escaped);
-
-            string unescaped = sut.UrlDecodeJson(escaped);
-            Assert.AreEqual(stringified, unescaped);
-
-            UpdateRequest objectified = sut.Deserialize<UpdateRequest>(unescaped);
-
-            Assert.IsTrue(model.PublicInstancePropertiesAreEqual(objectified));
+            UpdateRequest objectified = sut.Deserialize<UpdateRequest>(stringified);
+            model.ShouldBeEquivalentTo(objectified);
         }
     }
 }

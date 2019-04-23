@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
-using Telimena.WebApp.Infrastructure.Identity;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Repository.FileStorage;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
@@ -10,33 +10,31 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 {
     public class ProgramsUnitOfWork : IProgramsUnitOfWork
     {
-        public ProgramsUnitOfWork(TelimenaContext context, ITelimenaUserManager userManager, IAssemblyVersionReader versionReader)
+        public ProgramsUnitOfWork(TelimenaPortalContext context, IAssemblyStreamVersionReader versionReader)
         {
-            this._context = context;
-            this.Versions = new Repository<AssemblyVersion>(context);
-            this.Users = new Repository<TelimenaUser>(context);
-            this.Functions = new FunctionRepository(context);
+            this.context = context;
+            this.Versions = new Repository<AssemblyVersionInfo>(context);
+            this.Users = new UserRepository(context);
             this.Programs = new ProgramRepository(context);
             this.ToolkitData = new ToolkitDataRepository(context, versionReader);
-            this.UpdatePackages = new UpdatePackageRepository(context);
-            this.ProgramPackages = new ProgramPackageRepository(context);
-            this.TelimenaUserManager = userManager;
+            this.UpdatePackages = new UpdatePackageRepository(context, versionReader);
+            this.ProgramPackages = new ProgramPackageRepository(context, versionReader);
+            this.UpdaterRepository = new UpdaterRepository(context, versionReader);
         }
 
-        private readonly TelimenaContext _context;
+        private readonly TelimenaPortalContext context;
+        public IUserRepository Users { get; }
 
-        public IRepository<TelimenaUser> Users { get; }
-        public ITelimenaUserManager TelimenaUserManager { get; set; }
         public IToolkitDataRepository ToolkitData { get; set; }
         public IUpdatePackageRepository UpdatePackages { get; set; }
+        public IUpdaterRepository UpdaterRepository { get; set; }
         public IProgramPackageRepository ProgramPackages { get; set; }
-        public IRepository<AssemblyVersion> Versions { get; }
+        public IRepository<AssemblyVersionInfo> Versions { get; }
         public IProgramRepository Programs { get; }
-        public IFunctionRepository Functions { get; }
 
         public async Task CompleteAsync()
         {
-            await this._context.SaveChangesAsync();
+            await this.context.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }
