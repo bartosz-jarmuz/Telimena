@@ -18,17 +18,18 @@ The platform is intended for developers of small-to-medium applications where pl
   - **Write tests** - preferably integration / end-to-end tests
   - **Do not rush** - it's better to take a bit more time but do something better and more flexible
   
- ### Who is it **__not__** for
+ ### Who is it **__not__** for:
   - Large (enterprise-flagship) applications. If you have a product that has years of history and tens of people working on it full time, then you'll be better off investing a few sprints and creating/connecting something tailored for your needs and budget
   - Web applications. Since you don't need the 'lifecycle' management, you might be better off with something else, like ApplicationInsights
+  - Mobile applications - but only because I have no experience with mobile development :)
   
- ### Who is it for then:
+ ### Then who is it for:
   - Enterprises with teams (or individuals) creating lots of **small-to-medium** apps (perhaps for internal productivity?) 
   - Developers who want to **focus on working on their applications' features**, not the infrastructure plumbing that is nice-to-have, but not needed on it's own (who cares if your application can have 3 tiers of beta testing teams with automatic update deployment, if it doesn't do **the work**)
   - Developers who **need a simple 'all-in-one' solution** rather than discovering, learining and plumbing in a separate service for telemetry, separate for filtering errors, separate for supporting application updates, and yet another one for gather 'app feedback' from users
  
  ### Current status
- The project is currently at an alpha stage. The parts that are 'done' are usable (and in use) and stable. There's a **lot** of functionality to be added. Well, it's a journey, not a destination ;)
+ The project is currently in an alpha stage. The parts that are 'done' are usable (and in use) and stable. There's a **lot** of functionality to be added, as well as some areas that require redesign. Well, it's a journey, not a destination ;)
  
  ### Contributions
  Any kind of contributions or feedback are very welcome. I am looking for collaborators to add more power into the project. Let me know if you want to help it grow.
