@@ -38,4 +38,4 @@ The platform is intended for developers of small-to-medium applications where pl
   
 
  # Join the team 
- Do you want to collaborate? Join the project at https://crowdforge.io/projects/585
+ Do you want to collaborate? Join the project at https://crowdforge.io/projects/586
