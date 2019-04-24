@@ -30,7 +30,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
          
             var versions = await
-                this.versionReader.GetVersionsFromStream(program.PrimaryAssembly.GetFileName(), fileStream
+                this.versionReader.GetVersionsFromStream(packageFileName, fileStream
                     , program.PrimaryAssembly.GetFileName()).ConfigureAwait(false);
 
 
