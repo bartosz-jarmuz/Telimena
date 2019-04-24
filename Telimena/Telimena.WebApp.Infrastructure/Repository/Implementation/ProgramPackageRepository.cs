@@ -28,23 +28,22 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramPackageInfo> StorePackageAsync(Program program, Stream fileStream, string packageFileName, IFileSaver fileSaver)
         {
-            string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream, packageFileName, true).ConfigureAwait(false);
-            fileStream.Position = 0;
-            ObjectValidator.Validate(() => Version.TryParse(actualVersion, out Version _)
-                , new InvalidOperationException($"[{actualVersion}] is not a valid version string"));
+         
+            var versions = await
+                this.versionReader.GetVersionsFromStream(program.PrimaryAssembly.GetFileName(), fileStream
+                    , program.PrimaryAssembly.GetFileName()).ConfigureAwait(false);
 
-            string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, packageFileName, false).ConfigureAwait(false);
-            fileStream.Position = 0;
+
             fileStream = await Utilities.ZipTheStreamIfNeeded(packageFileName, fileStream).ConfigureAwait(false);
 
             ProgramPackageInfo pkg = await this.telimenaPortalContext.ProgramPackages.Where(x => x.ProgramId == program.Id
-                                                                                                && x.Version == actualVersion
+                                                                                                && x.Version == versions.appVersion
 #pragma warning disable 618
-                                                                                                && x.SupportedToolkitVersion == actualToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
+                                                                                                && x.SupportedToolkitVersion == versions.toolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
 #pragma warning restore 618
             if (pkg == null)
             {
-                pkg = new ProgramPackageInfo(packageFileName, program.Id, actualVersion, fileStream.Length, actualToolkitVersion);
+                pkg = new ProgramPackageInfo(packageFileName, program.Id, versions.appVersion, fileStream.Length, versions.toolkitVersion);
                 this.telimenaPortalContext.ProgramPackages.Add(pkg);
             }
             else

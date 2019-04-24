@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
 
 namespace TelimenaClient
@@ -51,6 +53,46 @@ namespace TelimenaClient
         {
             return GetVersionFromFile(file, versionType);
         }
+
+        /// <summary>
+        ///     Returns the version string of the specified type in assembly embedded in the specified file
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="embeddedAssemblyName"></param>
+        /// <param name="versionType"></param>
+        /// <returns></returns>
+        public static string ReadEmbeddedAssemblyVersion(FileInfo file, string embeddedAssemblyName, VersionTypes versionType)
+        {
+            Assembly ass = Assembly.LoadFile(file.FullName);
+            string resourceName = ass.GetManifestResourceNames().FirstOrDefault(x => x.IndexOf(embeddedAssemblyName, StringComparison.InvariantCultureIgnoreCase) != -1);
+
+            if (resourceName != null)
+            {
+                using (Stream resourceStream = ass.GetManifestResourceStream(resourceName))
+                {
+                    if (resourceStream == null)
+                    {
+                        return null;
+                    }
+                    using (DeflateStream compressedString = new DeflateStream(resourceStream, CompressionMode.Decompress))
+                    {
+                        MemoryStream memStream = new MemoryStream();
+                        compressedString.CopyTo(memStream);
+                        memStream.Position = 0;
+
+                        byte[] rawAssembly = new byte[memStream.Length];
+                        memStream.Read(rawAssembly, 0, rawAssembly.Length);
+                        Assembly reference = Assembly.Load(rawAssembly);
+                        return Read(reference, versionType);
+                    }
+                }
+            }
+
+
+
+            return null;
+        }
+
 
         /// <summary>
         ///     Returns the version string of the specified type

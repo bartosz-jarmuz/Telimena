@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
 
 namespace Telimena.WebApp.Utils.VersionComparison
 {
-    /// <summary>
-    ///     One place that reads the version strings consistently for Telimena-based apps
-    /// </summary>
     public static class TelimenaVersionReader
     {
         /// <summary>
@@ -53,6 +52,45 @@ namespace Telimena.WebApp.Utils.VersionComparison
         }
 
         /// <summary>
+        ///     Returns the version string of the specified type in assembly embedded in the specified file
+        /// </summary>
+        /// <param name="assemblyFile"></param>
+        /// <param name="embeddedAssemblyName"></param>
+        /// <param name="versionType"></param>
+        /// <returns></returns>
+        public static string ReadEmbeddedAssemblyVersion(FileInfo assemblyFile, string embeddedAssemblyName, VersionTypes versionType)
+        {
+            Assembly ass = Assembly.LoadFile(assemblyFile.FullName);
+            string resourceName = ass.GetManifestResourceNames().FirstOrDefault(x => x.IndexOf(embeddedAssemblyName, StringComparison.InvariantCultureIgnoreCase) != -1);
+
+            if (resourceName != null)
+            {
+                using (Stream resourceStream = ass.GetManifestResourceStream(resourceName))
+                {
+                    if (resourceStream == null)
+                    {
+                        return null;
+                    }
+                    using (DeflateStream compressedString = new DeflateStream(resourceStream, CompressionMode.Decompress))
+                    {
+                        MemoryStream memStream = new MemoryStream();
+                        compressedString.CopyTo(memStream);
+                        memStream.Position = 0;
+
+                        byte[] rawAssembly = new byte[memStream.Length];
+                        memStream.Read(rawAssembly, 0, rawAssembly.Length);
+                        Assembly reference = Assembly.Load(rawAssembly);
+                        return Read(reference, versionType);
+                    }
+                }
+            }
+
+            
+
+            return null;
+        }
+
+        /// <summary>
         ///     Returns the version string of the specified type
         /// </summary>
         /// <param name="assembly"></param>
@@ -81,11 +119,43 @@ namespace Telimena.WebApp.Utils.VersionComparison
                 case VersionTypes.AssemblyVersion:
                     return assembly.GetName().Version.ToString();
                 case VersionTypes.FileVersion:
-                    return FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion;
+                    return GetFileVersionFromAssembly(assembly);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(versionType), versionType, null);
             }
         }
+
+        private static string GetFileVersionFromAssembly(Assembly assembly)
+        {
+            if (!string.IsNullOrWhiteSpace(assembly.Location))
+            {
+                try
+                {
+                    return FileVersionInfo.GetVersionInfo(assembly.Location).FileVersion;
+                }
+                catch
+                {
+                    //ok, try another way
+                }
+            }
+
+            try
+            {
+
+                AssemblyFileVersionAttribute attribute = assembly.GetCustomAttribute<AssemblyFileVersionAttribute>();
+                if (attribute != null)
+                {
+                    return attribute.Version;
+                }
+
+                return "0.0.0.0";
+            }
+            catch
+            {
+                return "0.0.0.0";
+            }
+        }
+
 
         private static string GetVersionFromFile(FileInfo file, VersionTypes versionType)
         {
