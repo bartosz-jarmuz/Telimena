@@ -3,7 +3,7 @@
 
 ### Project overview
 Telimena is a platform which is intended to provide a **simple** telemetry and app lifecycle support. 
-**Simple** means as little setup & plumbing effort as possible on the *client* app. 
+**Simple** means as little setup & plumbing effort as possible on the *client* app. It allows monitoring application usage, exceptions, logging etc., and managing it's lifecycle - automatic updates, rollouts, centralized settings etc. 
 The platform is intended for developers of small-to-medium applications where plugging in any larger and more powerful solutions would be too much effort or cost. It is supposed to be ready to be either hosted internally, as a **private instance**, or used as a **multi-tenant cloud platform**.
 
 ### In short, the functional design principles for Telimena are: 
