@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Telimena.Portal.Utils;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Messages;
 
@@ -42,6 +43,18 @@ namespace Telimena.WebApp.Infrastructure
                 if (string.IsNullOrWhiteSpace(request.Name))
                 {
                     errorMessages.Add("Program name is missing!");
+                }
+
+                if (!request.Name.IsUrlFriendly())
+                {
+                    var properName = request.Name.MakeUrlFriendly();
+                    var properNameHint = "";
+                    if (properName != null)
+                    {
+                        properNameHint = $" Proposed name: {properName}";
+                    }
+                    errorMessages.Add(
+                        $"Program name should only contain letters and numbers or hyphens. Also it needs to begin and end with a letter or digit.{properNameHint}");
                 }
                 if (request.TelemetryKey == Guid.Empty)
                 {

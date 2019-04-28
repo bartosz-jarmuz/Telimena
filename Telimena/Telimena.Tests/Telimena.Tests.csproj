@@ -169,6 +169,7 @@
     <Compile Include="Controllers\DbContextService.cs" />
     <Compile Include="Controllers\DropCreateDatabaseAlwaysWithConnectionClose.cs" />
     <Compile Include="Controllers\TelemetryControllerHelpersTests.cs" />
+    <Compile Include="FriendlyUrlTests.cs" />
     <Compile Include="SequenceIdParserTests.cs" />
     <Compile Include="TsProDataParse.cs" />
     <Compile Include="EntitiesTests.cs" />
@@ -219,6 +220,10 @@
     <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
       <Project>{8bc1dd73-2520-4361-9845-282e87442339}</Project>
       <Name>Telimena.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telimena.Portal.Utils\Telimena.Portal.Utils.csproj">
+      <Project>{c8ec1e3e-60df-4f18-9ea7-42d239c0576d}</Project>
+      <Name>Telimena.Portal.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\Telimena.Updater\Telimena.Updater.csproj">
       <Project>{6dee078f-92bd-4f45-a876-bc4446217d83}</Project>

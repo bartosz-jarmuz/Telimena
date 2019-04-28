@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Tests", "Telimena.Tests\Telimena.Tests.csproj", "{13DF9DD2-D891-413B-A8AE-CEE3FA1B06EB}"
 EndProject
@@ -97,6 +97,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbeddedAssemblyTestApp", "EmbeddedAssemblyTest\EmbeddedAssemblyTestApp.csproj", "{F862D668-8E59-49E9-9968-39FF9A2348C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTestables", "UnitTestables", "{3FC84A67-A1EB-4149-9152-D37C58F55D65}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Portal.Utils", "Telimena.Portal.Utils\Telimena.Portal.Utils.csproj", "{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -450,6 +452,18 @@ Global
 		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
 		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|x86.ActiveCfg = Release|Any CPU
 		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|x86.Build.0 = Release|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.Debug|x86.Build.0 = Debug|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.Release|x86.ActiveCfg = Release|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.Release|x86.Build.0 = Release|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.ReleaseDev|Any CPU.ActiveCfg = Release|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.ReleaseDev|x86.ActiveCfg = Release|Any CPU
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.ReleaseDev|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -497,6 +511,7 @@ Global
 		{BEA9956A-2BC0-406B-81D1-AF2D5A48772B} = {1C9284FC-2E59-4F5C-8151-407B200B09BB}
 		{F862D668-8E59-49E9-9968-39FF9A2348C3} = {3FC84A67-A1EB-4149-9152-D37C58F55D65}
 		{3FC84A67-A1EB-4149-9152-D37C58F55D65} = {1C9284FC-2E59-4F5C-8151-407B200B09BB}
+		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D} = {49A0912D-B751-48F2-8477-AF7FE1CF9EB6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4AE5AB23-7640-4456-8051-8AC946EFBA9B}
