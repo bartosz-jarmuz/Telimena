@@ -56,6 +56,10 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 }
 
                 TelimenaUser user = await this.Work.Users.FirstOrDefaultAsync(x => x.UserName == this.User.Identity.Name).ConfigureAwait(false);
+                if (user == null)
+                {
+                    return new RegisterProgramResponse(new BadRequestException($"Cannot find user [{this.User.Identity.Name}]"));
+                }
                 DeveloperTeam developerTeam = user.GetDeveloperAccountsLedByUser().FirstOrDefault();
                 if (developerTeam == null)
                 {

@@ -33,14 +33,28 @@ namespace Telimena.Tests
 
         private static void GetTwoUsers(AccountUnitOfWork unit, [CallerMemberName] string caller = null)
         {
-            unit.RegisterUserAsync(new TelimenaUser(caller + "_Jim@Beam.com", caller + "_Jim Beam"), "P@ssword", TelimenaRoles.Developer).GetAwaiter()
+            var result = unit.RegisterUserAsync(new TelimenaUser(caller + "Jim@Beam.com", caller + "Jim Beam"), "P@ssword", TelimenaRoles.Developer).GetAwaiter()
                 .GetResult();
-
+            if (!result.Item1.Succeeded)
+            {
+                var msg = result.Item1.Errors?.FirstOrDefault();
+                if (msg != null && !msg.Contains("is already taken."))
+                {
+                    Assert.Fail($"Failed to register user. Error: {result.Item1.Errors?.FirstOrDefault()}");
+                }
+            }
             unit.Complete();
 
-            unit.RegisterUserAsync(new TelimenaUser(caller + "_Jack@Daniels.com", caller + "_Jack Daniels"), "P@ssword", TelimenaRoles.Developer).GetAwaiter()
+             result = unit.RegisterUserAsync(new TelimenaUser(caller + "Jack@Daniels.com", caller + "Jack Daniels"), "P@ssword", TelimenaRoles.Developer).GetAwaiter()
                 .GetResult();
-
+            if (!result.Item1.Succeeded)
+            {
+                var msg = result.Item1.Errors?.FirstOrDefault();
+                if (msg != null && !msg.Contains("is already taken."))
+                {
+                    Assert.Fail($"Failed to register user. Error: {result.Item1.Errors?.FirstOrDefault()}");
+                }
+            }
             unit.Complete();
         }
 
