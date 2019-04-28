@@ -71,14 +71,16 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.DeleteApp("Unit test app", true);
+                string appName = "Unit-Test-App";
+
+                this.DeleteApp(appName, true);
 
 
-                this.RegisterApp("Unit test app", null, "To be deleted", "Auto test TestPlugin.dll", true, false);
+                this.RegisterApp(appName, null, "To be deleted", "Auto test TestPlugin.dll", true, false);
 
-                this.RegisterApp("Unit test app", null, "To be deleted", "Auto test TestPlugin.dll", true, true);
+                this.RegisterApp(appName, null, "To be deleted", "Auto test TestPlugin.dll", true, true);
 
-                this.DeleteApp("Unit test app", false);
+                this.DeleteApp(appName, false);
             }
             catch (Exception ex)
             {
