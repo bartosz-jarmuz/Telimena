@@ -6,7 +6,7 @@ Write-Host "Toolkit Path: "  $TargetPath "   FileName: $fileName"
 Write-Host
 Write-Host
 
-$testAppsFolder = "$SolutionDir\Telimena.WebApp.UITests\02. IntegrationTests\Apps"
+$testAppsFolder = "$SolutionDir\Telimena.WebApp.AppIntegrationTests\Apps"
 
 Copy-Item $TargetPath -Destination $testAppsFolder
 

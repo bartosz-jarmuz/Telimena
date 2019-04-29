@@ -29,6 +29,7 @@
     <UpdatePackageVersion>False</UpdatePackageVersion>
     <AssemblyInfoVersionType>SettingsVersion</AssemblyInfoVersionType>
     <InheritWinAppVersionFrom>None</InheritWinAppVersionFrom>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -119,61 +120,13 @@
     <Compile Include="01. Ui\ToolkitManagementTests.cs" />
     <Compile Include="01. Ui\LoginTests.cs" />
     <Compile Include="01. Ui\UsersAndTeamsTests.cs" />
-    <Compile Include="02. IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.Helpers.cs" />
-    <Compile Include="Base\ConfigKeys.cs" />
-    <Compile Include="Base\DeployedTestEngine.cs" />
-    <Compile Include="Base\IntegrationTestBase.cs" />
-    <Compile Include="Base\ITestEngine.cs" />
-    <Compile Include="Base\LocalHostTestEngine.cs" />
-    <Compile Include="Base\MyJsonContractResolver.cs" />
-    <Compile Include="Base\TestAppInteraction\Apps.cs" />
-    <Compile Include="Base\TestBase.cs" />
-    <Compile Include="Base\UiTestBase.cs" />
-    <Compile Include="Base\TestFileNames.cs" />
-    <Compile Include="Base\Common.cs" />
-    <Compile Include="02. IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.cs" />
-    <Compile Include="02. IntegrationTests\BackwardCompatibilityIntegrationTests\TestApp_StatsTests.cs" />
-    <Compile Include="Base\TestHelpers.cs" />
-    <Compile Include="Base\TestAppInteraction\ProcessCreator.cs" />
     <Compile Include="01. Ui\StatsTests.cs" />
-    <Compile Include="Base\TestAppInteraction\TestAppProvider.cs" />
-    <Compile Include="Base\TestAppInteraction\UtilTest.cs" />
     <Compile Include="01. Ui\NavigationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UITestsInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="02. IntegrationTests\Apps\AutomaticTestsClientv3Beta.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="02. IntegrationTests\Apps\EmbeddedAssemblyTestApp.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="02. IntegrationTests\Apps\v1.1.2.9_InstallersTestApp.Msi3Installer.msi">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="02. IntegrationTests\Apps\v2.1.2.9_InstallersTestApp.Msi3Installer.msi">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="app.config" />
-    <None Include="02. IntegrationTests\Apps\AutomaticTestsClientv2.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="02. IntegrationTests\Apps\PackageTriggerUpdater.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="02. IntegrationTests\Apps\PackageTriggerUpdaterTestApp v.1.0.0.0.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="02. IntegrationTests\Apps\PackageTriggerUpdaterTestApp v.2.0.0.0.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="02. IntegrationTests\Apps\TestApp v1.0.0.0.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="02. IntegrationTests\Apps\Updater.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +137,10 @@
     <ProjectReference Include="..\Telimena.Client\Telimena.Client.csproj">
       <Project>{8BC1DD73-2520-4361-9845-282E87442339}</Project>
       <Name>Telimena.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telimena.TestUtilities\Telimena.TestUtilities.csproj">
+      <Project>{adfa2e47-3993-427e-a0ff-7f33034bc124}</Project>
+      <Name>Telimena.TestUtilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\Telimena.WebApp.Core\Telimena.WebApp.Core.csproj">
       <Project>{FFD85253-874C-41CB-9242-9267BFA3647B}</Project>
@@ -198,14 +155,6 @@
     <None Include="local.runsettings">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="02. IntegrationTests\Apps\Telimena.Client.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="02. IntegrationTests\Apps\Updater.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

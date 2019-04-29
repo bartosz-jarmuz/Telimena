@@ -31,7 +31,7 @@ namespace Telimena.WebApp.UITests.Base
                 try
                 {
 #if DEBUG
-                    return true;
+                    return false;
 #endif
                     return GetSetting<bool>(ConfigKeys.ShowBrowser);
                 }

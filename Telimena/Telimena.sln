@@ -98,7 +98,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbeddedAssemblyTestApp", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTestables", "UnitTestables", "{3FC84A67-A1EB-4149-9152-D37C58F55D65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Portal.Utils", "Telimena.Portal.Utils\Telimena.Portal.Utils.csproj", "{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telimena.Portal.Utils", "Telimena.Portal.Utils\Telimena.Portal.Utils.csproj", "{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.WebApp.AppIntegrationTests", "Telimena.WebApp.AppIntegrationTests\Telimena.WebApp.AppIntegrationTests.csproj", "{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.TestUtilities", "Telimena.TestUtilities\Telimena.TestUtilities.csproj", "{ADFA2E47-3993-427E-A0FF-7F33034BC124}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -464,6 +468,30 @@ Global
 		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
 		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.ReleaseDev|x86.ActiveCfg = Release|Any CPU
 		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}.ReleaseDev|x86.Build.0 = Release|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.Debug|x86.Build.0 = Debug|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.Release|x86.ActiveCfg = Release|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.Release|x86.Build.0 = Release|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.ReleaseDev|Any CPU.ActiveCfg = Release|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.ReleaseDev|x86.ActiveCfg = Release|Any CPU
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14}.ReleaseDev|x86.Build.0 = Release|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.Debug|x86.Build.0 = Debug|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.Release|x86.ActiveCfg = Release|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.Release|x86.Build.0 = Release|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.ReleaseDev|Any CPU.ActiveCfg = Release|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.ReleaseDev|x86.ActiveCfg = Release|Any CPU
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124}.ReleaseDev|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -512,6 +540,8 @@ Global
 		{F862D668-8E59-49E9-9968-39FF9A2348C3} = {3FC84A67-A1EB-4149-9152-D37C58F55D65}
 		{3FC84A67-A1EB-4149-9152-D37C58F55D65} = {1C9284FC-2E59-4F5C-8151-407B200B09BB}
 		{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D} = {49A0912D-B751-48F2-8477-AF7FE1CF9EB6}
+		{EFAEBCF1-276C-4454-A0EB-B2CFDDB00F14} = {2387CFF9-603F-4C8E-A14D-64FF9603CE70}
+		{ADFA2E47-3993-427E-A0FF-7F33034BC124} = {2387CFF9-603F-4C8E-A14D-64FF9603CE70}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4AE5AB23-7640-4456-8051-8AC946EFBA9B}

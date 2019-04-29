@@ -232,7 +232,7 @@ namespace Telimena.WebApp.UITests.Base
             Assert.IsTrue(validateText(confirmationBox.Text), "Incorrect message: " + confirmationBox.Text);
         }
 
-        internal static Lazy<RemoteWebDriver> RemoteDriver = new Lazy<RemoteWebDriver>(() =>
+        public static Lazy<RemoteWebDriver> RemoteDriver = new Lazy<RemoteWebDriver>(() =>
         {
             var browser = GetBrowser("Chrome");
 
@@ -293,7 +293,7 @@ namespace Telimena.WebApp.UITests.Base
             }
         }
 
-        internal IWebDriver Driver => RemoteDriver.Value;
+        public IWebDriver Driver => RemoteDriver.Value;
         internal ITakesScreenshot Screenshooter => this.Driver as ITakesScreenshot;
 
         public void WaitForPageLoad(int maxWaitTimeInSeconds)

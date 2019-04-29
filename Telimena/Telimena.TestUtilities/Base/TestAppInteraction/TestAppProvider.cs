@@ -11,7 +11,17 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
     public class TestAppProvider
     {
        
-        private static readonly DirectoryInfo AppsFolder = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "02. IntegrationTests", "Apps"));
+        private static DirectoryInfo AppsFolder
+        {
+            get
+            {
+                var solutionDir = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory)); //Debug
+                solutionDir = solutionDir.Parent; //bin
+                solutionDir = solutionDir.Parent; //project
+                solutionDir = solutionDir.Parent; //solution
+                return new DirectoryInfo(Path.Combine(solutionDir.FullName, "Telimena.WebApp.AppIntegrationTests", "Apps"));
+            }
+        }
 
         public static FileInfo GetFile(string fileName)
         {
