@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Telimena.WebApp.UITests.Base.TestAppInteraction
+namespace Telimena.TestUtilities.Base.TestAppInteraction
 {
     [DeploymentItem("IntegrationTests")]
     public class TestAppProvider
@@ -44,14 +44,14 @@ namespace Telimena.WebApp.UITests.Base.TestAppInteraction
 
             try
             {
-                TestHelpers.DeleteDirectory(targetDir.FullName);
+                SharedTestHelpers.DeleteDirectory(targetDir.FullName);
 
             }
             catch (UnauthorizedAccessException)
             {
                 KillTestApps();
 
-                TestHelpers.DeleteDirectory(targetDir.FullName);
+                SharedTestHelpers.DeleteDirectory(targetDir.FullName);
 
             }
             targetDir.Create();

@@ -101,9 +101,6 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TestStack.White, Version=0.13.0.0, Culture=neutral, PublicKeyToken=2672efbf3e161801, processorArchitecture=MSIL">
-      <HintPath>..\packages\TestStack.White.0.13.3\lib\net40\TestStack.White.dll</HintPath>
-    </Reference>
     <Reference Include="WebDriver, Version=3.14.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Selenium.WebDriver.3.14.0\lib\net45\WebDriver.dll</HintPath>
     </Reference>
@@ -122,7 +119,9 @@
     <Compile Include="01. Ui\UsersAndTeamsTests.cs" />
     <Compile Include="01. Ui\StatsTests.cs" />
     <Compile Include="01. Ui\NavigationTests.cs" />
+    <Compile Include="Common.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebsiteTestBase.cs" />
     <Compile Include="UITestsInitializer.cs" />
   </ItemGroup>
   <ItemGroup>

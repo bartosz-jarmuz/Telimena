@@ -26,10 +26,10 @@ using Assert = NUnit.Framework.Assert;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 using TestContext = NUnit.Framework.TestContext;
 
-namespace Telimena.WebApp.UITests.Base
+namespace Telimena.TestUtilities.Base
 {
     [TestFixture]
-    public abstract class UiTestBase : IntegrationTestBase
+    public abstract class WebsiteTestBase : IntegrationTestBase
     {
 
         protected void RegisterApp(string name, Guid? key, string description, string assemblyName, bool canAlreadyExist, bool hasToExistAlready)
@@ -108,6 +108,7 @@ namespace Telimena.WebApp.UITests.Base
             this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/LogOff"));
             this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
         }
+     
 
 
         /// <summary>
@@ -128,7 +129,7 @@ namespace Telimena.WebApp.UITests.Base
             }
             catch (Exception ex)
             {
-                Log($"Could not delete file {expectedPath }, error: {ex}");
+                this.Log($"Could not delete file {expectedPath }, error: {ex}");
             }
             var stopwatch = Stopwatch.StartNew();
             Assert.IsFalse(File.Exists(expectedPath));
@@ -144,7 +145,7 @@ namespace Telimena.WebApp.UITests.Base
                     .FirstOrDefault(x => Path.GetFileName(x) == expectedName);
                 if (filePath != null)
                 {
-                    Log($"File stored at {filePath}");
+                    this.Log($"File stored at {filePath}");
                 }
                 else
                 {
@@ -240,6 +241,24 @@ namespace Telimena.WebApp.UITests.Base
             browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
             return browser;
         });
+
+        public static bool ShowBrowser
+        {
+            get
+            {
+                try
+                {
+#if DEBUG
+                    return true;
+#endif
+                    return GetSetting<bool>(ConfigKeys.ShowBrowser);
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
 
         private static RemoteWebDriver GetBrowser(string browser)
         {

@@ -6,42 +6,20 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Web.UI.HtmlControls;
-using SharedLogic;
-using HtmlAgilityPack;
+using System.Xml.Linq;
 using Microsoft.Deployment.WindowsInstaller;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SharedLogic;
+using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.Core.Messages;
-using Telimena.WebApp.Models.Account;
-using Telimena.WebApp.UITests.Base.TestAppInteraction;
-using TelimenaClient;
 using TelimenaClient.Model;
-using TestStack.White;
 
-namespace Telimena.WebApp.UITests.Base
+namespace Telimena.TestUtilities.Base
 {
     [TestFixture]
-    public abstract class IntegrationTestBase : TestBase
+    public abstract class IntegrationTestBase 
     {
-        public static bool ShowBrowser
-        {
-            get
-            {
-                try
-                {
-#if DEBUG
-                    return false;
-#endif
-                    return GetSetting<bool>(ConfigKeys.ShowBrowser);
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-        }
-
         public readonly string AdminName = GetSetting<string>(ConfigKeys.AdminName);
         public readonly string User1Name = GetSetting(ConfigKeys.User1Name);
         public readonly string User2Name = GetSetting(ConfigKeys.User2Name);
@@ -50,17 +28,33 @@ namespace Telimena.WebApp.UITests.Base
         public readonly string User1Password = GetSetting(ConfigKeys.User1Password);
         public readonly string User2Password = GetSetting(ConfigKeys.User2Password);
         public readonly string User3Password = GetSetting(ConfigKeys.User3Password);
-
         
         protected List<string> errors = new List<string>();
         protected List<string> outputs = new List<string>();
-        private readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
+        protected readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
 
-        protected ITestEngine TestEngine { get; set; }
 
-        private string BaseUrl => this.TestEngine.BaseUrl;
+        [OneTimeTearDown]
+        public void TestCleanup()
+        {
+            this.TestEngine.BaseCleanup();
+        }
 
-        private HttpClient HttpClient { get; } = new HttpClient();
+        [OneTimeSetUp]
+        public void TestInitialize()
+        {
+            if (this.isLocalTestSetting)
+            {
+                this.TestEngine = new LocalHostTestEngine();
+            }
+            else
+            {
+                this.TestEngine = new DeployedTestEngine(GetSetting<string>(ConfigKeys.PortalUrl));
+            }
+
+            this.TestEngine.BaseInitialize();
+        }
+
 
         protected Exception CleanupAndRethrow(Exception ex, [CallerMemberName] string caller = "")
         {
@@ -108,27 +102,6 @@ namespace Telimena.WebApp.UITests.Base
             this.outputs = new List<string>();
         }
 
-        [OneTimeTearDown]
-        public void TestCleanup()
-        {
-            this.TestEngine.BaseCleanup();
-        }
-
-        [OneTimeSetUp]
-        public void TestInitialize()
-        {
-            if (this.isLocalTestSetting)
-            {
-                this.TestEngine = new LocalHostTestEngine();
-            }
-            else
-            {
-                this.TestEngine = new DeployedTestEngine(GetSetting<string>(ConfigKeys.PortalUrl));
-            }
-            
-            this.TestEngine.BaseInitialize();
-        }
-
         public void InstallMsi(FileInfo msi, FileInfo expectedProgramPath)
         {
             var productCode = this.GetCodeFromMsi(msi);
@@ -154,7 +127,7 @@ namespace Telimena.WebApp.UITests.Base
             {
                 foreach (Guid productCode in productCodes)
                 {
-                    UninstallMsi(productCode, null);
+                    this.UninstallMsi(productCode, null);
                 }
             }
             catch (ArgumentException e) when (e.Message.Contains("This action is only valid for products that are currently installed."))
@@ -199,6 +172,55 @@ namespace Telimena.WebApp.UITests.Base
             }
         }
 
+        protected static string GetSetting(string key)
+        {
+            if (NUnit.Framework.TestContext.Parameters.Count == 0)
+            {
+                return TryGetSettingFromXml(key);
+            }
+            var x = NUnit.Framework.TestContext.Parameters[key];
+            return x;
+        }
+
+        private static string TryGetSettingFromXml(string key)
+        {
+            var dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+
+            var file = dir.GetFiles("*.runsettings", SearchOption.AllDirectories).FirstOrDefault();
+            if (file != null)
+            {
+                XDocument xDoc = XDocument.Load(file.FullName);
+                var ele = xDoc.Root.Element("TestRunParameters").Elements().FirstOrDefault(x => x.Attribute("name")?.Value == key);
+                return ele?.Attribute("value")?.Value;
+            }
+
+            return null;
+        }
+
+
+        protected static T GetSetting<T>(string key)
+        {
+            string val = GetSetting(key);
+            if (val == null)
+            {
+                throw new ArgumentException($"Missing setting: {key}");
+            }
+            return (T)Convert.ChangeType(val, typeof(T));
+        }
+
+
+        protected void Log(string info)
+        {
+            //Trace.TraceInformation("trace - UiTestsLogger:" + info);
+            //Trace.TraceError("error - UiTestsLogger:" + info);
+            //Logger.LogMessage("Logger - UiTestsLogger:" + info);
+            //TestContext.Out.WriteLine("Ctx -  UiTestsLogger:" + info);
+            Console.WriteLine("UiTestsLogger:" + info);
+        }
+
+        private HttpClient HttpClient { get; } = new HttpClient();
+
+
         protected async Task<TelemetryQueryResponse> CheckTelemetry(TelemetryQueryRequest request)
         {
             HttpResponseMessage response = await this.HttpClient.PostAsJsonAsync(this.BaseUrl.TrimEnd('/') + "/api/v1/telemetry/execute-query", request).ConfigureAwait(false);
@@ -208,12 +230,42 @@ namespace Telimena.WebApp.UITests.Base
             return JsonConvert.DeserializeObject<TelemetryQueryResponse>(content);
         }
 
+     
+        protected ITestEngine TestEngine { get; set; }
+
+        protected string BaseUrl => this.TestEngine.BaseUrl;
+
+
+        protected T ParseOutput<T>() where T : class
+        {
+            foreach (string output in this.outputs)
+            {
+                if (!string.IsNullOrWhiteSpace(output))
+                {
+                    this.Log(output);
+                    try
+                    {
+                        T obj = JsonConvert.DeserializeObject<T>(output, new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto});
+                        if (obj != null)
+                        {
+                            return obj;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+            }
+
+            return null;
+        }
+
         protected FileInfo LaunchTestsAppNewInstance(out Process process, Actions action, Guid telemetryKey, string appName, string testSubfolderName, ProgramInfo pi = null
-            , string viewName = null, bool waitForExit = true)
+           , string viewName = null, bool waitForExit = true)
         {
             var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
 
-            process = this.LaunchTestsApp(appFile, action,telemetryKey, pi, waitForExit, viewName);
+            process = this.LaunchTestsApp(appFile, action, telemetryKey, pi, waitForExit, viewName);
             return appFile;
         }
 
@@ -226,8 +278,8 @@ namespace Telimena.WebApp.UITests.Base
             this.outputs.Clear();
             this.errors.Clear();
 
-            process = this.LaunchTestsApp(appFile, action,telemetryKey, pi, waitForExit, viewName);
-            
+            process = this.LaunchTestsApp(appFile, action, telemetryKey, pi, waitForExit, viewName);
+
             result = this.ParseOutput<T>();
             this.outputs.Clear();
             this.errors.Clear();
@@ -246,14 +298,14 @@ namespace Telimena.WebApp.UITests.Base
 
 
             Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);
-            Log($"Started process: {appFile.FullName}");
+            this.Log($"Started process: {appFile.FullName}");
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             if (waitForExit)
             {
                 process.WaitForExit();
-                Log($"Finished process: {appFile.FullName}");
+                this.Log($"Finished process: {appFile.FullName}");
             }
 
             return process;
@@ -261,20 +313,20 @@ namespace Telimena.WebApp.UITests.Base
 
         protected Process LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, string appName, string testSubfolderName, bool waitForExit)
         {
-             appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
+            appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
             Arguments args = new Arguments { ApiUrl = this.BaseUrl };
 
             args.TelemetryKey = Apps.Keys.PackageUpdaterClient;
 
             Process process = ProcessCreator.Create(appFile, args, this.outputs, this.errors);
-            Log($"Started process: {appFile.FullName}");
+            this.Log($"Started process: {appFile.FullName}");
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
             if (waitForExit)
             {
                 process.WaitForExit();
-                Log($"Finished process: {appFile.FullName}");
+                this.Log($"Finished process: {appFile.FullName}");
             }
 
             return process;
@@ -311,32 +363,6 @@ namespace Telimena.WebApp.UITests.Base
             }
 
             return result;
-        }
-
-
-
-        protected T ParseOutput<T>() where T : class
-        {
-            foreach (string output in this.outputs)
-            {
-                if (!string.IsNullOrWhiteSpace(output))
-                {
-                    Log(output);
-                    try
-                    {
-                        T obj = JsonConvert.DeserializeObject<T>(output, new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto});
-                        if (obj != null)
-                        {
-                            return obj;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-            }
-
-            return null;
         }
     }
 }

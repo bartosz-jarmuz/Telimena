@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Telimena.WebApp.UITests.Base;
+using Telimena.TestUtilities.Base;
 
 namespace Telimena.WebApp.UITests
 {
@@ -13,9 +13,9 @@ namespace Telimena.WebApp.UITests
         [OneTimeTearDown]
         public void Teardown()
         {
-            if (UiTestBase.RemoteDriver.IsValueCreated)
+            if (WebsiteTestBase.RemoteDriver.IsValueCreated)
             {
-                UiTestBase.RemoteDriver.Value.Dispose();
+                WebsiteTestBase.RemoteDriver.Value.Dispose();
             }
 
         }

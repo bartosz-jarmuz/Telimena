@@ -10,9 +10,9 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using Telimena.TestUtilities.Base;
+using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.UiStrings;
-using Telimena.WebApp.UITests.Base;
-using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 using TelimenaClient.Model;
 using static System.Reflection.MethodBase;
@@ -22,7 +22,7 @@ namespace Telimena.WebApp.UITests._01._Ui
     using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public partial class _1_UiTests : UiTestBase
+    public partial class _1_WebsiteTests : WebsiteTestBase
     {
      
         [Test, Order(5), Retry(3)]

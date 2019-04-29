@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SharedLogic;
-using NUnit.Framework;
-using Telimena.WebApp.UITests.Base;
-using Telimena.WebApp.UITests.Base.TestAppInteraction;
+using Telimena.TestUtilities.Base;
+using Telimena.TestUtilities.Base.TestAppInteraction;
+using Telimena.WebApp.AppIntegrationTests.Utilities;
 using TelimenaClient;
-using TelimenaClient.Model;
 using TelimenaClient.Model.Internal;
 using TestStack.White;
-using System.Linq;
-
 using TestStack.White.UIItems;
 using TestStack.White.UIItems.Finders;
 using TestStack.White.UIItems.WindowItems;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
-namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityIntegrationTests
+namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTests
 {
     public class VersionTuple
     {
@@ -68,7 +64,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             Process process = Process.Start(exe.FullName);
             Application app = TestStack.White.Application.Attach(process);
 
-            Window appWarning = await TestHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient - This app requires arguments to run"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
+            Window appWarning = await WindowHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient - This app requires arguments to run"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
             return await this.GetVersionFromMsgBox(appWarning).ConfigureAwait(false);
         }
 

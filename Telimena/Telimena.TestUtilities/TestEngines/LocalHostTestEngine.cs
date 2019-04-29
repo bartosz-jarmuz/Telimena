@@ -3,9 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
-using OpenQA.Selenium.Chrome;
 
-namespace Telimena.WebApp.UITests.Base
+namespace Telimena.TestUtilities.Base
 {
     public sealed class LocalHostTestEngine : ITestEngine
     {

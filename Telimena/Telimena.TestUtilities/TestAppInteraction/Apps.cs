@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Telimena.WebApp.UITests.Base.TestAppInteraction
+namespace Telimena.TestUtilities.Base.TestAppInteraction
 {
     public static class Apps
     {

@@ -2,56 +2,21 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
-using SharedLogic;
-using DotNetLittleHelpers;
-using Newtonsoft.Json;
 using NUnit.Framework;
+using SharedLogic;
+using Telimena.TestUtilities.Base;
+using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.Core.DTO;
-using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Messages;
-using Telimena.WebApp.UITests.Base;
-using Telimena.WebApp.UITests.Base.TestAppInteraction;
 
-namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityIntegrationTests
+namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTests
 {
     [TestFixture]
     [Order(2)]
     [SuppressMessage("ReSharper", "ConsiderUsingConfigureAwait")]
     public partial class _2_NonUiTests : IntegrationTestBase
     {
-        internal class DtoJsonConverter : JsonConverter
-        {
-            private static readonly string HttpContent = typeof(HttpContent).FullName;
-
-            public override bool CanConvert(Type objectType)
-            {
-                if (objectType.FullName == HttpContent)
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-            {
-                if (objectType.FullName == HttpContent)
-                {
-                    return serializer.Deserialize(reader, typeof(HttpContent));
-                }
-
-                throw new NotSupportedException(string.Format("Type {0} unexpected.", objectType));
-            }
-
-            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-            {
-                serializer.Serialize(writer, value);
-            }
-        }
 
         [Test]
         public void TestAppWithEmbeddedTeli()
@@ -60,7 +25,7 @@ namespace Telimena.WebApp.UITests._02._IntegrationTests.BackwardCompatibilityInt
             this.errors.Clear();
 
             this.LaunchTestsAppNewInstance(out _, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, 
-                Apps.PackageNames.EmbeddedAssemblyTestApp, TestHelpers.GetMethodName());
+                Apps.PackageNames.EmbeddedAssemblyTestApp, SharedTestHelpers.GetMethodName());
 
             Assert.IsTrue(this.outputs.Any(x=>x == "Ended with no errors"));
             this.outputs.Clear();

@@ -71,6 +71,7 @@
     <Compile Include="BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.cs" />
     <Compile Include="BackwardCompatibilityIntegrationTests\TestApp_UpdatesTests.Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\WindowHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -135,6 +136,7 @@
       <Name>Telimena.WebApp.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

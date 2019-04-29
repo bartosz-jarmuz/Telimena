@@ -4,9 +4,8 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
-using SeleniumExtras.WaitHelpers;
 
-namespace Telimena.WebApp.UITests.Base
+namespace Telimena.TestUtilities.Base
 {
     public static class Common
     {

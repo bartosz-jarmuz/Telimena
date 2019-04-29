@@ -1,4 +1,4 @@
-﻿namespace Telimena.WebApp.UITests.Base
+﻿namespace Telimena.TestUtilities.Base
 {
     public static class ConfigKeys
     {

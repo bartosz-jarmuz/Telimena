@@ -4,16 +4,16 @@ using DotNetLittleHelpers;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using Telimena.TestUtilities.Base;
+using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.UiStrings;
-using Telimena.WebApp.UITests.Base;
-using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
 namespace Telimena.WebApp.UITests._01._Ui
 {
     [TestFixture]
-    public partial class _1_UiTests : UiTestBase
+    public partial class _1_WebsiteTests : WebsiteTestBase
     {
         [Test]
         public void GoThroughAllPagesAsAdmin()

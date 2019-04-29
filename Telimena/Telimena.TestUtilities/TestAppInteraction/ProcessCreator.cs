@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using SharedLogic;
 using Newtonsoft.Json;
 
-namespace Telimena.WebApp.UITests.Base.TestAppInteraction
+namespace Telimena.TestUtilities.Base.TestAppInteraction
 {
-    internal static class ProcessCreator
+    public static class ProcessCreator
     {
         private static ProcessStartInfo CreateStartInfo(FileInfo testAppFile, object arguments)
         {

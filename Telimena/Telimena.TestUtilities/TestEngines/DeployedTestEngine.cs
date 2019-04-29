@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-
-namespace Telimena.WebApp.UITests.Base
+﻿namespace Telimena.TestUtilities.Base
 {
     public sealed class DeployedTestEngine : ITestEngine
     {

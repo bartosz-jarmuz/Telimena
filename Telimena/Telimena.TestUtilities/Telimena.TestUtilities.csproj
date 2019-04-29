@@ -37,9 +37,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
     <Reference Include="DotNetLittleHelpers, Version=1.0.96.0, Culture=neutral, PublicKeyToken=339dc7d237f083dc, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetLittleHelpers.1.0.96\lib\net461\DotNetLittleHelpers.dll</HintPath>
     </Reference>
@@ -58,9 +55,6 @@
     </Reference>
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="SeleniumExtras.WaitHelpers, Version=3.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetSeleniumExtras.WaitHelpers.3.11.0\lib\net45\SeleniumExtras.WaitHelpers.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -82,32 +76,17 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="TestStack.White, Version=0.13.0.0, Culture=neutral, PublicKeyToken=2672efbf3e161801, processorArchitecture=MSIL">
-      <HintPath>..\packages\TestStack.White.0.13.3\lib\net40\TestStack.White.dll</HintPath>
-    </Reference>
-    <Reference Include="WebDriver, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.WebDriver.3.141.0\lib\net45\WebDriver.dll</HintPath>
-    </Reference>
-    <Reference Include="WebDriver.Support, Version=3.141.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Selenium.Support.3.141.0\lib\net45\WebDriver.Support.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\Common.cs" />
-    <Compile Include="Base\ConfigKeys.cs" />
-    <Compile Include="Base\DeployedTestEngine.cs" />
-    <Compile Include="Base\IntegrationTestBase.cs" />
-    <Compile Include="Base\ITestEngine.cs" />
-    <Compile Include="Base\LocalHostTestEngine.cs" />
-    <Compile Include="Base\MyJsonContractResolver.cs" />
-    <Compile Include="Base\TestAppInteraction\Apps.cs" />
-    <Compile Include="Base\TestAppInteraction\ProcessCreator.cs" />
-    <Compile Include="Base\TestAppInteraction\TestAppProvider.cs" />
-    <Compile Include="Base\TestAppInteraction\UtilTest.cs" />
-    <Compile Include="Base\TestBase.cs" />
-    <Compile Include="Base\TestFileNames.cs" />
-    <Compile Include="Base\TestHelpers.cs" />
-    <Compile Include="Base\UiTestBase.cs" />
+    <Compile Include="ConfigKeys.cs" />
+    <Compile Include="TestEngines\DeployedTestEngine.cs" />
+    <Compile Include="IntegrationTestBase.cs" />
+    <Compile Include="TestEngines\ITestEngine.cs" />
+    <Compile Include="TestEngines\LocalHostTestEngine.cs" />
+    <Compile Include="TestAppInteraction\Apps.cs" />
+    <Compile Include="TestAppInteraction\ProcessCreator.cs" />
+    <Compile Include="TestAppInteraction\TestAppProvider.cs" />
+    <Compile Include="SharedTestHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

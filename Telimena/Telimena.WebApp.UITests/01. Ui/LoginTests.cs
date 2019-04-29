@@ -3,8 +3,8 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
+using Telimena.TestUtilities.Base;
 using Telimena.WebApp.UiStrings;
-using Telimena.WebApp.UITests.Base;
 using Assert = NUnit.Framework.Assert;
 
 // ReSharper disable once IdentifierTypo
@@ -12,7 +12,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 {
 
     [TestFixture]
-    public partial class _1_UiTests : UiTestBase
+    public partial class _1_WebsiteTests : WebsiteTestBase
     {
 
         [Test, Order(1), Retry(3)]

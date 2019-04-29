@@ -1,64 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using TestStack.White;
 using TestStack.White.Factory;
 using TestStack.White.UIItems.WindowItems;
 
-namespace Telimena.WebApp.UITests.Base
+namespace Telimena.WebApp.AppIntegrationTests.Utilities
 {
-    public static class TestHelpers
+    public class WindowHelpers
     {
-        /// <summary>
-        /// Depth-first recursive delete, with handling for descendant 
-        /// directories open in Windows Explorer.
-        /// </summary>
-        public static void DeleteDirectory(string path)
-        {
-
-            string[] subDirs = new string[0];
-
-            try
-            {
-
-             subDirs = Directory.GetDirectories(path);
-            }
-            catch { //ok, maybe the dir does not exist
-                    }
-
-            foreach (string directory in subDirs)
-            {
-                DeleteDirectory(directory);
-            }
-
-            try
-            {
-                Directory.Delete(path, true);
-            }
-            catch (DirectoryNotFoundException)
-            {
-                //very well
-                return;
-            }
-            catch (IOException)
-            {
-                Thread.Sleep(50);
-                Directory.Delete(path, true);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                Thread.Sleep(50);
-                Directory.Delete(path, true);
-            }
-        }
         public static async Task<Window> WaitForWindowAsync(Expression<Predicate<string>> match, TimeSpan timeout, string errorMessage = "")
         {
             Window win = null;
@@ -94,6 +49,24 @@ namespace Telimena.WebApp.UITests.Base
             }
         }
 
+        private static string DisplayProcessesInfo(IEnumerable<Process> processes)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine();
+            foreach (Process process in processes)
+            {
+                try
+                {
+                    sb.AppendLine(process.GetPropertyInfoString(nameof(Process.MainWindowTitle), nameof(Process.HasExited), nameof(Process.ProcessName)));
+                }
+                catch
+                {
+                    sb.AppendLine("Cannot get process info");
+                }
+            }
+
+            return sb.ToString();
+        }
 
         public static async Task<Window> WaitForMessageBoxAsync(Expression<Predicate<string>> match, string title, TimeSpan timeout, string errorMessage = "")
         {
@@ -124,7 +97,7 @@ namespace Telimena.WebApp.UITests.Base
                             }
                         }
                         catch (Exception) { }
-                        
+
                     }
                 }
                 if (timeoutWatch.Elapsed > timeout)
@@ -134,49 +107,6 @@ namespace Telimena.WebApp.UITests.Base
                     throw new InvalidOperationException($"Failed to find window by expression on Title: {expBody}. Available processes {DisplayProcessesInfo(matchinApps)}. Error: {errorMessage}");
                 }
             }
-        }
-
-        private static string DisplayProcessesInfo(IEnumerable<Process> processes)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine();
-            foreach (Process process in processes)
-            {
-                try
-                {
-                    sb.AppendLine(process.GetPropertyInfoString(nameof(Process.MainWindowTitle), nameof(Process.HasExited), nameof(Process.ProcessName)));
-                }
-                catch
-                {
-                    sb.AppendLine("Cannot get process info");
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        public static string GetMethodName()
-        {
-            StackTrace stackTrace = new System.Diagnostics.StackTrace();
-            var frames = stackTrace.GetFrames();
-            for (int index = 1; index < frames.Length; index++)
-            {
-                StackFrame stackFrame = frames[index];
-                var methodBase = stackFrame.GetMethod();
-                if (methodBase.Name == "MoveNext")
-                {
-                    continue;
-                }
-                if (methodBase.DeclaringType != null && !methodBase.DeclaringType.Assembly.FullName.StartsWith("mscorlib"))
-                {
-                    return methodBase.Name;
-                }
-            }
-
-
-            StackFrame frame = stackTrace.GetFrames()[3];
-            var method = frame.GetMethod();
-            return method.Name;
         }
 
 
