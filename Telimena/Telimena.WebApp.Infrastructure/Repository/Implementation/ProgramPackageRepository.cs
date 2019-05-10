@@ -51,7 +51,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 pkg.UploadedDate = DateTimeOffset.UtcNow;
             }
 
-            await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName, program.TelemetryKey).ConfigureAwait(false);
 
             return pkg;
         }

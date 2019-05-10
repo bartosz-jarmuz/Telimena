@@ -21,7 +21,7 @@ namespace Telimena.WebApp.Core.Models.Portal
         public int Id { get; set; }
 
         [Index(IsUnique = true, IsClustered = false)]
-        public Guid PublicId { get; set; } = Guid.NewGuid();
+        public override Guid PublicId { get; set; } = Guid.NewGuid();
 
         public int ProgramId { get; set; }
         public string SupportedToolkitVersion { get; set; }

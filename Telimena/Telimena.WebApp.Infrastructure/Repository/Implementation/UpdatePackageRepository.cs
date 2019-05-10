@@ -67,7 +67,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             pkg.UpdateContentAndMetadata(isBeta, releaseNotes);
          
-            await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName, program.TelemetryKey).ConfigureAwait(false);
 
             return pkg;
         }
