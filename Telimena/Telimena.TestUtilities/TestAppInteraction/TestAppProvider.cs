@@ -19,7 +19,23 @@ namespace Telimena.TestUtilities.Base.TestAppInteraction
                 solutionDir = solutionDir.Parent; //bin
                 solutionDir = solutionDir.Parent; //project
                 solutionDir = solutionDir.Parent; //solution
-                return new DirectoryInfo(Path.Combine(solutionDir.FullName, "Telimena.WebApp.AppIntegrationTests", "Apps"));
+                var dir = new DirectoryInfo(Path.Combine(solutionDir.FullName, "Telimena.WebApp.AppIntegrationTests", "Apps"));
+                if (!dir.Exists)
+                {
+                    // likely we were looking for a folder 
+                    //C:\Users\bjarmuz\agent_146_64bit\_work\r1\a\Telimena-alpha-CI\Telimena.WebApp.UITests\Telimena.WebApp.AppIntegrationTests\Apps
+
+                    solutionDir = solutionDir.Parent; //we're in UI tests artifact folder - need to go up and then into integration tests
+                    // now solution folder is - C:\Users\bjarmuz\agent_146_64bit\_work\r1\a\Telimena-alpha-CI\
+
+                    dir = new DirectoryInfo(Path.Combine(solutionDir.FullName, "Telimena.WebApp.AppIntegrationTests"));
+                    var guessedDir = dir.GetDirectories("Apps", SearchOption.AllDirectories).FirstOrDefault(x =>
+                        !x.FullName.Contains("/bin/") && !x.FullName.Contains(@"\bin\"));
+                    return guessedDir??new DirectoryInfo($"FAILED TO DETERMINE APPS DIRECTORY. Last recognized dir: [{dir.FullName}]. Exists: {dir.Exists}");
+
+                }
+
+                return dir;
             }
         }
 
