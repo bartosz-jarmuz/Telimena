@@ -38,9 +38,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             ProgramPackageInfo pkg = await this.telimenaPortalContext.ProgramPackages.Where(x => x.ProgramId == program.Id
                                                                                                 && x.Version == versions.appVersion
-#pragma warning disable 618
                                                                                                 && x.SupportedToolkitVersion == versions.toolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
-#pragma warning restore 618
             if (pkg == null)
             {
                 pkg = new ProgramPackageInfo(packageFileName, program.Id, versions.appVersion, fileStream.Length, versions.toolkitVersion);
