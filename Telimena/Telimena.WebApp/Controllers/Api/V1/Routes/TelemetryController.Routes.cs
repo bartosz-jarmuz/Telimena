@@ -7,7 +7,7 @@
         {
             public const string Initialize = nameof(TelemetryController) + "." + nameof(TelemetryController.Initialize);
             public const string Post = nameof(TelemetryController) + "." + nameof(TelemetryController.Post);
-            public const string PostV2 = nameof(TelemetryController) + "." + nameof(TelemetryController.Post) + "V2";
+            public const string PostWithVariousKeys = nameof(TelemetryController) + "." + nameof(TelemetryController.Post) + "V2";
             public const string PostBasic = nameof(TelemetryController) + "." + nameof(TelemetryController.PostBasic);
             public const string ExecuteQuery = nameof(TelemetryController) + "." + nameof(TelemetryController.ExecuteQuery);
         }

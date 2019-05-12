@@ -120,7 +120,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         }
 
         /// <summary>
-        ///     Report a program view access
+        ///     Posts telemetry entries to a program with the specified telemetry key
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
@@ -146,13 +146,14 @@ namespace Telimena.WebApp.Controllers.Api.V1
         }
 
         /// <summary>
-        ///     Report a program view access
+        ///     Posts telemetry entries with TelemetryKeys being sent in the item properties. This way a batch of entries from single request can go to multiple programs separately.
+        ///     This is available since Client 2.9.0
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        [Route("", Name = Routes.PostV2)]
-        public async Task<IHttpActionResult> PostV2()
+        [Route("", Name = Routes.PostWithVariousKeys)]
+        public async Task<IHttpActionResult> PostWithVariousKeys()
         {
             IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
 
@@ -161,7 +162,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
             //items might come with various telemetry key in one request (when there are multiple instances of telemetry client)
             IEnumerable<IGrouping<Guid, TelemetryItem>> groups = telemetryItems.GroupBy(telemetry => telemetry.TelemetryKey);
-
+            //todo - parallelism?
             foreach (IGrouping<Guid, TelemetryItem> grouping in groups)
             {
                 TelemetryRootObject program = await this.work.GetMonitoredProgram(grouping.Key).ConfigureAwait(false);
@@ -172,7 +173,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         }
 
         /// <summary>
-        ///     Report a program view access
+        ///   Provides a simplified telemetry endpoint for 1-to-1 requests
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
