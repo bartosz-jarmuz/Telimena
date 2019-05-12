@@ -50,5 +50,11 @@
         /// </summary>
         /// <value>The exception unhandled by user code key.</value>
         public static string ExceptionUnhandledByUserCodeKey { get; } = "ExceptionUnhandledByUserCode";
+
+        /// <summary>
+        /// Gets or sets the telemetry key property key (added to telemetry item).
+        /// </summary>
+        /// <value>The exception unhandled by user code key.</value>
+        public static string TelemetryKeyKey { get; } = "TelemetryKey";
     }
 }

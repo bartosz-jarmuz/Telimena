@@ -35,6 +35,11 @@ namespace TelimenaTestSandboxApp
                     TelimenaFactory.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text)){UserInfo = new UserInfo(){UserIdentifier = this.userNameTextBox.Text}}) as Telimena;
             }
 
+            this.TelimenaSecondInstance =
+                TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.Parse("5f53712e-6d07-46f0-ba2f-6caa4c1346d4"), new Uri(this.apiUrlTextBox.Text)) { UserInfo = new UserInfo() { UserIdentifier = this.userNameTextBox.Text + "2ndInstance" } }) as Telimena;
+        
+            
+
             this.Text = $"Sandbox v. {TelimenaVersionReader.Read(this.GetType(), VersionTypes.FileVersion)}";
         }
 
@@ -49,6 +54,7 @@ namespace TelimenaTestSandboxApp
         }
 
         private ITelimena Telimena;
+        private ITelimena TelimenaSecondInstance;
         private TelimenaHammer hammer;
 
         private void ThrowUnhandledButton_Click(object sender, EventArgs e)
@@ -276,6 +282,11 @@ namespace TelimenaTestSandboxApp
             text.AddContentParagraphs(rnd.Next(1,2), rnd.Next(1,5), rnd.Next(1, 5), rnd.Next(4,50), rnd.Next(50,150));
 
             return text.Content;
+        }
+
+        private void secondInstanceEventButton_Click(object sender, EventArgs e)
+        {
+            this.TelimenaSecondInstance.Track.Event("Second instance event!");
         }
     }
 

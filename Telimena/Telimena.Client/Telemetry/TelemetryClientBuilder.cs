@@ -27,7 +27,7 @@ namespace TelimenaClient
                 lock (this.telemetryClientBuildingLock)
                 {
                     TelemetryConfiguration config = TelemetryConfiguration.Active;
-
+                   
                     this.LoadTelemetryChannel(config);
 
                     this.LoadInitializers(config);
@@ -35,6 +35,7 @@ namespace TelimenaClient
                     var client = new TelemetryClient(config);
 
                     this.InitializeContext(client);
+                    client.TelemetryKey = this.properties.TelemetryKey;
 
                     if (this.properties.InstrumentationKey != null)
                     {
@@ -84,7 +85,7 @@ namespace TelimenaClient
                 cfg.TelemetryInitializers.Add(new SequencePropertyInitializer());
             }
 
-           
+
         }
 
         private void LoadTelemetryChannel(TelemetryConfiguration cfg)
@@ -104,7 +105,7 @@ namespace TelimenaClient
 
         internal static Uri GetTelimenaTelemetryEndpoint(ITelimenaProperties properties)
         {
-            return new Uri(properties.TelemetryApiBaseUrl, ApiRoutes.PostTelemetryData + "/" + properties.TelemetryKey);
+            return new Uri(properties.TelemetryApiBaseUrl, ApiRoutes.PostTelemetryData);
 
         }
 

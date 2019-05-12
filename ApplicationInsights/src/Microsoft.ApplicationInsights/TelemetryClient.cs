@@ -75,6 +75,12 @@
         }
 
         /// <summary>
+        /// Gets the Telimena telemetry key.
+        /// </summary>
+        /// <value>The telemetry key.</value>
+        public Guid TelemetryKey { get; internal set; }
+
+        /// <summary>
         /// Gets the <see cref="TelemetryConfiguration"/> object associated with this telemetry client instance.
         /// </summary>
         internal TelemetryConfiguration TelemetryConfiguration
@@ -483,6 +489,10 @@
             var telemetryWithProperties = telemetry as ISupportProperties;
             if (telemetryWithProperties != null)
             {
+                if (!telemetryWithProperties.Properties.ContainsKey("TelemetryKey"))
+                {
+                    telemetryWithProperties.Properties.Add("TelemetryKey", this.TelemetryKey.ToString());
+                }
                 if ((this.configuration.TelemetryChannel != null) && (this.configuration.TelemetryChannel.DeveloperMode.HasValue && this.configuration.TelemetryChannel.DeveloperMode.Value))
                 {
                     if (!telemetryWithProperties.Properties.ContainsKey("DeveloperMode"))

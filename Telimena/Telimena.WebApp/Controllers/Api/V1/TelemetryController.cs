@@ -151,6 +151,32 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
+        [Route("", Name = Routes.PostV2)]
+        public async Task<IHttpActionResult> PostV2()
+        {
+            IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
+
+            IEnumerable<TelemetryItem> telemetryItems = AppInsightsTelemetryMapper.Map(appInsightsTelemetries);
+            string ip = this.Request.GetClientIp();
+
+            //items might come with various telemetry key in one request (when there are multiple instances of telemetry client)
+            IEnumerable<IGrouping<Guid, TelemetryItem>> groups = telemetryItems.GroupBy(telemetry => telemetry.TelemetryKey);
+
+            foreach (IGrouping<Guid, TelemetryItem> grouping in groups)
+            {
+                TelemetryRootObject program = await this.work.GetMonitoredProgram(grouping.Key).ConfigureAwait(false);
+                await this.InsertDataInternal(grouping, program, ip).ConfigureAwait(false);
+            }
+
+            return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        ///     Report a program view access
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
         [Route("{telemetryKey}/basic", Name = Routes.PostBasic)]
         public async Task<IHttpActionResult> PostBasic(Guid telemetryKey, BasicTelemetryItem request)
         {
