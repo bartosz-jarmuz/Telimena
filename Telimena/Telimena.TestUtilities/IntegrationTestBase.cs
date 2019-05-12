@@ -361,7 +361,10 @@ namespace Telimena.TestUtilities.Base
                 this.outputs.Clear();
                 this.errors.Clear();
             }
-
+            else
+            {
+                this.Log($"Failed to deserialize the outputs as {typeof(T).Name}");
+            }
             return result;
         }
     }

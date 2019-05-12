@@ -111,7 +111,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
                 var installationResult = this.LaunchTestsAppAndGetResult<UpdateInstallationResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: false);
 
-                if (installationResult.Exception != null)
+                if (installationResult?.Exception != null)
                 {
                     throw installationResult.Exception;
                 }
