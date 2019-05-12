@@ -15,6 +15,7 @@ namespace Telimena.WebApp.Core.Models.Portal
             this.ProgramId = programId;
             this.Version = version;
             this.SupportedToolkitVersion = supportedToolkitVersion;
+            this.IsStandalone = true; //for now there are no 'partial' updates - all are standalone
         }
       
         public int Id { get; set; } 

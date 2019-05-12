@@ -109,7 +109,12 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
                 VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, SharedTestHelpers.GetMethodName(), out FileInfo appFile);
 
-                this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: false);
+                var installationResult = this.LaunchTestsAppAndGetResult<UpdateInstallationResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: false);
+
+                if (installationResult.Exception != null)
+                {
+                    throw installationResult.Exception;
+                }
 
                 Window updater = await WindowHelpers.WaitForWindowAsync(x => x.Contains("AutomaticTestsClient Updater"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
                 updater.Get<Button>(SearchCriteria.ByText("Install now!")).Click();

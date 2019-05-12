@@ -38,22 +38,47 @@ namespace Telimena.WebApp.Controllers.Api.V1.Helpers
             }
 
             ProgramUpdatePackageInfo newestPackage = updatePackages.First();
-            if (newestPackage.IsStandalone)
+            if (newestPackage.IsStandalone && !newestPackage.IsBeta) //in case newest is beta, return a latest stable as well - because the end user might choose to not install beta
             {
                 return new List<ProgramUpdatePackageInfo> { newestPackage };
             }
+
+
 
             List<ProgramUpdatePackageInfo> list = new List<ProgramUpdatePackageInfo>();
             foreach (ProgramUpdatePackageInfo updatePackageInfo in updatePackages)
             {
                 list.Add(updatePackageInfo);
-                if (updatePackageInfo.IsStandalone)
+                if (updatePackageInfo.IsStandalone && !updatePackageInfo.IsBeta)
                 {
                     break;
                 }
             }
 
-            return list;
+            //now skip all the potential beta standalone except for the latest one
+            var finalFiltered = new List<ProgramUpdatePackageInfo>();
+            bool latestStandaloneBetaAdded = false;
+            foreach (ProgramUpdatePackageInfo programUpdatePackageInfo in list)
+            {
+                if (programUpdatePackageInfo.IsBeta)
+                {
+                    if (latestStandaloneBetaAdded)
+                    {
+                        continue;
+                    }
+                    if (programUpdatePackageInfo.IsStandalone)
+                    {
+                        latestStandaloneBetaAdded = true;
+                    }
+                    finalFiltered.Add(programUpdatePackageInfo);
+                }
+                else
+                {
+                    finalFiltered.Add(programUpdatePackageInfo);
+                }
+            }
+
+            return finalFiltered;
         }
 
 

@@ -171,7 +171,6 @@
     <Compile Include="Controllers\TelemetryControllerHelpersTests.cs" />
     <Compile Include="FriendlyUrlTests.cs" />
     <Compile Include="SequenceIdParserTests.cs" />
-    <Compile Include="TsProDataParse.cs" />
     <Compile Include="EntitiesTests.cs" />
     <Compile Include="MiscTests.cs" />
     <Compile Include="UnitOfWorkTests\AsyncQueryableExtensions.cs" />
