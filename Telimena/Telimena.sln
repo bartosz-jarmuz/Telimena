@@ -98,6 +98,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmbeddedAssemblyTestApp", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTestables", "UnitTestables", "{3FC84A67-A1EB-4149-9152-D37C58F55D65}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{1376CCC3-F504-4D6B-AD46-904F412EA751}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{090cd12d-79fd-421d-b26f-05cb1a496458}*SharedItemsImports = 4
@@ -450,6 +452,18 @@ Global
 		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
 		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|x86.ActiveCfg = Release|Any CPU
 		{F862D668-8E59-49E9-9968-39FF9A2348C3}.ReleaseDev|x86.Build.0 = Release|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.Debug|x86.Build.0 = Debug|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.Release|x86.ActiveCfg = Release|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.Release|x86.Build.0 = Release|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.ReleaseDev|Any CPU.ActiveCfg = Release|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.ReleaseDev|x86.ActiveCfg = Release|Any CPU
+		{1376CCC3-F504-4D6B-AD46-904F412EA751}.ReleaseDev|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
