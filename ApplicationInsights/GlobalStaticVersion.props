@@ -19,7 +19,8 @@
     -->
     <SemanticVersionDate>2018-11-08</SemanticVersionDate>
 
-    <PreReleaseVersion Condition="'$(PreReleaseVersion)'==''">$([MSBuild]::Divide($([System.DateTime]::Now.Subtract($([System.DateTime]::Parse($(SemanticVersionDate)))).TotalMinutes), 5).ToString('F0'))</PreReleaseVersion>
+    <!-- <PreReleaseVersion Condition="'$(PreReleaseVersion)'==''">$([MSBuild]::Divide($([System.DateTime]::Now.Subtract($([System.DateTime]::Parse($(SemanticVersionDate)))).TotalMinutes), 5).ToString('F0'))</PreReleaseVersion> -->
+    <PreReleaseVersion Condition="'$(PreReleaseVersion)'==''">0</PreReleaseVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(PackageVersion)'==''">
