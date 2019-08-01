@@ -19,13 +19,14 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
     internal class ProgramRepository : IProgramRepository
     {
-        public ProgramRepository(TelimenaPortalContext portalContext)
+        public ProgramRepository(TelimenaPortalContext portalContext, TelimenaTelemetryContext telemetryContext)
         {
             this.portalContext = portalContext;
+            this.telemetryContext = telemetryContext;
         }
 
         private readonly TelimenaPortalContext portalContext;
-
+        private readonly TelimenaTelemetryContext telemetryContext;
 
         public void Add(Program objectToAdd)
         {
@@ -80,9 +81,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         }
         public void Remove(Program program)
         {
-            //this.telemetryContext.ViewTelemetryDetails.RemoveRange(this.telemetryContext.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id));
-            //this.telemetryContext.ViewTelemetrySummaries.RemoveRange(this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id));
-            //this.telemetryContext.Views.RemoveRange(this.telemetryContext.Views.Where(x => x.ProgramId == program.Id));
+            this.telemetryContext.ViewTelemetryDetails.RemoveRange(this.telemetryContext.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id));
+            this.telemetryContext.ViewTelemetrySummaries.RemoveRange(this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id));
+            this.telemetryContext.Views.RemoveRange(this.telemetryContext.Views.Where(x => x.ProgramId == program.Id));
+            this.telemetryContext.TelemetryRootObjects.RemoveRange(this.telemetryContext.TelemetryRootObjects.Where(x => x.ProgramId == program.Id));
 
             this.portalContext.Versions.RemoveRange(this.portalContext.Versions.Where(x => x.ProgramAssembly.ProgramId == program.Id));
             this.portalContext.ProgramAssemblies.RemoveRange(this.portalContext.ProgramAssemblies.Where(x => x.ProgramId == program.Id));

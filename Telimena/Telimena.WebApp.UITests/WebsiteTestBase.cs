@@ -251,7 +251,9 @@ namespace Telimena.TestUtilities.Base
 #if DEBUG
                     return true;
 #endif
+#pragma warning disable 162
                     return GetSetting<bool>(ConfigKeys.ShowBrowser);
+#pragma warning restore 162
                 }
                 catch
                 {

@@ -39,11 +39,12 @@ namespace Telimena.Tests
         protected internal Guid  PrgPkg_5 = Guid.Parse("3fb61c5b-ece2-4b60-b659-85d94bfb39c0");
         protected internal Guid  PrgPkg_6 = Guid.Parse("871ae68f-63d2-4105-b2bb-9d2c28cf6523");
         private List<Guid> toolkitPackageGuids;
+        private readonly TelimenaTelemetryContext telemetryContext = null;
 
         private IProgramsUnitOfWork GetUnit(List<ProgramUpdatePackageInfo> list, List<TelimenaPackageInfo> toolkitPackages = null)
         {
             UpdatePackageRepository pkgRepo = new UpdatePackageRepository(this.Context, new AssemblyStreamVersionReader());
-            ProgramRepository prgRepo = new ProgramRepository(this.Context);
+            ProgramRepository prgRepo = new ProgramRepository(this.Context, null);
             ProgramPackageRepository prgPkgRepo = new ProgramPackageRepository(this.Context, new AssemblyStreamVersionReader());
             prgPkgRepo.Add(new ProgramPackageInfo("Prg.zip", this.Prg_1, "1.0.0.0", 2222, "1.0.0.0"));
             prgRepo.Add(new Program("prg", this.Program1Key) { Id = this.Prg_1 });
@@ -61,7 +62,7 @@ namespace Telimena.Tests
 
 
 
-            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, reader.Object);
+            ProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, telemetryContext, reader.Object);
             return unit;
         }
 
@@ -85,10 +86,10 @@ namespace Telimena.Tests
         [Test]
         public void NoPackagesAvailable_ShouldNotThrowErrors()
         {
-            ProgramRepository prgRepo = new ProgramRepository(this.Context);
+            ProgramRepository prgRepo = new ProgramRepository(this.Context, null);
             prgRepo.Add(new Program("prg", this.Program1Key) { Id = this.Prg_1 });
             this.Context.SaveChanges();
-            IProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, TestingUtilities.GetMockVersionReader().Object);
+            IProgramsUnitOfWork unit = new ProgramsUnitOfWork(this.Context, telemetryContext, TestingUtilities.GetMockVersionReader().Object);
 
             ProgramsController sut = new ProgramsController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
             UpdateRequest request = new UpdateRequest(this.Program1Key, new VersionData("", "1.2.0.0"), this.User1Guid, false, "0.7.0.0", "1.0.0.0");
