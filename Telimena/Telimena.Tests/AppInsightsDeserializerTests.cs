@@ -47,10 +47,12 @@ namespace Telimena.Tests
 
             List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
 
+
             Assert.AreEqual(TelemetryItemTypes.Event, mapped.Single().TelemetryItemType);
             Assert.AreEqual("AValue", mapped[0].Properties["AKey"]);
             Assert.AreEqual("AValue2", mapped[0].Properties["AKey2"]);
-            Assert.AreEqual(2, mapped[0].Properties.Count);
+            Assert.AreEqual(3, mapped[0].Properties.Count);
+            Assert.IsNotNull(mapped[0].Properties.SingleOrDefault(x=>x.Value == this.testTelemetryKey.ToString()));
         }
 
         [Test]
@@ -103,7 +105,9 @@ namespace Telimena.Tests
 
             Assert.AreEqual(TelemetryItemTypes.View, mapped.Single().TelemetryItemType);
             Assert.AreEqual("AValue", mapped[0].Properties["AKey"]);
-            Assert.AreEqual(1, mapped[0].Properties.Count);
+            Assert.AreEqual(2, mapped[0].Properties.Count);
+            Assert.IsNotNull(mapped[0].Properties.SingleOrDefault(x => x.Value == this.testTelemetryKey.ToString()));
+
         }
 
 

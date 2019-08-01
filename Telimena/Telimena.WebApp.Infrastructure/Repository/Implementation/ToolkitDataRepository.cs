@@ -48,7 +48,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             }
 
             data.TelimenaPackageInfo.UpdateContentAndMetadata(isBeta, introducesBreakingChanges, actualVersion, fileStream.Length);
-            await fileSaver.SaveFile(data.TelimenaPackageInfo, fileStream, this.containerName).ConfigureAwait(false);
+            await fileSaver.SaveFile(data.TelimenaPackageInfo, fileStream, this.containerName, data.PublicId).ConfigureAwait(false);
 
             return data;
         }

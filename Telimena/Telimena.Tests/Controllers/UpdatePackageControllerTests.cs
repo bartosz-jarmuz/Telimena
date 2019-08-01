@@ -175,6 +175,134 @@ namespace Telimena.Tests
 
         }
 
+
+        [Test]
+        public void Standalone_NewestIsBeta_ShouldIncludeNonBetaAsWell()
+        {
+            IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
+            {
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = false,    PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = false,   PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,   PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true,   PublicId = this.PrgPkg_4}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,   PublicId = this.PrgPkg_6}
+            });
+
+            ProgramsController sut = new ProgramsController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            UpdateRequest request = new UpdateRequest(this.Program1Key, new VersionData("2.0.0.0", "1.2.0.0"), this.User1Guid, false, "2.0.0.0", "1.0.0.0");
+
+
+            //beta is not accepted, therefore should return only one package
+            UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.IsNull(result.Exception);
+
+            Assert.AreEqual(1, result.UpdatePackages.Count());
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual($"api/v1/update-packages/{this.PrgPkg_2}", result.UpdatePackages[0].DownloadUrl);
+
+            //beta is accepted, however it should still return the info about latest 'stable' release as well
+            request.AcceptBeta = true;
+            result = sut.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.IsNull(result.Exception);
+
+            Assert.AreEqual(2, result.UpdatePackages.Count());
+            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual($"api/v1/update-packages/{this.PrgPkg_6}", result.UpdatePackages[0].DownloadUrl);
+
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[1].PublicId);
+            //no update for toolkit, because its already maxed
+            Assert.IsFalse(result.UpdatePackages.Any(x => x.FileName == "Telimena.Client.zip"));
+
+        }
+
+        [Test]
+        public void NonStandalone_NewestIsBeta_ShouldIncludeNonBetaAsWell()
+        {
+            IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
+            {
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,    PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = false,   PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,   PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,   PublicId = this.PrgPkg_4}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true,   PublicId = this.PrgPkg_6}
+            });
+
+            ProgramsController sut = new ProgramsController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            UpdateRequest request = new UpdateRequest(this.Program1Key, new VersionData("2.0.0.0", "1.2.0.0"), this.User1Guid, false, "2.0.0.0", "1.0.0.0");
+
+
+            //beta is not accepted, therefore should return only one package
+            UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.IsNull(result.Exception);
+
+            Assert.AreEqual(1, result.UpdatePackages.Count());
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual($"api/v1/update-packages/{this.PrgPkg_2}", result.UpdatePackages[0].DownloadUrl);
+
+            //beta is accepted, however it should still return the info about latest 'stable' release as well
+            request.AcceptBeta = true;
+            result = sut.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.IsNull(result.Exception);
+
+            Assert.AreEqual(3, result.UpdatePackages.Count());
+            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual($"api/v1/update-packages/{this.PrgPkg_6}", result.UpdatePackages[0].DownloadUrl);
+
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[1].PublicId);
+            Assert.AreEqual($"api/v1/update-packages/{this.PrgPkg_4}", result.UpdatePackages[1].DownloadUrl);
+
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].PublicId);
+            Assert.AreEqual($"api/v1/update-packages/{this.PrgPkg_2}", result.UpdatePackages[2].DownloadUrl);
+
+            //no update for toolkit, because its already maxed
+            Assert.IsFalse(result.UpdatePackages.Any(x => x.FileName == "Telimena.Client.zip"));
+
+        }
+
+
+
+        [Test]
+        public void NonStandalone_AllStandalonesAreBeta_ShouldReturnNonStandaloneStableAsWell()
+        {
+            IProgramsUnitOfWork unit = this.GetUnit(new List<ProgramUpdatePackageInfo>
+            {
+                  new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.1", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = false,    PublicId = this.PrgPkg_1}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.2", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = false,   PublicId = this.PrgPkg_2}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.3", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,   PublicId = this.PrgPkg_3}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.4", 2222, "1.0.0.0") {IsStandalone = true, IsBeta = true,   PublicId = this.PrgPkg_4}
+                , new ProgramUpdatePackageInfo("pkg.zip", this.Prg_1, "1.2.0.6", 2222, "1.0.0.0") {IsStandalone = false, IsBeta = true,   PublicId = this.PrgPkg_6}
+            });
+
+            ProgramsController sut = new ProgramsController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
+            UpdateRequest request = new UpdateRequest(this.Program1Key, new VersionData("2.0.0.0", "1.2.0.0"), this.User1Guid, false, "2.0.0.0", "1.0.0.0");
+
+
+            UpdateResponse result = sut.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.IsNull(result.Exception);
+
+            Assert.AreEqual(2, result.UpdatePackages.Count());
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[0].PublicId);
+            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[1].PublicId);
+
+            //beta is accepted, however it should still return the info about latest 'stable' release as well
+            request.AcceptBeta = true;
+            result = sut.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.IsNull(result.Exception);
+
+            Assert.AreEqual(4, result.UpdatePackages.Count());
+            Assert.AreEqual(this.PrgPkg_6, result.UpdatePackages[0].PublicId);
+
+            Assert.AreEqual(this.PrgPkg_4, result.UpdatePackages[1].PublicId);
+
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[2].PublicId);
+
+            Assert.AreEqual(this.PrgPkg_1, result.UpdatePackages[3].PublicId);
+
+            //no update for toolkit, because its already maxed
+            Assert.IsFalse(result.UpdatePackages.Any(x => x.FileName == "Telimena.Client.zip"));
+
+        }
+
         [Test]
         public void Beta_TestSimplestScenario()
         {
@@ -204,13 +332,17 @@ namespace Telimena.Tests
 
             request.AcceptBeta = true;
             result = sut.UpdateCheck(request).GetAwaiter().GetResult();
+            Assert.AreEqual(2, result.UpdatePackages.Count);
+
             Assert.AreEqual(this.PrgPkg_3, result.UpdatePackages[0].PublicId);
             Assert.AreEqual("api/v1/update-packages/0d9dd99e-242b-4b6c-ba24-1ded4bb9d87d", result.UpdatePackages[0].DownloadUrl);
-            Assert.AreEqual(1, result.UpdatePackages.Count);
+
+            Assert.AreEqual(this.PrgPkg_2, result.UpdatePackages[1].PublicId); //this one should be returned as well - because the user might decide to skip the beta version
+
 
             //return the version that is higher than max supported, but does not introduce breaking changes
             //todo - toolkit updating temporarily disabled - update package requires toolkit presence -  Assert.AreEqual("1.2.0.0", result.UpdatePackages.Single(x => x.FileName == "Telimena.Client.zip"
-              //                                                           && x.DownloadUrl.Contains($"api/v1/toolkit/")).Version);
+            //                                                           && x.DownloadUrl.Contains($"api/v1/toolkit/")).Version);
 
         }
 

@@ -2064,6 +2064,10 @@
       <Project>{45F7FC02-25D4-4F2A-93B5-FCCBC7B608A4}</Project>
       <Name>Telimena.Portal.Api.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Telimena.Portal.Utils\Telimena.Portal.Utils.csproj">
+      <Project>{C8EC1E3E-60DF-4F18-9EA7-42D239C0576D}</Project>
+      <Name>Telimena.Portal.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Telimena.WebApp.Core\Telimena.WebApp.Core.csproj">
       <Project>{ffd85253-874c-41cb-9242-9267bfa3647b}</Project>
       <Name>Telimena.WebApp.Core</Name>

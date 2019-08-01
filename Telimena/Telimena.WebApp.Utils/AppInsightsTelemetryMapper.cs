@@ -45,6 +45,8 @@ namespace Telimena.WebApp.Utils
                 Sequence = appInsightsTelemetry.Seq,
                 LogMessage = appInsightsTelemetry.Data?.BaseData?.Message
             };
+            MapTelemetryKey(appInsightsProperties, item);
+
             MapLogLevel(appInsightsTelemetry, item);
 
             MapExceptionProperties(appInsightsTelemetry, item);
@@ -52,6 +54,24 @@ namespace Telimena.WebApp.Utils
             HandleNullPropertiesError(appInsightsTelemetry, appInsightsProperties, item);
 
             return item;
+        }
+
+        private static void MapTelemetryKey(Dictionary<string, string> appInsightsProperties, TelemetryItem item)
+        {
+            try
+            {
+                KeyValuePair<string, string> key =
+                    appInsightsProperties.FirstOrDefault(x => x.Key == DefaultToolkitNames.TelemetryKeyKey);
+                if (key.Value != null)
+                {
+                    item.TelemetryKey = Guid.Parse(key.Value);
+                }
+            }
+            catch 
+            {
+               //
+            }
+            
         }
 
         private static void HandleNullPropertiesError(AppInsightsTelemetry appInsightsTelemetry

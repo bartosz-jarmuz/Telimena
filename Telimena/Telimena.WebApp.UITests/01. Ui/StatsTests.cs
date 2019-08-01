@@ -8,10 +8,10 @@ using SharedLogic;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using Telimena.TestUtilities.Base;
+using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.UiStrings;
-using Telimena.WebApp.UITests.Base;
-using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
@@ -20,7 +20,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 {
     [TestFixture]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public partial class _1_UiTests : UiTestBase
+    public partial class _1_WebsiteTests : WebsiteTestBase
     {
         private Task<DateTime> GetLatestUsageFromTable()
         {
@@ -80,7 +80,11 @@ namespace Telimena.WebApp.UITests._01._Ui
             var second = this.LaunchTestsAppAndGetResult<TelemetryItem>(app, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, viewName: viewName);
 
             DateTime current = await this.GetLatestUsageFromTable().ConfigureAwait(false);
-
+            if (current == previous)
+            {
+                await Task.Delay(2000);
+            }
+            current = await this.GetLatestUsageFromTable().ConfigureAwait(false);
             Assert.IsTrue(current > previous, $"current {current} is not larger than previous {previous}");
         }
     }

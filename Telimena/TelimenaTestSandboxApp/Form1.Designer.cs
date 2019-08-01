@@ -68,6 +68,7 @@
             this.label13 = new System.Windows.Forms.Label();
             this.apiKeyTextBox = new System.Windows.Forms.TextBox();
             this.throwErrorButton = new System.Windows.Forms.Button();
+            this.secondInstanceEventButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -92,6 +93,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.secondInstanceEventButton);
             this.groupBox1.Controls.Add(this.sendLog_Button);
             this.groupBox1.Controls.Add(this.sendEvent_Button);
             this.groupBox1.Controls.Add(this.reportError_Button);
@@ -467,6 +469,16 @@
             this.throwErrorButton.UseVisualStyleBackColor = true;
             this.throwErrorButton.Click += new System.EventHandler(this.throwErrorButton_Click);
             // 
+            // secondInstanceEventButton
+            // 
+            this.secondInstanceEventButton.Location = new System.Drawing.Point(476, 40);
+            this.secondInstanceEventButton.Name = "secondInstanceEventButton";
+            this.secondInstanceEventButton.Size = new System.Drawing.Size(75, 50);
+            this.secondInstanceEventButton.TabIndex = 15;
+            this.secondInstanceEventButton.Text = "Second instance event";
+            this.secondInstanceEventButton.UseVisualStyleBackColor = true;
+            this.secondInstanceEventButton.Click += new System.EventHandler(this.secondInstanceEventButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -541,6 +553,7 @@
         private System.Windows.Forms.Button throwErrorButton;
         private System.Windows.Forms.Button sendLog_Button;
         private System.Windows.Forms.Button sendEvent_Button;
+        private System.Windows.Forms.Button secondInstanceEventButton;
     }
 }
 

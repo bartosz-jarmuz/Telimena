@@ -9,7 +9,7 @@ namespace Telimena.WebApp.Core.DTO
     /// </summary>
     public class TelemetryItem
     {
-     
+        
 
         /// <summary>
         /// 
@@ -18,6 +18,7 @@ namespace Telimena.WebApp.Core.DTO
         {
         }
 
+        public Guid TelemetryKey { get; set; }
 
         public List<ExceptionInfo> Exceptions { get; set; }= new List<ExceptionInfo>();
 

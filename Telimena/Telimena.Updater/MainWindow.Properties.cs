@@ -10,7 +10,7 @@ namespace Telimena.Updater
     {
         public bool ReleaseNotesVisible
         {
-            get => this.releaseNotesVisible;
+            get { return this.releaseNotesVisible; }
             set
             {
                 if (value == this.releaseNotesVisible) return;
@@ -26,7 +26,7 @@ namespace Telimena.Updater
 
         public string ReleaseNotes
         {
-            get => this.releaseNotes;
+            get { return this.releaseNotes; }
             set
             {
                 if (this.releaseNotes == value)
@@ -40,7 +40,7 @@ namespace Telimena.Updater
 
         public string UpdateVersionInfoLabel
         {
-            get => this.updateVersionInfoLabel;
+            get { return this.updateVersionInfoLabel; }
             set
             {
                 if (value == this.updateVersionInfoLabel)
@@ -55,7 +55,7 @@ namespace Telimena.Updater
 
         public string TitleLabel
         {
-            get => this.titleLabel;
+            get { return this.titleLabel; }
             set
             {
                 if (value == this.titleLabel) return;
@@ -63,7 +63,6 @@ namespace Telimena.Updater
                 this.OnPropertyChanged();
             }
         }
-
 
         public UpdateInstructions Instructions { get; set; }
 

@@ -74,7 +74,8 @@ namespace Telimena.Tests
 
         }
        
-        public static void AssertUpdateResponse(List<TelemetrySummary> response, TelemetryRootObject prg, ClientAppUser usr, int expectedSummariesCount, string funcName = null, Guid funcId = default(Guid))
+        public static void AssertUpdateResponse(List<TelemetrySummary> response, TelemetryRootObject prg, ClientAppUser usr,
+            int expectedSummariesCount, string funcName = null, Guid funcId = default(Guid))
         {
             Assert.AreEqual(expectedSummariesCount, response.Count);
             Assert.AreEqual(1, response.Count(x => x.GetComponent().Name == funcName));
@@ -94,16 +95,23 @@ namespace Telimena.Tests
             AccountUnitOfWork unit = new AccountUnitOfWork(null, manager, context);
 
 
-            TelimenaUser user = new TelimenaUser(caller + "_" + email, caller + "_" + (displayName ?? email.ToUpper()));
-           await  unit.RegisterUserAsync(user, "P@ssword", TelimenaRoles.Developer).ConfigureAwait(false);
-
+            TelimenaUser user = new TelimenaUser(caller + "" + email, caller + "" + (displayName ?? email.ToUpper()));
+      var result =     await  unit.RegisterUserAsync(user, "P@ssword", TelimenaRoles.Developer).ConfigureAwait(false);
+      if (!result.Item1.Succeeded)
+      {
+          var msg = result.Item1.Errors?.FirstOrDefault();
+          if (msg != null && !msg.Contains("is already taken."))
+          {
+              Assert.Fail($"Failed to register user {user.UserName}. Error: {result.Item1.Errors?.FirstOrDefault()}");
+            }
+        }
             unit.Complete();
             return user;
         }
 
         public static string GetName(string name, [CallerMemberName] string methodIdentifier = "")
         {
-            return $"{methodIdentifier}_{name}";
+            return $"{methodIdentifier}{name}";
         }
 
         public static void GetProgramAndUser(TelemetryUnitOfWork unit, string programName, string userName, out TelemetryRootObject prg, out ClientAppUser usr
@@ -123,7 +131,8 @@ namespace Telimena.Tests
             return context.ClientAppUsers.FirstOrDefault(x => x.UserIdentifier == usrName);
         }
 
-        public static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(TelimenaPortalContext portalContext, TelimenaTelemetryContext telemetryContext, int prgCount, string getName, string[] userNames, string devName = "Some Developer", string devEmail = "some@dev.dev", [CallerMemberName] string caller = "")
+        public static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(TelimenaPortalContext portalContext, TelimenaTelemetryContext telemetryContext, 
+            int prgCount, string getName, string[] userNames, string devName = "SomeDeveloper", string devEmail = "some@dev.dev", [CallerMemberName] string caller = "")
         {
             Mock<HttpRequestContext> requestContext =
                 await SetupUserIntoRequestContext(portalContext, devName, devEmail).ConfigureAwait(false);
@@ -147,7 +156,8 @@ namespace Telimena.Tests
         }
 
 
-        public static async Task<Mock<HttpRequestContext>> SetupUserIntoRequestContext(TelimenaPortalContext context, string devName, string devEmail, [CallerMemberName] string caller = "")
+        public static async Task<Mock<HttpRequestContext>> SetupUserIntoRequestContext(TelimenaPortalContext context, string devName, string devEmail,
+            [CallerMemberName] string caller = "")
         {
             TelimenaUser teliUsr = context.Users.FirstOrDefault(x => x.Email == devEmail);
             if (teliUsr == null)
@@ -164,7 +174,8 @@ namespace Telimena.Tests
             return requestContext;
         }
 
-        private static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(RegisterProgramController programsController, int prgCount, string prgName, IEnumerable<string> userNames)
+        private static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(RegisterProgramController programsController, int prgCount, 
+            string prgName, IEnumerable<string> userNames)
         {
             List<KeyValuePair<string, Guid>> list = new List<KeyValuePair<string, Guid>>();
             IEnumerable<string> enumerable = userNames as string[] ?? userNames.ToArray();

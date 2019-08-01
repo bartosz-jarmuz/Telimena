@@ -15,12 +15,13 @@ namespace Telimena.WebApp.Core.Models.Portal
             this.ProgramId = programId;
             this.Version = version;
             this.SupportedToolkitVersion = supportedToolkitVersion;
+            this.IsStandalone = true; //for now there are no 'partial' updates - all are standalone
         }
       
         public int Id { get; set; } 
 
         [Index(IsUnique = true, IsClustered =  false)]
-        public Guid PublicId { get; set; } = Guid.NewGuid();
+        public override Guid PublicId { get; set; } = Guid.NewGuid();
 
 
         public int ProgramId { get; set; }

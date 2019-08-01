@@ -4,9 +4,9 @@ using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using Telimena.TestUtilities.Base;
+using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.UiStrings;
-using Telimena.WebApp.UITests.Base;
-using Telimena.WebApp.UITests.Base.TestAppInteraction;
 using TelimenaClient;
 using TelimenaClient.Model;
 
@@ -19,7 +19,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 #if !DEBUG
     [Timeout(1 * 60 * 1000)]
 #endif
-    public partial class _1_UiTests : UiTestBase
+    public partial class _1_WebsiteTests : WebsiteTestBase
     {
 
         private void UploadUpdater(string fileName, string internalName, string exeName)

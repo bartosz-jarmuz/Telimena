@@ -2,14 +2,13 @@
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
+using Telimena.TestUtilities.Base;
 using Telimena.WebApp.UiStrings;
-using Telimena.WebApp.UITests.Base;
-using Telimena.WebApp.UITests.Base.TestAppInteraction;
 
 namespace Telimena.WebApp.UITests._01._Ui
 {
     [TestFixture]
-    public partial class _3_TeamsTests: UiTestBase
+    public partial class _3_TeamsTests: WebsiteTestBase
     {
 //        [Test]
         public void RegisterTestUsers()

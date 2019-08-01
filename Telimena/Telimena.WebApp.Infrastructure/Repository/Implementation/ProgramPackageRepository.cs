@@ -28,23 +28,20 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramPackageInfo> StorePackageAsync(Program program, Stream fileStream, string packageFileName, IFileSaver fileSaver)
         {
-            string actualVersion = await this.versionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream, packageFileName, true).ConfigureAwait(false);
-            fileStream.Position = 0;
-            ObjectValidator.Validate(() => Version.TryParse(actualVersion, out Version _)
-                , new InvalidOperationException($"[{actualVersion}] is not a valid version string"));
+         
+            var versions = await
+                this.versionReader.GetVersionsFromStream(packageFileName, fileStream
+                    , program.PrimaryAssembly.GetFileName()).ConfigureAwait(false);
 
-            string actualToolkitVersion = await this.versionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, packageFileName, false).ConfigureAwait(false);
-            fileStream.Position = 0;
+
             fileStream = await Utilities.ZipTheStreamIfNeeded(packageFileName, fileStream).ConfigureAwait(false);
 
             ProgramPackageInfo pkg = await this.telimenaPortalContext.ProgramPackages.Where(x => x.ProgramId == program.Id
-                                                                                                && x.Version == actualVersion
-#pragma warning disable 618
-                                                                                                && x.SupportedToolkitVersion == actualToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
-#pragma warning restore 618
+                                                                                                && x.Version == versions.appVersion
+                                                                                                && x.SupportedToolkitVersion == versions.toolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
             if (pkg == null)
             {
-                pkg = new ProgramPackageInfo(packageFileName, program.Id, actualVersion, fileStream.Length, actualToolkitVersion);
+                pkg = new ProgramPackageInfo(packageFileName, program.Id, versions.appVersion, fileStream.Length, versions.toolkitVersion);
                 this.telimenaPortalContext.ProgramPackages.Add(pkg);
             }
             else
@@ -52,7 +49,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 pkg.UploadedDate = DateTimeOffset.UtcNow;
             }
 
-            await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName, program.TelemetryKey).ConfigureAwait(false);
 
             return pkg;
         }

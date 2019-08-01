@@ -2,6 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Telimena.Portal.Utils;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Security;
@@ -59,6 +60,19 @@ namespace Telimena.WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> RenameTeam(string newName)
         {
+            if (!newName.IsUrlFriendly())
+            {
+                var properName = newName.MakeUrlFriendly();
+                var properNameHint = "";
+                if (properName != null)
+                {
+                    properNameHint = $" Proposed name: {properName}";
+                }
+
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, $"Team name should only contain letters and numbers or hyphens. " +
+                                                                         $"Also it needs to begin and end with a letter or digit.{properNameHint}");
+            }
+
             var existingTeam = await this.unitOfWork.Developers.FirstOrDefaultAsync(x => x.Name == newName).ConfigureAwait(false);
             if (existingTeam != null)
             {

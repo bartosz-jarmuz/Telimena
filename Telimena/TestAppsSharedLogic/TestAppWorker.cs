@@ -64,7 +64,9 @@ namespace SharedLogic
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));
 
             UpdateInstallationResult installationResult = telimena.Update.InstallUpdates(result, takeBeta);
+            Console.WriteLine($"Finished update installation. Exception: {installationResult.Exception}...");
 
+            Console.WriteLine(JsonConvert.SerializeObject(installationResult, settings));
 
             Console.WriteLine($"Finished {MethodBase.GetCurrentMethod().Name}");
         }

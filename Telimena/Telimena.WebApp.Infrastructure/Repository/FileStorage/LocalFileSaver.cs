@@ -16,9 +16,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.FileStorage
 
         private string RootFolder { get; }
 
-        public async Task SaveFile(IRepositoryFile repositoryFile, Stream fileStream, string containerName)
+        public async Task SaveFile(IRepositoryFile repositoryFile, Stream fileStream, string containerName, Guid programIdentifier)
         {
-            string fileLocation = Path.Combine(this.RootFolder, "FileRepo", containerName, Guid.NewGuid().ToString(), repositoryFile.FileName);
+            string fileLocation = Path.Combine(this.RootFolder, "FileRepo", containerName, 
+                programIdentifier.ToString(), 
+                repositoryFile.PublicId.ToString(), repositoryFile.FileName);
             Directory.CreateDirectory(Path.GetDirectoryName(fileLocation));
             using (Stream file = File.Create(fileLocation))
             {

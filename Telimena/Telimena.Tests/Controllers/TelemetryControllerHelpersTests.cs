@@ -31,8 +31,8 @@ namespace Telimena.Tests
         [Test]
         public async Task TestRegisterApp()
         {
-            string methodName = MethodInfo.GetCurrentMethod().Name;
-            Mock<HttpRequestContext> requestContext = await Helpers.SetupUserIntoRequestContext(this.PortalContext, "testDevTeam", "testDev@Email", nameof(TestRegisterApp)).ConfigureAwait(false);
+            Mock<HttpRequestContext> requestContext = await Helpers.SetupUserIntoRequestContext(this.PortalContext, "testDevTeam", "testDev@Email", 
+                nameof(TestRegisterApp)).ConfigureAwait(false);
 
             RegisterProgramUnitOfWork unit = new RegisterProgramUnitOfWork(this.TelemetryContext, this.PortalContext);
 
@@ -68,7 +68,7 @@ namespace Telimena.Tests
         }
 
         [Test]
-        public async Task Test_AuthUserId()
+        public async Task TestAuthUserId()
         {
             //prepare context
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.TelemetryContext, this.PortalContext, new AssemblyStreamVersionReader());
@@ -165,7 +165,7 @@ namespace Telimena.Tests
         }
 
         [Test]
-        public async Task TestEvents_VariousUsers()
+        public async Task TestEventsVariousUsers()
         {
             TelemetryUnitOfWork unit = new TelemetryUnitOfWork(this.TelemetryContext,this.PortalContext, new AssemblyStreamVersionReader());
             List<KeyValuePair<string, Guid>> apps = await Helpers.SeedInitialPrograms(this.PortalContext, this.TelemetryContext, 2, "TestApp", new[] { "Billy Jean", "Jack Black" });

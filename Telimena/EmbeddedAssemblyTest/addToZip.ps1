@@ -10,7 +10,7 @@ $Assemblyversion =  $AssemblyName.version
 Write-Host "App Path: "  $TargetPath "   FileName: $fileName, Version: $Assemblyversion" 
 Write-Host
 
-$testAppsFolder = "$SolutionDir\Telimena.WebApp.UITests\02. IntegrationTests\Apps"
+$testAppsFolder = "$SolutionDir\Telimena.WebApp.AppIntegrationTests\Apps"
 $zipPath = "$testAppsFolder\EmbeddedAssemblyTestApp.zip"
 
 

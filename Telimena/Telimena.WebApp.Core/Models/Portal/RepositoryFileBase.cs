@@ -36,5 +36,6 @@ namespace Telimena.WebApp.Core.Models.Portal
 
         public string FileLocation { get; set; }
         public long FileSizeBytes { get;  set; }
+        public abstract Guid PublicId { get; set; }
     }
 }

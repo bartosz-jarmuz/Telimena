@@ -36,16 +36,17 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string packageName, Stream fileStream, string supportedToolkitVersion, bool isBeta, string releaseNotes, IFileSaver fileSaver)
         {
-            string actualVersion = await this.streamVersionReader.GetVersionFromPackage(program.PrimaryAssembly.GetFileName(), fileStream,  packageName, true).ConfigureAwait(false);
-            fileStream.Position = 0;
+            var versions = await 
+                this.streamVersionReader.GetVersionsFromStream(packageName, fileStream
+                    , program.PrimaryAssembly.GetFileName()).ConfigureAwait(false);
 
-            string actualToolkitVersion = await this.streamVersionReader.GetVersionFromPackage(DefaultToolkitNames.TelimenaAssemblyName, fileStream, packageName, false).ConfigureAwait(false);
-            fileStream.Position = 0;
+
+
             fileStream = await Utilities.ZipTheStreamIfNeeded(packageName, fileStream).ConfigureAwait(false);
 
-            if (actualToolkitVersion != null)
+            if (versions.toolkitVersion!= null)
             {
-                supportedToolkitVersion = actualToolkitVersion;
+                supportedToolkitVersion = versions.toolkitVersion;
             }
 
             ObjectValidator.Validate(() => Version.TryParse(supportedToolkitVersion, out Version _)
@@ -54,19 +55,19 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 , new ArgumentException($"There is no toolkit package with version [{supportedToolkitVersion}]"));
 
             ProgramUpdatePackageInfo pkg = await this.TelimenaPortalContext.UpdatePackages.Where(x => x.ProgramId == program.Id
-                                                                                                && x.Version == actualVersion
+                                                                                                && x.Version == versions.appVersion
 #pragma warning disable 618
                                                                                                 && x.SupportedToolkitVersion == supportedToolkitVersion).OrderByDescending(x => x.Id).FirstOrDefaultAsync().ConfigureAwait(false);
 #pragma warning restore 618
             if (pkg == null)
             {
-                pkg = new ProgramUpdatePackageInfo(packageName, program.Id, actualVersion, fileStream.Length, supportedToolkitVersion);
+                pkg = new ProgramUpdatePackageInfo(packageName, program.Id, versions.appVersion, fileStream.Length, supportedToolkitVersion);
                 this.TelimenaPortalContext.UpdatePackages.Add(pkg);
             }
 
             pkg.UpdateContentAndMetadata(isBeta, releaseNotes);
          
-            await fileSaver.SaveFile(pkg, fileStream, this.containerName).ConfigureAwait(false);
+            await fileSaver.SaveFile(pkg, fileStream, this.containerName, program.TelemetryKey).ConfigureAwait(false);
 
             return pkg;
         }
