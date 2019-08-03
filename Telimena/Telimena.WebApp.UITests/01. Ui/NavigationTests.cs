@@ -49,7 +49,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 //api should be last
                 this.TryFind(By.Id(Strings.Id.ApiDocsLink)).Click();
                 var apiInfo = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("api_info")));
-                Assert.IsTrue(apiInfo.Text.Contains("Telimena API"));
+                Assert.IsTrue(apiInfo.Text.Contains("Telimena API"), "apiInfo.Text.Contains('Telimena API')");
             }
             catch (Exception ex)
             {
@@ -63,7 +63,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
                 var elms = table.FindElements(By.TagName("tr"));
-                Assert.IsTrue(elms.Count > 1);
+                Assert.IsTrue(elms.Count > 1, "View usage table does not have at least one row");
 
             },TimeSpan.FromMilliseconds(250), 8).GetAwaiter().GetResult();
             var rows = table.FindElements(By.TagName("tr"));
