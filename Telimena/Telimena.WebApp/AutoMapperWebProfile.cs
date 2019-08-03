@@ -42,7 +42,8 @@ namespace Telimena.WebApp
             this.CreateMap<ProgramPackageInfo, ProgramPackageInfoDto>()
                 .ForMember(x => x.Id, o => o.MapFrom(y => y.PublicId));
 
-            this.CreateMap<Audit, AuditViewModel>();
+            this.CreateMap<Audit, AuditViewModel>()
+                .ForMember(x => x.Application, o => o.Ignore());
         }
     }
 }
