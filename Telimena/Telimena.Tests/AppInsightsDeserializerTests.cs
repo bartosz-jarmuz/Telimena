@@ -24,8 +24,6 @@ using TelimenaContextPropertyKeys = TelimenaClient.Model.TelimenaContextProperty
 
 namespace Telimena.Tests
 {
-    
-
     [TestFixture]
     public class AppInsightsDeserializerTests
     {
@@ -118,7 +116,7 @@ namespace Telimena.Tests
         {
             byte[] serialized = JsonSerializer.Serialize(sentTelemetry, false);
             var items = AppInsightsDeserializer.Deserialize(serialized, false).ToList();
-            var mapped = AppInsightsTelemetryMapper.Map(items).ToList();
+            var mapped = TelemetryMapper.Map(items).ToList();
             return mapped;
         }
 
@@ -139,7 +137,7 @@ namespace Telimena.Tests
 
 
             var items = AppInsightsDeserializer.Deserialize(serialized, true).ToList();
-            var mapped = AppInsightsTelemetryMapper.Map(items).ToList();
+            var mapped = TelemetryMapper.Map(items).ToList();
 
             for (int index = 0; index < sentTelemetry.Count; index++)
             {

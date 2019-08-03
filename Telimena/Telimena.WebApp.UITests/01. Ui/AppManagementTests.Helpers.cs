@@ -11,6 +11,7 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using Telimena.TestUtilities.Base;
 using Telimena.TestUtilities.Base.TestAppInteraction;
+using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.UiStrings;
 using TelimenaClient;
 using TelimenaClient.Model;

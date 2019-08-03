@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using SharedLogic;
 using Telimena.TestUtilities.Base.TestAppInteraction;
+using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Messages;
 using TelimenaClient.Model;
 
@@ -230,7 +231,17 @@ namespace Telimena.TestUtilities.Base
             return JsonConvert.DeserializeObject<TelemetryQueryResponse>(content);
         }
 
-     
+
+
+        public async Task SendBasicTelemetry(Guid guid, BasicTelemetryItem telemetry)
+        {
+            HttpResponseMessage response = await this.HttpClient.PostAsJsonAsync($"{this.BaseUrl.TrimEnd('/')}/api/v1/telemetry/{guid.ToString()}/basic", telemetry).ConfigureAwait(false);
+            var text = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            Console.WriteLine(text);
+            response.EnsureSuccessStatusCode();
+        }
+
+
         protected ITestEngine TestEngine { get; set; }
 
         protected string BaseUrl => this.TestEngine.BaseUrl;
