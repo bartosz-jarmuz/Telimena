@@ -193,6 +193,7 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
@@ -317,7 +318,7 @@
     <Compile Include="Models\Account\LoginViewModel.cs" />
     <Compile Include="Models\Account\ChangePasswordViewModel.cs" />
     <Compile Include="Models\Account\RegisterViewModel.cs" />
-    <Compile Include="Models\AdminDashboard\AdminDashboardViewModel.cs" />
+    <Compile Include="Models\AdminDashboard\AuditViewModel.cs" />
     <Compile Include="Models\Developer\RegisterProgramViewModel.cs" />
     <Compile Include="Models\PortalUsers\PortalUsersViewModel.cs" />
     <Compile Include="Models\PortalUsers\TelimenaUserViewModel.cs" />

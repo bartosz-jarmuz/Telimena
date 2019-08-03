@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
+using System.Web.Caching;
 using System.Web.Mvc;
 using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
@@ -14,9 +16,11 @@ using Telimena.WebApp.Controllers.Developer;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
+using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Core.Models.Telemetry;
 using Telimena.WebApp.Infrastructure.Repository;
 using Telimena.WebApp.Infrastructure.Security;
+using Telimena.WebApp.Models.AdminDashboard;
 
 namespace Telimena.WebApp.Controllers.Admin
 {
@@ -89,10 +93,63 @@ namespace Telimena.WebApp.Controllers.Admin
             }
             List<Audit> data = await query.OrderByMany(sorts).Skip(request.Start).Take(take).ToListAsync().ConfigureAwait(false);
 
-            DataTablesResponse response = DataTablesResponse.Create(request, totalCount, totalCount, data);
+            List<AuditViewModel> model = await this.ToViewModel(data).ConfigureAwait(false);
+
+
+            DataTablesResponse response = DataTablesResponse.Create(request, totalCount, totalCount, model);
 
             return new DataTablesJsonResult(response, JsonRequestBehavior.AllowGet);
 
+        }
+
+        private async Task<List<AuditViewModel>> ToViewModel(List<Audit> data)
+        {
+            List<AuditViewModel> model = new List<AuditViewModel>();
+            foreach (Audit audit in data)
+            {
+                var vm = AutoMapper.Mapper.Map<AuditViewModel>(audit);
+
+                await this.AssignAppNameToAuditRecord(vm).ConfigureAwait(false);
+                model.Add(vm);
+            }
+            return model;
+        }
+
+        internal static Guid? GetGuidFromUrl(string url)
+        {
+            if (url.IndexOf("telemetryKey=", StringComparison.OrdinalIgnoreCase) != -1)
+            {
+                var key = url.Substring(url.LastIndexOf("telemetryKey=", StringComparison.OrdinalIgnoreCase) + "telemetryKey=".Length);
+                if (key.Contains("?"))
+                {
+                    key = key.Remove(key.IndexOf("?"));
+                }
+                if (Guid.TryParse(key, out Guid result))
+                {
+                    return result;
+                }
+
+            }
+            return null;
+        }
+
+        private async Task AssignAppNameToAuditRecord(AuditViewModel viewModel)
+        {
+            var guid = GetGuidFromUrl(viewModel.AreaAccessed);
+            if (guid.HasValue)
+            {
+                string cacheKey = "AppName:" + guid.ToString();
+
+                var appName = (string)MemoryCache.Default.Get(cacheKey);
+                if (string.IsNullOrEmpty(appName))
+                {
+                    Program app = await this.unitOfWork.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == guid.Value).ConfigureAwait(false);
+                    appName = app.Name;
+                    MemoryCache.Default.Add(cacheKey, appName, new CacheItemPolicy() {AbsoluteExpiration = DateTimeOffset.UtcNow.AddDays(1)});
+                }
+
+                viewModel.Application = appName;
+            }
         }
 
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿@using DotNetLittleHelpers
-@using MvcAuditLogger
 @using Telimena.WebApp.Core.DTO
+@using Telimena.WebApp.Models.AdminDashboard
 @using Telimena.WebApp.UiStrings
 @{
     ViewBag.Title = "Admin Dashboard";
@@ -66,32 +66,39 @@
 
                 columns: [
                     {
-                        name: "@nameof(Audit.Timestamp)",
-                        data: "@nameof(Audit.Timestamp).ToLowerFirstChar()",
+                        name: "@nameof(AuditViewModel.Timestamp)",
+                        data: "@nameof(AuditViewModel.Timestamp).ToLowerFirstChar()",
                         render: function(data, type, row, meta) {
                             return toFormattedTimestamp(new Date(data));
                         },
-                        title:"@nameof(Audit.Timestamp)",
+                        title:"@nameof(AuditViewModel.Timestamp)",
                         sortable: true,
                         searchable: false
                     },
                     {
-                        name:  "@nameof(Audit.UserName)",
-                        data:  "@nameof(Audit.UserName).ToLowerFirstChar()",
-                        title: "@nameof(Audit.UserName)",
+                        name:  "@nameof(AuditViewModel.UserName)",
+                        data:  "@nameof(AuditViewModel.UserName).ToLowerFirstChar()",
+                        title: "@nameof(AuditViewModel.UserName)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(Audit.IPAddress)",
+                        name:  "@nameof(AuditViewModel.IPAddress)",
                         data:  "ipAddress",
-                        title: "@nameof(Audit.IPAddress)",
+                        title: "@nameof(AuditViewModel.IPAddress)",
                         sortable: true,
                         searchable: true
                     },
                     {
-                        name:  "@nameof(Audit.AreaAccessed)",
-                        data: "@nameof(Audit.AreaAccessed).ToLowerFirstChar()",
+                        name:  "@nameof(AuditViewModel.Application)",
+                        data: "@nameof(AuditViewModel.Application).ToLowerFirstChar()",
+                        title: "@nameof(AuditViewModel.Application)",
+                        sortable: true,
+                        searchable: true
+                    },
+                    {
+                        name:  "@nameof(AuditViewModel.AreaAccessed)",
+                        data: "@nameof(AuditViewModel.AreaAccessed).ToLowerFirstChar()",
                         render: function(data, type, row, meta){
                             if(type === 'display'){
                                 data = '<a href="' + data + '">' + data + '</a>';
@@ -99,7 +106,7 @@
 
                             return data;
                         },
-                        title: "@nameof(Audit.AreaAccessed)",
+                        title: "@nameof(AuditViewModel.AreaAccessed)",
                         sortable: true,
                         searchable: true
                     },
