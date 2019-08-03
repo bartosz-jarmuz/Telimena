@@ -19,13 +19,13 @@ Write-Host "Version: "  $Value
 
 Write-Host
 
-$testAppsFolder = "$SolutionDir\Telimena.WebApp.UITests\02. IntegrationTests\Apps"
+$testAppsFolder = $SolutionDir+"Telimena.WebApp.AppIntegrationTests\Apps"
 $finalPath = "$testAppsFolder\v$($Value)_$fileName"
 
 Write-Host "Copying: "  $TargetPath "   To: $finalPath" 
 
 
-Copy-Item -Path $TargetPath -Destination $finalPath
+Copy-Item -Path "$TargetPath" -Destination "$finalPath"
 
 
 Write-Host "Copied" $zipPath1
