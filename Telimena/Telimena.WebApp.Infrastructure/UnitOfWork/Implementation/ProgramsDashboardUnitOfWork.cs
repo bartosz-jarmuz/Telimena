@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.Caching;
 using System.Threading.Tasks;
 using Castle.Components.DictionaryAdapter;
 using DataTables.AspNet.Core;
@@ -120,17 +121,17 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return returnData;
         }
 
-        public async Task<DataTable> GetDailyActivityScore(List<Program> programs, DateTime startDate, DateTime endDate)
+        public async Task<DataTable> GetDailyActivityScore(Program program, DateTime startDate, DateTime endDate)
         {
-            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
-            IEnumerable<int> programIds = telemetryRootObjects.Select(x => x.ProgramId);
+            var rootObject = await this.GetTelemetryRootObject(program).ConfigureAwait(false);
 
-            (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false); ;
-            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+            (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(new List<TelemetryRootObject>(){rootObject}).ConfigureAwait(false);
+            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(new List<TelemetryRootObject>(){rootObject}).ConfigureAwait(false);
 
-            List<ExceptionInfo> errorData = await this.telemetryContext.Exceptions.Where(x =>
-                    programIds.Contains(x.ProgramId) && x.Timestamp >= startDate.Date &&
-                    x.Timestamp <= endDate.Date)
+            List<ExceptionInfo> errorData = await this.telemetryContext.Exceptions.Where(x => 
+                    program.Id == x.ProgramId 
+                    && x.Timestamp >= startDate.Date 
+                    && x.Timestamp <= endDate.Date)
                 .ToListAsync().ConfigureAwait(false);
 
             return PrepareDailyActivityScoreTable(startDate, endDate, eventData.summaries, viewData.summaries, errorData);
@@ -170,11 +171,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return data;
         }
 
-        public async Task<DataTable> GetDailyUsersCount(List<Program> programs, DateTime startDate, DateTime endDate)
+        public async Task<DataTable> GetDailyUsersCount(Program programs, DateTime startDate, DateTime endDate)
         {
-            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
+            var rootObject = await this.GetTelemetryRootObject(programs).ConfigureAwait(false);
 
-            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
+            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(new List<TelemetryRootObject>() { rootObject }).ConfigureAwait(false);
 
             List<EventTelemetryDetail> details = eventData.summaries.SelectMany(x => x.TelemetryDetails).ToList();
 
@@ -371,7 +372,15 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         private async Task<TelemetryRootObject> GetTelemetryRootObject(Program program)
         {
-            return await this.telemetryContext.TelemetryRootObjects.FirstOrDefaultAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+            var key = nameof(this.GetTelemetryRootObject) + program.TelemetryKey;
+            var rootObject = (TelemetryRootObject) MemoryCache.Default.Get(key);
+            if (rootObject == null)
+            {
+                rootObject = await this.telemetryContext.TelemetryRootObjects.FirstOrDefaultAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+                MemoryCache.Default.Add(key, rootObject, DateTimeOffset.UtcNow.AddDays(1));
+            }
+
+            return rootObject;
         }
 
         public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)

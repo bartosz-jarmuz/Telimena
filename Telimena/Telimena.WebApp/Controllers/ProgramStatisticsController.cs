@@ -314,7 +314,7 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            var dt = await this.Work.GetDailyActivityScore(new List<Program>() {program}, startDate, endDate).ConfigureAwait(false);
+            var dt = await this.Work.GetDailyActivityScore(program, startDate, endDate).ConfigureAwait(false);
 
             List<object> iData = new List<object>();
             foreach (DataColumn dc in dt.Columns)
@@ -336,7 +336,7 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            var dt = await this.Work.GetDailyUsersCount(new List<Program>() { program }, startDate, endDate).ConfigureAwait(false);
+            var dt = await this.Work.GetDailyUsersCount(program , startDate, endDate).ConfigureAwait(false);
 
             List<object> iData = new List<object>();
             foreach (DataColumn dc in dt.Columns)

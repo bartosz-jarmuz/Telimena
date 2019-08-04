@@ -223,8 +223,6 @@ namespace Telimena.WebApp.Controllers.Admin
             return orderedQuery;
         }
 
-
-
         /// <summary>
         /// Gets all programs summary counts.
         /// </summary>
