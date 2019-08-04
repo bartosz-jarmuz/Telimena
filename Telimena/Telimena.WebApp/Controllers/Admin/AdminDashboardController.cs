@@ -84,9 +84,9 @@ namespace Telimena.WebApp.Controllers.Admin
             List<Tuple<string, bool>> sorts = request.Columns.Where(x => x.Sort != null).OrderBy(x => x.Sort.Order).Select(x => new Tuple<string, bool>(x.Name, x.Sort.Direction == SortDirection.Descending)).ToList();
 
             string userName = this.User.Identity.Name;
-            var totalCount = await this.auditingContext.AuditRecords.Where(x => x.UserName != userName).CountAsync().ConfigureAwait(false);
-            var query = this.auditingContext.AuditRecords.Where(x=>x.UserName != userName).AsQueryable();
-            var take = request.Length;
+            int totalCount = await this.auditingContext.AuditRecords.Where(x => x.UserName != userName).CountAsync().ConfigureAwait(false);
+            IQueryable<Audit> query = this.auditingContext.AuditRecords.Where(x=>x.UserName != userName).AsQueryable();
+            int take = request.Length;
             if (take == -1)
             {
                 take = totalCount;
@@ -107,7 +107,7 @@ namespace Telimena.WebApp.Controllers.Admin
             List<AuditViewModel> model = new List<AuditViewModel>();
             foreach (Audit audit in data)
             {
-                var vm = AutoMapper.Mapper.Map<AuditViewModel>(audit);
+                AuditViewModel vm = AutoMapper.Mapper.Map<AuditViewModel>(audit);
 
                 await this.AssignAppNameToAuditRecord(vm).ConfigureAwait(false);
                 model.Add(vm);
@@ -115,11 +115,11 @@ namespace Telimena.WebApp.Controllers.Admin
             return model;
         }
 
-        internal static Guid? GetGuidFromUrl(string url)
+        internal static Guid? GetTelemetryKeyFromUrl(string url)
         {
             if (url.IndexOf("telemetryKey=", StringComparison.OrdinalIgnoreCase) != -1)
             {
-                var key = url.Substring(url.LastIndexOf("telemetryKey=", StringComparison.OrdinalIgnoreCase) + "telemetryKey=".Length);
+                string key = url.Substring(url.LastIndexOf("telemetryKey=", StringComparison.OrdinalIgnoreCase) + "telemetryKey=".Length);
                 if (key.Contains("?"))
                 {
                     key = key.Remove(key.IndexOf("?"));
@@ -133,22 +133,64 @@ namespace Telimena.WebApp.Controllers.Admin
             return null;
         }
 
+        internal static Guid? GetUpdatePackageGuidFromUrl(string url)
+        {
+            if (url.IndexOf("update-packages/", StringComparison.OrdinalIgnoreCase) != -1)
+            {
+                string key = url.Substring(url.LastIndexOf("update-packages/", StringComparison.OrdinalIgnoreCase) + "update-packages/".Length);
+                if (key.Contains("/"))
+                {
+                    key = key.Remove(key.IndexOf("/"));
+                }
+                if (Guid.TryParse(key, out Guid result))
+                {
+                    return result;
+                }
+
+            }
+            return null;
+        }
+
         private async Task AssignAppNameToAuditRecord(AuditViewModel viewModel)
         {
-            var guid = GetGuidFromUrl(viewModel.AreaAccessed);
+            Guid? guid = GetTelemetryKeyFromUrl(viewModel.AreaAccessed);
             if (guid.HasValue)
             {
                 string cacheKey = "AppName:" + guid.ToString();
 
-                var appName = (string)MemoryCache.Default.Get(cacheKey);
-                if (string.IsNullOrEmpty(appName))
+                string name = (string)MemoryCache.Default.Get(cacheKey);
+                if (string.IsNullOrEmpty(name))
                 {
                     Program app = await this.unitOfWork.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == guid.Value).ConfigureAwait(false);
-                    appName = app.Name;
-                    MemoryCache.Default.Add(cacheKey, appName, new CacheItemPolicy() {AbsoluteExpiration = DateTimeOffset.UtcNow.AddDays(1)});
+                    name = app.Name;
+                    MemoryCache.Default.Add(cacheKey, name, new CacheItemPolicy() {AbsoluteExpiration = DateTimeOffset.UtcNow.AddDays(1)});
                 }
 
-                viewModel.Application = appName;
+                viewModel.Application = name;
+                return;
+            }
+
+            guid = GetUpdatePackageGuidFromUrl(viewModel.AreaAccessed);
+            if (guid.HasValue)
+            {
+                string cacheKey = "AppName:" + guid.ToString();
+
+                string name = (string)MemoryCache.Default.Get(cacheKey);
+                if (string.IsNullOrEmpty(name))
+                {
+                    ProgramUpdatePackageInfo packageInfo = await this.unitOfWork.UpdatePackages.GetUpdatePackageInfo(guid.Value).ConfigureAwait(false);
+                    if (packageInfo != null)
+                    {
+                        Program app = await this.unitOfWork.Programs.FirstOrDefaultAsync(x => x.Id == packageInfo.ProgramId).ConfigureAwait(false);
+                        if (app != null)
+                        {
+                            name = app.Name;
+                            MemoryCache.Default.Add(cacheKey, name, new CacheItemPolicy() { AbsoluteExpiration = DateTimeOffset.UtcNow.AddDays(1) });
+                        }
+                    }
+                }
+
+                viewModel.Application = name;
             }
         }
 
@@ -177,7 +219,7 @@ namespace Telimena.WebApp.Controllers.Admin
                 }
             }
 
-            var orderedQuery = query as IOrderedQueryable<Audit>;
+            IOrderedQueryable<Audit> orderedQuery = query as IOrderedQueryable<Audit>;
             return orderedQuery;
         }
 

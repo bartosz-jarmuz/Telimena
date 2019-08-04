@@ -13,6 +13,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 {
     public interface IProgramsDashboardUnitOfWork
     {
+        IUpdatePackageRepository UpdatePackages { get;  }
         IRepository<TelimenaUser> Users { get; }
 
         IProgramRepository Programs { get; }
