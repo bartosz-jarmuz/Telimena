@@ -365,7 +365,7 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
-            var dt = await this.Work.GetVersionDistribution(new List<Program>() { program }, startDate, endDate).ConfigureAwait(false);
+            var dt = await this.Work.GetVersionDistribution(program, startDate, endDate).ConfigureAwait(false);
 
             List<object> iData = new List<object>();
             foreach (DataColumn dc in dt.Columns)

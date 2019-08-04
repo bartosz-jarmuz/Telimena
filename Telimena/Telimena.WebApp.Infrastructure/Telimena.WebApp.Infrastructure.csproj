@@ -171,6 +171,7 @@
     <Compile Include="Audit\IAudit.cs" />
     <Compile Include="Audit\IAuditLogger.cs" />
     <Compile Include="AutoMapperDomainProfile.cs" />
+    <Compile Include="Database\Sql\StoredProcedures\StoredProcedureNames.cs" />
     <Compile Include="Database\TelimenaTelemetryContext.cs" />
     <Compile Include="Database\TelimenaPortalContext.cs" />
     <Compile Include="Database\TelimenaTelemetryDbInitializer.cs" />
@@ -270,6 +271,14 @@
     <EmbeddedResource Include="Migrations\201903211358303_AddedVersionToProgramPackageInfo.resx">
       <DependentUpon>201903211358303_AddedVersionToProgramPackageInfo.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Database\Sql\StoredProcedures\p_GetVersionUsage.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Database\Sql\Seed\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.3\build\Microsoft.Azure.Services.AppAuthentication.targets')" />
