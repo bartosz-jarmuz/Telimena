@@ -123,7 +123,48 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<DataTable> GetDailyActivityScore(Program program, DateTime startDate, DateTime endDate)
         {
-            var set = new DataSet();
+            var set = await this.GetProgramDashboardDataSet(program, StoredProcedureNames.p_GetDailySummaryCounts, startDate, endDate).ConfigureAwait(false);
+
+            return PrepareDailyActivityScoreTable(startDate, endDate, set.Tables[0].AsEnumerable().ToList()
+                , set.Tables[1].AsEnumerable().ToList(), set.Tables[2].AsEnumerable().ToList());
+        
+        }
+
+        public async Task<DataTable> GetVersionDistribution(Program program, DateTime startDate, DateTime endDate)
+        {
+           return (await this.GetProgramDashboardDataSet(program, StoredProcedureNames.p_GetVersionUsage, startDate, endDate).ConfigureAwait(false)).Tables[0];
+        }
+
+
+
+        public async Task<DataTable> GetDailyUsersCount(Program program, DateTime startDate, DateTime endDate)
+        {
+            DataTable queryResult = (await this.GetProgramDashboardDataSet(program, StoredProcedureNames.p_GetDailyUsersCounts, startDate, endDate).ConfigureAwait(false)).Tables[0];
+
+            DataTable data = new DataTable();
+            data.Columns.Add("Date");
+            data.Columns.Add("Users", typeof(int));
+
+            DateTime dateRecord = startDate;
+
+            var resultsRows = queryResult.AsEnumerable().ToList();
+
+            while (dateRecord.Date <= endDate.Date) //include empty days
+            {
+                DataRow row = data.NewRow();
+                row["Date"] = ToDashboardDateString(dateRecord);
+                row["Users"] = resultsRows.FirstOrDefault(x=> (DateTime)x[0] == dateRecord.Date)?[1]??0;
+                data.Rows.Add(row);
+                dateRecord = dateRecord.AddDays(1);
+            }
+
+            return data;
+        }
+
+        private async Task<DataSet> GetProgramDashboardDataSet(Program program,  string procedureName, DateTime startDate, DateTime endDate)
+        {
+            DataSet set = new DataSet();
+
             using (DbConnection conn = this.telemetryContext.Database.Connection)
             {
                 if (conn.State != ConnectionState.Open)
@@ -133,95 +174,25 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
                 using (DbCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = StoredProcedureNames.p_GetDailySummaryCounts;
+                    cmd.CommandText = procedureName;
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlParameter programIdParam = new SqlParameter("programId", SqlDbType.Int) {Value = program.Id};
-                    SqlParameter startDateParam =
-                        new SqlParameter("startDate", SqlDbType.DateTime) {Value = startDate};
+                    SqlParameter startDateParam = new SqlParameter("startDate", SqlDbType.DateTime) {Value = startDate};
                     SqlParameter endDateParam = new SqlParameter("endDate", SqlDbType.DateTime) {Value = endDate};
                     cmd.Parameters.Add(programIdParam);
                     cmd.Parameters.Add(startDateParam);
                     cmd.Parameters.Add(endDateParam);
+
                     var adapter = DbProviderFactories.GetFactory(conn).CreateDataAdapter();
                     if (adapter != null)
                     {
                         adapter.SelectCommand = cmd;
                         await Task.Run(() => adapter.Fill(set)).ConfigureAwait(false);
                     }
-                    else
-                    {
-                        return new DataTable();
-                    }
                 }
             }
 
-            return PrepareDailyActivityScoreTable(startDate, endDate, set.Tables[0].AsEnumerable().ToList()
-                , set.Tables[1].AsEnumerable().ToList(), set.Tables[2].AsEnumerable().ToList());
-        
-        }
-
-        public async Task<DataTable> GetVersionDistribution(Program program, DateTime startDate, DateTime endDate)
-        {
-           DataTable data = new DataTable();
-
-           using (DbConnection conn = this.telemetryContext.Database.Connection)
-           {
-               if (conn.State != ConnectionState.Open)
-               {
-                   conn.Open();
-               }
-               using (DbCommand cmd = conn.CreateCommand())
-               {
-                   cmd.CommandText = StoredProcedureNames.p_GetVersionUsage;
-                   cmd.CommandType = CommandType.StoredProcedure;
-                   SqlParameter programIdParam = new SqlParameter("programId", SqlDbType.Int)
-                   {
-                       Value = program.Id
-                   };
-                   SqlParameter startDateParam = new SqlParameter("startDate", SqlDbType.DateTime) {Value = startDate};
-                   SqlParameter endDateParam = new SqlParameter("endDate", SqlDbType.DateTime) {Value = endDate};
-                   cmd.Parameters.Add(programIdParam);
-                   cmd.Parameters.Add(startDateParam);
-                   cmd.Parameters.Add(endDateParam);
-
-                   using (DbDataReader reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false))
-                   {
-                       data.Load(reader);
-                   }
-               }
-            }
-
-            return data;
-        }
-
-        public async Task<DataTable> GetDailyUsersCount(Program programs, DateTime startDate, DateTime endDate)
-        {
-            var rootObject = await this.GetTelemetryRootObject(programs).ConfigureAwait(false);
-
-            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(new List<TelemetryRootObject>() { rootObject }).ConfigureAwait(false);
-
-            List<EventTelemetryDetail> details = eventData.summaries.SelectMany(x => x.TelemetryDetails).ToList();
-
-            DataTable data = new DataTable();
-            data.Columns.Add("Date");
-            data.Columns.Add("Users", typeof(int));
-
-            DateTime dateRecord = startDate;
-
-            while (dateRecord.Date <= endDate.Date) //include empty days
-            {
-                DataRow row = data.NewRow();
-                row["Date"] = ToDashboardDateString(dateRecord);
-                List<EventTelemetryDetail> detailsForDay = details.Where(detail => detail.Timestamp.Date == dateRecord.Date).ToList();
-                List<EventTelemetryDetail> distinct = detailsForDay.DistinctBy(x => x.TelemetrySummary.ClientAppUserId).ToList();
-                row["Users"] = details.Where(detail=>detail.Timestamp.Date == dateRecord.Date).DistinctBy(x => x.TelemetrySummary.ClientAppUserId).Count();
-                data.Rows.Add(row);
-                dateRecord = dateRecord.AddDays(1);
-            }
-
-            return data;
-
-
+            return set;
         }
 
         public async Task<Dictionary<string, int>> GetEventNames(Program program)
