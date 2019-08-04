@@ -53,9 +53,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             {
                 prg.Updater = await this.portalContext.Updaters.FirstOrDefaultAsync(x => x.InternalName == DefaultToolkitNames.UpdaterInternalName).ConfigureAwait(false);
             }
-
             return prg;
-
         }
 
 
