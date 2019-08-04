@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using Telimena.TestUtilities.Base;
 using Telimena.TestUtilities.Base.TestAppInteraction;
+using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.UiStrings;
 using TelimenaClient;
 using TelimenaClient.Model;
@@ -66,7 +70,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
         [Test, Retry(3)]
-        public void RegisterTempTestApp()
+        public async Task RegisterTempTestApp()
         {
             try
             {
@@ -75,9 +79,11 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.DeleteApp(appName, true);
 
 
-                this.RegisterApp(appName, null, "To be deleted", "Auto test TestPlugin.dll", true, false);
+                var guid = this.RegisterApp(appName, null, "To be deleted", "Auto test TestPlugin.dll", true, false);
 
-                this.RegisterApp(appName, null, "To be deleted", "Auto test TestPlugin.dll", true, true);
+                this.SendBasicTelemetry(guid);
+
+                 this.RegisterApp(appName, null, "To be deleted", "Auto test TestPlugin.dll", true, true);
 
                 this.DeleteApp(appName, false);
             }
@@ -92,6 +98,41 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
+
+        private async void SendBasicTelemetry(Guid guid)
+        {
+
+            await this.SendBasicTelemetry(guid, new BasicTelemetryItem()
+            {
+                Metrics = new Dictionary<string, double>()
+                {
+                    {"Something", 123.3 }
+                },
+                ProgramVersion = "1.2.3.4",
+            }).ConfigureAwait(false);
+            await this.SendBasicTelemetry(guid, new BasicTelemetryItem()
+            {
+                EventName = "SomeViewEvent",
+                TelemetryItemType = TelemetryItemTypes.View,
+                Metrics = new Dictionary<string, double>()
+                {
+                    {"SomethingForView", 123.3 }
+                },
+                ProgramVersion = "1.2.3.4",
+            }).ConfigureAwait(false);
+            await this.SendBasicTelemetry(guid, new BasicTelemetryItem()
+            {
+                TelemetryItemType = TelemetryItemTypes.LogMessage,
+                LogMessage = "Hello, world",
+            }).ConfigureAwait(false);
+
+            TelemetryQueryRequest request = TelemetryQueryRequest.CreateFull(guid);
+            TelemetryQueryResponse queryResponse = await this.CheckTelemetry(request).ConfigureAwait(false);
+            var viewTelemetry  = queryResponse.TelemetryAware.Single(x=>x.ComponentKey == "SomeViewEvent");
+            var eventTelemetry = queryResponse.TelemetryAware.Single(x=>x.ComponentKey == "DefaultEvent");
+            Assert.AreEqual("1.2.3.4", viewTelemetry.Summaries.Single().Details.Single().FileVersion);
+            Assert.AreEqual("1.2.3.4", eventTelemetry.Summaries.Single().Details.Single().FileVersion);
+        }
         
 
    

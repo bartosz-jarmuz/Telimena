@@ -13,8 +13,48 @@ namespace Telimena.WebApp.Utils
     /// <summary>
     /// Class AppInsightsTelemetryMapper.
     /// </summary>
-    public static class AppInsightsTelemetryMapper
+    public static class TelemetryMapper
     {
+        /// <summary>
+        /// Maps the specified basic item.
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        /// <param name="basicItem">The basic item.</param>
+        /// <returns>TelemetryItem.</returns>
+        public static TelemetryItem Map(Guid telemetryKey, BasicTelemetryItem basicItem)
+        {
+            if (!Version.TryParse(basicItem.ProgramVersion, out _))
+            {
+                basicItem.ProgramVersion = "0.0.0.0";
+            }
+
+            TelemetryItem item = new TelemetryItem
+            {
+                TelemetryKey = telemetryKey,
+                UserIdentifier = basicItem.UserIdentifier,
+                TelemetryItemType = basicItem.TelemetryItemType,
+                LogMessage = basicItem.LogMessage,
+                EntryKey = basicItem.EventName,
+                Sequence= "NotSpecified",
+                Properties = basicItem.Properties,
+                Measurements = basicItem.Metrics,
+                VersionData = new VersionData(basicItem.ProgramVersion, basicItem.ProgramVersion),
+                Timestamp = basicItem.Timestamp
+            };
+
+            if (basicItem.TelemetryItemType == TelemetryItemTypes.Exception)
+            {
+                item.Exceptions = new List<TelemetryItem.ExceptionInfo>();
+                item.Exceptions.Add(new TelemetryItem.ExceptionInfo()
+                {
+                    Message = basicItem.ErrorMessage
+                });
+            }
+            return item;
+        }
+
+
+
         /// <summary>
         /// Maps the specified items.
         /// </summary>

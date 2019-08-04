@@ -32,7 +32,7 @@ namespace Telimena.TestUtilities.Base
     public abstract class WebsiteTestBase : IntegrationTestBase
     {
 
-        protected void RegisterApp(string name, Guid? key, string description, string assemblyName, bool canAlreadyExist, bool hasToExistAlready)
+        protected Guid RegisterApp(string name, Guid? key, string description, string assemblyName, bool canAlreadyExist, bool hasToExistAlready)
         {
             this.GoToAdminHomePage();
 
@@ -71,7 +71,7 @@ namespace Telimena.TestUtilities.Base
                         Assert.AreEqual($"A program with name [{name}] was already registered by TelimenaSystemDevTeam", alert.Text);
                     }
                     alert.Accept();
-                    return;
+                    return key.Value;
                 }
                 else
                 {
@@ -94,6 +94,7 @@ namespace Telimena.TestUtilities.Base
             Assert.AreEqual(description, infoElements[1].Text);
             Assert.AreEqual(key.ToString(), infoElements[2].Text);
             Assert.AreEqual(assemblyName, infoElements[3].Text);
+            return key.Value;
         }
 
         protected void LogOut()

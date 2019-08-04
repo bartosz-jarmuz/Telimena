@@ -136,7 +136,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
             IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
 
-            IEnumerable<TelemetryItem> telemetryItems = AppInsightsTelemetryMapper.Map(appInsightsTelemetries);
+            IEnumerable<TelemetryItem> telemetryItems = TelemetryMapper.Map(appInsightsTelemetries);
 
             string ip = this.Request.GetClientIp();
 
@@ -157,7 +157,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
 
-            IEnumerable<TelemetryItem> telemetryItems = AppInsightsTelemetryMapper.Map(appInsightsTelemetries);
+            IEnumerable<TelemetryItem> telemetryItems = TelemetryMapper.Map(appInsightsTelemetries);
             string ip = this.Request.GetClientIp();
 
             //items might come with various telemetry key in one request (when there are multiple instances of telemetry client)
@@ -192,27 +192,23 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 throw new BadRequestException($"Program with telemetry key [{telemetryKey}] does not exist");
             }
 
-            if (!Version.TryParse(request.ProgramVersion, out _))
+            try
             {
-                request.ProgramVersion = "0.0.0.0";
+
+               
+
+                TelemetryItem item = TelemetryMapper.Map(telemetryKey, request);
+
+                string ip = this.Request.GetClientIp();
+
+                await this.InsertDataInternal(new[] {item}, program, ip).ConfigureAwait(false);
+
+                return await Task.FromResult(this.StatusCode(HttpStatusCode.OK)).ConfigureAwait(false);
             }
-
-            TelemetryItem item = new TelemetryItem
+            catch (Exception ex)
             {
-                UserIdentifier = request.UserIdentifier
-                , EntryKey = request.EventName
-                , Properties = request.Properties
-                , Measurements = request.Metrics
-                , VersionData = new VersionData(request.ProgramVersion, request.ProgramVersion)
-                , Timestamp = request.Timestamp
-            };
-
-
-            string ip = this.Request.GetClientIp();
-
-            await this.InsertDataInternal(new []{item}, program, ip).ConfigureAwait(false);
-
-            return await Task.FromResult(this.StatusCode(HttpStatusCode.OK)).ConfigureAwait(false);
+                return await Task.FromResult(this.InternalServerError(new InvalidOperationException($"Error while inserting entry: {ex}"))).ConfigureAwait(false);
+            }
         }
 
 
