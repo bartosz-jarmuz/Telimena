@@ -10,5 +10,6 @@ namespace Telimena.WebApp.Infrastructure.Database.Sql.StoredProcedures
     public static class StoredProcedureNames
     {
         public static string p_GetVersionUsage { get; } = nameof(p_GetVersionUsage);
+        public static string p_GetDailySummaryCounts { get; } = nameof(p_GetDailySummaryCounts);
     }
 }

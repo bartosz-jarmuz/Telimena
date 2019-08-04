@@ -123,18 +123,41 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<DataTable> GetDailyActivityScore(Program program, DateTime startDate, DateTime endDate)
         {
-            var rootObject = await this.GetTelemetryRootObject(program).ConfigureAwait(false);
+            var set = new DataSet();
+            using (DbConnection conn = this.telemetryContext.Database.Connection)
+            {
+                if (conn.State != ConnectionState.Open)
+                {
+                    conn.Open();
+                }
 
-            (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(new List<TelemetryRootObject>(){rootObject}).ConfigureAwait(false);
-            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(new List<TelemetryRootObject>(){rootObject}).ConfigureAwait(false);
+                using (DbCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = StoredProcedureNames.p_GetDailySummaryCounts;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlParameter programIdParam = new SqlParameter("programId", SqlDbType.Int) {Value = program.Id};
+                    SqlParameter startDateParam =
+                        new SqlParameter("startDate", SqlDbType.DateTime) {Value = startDate};
+                    SqlParameter endDateParam = new SqlParameter("endDate", SqlDbType.DateTime) {Value = endDate};
+                    cmd.Parameters.Add(programIdParam);
+                    cmd.Parameters.Add(startDateParam);
+                    cmd.Parameters.Add(endDateParam);
+                    var adapter = DbProviderFactories.GetFactory(conn).CreateDataAdapter();
+                    if (adapter != null)
+                    {
+                        adapter.SelectCommand = cmd;
+                        await Task.Run(() => adapter.Fill(set)).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        return new DataTable();
+                    }
+                }
+            }
 
-            List<ExceptionInfo> errorData = await this.telemetryContext.Exceptions.Where(x => 
-                    program.Id == x.ProgramId 
-                    && x.Timestamp >= startDate.Date 
-                    && x.Timestamp <= endDate.Date)
-                .ToListAsync().ConfigureAwait(false);
-
-            return PrepareDailyActivityScoreTable(startDate, endDate, eventData.summaries, viewData.summaries, errorData);
+            return PrepareDailyActivityScoreTable(startDate, endDate, set.Tables[0].AsEnumerable().ToList()
+                , set.Tables[1].AsEnumerable().ToList(), set.Tables[2].AsEnumerable().ToList());
+        
         }
 
         public async Task<DataTable> GetVersionDistribution(Program program, DateTime startDate, DateTime endDate)
@@ -218,7 +241,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         }
 
         internal static DataTable PrepareDailyActivityScoreTable(DateTime startDate, DateTime endDate
-            , List<EventTelemetrySummary> eventDataSummaries, List<ViewTelemetrySummary> viewDataSummaries, List<ExceptionInfo> errorData)
+            , List<DataRow> eventDataSummaries, List<DataRow> viewDataSummaries, List<DataRow> errorData)
         {
             DataTable data = new DataTable();
 
@@ -226,7 +249,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             data.Columns.Add("Events", typeof(int));
             data.Columns.Add("Views", typeof(int));
             data.Columns.Add("Errors", typeof(int));
-            
+
             DateTime dateRecord = startDate;
 
             while (dateRecord.Date <= endDate.Date) //include empty days
@@ -234,12 +257,10 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 DataRow row = data.NewRow();
                 row["Date"] = ToDashboardDateString(dateRecord);
 
-                row["Events"] =
-                    eventDataSummaries?.Sum(s => s.TelemetryDetails?.Count(d => d.Timestamp.Date == dateRecord.Date));
-                row["Views"] =
-                    viewDataSummaries?.Sum(x => x.TelemetryDetails?.Count(d => d.Timestamp.Date == dateRecord.Date));
-
-                row["Errors"] = errorData?.Count(x => x.Timestamp.Date == dateRecord.Date);
+                row["Events"] = eventDataSummaries.FirstOrDefault(x => (DateTime)x[0] == dateRecord.Date)?[1] ?? 0;
+                row["Views"] = viewDataSummaries.FirstOrDefault(x => (DateTime)x[0] == dateRecord.Date)?[1] ?? 0;
+                row["Errors"] = errorData.FirstOrDefault(x => (DateTime)x[0] == dateRecord.Date)?[1] ?? 0;
+                    
 
                 data.Rows.Add(row);
                 dateRecord = dateRecord.AddDays(1);
@@ -247,6 +268,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             return data;
         }
+
 
         internal static string ToDashboardDateString(DateTime date)
         {
