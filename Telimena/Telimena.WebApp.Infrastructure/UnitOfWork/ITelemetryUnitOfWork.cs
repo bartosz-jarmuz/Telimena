@@ -23,6 +23,5 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
         IRepository<LogMessage> LogMessages { get; }
         Task CompleteAsync();
         void InsertMonitoredProgram(TelemetryRootObject program);
-        Task<Program> GetProgramFirstOrDefault(Expression<Func<Program, bool>> predicate);
     }
 }

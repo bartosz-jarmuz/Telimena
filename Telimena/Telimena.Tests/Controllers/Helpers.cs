@@ -118,7 +118,7 @@ namespace Telimena.Tests
             , [CallerMemberName] string methodIdentifier = "")
         {
             string prgName = GetName(programName, methodIdentifier);
-            var p = unit.GetProgramFirstOrDefault(x => x.Name == prgName).GetAwaiter().GetResult();
+            var p = unit.Programs.GetByNames("SeedInitialProgramsSomeDeveloper", prgName).GetAwaiter().GetResult();
             prg = unit.GetMonitoredProgram(p.TelemetryKey).Result;
             usr = GetUser(unit, userName, methodIdentifier);
         }

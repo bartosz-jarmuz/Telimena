@@ -56,7 +56,7 @@ namespace Telimena.WebApp.Controllers
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> Index(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -108,7 +108,7 @@ namespace Telimena.WebApp.Controllers
         [System.Web.Mvc.HttpGet, System.Web.Mvc.Route("~/{developerName}/{programName}/get", Name ="Get")]
         public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName).ConfigureAwait(false);
+            Program prg = await this.Work.Programs.GetByNames(developerName, programName).ConfigureAwait(false);
             if (prg == null)
             {
                 throw new BadRequestException($"Program [{programName}] does not exist");

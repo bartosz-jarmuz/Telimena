@@ -92,7 +92,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    Program program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false);
+                    Program program = await this.work.Programs.GetByTelemetryKey(request.TelemetryKey).ConfigureAwait(false);
                     ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.StorePackageAsync(program, uploadedFile.FileName, uploadedFile.InputStream
                         , request.ToolkitVersionUsed, request.IsBeta, request.ReleaseNotes, this.fileSaver).ConfigureAwait(false);
                     await this.work.CompleteAsync().ConfigureAwait(false);

@@ -157,7 +157,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         public async Task<UpdateResponse> UpdateCheck(UpdateRequest requestModel)
         {
          //   UpdateRequest requestModel = Utilities.ReadRequest(request, this.serializer);
-            var program = await this.work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey).ConfigureAwait(false);
+            var program = await this.work.Programs.GetByTelemetryKey(requestModel.TelemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 return new UpdateResponse()

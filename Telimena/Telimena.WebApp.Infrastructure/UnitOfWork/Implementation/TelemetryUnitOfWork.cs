@@ -31,7 +31,7 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
             this.ToolkitData = new ToolkitDataRepository(telemetryContext, versionReader);
         }
 
-        private ProgramRepository Programs { get; set; }
+        internal ProgramRepository Programs { get; set; }
         private IRepository<TelemetryRootObject> TelemetryRootObjects { get; }
 
         private readonly TelimenaTelemetryContext telemetryContext;
@@ -44,11 +44,6 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         public void InsertMonitoredProgram(TelemetryRootObject program)
         {
             this.TelemetryRootObjects.Add(program);
-        }
-
-        public async Task<Program> GetProgramFirstOrDefault(Expression<Func<Program, bool>> predicate)
-        {
-            return await this.Programs.FirstOrDefaultAsync(predicate).ConfigureAwait(false);
         }
 
         public Task<TelemetryRootObject> GetMonitoredProgram(Guid telemetryKey)

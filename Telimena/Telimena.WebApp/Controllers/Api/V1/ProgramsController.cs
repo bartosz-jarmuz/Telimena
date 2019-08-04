@@ -61,7 +61,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpDelete, Route("{telemetryKey}", Name = Routes.Delete)]
         public async Task<IHttpActionResult> Delete(Guid telemetryKey)
         {
-            var prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            var prg = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program with key {telemetryKey} does not exist");
@@ -92,7 +92,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
                 if (uploadedFile != null && uploadedFile.ContentLength > 0)
                 {
-                    var program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+                    var program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
 
                     if (program == null)
                     {
@@ -122,7 +122,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{telemetryKey}/packages/latest", Name = Routes.DownloadLatestProgramPackage)]
         public async Task<IHttpActionResult> DownloadLatestProgramPackage(Guid telemetryKey)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program prg = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program with key [{telemetryKey}] does not exist");
@@ -142,7 +142,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             try
             {
-                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+                Program program = await this.Work.Programs.GetByTelemetryKey( telemetryKey).ConfigureAwait(false);
                 if (program == null)
                 {
                     return $"Failed to find program by Key: [{telemetryKey}]";
@@ -171,7 +171,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{telemetryKey}/versions/count", Name = Routes.GetVersionsCount)]
         public async Task<IHttpActionResult> GetVersionsCount(Guid telemetryKey)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program prg = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program key [{telemetryKey}] not found");
@@ -191,7 +191,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("{telemetryKey}/updater/name", Name= Routes.GetProgramUpdaterName)]
         public async Task<HttpResponseMessage> GetProgramUpdaterName(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 throw new BadRequestException($"Program with Key [{telemetryKey}] does not exist");
@@ -214,7 +214,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPut, Route("{telemetryKey}/updater/set-updater/{updaterId}", Name = Routes.SetUpdater)]
         public async Task<IHttpActionResult> SetUpdater(Guid telemetryKey, Guid updaterId)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program prg = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program with Key {telemetryKey} does not exist");
@@ -242,7 +242,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             try
             {
-                Program program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == requestModel.TelemetryKey).ConfigureAwait(false);
+                Program program = await this.Work.Programs.GetByTelemetryKey(requestModel.TelemetryKey).ConfigureAwait(false);
                 if (program == null)
                 {
                     return new UpdateResponse { Exception = new BadRequestException($"Failed to find program by Id: [{requestModel.TelemetryKey}]") };
@@ -297,7 +297,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpGet, Route("~/{developerName}/{programName}/download", Name = ProgramsController.Routes.DownloadApp)]
         public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
         {
-            Program prg = await this.Work.Programs.FirstOrDefaultAsync(x => x.Name == programName).ConfigureAwait(false);
+            Program prg = await this.Work.Programs.GetByNames(developerName, programName).ConfigureAwait(false);
             if (prg == null)
             {
                 return this.BadRequest($"Program [{programName}] does not exist");

@@ -14,11 +14,14 @@ namespace Telimena.WebApp.Infrastructure.Repository
         List<Program> GetProgramsVisibleToUser(TelimenaUser user, IPrincipal principal);
         Task<List<Program>> GetProgramsVisibleToUserAsync(TelimenaUser user, IPrincipal principal);
         void Add(Program objectToAdd);
-        Task<Program> FirstOrDefaultAsync(Expression<Func<Program, bool>> predicate = null);
         Task<Program> SingleOrDefaultAsync(Expression<Func<Program, bool>> predicate = null);
         void Remove(Program program);
 
         Task<IEnumerable<Program>> GetAsync(Expression<Func<Program, bool>> filter = null
             , Func<IQueryable<Program>, IOrderedQueryable<Program>> orderBy = null, string includeProperties = "");
+
+        Task<Program> GetByTelemetryKey(Guid telemetryKey);
+        Task<Program> GetByProgramId(int id);
+        Task<Program> GetByNames(string developerName, string programName);
     }
 }

@@ -19,6 +19,7 @@ namespace Telimena.Tests
     public class UpdaterUpdatesTests : IntegrationTestsContextNotShared<TelimenaPortalContext>
     {
         public Guid TestProgramTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
+        public Guid TestProgram2TelemetryKey = Guid.Parse("e0164bcd-f091-4b85-b88b-28b6efbebd2b");
         public Guid TestProgramWithDifferentUpdaterTelemetryKey = Guid.Parse("14b6e9b2-7886-4e4b-ba55-3541155c29ee");
         public Guid ProgramWhichChangesUpdaterTelemetryKey = Guid.Parse("ae21e6c3-131c-46ca-a91a-ee51f90d44cb");
 
@@ -129,6 +130,9 @@ namespace Telimena.Tests
 
         private void InsertPrograms(ToolkitDataUnitOfWork unit, WebApp.Core.Models.Portal.Updater updaterOther)
         {
+            var prg = new Program("Test Program", this.TestProgram2TelemetryKey);
+            unit.Programs.Add(prg);
+
             this.testProgram = new Program("Test Program", this.TestProgramTelemetryKey);
             unit.Programs.Add(this.testProgram);
 
@@ -157,7 +161,7 @@ namespace Telimena.Tests
             unit.CompleteAsync().GetAwaiter().GetResult();
 
             UpdatersController controller = new UpdatersController(unit, new Mock<IFileSaver>().Object, new Mock<IFileRetriever>().Object);
-            var request = new UpdateRequest(telemetryKey: this.TestProgramTelemetryKey, programVersion: new VersionData("0.0", ""), 
+            var request = new UpdateRequest(telemetryKey: this.TestProgram2TelemetryKey, programVersion: new VersionData("0.0", ""), 
                 userId: this.User1Guid, acceptBeta: false, 
                 updaterVersion: "1.0"
                 , toolkitVersion: "1.3.0");

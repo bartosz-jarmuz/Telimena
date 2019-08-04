@@ -50,7 +50,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     return new RegisterProgramResponse(new BadRequestException(string.Join(", ", errors)));
                 }
 
-                if (await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false) != null)
+                if (await this.Work.Programs.GetByTelemetryKey(request.TelemetryKey).ConfigureAwait(false) != null)
                 {
                     return new RegisterProgramResponse(new BadRequestException($"Use different telemetry key"));
                 }
@@ -79,7 +79,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
                 await this.Work.RegisterProgram(developerTeam, program, primaryAss).ConfigureAwait(false);
 
-                program = await this.Work.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == request.TelemetryKey).ConfigureAwait(false);
+                program = await this.Work.Programs.GetByTelemetryKey(request.TelemetryKey).ConfigureAwait(false);
                 var url = this.Url?.Link("Default", new { Controller = "ProgramManagement", Action = "Index", telemetryKey = program.TelemetryKey });
                 return new RegisterProgramResponse(program.TelemetryKey, program.DeveloperTeam.PublicId, url);
             }

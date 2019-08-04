@@ -55,7 +55,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Index(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -77,7 +77,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Dashboard(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -100,7 +100,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> PivotTable(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -123,7 +123,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> SequenceHistory(Guid telemetryKey, string sequenceId)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -147,7 +147,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Exceptions(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -170,7 +170,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Logs(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
 
             if (program == null)
             {
@@ -259,7 +259,7 @@ namespace Telimena.WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> GetAppUsersSummary(Guid telemetryKey, DateTime startDate, DateTime endDate)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 return this.RedirectToAction("Index", "Home");
@@ -279,7 +279,7 @@ namespace Telimena.WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> GetProgramUsages(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 return this.RedirectToAction("Index", "Home");
@@ -295,7 +295,7 @@ namespace Telimena.WebApp.Controllers
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         public async Task<ActionResult> GetSummaryCounts(Guid telemetryKey)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 return this.RedirectToAction("Index", "Home");
@@ -308,7 +308,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> GetDailyUsages(Guid telemetryKey, DateTime startDate, DateTime endDate)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 return this.RedirectToAction("Index", "Home");
@@ -330,7 +330,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> GetDailyUsersCount(Guid telemetryKey, DateTime startDate, DateTime endDate)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 return this.RedirectToAction("Index", "Home");
@@ -359,7 +359,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> GetVersionDistribution(Guid telemetryKey, DateTime startDate, DateTime endDate)
         {
-            Program program = await this.Work.Programs.SingleOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (program == null)
             {
                 return this.RedirectToAction("Index", "Home");

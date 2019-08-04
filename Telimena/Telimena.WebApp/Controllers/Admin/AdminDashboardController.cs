@@ -161,7 +161,7 @@ namespace Telimena.WebApp.Controllers.Admin
                 string name = (string)MemoryCache.Default.Get(cacheKey);
                 if (string.IsNullOrEmpty(name))
                 {
-                    Program app = await this.unitOfWork.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == guid.Value).ConfigureAwait(false);
+                    Program app = await this.unitOfWork.Programs.GetByTelemetryKey(guid.Value).ConfigureAwait(false);
                     name = app.Name;
                     MemoryCache.Default.Add(cacheKey, name, new CacheItemPolicy() {AbsoluteExpiration = DateTimeOffset.UtcNow.AddDays(1)});
                 }
@@ -181,7 +181,7 @@ namespace Telimena.WebApp.Controllers.Admin
                     ProgramUpdatePackageInfo packageInfo = await this.unitOfWork.UpdatePackages.GetUpdatePackageInfo(guid.Value).ConfigureAwait(false);
                     if (packageInfo != null)
                     {
-                        Program app = await this.unitOfWork.Programs.FirstOrDefaultAsync(x => x.Id == packageInfo.ProgramId).ConfigureAwait(false);
+                        Program app = await this.unitOfWork.Programs.GetByProgramId(packageInfo.ProgramId).ConfigureAwait(false);
                         if (app != null)
                         {
                             name = app.Name;
