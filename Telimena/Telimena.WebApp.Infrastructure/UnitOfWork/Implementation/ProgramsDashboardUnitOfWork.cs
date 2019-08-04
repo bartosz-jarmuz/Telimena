@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -17,6 +19,7 @@ using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Core.Models.Telemetry;
 using Telimena.WebApp.Infrastructure.Database;
+using Telimena.WebApp.Infrastructure.Database.Sql.StoredProcedures;
 using Telimena.WebApp.Infrastructure.Repository.Implementation;
 using Telimena.WebApp.Utils;
 
@@ -133,32 +136,35 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return PrepareDailyActivityScoreTable(startDate, endDate, eventData.summaries, viewData.summaries, errorData);
         }
 
-        public async Task<DataTable> GetVersionDistribution(List<Program> programs, DateTime startDate, DateTime endDate)
+        public async Task<DataTable> GetVersionDistribution(Program program, DateTime startDate, DateTime endDate)
         {
-            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
-            IEnumerable<int> programIds = programs.Select(x => x.Id);
+           DataTable data = new DataTable();
 
-            List<Event> events = telemetryRootObjects.SelectMany(x => x.Events.Where(ev=>ev.Name == "TelimenaSessionStarted")).ToList();
-            IEnumerable<Guid> ids = events.Select(x => x.Id);
-            List<EventTelemetrySummary> telemetrySummaries = await this.telemetryContext.EventTelemetrySummaries
-                .Where(usg => ids.Contains(usg.EventId)).ToListAsync().ConfigureAwait(false);
+           using (DbConnection conn = this.telemetryContext.Database.Connection)
+           {
+               if (conn.State != ConnectionState.Open)
+               {
+                   conn.Open();
+               }
+               using (DbCommand cmd = conn.CreateCommand())
+               {
+                   cmd.CommandText = StoredProcedureNames.p_GetVersionUsage;
+                   cmd.CommandType = CommandType.StoredProcedure;
+                   SqlParameter programIdParam = new SqlParameter("programId", SqlDbType.Int)
+                   {
+                       Value = program.Id
+                   };
+                   SqlParameter startDateParam = new SqlParameter("startDate", SqlDbType.DateTime) {Value = startDate};
+                   SqlParameter endDateParam = new SqlParameter("endDate", SqlDbType.DateTime) {Value = endDate};
+                   cmd.Parameters.Add(programIdParam);
+                   cmd.Parameters.Add(startDateParam);
+                   cmd.Parameters.Add(endDateParam);
 
-            List<EventTelemetryDetail> details = telemetrySummaries.SelectMany(x =>
-                x.TelemetryDetails.Where(d => d.Timestamp >= startDate && d.Timestamp <= endDate)).ToList();
-
-            List<IGrouping<string, EventTelemetryDetail>> grouped = details.GroupBy(x => x.FileVersion).ToList();
-
-            DataTable data = new DataTable();
-
-            data.Columns.Add("Version");
-            data.Columns.Add("Count", typeof(int));
-            foreach (IGrouping<string, EventTelemetryDetail> eventTelemetryDetails in grouped)
-            {
-                DataRow row = data.NewRow();
-                row["Version"] = eventTelemetryDetails.Key;
-                row["Count"] = eventTelemetryDetails.Count();
-                
-                data.Rows.Add(row);
+                   using (DbDataReader reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false))
+                   {
+                       data.Load(reader);
+                   }
+               }
             }
 
             return data;
@@ -182,8 +188,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
             {
                 DataRow row = data.NewRow();
                 row["Date"] = ToDashboardDateString(dateRecord);
-                var detailsForDay = details.Where(detail => detail.Timestamp.Date == dateRecord.Date).ToList();
-                var distinct = detailsForDay.DistinctBy(x => x.TelemetrySummary.ClientAppUserId).ToList();
+                List<EventTelemetryDetail> detailsForDay = details.Where(detail => detail.Timestamp.Date == dateRecord.Date).ToList();
+                List<EventTelemetryDetail> distinct = detailsForDay.DistinctBy(x => x.TelemetrySummary.ClientAppUserId).ToList();
                 row["Users"] = details.Where(detail=>detail.Timestamp.Date == dateRecord.Date).DistinctBy(x => x.TelemetrySummary.ClientAppUserId).Count();
                 data.Rows.Add(row);
                 dateRecord = dateRecord.AddDays(1);
@@ -361,6 +367,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
             }
 
             return telemetryRootObjects;
+        }
+
+        private async Task<TelemetryRootObject> GetTelemetryRootObject(Program program)
+        {
+            return await this.telemetryContext.TelemetryRootObjects.FirstOrDefaultAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
         }
 
         public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)

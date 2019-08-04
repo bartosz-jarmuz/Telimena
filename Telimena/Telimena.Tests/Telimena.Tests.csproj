@@ -171,6 +171,7 @@
     <Compile Include="Controllers\DropCreateDatabaseAlwaysWithConnectionClose.cs" />
     <Compile Include="Controllers\TelemetryControllerHelpersTests.cs" />
     <Compile Include="FriendlyUrlTests.cs" />
+    <Compile Include="ProceduresTests.cs" />
     <Compile Include="SequenceIdParserTests.cs" />
     <Compile Include="EntitiesTests.cs" />
     <Compile Include="MiscTests.cs" />
