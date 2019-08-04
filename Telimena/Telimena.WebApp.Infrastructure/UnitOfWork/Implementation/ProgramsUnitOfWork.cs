@@ -10,19 +10,21 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 {
     public class ProgramsUnitOfWork : IProgramsUnitOfWork
     {
-        public ProgramsUnitOfWork(TelimenaPortalContext context, IAssemblyStreamVersionReader versionReader)
+        public ProgramsUnitOfWork(TelimenaPortalContext portalContext, TelimenaTelemetryContext telemetryContext, IAssemblyStreamVersionReader versionReader)
         {
-            this.context = context;
-            this.Versions = new Repository<AssemblyVersionInfo>(context);
-            this.Users = new UserRepository(context);
-            this.Programs = new ProgramRepository(context);
-            this.ToolkitData = new ToolkitDataRepository(context, versionReader);
-            this.UpdatePackages = new UpdatePackageRepository(context, versionReader);
-            this.ProgramPackages = new ProgramPackageRepository(context, versionReader);
-            this.UpdaterRepository = new UpdaterRepository(context, versionReader);
+            this.portalContext = portalContext;
+            this.telemetryContext = telemetryContext;
+            this.Versions = new Repository<AssemblyVersionInfo>(portalContext);
+            this.Users = new UserRepository(portalContext);
+            this.Programs = new ProgramRepository(portalContext, telemetryContext);
+            this.ToolkitData = new ToolkitDataRepository(portalContext, versionReader);
+            this.UpdatePackages = new UpdatePackageRepository(portalContext, versionReader);
+            this.ProgramPackages = new ProgramPackageRepository(portalContext, versionReader);
+            this.UpdaterRepository = new UpdaterRepository(portalContext, versionReader);
         }
 
-        private readonly TelimenaPortalContext context;
+        private readonly TelimenaPortalContext portalContext;
+        private readonly TelimenaTelemetryContext telemetryContext;
         public IUserRepository Users { get; }
 
         public IToolkitDataRepository ToolkitData { get; set; }
@@ -34,7 +36,8 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
 
         public async Task CompleteAsync()
         {
-            await this.context.SaveChangesAsync().ConfigureAwait(false);
+            await this.portalContext.SaveChangesAsync().ConfigureAwait(false);
+            await this.telemetryContext.SaveChangesAsync().ConfigureAwait(false);
         }
     }
 }

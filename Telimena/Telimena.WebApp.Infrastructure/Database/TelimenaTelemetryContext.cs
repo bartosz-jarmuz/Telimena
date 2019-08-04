@@ -98,6 +98,7 @@ namespace Telimena.WebApp.Infrastructure.Database
         public DbSet<ViewTelemetryDetail> ViewTelemetryDetails { get; set; }
         public DbSet<EventTelemetryDetail> EventTelemetryDetails { get; set; }
         public DbSet<ViewTelemetryUnit> ViewTelemetryUnits { get; set; }
+        public DbSet<EventTelemetryUnit> EventTelemetryUnits { get; set; }
         public DbSet<TelemetryRootObject> TelemetryRootObjects { get; set; }
         public DbSet<ClientAppUser> AppUsers { get; set; }
 

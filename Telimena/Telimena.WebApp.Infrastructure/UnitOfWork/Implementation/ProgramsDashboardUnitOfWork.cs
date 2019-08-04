@@ -60,7 +60,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
             this.portalContext = portalContext;
             this.telemetryContext = telemetryContext;
-            this.Programs = new ProgramRepository(this.portalContext);
+            this.Programs = new ProgramRepository(this.portalContext, telemetryContext);
             this.Views = new ViewRepository(this.telemetryContext);
             this.Events = new Repository<Event>(this.telemetryContext);
             this.UpdatePackages = new UpdatePackageRepository(this.portalContext, null);

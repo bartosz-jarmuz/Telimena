@@ -86,7 +86,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
                     , TimeSpan.FromMinutes(2)).ConfigureAwait(false);
                 VersionTuple newVersions = await this.GetVersionFromMsgBox(appWarning).ConfigureAwait(false);
 
-                await this.AssertVersionAreCorrect(newVersions, initialVersions, appFile, "2.").ConfigureAwait(false);
+                this.AssertVersionAreCorrect(newVersions, initialVersions, appFile, "2.");
 
 
                 //now just assert that the update check result is empty next time
@@ -125,7 +125,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
                     , TimeSpan.FromMinutes(2)).ConfigureAwait(false);
                 VersionTuple newVersions = await this.GetVersionFromMsgBox(appWarning).ConfigureAwait(false);
 
-                await this.AssertVersionAreCorrect(newVersions, initialVersions, appFile, "2.").ConfigureAwait(false);
+                this.AssertVersionAreCorrect(newVersions, initialVersions, appFile, "2.");
 
                 //now just assert that the update check result is empty next time
                 UpdateCheckResult result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: true);
@@ -221,7 +221,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
                 VersionTuple newVersions = this.GetVersionsFromFile(appFile);
 
-                await this.AssertVersionAreCorrect(newVersions, initialVersions, appFile, "3.").ConfigureAwait(false);
+                this.AssertVersionAreCorrect(newVersions, initialVersions, appFile, "3.");
 
                 //now just assert that the update check result is empty next time
                 UpdateCheckResult result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: true);

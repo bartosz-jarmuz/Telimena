@@ -220,6 +220,7 @@
     <Compile Include="Repository\IUpdaterRepository.cs" />
     <Compile Include="Repository\IUpdatePackageRepository.cs" />
     <Compile Include="Security\TelimenaApiAuthorizeAttribute.cs" />
+    <Compile Include="UnitOfWork\Implementation\RegisterProgramUnitOfWork.cs" />
     <Compile Include="UnitOfWork\ITeamUnitOfWork.cs" />
     <Compile Include="UnitOfWork\Implementation\TeamUnitOfWork.cs" />
     <Compile Include="UnitOfWork\IProgramsDashboardUnitOfWork.cs" />
