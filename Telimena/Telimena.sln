@@ -116,6 +116,7 @@ Global
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{8c7395cf-1c86-4c66-bf55-b254ab1ea6f3}*SharedItemsImports = 4
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{ae42cc85-651b-4404-9d3b-992a141d6ae6}*SharedItemsImports = 4
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{bea9956a-2bc0-406b-81d1-af2d5a48772b}*SharedItemsImports = 13
+		..\ApplicationInsights\Test\TestFramework\Shared\TestFramework.Shared.projitems*{f76c6cbd-29b0-4564-bdcb-c969f8fec136}*SharedItemsImports = 13
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{f862d668-8e59-49e9-9968-39ff9a2348c3}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
