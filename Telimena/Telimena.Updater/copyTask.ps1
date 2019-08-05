@@ -4,7 +4,7 @@ $fileName = [System.IO.Path]::GetFileName($TargetPath)
 Write-Host "Copy to apps folder starting..."
 Write-Host "File Path: "  $TargetPath
 
-$testAppsFolder = "$SolutionDir\Telimena.WebApp.UITests\02. IntegrationTests\Apps"
+$testAppsFolder = "$SolutionDir\Telimena.WebApp.AppIntegrationTests\Apps"
 
 Copy-Item $TargetPath -Destination $testAppsFolder
 Write-Host "Copied to $testAppsFolder"

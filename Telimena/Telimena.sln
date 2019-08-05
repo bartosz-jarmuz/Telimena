@@ -116,10 +116,6 @@ Global
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{8c7395cf-1c86-4c66-bf55-b254ab1ea6f3}*SharedItemsImports = 4
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{ae42cc85-651b-4404-9d3b-992a141d6ae6}*SharedItemsImports = 4
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{bea9956a-2bc0-406b-81d1-af2d5a48772b}*SharedItemsImports = 13
-		..\ApplicationInsights\Test\Microsoft.ApplicationInsights.Test\Shared\Microsoft.ApplicationInsights.Shared.Tests.projitems*{c4a0db5b-0988-4e04-b9b8-bcf3b0842000}*SharedItemsImports = 13
-		..\ApplicationInsights\Test\ServerTelemetryChannel.Test\net45.Shared.Tests\net45.Shared.Tests.projitems*{c5a3f18d-1426-4941-9d81-d21062a2b8f2}*SharedItemsImports = 13
-		..\ApplicationInsights\Test\ServerTelemetryChannel.Test\Shared.Tests\Shared.Tests.projitems*{c5a3f18f-1426-4941-9d81-d21062a2b8f2}*SharedItemsImports = 13
-		..\ApplicationInsights\Test\TestFramework\Shared\TestFramework.Shared.projitems*{f76c6cbd-29b0-4564-bdcb-c969f8fec136}*SharedItemsImports = 13
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{f862d668-8e59-49e9-9968-39ff9a2348c3}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -416,8 +412,8 @@ Global
 		{45F7FC02-25D4-4F2A-93B5-FCCBC7B608A4}.ReleaseDev|Any CPU.Build.0 = Release|Any CPU
 		{45F7FC02-25D4-4F2A-93B5-FCCBC7B608A4}.ReleaseDev|x86.ActiveCfg = Release|Any CPU
 		{45F7FC02-25D4-4F2A-93B5-FCCBC7B608A4}.ReleaseDev|x86.Build.0 = Release|Any CPU
-		{1FD916F2-1DF6-42F6-9AD4-83565FBF8E5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1FD916F2-1DF6-42F6-9AD4-83565FBF8E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FD916F2-1DF6-42F6-9AD4-83565FBF8E5C}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{1FD916F2-1DF6-42F6-9AD4-83565FBF8E5C}.Debug|Any CPU.Build.0 = Debug|x86
 		{1FD916F2-1DF6-42F6-9AD4-83565FBF8E5C}.Debug|x86.ActiveCfg = Debug|x86
 		{1FD916F2-1DF6-42F6-9AD4-83565FBF8E5C}.Debug|x86.Build.0 = Debug|x86
 		{1FD916F2-1DF6-42F6-9AD4-83565FBF8E5C}.Release|Any CPU.ActiveCfg = Release|x86

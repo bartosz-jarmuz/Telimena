@@ -273,8 +273,6 @@ namespace Telimena.WebApp.Controllers
         /// Gets the program usages.
         /// </summary>
         /// <param name="telemetryKey">The telemetry key.</param>
-        /// <param name="startDate"></param>
-        /// <param name="endDate"></param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         public async Task<ActionResult> GetProgramUsages(Guid telemetryKey)
@@ -305,6 +303,14 @@ namespace Telimena.WebApp.Controllers
             return this.PartialView("_AllProgramsSummaryBoxes", summary);
         }
 
+
+        /// <summary>
+        /// Gets the daily usages.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <param name="startDate">The start date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpGet]
         public async Task<ActionResult> GetDailyUsages(Guid telemetryKey, DateTime startDate, DateTime endDate)
         {
@@ -327,6 +333,13 @@ namespace Telimena.WebApp.Controllers
             return this.Json(iData, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Gets the daily users count.
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <param name="startDate">The start date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpGet]
         public async Task<ActionResult> GetDailyUsersCount(Guid telemetryKey, DateTime startDate, DateTime endDate)
         {

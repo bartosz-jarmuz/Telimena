@@ -70,7 +70,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
         [Test, Retry(3)]
-        public async Task RegisterTempTestApp()
+        public void RegisterTempTestApp()
         {
             try
             {
