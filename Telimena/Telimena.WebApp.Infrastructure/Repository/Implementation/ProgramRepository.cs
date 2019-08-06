@@ -38,7 +38,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             this.portalContext.Programs.Add(objectToAdd);
         }
 
-        
+
 
         private async Task<Program> FirstOrDefaultAsync(Expression<Func<Program, bool>> predicate = null)
         {
@@ -61,61 +61,25 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<Program> GetByTelemetryKey(Guid telemetryKey)
         {
-            Program prg;
-            string cacheKey = "GetProgramByTelemetryKey:" + telemetryKey;
-            prg = (Program) MemoryCache.Default.Get(cacheKey);
-            if (prg == null)
-            {
-                prg = await this.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
-                if (prg != null)
-                {
-                    MemoryCache.Default.Add(cacheKey, prg, DateTimeOffset.UtcNow.AddDays(1));
-                }
-            }
-
-            return prg;
+            return await this.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
         }
 
         public async Task<Program> GetByNames(string developerName, string programName)
         {
-            Program prg;
-            string cacheKey = "GetByNames:" + developerName + programName;
-            prg = (Program)MemoryCache.Default.Get(cacheKey);
-            if (prg == null)
-            {
-                prg = await this.FirstOrDefaultAsync(x => x.Name == programName && x.DeveloperTeam.Name == developerName).ConfigureAwait(false);
-                if (prg != null)
-                {
-                    MemoryCache.Default.Add(cacheKey, prg, DateTimeOffset.UtcNow.AddDays(1));
-                }
-            }
-
-            return prg;
+            return await this.FirstOrDefaultAsync(x => x.Name == programName && x.DeveloperTeam.Name == developerName).ConfigureAwait(false);
         }
 
 
         public async Task<Program> GetByProgramId(int id)
         {
-            Program prg;
-            string cacheKey = "GetByProgramId:" + id;
-            prg = (Program)MemoryCache.Default.Get(cacheKey);
-            if (prg == null)
-            {
-                prg = await this.FirstOrDefaultAsync(x => x.Id == id).ConfigureAwait(false);
-                if (prg != null)
-                {
-                    MemoryCache.Default.Add(cacheKey, prg, DateTimeOffset.UtcNow.AddDays(1));
-                }
-            }
-
-            return prg;
+            return await this.FirstOrDefaultAsync(x => x.Id == id).ConfigureAwait(false);
         }
 
 
 
         public async Task<Program> SingleOrDefaultAsync(Expression<Func<Program, bool>> predicate = null)
         {
-            Program prg; 
+            Program prg;
             if (predicate == null)
             {
                 prg = await this.portalContext.Set<Program>().SingleOrDefaultAsync().ConfigureAwait(false);
@@ -186,7 +150,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 return this.portalContext.Programs;
             }
 
-            return this.portalContext.Programs.Where(x => x.DeveloperTeam != null && (x.DeveloperTeam.MainUserId == user.Id || x.DeveloperTeam.AssociatedUsers.Any(a=>a.Id == user.Id)));
+            return this.portalContext.Programs.Where(x => x.DeveloperTeam != null && (x.DeveloperTeam.MainUserId == user.Id || x.DeveloperTeam.AssociatedUsers.Any(a => a.Id == user.Id)));
         }
     }
 }
