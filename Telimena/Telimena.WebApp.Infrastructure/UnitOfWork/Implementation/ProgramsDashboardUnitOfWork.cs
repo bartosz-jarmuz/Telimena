@@ -363,6 +363,19 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return telemetryRootObjects;
         }
 
+        private async Task<TelemetryRootObject> GetTelemetryRootObject(Program program)
+        {
+            var key = nameof(this.GetTelemetryRootObject) + program.TelemetryKey;
+            var rootObject = (TelemetryRootObject) MemoryCache.Default.Get(key);
+            if (rootObject == null)
+            {
+                rootObject = await this.telemetryContext.TelemetryRootObjects.FirstOrDefaultAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
+                MemoryCache.Default.Add(key, rootObject, DateTimeOffset.UtcNow.AddDays(1));
+            }
+
+            return rootObject;
+        }
+
         public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)
         {
             List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);

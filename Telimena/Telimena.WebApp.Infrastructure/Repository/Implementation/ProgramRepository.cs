@@ -61,18 +61,54 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task<Program> GetByTelemetryKey(Guid telemetryKey)
         {
-            return await this.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+            Program prg;
+            string cacheKey = "GetProgramByTelemetryKey:" + telemetryKey;
+            prg = (Program) MemoryCache.Default.Get(cacheKey);
+            if (prg == null)
+            {
+                prg = await this.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
+                if (prg != null)
+                {
+                    MemoryCache.Default.Add(cacheKey, prg, DateTimeOffset.UtcNow.AddDays(1));
+                }
+            }
+
+            return prg;
         }
 
         public async Task<Program> GetByNames(string developerName, string programName)
         {
-            return await this.FirstOrDefaultAsync(x => x.Name == programName && x.DeveloperTeam.Name == developerName).ConfigureAwait(false);
+            Program prg;
+            string cacheKey = "GetByNames:" + developerName + programName;
+            prg = (Program)MemoryCache.Default.Get(cacheKey);
+            if (prg == null)
+            {
+                prg = await this.FirstOrDefaultAsync(x => x.Name == programName && x.DeveloperTeam.Name == developerName).ConfigureAwait(false);
+                if (prg != null)
+                {
+                    MemoryCache.Default.Add(cacheKey, prg, DateTimeOffset.UtcNow.AddDays(1));
+                }
+            }
+
+            return prg;
         }
 
 
         public async Task<Program> GetByProgramId(int id)
         {
-            return await this.FirstOrDefaultAsync(x => x.Id == id).ConfigureAwait(false);
+            Program prg;
+            string cacheKey = "GetByProgramId:" + id;
+            prg = (Program)MemoryCache.Default.Get(cacheKey);
+            if (prg == null)
+            {
+                prg = await this.FirstOrDefaultAsync(x => x.Id == id).ConfigureAwait(false);
+                if (prg != null)
+                {
+                    MemoryCache.Default.Add(cacheKey, prg, DateTimeOffset.UtcNow.AddDays(1));
+                }
+            }
+
+            return prg;
         }
 
 
