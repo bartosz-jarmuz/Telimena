@@ -63,9 +63,10 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
                 var elms = table.FindElements(By.TagName("tr"));
+                this.Log($"View usage table row count: {elms.Count}");
                 Assert.IsTrue(elms.Count > 1, "View usage table does not have at least one row");
 
-            },TimeSpan.FromMilliseconds(250), 8).GetAwaiter().GetResult();
+            },TimeSpan.FromMilliseconds(500), 8).GetAwaiter().GetResult();
             var rows = table.FindElements(By.TagName("tr"));
             if (rows.Count > 1)
             {
