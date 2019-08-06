@@ -33,8 +33,7 @@ namespace Telimena.WebApp.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="ProgramManagementController"/> class.
         /// </summary>
-        /// <param name="work"></param>
-        /// <param name="fileRetriever">The fileRetriever.</param>
+        /// <param name="work">The work.</param>
         public ProgramManagementController(IProgramsUnitOfWork work, IFileRetriever fileRetriever)
         {
             this.Work = work;
@@ -104,13 +103,7 @@ namespace Telimena.WebApp.Controllers
             return this.View("ManageProgram", model);
         }
 
-        /// <summary>
-        /// Downloads the application.
-        /// </summary>
-        /// <param name="developerName">Name of the developer.</param>
-        /// <param name="programName">Name of the program.</param>
-        /// <returns>Task&lt;IHttpActionResult&gt;.</returns>
-        /// <exception cref="BadRequestException">Program [{programName}</exception>
+
         [Audit]
         [System.Web.Mvc.HttpGet, System.Web.Mvc.Route("~/{developerName}/{programName}/get", Name ="Get")]
         public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)

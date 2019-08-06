@@ -54,7 +54,7 @@ namespace Telimena.WebApp.Controllers
         /// <summary>
         /// Adds the member.
         /// </summary>
-        /// <param name="newName">The new name.</param>
+        /// <param name="email">The email.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit(AuditingLevel.BasicData)]
         [HttpPost]

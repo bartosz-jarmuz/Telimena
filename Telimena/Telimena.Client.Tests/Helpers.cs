@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights.Channel;
+using Microsoft.ApplicationInsights.TestFramework;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;

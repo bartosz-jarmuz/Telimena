@@ -56,10 +56,6 @@ namespace Telimena.WebApp.Controllers
             return this.View("Telemetry");
         }
 
-        /// <summary>
-        /// Lifecycles the management.
-        /// </summary>
-        /// <returns>ActionResult.</returns>
         [Audit]
         public ActionResult LifecycleManagement()
         {

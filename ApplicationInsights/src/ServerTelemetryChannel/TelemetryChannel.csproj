@@ -14,7 +14,6 @@
     <Description>This nuget provides a telemetry channel to Application Insights Windows Server SDK that will preserve telemetry in offline scenarios. This is a dependent package, for the best experience please install the platform specific package. Privacy statement: https://go.microsoft.com/fwlink/?LinkId=512156</Description>
     <AssemblyName>Telimena.Microsoft.AI.ServerTelemetryChannel</AssemblyName>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -87,10 +86,6 @@
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
   
   <ItemGroup>
