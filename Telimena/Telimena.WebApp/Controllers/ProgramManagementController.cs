@@ -67,6 +67,7 @@ namespace Telimena.WebApp.Controllers
             {
                 TelemetryKey = program.TelemetryKey,
                 ProgramName = program.Name,
+                ProgramId = program.Id,
                 PrimaryAssemblyName = program.PrimaryAssembly.Name + program.PrimaryAssembly.Extension,
                 ProgramDescription = program.Description,
             };
