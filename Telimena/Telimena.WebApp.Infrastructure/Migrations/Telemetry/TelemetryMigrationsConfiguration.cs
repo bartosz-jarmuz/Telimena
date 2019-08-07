@@ -22,6 +22,30 @@ namespace Telimena.WebApp.Infrastructure.Migrations.Telemetry
             this.RecreateProcedures(context);
         }
 
+        private void RecreateFunctions(TelimenaTelemetryContext context)
+        {
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin\\Database\\Sql\\Functions");
+            DirectoryInfo dir = new DirectoryInfo(path);
+            var spFiles = dir.GetFiles("*.sql");
+            foreach (FileInfo file in spFiles)
+            {
+                string funcName = Path.GetFileNameWithoutExtension(file.Name);
+                try
+                {
+                    context.Database.ExecuteSqlCommand($"DROP FUNCTION {funcName}");
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.Contains("because it does not exist or you do not have permission."))
+                    {
+                        throw;
+                    }
+                    //otherwise it's fine, the procedure is new
+                }
+
+                context.Database.ExecuteSqlCommand(File.ReadAllText(file.FullName));
+            }
+        }
 
         private void RecreateProcedures(TelimenaTelemetryContext context)
         {

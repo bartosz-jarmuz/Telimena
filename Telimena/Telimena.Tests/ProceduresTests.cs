@@ -29,5 +29,22 @@ namespace Telimena.Tests
             }
         }
 
+        [Test]
+        public void ValidateFunctionNames()
+        {
+            var dire = TestContext.CurrentContext.TestDirectory;
+            var path = Path.Combine(dire, "Database\\Sql\\Functions");
+            DirectoryInfo dir = new DirectoryInfo(path);
+            var spFiles = dir.GetFiles("*.sql");
+            foreach (FileInfo file in spFiles)
+            {
+                string funcName = Path.GetFileNameWithoutExtension(file.Name);
+                var fileContent = File.ReadAllText(file.FullName);
+                Assert.IsTrue(Regex.IsMatch(fileContent,
+                        ($@"CREATE FUNCTION (\[dbo\]\.)?(\[{funcName}\]){{1}}"), RegexOptions.IgnoreCase), $"Incorrect declaration of func {funcName}. " +
+                                                                                                          $"Func name must match file name without extension. SP Text:\r\n{fileContent}");
+            }
+        }
+
     }
 }
