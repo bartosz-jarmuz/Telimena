@@ -10,6 +10,7 @@ namespace Telimena.WebApp.Models.ProgramManagement
     public class ProgramManagementViewModel
     {
         public string ProgramName { get; set; }
+        public int ProgramId { get; set; }
         public string PrimaryAssemblyName { get; set; }
         public Guid TelemetryKey { get; set; }
 
