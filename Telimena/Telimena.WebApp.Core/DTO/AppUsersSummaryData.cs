@@ -8,6 +8,6 @@ namespace Telimena.WebApp.Core.DTO
         public DateTimeOffset LastActiveDate { get; set; }
         public DateTimeOffset FirstSeenDate { get; set; }
         public int ActivityScore { get; set; }
-        public int NumberOfApps { get; set; }
+        public string FileVersion { get; set; }
     }
 }

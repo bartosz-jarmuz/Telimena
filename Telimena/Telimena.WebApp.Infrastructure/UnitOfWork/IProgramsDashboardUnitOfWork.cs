@@ -41,8 +41,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         Task<DataTable> GetVersionDistribution(Program program, DateTime startDate, DateTime endDate);
         Task<DataTable> GetDailyUsersCount(Program program, DateTime startDate, DateTime endDate);
-        Task<Dictionary<string, int>> GetEventNames(Program program);
-        Task<Dictionary<string, int>> GetViewNames(Program program);
     }
 
 

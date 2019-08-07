@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[p_GetDailySummaryCounts]
+﻿CREATE PROCEDURE [dbo].[p_GetUserActivitySummary]
 	@programIds nvarchar (max),
 	@startDate datetime,
 	@endDate datetime
@@ -9,7 +9,7 @@ TABLE(
 UserId nvarchar(255), 
 FileVersion nvarchar(255), 
 FirstSeen datetime, 
-LastUsed dateTime, 
+LastActive dateTime, 
 ActivityScore int)
 
 
@@ -44,13 +44,13 @@ GROUP BY cau.UserIdentifier, ed.FileVersion, cau.FirstSeenDate
 SELECT UserId,
 FileVersion, 
 FirstSeen, 
-LastUsed, 
+LastActive, 
 ActivityScore =
 	(SELECT SUM(ActivityScore) FROM
 		@TempResults r WHERE r.UserId = results.UserId) 
 FROM @TempResults results
-WHERE LastUsed = 
-	(SELECT MAX(LastUsed) 
+WHERE LastActive = 
+	(SELECT MAX(LastActive) 
 		FROM @TempResults r WHERE r.UserId = results.UserId)
-GROUP BY UserId,FileVersion, FirstSeen, not LastUsed
+GROUP BY UserId,FileVersion, FirstSeen, LastActive
 ORDER BY ActivityScore DESC
