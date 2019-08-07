@@ -93,7 +93,7 @@ namespace Telimena.TestUtilities.Base
             Assert.AreEqual(name, infoElements[0].Text);
             Assert.AreEqual(description, infoElements[1].Text);
             Assert.AreEqual(key.ToString(), infoElements[2].Text);
-            Assert.AreEqual(assemblyName, infoElements[3].Text);
+            Assert.AreEqual(assemblyName, infoElements[4].Text);
             return key.Value;
         }
 
