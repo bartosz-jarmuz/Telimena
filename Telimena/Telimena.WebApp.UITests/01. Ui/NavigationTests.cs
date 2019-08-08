@@ -22,7 +22,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 this.GoToAdminHomePage();
 
-                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(20));
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(GetSetting<int>(ConfigKeys.WaitTimeoutSeconds)));
 
                 this.TryFind(By.Id(Strings.Id.ToolkitManagementLink)).Click();
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.ToolkitManagementForm)));

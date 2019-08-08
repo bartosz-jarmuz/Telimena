@@ -9,6 +9,7 @@
     <Parameter name="User2Password" value="123456" />
     <Parameter name="PortalUrl" value="" />
     <Parameter name="IsLocalTest" value="True" />
+    <Parameter name="WaitTimeoutSeconds" value="40" />
   </TestRunParameters>
 
 </RunSettings>

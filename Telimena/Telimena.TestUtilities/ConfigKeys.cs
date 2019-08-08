@@ -13,5 +13,6 @@
         public const string PortalUrl = "PortalUrl";
         public const string IsLocalTest = "IsLocalTest";
         public const string ShowBrowser = "ShowBrowser";
+        public const string WaitTimeoutSeconds = "WaitTimeoutSeconds";
     }
 }
