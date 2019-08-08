@@ -490,6 +490,7 @@ namespace Telimena.TestUtilities.Base
             Screenshot screen = this.Screenshooter.GetScreenshot();
             string path = Common.CreatePngPath(memberName);
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
+            TestContext.AddTestAttachment(path);
             string page = this.Driver.PageSource;
 
             string errorOutputs = "";
