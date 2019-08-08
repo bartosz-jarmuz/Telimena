@@ -270,6 +270,8 @@ namespace Telimena.TestUtilities.Base
                     }
                     var driverService = ChromeDriverService.CreateDefaultService();
                     var driver = new ChromeDriver(driverService, opt);
+                    driver.Manage().Window.Maximize();
+                    driver.Manage().Window.Size = new System.Drawing.Size(4800, 2560);
 
                     Task.Run(() => AllowHeadlessDownload(driver, driverService));
                     return driver;
@@ -489,6 +491,7 @@ namespace Telimena.TestUtilities.Base
         {
             Screenshot screen = this.Screenshooter.GetScreenshot();
             string path = Common.CreatePngPath(memberName);
+            this.Log($"Saving error screen shot at {path}");
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
             TestContext.AddTestAttachment(path);
             string page = this.Driver.PageSource;
@@ -509,7 +512,6 @@ namespace Telimena.TestUtilities.Base
             alert?.Dismiss();
             throw new AssertFailedException($"{ex}\r\n\r\n{this.PresentParams()}\r\n\r\n{errorOutputs}\r\n\r\n{normalOutputs}\r\n\r\n{page}", ex);
 
-            //this.TestContext.AddResultFile(path);
         }
 
         private string PresentParams()

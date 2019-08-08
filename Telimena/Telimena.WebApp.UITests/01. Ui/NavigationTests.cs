@@ -82,7 +82,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                     var sequenceRows = sequenceTable.FindElements(By.TagName("tr"));
                     Assert.IsTrue(sequenceRows.Count > 1, $"Sequence table does not contain sequence elements. [{sequenceTable.Text}]"); //includes header
 
-                }, TimeSpan.FromMilliseconds(250), 8).GetAwaiter().GetResult();
+                }, TimeSpan.FromMilliseconds(1000), 8).GetAwaiter().GetResult();
                 
             }
         }
