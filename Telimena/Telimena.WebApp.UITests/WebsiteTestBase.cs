@@ -36,7 +36,7 @@ namespace Telimena.TestUtilities.Base
         {
             this.GoToAdminHomePage();
 
-            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(25));
 
             this.Driver.FindElement(By.Id(Strings.Id.RegisterApplicationLink)).Click();
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
