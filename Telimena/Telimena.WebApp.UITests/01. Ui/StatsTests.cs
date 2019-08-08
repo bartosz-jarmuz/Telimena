@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using SharedLogic;
 using NUnit.Framework;
@@ -22,7 +23,7 @@ namespace Telimena.WebApp.UITests._01._Ui
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_WebsiteTests : WebsiteTestBase
     {
-        private Task<DateTime> GetLatestUsageFromTable()
+        private Task<DateTime> GetLatestUsageFromTable([CallerMemberName] string caller = "")
         {
             try
             {
@@ -61,7 +62,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, this.outputs, this.errors);
+                this.HandleError(ex, caller, this.outputs, this.errors);
                 return Task.FromResult(default(DateTime));
             }
         }

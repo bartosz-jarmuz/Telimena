@@ -34,6 +34,7 @@ namespace Telimena.TestUtilities.Base
         protected List<string> outputs = new List<string>();
         protected readonly bool isLocalTestSetting = GetSetting<bool>(ConfigKeys.IsLocalTest);
 
+        protected string TestRunFolderName;
 
         [OneTimeTearDown]
         public void TestCleanup()
@@ -44,6 +45,7 @@ namespace Telimena.TestUtilities.Base
         [OneTimeSetUp]
         public void TestInitialize()
         {
+            this.TestRunFolderName = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") +"_"+ this.GetType().Name;
             if (this.isLocalTestSetting)
             {
                 this.TestEngine = new LocalHostTestEngine();

@@ -271,7 +271,7 @@ namespace Telimena.TestUtilities.Base
                     var driverService = ChromeDriverService.CreateDefaultService();
                     var driver = new ChromeDriver(driverService, opt);
                     driver.Manage().Window.Maximize();
-                    driver.Manage().Window.Size = new System.Drawing.Size(4800, 2560);
+                    //driver.Manage().Window.Size = new System.Drawing.Size(4800, 2560);
 
                     Task.Run(() => AllowHeadlessDownload(driver, driverService));
                     return driver;
@@ -487,10 +487,10 @@ namespace Telimena.TestUtilities.Base
             return false;
         }
 
-        protected void HandleError(Exception ex, List<string> outputs = null, List<string> errors = null, [CallerMemberName] string memberName = "")
+        protected void HandleError(Exception ex, string screenshotName, List<string> outputs = null, List<string> errors = null)
         {
             Screenshot screen = this.Screenshooter.GetScreenshot();
-            string path = Common.CreatePngPath(memberName);
+            string path = Common.CreatePngPath(screenshotName, this.TestRunFolderName);
             this.Log($"Saving error screen shot at {path}");
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
             TestContext.AddTestAttachment(path);

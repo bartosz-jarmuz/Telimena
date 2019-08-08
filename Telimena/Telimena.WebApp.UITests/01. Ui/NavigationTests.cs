@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 using DotNetLittleHelpers;
 using NUnit.Framework;
@@ -53,7 +54,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex);
+                this.HandleError(ex, MethodBase.GetCurrentMethod().Name);
             }
         }
 
