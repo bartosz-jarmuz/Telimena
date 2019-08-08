@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -24,7 +25,7 @@ namespace Telimena.WebApp.UITests._01._Ui
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_WebsiteTests : WebsiteTestBase
     {
-        public void UploadUpdatePackage(string appName, string packageFileName)
+        public void UploadUpdatePackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -64,7 +65,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex);
+                this.HandleError(ex, caller);
             }
         }
 
@@ -228,7 +229,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
 
-        public void UploadProgramPackage(string appName, string packageFileName)
+        public void UploadProgramPackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -264,11 +265,11 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex);
+                this.HandleError(ex, caller);
             }
         }
 
-        private void DownloadAndInstallMsiProgramPackage(string appName, string packageFileName)
+        private void DownloadAndInstallMsiProgramPackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -298,7 +299,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex);
+                this.HandleError(ex, caller);
             }
         }
 
@@ -318,7 +319,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
 
         }
-        private string GetUpdaterForApp(string appName)
+        private string GetUpdaterForApp(string appName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -339,13 +340,13 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex);
+                this.HandleError(ex, caller);
                 throw;
 
             }
         }
 
-        private void SetUpdaterForApp(string appName, string updaterName)
+        private void SetUpdaterForApp(string appName, string updaterName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -369,7 +370,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex);
+                this.HandleError(ex, caller);
             }
         }
     }
