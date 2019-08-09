@@ -18,15 +18,10 @@ namespace Telimena.WebApp.UITests._01._Ui
     [TestFixture]
     [TestFixture()]
 #if !DEBUG
-    [Timeout(1 * 60 * 1000)]
+    [Timeout(2 * 60 * 1000)]
 #endif
     public partial class _1_WebsiteTests : WebsiteTestBase
     {
-
-      
-
-  
-
 
         [Test, Order(1), Retry(3)]
         public void _01_UploadToolkit()

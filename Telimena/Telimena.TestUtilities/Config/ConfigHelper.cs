@@ -41,5 +41,15 @@ namespace Telimena.TestUtilities
             }
             return (T)Convert.ChangeType(val, typeof(T));
         }
+
+        public static T GetSetting<T>(string key, T defaultValue)
+        {
+            string val = GetSetting(key);
+            if (val == null)
+            {
+                return defaultValue;
+            }
+            return (T)Convert.ChangeType(val, typeof(T));
+        }
     }
 }

@@ -68,7 +68,8 @@ namespace Telimena.WebApp.UITests._01._Ui
                 IntegrationTestBase.Log($"View usage table row count: {elms.Count}");
                 Assert.IsTrue(elms.Count > 1, "View usage table does not have at least one row");
 
-            },TimeSpan.FromMilliseconds(1000), 8).GetAwaiter().GetResult();
+            },TimeSpan.FromMilliseconds(1000), 30).GetAwaiter().GetResult();
+
             var rows = table.FindElements(By.TagName("tr"));
             if (rows.Count > 1)
             {
@@ -84,7 +85,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                     var sequenceRows = sequenceTable.FindElements(By.TagName("tr"));
                     Assert.IsTrue(sequenceRows.Count > 1, $"Sequence table does not contain sequence elements. [{sequenceTable.Text}]"); //includes header
 
-                }, TimeSpan.FromMilliseconds(1000), 8).GetAwaiter().GetResult();
+                }, TimeSpan.FromMilliseconds(1000), 30).GetAwaiter().GetResult();
                 
             }
         }

@@ -37,8 +37,8 @@ namespace Telimena.TestUtilities.Base
             //Trace.TraceInformation("trace - UiTestsLogger:" + info);
             //Trace.TraceError("error - UiTestsLogger:" + info);
             //Logger.LogMessage("Logger - UiTestsLogger:" + info);
-            TestContext.Out.WriteLine("Ctx -  UiTestsLogger:" + info);
-            Console.WriteLine("UiTestsLogger:" + info);
+            //TestContext.Out.WriteLine("Ctx -  UiTestsLogger:" + info);
+            Console.WriteLine(info);
         }
         
         protected T ParseOutput<T>() where T : class

@@ -70,7 +70,7 @@ namespace Telimena.WebApp.UITests
                     var driverService = ChromeDriverService.CreateDefaultService();
                     var driver = new ChromeDriver(driverService, opt);
                     driver.Manage().Window.Maximize();
-                    //driver.Manage().Window.Size = new Size(4800, 2560);
+                    driver.Manage().Window.Size = new Size(ConfigHelper.GetSetting<int>(ConfigKeys.BrowserWidth, 1920), ConfigHelper.GetSetting<int>(ConfigKeys.BrowserHeight, 1080));
 
                     Task.Run(() => AllowHeadlessDownload(driver, driverService));
                     return driver;
