@@ -29,7 +29,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
     {
         public async Task<VersionTuple> GetVersionsFromApp(string appName, string testSubfolderName)
         {
-            FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
+            FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName, Log);
             return await this.GetVersionsFromApp(exe).ConfigureAwait(false);
         }
         private void AssertNoNonBetaUpdatesToInstall(UpdateCheckResult result, bool betaUpdateMightStillBeAvailable)
@@ -45,7 +45,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
         }
         public VersionTuple GetVersionsFromExtractedAppFile(string appName, string testSubfolderName, out FileInfo exe)
         {
-            exe = TestAppProvider.ExtractApp(appName, testSubfolderName, this.Log);
+            exe = TestAppProvider.ExtractApp(appName, testSubfolderName, Log);
             return this.GetVersionsFromFile(exe);
         }
 
@@ -60,7 +60,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
         public async Task<VersionTuple> GetVersionsFromApp(FileInfo exe)
         {
-            this.Log($"Starting process [{exe.FullName}]");
+            Log($"Starting process [{exe.FullName}]");
             Process process = Process.Start(exe.FullName);
             Application app = TestStack.White.Application.Attach(process);
 
