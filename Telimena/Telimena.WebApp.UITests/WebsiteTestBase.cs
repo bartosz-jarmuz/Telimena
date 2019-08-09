@@ -489,9 +489,10 @@ namespace Telimena.TestUtilities.Base
 
         protected void HandleError(Exception ex, string screenshotName, List<string> outputs = null, List<string> errors = null)
         {
-            Screenshot screen = this.Screenshooter.GetScreenshot();
             string path = Common.CreatePngPath(screenshotName, this.TestRunFolderName);
             this.Log($"Saving error screen shot at {path}");
+
+            Screenshot screen = this.Screenshooter.GetScreenshot();
             screen.SaveAsFile(path, ScreenshotImageFormat.Png);
             TestContext.AddTestAttachment(path);
             string page = this.Driver.PageSource;
