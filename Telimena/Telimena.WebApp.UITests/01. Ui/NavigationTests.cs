@@ -5,6 +5,7 @@ using DotNetLittleHelpers;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using Telimena.TestUtilities;
 using Telimena.TestUtilities.Base;
 using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.UiStrings;
@@ -23,24 +24,24 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 this.GoToAdminHomePage();
 
-                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(GetSetting<int>(ConfigKeys.WaitTimeoutSeconds)));
+                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(ConfigHelper.GetSetting<int>(ConfigKeys.WaitTimeoutSeconds)));
 
-                this.TryFind(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver, this.Log);
+                this.Driver.TryFind(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.ToolkitManagementForm)));
 
-                this.TryFind(By.Id(Strings.Id.PortalAdminDashboardLink)).ClickWrapper(this.Driver, this.Log);
+                this.Driver.TryFind(By.Id(Strings.Id.PortalAdminDashboardLink)).ClickWrapper(this.Driver);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.PortalSummary)));
 
-                this.TryFind(By.Id(Strings.Id.PortalUsersLink)).ClickWrapper(this.Driver, this.Log);
+                this.Driver.TryFind(By.Id(Strings.Id.PortalUsersLink)).ClickWrapper(this.Driver);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.PortalUsersTable)));
 
-                this.TryFind(By.Id(Strings.Id.DeveloperDashboardLink)).ClickWrapper(this.Driver, this.Log);
+                this.Driver.TryFind(By.Id(Strings.Id.DeveloperDashboardLink)).ClickWrapper(this.Driver);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.DeveloperDashboard)));
 
-                this.TryFind(By.Id(Strings.Id.TeamManagementLink)).ClickWrapper(this.Driver, this.Log);
+                this.Driver.TryFind(By.Id(Strings.Id.TeamManagementLink)).ClickWrapper(this.Driver);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.TeamMembersList)));
 
-                this.TryFind(By.Id(Strings.Id.RegisterApplicationLink)).ClickWrapper(this.Driver, this.Log);
+                this.Driver.TryFind(By.Id(Strings.Id.RegisterApplicationLink)).ClickWrapper(this.Driver);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
 
                 this.ValidateAppPages(Apps.Names.AutomaticTestsClient, wait);
@@ -48,7 +49,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.ValidateHelpPages(wait);
 
                 //api should be last
-                this.TryFind(By.Id(Strings.Id.ApiDocsLink)).ClickWrapper(this.Driver, this.Log);
+                this.Driver.TryFind(By.Id(Strings.Id.ApiDocsLink)).ClickWrapper(this.Driver);
                 var apiInfo = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("api_info")));
                 Assert.IsTrue(apiInfo.Text.Contains("Telimena API"), "apiInfo.Text.Contains('Telimena API')");
             }
@@ -64,7 +65,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
                 var elms = table.FindElements(By.TagName("tr"));
-                this.Log($"View usage table row count: {elms.Count}");
+                IntegrationTestBase.Log($"View usage table row count: {elms.Count}");
                 Assert.IsTrue(elms.Count > 1, "View usage table does not have at least one row");
 
             },TimeSpan.FromMilliseconds(1000), 8).GetAwaiter().GetResult();
@@ -75,7 +76,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 var link = cells[1].FindElement(By.TagName("a"));
 
-                link.ClickWrapper(this.Driver, this.Log);
+                link.ClickWrapper(this.Driver);
 
                 Retrier.RetryAsync(() =>
                 {
@@ -114,16 +115,16 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         private void ValidateHelpPages(WebDriverWait wait)
         {
-            this.TryFind(By.Id(Strings.Id.Help.LinkHelpOverview)).ClickWrapper(this.Driver, this.Log);
+            this.Driver.TryFind(By.Id(Strings.Id.Help.LinkHelpOverview)).ClickWrapper(this.Driver);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.HelpOverview)));
 
-            this.TryFind(By.Id(Strings.Id.Help.LinkGettingStarted)).ClickWrapper(this.Driver, this.Log);
+            this.Driver.TryFind(By.Id(Strings.Id.Help.LinkGettingStarted)).ClickWrapper(this.Driver);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.AppRegistrationPanel)));
 
-            this.TryFind(By.Id(Strings.Id.Help.LinkTelemetry)).ClickWrapper(this.Driver, this.Log);
+            this.Driver.TryFind(By.Id(Strings.Id.Help.LinkTelemetry)).ClickWrapper(this.Driver);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.TelemetryOverviewPanel)));
 
-            this.TryFind(By.Id(Strings.Id.Help.LinkLifecycleManagement)).ClickWrapper(this.Driver, this.Log);
+            this.Driver.TryFind(By.Id(Strings.Id.Help.LinkLifecycleManagement)).ClickWrapper(this.Driver);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.CheckingForUpdatesPanel)));
 
         }

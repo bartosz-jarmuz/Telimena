@@ -64,9 +64,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigKeys.cs" />
+    <Compile Include="Base\IntegrationTestBase.MsiHandling.cs" />
+    <Compile Include="Base\IntegrationTestBase.LogsAndErrors.cs" />
+    <Compile Include="Base\IntegrationTestBase.TelemetryRequests.cs" />
+    <Compile Include="Base\IntegrationTestBase.cs" />
+    <Compile Include="Base\IntegrationTestBase.Settings.cs" />
+    <Compile Include="Config\ConfigHelper.cs" />
+    <Compile Include="Config\ConfigKeys.cs" />
     <Compile Include="TestEngines\DeployedTestEngine.cs" />
-    <Compile Include="IntegrationTestBase.cs" />
+    <Compile Include="Base\IntegrationTestBase.TestAppLaunching.cs" />
     <Compile Include="TestEngines\ITestEngine.cs" />
     <Compile Include="TestEngines\LocalHostTestEngine.cs" />
     <Compile Include="TestAppInteraction\Apps.cs" />

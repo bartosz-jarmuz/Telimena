@@ -33,9 +33,9 @@ namespace Telimena.WebApp.UITests._01._Ui
                 login.SendKeys(this.AdminName);
                 pass.SendKeys(this.AdminPassword);
                 IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
-                submit.ClickWrapper(this.Driver, this.Log);
+                submit.ClickWrapper(this.Driver);
 
-                  if (this.TryFind(Strings.Id.PasswordForm) == null)
+                  if (this.Driver.TryFind(Strings.Id.PasswordForm) == null)
                 {
                     this.RecognizeAdminDashboardPage();
 
@@ -43,7 +43,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, MethodBase.GetCurrentMethod().Name);
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
 
         }
@@ -66,7 +66,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 login.SendKeys("Wrong");
                 pass.SendKeys("Dude");
                 IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
-                submit.ClickWrapper(this.Driver, this.Log);
+                submit.ClickWrapper(this.Driver);
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
                 IWebElement element = wait.Until(x => x.FindElement(By.ClassName("validation-summary-errors")));
 
@@ -74,7 +74,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, MethodBase.GetCurrentMethod().Name);
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
         }
 

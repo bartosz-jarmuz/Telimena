@@ -37,7 +37,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, nameof(_04_RegisterAutomaticTestsClient));
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
         }
 
@@ -51,7 +51,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, "_04b_RegisterAutomaticTestsClient_PackageUpdaterTest");
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
         }
 
@@ -65,7 +65,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, "_04c_RegisterInstallerTestApp_Msi3");
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
         }
 
@@ -78,18 +78,20 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.DeleteApp(appName, true);
 
-
                 var guid = this.RegisterApp(appName, null, "To be deleted", "Auto test TestPlugin.dll", true, false);
+                Log("Temp test app registered");
+                await this.SendBasicTelemetry(guid).ConfigureAwait(false);
+                Log("Telemetry sent");
 
-                this.SendBasicTelemetry(guid);
-
-                 this.RegisterApp(appName, null, "To be deleted", "Auto test TestPlugin.dll", true, true);
+                this.RegisterApp(appName, null, "To be deleted", "Auto test TestPlugin.dll", true, true);
+                Log("Attempting to delete the test app");
 
                 this.DeleteApp(appName, false);
+
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, nameof(this.RegisterTempTestApp));
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
             finally
             {
@@ -98,64 +100,32 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-
-        private async void SendBasicTelemetry(Guid guid)
-        {
-
-            await this.SendBasicTelemetry(guid, new BasicTelemetryItem()
-            {
-                Metrics = new Dictionary<string, double>()
-                {
-                    {"Something", 123.3 }
-                },
-                ProgramVersion = "1.2.3.4",
-            }).ConfigureAwait(false);
-            await this.SendBasicTelemetry(guid, new BasicTelemetryItem()
-            {
-                EventName = "SomeViewEvent",
-                TelemetryItemType = TelemetryItemTypes.View,
-                Metrics = new Dictionary<string, double>()
-                {
-                    {"SomethingForView", 123.3 }
-                },
-                ProgramVersion = "1.2.3.4",
-            }).ConfigureAwait(false);
-            await this.SendBasicTelemetry(guid, new BasicTelemetryItem()
-            {
-                TelemetryItemType = TelemetryItemTypes.LogMessage,
-                LogMessage = "Hello, world",
-            }).ConfigureAwait(false);
-
-            TelemetryQueryRequest request = TelemetryQueryRequest.CreateFull(guid);
-            TelemetryQueryResponse queryResponse = await this.CheckTelemetry(request).ConfigureAwait(false);
-            var viewTelemetry  = queryResponse.TelemetryAware.Single(x=>x.ComponentKey == "SomeViewEvent");
-            var eventTelemetry = queryResponse.TelemetryAware.Single(x=>x.ComponentKey == "DefaultEvent");
-            Assert.AreEqual("1.2.3.4", viewTelemetry.Summaries.Single().Details.Single().FileVersion);
-            Assert.AreEqual("1.2.3.4", eventTelemetry.Summaries.Single().Details.Single().FileVersion);
-        }
-        
-
-   
-
         [Test, Order(7), Retry(3)]
         public void _07_SetUpdaterForPackageTriggerApp()
-        { 
-
-            var app = Apps.Names.PackageUpdaterTest;
-            var currentUpdater = this.GetUpdaterForApp(app);
-
-            if (currentUpdater == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
+        {
+            try
             {
-                this.SetUpdaterForApp(app, DefaultToolkitNames.UpdaterInternalName);
-                Assert.AreEqual(DefaultToolkitNames.UpdaterInternalName, this.GetUpdaterForApp(app));
 
-                this.SetUpdaterForApp(app, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
-                Assert.AreEqual(DefaultToolkitNames.PackageTriggerUpdaterInternalName, this.GetUpdaterForApp(app));
+                var app = Apps.Names.PackageUpdaterTest;
+                var currentUpdater = this.GetUpdaterForApp(app);
+
+                if (currentUpdater == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
+                {
+                    this.SetUpdaterForApp(app, DefaultToolkitNames.UpdaterInternalName);
+                    Assert.AreEqual(DefaultToolkitNames.UpdaterInternalName, this.GetUpdaterForApp(app));
+
+                    this.SetUpdaterForApp(app, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
+                    Assert.AreEqual(DefaultToolkitNames.PackageTriggerUpdaterInternalName, this.GetUpdaterForApp(app));
+                }
+                else
+                {
+                    this.SetUpdaterForApp(app, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
+                    Assert.AreEqual(DefaultToolkitNames.PackageTriggerUpdaterInternalName, this.GetUpdaterForApp(app));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                this.SetUpdaterForApp(app, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
-                Assert.AreEqual(DefaultToolkitNames.PackageTriggerUpdaterInternalName, this.GetUpdaterForApp(app));
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
         }
 
@@ -186,40 +156,56 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, MethodBase.GetCurrentMethod().Name);
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
 
         }
 
-     
         [Test, Order(10), Retry(3)]
         public void _10_DownloadInstallerTestAppMsi3Package()
         {
-            this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
+            try
+            {
 
-            this.Log("Proceeding to download");
+                this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1
+                    , Apps.ProductCodes.InstallersTestAppMsi3V2);
 
-            this.DownloadAndInstallMsiProgramPackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V1);
+                IntegrationTestBase.Log("Proceeding to download");
 
-            this.Log("Uninstalling packages after test");
-            this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.ProductCodes.InstallersTestAppMsi3V2);
+                this.DownloadAndInstallMsiProgramPackage(Apps.Names.InstallersTestAppMsi3
+                    , Apps.PackageNames.InstallersTestAppMsi3V1);
+
+                IntegrationTestBase.Log("Uninstalling packages after test");
+                this.UninstallPackages(Apps.ProductCodes.InstallersTestAppMsi3V1
+                    , Apps.ProductCodes.InstallersTestAppMsi3V2);
+            }
+            catch (Exception ex)
+            {
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
+            }
         }
 
         [Test, Order(12), Retry(3)]
         public void _12_SetUpdaterForMsiInstallerApp()
         {
-
-            var app = Apps.Names.InstallersTestAppMsi3;
-            var currentUpdater = this.GetUpdaterForApp(app);
-
-            if (currentUpdater == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
+            try
             {
-                //ok
+                var app = Apps.Names.InstallersTestAppMsi3;
+                var currentUpdater = this.GetUpdaterForApp(app);
+
+                if (currentUpdater == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
+                {
+                    //ok
+                }
+                else
+                {
+                    this.SetUpdaterForApp(app, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
+                    Assert.AreEqual(DefaultToolkitNames.PackageTriggerUpdaterInternalName, this.GetUpdaterForApp(app));
+                }
             }
-            else
+            catch (Exception ex)
             {
-                this.SetUpdaterForApp(app, DefaultToolkitNames.PackageTriggerUpdaterInternalName);
-                Assert.AreEqual(DefaultToolkitNames.PackageTriggerUpdaterInternalName, this.GetUpdaterForApp(app));
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
         }
 

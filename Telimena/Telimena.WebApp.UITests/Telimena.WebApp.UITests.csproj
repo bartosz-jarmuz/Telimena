@@ -104,9 +104,11 @@
     <Compile Include="01. Ui\UsersAndTeamsTests.cs" />
     <Compile Include="01. Ui\StatsTests.cs" />
     <Compile Include="01. Ui\NavigationTests.cs" />
-    <Compile Include="Common.cs" />
-    <Compile Include="DOMActionsExtensions.cs" />
+    <Compile Include="DOMExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TelimenaTestException.cs" />
+    <Compile Include="WebsiteTestBase.CommonNavigation.cs" />
+    <Compile Include="WebsiteTestBase.Browser.cs" />
     <Compile Include="WebsiteTestBase.cs" />
     <Compile Include="UITestsInitializer.cs" />
   </ItemGroup>

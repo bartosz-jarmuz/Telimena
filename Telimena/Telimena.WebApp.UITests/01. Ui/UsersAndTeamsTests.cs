@@ -53,21 +53,21 @@ namespace Telimena.WebApp.UITests._01._Ui
                 pass2.SendKeys(password);
 
                 IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.Register));
-                submit.ClickWrapper(this.Driver, this.Log);
+                submit.ClickWrapper(this.Driver);
 
                 
                 this.VerifyUserAdded();
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, MethodBase.GetCurrentMethod().Name);
+                this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
 
         }
 
         private void VerifyUserAdded()
         {
-            var element = this.TryFind(By.ClassName(Strings.Css.UserCreatedMessage));
+            var element = this.Driver.TryFind(By.ClassName(Strings.Css.UserCreatedMessage));
             if (element != null)
             {
                 if (element.Text.Contains("Account created successfully."))
@@ -76,7 +76,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 }
             }
 
-            element = this.TryFind(By.ClassName("validation-summary-errors"));
+            element = this.Driver.TryFind(By.ClassName("validation-summary-errors"));
             if (element != null)
             {
                 if (element.Text.Contains("is already taken."))

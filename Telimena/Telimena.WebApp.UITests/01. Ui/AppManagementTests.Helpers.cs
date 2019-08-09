@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
@@ -13,6 +15,7 @@ using OpenQA.Selenium.Support.UI;
 using Telimena.TestUtilities.Base;
 using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.Core.DTO;
+using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.UiStrings;
 using TelimenaClient;
 using TelimenaClient.Model;
@@ -25,7 +28,7 @@ namespace Telimena.WebApp.UITests._01._Ui
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_WebsiteTests : WebsiteTestBase
     {
-        public void UploadUpdatePackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
+        private void UploadUpdatePackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -55,7 +58,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 var btn = wait.Until(ExpectedConditions.ElementToBeClickable(form.FindElements(By.TagName("input"))
                     .FirstOrDefault(x => x.GetAttribute("type") == "submit")));
 
-                btn.ClickWrapper(this.Driver, this.Log);
+                btn.ClickWrapper(this.Driver);
                 this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Uploaded package with ID"));
                 this.Driver.Navigate().Refresh();
                 
@@ -86,7 +89,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             var id = row.FindElements(By.TagName("td"))[1].Text;
 
 
-            var showBtn = this.TryFind(() => row.FindElement(By.ClassName("expand"))
+            var showBtn = DOMExtensions.TryFind(() => row.FindElement(By.ClassName("expand"))
                 , TimeSpan.FromSeconds(15));
             Assert.IsNotNull(showBtn);
             Actions actions = new Actions(this.Driver);
@@ -94,11 +97,11 @@ namespace Telimena.WebApp.UITests._01._Ui
             actions.Perform();
 
             wait.Until(ExpectedConditions.ElementToBeClickable(showBtn));
-            showBtn.ClickWrapper(this.Driver, this.Log);
+            showBtn.ClickWrapper(this.Driver);
 
             var nextRow = row.FindElement(By.XPath("following-sibling::*[1]"));
             IWebElement notesSection =
-                this.TryFind(
+                DOMExtensions.TryFind(
                     () => nextRow.FindElements(By.TagName("pre")).ToList()
                         .FirstOrDefault(x => x.GetAttribute("data-pkg-id") == id), TimeSpan.FromSeconds(1));
 
@@ -106,6 +109,40 @@ namespace Telimena.WebApp.UITests._01._Ui
             Assert.AreEqual(expectedNotes, notesSection.Text);
         }
 
+        private async Task SendBasicTelemetry(Guid guid)
+        {
+
+            await this.SendBasicTelemetry(guid, new BasicTelemetryItem()
+            {
+                Metrics = new Dictionary<string, double>()
+                {
+                    {"Something", 123.3 }
+                },
+                ProgramVersion = "1.2.3.4",
+            }).ConfigureAwait(false);
+            await this.SendBasicTelemetry(guid, new BasicTelemetryItem()
+            {
+                EventName = "SomeViewEvent",
+                TelemetryItemType = TelemetryItemTypes.View,
+                Metrics = new Dictionary<string, double>()
+                {
+                    {"SomethingForView", 123.3 }
+                },
+                ProgramVersion = "1.2.3.4",
+            }).ConfigureAwait(false);
+            await this.SendBasicTelemetry(guid, new BasicTelemetryItem()
+            {
+                TelemetryItemType = TelemetryItemTypes.LogMessage,
+                LogMessage = "Hello, world",
+            }).ConfigureAwait(false);
+
+            TelemetryQueryRequest request = TelemetryQueryRequest.CreateFull(guid);
+            TelemetryQueryResponse queryResponse = await this.CheckTelemetry(request).ConfigureAwait(false);
+            var viewTelemetry = queryResponse.TelemetryAware.Single(x => x.ComponentKey == "SomeViewEvent");
+            var eventTelemetry = queryResponse.TelemetryAware.Single(x => x.ComponentKey == "DefaultEvent");
+            Assert.AreEqual("1.2.3.4", viewTelemetry.Summaries.Single().Details.Single().FileVersion);
+            Assert.AreEqual("1.2.3.4", eventTelemetry.Summaries.Single().Details.Single().FileVersion);
+        }
 
         private void SetReleaseNotesOnExistingPkg(string notes)
         {
@@ -113,7 +150,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
 
 
-            var setBtn = this.TryFind(() => table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))
+            var setBtn = DOMExtensions.TryFind(() => table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))
                 , TimeSpan.FromSeconds(15));
 
             Actions actions = new Actions(this.Driver);
@@ -122,7 +159,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             wait.Until(ExpectedConditions.ElementToBeClickable(setBtn));
 
-            setBtn.ClickWrapper(this.Driver, this.Log);
+            setBtn.ClickWrapper(this.Driver);
 
             this.FillInReleaseNotesModal(wait, notes);
         }
@@ -134,7 +171,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             var btn = wait.Until(ExpectedConditions.ElementToBeClickable(
                 form.FindElement(By.ClassName(@Strings.Css.PrepareReleaseNotesButton))));
 
-            btn.ClickWrapper(this.Driver, this.Log);
+            btn.ClickWrapper(this.Driver);
 
             this.FillInReleaseNotesModal(wait, notes);
         }
@@ -149,11 +186,10 @@ namespace Telimena.WebApp.UITests._01._Ui
             area.SendKeys(notes);
 
             var submit = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.SubmitReleaseNotesButton)));
-            submit.ClickWrapper(this.Driver, this.Log);
+            submit.ClickWrapper(this.Driver);
         }
-
       
-        public void SetPackageAsBeta()
+        private void SetPackageAsBeta()
         {
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var row = this.GetUpdatesTableTopRow(wait);
@@ -162,14 +198,14 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             if (box.Selected)
             {
-                box.ClickWrapper(this.Driver, this.Log);
+                box.ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: false"));
                 this.SetPackageAsBeta();
             }
             else
             {
-                box.ClickWrapper(this.Driver, this.Log);
+                box.ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: true"));
                 this.Driver.Navigate().Refresh();
@@ -185,19 +221,19 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         }
 
-
-
         private void DeleteApp(string appName, bool maybeNotExists)
         {
             this.GoToAdminHomePage();
 
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(45));
 
-            IWebElement element = this.TryFind(By.Id($"{appName}_menu"));
+            IWebElement element = this.Driver.TryFind(By.Id($"{appName}_menu"));
             if (element == null)
             {
                 if (maybeNotExists)
                 {
+                    Log("Temp test app did not exist");
+
                     return;
 
                 }
@@ -207,14 +243,14 @@ namespace Telimena.WebApp.UITests._01._Ui
                 }
             }
 
-            element.ClickWrapper(this.Driver, this.Log);
+            element.ClickWrapper(this.Driver);
             IWebElement link = wait.Until(ExpectedConditions.ElementIsVisible(By.Id($"{appName}_manageLink")));
 
-            link.ClickWrapper(this.Driver, this.Log);
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DeleteProgramTab + "Id"))).ClickWrapper(this.Driver, this.Log);
+            link.ClickWrapper(this.Driver);
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DeleteProgramTab + "Id"))).ClickWrapper(this.Driver);
 
             var deleteBtn = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.DeleteProgramButton)));
-            deleteBtn.ClickWrapper(this.Driver, this.Log);
+            deleteBtn.ClickWrapper(this.Driver);
             var alert = this.Driver.WaitForAlert(10000, true);
             alert.Accept();
             Thread.Sleep(2000);
@@ -226,10 +262,11 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             this.Driver.Navigate().Refresh();
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.PortalSummary)));
+            Log("Temp test app deleted");
+
         }
 
-
-        public void UploadProgramPackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
+        private void UploadProgramPackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -256,7 +293,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 var btn = wait.Until(ExpectedConditions.ElementToBeClickable(form.FindElements(By.TagName("input"))
                     .FirstOrDefault(x => x.GetAttribute("type") == "submit")));
 
-                btn.ClickWrapper(this.Driver, this.Log);
+                btn.ClickWrapper(this.Driver);
                 Log($"Submitted upload of {file.FullName}");
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Uploaded package with ID"));
@@ -284,16 +321,16 @@ namespace Telimena.WebApp.UITests._01._Ui
 
 
 
-                this.Log($"Clicking on download URL to store file in {DownloadPath}");
+                IntegrationTestBase.Log($"Clicking on download URL to store file in {DownloadPath}");
 
-                FileInfo file = this.ActAndWaitForFileDownload(() => link.ClickWrapper(this.Driver, this.Log), packageFileName, TimeSpan.FromSeconds(80)
+                FileInfo file = this.ActAndWaitForFileDownload(() => link.ClickWrapper(this.Driver), packageFileName, TimeSpan.FromSeconds(80)
                     , DownloadPath);
 
-                this.Log($"File downloaded {file.FullName}. ");
+                IntegrationTestBase.Log($"File downloaded {file.FullName}. ");
 
                 this.InstallMsi3AndVerify(file);
 
-                this.Log($"Deleting downloaded file {file.FullName}. ");
+                IntegrationTestBase.Log($"Deleting downloaded file {file.FullName}. ");
 
                 file.Delete();
             }
@@ -308,10 +345,10 @@ namespace Telimena.WebApp.UITests._01._Ui
             this.UninstallMsi(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.Paths.InstallersTestAppMsi3);
 
             Assert.IsFalse(File.Exists(Apps.Paths.InstallersTestAppMsi3.FullName));
-            this.Log($"Installing {msi.FullName}.");
+            IntegrationTestBase.Log($"Installing {msi.FullName}.");
 
             this.InstallMsi(msi, Apps.Paths.InstallersTestAppMsi3);
-            this.Log($"Finished installing {msi.FullName}.");
+            IntegrationTestBase.Log($"Finished installing {msi.FullName}.");
 
             Assert.IsTrue(File.Exists(Apps.Paths.InstallersTestAppMsi3.FullName));
             this.UninstallMsi(Apps.ProductCodes.InstallersTestAppMsi3V1, Apps.Paths.InstallersTestAppMsi3);
@@ -364,7 +401,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 }
 
                 new SelectElement(input).SelectByText(updaterName);
-                this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).ClickWrapper(this.Driver, this.Log);
+                this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Updater set to "+ updaterName));
             }

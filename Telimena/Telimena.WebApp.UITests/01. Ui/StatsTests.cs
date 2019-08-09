@@ -23,7 +23,29 @@ namespace Telimena.WebApp.UITests._01._Ui
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_WebsiteTests : WebsiteTestBase
     {
-        private Task<DateTime> GetLatestUsageFromTable([CallerMemberName] string caller = "")
+        [Test]
+        [Timeout(3*60*1000), Retry(3)]
+        public async Task Test_AppUsageTable()
+        {
+            string viewName = nameof(this.Test_AppUsageTable);
+            FileInfo app = this.LaunchTestsAppNewInstanceAndGetResult(out _, out TelemetryItem first, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1, nameof(this.Test_AppUsageTable)
+                , viewName: viewName);
+            Task.Delay(1000).GetAwaiter().GetResult();
+            DateTime previous = await this.GetLatestUsageFromTable(SharedTestHelpers.GetMethodName()).ConfigureAwait(false);
+            Task.Delay(1500).GetAwaiter().GetResult();
+
+            var second = this.LaunchTestsAppAndGetResult<TelemetryItem>(app, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, viewName: viewName);
+
+            DateTime current = await this.GetLatestUsageFromTable(SharedTestHelpers.GetMethodName()).ConfigureAwait(false);
+            if (current == previous)
+            {
+                await Task.Delay(2000);
+            }
+            current = await this.GetLatestUsageFromTable(SharedTestHelpers.GetMethodName()).ConfigureAwait(false);
+            Assert.IsTrue(current > previous, $"current {current} is not larger than previous {previous}");
+        }
+
+        private Task<DateTime> GetLatestUsageFromTable(string callerMethodName)
         {
             try
             {
@@ -31,16 +53,16 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.Driver.FindElement(By.Id(Apps.Names.AutomaticTestsClient + "_menu")).ClickWrapper(this.Driver, this.Log);
+                this.Driver.FindElement(By.Id(Apps.Names.AutomaticTestsClient + "_menu")).ClickWrapper(this.Driver);
                 IWebElement statLink = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Apps.Names.AutomaticTestsClient + "_statsLink")));
 
-                statLink.ClickWrapper(this.Driver, this.Log);
+                statLink.ClickWrapper(this.Driver);
 
                 IWebElement programsTable = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.ViewUsageTable)));
                 wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.Id("ProgramUsageTable_processing")));
 
-                IWebElement latestRow = this.TryFind(() => programsTable.FindElement(By.TagName("tbody")).FindElements(By.TagName("tr")).FirstOrDefault()
+                IWebElement latestRow = DOMExtensions.TryFind(() => programsTable.FindElement(By.TagName("tbody")).FindElements(By.TagName("tr")).FirstOrDefault()
                     , TimeSpan.FromSeconds(2));
 
                 if (latestRow == null)
@@ -62,31 +84,10 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, caller, this.outputs, this.errors);
+                this.HandleError(ex, callerMethodName, this.outputs, this.errors);
                 return Task.FromResult(default(DateTime));
             }
         }
 
-        [Test]
-        [Timeout(3*60*1000), Retry(3)]
-        public async Task Test_AppUsageTable()
-        {
-            string viewName = nameof(this.Test_AppUsageTable);
-            FileInfo app = this.LaunchTestsAppNewInstanceAndGetResult(out _, out TelemetryItem first, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1, nameof(this.Test_AppUsageTable)
-                , viewName: viewName);
-            Task.Delay(1000).GetAwaiter().GetResult();
-            DateTime previous = await this.GetLatestUsageFromTable().ConfigureAwait(false);
-            Task.Delay(1500).GetAwaiter().GetResult();
-
-            var second = this.LaunchTestsAppAndGetResult<TelemetryItem>(app, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, viewName: viewName);
-
-            DateTime current = await this.GetLatestUsageFromTable().ConfigureAwait(false);
-            if (current == previous)
-            {
-                await Task.Delay(2000);
-            }
-            current = await this.GetLatestUsageFromTable().ConfigureAwait(false);
-            Assert.IsTrue(current > previous, $"current {current} is not larger than previous {previous}");
-        }
     }
 }
