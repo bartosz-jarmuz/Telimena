@@ -55,7 +55,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 var btn = wait.Until(ExpectedConditions.ElementToBeClickable(form.FindElements(By.TagName("input"))
                     .FirstOrDefault(x => x.GetAttribute("type") == "submit")));
 
-                btn.Click();
+                btn.ClickWrapper(this.Driver, this.Log);
                 this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Uploaded package with ID"));
                 this.Driver.Navigate().Refresh();
                 
@@ -94,7 +94,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             actions.Perform();
 
             wait.Until(ExpectedConditions.ElementToBeClickable(showBtn));
-            showBtn.Click();
+            showBtn.ClickWrapper(this.Driver, this.Log);
 
             var nextRow = row.FindElement(By.XPath("following-sibling::*[1]"));
             IWebElement notesSection =
@@ -122,7 +122,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             wait.Until(ExpectedConditions.ElementToBeClickable(setBtn));
 
-            setBtn.Click();
+            setBtn.ClickWrapper(this.Driver, this.Log);
 
             this.FillInReleaseNotesModal(wait, notes);
         }
@@ -134,7 +134,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             var btn = wait.Until(ExpectedConditions.ElementToBeClickable(
                 form.FindElement(By.ClassName(@Strings.Css.PrepareReleaseNotesButton))));
 
-            btn.Click();
+            btn.ClickWrapper(this.Driver, this.Log);
 
             this.FillInReleaseNotesModal(wait, notes);
         }
@@ -149,7 +149,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             area.SendKeys(notes);
 
             var submit = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.SubmitReleaseNotesButton)));
-            submit.Click();
+            submit.ClickWrapper(this.Driver, this.Log);
         }
 
       
@@ -162,14 +162,14 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             if (box.Selected)
             {
-                box.Click();
+                box.ClickWrapper(this.Driver, this.Log);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: false"));
                 this.SetPackageAsBeta();
             }
             else
             {
-                box.Click();
+                box.ClickWrapper(this.Driver, this.Log);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: true"));
                 this.Driver.Navigate().Refresh();
@@ -207,14 +207,14 @@ namespace Telimena.WebApp.UITests._01._Ui
                 }
             }
 
-            element.Click();
+            element.ClickWrapper(this.Driver, this.Log);
             IWebElement link = wait.Until(ExpectedConditions.ElementIsVisible(By.Id($"{appName}_manageLink")));
 
-            link.Click();
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DeleteProgramTab + "Id"))).Click();
+            link.ClickWrapper(this.Driver, this.Log);
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DeleteProgramTab + "Id"))).ClickWrapper(this.Driver, this.Log);
 
             var deleteBtn = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.DeleteProgramButton)));
-            deleteBtn.Click();
+            deleteBtn.ClickWrapper(this.Driver, this.Log);
             var alert = this.Driver.WaitForAlert(10000, true);
             alert.Accept();
             Thread.Sleep(2000);
@@ -256,7 +256,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 var btn = wait.Until(ExpectedConditions.ElementToBeClickable(form.FindElements(By.TagName("input"))
                     .FirstOrDefault(x => x.GetAttribute("type") == "submit")));
 
-                btn.Click();
+                btn.ClickWrapper(this.Driver, this.Log);
                 Log($"Submitted upload of {file.FullName}");
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Uploaded package with ID"));
@@ -286,7 +286,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.Log($"Clicking on download URL to store file in {DownloadPath}");
 
-                FileInfo file = this.ActAndWaitForFileDownload(() => link.Click(), packageFileName, TimeSpan.FromSeconds(80)
+                FileInfo file = this.ActAndWaitForFileDownload(() => link.ClickWrapper(this.Driver, this.Log), packageFileName, TimeSpan.FromSeconds(80)
                     , DownloadPath);
 
                 this.Log($"File downloaded {file.FullName}. ");
@@ -364,7 +364,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 }
 
                 new SelectElement(input).SelectByText(updaterName);
-                this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).Click();
+                this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).ClickWrapper(this.Driver, this.Log);
 
                 this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Updater set to "+ updaterName));
             }

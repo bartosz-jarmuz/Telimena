@@ -13,10 +13,11 @@ namespace Telimena.TestUtilities.Base
 
         public static string ScreenshotOutputFolderPath = Path.Combine(TestOutputFolderPathBase, "Selenium Screenshots");
 
-        public static string CreatePngPath(string fileName, string testFolderName)
+        public static string CreatePngPath(string fileName, string callerClassName)
         {
-            Directory.CreateDirectory(Common.ScreenshotOutputFolderPath);
-            return Path.Combine(Common.ScreenshotOutputFolderPath, testFolderName, fileName + ".png");
+            var path = Path.Combine(Common.ScreenshotOutputFolderPath, IntegrationTestBase.TestRunTimestamp + " " + callerClassName);
+            Directory.CreateDirectory(path);
+            return Path.Combine(path, fileName + ".png");
         }
         public static IWebElement GetElementByNameOrId(IWebDriver driver, string nameOrId)
         {

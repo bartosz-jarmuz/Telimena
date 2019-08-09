@@ -53,7 +53,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 pass2.SendKeys(password);
 
                 IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.Register));
-                submit.Click();
+                submit.ClickWrapper(this.Driver, this.Log);
 
                 
                 this.VerifyUserAdded();

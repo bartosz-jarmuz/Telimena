@@ -38,7 +38,7 @@ namespace Telimena.TestUtilities.Base
 
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(25));
 
-            this.Driver.FindElement(By.Id(Strings.Id.RegisterApplicationLink)).Click();
+            this.Driver.FindElement(By.Id(Strings.Id.RegisterApplicationLink)).ClickWrapper(this.Driver, this.Log);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
             if (key != null)
             {
@@ -58,7 +58,7 @@ namespace Telimena.TestUtilities.Base
             this.Driver.FindElement(By.Id(Strings.Id.ProgramDescriptionInputBox)).SendKeys(description);
             this.Driver.FindElement(By.Id(Strings.Id.PrimaryAssemblyNameInputBox)).SendKeys(assemblyName);
 
-            this.Driver.FindElement(By.Id(Strings.Id.SubmitAppRegistration)).Click();
+            this.Driver.FindElement(By.Id(Strings.Id.SubmitAppRegistration)).ClickWrapper(this.Driver, this.Log);
 
 
             IAlert alert = this.Driver.WaitForAlert(10000);
@@ -184,7 +184,7 @@ namespace Telimena.TestUtilities.Base
                     var prgMenu = wait.Until(ExpectedConditions.ElementToBeClickable(element));
 
 
-                    prgMenu.Click();
+                    prgMenu.ClickWrapper(this.Driver, this.Log);
                     this.Log($"Clicked { appName}_menu button");
 
 
@@ -193,7 +193,7 @@ namespace Telimena.TestUtilities.Base
 
                     link = wait.Until(ExpectedConditions.ElementToBeClickable(link));
 
-                    link.Click();
+                    link.ClickWrapper(this.Driver, this.Log);
                 }, TimeSpan.FromMilliseconds(500), 3).GetAwaiter().GetResult();
 
             }
@@ -271,7 +271,7 @@ namespace Telimena.TestUtilities.Base
                     var driverService = ChromeDriverService.CreateDefaultService();
                     var driver = new ChromeDriver(driverService, opt);
                     driver.Manage().Window.Maximize();
-                    //driver.Manage().Window.Size = new System.Drawing.Size(4800, 2560);
+                    driver.Manage().Window.Size = new System.Drawing.Size(4800, 2560);
 
                     Task.Run(() => AllowHeadlessDownload(driver, driverService));
                     return driver;
@@ -309,6 +309,8 @@ namespace Telimena.TestUtilities.Base
                 var resultContent = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
             }
         }
+
+
 
         public IWebDriver Driver => RemoteDriver.Value;
         internal ITakesScreenshot Screenshooter => this.Driver as ITakesScreenshot;
@@ -432,6 +434,7 @@ namespace Telimena.TestUtilities.Base
             return null;
         }
 
+        
         protected ReadOnlyCollection<IWebElement> TryFindMany(By by, int timeoutSeconds = 10)
         {
             try
@@ -487,14 +490,52 @@ namespace Telimena.TestUtilities.Base
             return false;
         }
 
+        private void TakeScreenshot(string screenshotName)
+        {
+            int attempt = 0;
+            while (attempt < 5)
+            {
+                attempt++;
+                this.Log($"Saving error screenshot: {screenshotName} for test run {TestRunTimestamp}");
+                string path = Common.CreatePngPath(screenshotName, this.GetType().Name);
+                this.Log($"{path}");
+                try
+                {
+                    Screenshot screen = this.Screenshooter.GetScreenshot();
+                    screen.SaveAsFile(path, ScreenshotImageFormat.Png);
+                    TestContext.AddTestAttachment(path);
+                    break;
+
+                }
+                catch (UnhandledAlertException alertException)
+                {
+                    this.Log($"Attempt {attempt} - Unexpected alert {screenshotName} for test run {TestRunTimestamp}.\r\n{alertException}");
+
+                    IAlert unexpectedAlert = this.Driver.SwitchTo().Alert();
+                    this.Log($"Attempt {attempt} - Alert text: [{unexpectedAlert?.Text}]");
+                    unexpectedAlert?.Dismiss();
+                    try
+                    {
+                        Screenshot screen = this.Screenshooter.GetScreenshot();
+                        screen.SaveAsFile(path, ScreenshotImageFormat.Png);
+                    }
+                    catch (Exception screenshotError)
+                    {
+                        this.Log($"Attempt {attempt} - Error while saving screenshot after dismissing alert: {screenshotError}");
+                    }
+                }
+                catch (Exception screenshotError)
+                {
+                    this.Log($"Attempt {attempt} - Error while saving screenshot: {screenshotError}");
+                }
+
+            }
+        }
+
         protected void HandleError(Exception ex, string screenshotName, List<string> outputs = null, List<string> errors = null)
         {
-            string path = Common.CreatePngPath(screenshotName, this.TestRunFolderName);
-            this.Log($"Saving error screen shot at {path}");
 
-            Screenshot screen = this.Screenshooter.GetScreenshot();
-            screen.SaveAsFile(path, ScreenshotImageFormat.Png);
-            TestContext.AddTestAttachment(path);
+            this.TakeScreenshot(screenshotName);
             string page = this.Driver.PageSource;
 
             string errorOutputs = "";
@@ -552,7 +593,7 @@ namespace Telimena.TestUtilities.Base
                     login.SendKeys(userName);
                     pass.SendKeys(password);
                     IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
-                    submit.Click();
+                    submit.ClickWrapper(this.Driver, this.Log);
                     this.GoToAdminHomePage();
                     this.RecognizeAdminDashboardPage();
                 }

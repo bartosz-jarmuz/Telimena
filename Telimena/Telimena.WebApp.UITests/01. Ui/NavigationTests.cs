@@ -25,22 +25,22 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(GetSetting<int>(ConfigKeys.WaitTimeoutSeconds)));
 
-                this.TryFind(By.Id(Strings.Id.ToolkitManagementLink)).Click();
+                this.TryFind(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver, this.Log);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.ToolkitManagementForm)));
 
-                this.TryFind(By.Id(Strings.Id.PortalAdminDashboardLink)).Click();
+                this.TryFind(By.Id(Strings.Id.PortalAdminDashboardLink)).ClickWrapper(this.Driver, this.Log);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.PortalSummary)));
 
-                this.TryFind(By.Id(Strings.Id.PortalUsersLink)).Click();
+                this.TryFind(By.Id(Strings.Id.PortalUsersLink)).ClickWrapper(this.Driver, this.Log);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.PortalUsersTable)));
 
-                this.TryFind(By.Id(Strings.Id.DeveloperDashboardLink)).Click();
+                this.TryFind(By.Id(Strings.Id.DeveloperDashboardLink)).ClickWrapper(this.Driver, this.Log);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.DeveloperDashboard)));
 
-                this.TryFind(By.Id(Strings.Id.TeamManagementLink)).Click();
+                this.TryFind(By.Id(Strings.Id.TeamManagementLink)).ClickWrapper(this.Driver, this.Log);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.TeamMembersList)));
 
-                this.TryFind(By.Id(Strings.Id.RegisterApplicationLink)).Click();
+                this.TryFind(By.Id(Strings.Id.RegisterApplicationLink)).ClickWrapper(this.Driver, this.Log);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
 
                 this.ValidateAppPages(Apps.Names.AutomaticTestsClient, wait);
@@ -48,7 +48,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.ValidateHelpPages(wait);
 
                 //api should be last
-                this.TryFind(By.Id(Strings.Id.ApiDocsLink)).Click();
+                this.TryFind(By.Id(Strings.Id.ApiDocsLink)).ClickWrapper(this.Driver, this.Log);
                 var apiInfo = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("api_info")));
                 Assert.IsTrue(apiInfo.Text.Contains("Telimena API"), "apiInfo.Text.Contains('Telimena API')");
             }
@@ -75,7 +75,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 var link = cells[1].FindElement(By.TagName("a"));
 
-                link.Click();
+                link.ClickWrapper(this.Driver, this.Log);
 
                 Retrier.RetryAsync(() =>
                 {
@@ -114,16 +114,16 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         private void ValidateHelpPages(WebDriverWait wait)
         {
-            this.TryFind(By.Id(Strings.Id.Help.LinkHelpOverview)).Click();
+            this.TryFind(By.Id(Strings.Id.Help.LinkHelpOverview)).ClickWrapper(this.Driver, this.Log);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.HelpOverview)));
 
-            this.TryFind(By.Id(Strings.Id.Help.LinkGettingStarted)).Click();
+            this.TryFind(By.Id(Strings.Id.Help.LinkGettingStarted)).ClickWrapper(this.Driver, this.Log);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.AppRegistrationPanel)));
 
-            this.TryFind(By.Id(Strings.Id.Help.LinkTelemetry)).Click();
+            this.TryFind(By.Id(Strings.Id.Help.LinkTelemetry)).ClickWrapper(this.Driver, this.Log);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.TelemetryOverviewPanel)));
 
-            this.TryFind(By.Id(Strings.Id.Help.LinkLifecycleManagement)).Click();
+            this.TryFind(By.Id(Strings.Id.Help.LinkLifecycleManagement)).ClickWrapper(this.Driver, this.Log);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.CheckingForUpdatesPanel)));
 
         }

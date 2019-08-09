@@ -37,7 +37,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, MethodBase.GetCurrentMethod().Name);
+                this.HandleError(ex, nameof(_04_RegisterAutomaticTestsClient));
             }
         }
 
@@ -51,7 +51,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, MethodBase.GetCurrentMethod().Name);
+                this.HandleError(ex, "_04b_RegisterAutomaticTestsClient_PackageUpdaterTest");
             }
         }
 
@@ -65,7 +65,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, MethodBase.GetCurrentMethod().Name);
+                this.HandleError(ex, "_04c_RegisterInstallerTestApp_Msi3");
             }
         }
 
@@ -89,7 +89,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             catch (Exception ex)
             {
-                this.HandleError(ex, MethodBase.GetCurrentMethod().Name);
+                this.HandleError(ex, nameof(this.RegisterTempTestApp));
             }
             finally
             {

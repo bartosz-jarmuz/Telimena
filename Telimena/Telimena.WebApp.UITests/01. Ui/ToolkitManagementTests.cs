@@ -29,7 +29,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-            this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).Click();
+            this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver, this.Log);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ToolkitManagementForm)));
 
             var updater = TestAppProvider.GetFile(fileName);
@@ -46,7 +46,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             wait.Until(x => x.FindElements(By.Id(Strings.Id.UpdaterUploadInfoBox)).FirstOrDefault(e => e.Text.Contains(updater.Name)));
 
-            this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterUpload)).Click();
+            this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterUpload)).ClickWrapper(this.Driver, this.Log);
 
 
             this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Uploaded package "));
@@ -63,7 +63,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-            this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).Click();
+            this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver, this.Log);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ToolkitManagementForm)));
 
             var file = TestAppProvider.GetFile("Telimena.Client.dll");
@@ -75,7 +75,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             wait.Until(x => x.FindElements(By.Id(Strings.Id.ToolkitUploadInfoBox)).FirstOrDefault(e => e.Text.Contains(file.Name)));
 
 
-            this.Driver.FindElement(By.Id(Strings.Id.SubmitToolkitUpload)).Click();
+            this.Driver.FindElement(By.Id(Strings.Id.SubmitToolkitUpload)).ClickWrapper(this.Driver, this.Log);
 
 
             this.WaitForSuccessConfirmationWithText(wait, z=> (z.Contains("Uploaded package ")&& z.Contains(" with ID ")));
@@ -140,7 +140,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             try
             {
                 this.GoToAdminHomePage();
-                this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).Click();
+                this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver, this.Log);
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
                 var checkBox = this.GetIsPublicCheckbox(internalName);
@@ -148,16 +148,16 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 if (isChecked == "true")
                 {
-                    checkBox.Click();
+                    checkBox.ClickWrapper(this.Driver, this.Log);
                     Thread.Sleep(1000);
 
                     this.WaitForErrorConfirmationWithText(wait, x=>x.Contains("Cannot change default updater"));
                 }
                 else
                 {
-                    checkBox.Click();
+                    checkBox.ClickWrapper(this.Driver, this.Log);
                     Thread.Sleep(1000);
-                    this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).Click();
+                    this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver, this.Log);
 
                     checkBox = this.GetIsPublicCheckbox(internalName);
                     isChecked = checkBox.GetAttribute("checked");

@@ -33,7 +33,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 login.SendKeys(this.AdminName);
                 pass.SendKeys(this.AdminPassword);
                 IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
-                submit.Click();
+                submit.ClickWrapper(this.Driver, this.Log);
 
                   if (this.TryFind(Strings.Id.PasswordForm) == null)
                 {
@@ -66,7 +66,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 login.SendKeys("Wrong");
                 pass.SendKeys("Dude");
                 IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
-                submit.Click();
+                submit.ClickWrapper(this.Driver, this.Log);
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
                 IWebElement element = wait.Until(x => x.FindElement(By.ClassName("validation-summary-errors")));
 

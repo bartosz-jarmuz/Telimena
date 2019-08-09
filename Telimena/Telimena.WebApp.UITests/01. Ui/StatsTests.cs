@@ -31,10 +31,10 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.Driver.FindElement(By.Id(Apps.Names.AutomaticTestsClient + "_menu")).Click();
+                this.Driver.FindElement(By.Id(Apps.Names.AutomaticTestsClient + "_menu")).ClickWrapper(this.Driver, this.Log);
                 IWebElement statLink = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Apps.Names.AutomaticTestsClient + "_statsLink")));
 
-                statLink.Click();
+                statLink.ClickWrapper(this.Driver, this.Log);
 
                 IWebElement programsTable = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
                 wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.ViewUsageTable)));
