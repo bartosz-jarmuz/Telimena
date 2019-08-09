@@ -1,5 +1,6 @@
 using System;
 using System.Data.Entity.Migrations;
+using System.Diagnostics;
 using System.IO;
 using Telimena.WebApp.Infrastructure.Database;
 
@@ -20,6 +21,7 @@ namespace Telimena.WebApp.Infrastructure.Migrations.Telemetry
             //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
             //  to avoid creating duplicate seed data.
             this.RecreateProcedures(context);
+            this.RecreateFunctions(context);
         }
 
         private void RecreateFunctions(TelimenaTelemetryContext context)
@@ -43,7 +45,17 @@ namespace Telimena.WebApp.Infrastructure.Migrations.Telemetry
                     //otherwise it's fine, the procedure is new
                 }
 
-                context.Database.ExecuteSqlCommand(File.ReadAllText(file.FullName));
+                var funcText = File.ReadAllText(file.FullName);
+                try
+                {
+                    context.Database.ExecuteSqlCommand(funcText);
+                    Debug.WriteLine("Adding function");
+                    Debug.WriteLine(funcText);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Fail($"Failed to add function [{funcName}]", funcText + "\r\n" +ex);
+                }
             }
         }
 
@@ -68,7 +80,18 @@ namespace Telimena.WebApp.Infrastructure.Migrations.Telemetry
                     //otherwise it's fine, the procedure is new
                 }
 
-                context.Database.ExecuteSqlCommand(File.ReadAllText(file.FullName));
+                var text = File.ReadAllText(file.FullName);
+                try
+                {
+                    context.Database.ExecuteSqlCommand(text);
+                    Debug.WriteLine("Adding procedure");
+                    Debug.WriteLine(text);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Fail($"Failed to add procedure [{spName}]", text + "\r\n" + ex);
+                }
+
             }
         }
             

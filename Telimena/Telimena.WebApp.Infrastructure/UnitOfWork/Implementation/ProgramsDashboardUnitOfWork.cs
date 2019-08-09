@@ -57,16 +57,12 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             foreach (Program program in programs)
             {
-
                 ProgramSummary summary;
                 try
                 {
-                    List<View> views = await this.Views.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
-                    List<ViewTelemetrySummary> viewSummaries = views.SelectMany(x => x.TelemetrySummaries).ToList();
                     List<Event> events = await this.Events.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
                     List<EventTelemetrySummary> eventSummaries = events.SelectMany(x => x.TelemetrySummaries).ToList();
 
-                    List<TelemetrySummary> allSummaries = viewSummaries.Cast<TelemetrySummary>().Concat(eventSummaries).ToList();
                     ProgramUpdatePackageInfo latestPkg = await this.UpdatePackages.GetLatestPackage(program.Id).ConfigureAwait(false);
                     summary = new ProgramSummary
                     {
@@ -74,7 +70,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                         ,DeveloperName = program.DeveloperTeam?.Name ?? "N/A"
                         ,TelemetryKey = program.TelemetryKey
                         ,RegisteredDate = program.RegisteredDate
-                        ,UsersCount = allSummaries.DistinctBy(x => x.ClientAppUserId).Count()
+                        ,UsersCount = eventSummaries.DistinctBy(x=>x.ClientAppUserId).Count()
                         ,LastUpdateDate = latestPkg?.UploadedDate
                         ,LatestVersion = latestPkg?.SupportedToolkitVersion??"?"
                         ,ToolkitVersion = latestPkg?.SupportedToolkitVersion??"?"
@@ -95,7 +91,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         public async Task<DataTable> GetDailyActivityScore(Program program, DateTime startDate, DateTime endDate)
         {
-            var set = await this.ExecuteStoredProcedure(program, StoredProcedureNames.p_GetDailySummaryCounts, startDate, endDate).ConfigureAwait(false);
+            DataSet set = await this.ExecuteStoredProcedure(program, StoredProcedureNames.p_GetDailySummaryCounts, startDate, endDate).ConfigureAwait(false);
 
             return PrepareDailyActivityScoreTable(startDate, endDate, set.Tables[0].AsEnumerable().ToList()
                 , set.Tables[1].AsEnumerable().ToList(), set.Tables[2].AsEnumerable().ToList());
@@ -390,8 +386,10 @@ namespace Telimena.WebApp.Infrastructure.Repository
            if (string.IsNullOrEmpty(sequencePrefix))
            {
                return new UsageDataTableResult { TotalCount = 0, FilteredCount = 0, UsageData = new List<DataTableTelemetryData>()};
-            }
-            IEnumerable<TelemetryDetail> viewQuery = (await this.telemetryContext.ViewTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
+           }
+
+
+           IEnumerable<TelemetryDetail> viewQuery = (await this.telemetryContext.ViewTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
            IEnumerable<TelemetryDetail> eventQuery = (await this.telemetryContext.EventTelemetryDetails.Where(x => x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false)).Cast<TelemetryDetail>();
            List<LogMessage> logsQuery = (await this.telemetryContext.LogMessages.Where(x =>x.ProgramId == program.Id && x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));
            List<ExceptionInfo> exceptionsQuery = (await this.telemetryContext.Exceptions.Where(x => x.ProgramId == program.Id && x.Sequence.StartsWith(sequencePrefix)).ToListAsync().ConfigureAwait(false));

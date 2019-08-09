@@ -12,4 +12,3 @@ AS
           ) AS a CROSS APPLY [XML].nodes('i') AS x(i) ) AS y
       WHERE Item IS NOT NULL
   );
-GO
