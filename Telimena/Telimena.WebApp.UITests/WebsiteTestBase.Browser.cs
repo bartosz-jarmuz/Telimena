@@ -70,7 +70,7 @@ namespace Telimena.WebApp.UITests
                     var driverService = ChromeDriverService.CreateDefaultService();
                     var driver = new ChromeDriver(driverService, opt);
                     driver.Manage().Window.Maximize();
-                    driver.Manage().Window.Size = new Size(ConfigHelper.GetSetting<int>(ConfigKeys.BrowserWidth, 1920), ConfigHelper.GetSetting<int>(ConfigKeys.BrowserHeight, 1080));
+                    driver.Manage().Window.Size = new Size(ConfigHelper.GetSetting<int>(ConfigKeys.BrowserWidth, 3840), ConfigHelper.GetSetting<int>(ConfigKeys.BrowserHeight, 2160));
 
                     Task.Run(() => AllowHeadlessDownload(driver, driverService));
                     return driver;
@@ -116,7 +116,7 @@ namespace Telimena.WebApp.UITests
             return this.TestEngine.GetAbsoluteUrl(relativeUrl);
         }
         
-        private void TakeScreenshot(string screenshotName)
+        private string TakeScreenshot(string screenshotName)
         {
             int attempt = 0;
             while (attempt < 5)
@@ -130,7 +130,7 @@ namespace Telimena.WebApp.UITests
                     Screenshot screen = this.Screenshooter.GetScreenshot();
                     screen.SaveAsFile(path, ScreenshotImageFormat.Png);
                     TestContext.AddTestAttachment(path);
-                    break;
+                    return path;
 
                 }
                 catch (UnhandledAlertException alertException)
@@ -156,6 +156,8 @@ namespace Telimena.WebApp.UITests
                 }
 
             }
+
+            return "Failed to take screenshot";
         }
 
         public static string CreatePngPath(string fileName, string callerClassName)
@@ -168,8 +170,7 @@ namespace Telimena.WebApp.UITests
         protected void HandleError(Exception ex, string screenshotName, List<string> outputs = null, List<string> errors = null)
         {
 
-            this.TakeScreenshot(screenshotName);
-            string page = this.Driver.PageSource;
+            var screenshotPath = this.TakeScreenshot(screenshotName);
 
             string errorOutputs = "";
             if (errors != null)
@@ -185,7 +186,7 @@ namespace Telimena.WebApp.UITests
 
             IAlert alert = this.Driver.WaitForAlert(500);
             alert?.Dismiss();
-            throw new TelimenaTestException($"{ex}\r\n\r\n{this.PresentParams()}\r\n\r\n{errorOutputs}\r\n\r\n{normalOutputs}\r\n\r\n{page}", ex);
+            throw new TelimenaTestException($"{ex}\r\n\r\n{this.PresentParams()}\r\n\r\n{errorOutputs}\r\n\r\n{normalOutputs}\r\n\r\nScreenshot Path:\r\n\r\n{screenshotPath}", ex);
 
         }
 

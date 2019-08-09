@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNetLittleHelpers;
 using Telimena.TestUtilities.Base;
 using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.AppIntegrationTests.Utilities;
@@ -133,14 +134,18 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
       
         private void AssertVersionAreCorrect(VersionTuple newVersions, VersionTuple initialVersions, FileInfo appFile, string newVersionStartingPart)
         {
-            Assert.IsTrue(newVersions.AssemblyVersion.IsNewerVersionThan(initialVersions.AssemblyVersion));
-            Assert.IsTrue(newVersions.FileVersion.IsNewerVersionThan(initialVersions.FileVersion));
+            Log("Initial versions\r\n" + initialVersions.GetPropertyInfoString());
+            Log("New versions\r\n" + newVersions.GetPropertyInfoString());
+            Assert.IsTrue(Extensions.IsNewerVersionThan(newVersions.AssemblyVersion, initialVersions.AssemblyVersion), $"New assembly version {newVersions.AssemblyVersion} is not newer than initial assembly version {initialVersions.AssemblyVersion}");
+            Assert.IsTrue(Extensions.IsNewerVersionThan(newVersions.FileVersion, initialVersions.FileVersion), $"New file version {newVersions.FileVersion} is not newer than initial file version {initialVersions.FileVersion}");
             VersionTuple postUpdateVersions = this.GetVersionsFromFile(appFile);
-            Assert.AreEqual(postUpdateVersions.AssemblyVersion, newVersions.AssemblyVersion);
-            Assert.AreEqual(postUpdateVersions.FileVersion, newVersions.FileVersion);
+            Log("PostUpdate versions\r\n" + postUpdateVersions.GetPropertyInfoString());
 
-            Assert.IsTrue(newVersions.AssemblyVersion.StartsWith(newVersionStartingPart));
-            Assert.IsTrue(newVersions.FileVersion.StartsWith(newVersionStartingPart));
+            Assert.AreEqual(postUpdateVersions.AssemblyVersion, newVersions.AssemblyVersion, $"Post update assembly version {postUpdateVersions.AssemblyVersion} is equal to 'new' assembly version {newVersions.AssemblyVersion}");
+            Assert.AreEqual(postUpdateVersions.FileVersion, newVersions.FileVersion, $"Post update file version {postUpdateVersions.FileVersion} is equal to 'new' file version {newVersions.FileVersion}");
+
+            Assert.IsTrue(newVersions.AssemblyVersion.StartsWith(newVersionStartingPart), "newVersions.AssemblyVersion.StartsWith(newVersionStartingPart)");
+            Assert.IsTrue(newVersions.FileVersion.StartsWith(newVersionStartingPart), "newVersions.FileVersion.StartsWith(newVersionStartingPart)");
         }
 
         

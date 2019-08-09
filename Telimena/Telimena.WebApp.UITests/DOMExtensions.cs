@@ -20,7 +20,9 @@ namespace Telimena.WebApp.UITests
             try
             {
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutSeconds));
-                return wait.Until(x => x.FindElement(By.Id(id)));
+                var ele = wait.Until(x => x.FindElement(By.Id(id)));
+                driver.ExecuteJavaScript("arguments[0].scrollIntoView(true);", ele);
+                return ele;
             }
             catch
             {
@@ -39,6 +41,8 @@ namespace Telimena.WebApp.UITests
                 Actions actions = new Actions(driver);
                 actions.MoveToElement(element);
                 actions.Perform();
+                driver.ExecuteJavaScript("arguments[0].scrollIntoView(true);", element);
+
                 return element;
             }
             catch

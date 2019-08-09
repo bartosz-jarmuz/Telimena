@@ -44,7 +44,9 @@ namespace Telimena.WebApp.UITests
 
         public void WaitForConfirmationWithTextAndClass(WebDriverWait wait, string cssPart, Func<string, bool> validateText)
         {
-            var confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.TopAlertBox)));
+            var confirmationBox = this.Driver.TryFind(Strings.Id.TopAlertBox, (int)wait.Timeout.TotalMilliseconds);
+
+            confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.TopAlertBox)));
 
             Assert.IsTrue(confirmationBox.GetAttribute("class").Contains(cssPart), "The alert has incorrect class: " + confirmationBox.GetAttribute("class"));
             Assert.IsTrue(validateText(confirmationBox.Text), "Incorrect message: " + confirmationBox.Text);
