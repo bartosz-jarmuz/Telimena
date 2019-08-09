@@ -12,30 +12,44 @@ namespace Telimena.TestUtilities.Base
     {
         public static void ClickWrapper(this IWebElement element, IWebDriver driver, Action<string> log)
         {
-            try
+            int attempt = 0;
+            while (attempt < 4)
             {
-                element.Click();
-            }
-            catch (Exception ex)
-            {
-                log($"Could not click on  [{element?.TagName}] element: [{element?.Text}]. {ex}");
-                Actions actions = new Actions(driver);
-                actions.MoveToElement(element).Click().Perform();
-                actions.Perform();
-                driver.ExecuteJavaScript("arguments[0].scrollIntoView(true);", element);
-                Thread.Sleep(500);
-
-                if (element != null)
+                attempt++;
+                try
                 {
+                    element.Click();
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    log($"Attempt {attempt} - Could not click on  [{element?.TagName}] element: [{element?.Text}]. {ex}");
+                    Actions actions = new Actions(driver);
+                    actions.MoveToElement(element).Click().Perform();
+                    actions.Perform();
+                    driver.ExecuteJavaScript("arguments[0].scrollIntoView(true);", element);
+                    Thread.Sleep(500);
 
-                    try
+                    if (element != null)
                     {
-                        element.Click();
-                    }
-                    catch (WebDriverException anotherEx)
-                    {
-                        throw new InvalidOperationException($"Cannot click on [{element?.TagName}] element: [{element?.Text}] regardless of moving it to viewport." +
-                            anotherEx);
+
+                        try
+                        {
+                            element.Click();
+                        }
+                        catch (WebDriverException anotherEx)
+                        {
+                            if (attempt >= 3)
+                            {
+                                throw new InvalidOperationException($"Cannot click on [{element?.TagName}] element: [{element?.Text}] regardless of moving it to viewport." +
+                                                                    anotherEx);
+                            }
+                            else
+                            {
+                                log($"Attempt {attempt} - Could not click on [{element?.TagName}] element: [{element?.Text}] Regardless of moving to viewport. {ex}");
+                            }
+
+                        }
                     }
                 }
             }

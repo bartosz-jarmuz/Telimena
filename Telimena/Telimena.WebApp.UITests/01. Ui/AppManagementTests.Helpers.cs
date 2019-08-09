@@ -191,7 +191,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             this.GoToAdminHomePage();
 
-            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(45));
 
             IWebElement element = this.TryFind(By.Id($"{appName}_menu"));
             if (element == null)
