@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
+using NUnit.Framework;
 using Telimena.TestUtilities.Base;
 using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.AppIntegrationTests.Utilities;
@@ -14,7 +15,7 @@ using TestStack.White;
 using TestStack.White.UIItems;
 using TestStack.White.UIItems.Finders;
 using TestStack.White.UIItems.WindowItems;
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+
 
 namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTests
 {
@@ -144,8 +145,8 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             Assert.AreEqual(postUpdateVersions.AssemblyVersion, newVersions.AssemblyVersion, $"Post update assembly version {postUpdateVersions.AssemblyVersion} is equal to 'new' assembly version {newVersions.AssemblyVersion}");
             Assert.AreEqual(postUpdateVersions.FileVersion, newVersions.FileVersion, $"Post update file version {postUpdateVersions.FileVersion} is equal to 'new' file version {newVersions.FileVersion}");
 
-            Assert.IsTrue(newVersions.AssemblyVersion.StartsWith(newVersionStartingPart), "newVersions.AssemblyVersion.StartsWith(newVersionStartingPart)");
-            Assert.IsTrue(newVersions.FileVersion.StartsWith(newVersionStartingPart), "newVersions.FileVersion.StartsWith(newVersionStartingPart)");
+            Assert.IsTrue(newVersions.AssemblyVersion.StartsWith(newVersionStartingPart), $"{newVersions.AssemblyVersion}.StartsWith({newVersionStartingPart})");
+            Assert.IsTrue(newVersions.FileVersion.StartsWith(newVersionStartingPart), $"{newVersions.FileVersion}.StartsWith({newVersionStartingPart})");
         }
 
         
