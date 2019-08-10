@@ -78,6 +78,22 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
         }
 
+        private void CheckProperUpdateVersionDownloadedInMessageBo(Window updateNowMsgBox, string expectedVersion)
+        {
+            var label = updateNowMsgBox.Get<Label>(SearchCriteria.Indexed(0));
+            var text = label.Text;
+            var version = text.Replace("An update to version ", "").Replace(" was downloaded", "").Replace("Would you like to install now?", "").Trim();
+
+            StringAssert.StartsWith(expectedVersion, version, $"Update version {version} does not start with {expectedVersion}. Probably incorrect version of update was downloaded");
+        }
+
+        private void CheckProperUpdateVersionDownloadedInUpdater(Window updaterWindow, string expectedVersion)
+        {
+            var versionText = updaterWindow.Get<Label>(SearchCriteria.Indexed(1));
+            var text = versionText.Text;
+
+            StringAssert.StartsWith(expectedVersion, text, $"Update version {text} does not start with {expectedVersion}. Probably incorrect version of update was downloaded");
+        }
         public string GetTextFromMsgBox(Window msgBox)
         {
             string text = msgBox.Get<Label>(SearchCriteria.Indexed(0)).Text;

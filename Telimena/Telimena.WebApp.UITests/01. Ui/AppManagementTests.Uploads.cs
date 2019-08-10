@@ -43,7 +43,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             try
             {
                 this.UploadUpdatePackage(Apps.Names.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV3Beta);
-                this.SetPackageAsBeta();
+                this.SetPackageAsBeta(Apps.PackageNames.AutomaticTestsClientAppV3Beta);
             }
             catch (Exception ex)
             {

@@ -72,10 +72,13 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
                 VersionTuple initialVersions = await this.GetVersionsFromApp(Apps.PackageNames.AutomaticTestsClientAppV1, SharedTestHelpers.GetMethodName()).ConfigureAwait(false);
 
-                this.LaunchTestsAppNewInstanceAndGetResult<UpdateCheckResult>(out FileInfo appFile, Actions.HandleUpdates, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1
+                UpdateCheckResult result = this.LaunchTestsAppNewInstanceAndGetResult<UpdateCheckResult>(out FileInfo appFile, Actions.HandleUpdates, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1
                     , SharedTestHelpers.GetMethodName(), waitForExit: false);
+
                 Window updateNowMsgBox =
                     await WindowHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient update installation"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
+                this.CheckProperUpdateVersionDownloadedInMessageBo(updateNowMsgBox, "2.");
+
                 updateNowMsgBox.Get<Button>(SearchCriteria.ByText("Yes")).Click();
                 Log("Clicked yes");
                 Window updater = await WindowHelpers.WaitForWindowAsync(x => x.Contains("AutomaticTestsClient Updater"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
@@ -96,7 +99,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
                 Log("Checking update info is false");
                 //now just assert that the update check result is empty next time
-                UpdateCheckResult result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: true);
+                 result = this.LaunchTestsAppAndGetResult<UpdateCheckResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: true);
 
                 this.AssertNoNonBetaUpdatesToInstall(result, true);
 
@@ -113,7 +116,6 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             try
             {
                 VersionTuple initialVersions = this.GetVersionsFromExtractedAppFile(Apps.PackageNames.AutomaticTestsClientAppV1, SharedTestHelpers.GetMethodName(), out FileInfo appFile);
-
                 var installationResult = this.LaunchTestsAppAndGetResult<UpdateInstallationResult>(appFile, Actions.CheckAndInstallUpdates, Apps.Keys.AutomaticTestsClient, waitForExit: false);
 
                 if (installationResult?.Exception != null)
@@ -122,6 +124,9 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
                 }
 
                 Window updater = await WindowHelpers.WaitForWindowAsync(x => x.Contains("AutomaticTestsClient Updater"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
+                this.CheckProperUpdateVersionDownloadedInUpdater(updater, "2.");
+
+
                 updater.Get<Button>(SearchCriteria.ByText("Install now!")).Click();
                 Log("Clicked Install now!");
 

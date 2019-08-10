@@ -64,7 +64,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.Navigate().Refresh();
                 
                 //wait for the reload and verify package uploaded and notes set OK
-                this.VerifyReleaseNotesOnPkg( notes);
+                this.VerifyReleaseNotesOnPkg( notes, packageFileName);
 
             }
             catch (Exception ex)
@@ -73,20 +73,38 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        private IWebElement GetUpdatesTableTopRow(WebDriverWait wait)
+        private IWebElement GetUpdatesTableTopRow(WebDriverWait wait, string packageName = null)
         {
 
             var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
-
             var rows = table.FindElements(By.TagName("tr")).ToList();
-            return rows[1];
+
+            if (packageName == null)
+            {
+                return rows[1];
+
+            }
+            else
+            {
+                for (int index = 1; index < rows.Count; index++) //skip header row
+                {
+                    IWebElement webElement = rows[index];
+                    var cells = webElement.FindElements(By.TagName("td"));
+                    if (cells.Any(x => x.Text == packageName))
+                    {
+                        return webElement;
+                    }
+                }
+
+                return null;
+            }
         }
 
-        private void VerifyReleaseNotesOnPkg(string expectedNotes)
+        private void VerifyReleaseNotesOnPkg(string expectedNotes, string packageName = null)
         {
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-            var row = this.GetUpdatesTableTopRow(wait);
+            var row = this.GetUpdatesTableTopRow(wait, packageName);
             var id = row.FindElements(By.TagName("td"))[1].Text;
 
 
@@ -190,10 +208,10 @@ namespace Telimena.WebApp.UITests._01._Ui
             submit.ClickWrapper(this.Driver);
         }
       
-        private void SetPackageAsBeta()
+        private void SetPackageAsBeta(string packageName)
         {
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
-            var row = this.GetUpdatesTableTopRow(wait);
+            var row = this.GetUpdatesTableTopRow(wait, packageName);
 
             Log($"Setting update as bet in top row: {row.Text}");
 
@@ -207,7 +225,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: false"));
                 Log("Box deselected. Rerunning function.");
-                this.SetPackageAsBeta();
+                this.SetPackageAsBeta(packageName);
             }
             else
             {
@@ -219,7 +237,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.Navigate().Refresh();
                 Log("Refreshed page");
 
-                row = this.GetUpdatesTableTopRow(wait);
+                row = this.GetUpdatesTableTopRow(wait, packageName);
                 Log($"Setting update as bet in top row: {row.Text}");
 
                 box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
