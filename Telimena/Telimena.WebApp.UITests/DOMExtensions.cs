@@ -146,18 +146,21 @@ namespace Telimena.WebApp.UITests
         public static void ClickWrapper(this IWebElement element, IWebDriver driver)
         {
             int attempt = 0;
+            string tagName = element?.TagName;
+            string text = element?.Text;
             while (attempt < 4)
             {
                 attempt++;
                 try
                 {
+
                     element.Click();
-                    IntegrationTestBase.Log($"Attempt {attempt} - Clicked on  [{element?.TagName}] element: [{element?.Text}].");
+                    IntegrationTestBase.Log($"Attempt {attempt} - Clicked on  [{tagName}] element: [{text}].");
                     return;
                 }
                 catch (Exception ex)
                 {
-                    IntegrationTestBase.Log($"Attempt {attempt} - Could not click on  [{element?.TagName}] element: [{element?.Text}]. {ex}");
+                    IntegrationTestBase.Log($"Attempt {attempt} - Could not click on  [{tagName}] element: [{text}]. {ex}");
                     Actions actions = new Actions(driver);
                     actions.MoveToElement(element).Click().Perform();
                     actions.Perform();
