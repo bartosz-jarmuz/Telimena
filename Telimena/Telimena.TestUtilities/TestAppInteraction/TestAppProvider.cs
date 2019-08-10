@@ -82,6 +82,7 @@ namespace Telimena.TestUtilities.Base.TestAppInteraction
         {
             KillProcessesByName("AutomaticTestsClient.exe");
             KillProcessesByName("AutomaticTestsClient");
+            KillProcessesByName("Updater");
             KillProcessesByName("PackageTriggerUpdaterTestApp");
             KillProcessesByName("PackageTriggerUpdaterTestApp.exe");
         }

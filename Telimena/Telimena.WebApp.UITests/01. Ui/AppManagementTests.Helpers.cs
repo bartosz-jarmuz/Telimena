@@ -195,31 +195,38 @@ namespace Telimena.WebApp.UITests._01._Ui
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var row = this.GetUpdatesTableTopRow(wait);
 
+            Log($"Setting update as bet in top row: {row.Text}");
+
+
             var box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
 
             if (box.Selected)
             {
+                Log("Box was initially selected.");
                 box.ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: false"));
+                Log("Box deselected. Rerunning function.");
                 this.SetPackageAsBeta();
             }
             else
             {
+                Log("Box is not selected");
+
                 box.ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: true"));
                 this.Driver.Navigate().Refresh();
+                Log("Refreshed page");
 
                 row = this.GetUpdatesTableTopRow(wait);
+                Log($"Setting update as bet in top row: {row.Text}");
 
                 box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
 
                 Assert.IsTrue(box.Selected);
+                Log("Box is selected");
             }
-
-          
-
         }
 
         private void DeleteApp(string appName, bool maybeNotExists)

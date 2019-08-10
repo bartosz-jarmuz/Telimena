@@ -155,12 +155,12 @@ namespace Telimena.WebApp.UITests
                 {
 
                     element.Click();
-                    IntegrationTestBase.Log($"Attempt {attempt} - Clicked on element: {props}");
+                    IntegrationTestBase.Log($"Click Attempt {attempt} - Successfully clicked on element: {props}");
                     return;
                 }
                 catch (Exception ex)
                 {
-                    IntegrationTestBase.Log($"Attempt {attempt} - Could not click on element: {props}. {ex}");
+                    IntegrationTestBase.Log($"Click Attempt {attempt} - Could not click on element: {props}. {ex}");
                     Actions actions = new Actions(driver);
                     actions.MoveToElement(element).Click().Perform();
                     actions.Perform();
@@ -183,7 +183,7 @@ namespace Telimena.WebApp.UITests
                             }
                             else
                             {
-                                IntegrationTestBase.Log($"Attempt {attempt} - Could not click on [{element?.TagName}] element: [{element?.Text}] Regardless of moving to viewport. {ex}");
+                                IntegrationTestBase.Log($"Click Attempt {attempt} - Could not click on [{element?.TagName}] element: [{element?.Text}] Regardless of moving to viewport. {ex}");
                             }
 
                         }
