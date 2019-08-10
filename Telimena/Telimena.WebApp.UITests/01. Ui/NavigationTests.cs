@@ -24,7 +24,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 this.GoToAdminHomePage();
 
-                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(ConfigHelper.GetSetting<int>(ConfigKeys.WaitTimeoutSeconds)));
+                WebDriverWait wait = new WebDriverWait(this.Driver, ConfigHelper.GetTimeout());
 
                 this.Driver.TryFind(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.ToolkitManagementForm)));

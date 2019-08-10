@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Telimena.TestUtilities.Base;
 
 namespace Telimena.TestUtilities
 {
@@ -30,6 +31,11 @@ namespace Telimena.TestUtilities
             }
 
             return null;
+        }
+
+        public static TimeSpan GetTimeout()
+        {
+            return TimeSpan.FromSeconds(GetSetting<int>(ConfigKeys.WaitTimeoutSeconds));
         }
 
         public static T GetSetting<T>(string key)

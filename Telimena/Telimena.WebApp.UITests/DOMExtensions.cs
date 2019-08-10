@@ -152,7 +152,8 @@ namespace Telimena.WebApp.UITests
                 try
                 {
                     element.Click();
-                    break;
+                    IntegrationTestBase.Log($"Attempt {attempt} - Clicked on  [{element?.TagName}] element: [{element?.Text}].");
+                    return;
                 }
                 catch (Exception ex)
                 {

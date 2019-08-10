@@ -12,6 +12,7 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using Telimena.TestUtilities;
 using Telimena.TestUtilities.Base;
 using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.Core.DTO;
@@ -35,7 +36,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.LoginAdminIfNeeded();
 
-                WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+                WebDriverWait wait = new WebDriverWait(this.Driver, ConfigHelper.GetTimeout());
 
                 this.ClickOnManageProgramMenu(appName);
 

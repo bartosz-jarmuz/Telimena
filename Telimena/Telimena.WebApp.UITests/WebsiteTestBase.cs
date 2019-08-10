@@ -42,7 +42,7 @@ namespace Telimena.WebApp.UITests
             this.WaitForConfirmationWithTextAndClass(wait, "danger", validateText);
         }
 
-        public void WaitForConfirmationWithTextAndClass(WebDriverWait wait, string cssPart, Func<string, bool> validateText)
+        private void WaitForConfirmationWithTextAndClass(WebDriverWait wait, string cssPart, Func<string, bool> validateText)
         {
             var confirmationBox = this.Driver.TryFind(Strings.Id.TopAlertBox, (int)wait.Timeout.TotalMilliseconds);
 
