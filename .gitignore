@@ -265,3 +265,6 @@ __pycache__/
 /AppInsights/Test/Microsoft.ApplicationInsights.Test/ApplicationInsightsTypes/Generated/bondcodegen.done
 
 **/Selenium Screenshots/**
+/Telimena/Telimena.WebApp.AppIntegrationTests/Apps/*/*_Extracted/
+/Telimena/Telimena.WebApp.AppIntegrationTests/Apps/*_Extracted/
+/Telimena/Telimena.WebApp.AppIntegrationTests/Apps/RunInternal/*
