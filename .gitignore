@@ -263,3 +263,5 @@ __pycache__/
 /Telimena/Telimena.WebApp/App_Data/FileRepo
 /AppInsights/Test/Microsoft.ApplicationInsights.Test/ApplicationInsightsTypes/Generated/bonddefaultcodegen.in
 /AppInsights/Test/Microsoft.ApplicationInsights.Test/ApplicationInsightsTypes/Generated/bondcodegen.done
+
+**/Selenium Screenshots/**
