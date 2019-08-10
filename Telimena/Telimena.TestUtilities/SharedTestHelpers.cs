@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace Telimena.TestUtilities.Base
             }
         }
     
-        public static string GetMethodName()
+        public static string GetMethodName([CallerMemberName] string caller = "")
         {
             StackTrace stackTrace = new System.Diagnostics.StackTrace();
             var frames = stackTrace.GetFrames();
@@ -64,21 +65,21 @@ namespace Telimena.TestUtilities.Base
                 StackFrame stackFrame = frames[index];
                 var methodBase = stackFrame.GetMethod();
                 if (methodBase.Name == "MoveNext")
+                  
                 {
                     continue;
                 }
-                if (methodBase.DeclaringType != null && !methodBase.DeclaringType.Assembly.FullName.StartsWith("mscorlib"))
+                if (methodBase.DeclaringType != null && !
+                        (methodBase.DeclaringType.Assembly.FullName.StartsWith("mscorlib")
+                         || methodBase.DeclaringType.Assembly.FullName.StartsWith("System.Net.Http")
+                         || methodBase.DeclaringType.Assembly.FullName.StartsWith("System, ")
+                         ))
                 {
                     return methodBase.Name;
                 }
             }
 
-
-            StackFrame frame = stackTrace.GetFrames()[3];
-            var method = frame.GetMethod();
-            return method.Name;
+            return caller;
         }
-
-
     }
 }

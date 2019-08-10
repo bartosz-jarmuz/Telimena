@@ -169,7 +169,7 @@ namespace Telimena.WebApp.UITests
 
         protected void HandleError(Exception ex, string screenshotName, List<string> outputs = null, List<string> errors = null)
         {
-
+            Log($"Handling error {ex.Message}.");
             var screenshotPath = this.TakeScreenshot(screenshotName);
 
             string errorOutputs = "";
@@ -183,6 +183,8 @@ namespace Telimena.WebApp.UITests
             {
                 normalOutputs = String.Join("\r\n", outputs);
             }
+
+            Log($"{ex.ToString()}.");
 
             IAlert alert = this.Driver.WaitForAlert(500);
             alert?.Dismiss();

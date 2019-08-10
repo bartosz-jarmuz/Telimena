@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using DotNetLittleHelpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
@@ -146,8 +147,7 @@ namespace Telimena.WebApp.UITests
         public static void ClickWrapper(this IWebElement element, IWebDriver driver)
         {
             int attempt = 0;
-            string tagName = element?.TagName;
-            string text = element?.Text;
+            string props = element?.GetPropertyInfoString();
             while (attempt < 4)
             {
                 attempt++;
@@ -155,12 +155,12 @@ namespace Telimena.WebApp.UITests
                 {
 
                     element.Click();
-                    IntegrationTestBase.Log($"Attempt {attempt} - Clicked on  [{tagName}] element: [{text}].");
+                    IntegrationTestBase.Log($"Attempt {attempt} - Clicked on element: {props}");
                     return;
                 }
                 catch (Exception ex)
                 {
-                    IntegrationTestBase.Log($"Attempt {attempt} - Could not click on  [{tagName}] element: [{text}]. {ex}");
+                    IntegrationTestBase.Log($"Attempt {attempt} - Could not click on element: {props}. {ex}");
                     Actions actions = new Actions(driver);
                     actions.MoveToElement(element).Click().Perform();
                     actions.Perform();

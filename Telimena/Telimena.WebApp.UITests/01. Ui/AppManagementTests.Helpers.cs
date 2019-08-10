@@ -252,19 +252,26 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             var deleteBtn = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.DeleteProgramButton)));
             deleteBtn.ClickWrapper(this.Driver);
+            Log("Delete button clicked");
             var alert = this.Driver.WaitForAlert(10000, true);
             alert.Accept();
+            Log("Are you sure alert accepted");
+
             Thread.Sleep(2000);
             alert = this.Driver.WaitForAlert(10000, true);
             alert.SendKeys(appName);
             alert.Accept();
+            Log("Provide app name alert accepted");
 
             Thread.Sleep(2000);
+            this.WaitForSuccessConfirmationWithText(wait, s => s.Contains("deleted successfully"));
+            Log("Success alert displayed");
 
             this.Driver.Navigate().Refresh();
+            Log("Refresh clicked");
+
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.PortalSummary)));
             Log("Temp test app deleted");
-
         }
 
         private void UploadProgramPackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
