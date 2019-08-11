@@ -272,6 +272,7 @@
                             <th>Toolkit Version</th>
                             <th>File Size</th>
                             <th>Release Notes</th>
+                            <th>Delete package</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -297,6 +298,12 @@
                                     <button type="button" class="btn btn-default btn-sm expand">Show</button>
                                     <button type="button" data-toggle="modal" data-target="#@Strings.Id.SetReleaseNotesModal" data-pkg-id="@pkg.Id" class="btn btn-default btn-sm @Strings.Css.PrepareReleaseNotesButton">Set</button>
                                 </div>
+
+
+                            </td>
+                            <td>
+
+                                    <button type="button" data-pkg-id="@pkg.Id" onclick="DeleteUpdatePackage(this)" class="btn btn-danger btn-sm @Strings.Css.PrepareReleaseNotesButton">Delete</button>
 
 
                             </td>
@@ -528,6 +535,23 @@
                 url: url,
                 success: function(result) {
                     showSuccessTopAlert('Set package with ID: [' + id + '] Beta flag to: ' + result);
+                },
+                error: function(xhr) {
+                    showDangerTopAlert(getXhrErrorMessage(xhr));
+                }
+            });
+        }
+
+        function DeleteUpdatePackage(input) {
+            var id = $(input).data("pkg-id");
+            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.Delete, new {id = "__id__"})';
+            url = url
+                .replace("__id__", id);
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                success: function(result) {
+                    showSuccessTopAlert('Deleted package with ID: [' + id + ']');
                 },
                 error: function(xhr) {
                     showDangerTopAlert(getXhrErrorMessage(xhr));

@@ -96,7 +96,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
 
             await this.work.UpdatePackages.DeletePackage(packageInfo, this.fileRemover).ConfigureAwait(false);
-           
+            await this.work.CompleteAsync().ConfigureAwait(false);
             return this.Ok();
         }
 

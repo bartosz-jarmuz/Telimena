@@ -88,7 +88,19 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         {
             if (pkg != null)
             {
-                await fileRemover.DeleteFile(pkg, this.containerName).ConfigureAwait(false);
+                try
+                {
+                    await fileRemover.DeleteFile(pkg, this.containerName).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.Contains("(404) Not Found"))
+                    {
+                        throw;
+                    }
+                }
+
+                this.TelimenaPortalContext.UpdatePackages.Remove(pkg);
             }
 
         }
