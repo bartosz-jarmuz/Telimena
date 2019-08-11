@@ -22,7 +22,7 @@ namespace Telimena.TestUtilities.Base
         protected FileInfo LaunchTestsAppNewInstance(out Process process, Actions action, Guid telemetryKey, string appName, string testSubfolderName, ProgramInfo pi = null
            , string viewName = null, bool waitForExit = true)
         {
-            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, IntegrationTestBase.Log);
+            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, x => IntegrationTestBase.Log(x));
 
             process = this.LaunchTestsApp(appFile, action, telemetryKey, pi, waitForExit, viewName);
             return appFile;
@@ -31,7 +31,7 @@ namespace Telimena.TestUtilities.Base
         protected FileInfo LaunchTestsAppNewInstanceAndGetResult<T>(out Process process, out T result, Actions action, Guid telemetryKey, string appName, string testSubfolderName, ProgramInfo pi = null
             , string viewName = null, bool waitForExit = true) where T : class
         {
-            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, IntegrationTestBase.Log);
+            var appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, x => IntegrationTestBase.Log(x));
 
 
             this.outputs.Clear();
@@ -72,7 +72,7 @@ namespace Telimena.TestUtilities.Base
 
         protected Process LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, string appName, string testSubfolderName, bool waitForExit)
         {
-            appFile = TestAppProvider.ExtractApp(appName, testSubfolderName, IntegrationTestBase.Log);
+            appFile = TestAppProvider.ExtractApp(appName, testSubfolderName,x=> IntegrationTestBase.Log(x));
             Arguments args = new Arguments { ApiUrl = this.BaseUrl };
 
             args.TelemetryKey = Apps.Keys.PackageUpdaterClient;
