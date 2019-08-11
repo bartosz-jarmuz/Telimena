@@ -594,6 +594,7 @@
                 @nameof(CreateUpdatePackageRequest.PackageVersion): $('#updatePackageVersion').val(),
                 @nameof(CreateUpdatePackageRequest.ToolkitVersionUsed): $('#updatePackageToolkitVersion').val(),
                 @nameof(CreateUpdatePackageRequest.ReleaseNotes): $('#newPackageReleaseNotes').val(),
+                @nameof(CreateUpdatePackageRequest.IsBeta): "True",
 
             };
             var modelString = JSON.stringify(model);
