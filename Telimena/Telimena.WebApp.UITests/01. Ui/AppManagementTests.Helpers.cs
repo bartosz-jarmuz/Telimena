@@ -249,6 +249,13 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Assert.IsTrue(box.Selected);
                 Log("Box is selected");
             }
+
+            this.Driver.Navigate().Refresh();
+            row = this.GetUpdatesTableTopRow(wait, packageName);
+            box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
+            Assert.IsTrue(box.Selected);
+            Log($"Status asserted after refresh: {box.Selected}");
+
         }
 
 
@@ -291,6 +298,13 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Assert.IsFalse(box.Selected);
                 Log("Box is deselected");
             }
+            this.Driver.Navigate().Refresh();
+            row = this.GetUpdatesTableTopRow(wait, packageName);
+            box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
+            Assert.IsFalse(box.Selected);
+            Log($"Status asserted after refresh: {box.Selected}");
+
+
         }
 
         private void DeleteApp(string appName, bool maybeNotExists)

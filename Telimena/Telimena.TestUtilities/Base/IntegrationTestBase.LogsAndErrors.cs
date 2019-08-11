@@ -39,7 +39,7 @@ namespace Telimena.TestUtilities.Base
             //Logger.LogMessage("Logger - UiTestsLogger:" + info);
             //TestContext.Out.WriteLine("Ctx -  UiTestsLogger:" + info);
 
-            Console.WriteLine(SharedTestHelpers.GetMethodName(caller) + " - "+ info);
+            Console.WriteLine(caller + " - "+ info);
         }
         
         protected T ParseOutput<T>() where T : class

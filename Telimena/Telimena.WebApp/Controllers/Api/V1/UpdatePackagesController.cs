@@ -173,15 +173,16 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="isBeta"></param>
         /// <returns></returns>
         [Audit]
-        [HttpPut, Route("{packageId}/is-beta/{isBeta}", Name = Routes.ToggleBetaSetting)]
-        public async Task<bool> ToggleBetaSetting(Guid packageId, bool isBeta)
+        [HttpPut, Route("{packageId}/is-beta/", Name = Routes.ToggleBetaSetting)]
+        public async Task<bool> ToggleBetaSetting(Guid packageId)
         {
-            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Setting IsBeta on package {packageId} to {isBeta}"));
-
             ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == packageId).ConfigureAwait(false);
-            pkg.IsBeta = isBeta;
+            bool valueToSet = !pkg.IsBeta;
+            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Setting IsBeta on package {packageId} to {valueToSet}"));
+            pkg.IsBeta = valueToSet;
+           
             await this.work.CompleteAsync().ConfigureAwait(false);
-            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Successfully set IsBeta on package {packageId} to {isBeta}"));
+            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Successfully set IsBeta on package {packageId} to { pkg.IsBeta}"));
 
             return pkg.IsBeta;
         }

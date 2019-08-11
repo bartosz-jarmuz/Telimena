@@ -525,11 +525,9 @@
 
         function TogglePackageBeta(input) {
             var id = $(input).data("pkg-id");
-            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.ToggleBetaSetting, new {isBeta = "__isBeta__", packageId = "__packageId__"})';
+            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.ToggleBetaSetting, new {packageId = "__packageId__"})';
             url = url
-                .replace("__isBeta__", input.checked)
                 .replace("__packageId__", id);
-
             $.ajax({
                 type: 'PUT',
                 url: url,

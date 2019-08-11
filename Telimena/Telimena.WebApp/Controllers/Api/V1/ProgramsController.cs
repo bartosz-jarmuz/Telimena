@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel;
 using System.Linq;
 using System.Net;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using AutoMapper;
+using DotNetLittleHelpers;
 using Microsoft.Web.Http;
 using MvcAuditLogger;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
@@ -243,19 +245,22 @@ namespace Telimena.WebApp.Controllers.Api.V1
             try
             {
                 Program program = await this.Work.Programs.GetByTelemetryKey(requestModel.TelemetryKey).ConfigureAwait(false);
+                
                 if (program == null)
                 {
                     return new UpdateResponse { Exception = new BadRequestException($"Failed to find program by Id: [{requestModel.TelemetryKey}]") };
                 }
-
+                Trace.TraceInformation($"Program {program.GetNameAndIdString()} checking for updates with request: {requestModel.GetPropertyInfoString()}");
                 List<ProgramUpdatePackageInfo> allUpdatePackages =
                     (await this.Work.UpdatePackages.GetAllPackagesNewerThan(requestModel.VersionData, program.Id).ConfigureAwait(false))
                     .OrderByDescending(x => x.Version, new TelimenaVersionStringComparer()).ToList();
+                Trace.TraceInformation($"Found {allUpdatePackages.Count} packages");
 
                 List<ProgramUpdatePackageInfo> filteredPackages = ProgramsControllerHelpers.FilterPackagesSet(allUpdatePackages, requestModel);
                 //todo - for now updating the package is disabled - update packagaces are expected to contain the toolkit package
                 //  string supportedToolkitVersion = await ProgramsControllerHelpers.GetMaximumSupportedToolkitVersion(this.Work, filteredPackages, program, requestModel).ConfigureAwait(false);
                 // TelimenaPackageInfo toolkitPackage = await ProgramsControllerHelpers.GetToolkitUpdateInfo(this.Work, program, requestModel, supportedToolkitVersion).ConfigureAwait(false);
+                Trace.TraceInformation($"Filtered {filteredPackages.Count} packages");
 
                 List<UpdatePackageData> packageDataSets = new List<UpdatePackageData>();
                 foreach (ProgramUpdatePackageInfo programUpdatePackageInfo in filteredPackages)
