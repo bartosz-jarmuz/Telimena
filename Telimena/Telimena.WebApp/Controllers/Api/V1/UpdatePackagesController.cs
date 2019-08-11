@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel;
 using System.Linq;
 using System.Net;
@@ -13,6 +14,7 @@ using DotNetLittleHelpers;
 using MvcAuditLogger;
 using Newtonsoft.Json;
 using Telimena.Portal.Api.Models.RequestMessages;
+using Telimena.Portal.Utils;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models;
@@ -110,6 +112,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             try
             {
+                Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, "Starting update package upload"));
                 string reqString = HttpContext.Current.Request.Form["Model"];
                 CreateUpdatePackageRequest request = JsonConvert.DeserializeObject<CreateUpdatePackageRequest>(reqString);
                 HttpPostedFile uploadedFile = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
@@ -143,6 +146,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         public async Task<IHttpActionResult> SetReleaseNotes(Guid packageId, ReleaseNotesRequest request)
         {
             ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == packageId).ConfigureAwait(false);
+            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Setting release notes on package {pkg.Id}"));
+
             pkg.ReleaseNotes = request.Notes;
             await this.work.CompleteAsync().ConfigureAwait(false);
             return this.Ok("");
@@ -171,9 +176,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPut, Route("{packageId}/is-beta/{isBeta}", Name = Routes.ToggleBetaSetting)]
         public async Task<bool> ToggleBetaSetting(Guid packageId, bool isBeta)
         {
+            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Setting IsBeta on package {packageId} to {isBeta}"));
+
             ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == packageId).ConfigureAwait(false);
             pkg.IsBeta = isBeta;
             await this.work.CompleteAsync().ConfigureAwait(false);
+            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Successfully set IsBeta on package {packageId} to {isBeta}"));
+
             return pkg.IsBeta;
         }
 

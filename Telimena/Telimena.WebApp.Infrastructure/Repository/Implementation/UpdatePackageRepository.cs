@@ -86,6 +86,7 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public async Task DeletePackage(ProgramUpdatePackageInfo pkg, IFileRemover fileRemover)
         {
+            
             if (pkg != null)
             {
                 try
@@ -94,13 +95,19 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 }
                 catch (Exception ex)
                 {
+
                     if (!ex.Message.Contains("(404) Not Found"))
                     {
+                        Trace.TraceError($"Error while deleting stored file: {pkg.GetPropertyInfoString()}. {ex}");
+
                         throw;
                     }
+                    Trace.TraceWarning($"Failed to delete stored file: {pkg.GetPropertyInfoString()}. {ex}");
+
                 }
 
                 this.TelimenaPortalContext.UpdatePackages.Remove(pkg);
+                Trace.TraceInformation($"Deleted ProgramUpdatePackage {pkg.GetPropertyInfoString()}");
             }
 
         }
