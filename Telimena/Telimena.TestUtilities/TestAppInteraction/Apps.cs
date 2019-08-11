@@ -28,6 +28,7 @@ namespace Telimena.TestUtilities.Base.TestAppInteraction
             public static string InstallersTestAppMsi3V1 { get; } = "v1.1.2.9_InstallersTestApp.Msi3Installer.msi";
             public static string InstallersTestAppMsi3V2 { get; } = "v2.1.2.9_InstallersTestApp.Msi3Installer.msi";
             public static string PackageUpdaterTestAppV1 { get; } = "PackageTriggerUpdaterTestApp v.1.0.0.0.zip";
+            public static string PackageUpdaterTestAppV2 { get; } = "PackageTriggerUpdaterTestApp v.2.0.0.0.zip";
             public static string EmbeddedAssemblyTestApp { get; } = "EmbeddedAssemblyTestApp.zip";
         }
 

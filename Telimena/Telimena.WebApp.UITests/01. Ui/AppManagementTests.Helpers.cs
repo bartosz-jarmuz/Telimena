@@ -213,7 +213,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var row = this.GetUpdatesTableTopRow(wait, packageName);
 
-            Log($"Setting update as bet in top row: {row.Text}");
+            Log($"Setting update as beta in top row: {row.Text}");
 
 
             var box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
@@ -225,7 +225,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: false"));
                 Log("Box deselected. Rerunning function.");
-                this.SetPackageAsBeta(packageName);
+                this.SetPackageAsBeta( packageName);
             }
             else
             {
@@ -244,6 +244,46 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 Assert.IsTrue(box.Selected);
                 Log("Box is selected");
+            }
+        }
+
+
+        private void SetPackageAsNonBeta(string packageName)
+        {
+            var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+            var row = this.GetUpdatesTableTopRow(wait, packageName);
+
+            Log($"Setting update as non-beta in top row: {row.Text}");
+
+
+            var box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
+
+            if (!box.Selected)
+            {
+                Log("Box was initially deselected.");
+                box.ClickWrapper(this.Driver);
+
+                this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: true"));
+                Log("Box selected. Rerunning function.");
+                this.SetPackageAsNonBeta(packageName);
+            }
+            else
+            {
+                Log("Box is selected");
+
+                box.ClickWrapper(this.Driver);
+
+                this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: false"));
+                this.Driver.Navigate().Refresh();
+                Log("Refreshed page");
+
+                row = this.GetUpdatesTableTopRow(wait, packageName);
+                Log($"Setting update as non-beta in top row: {row.Text}");
+
+                box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
+
+                Assert.IsFalse(box.Selected);
+                Log("Box is deselected");
             }
         }
 

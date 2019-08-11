@@ -30,6 +30,8 @@ namespace Telimena.WebApp.UITests._01._Ui
             try
             {
                 this.UploadUpdatePackage(Apps.Names.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV2);
+                this.SetPackageAsNonBeta(Apps.PackageNames.AutomaticTestsClientAppV2);
+
             }
             catch (Exception ex)
             {
@@ -38,7 +40,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         }
 
         [Test, Order(5), Retry(3)]
-        public void _05_UploadTestAppBetaUpdate()
+        public void _05_UploadTestAppUpdate_Beta()
         {
             try
             {
@@ -69,7 +71,9 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.UploadUpdatePackage(Apps.Names.PackageUpdaterTest, "PackageTriggerUpdaterTestApp v.2.0.0.0.zip");
+                this.UploadUpdatePackage(Apps.Names.PackageUpdaterTest, Apps.PackageNames.PackageUpdaterTestAppV2);
+                this.SetPackageAsNonBeta(Apps.PackageNames.PackageUpdaterTestAppV2);
+
             }
             catch (Exception ex)
             {
@@ -87,6 +91,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Assert.AreEqual(Apps.ProductCodes.InstallersTestAppMsi3V1
                     , this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V1));
                 this.UploadProgramPackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V1);
+
             }
             catch (Exception ex)
             {
@@ -104,6 +109,8 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Assert.AreEqual(Apps.ProductCodes.InstallersTestAppMsi3V2
                     , this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V2));
                 this.UploadUpdatePackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V2);
+                this.SetPackageAsNonBeta(Apps.PackageNames.InstallersTestAppMsi3V2);
+
             }
             catch (Exception ex)
             {
