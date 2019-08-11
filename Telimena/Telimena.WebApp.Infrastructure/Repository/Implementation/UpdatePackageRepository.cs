@@ -84,6 +84,27 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return null;
         }
 
+        public async Task DeletePackage(ProgramUpdatePackageInfo pkg, IFileRemover fileRemover)
+        {
+            if (pkg != null)
+            {
+                try
+                {
+                    await fileRemover.DeleteFile(pkg, this.containerName).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    if (!ex.Message.Contains("(404) Not Found"))
+                    {
+                        throw;
+                    }
+                }
+
+                this.TelimenaPortalContext.UpdatePackages.Remove(pkg);
+            }
+
+        }
+
         public Task<List<ProgramUpdatePackageInfo>> GetAllPackages(int programId)
         {
             return this.TelimenaPortalContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();

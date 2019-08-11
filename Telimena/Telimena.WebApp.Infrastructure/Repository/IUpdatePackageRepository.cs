@@ -20,5 +20,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<ProgramUpdatePackageInfo> StorePackageAsync(Program program, string packageName, Stream fileStream, string supportedToolkitVersion, bool isBeta, string releaseNotes, IFileSaver fileSaver);
         Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(Guid id);
         Task<ProgramUpdatePackageInfo> GetLatestPackage(int programId);
+        Task DeletePackage(ProgramUpdatePackageInfo packageId, IFileRemover fileRemover);
     }
 }

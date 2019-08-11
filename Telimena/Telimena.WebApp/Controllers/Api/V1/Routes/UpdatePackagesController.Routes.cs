@@ -15,6 +15,7 @@
             public const string ValidateRequest = nameof(UpdatePackagesController) + "." + nameof(UpdatePackagesController.ValidateRequest);
             public const string SetReleaseNotes = nameof(UpdatePackagesController) + "." + nameof(UpdatePackagesController.SetReleaseNotes);
             public const string GetReleaseNotes = nameof(UpdatePackagesController) + "." + nameof(UpdatePackagesController.GetReleaseNotes);
+            public const string Delete = nameof(UpdatePackagesController) + "." + nameof(UpdatePackagesController.Delete);
         }
 
     }

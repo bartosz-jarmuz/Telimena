@@ -71,6 +71,7 @@ namespace Telimena.WebApi
             this.Bind<TelimenaPortalContext>().ToSelf().InRequestScope();
             this.Bind<TelimenaTelemetryContext>().ToSelf().InRequestScope();
             this.Bind<IFileSaver>().To<AzureFileSaver>();
+            this.Bind<IFileRemover>().To<AzureFileRemover>();
             this.Bind<IFileRetriever>().To<AzureFileRetriever>();
             this.Bind<ILog>().ToMethod(context => LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
             this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();

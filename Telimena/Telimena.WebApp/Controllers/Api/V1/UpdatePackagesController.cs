@@ -41,15 +41,17 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="work"></param>
         /// <param name="fileSaver"></param>
         /// <param name="fileRetriever"></param>
-        public UpdatePackagesController(IProgramsUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
+        public UpdatePackagesController(IProgramsUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever, IFileRemover fileRemover)
         {
             this.FileRetriever = fileRetriever;
             this.work = work;
             this.fileSaver = fileSaver;
+            this.fileRemover = fileRemover;
         }
 
         private readonly IProgramsUnitOfWork work;
         private readonly IFileSaver fileSaver;
+        private readonly IFileRemover fileRemover;
         private IFileRetriever FileRetriever { get; }
 
         /// <summary>
@@ -75,6 +77,27 @@ namespace Telimena.WebApp.Controllers.Api.V1
             result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
 
             return this.ResponseMessage(result);
+        }
+
+        /// <summary>
+        /// Deletes the package
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Audit]
+        [HttpDelete, Route("{id}", Name = Routes.Delete)]
+        public async Task<IHttpActionResult> Delete(Guid id)
+        {
+            ProgramUpdatePackageInfo packageInfo = await this.work.UpdatePackages.GetUpdatePackageInfo(id).ConfigureAwait(false);
+
+            if (packageInfo == null)
+            {
+                return this.BadRequest($"Program Update Package [{id}] does not exist!");
+            }
+
+            await this.work.UpdatePackages.DeletePackage(packageInfo, this.fileRemover).ConfigureAwait(false);
+            await this.work.CompleteAsync().ConfigureAwait(false);
+            return this.Ok();
         }
 
         /// <summary>

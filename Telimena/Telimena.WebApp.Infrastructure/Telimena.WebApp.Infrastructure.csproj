@@ -197,10 +197,12 @@
     <Compile Include="Migrations\Telemetry\TelemetryMigrationsConfiguration.cs" />
     <Compile Include="Migrations\PortalMigrationsConfiguration.cs" />
     <Compile Include="Repository\FileStorage\AssemblyStreamVersionReader.cs" />
+    <Compile Include="Repository\FileStorage\AzureFileRemover.cs" />
     <Compile Include="Repository\FileStorage\AzureFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\AzureFileSaver.cs" />
     <Compile Include="Repository\FileStorage\AzureStorageConnectorBase.cs" />
     <Compile Include="Repository\FileStorage\IAssemblyStreamVersionReader.cs" />
+    <Compile Include="Repository\FileStorage\IFileRemover.cs" />
     <Compile Include="Repository\FileStorage\IFileRetriever.cs" />
     <Compile Include="Repository\FileStorage\IFileSaver.cs" />
     <Compile Include="Repository\FileStorage\LocalFileRetriever.cs" />
