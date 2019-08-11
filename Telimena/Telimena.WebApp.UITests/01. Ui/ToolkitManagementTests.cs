@@ -50,7 +50,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
 
                 this.WaitForSuccessConfirmationWithText(wait
-                    , x => StringAssert.Contains(x, "Uploaded package "));
+                    , x => StringAssert.Contains( "Uploaded package ", x));
 
             }
             catch (Exception ex)
@@ -142,7 +142,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 checkBox.ClickWrapper(this.Driver);
                 Thread.Sleep(1000);
 
-                this.WaitForErrorConfirmationWithText(wait, x=> StringAssert.Contains(x, "Cannot change default updater"));
+                this.WaitForErrorConfirmationWithText(wait, x=> StringAssert.Contains("Cannot change default updater", x));
             }
             else
             {
@@ -184,7 +184,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterUpload)).ClickWrapper(this.Driver);
 
 
-            this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "Uploaded package "));
+            this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Uploaded package ", x));
 
         }
 
