@@ -51,7 +51,7 @@ namespace Telimena.WebApp.UITests
             Assert.IsTrue(confirmationBox.GetAttribute("class").Contains(cssPart), "The alert has incorrect class: " + confirmationBox.GetAttribute("class"));
             validateText(confirmationBox.Text);
             //Assert.IsTrue(validateText(confirmationBox.Text), "Incorrect message: " + confirmationBox.Text);
-            Log($"Confirmation box - Displayed {cssPart}, {confirmationBox.Text}");
+            Log($"Confirmation [{cssPart}] box - Text: {confirmationBox.Text}");
         }
 
         public void WaitForPageLoad(int maxWaitTimeInSeconds)

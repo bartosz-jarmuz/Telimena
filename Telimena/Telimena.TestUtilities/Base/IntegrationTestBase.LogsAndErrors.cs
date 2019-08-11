@@ -32,13 +32,14 @@ namespace Telimena.TestUtilities.Base
             return new InvalidOperationException(msg, ex);
         }
 
-        public static void Log(string info)
+        public static void Log(string info, [CallerMemberName] string caller = "")
         {
             //Trace.TraceInformation("trace - UiTestsLogger:" + info);
             //Trace.TraceError("error - UiTestsLogger:" + info);
             //Logger.LogMessage("Logger - UiTestsLogger:" + info);
             //TestContext.Out.WriteLine("Ctx -  UiTestsLogger:" + info);
-            Console.WriteLine(info);
+
+            Console.WriteLine(SharedTestHelpers.GetMethodName(caller) + " - "+ info);
         }
         
         protected T ParseOutput<T>() where T : class

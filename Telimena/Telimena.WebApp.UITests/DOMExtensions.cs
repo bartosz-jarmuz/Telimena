@@ -27,7 +27,7 @@ namespace Telimena.WebApp.UITests
             }
             catch
             {
-                IntegrationTestBase.Log($"Failed to find element by Id {id}");
+                IntegrationTestBase.Log($"***DOM*** Failed to find element by Id {id}");
             }
 
             return null;
@@ -48,7 +48,7 @@ namespace Telimena.WebApp.UITests
             }
             catch
             {
-                IntegrationTestBase.Log($"Failed to find element using By {@by.ToString()}");
+                IntegrationTestBase.Log($"***DOM*** Failed to find element using By {@by.ToString()}");
             }
 
             return null;
@@ -97,7 +97,7 @@ namespace Telimena.WebApp.UITests
                 }
             }
 
-            IntegrationTestBase.Log($"Failed to find object within {timeout.TotalMilliseconds}");
+            IntegrationTestBase.Log($"***DOM*** Failed to find object within {timeout.TotalMilliseconds}");
             return null;
         }
 
@@ -155,12 +155,12 @@ namespace Telimena.WebApp.UITests
                 {
 
                     element.Click();
-                    IntegrationTestBase.Log($"Click Attempt {attempt} - Successfully clicked on element: {props}");
+                    IntegrationTestBase.Log($"***DOM*** Click Attempt {attempt} - Successfully clicked on element: {props}");
                     return;
                 }
                 catch (Exception ex)
                 {
-                    IntegrationTestBase.Log($"Click Attempt {attempt} - Could not click on element: {props}. {ex}");
+                    IntegrationTestBase.Log($"***DOM*** Click Attempt {attempt} - Could not click on element: {props}. {ex}");
                     Actions actions = new Actions(driver);
                     actions.MoveToElement(element).Click().Perform();
                     actions.Perform();
@@ -183,7 +183,7 @@ namespace Telimena.WebApp.UITests
                             }
                             else
                             {
-                                IntegrationTestBase.Log($"Click Attempt {attempt} - Could not click on [{element?.TagName}] element: [{element?.Text}] Regardless of moving to viewport. {ex}");
+                                IntegrationTestBase.Log($"***DOM*** Click Attempt {attempt} - Could not click on [{element?.TagName}] element: [{element?.Text}] Regardless of moving to viewport. {ex}");
                             }
 
                         }

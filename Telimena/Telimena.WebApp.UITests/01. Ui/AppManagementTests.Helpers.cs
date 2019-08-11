@@ -222,9 +222,13 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 Log("Box was initially selected.");
                 box.ClickWrapper(this.Driver);
+                Assert.IsFalse(box.Selected);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: false", x));
-                Log("Box deselected. Rerunning function.");
+
+                Log("Box deselected. Refreshing and rerunning function.");
+                this.Driver.Navigate().Refresh();
+
                 this.SetPackageAsBeta( packageName);
             }
             else
@@ -262,9 +266,11 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 Log("Box was initially deselected.");
                 box.ClickWrapper(this.Driver);
+                Assert.IsTrue(box.Selected);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: true", x));
-                Log("Box selected. Rerunning function.");
+                Log("Box selected. Refreshing and rerunning function.");
+                this.Driver.Navigate().Refresh();
                 this.SetPackageAsNonBeta(packageName);
             }
             else
