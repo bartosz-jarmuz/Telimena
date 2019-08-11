@@ -32,24 +32,25 @@ namespace Telimena.WebApp.UITests
     [TestFixture]
     public abstract partial class WebsiteTestBase : IntegrationTestBase
     {
-        public void WaitForSuccessConfirmationWithText(WebDriverWait wait, Func<string, bool> validateText)
+        public void WaitForSuccessConfirmationWithText(WebDriverWait wait, Action<string> validateText)
         {
             this.WaitForConfirmationWithTextAndClass(wait, "success", validateText);
         }
 
-        public void WaitForErrorConfirmationWithText(WebDriverWait wait, Func<string, bool> validateText)
+        public void WaitForErrorConfirmationWithText(WebDriverWait wait, Action<string> validateText)
         {
             this.WaitForConfirmationWithTextAndClass(wait, "danger", validateText);
         }
 
-        private void WaitForConfirmationWithTextAndClass(WebDriverWait wait, string cssPart, Func<string, bool> validateText)
+        private void WaitForConfirmationWithTextAndClass(WebDriverWait wait, string cssPart, Action<string> validateText)
         {
             var confirmationBox = this.Driver.TryFind(Strings.Id.TopAlertBox, (int)wait.Timeout.TotalMilliseconds);
 
             confirmationBox = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.TopAlertBox)));
 
             Assert.IsTrue(confirmationBox.GetAttribute("class").Contains(cssPart), "The alert has incorrect class: " + confirmationBox.GetAttribute("class"));
-            Assert.IsTrue(validateText(confirmationBox.Text), "Incorrect message: " + confirmationBox.Text);
+            validateText(confirmationBox.Text);
+            //Assert.IsTrue(validateText(confirmationBox.Text), "Incorrect message: " + confirmationBox.Text);
             Log($"Confirmation box - Displayed {cssPart}, {confirmationBox.Text}");
         }
 

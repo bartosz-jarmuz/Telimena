@@ -60,7 +60,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                     .FirstOrDefault(x => x.GetAttribute("type") == "submit")));
 
                 btn.ClickWrapper(this.Driver);
-                this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Uploaded package with ID"));
+                this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "Uploaded package with ID"));
                 this.Driver.Navigate().Refresh();
                 
                 //wait for the reload and verify package uploaded and notes set OK
@@ -223,7 +223,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Log("Box was initially selected.");
                 box.ClickWrapper(this.Driver);
 
-                this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: false"));
+                this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "Beta flag to: false"));
                 Log("Box deselected. Rerunning function.");
                 this.SetPackageAsBeta( packageName);
             }
@@ -233,7 +233,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 box.ClickWrapper(this.Driver);
 
-                this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: true"));
+                this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "Beta flag to: true"));
                 this.Driver.Navigate().Refresh();
                 Log("Refreshed page");
 
@@ -263,7 +263,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Log("Box was initially deselected.");
                 box.ClickWrapper(this.Driver);
 
-                this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: true"));
+                this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "Beta flag to: true"));
                 Log("Box selected. Rerunning function.");
                 this.SetPackageAsNonBeta(packageName);
             }
@@ -273,7 +273,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 box.ClickWrapper(this.Driver);
 
-                this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Beta flag to: false"));
+                this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "Beta flag to: false"));
                 this.Driver.Navigate().Refresh();
                 Log("Refreshed page");
 
@@ -329,7 +329,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             Log("Provide app name alert accepted");
 
             Thread.Sleep(2000);
-            this.WaitForSuccessConfirmationWithText(wait, s => s.Contains("deleted successfully"));
+            this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "deleted successfully"));
             Log("Success alert displayed");
 
             this.Driver.Navigate().Refresh();
@@ -369,7 +369,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 btn.ClickWrapper(this.Driver);
                 Log($"Submitted upload of {file.FullName}");
 
-                this.WaitForSuccessConfirmationWithText(wait, x => x.Contains("Uploaded package with ID"));
+                this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "Uploaded package with ID"));
                 this.Driver.Navigate().Refresh();
 
             }
@@ -476,7 +476,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 new SelectElement(input).SelectByText(updaterName);
                 this.Driver.FindElement(By.Id(Strings.Id.SubmitUpdaterChange)).ClickWrapper(this.Driver);
 
-                this.WaitForSuccessConfirmationWithText(wait, x=>x.Contains("Updater set to "+ updaterName));
+                this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "Updater set to " + updaterName));
             }
             catch (Exception ex)
             {

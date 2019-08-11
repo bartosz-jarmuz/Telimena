@@ -146,7 +146,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.SetReleaseNotesOnExistingPkg( notes);
 
-                this.WaitForSuccessConfirmationWithText(wait, z=>z.Contains("Updated release notes."));
+                this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains(x, "Updated release notes."));
 
                 wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.Id(Strings.Id.TopAlertBox)));
 
