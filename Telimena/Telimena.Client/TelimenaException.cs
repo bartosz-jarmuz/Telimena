@@ -11,6 +11,13 @@ namespace TelimenaClient
     public class TelimenaException : Exception
     {
         /// <summary>
+        /// 
+        /// </summary>
+        public TelimenaException() : base()
+        {
+            //for deserialization
+        }
+        /// <summary>
         ///     Initializes a new instance of the <see cref="TelimenaException" /> class.
         /// </summary>
         /// <param name="message">The message.</param>
