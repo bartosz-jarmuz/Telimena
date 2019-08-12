@@ -149,6 +149,14 @@ namespace TelimenaClient
         {
             try
             {
+                if (checkResult.ProgramUpdatesToInstall == null)
+                {
+                    return new UpdateInstallationResult()
+                    {
+                        CheckResult = checkResult,
+                        Exception = new TelimenaException("ProgramUpdatesToInstall is null")
+                    };
+                }
                 if (!takeBeta)
                 {
                     checkResult.ProgramUpdatesToInstall = checkResult.ProgramUpdatesToInstall.Where(x => x.IsBeta == false).ToList();
