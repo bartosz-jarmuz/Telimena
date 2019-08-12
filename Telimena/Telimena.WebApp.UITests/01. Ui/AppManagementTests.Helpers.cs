@@ -100,7 +100,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        private void VerifyReleaseNotesOnPkg(string expectedNotes, string packageName = null)
+        private void VerifyReleaseNotesOnPkg(string expectedNotes, string packageName )
         {
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
@@ -163,13 +163,12 @@ namespace Telimena.WebApp.UITests._01._Ui
             Assert.AreEqual("1.2.3.4", eventTelemetry.Summaries.Single().Details.Single().FileVersion);
         }
 
-        private void SetReleaseNotesOnExistingPkg(string notes)
+        private void SetReleaseNotesOnExistingPkg(string notes, string packageName)
         {
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
-            var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramUpdatePackagesTable)));
+            var row = this.GetUpdatesTableTopRow(wait, packageName);
 
-
-            var setBtn = DOMExtensions.TryFind(() => table.FindElements(By.TagName("tr"))[1].FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))
+            var setBtn = DOMExtensions.TryFind(() => row.FindElement(By.ClassName(Strings.Css.PrepareReleaseNotesButton))
                 , TimeSpan.FromSeconds(15));
 
             Actions actions = new Actions(this.Driver);

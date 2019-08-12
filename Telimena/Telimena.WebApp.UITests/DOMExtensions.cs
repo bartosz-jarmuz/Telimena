@@ -10,6 +10,7 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.Extensions;
 using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
+using Telimena.TestUtilities;
 using Telimena.TestUtilities.Base;
 
 namespace Telimena.WebApp.UITests

@@ -73,12 +73,23 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 return this.BadRequest($"Program Update Package [{id}] does not exist!");
             }
 
-            byte[] bytes = await this.work.UpdatePackages.GetPackage(id, this.FileRetriever).ConfigureAwait(false);
-            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes) };
-            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = packageInfo.FileName };
-            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
+            try
+            {
 
-            return this.ResponseMessage(result);
+                byte[] bytes = await this.work.UpdatePackages.GetPackage(id, this.FileRetriever).ConfigureAwait(false);
+                HttpResponseMessage result =
+                    new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
+                result.Content.Headers.ContentDisposition =
+                    new ContentDispositionHeaderValue("attachment") {FileName = packageInfo.FileName};
+                result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/zip");
+
+                return this.ResponseMessage(result);
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError($"Error while trying to download update package {packageInfo.GetPropertyInfoString()}.\r\n\r\n{ex}");
+                return this.InternalServerError(new InvalidOperationException("Error while trying to download update package"));
+            }
         }
 
         /// <summary>

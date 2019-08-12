@@ -81,8 +81,6 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-
-
         [Test, Order(9), Retry(3)]
         public void _09_UploadInstallerTestAppMsi3Package()
         {
@@ -98,8 +96,6 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.HandleError(ex, SharedTestHelpers.GetMethodName());
             }
         }
-
-
 
         [Test, Order(11), Retry(3)]
         public void _11_UploadInstallerMsi3TestAppUpdate()

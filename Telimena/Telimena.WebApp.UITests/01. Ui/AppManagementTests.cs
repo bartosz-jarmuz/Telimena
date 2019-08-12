@@ -144,14 +144,14 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 var notes = GetCurrentMethod().Name + DateTimeOffset.UtcNow.ToString("O");
 
-                this.SetReleaseNotesOnExistingPkg( notes);
+                this.SetReleaseNotesOnExistingPkg( notes, Apps.PackageNames.AutomaticTestsClientAppV2);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Updated release notes.", x));
 
                 wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.Id(Strings.Id.TopAlertBox)));
 
                 //wait for the reload and verify package uploaded and notes set OK
-                this.VerifyReleaseNotesOnPkg( notes);
+                this.VerifyReleaseNotesOnPkg( notes, Apps.PackageNames.AutomaticTestsClientAppV2);
 
             }
             catch (Exception ex)

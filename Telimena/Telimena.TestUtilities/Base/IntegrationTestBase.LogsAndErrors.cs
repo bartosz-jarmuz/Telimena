@@ -26,10 +26,11 @@ namespace Telimena.TestUtilities.Base
         {
             string msg =
                 $"Error when executing test: {caller}" + 
-                $"\r\nOutputs:\r\n{String.Join("\r\n", this.outputs)}" + 
-                $"\r\n\r\nErrors:\r\n{string.Join("\r\n", this.errors)}\r\n. See inner exception.";
+                $"\r\n***Outputs:***\r\n{String.Join("\r\n", this.outputs)}\r\n\r\n***End of Outputs***" + 
+                $"\r\n\r\n***Errors:***\r\n{string.Join("\r\n", this.errors)}\r\n\r\n***End of Errors:***." + 
+                $"\r\n\r\nSee inner exception.";
             TestAppProvider.KillTestApps();
-            return new InvalidOperationException(msg, ex);
+            return new TelimenaTestException(msg, ex);
         }
 
         public static void Log(string info, [CallerMemberName] string caller = "")
@@ -54,6 +55,28 @@ namespace Telimena.TestUtilities.Base
                         T obj = JsonConvert.DeserializeObject<T>(output, new JsonSerializerSettings(){TypeNameHandling = TypeNameHandling.Auto});
                         if (obj != null)
                         {
+                            IntegrationTestBase.Log($"Output deserialized as {typeof(T).Name}");
+                            return obj;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+            }
+
+
+            foreach (string output in this.errors)
+            {
+                if (!string.IsNullOrWhiteSpace(output))
+                {
+                    Log(output);
+                    try
+                    {
+                        T obj = JsonConvert.DeserializeObject<T>(output, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
+                        if (obj != null)
+                        {
+                            IntegrationTestBase.Log($"Error output deserialized as {typeof(T).Name}");
                             return obj;
                         }
                     }
