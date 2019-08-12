@@ -226,6 +226,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: false", x));
 
                 Log("Box deselected. Refreshing and rerunning function.");
+                Thread.Sleep(15000);
                 this.Driver.Navigate().Refresh();
 
                 this.SetPackageAsBeta( packageName);
@@ -237,6 +238,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 box.ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: true", x));
+                Thread.Sleep(15000);
                 this.Driver.Navigate().Refresh();
                 Log("Refreshed page");
 
@@ -249,6 +251,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Log("Box is selected");
             }
 
+                Thread.Sleep(15000);
             this.Driver.Navigate().Refresh();
             row = this.GetUpdatesTableTopRow(wait, packageName);
             box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
@@ -276,6 +279,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: true", x));
                 Log("Box selected. Refreshing and rerunning function.");
+                Thread.Sleep(15000);
                 this.Driver.Navigate().Refresh();
                 this.SetPackageAsNonBeta(packageName);
             }
@@ -286,6 +290,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 box.ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: false", x));
+                Thread.Sleep(15000);
                 this.Driver.Navigate().Refresh();
                 Log("Refreshed page");
 
@@ -297,6 +302,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Assert.IsFalse(box.Selected);
                 Log("Box is deselected");
             }
+            Thread.Sleep(15000);
             this.Driver.Navigate().Refresh();
             row = this.GetUpdatesTableTopRow(wait, packageName);
             box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
