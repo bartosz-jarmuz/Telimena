@@ -40,8 +40,8 @@
     <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.8.0.0\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetLittleHelpers, Version=1.0.96.0, Culture=neutral, PublicKeyToken=339dc7d237f083dc, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetLittleHelpers.1.0.96\lib\net461\DotNetLittleHelpers.dll</HintPath>
+    <Reference Include="DotNetLittleHelpers, Version=1.0.99.0, Culture=neutral, PublicKeyToken=339dc7d237f083dc, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetLittleHelpers.1.0.99\lib\net45\DotNetLittleHelpers.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationInsights, Version=2.8.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.8.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>

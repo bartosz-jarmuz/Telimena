@@ -193,6 +193,14 @@ namespace Telimena.WebApp.Controllers.Api.V1
             pkg.IsBeta = valueToSet;
            
             await this.work.CompleteAsync().ConfigureAwait(false);
+
+            pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == packageId).ConfigureAwait(false);
+
+            if (pkg.IsBeta != valueToSet)
+            {
+                throw new InvalidOperationException($"Error occurred while setting package 'beta' status to {valueToSet}. Value was not saved correctly.");
+            }
+
             Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Successfully set IsBeta on package {packageId} to { pkg.IsBeta}"));
 
             return pkg.IsBeta;

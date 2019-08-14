@@ -206,8 +206,34 @@ namespace Telimena.WebApp.UITests._01._Ui
             var submit = wait.Until(ExpectedConditions.ElementToBeClickable(By.Id(Strings.Id.SubmitReleaseNotesButton)));
             submit.ClickWrapper(this.Driver);
         }
-      
+
         private void SetPackageAsBeta(string packageName)
+        {
+            int attempts = 0;
+            while (true)
+            {
+                attempts++;
+                try
+                {
+                    this.SetPackageAsBetaImpl(packageName);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    if (attempts < 4)
+                    {
+                        Log($"Error occurred while setting package as beta. Attempt {attempts}.\r\n{ex.Message}");
+                        Thread.Sleep(5000);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+        }
+
+        private void SetPackageAsBetaImpl(string packageName)
         {
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var row = this.GetUpdatesTableTopRow(wait, packageName);
@@ -226,7 +252,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: false", x));
 
                 Log("Box deselected. Refreshing and rerunning function.");
-                Thread.Sleep(15000);
+                Thread.Sleep(1000);
                 this.Driver.Navigate().Refresh();
 
                 this.SetPackageAsBeta( packageName);
@@ -238,7 +264,8 @@ namespace Telimena.WebApp.UITests._01._Ui
                 box.ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: true", x));
-                Thread.Sleep(15000);
+                Thread.Sleep(1000);
+
                 this.Driver.Navigate().Refresh();
                 Log("Refreshed page");
 
@@ -250,8 +277,8 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Assert.IsTrue(box.Selected);
                 Log("Box is selected");
             }
+            Thread.Sleep(1000);
 
-                Thread.Sleep(15000);
             this.Driver.Navigate().Refresh();
             row = this.GetUpdatesTableTopRow(wait, packageName);
             box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
@@ -260,8 +287,34 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         }
 
-
         private void SetPackageAsNonBeta(string packageName)
+        {
+            int attempts = 0;
+            while (true)
+            {
+                attempts++;
+                try
+                {
+                    this.SetPackageAsNonBetaImpl(packageName);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    if (attempts < 4)
+                    {
+                        Log($"Error occurred while setting package as beta. Attempt {attempts}.\r\n{ex.Message}");
+                        Thread.Sleep(5000);
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+        }
+
+
+        private void SetPackageAsNonBetaImpl(string packageName)
         {
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var row = this.GetUpdatesTableTopRow(wait, packageName);
@@ -279,7 +332,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: true", x));
                 Log("Box selected. Refreshing and rerunning function.");
-                Thread.Sleep(15000);
+                Thread.Sleep(1000);
                 this.Driver.Navigate().Refresh();
                 this.SetPackageAsNonBeta(packageName);
             }
@@ -290,7 +343,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 box.ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: false", x));
-                Thread.Sleep(15000);
+                Thread.Sleep(1000);
                 this.Driver.Navigate().Refresh();
                 Log("Refreshed page");
 
@@ -302,7 +355,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Assert.IsFalse(box.Selected);
                 Log("Box is deselected");
             }
-            Thread.Sleep(15000);
+            Thread.Sleep(1000);
             this.Driver.Navigate().Refresh();
             row = this.GetUpdatesTableTopRow(wait, packageName);
             box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
