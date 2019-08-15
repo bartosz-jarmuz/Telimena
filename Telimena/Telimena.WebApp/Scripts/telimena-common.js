@@ -91,8 +91,14 @@ function renderSequenceHistoryUrl(data, type, url) {
 }
 
 function convertUTCDateToLocalDate(date) {
-    //this is not needed anymore
-    return date;
+    var newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+
+    var offset = date.getTimezoneOffset() / 60;
+    var hours = date.getHours();
+
+    newDate.setHours(hours - offset);
+
+    return newDate;
 }
 
 Number.prototype.padLeft = function (base, chr) {
@@ -117,7 +123,8 @@ function toDdMmYyyy(date) {
     var fromTime = timePart.split(":");
 
     var fromDate = datePart.split(/\.|\//);
-    return new Date(fromDate[2], fromDate[1] - 1, fromDate[0], fromTime[0], fromTime[1], fromTime[2]);
+    var utcDate = new Date(fromDate[2], fromDate[1] - 1, fromDate[0], fromTime[0], fromTime[1], fromTime[2]);
+    return convertUTCDateToLocalDate(utcDate);
 }
 
 function isValidDate(d) {
@@ -125,13 +132,13 @@ function isValidDate(d) {
 }
 
 function toFormattedTimestamp(utcDate) {
-    if (utcDate === '' || utcDate === undefined) {
+    if (utcDate === '' || utcDate === undefined || utcDate === null) {
         return '';
     }
     if (!isValidDate(utcDate)) {
         utcDate = toDdMmYyyy(utcDate);
     }
-    var d = convertUTCDateToLocalDate(utcDate);
+    var d = utcDate;
     var formatted = [
         d.getDate().padLeft(),
         (d.getMonth() + 1).padLeft(),

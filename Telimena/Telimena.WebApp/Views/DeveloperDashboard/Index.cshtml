@@ -108,7 +108,11 @@
                         title: 'Last updated',
                         "data": "@nameof(ProgramSummary.LastUpdateDate)",
                         render: function (data, type, row, meta) {
-                            return toFormattedTimestamp(new Date(data));
+                            if (data !== null) {
+                                return toFormattedTimestamp(new Date(data));
+                            } else {
+                                return "N/A";
+                            }
                         }
                     },
                     {
