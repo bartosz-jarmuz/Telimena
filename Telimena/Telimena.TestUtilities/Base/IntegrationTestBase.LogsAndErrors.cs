@@ -64,8 +64,8 @@ namespace Telimena.TestUtilities.Base
             try
             {
                 string path = Path.Combine(IntegrationTestBase.LogsOutputFolderPath
-                    , IntegrationTestBase.TestRunTimestamp + "Log.txt");
-                File.WriteAllText(path
+                    , IntegrationTestBase.TestRunTimestamp + " Logs.txt");
+                File.AppendAllText(path
                     , DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " - " + message + Environment.NewLine);
             }
             catch (Exception ex)
