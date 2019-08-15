@@ -24,7 +24,6 @@ namespace Telimena.WebApp.UITests
     [TestFixture]
     public abstract partial class WebsiteTestBase : IntegrationTestBase
     {
-        public static string TestOutputFolderPathBase => Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "Tests");
 
         public static string ScreenshotOutputFolderPath = Path.Combine(TestOutputFolderPathBase, "Selenium Screenshots");
 

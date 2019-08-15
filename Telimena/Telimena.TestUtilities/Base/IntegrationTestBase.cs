@@ -20,6 +20,9 @@ namespace Telimena.TestUtilities.Base
     public abstract partial class IntegrationTestBase 
     {
         public static string TestRunTimestamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+
+        public static string TestOutputFolderPathBase => Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName, "Tests");
+
         private HttpClient HttpClient { get; } = new HttpClient();
         protected ITestEngine TestEngine { get; set; }
 

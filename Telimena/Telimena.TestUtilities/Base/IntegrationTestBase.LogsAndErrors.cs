@@ -19,8 +19,23 @@ namespace Telimena.TestUtilities.Base
     [TestFixture]
     public abstract partial class IntegrationTestBase 
     {
+        protected IntegrationTestBase()
+        {
+            try
+            {
+                Directory.CreateDirectory(LogsOutputFolderPath);
+            }
+            catch 
+            {
+                //
+            }
+        }
+
         protected List<string> errors = new List<string>();
         protected List<string> outputs = new List<string>();
+
+        public static string LogsOutputFolderPath = Path.Combine(TestOutputFolderPathBase, "Logs");
+
 
         protected Exception CleanupAndRethrow(Exception ex, [CallerMemberName] string caller = "")
         {
@@ -41,6 +56,22 @@ namespace Telimena.TestUtilities.Base
             //TestContext.Out.WriteLine("Ctx -  UiTestsLogger:" + info);
 
             Console.WriteLine(caller + " - "+ info);
+            LogToFile(caller + " - " + info);
+        }
+
+        private static void LogToFile(string message)
+        {
+            try
+            {
+                string path = Path.Combine(IntegrationTestBase.LogsOutputFolderPath
+                    , IntegrationTestBase.TestRunTimestamp + "Log.txt");
+                File.WriteAllText(path
+                    , DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " - " + message + Environment.NewLine);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error when writing error log:" + ex);
+            }
         }
         
         protected T ParseOutput<T>() where T : class

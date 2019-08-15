@@ -355,7 +355,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Assert.IsFalse(box.Selected);
                 Log("Box is deselected");
             }
-            Thread.Sleep(1000);
+            Thread.Sleep(15000);
             this.Driver.Navigate().Refresh();
             row = this.GetUpdatesTableTopRow(wait, packageName);
             box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
