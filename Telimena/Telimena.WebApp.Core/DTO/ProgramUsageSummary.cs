@@ -12,6 +12,7 @@ namespace Telimena.WebApp.Core.DTO
         public int UsersCount { get; set; }
         public DateTimeOffset? LastUpdateDate { get; set; }
         public DateTimeOffset RegisteredDate { get; set; }
+        public int NumberOfUpdatePackages { get; set; }
     }
 
     public class ProgramUsageSummary

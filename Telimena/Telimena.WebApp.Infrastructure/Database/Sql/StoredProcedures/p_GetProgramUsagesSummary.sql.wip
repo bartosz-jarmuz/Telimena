@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[p_GetProgramSummary]
+﻿CREATE PROCEDURE [dbo].[p_GetProgramUsagesSummary]
 	@programIds nvarchar (max),
 	@startDate datetime,
 	@endDate datetime

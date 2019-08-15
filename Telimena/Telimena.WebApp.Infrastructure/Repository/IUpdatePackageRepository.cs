@@ -21,5 +21,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<ProgramUpdatePackageInfo> GetUpdatePackageInfo(Guid id);
         Task<ProgramUpdatePackageInfo> GetLatestPackage(int programId);
         Task DeletePackage(ProgramUpdatePackageInfo packageId, IFileRemover fileRemover);
+        Task<int> CountPackages(int programId);
     }
 }

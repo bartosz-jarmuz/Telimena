@@ -37,8 +37,11 @@ namespace Telimena.WebApp.Infrastructure.Repository
             this.Views = new ViewRepository(this.telemetryContext);
             this.Events = new Repository<Event>(this.telemetryContext);
             this.UpdatePackages = new UpdatePackageRepository(this.portalContext, null);
+            this.ProgramPackages = new ProgramPackageRepository(this.portalContext, null);
             this.Users = new Repository<TelimenaUser>(this.portalContext);
         }
+
+        public IProgramPackageRepository ProgramPackages { get; set; }
 
         public IUpdatePackageRepository UpdatePackages { get; set; }
 
@@ -63,7 +66,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     List<Event> events = await this.Events.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
                     List<EventTelemetrySummary> eventSummaries = events.SelectMany(x => x.TelemetrySummaries).ToList();
 
-                    ProgramUpdatePackageInfo latestPkg = await this.UpdatePackages.GetLatestPackage(program.Id).ConfigureAwait(false);
                     summary = new ProgramSummary
                     {
                         ProgramName = program.Name
@@ -71,10 +73,34 @@ namespace Telimena.WebApp.Infrastructure.Repository
                         ,TelemetryKey = program.TelemetryKey
                         ,RegisteredDate = program.RegisteredDate
                         ,UsersCount = eventSummaries.DistinctBy(x=>x.ClientAppUserId).Count()
-                        ,LastUpdateDate = latestPkg?.UploadedDate
-                        ,LatestVersion = latestPkg?.SupportedToolkitVersion??"?"
-                        ,ToolkitVersion = latestPkg?.SupportedToolkitVersion??"?"
+                        
                     };
+                    ProgramUpdatePackageInfo latestPkg = await this.UpdatePackages.GetLatestPackage(program.Id).ConfigureAwait(false);
+
+                    if (latestPkg != null)
+                    {
+                        summary.LastUpdateDate = latestPkg.UploadedDate;
+                        summary.LatestVersion = latestPkg.SupportedToolkitVersion ?? "?";
+                        summary.ToolkitVersion = latestPkg.SupportedToolkitVersion ?? "?";
+                    }
+                    else
+                    {
+                        var programPkg = await this.ProgramPackages.GetLatestProgramPackageInfo(program.Id).ConfigureAwait(false);
+                        if (programPkg != null)
+                        {
+                            summary.LastUpdateDate = programPkg.UploadedDate;
+                            summary.LatestVersion = programPkg.Version;
+                            summary.ToolkitVersion = programPkg.SupportedToolkitVersion;
+                        }
+                        else
+                        {
+                            summary.LatestVersion ="N/A";
+                            summary.ToolkitVersion = "N/A";
+
+                        }
+                    }
+
+                    summary.NumberOfUpdatePackages = await this.UpdatePackages.CountPackages(program.Id).ConfigureAwait(false);
                 }
                 catch (Exception)
                 {

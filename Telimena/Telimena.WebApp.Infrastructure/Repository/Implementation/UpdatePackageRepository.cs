@@ -117,6 +117,11 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             return this.TelimenaPortalContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync();
         }
 
+        public Task<int> CountPackages(int programId)
+        {
+            return this.TelimenaPortalContext.UpdatePackages.CountAsync(x => x.ProgramId == programId);
+        }
+
         public async Task<ProgramUpdatePackageInfo> GetLatestPackage(int programId)
         {
             return (await this.TelimenaPortalContext.UpdatePackages.Where(x => x.ProgramId == programId).ToListAsync().ConfigureAwait(false)).OrderByDescending(x => x.Version, new VersionStringComparer()).ThenByDescending(x => x.Id).FirstOrDefault();
