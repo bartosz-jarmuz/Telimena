@@ -1,4 +1,5 @@
-﻿@using System.Security.Policy
+﻿@using System.Collections.Generic
+@using System.Security.Policy
 @using DotNetLittleHelpers
 @using Telimena.Portal.Api.Models.RequestMessages
 @using Telimena.WebApp
@@ -344,9 +345,9 @@
 
 @section scripts
 {
-   
+
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             globalUtcConversion();
 
             $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
@@ -354,12 +355,12 @@
             $('#@Strings.Id.ProgramUpdatePackagesTable').DataTable({
                 "columnDefs": [
                     {
-                        "targets": [ 0 ],
+                        "targets": [0],
                         "visible": false,
                         "searchable": false
                     },
                 ],
-                "order": [[ 1, "desc" ]]
+                "order": [[1, "desc"]]
             });
             var updaterInfo = new Object();
             @foreach (KeyValuePair<string, string> kvp in Model.UpdaterInfo)
@@ -395,13 +396,12 @@
             }
 
 
-          
             $('#@Strings.Id.UpdaterSelectList').change(function() {
                 var name = $(this.selectedOptions[0]).text();
                 PresentDescriptionOfUpdater(name);
             });
 
-              $('#@Strings.Id.UpdaterSelectList').each(function() {
+            $('#@Strings.Id.UpdaterSelectList').each(function() {
                 var name = $(this.selectedOptions[0]).text();
                 PresentDescriptionOfUpdater(name);
             });
@@ -469,7 +469,9 @@
 
             function format(d) {
 
-                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;" ><tr><td><pre data-pkg-id="' + d[2] +'">' +
+                return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;" ><tr><td><pre data-pkg-id="' +
+                    d[2] +
+                    '">' +
                     d[0] +
                     '</pre></td></tr></table>';
             }
@@ -501,8 +503,6 @@
 
         }
 
-        
-
 
         function SetUpdater(input) {
             var id = $('#@Strings.Id.UpdaterSelectList').val();
@@ -525,7 +525,8 @@
 
         function TogglePackageBeta(input) {
             var id = $(input).data("pkg-id");
-            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.ToggleBetaSetting, new {packageId = "__packageId__"})';
+            var url =
+                '@Url.LatestApiUrl(UpdatePackagesController.Routes.ToggleBetaSetting, new {packageId = "__packageId__"})';
             url = url
                 .replace("__packageId__", id);
             $.ajax({
@@ -541,20 +542,22 @@
         }
 
         function DeleteUpdatePackage(input) {
-            var id = $(input).data("pkg-id");
-            var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.Delete, new {id = "__id__"})';
-            url = url
-                .replace("__id__", id);
-            $.ajax({
-                type: 'DELETE',
-                url: url,
-                success: function(result) {
-                    showSuccessTopAlert('Deleted package with ID: [' + id + ']');
-                },
-                error: function(xhr) {
-                    showDangerTopAlert(getXhrErrorMessage(xhr));
-                }
-            });
+            if (confirm('Are you sure you want to delete update package? (this cannot be undone!)')) {
+                var id = $(input).data("pkg-id");
+                var url = '@Url.LatestApiUrl(UpdatePackagesController.Routes.Delete, new {id = "__id__"})';
+                url = url
+                    .replace("__id__", id);
+                $.ajax({
+                    type: 'DELETE',
+                    url: url,
+                    success: function(result) {
+                        showSuccessTopAlert('Deleted package with ID: [' + id + ']');
+                    },
+                    error: function(xhr) {
+                        showDangerTopAlert(getXhrErrorMessage(xhr));
+                    }
+                });
+            }
         }
 
         function SingleFileSelected(evt, input) {
