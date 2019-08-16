@@ -184,24 +184,23 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="isBeta"></param>
         /// <returns></returns>
         [Audit]
-        [HttpPut, Route("{packageId}/is-beta/", Name = Routes.ToggleBetaSetting)]
-        public async Task<bool> ToggleBetaSetting(Guid packageId)
+        [HttpPut, Route("{packageId}/is-beta/{isBeta}", Name = Routes.ToggleBetaSetting)]
+        public async Task<bool> ToggleBetaSetting(Guid packageId, bool isBeta)
         {
             ProgramUpdatePackageInfo pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == packageId).ConfigureAwait(false);
-            bool valueToSet = !pkg.IsBeta;
-            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Setting IsBeta on package {packageId} to {valueToSet}"));
-            pkg.IsBeta = valueToSet;
+            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Setting IsBeta on package {packageId} to {isBeta}"));
+            pkg.IsBeta = isBeta;
            
             await this.work.CompleteAsync().ConfigureAwait(false);
 
             pkg = await this.work.UpdatePackages.FirstOrDefaultAsync(x => x.PublicId == packageId).ConfigureAwait(false);
 
-            if (pkg.IsBeta != valueToSet)
+            if (pkg.IsBeta != isBeta)
             {
-                throw new InvalidOperationException($"Error occurred while setting package 'beta' status to {valueToSet}. Value was not saved correctly.");
+                throw new InvalidOperationException($"Error occurred while setting package 'beta' status to {isBeta}. Value was not saved correctly.");
             }
 
-            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Successfully set IsBeta on package {packageId} to { pkg.IsBeta}"));
+            Trace.TraceInformation(LoggerHelper.FormatMessage(this.RequestContext, $"Successfully set IsBeta on package {packageId} to {pkg.IsBeta}"));
 
             return pkg.IsBeta;
         }
