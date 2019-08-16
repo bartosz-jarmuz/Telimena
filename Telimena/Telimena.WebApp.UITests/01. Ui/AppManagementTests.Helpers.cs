@@ -222,7 +222,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 {
                     if (attempts < 4)
                     {
-                        Log($"Error occurred while setting package as beta. Attempt {attempts}.\r\n{ex.Message}");
+                        Log($"Caught error occurred while setting package as beta. Attempt {attempts}.\r\n{ex.Message}");
                         Thread.Sleep(5000);
                     }
                     else
@@ -238,20 +238,20 @@ namespace Telimena.WebApp.UITests._01._Ui
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var row = this.GetUpdatesTableTopRow(wait, packageName);
 
-            Log($"Setting update as beta in top row: {row.Text}");
+            Log($"Setting update as beta in top row: {row.Text?.Replace("\r\n","")}");
 
 
             var box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
 
             if (box.Selected)
             {
-                Log("Box was initially selected.");
+                Log("Box was initially selected. Clicking to deselect.");
                 box.ClickWrapper(this.Driver);
                 Assert.IsFalse(box.Selected);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: false", x));
 
-                Log("Box deselected. Refreshing and rerunning function.");
+                Log("Seems correct - Box deselected. Refreshing and rerunning function.");
                 Thread.Sleep(1000);
                 this.Driver.Navigate().Refresh();
 
@@ -259,7 +259,8 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
             else
             {
-                Log("Box is not selected");
+                Log("Correct - Box is not selected.");
+                Log($"Setting update as bet in top row: {row.Text?.Replace("\r\n", "")}");
 
                 box.ClickWrapper(this.Driver);
 
@@ -267,15 +268,16 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Thread.Sleep(1000);
 
                 this.Driver.Navigate().Refresh();
-                Log("Refreshed page");
+                Log("Seems correct - no error messages. Refreshed page");
 
                 row = this.GetUpdatesTableTopRow(wait, packageName);
-                Log($"Setting update as bet in top row: {row.Text}");
+                Log($"Checking if update is beta in top row: {row.Text?.Replace("\r\n", "")}");
 
                 box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
 
                 Assert.IsTrue(box.Selected);
-                Log("Box is selected");
+                Log("Correct - Box is deselected after refresh. Validating once more");
+
             }
             Thread.Sleep(1000);
 
@@ -283,7 +285,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             row = this.GetUpdatesTableTopRow(wait, packageName);
             box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
             Assert.IsTrue(box.Selected);
-            Log($"Status asserted after refresh: {box.Selected}");
+            Log($"All done - Correct Status asserted after refresh: {box.Selected}");
 
         }
 
@@ -302,7 +304,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 {
                     if (attempts < 4)
                     {
-                        Log($"Error occurred while setting package as beta. Attempt {attempts}.\r\n{ex.Message}");
+                        Log($"Caught error occurred while setting package as non-beta. Attempt {attempts}.\r\n{ex.Message}");
                         Thread.Sleep(5000);
                     }
                     else
@@ -319,7 +321,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             var wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
             var row = this.GetUpdatesTableTopRow(wait, packageName);
 
-            Log($"Setting update as non-beta in top row: {row.Text}");
+            Log($"Setting update as non-beta in top row: {row.Text?.Replace("\r\n","")}");
 
 
             var box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
@@ -331,7 +333,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 Assert.IsTrue(box.Selected);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: true", x));
-                Log("Box selected. Refreshing and rerunning function.");
+                Log("Box selected successfully. Refreshing and rerunning function.");
                 Thread.Sleep(1000);
                 this.Driver.Navigate().Refresh();
                 this.SetPackageAsNonBeta(packageName);
@@ -339,28 +341,29 @@ namespace Telimena.WebApp.UITests._01._Ui
             else
             {
                 Log("Box is selected");
+                Log($"Setting update as non-beta in top row: {row.Text?.Replace("\r\n","")}");
 
                 box.ClickWrapper(this.Driver);
 
                 this.WaitForSuccessConfirmationWithText(wait, x => StringAssert.Contains( "Beta flag to: false", x));
                 Thread.Sleep(1000);
                 this.Driver.Navigate().Refresh();
-                Log("Refreshed page");
+                Log("All seems correct - Refreshed page");
 
                 row = this.GetUpdatesTableTopRow(wait, packageName);
-                Log($"Setting update as non-beta in top row: {row.Text}");
+                Log($"Checking if update is non-beta in top row: {row.Text?.Replace("\r\n","")}");
 
                 box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
 
                 Assert.IsFalse(box.Selected);
-                Log("Box is deselected");
+                Log("Correct - Box is deselected after refresh. Validating once more");
             }
-            Thread.Sleep(15000);
+            Thread.Sleep(1000);
             this.Driver.Navigate().Refresh();
             row = this.GetUpdatesTableTopRow(wait, packageName);
             box = row.FindElement(By.ClassName(Strings.Css.PackageBetaToggle));
             Assert.IsFalse(box.Selected);
-            Log($"Status asserted after refresh: {box.Selected}");
+            Log($"All done - Correct Status asserted after refresh: {box.Selected}");
 
 
         }
