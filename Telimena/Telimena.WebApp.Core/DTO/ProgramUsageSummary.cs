@@ -24,8 +24,6 @@ namespace Telimena.WebApp.Core.DTO
         public int EventsCount { get; set; }
         public int TotalEventsUsageCount { get; set; }
         public int TotalTodayEventsUsageCount { get; set; }
-        public int TotalUsageCount { get; set; }
-        public int TodayUsageCount { get; set; }
         public DateTimeOffset? LastUsage { get; set; }
     }
 }

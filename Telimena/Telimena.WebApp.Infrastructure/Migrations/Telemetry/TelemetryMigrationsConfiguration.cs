@@ -89,7 +89,7 @@ namespace Telimena.WebApp.Infrastructure.Migrations.Telemetry
                 }
                 catch (Exception ex)
                 {
-                    Debug.Fail($"Failed to add procedure [{spName}]", text + "\r\n" + ex);
+                    Debug.Fail($"{ex.Message}\r\nFailed to add procedure [{spName}]", text + "\r\n" + ex);
                 }
 
             }

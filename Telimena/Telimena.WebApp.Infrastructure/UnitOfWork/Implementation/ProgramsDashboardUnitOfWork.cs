@@ -85,7 +85,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     }
                     else
                     {
-                        var programPkg = await this.ProgramPackages.GetLatestProgramPackageInfo(program.Id).ConfigureAwait(false);
+                        ProgramPackageInfo programPkg = await this.ProgramPackages.GetLatestProgramPackageInfo(program.Id).ConfigureAwait(false);
                         if (programPkg != null)
                         {
                             summary.LastUpdateDate = programPkg.UploadedDate;
@@ -138,7 +138,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             DateTime dateRecord = startDate;
 
-            var resultsRows = queryResult.AsEnumerable().ToList();
+            List<DataRow> resultsRows = queryResult.AsEnumerable().ToList();
 
             while (dateRecord.Date <= endDate.Date) //include empty days
             {
@@ -156,36 +156,49 @@ namespace Telimena.WebApp.Infrastructure.Repository
         {
             List<ProgramUsageSummary> returnData = new List<ProgramUsageSummary>();
 
+            DataSet set = await this.ExecuteStoredProcedure(StoredProcedureNames.p_GetProgramUsagesSummary
+              , new SqlParameter("programIds", SqlDbType.NVarChar, 500)
+                {
+                    Value = string.Join(",", programs.Select(x => x.Id))
+                }
+
+            ).ConfigureAwait(false);
+
+            List<DataRow> eventsRows = set.Tables[0].AsEnumerable().ToList();
+            List<DataRow> viewsRows = set.Tables[1].AsEnumerable().ToList();
+
             foreach (Program program in programs)
             {
                 
                 ProgramUsageSummary usageSummary;
                 try
                 {
-                    List<View> views = await this.Views.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
-                    List<ViewTelemetrySummary> viewSummaries = views.SelectMany(x => x.TelemetrySummaries).ToList();
-                    List<Event> events = await this.Events.FindAsync(x => x.ProgramId == program.Id).ConfigureAwait(false);
-                    List<EventTelemetrySummary> eventSummaries = events.SelectMany(x => x.TelemetrySummaries).ToList();
-
-                    List<TelemetrySummary> allSummaries = viewSummaries.Cast<TelemetrySummary>().Concat(eventSummaries).ToList();
+                    DataRow programEventSummary = eventsRows.FirstOrDefault(x => (int) x["ProgramId"] == program.Id);
+                    DataRow programViewSummary = viewsRows.FirstOrDefault(x => (int)x["ProgramId"] == program.Id);
 
                     usageSummary = new ProgramUsageSummary
                     {
-                        ProgramName = program.Name
-                        , LastUsage = allSummaries.MaxOrNull(x => x.LastTelemetryUpdateTimestamp)
-                        , TodayUsageCount = allSummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
-                                smr.GetTelemetryDetails().Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24))
-                        , TotalUsageCount = allSummaries.Sum(x => x.SummaryCount)
-                        , ViewsCount = views.Count
-                        , TotalViewsUsageCount = viewSummaries.Sum(s => s.SummaryCount)
-                        , TotalTodayViewsUsageCount = viewSummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
-                                smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24))
-                        , EventsCount = events.Count
-                        , TotalEventsUsageCount = eventSummaries.Sum(x=>x.SummaryCount)
-                        , TotalTodayEventsUsageCount = eventSummaries.Where(x => (DateTime.UtcNow - x.LastTelemetryUpdateTimestamp).TotalHours <= 24).Sum(smr =>
-                            smr.TelemetryDetails.Count(detail => (DateTime.UtcNow - detail.Timestamp).TotalHours <= 24))
-                        
-                    };
+                        ProgramName = program.Name 
+                        , EventsCount = (int)(programEventSummary?["Types"]??0)
+                        , ViewsCount = (int)(programViewSummary?["Types"] ?? 0)
+
+                        , TotalViewsUsageCount = (int)(programViewSummary?["Total"] ?? 0)
+                        , TotalTodayViewsUsageCount = (int)(programViewSummary?["Todays"] ?? 0)
+
+                        , TotalEventsUsageCount = (int)(programEventSummary?["Total"] ?? 0)
+                        , TotalTodayEventsUsageCount = (int)(programEventSummary?["Todays"] ?? 0)
+
+                      };
+
+                    DateTimeOffset lastView = (DateTimeOffset) (programViewSummary?["Last"] ?? default(DateTimeOffset));
+                    DateTimeOffset lastEvent = (DateTimeOffset) (programEventSummary?["Last"] ?? default(DateTimeOffset));
+                    usageSummary.LastUsage = lastEvent;
+                    if (lastView > lastEvent)
+                    {
+                        usageSummary.LastUsage = lastView;
+                    }
+
+
                 }
                 catch (Exception)
                 {
@@ -237,7 +250,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             DataRowCollection rows = set.Tables[0].Rows;
             foreach (DataRow row in rows)
             {
-                var data = new AppUsersSummaryData();
+                AppUsersSummaryData data = new AppUsersSummaryData();
                 data.ActivityScore = (int) row["ActivityScore"];
                 data.UserName = (string) row["UserId"];
                 data.FirstSeenDate= (DateTime) row["FirstSeen"];

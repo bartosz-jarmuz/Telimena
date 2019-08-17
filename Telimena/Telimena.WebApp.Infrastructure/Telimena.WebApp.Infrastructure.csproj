@@ -281,9 +281,9 @@
     <Content Include="Database\Sql\Functions\f_SplitInts.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Database\Sql\StoredProcedures\p_GetProgramUsagesSummary.sql.wip">
+    <Content Include="Database\Sql\StoredProcedures\p_GetProgramUsagesSummary.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Content Include="Database\Sql\StoredProcedures\p_GetUserActivitySummary.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

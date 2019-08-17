@@ -174,33 +174,41 @@
                 "columns": [
                     {
                         title: 'Name',
-                        "data": "@nameof(ProgramUsageSummary.ProgramName)"
+                        "data": "@nameof(ProgramUsageSummary.ProgramName)" 
 
                     },
                     {
-                        title: 'Usage today',
-                        "data": "@nameof(ProgramUsageSummary.TodayUsageCount)"
+                        title: 'Last usage',
+                        "data": "@nameof(ProgramUsageSummary.LastUsage)",
+                        render: function(data, type, row, meta) {
+                            return toFormattedTimestamp(new Date(data));
+                        }
                     },
                     {
-                        title: 'Total usage',
-                        "data": "@nameof(ProgramUsageSummary.TotalUsageCount)"
-                    },
-                    {
-                        title: '# Views',
-                        "data": "@nameof(ProgramUsageSummary.ViewsCount)"
-                    },
-                    {
-                        title: 'Total view usage',
-                        "data": "@nameof(ProgramUsageSummary.TotalViewsUsageCount)"
-                    },
-                    {
-                        title: '# Events',
+                        title: 'Event types',
                         "data": "@nameof(ProgramUsageSummary.EventsCount)"
+                    },
+                    {
+                        title: 'Events today',
+                        "data": "@nameof(ProgramUsageSummary.TotalTodayEventsUsageCount)"
                     },
                     {
                         title: 'Events total',
                         "data": "@nameof(ProgramUsageSummary.TotalEventsUsageCount)"
                     },
+                    {
+                        title: 'View types',
+                        "data": "@nameof(ProgramUsageSummary.ViewsCount)"
+                    },
+                    {
+                        title: 'View usage today',
+                        "data": "@nameof(ProgramUsageSummary.TotalTodayViewsUsageCount)"
+                    },
+                    {
+                        title: 'Total view usage',
+                        "data": "@nameof(ProgramUsageSummary.TotalViewsUsageCount)"
+                    },
+                   
                 ]
             });
         });
