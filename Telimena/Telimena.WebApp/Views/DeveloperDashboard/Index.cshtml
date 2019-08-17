@@ -108,11 +108,12 @@
                         title: 'Last updated',
                         "data": "@nameof(ProgramSummary.LastUpdateDate)",
                         render: function (data, type, row, meta) {
+                            var formatted = 'N/A';
                             if (data !== null) {
-                                return toFormattedTimestamp(new Date(data));
-                            } else {
-                                return "N/A";
+                                formatted = toFormattedTimestamp(new Date(data));
                             }
+
+                            return '<span style="display: none;">' + new Date(data).toISOString() + '</span>' + formatted;
                         }
                     },
                     {
