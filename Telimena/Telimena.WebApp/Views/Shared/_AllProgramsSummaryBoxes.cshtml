@@ -3,13 +3,13 @@
 <!-- Small boxes (Stat box) -->
     <!-- ./col -->
     @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-yellow", IconClass = "fa-users", Label = "Total Applications Users",
-        Value = Model.TotalAppUsersCount.ToString(), SecondaryLabel = "Users registered in last 7 days: " + Model.AppUsersRegisteredLast7DaysCount})
+        Value = Model.TotalAppUsersCount.ToString(), SecondaryLabel = "New users in last 7 days: " + Model.AppUsersRegisteredLast7DaysCount})
 
     @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-aqua", IconClass = "fa-magic", Label = "All tracked events",
-        Value = Model.TotalEventsCount.ToString(), SecondaryLabel = "Usage count: " + Model.TotalEventUsageCount})
+        Value = Model.EventTypesCount.ToString(), SecondaryLabel = "All time usage count: " + Model.TotalEventUsageCount})
    
     @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-green", IconClass = "fa-object-group", Label = "All tracked views",
-        Value = Model.TotalViewsCount.ToString(), SecondaryLabel = "Usage count: " + Model.TotalViewsUsageCount})
+        Value = Model.ViewTypesCount.ToString(), SecondaryLabel = "All time usage count: " + Model.TotalViewsUsageCount})
 
     @Html.Partial("_InfoBox", new BoxViewModel {BackgroundColorClass = "bg-red", IconClass = "fa-exclamation-triangle", Label = "Most common exception",
         Value = Model.MostPopularExceptionInLast7Days, SecondaryLabel = "Exceptions in last 7 days: " + Model.TotalExceptionsInLast7Days})

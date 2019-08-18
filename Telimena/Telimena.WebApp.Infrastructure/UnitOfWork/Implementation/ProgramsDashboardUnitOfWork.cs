@@ -157,12 +157,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             List<ProgramUsageSummary> returnData = new List<ProgramUsageSummary>();
 
             DataSet set = await this.ExecuteStoredProcedure(StoredProcedureNames.p_GetProgramUsagesSummary
-              , new SqlParameter("programIds", SqlDbType.NVarChar, 500)
-                {
-                    Value = string.Join(",", programs.Select(x => x.Id))
-                }
-
-            ).ConfigureAwait(false);
+              , this.GetProgramIdsParam(programs)).ConfigureAwait(false);
 
             List<DataRow> eventsRows = set.Tables[0].AsEnumerable().ToList();
             List<DataRow> viewsRows = set.Tables[1].AsEnumerable().ToList();
@@ -239,11 +234,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             DataSet set = await this.ExecuteStoredProcedure(StoredProcedureNames.p_GetUserActivitySummary
                 , startDate.Value
                 , endDate.Value
-                , new SqlParameter("programIds", SqlDbType.NVarChar, 500)
-                {
-                    Value = string.Join(",", programs.Select(x=>x.Id))
-                }
-              
+                , this.GetProgramIdsParam(programs)
                 ).ConfigureAwait(false);
 
             List<AppUsersSummaryData> list = new List<AppUsersSummaryData>();
@@ -263,37 +254,47 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return list;
         }
 
+        
+
         public async Task<AllProgramsSummaryData> GetAllProgramsSummaryCounts(List<Program> programs)
         {
-            List<TelemetryRootObject> telemetryRootObjects = await this.GetTelemetryRootObjects(programs).ConfigureAwait(false);
-
-            (List<View> views, List<ViewTelemetrySummary> summaries) viewData = await this.GetViewsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
-            (List<Event> events, List<EventTelemetrySummary> summaries) eventData = await this.GetEventsAndSummaries(telemetryRootObjects).ConfigureAwait(false);
-
-            List<ClientAppUser> allUsers = GetClientAppUsers(viewData.summaries, eventData.summaries);
-
-            IEnumerable<int> programIds = telemetryRootObjects.Select(x => x.ProgramId);
-            List<ExceptionInfo> exceptions =
-                await this.telemetryContext.Exceptions.Where(ex=> programIds.Contains(ex.ProgramId)).ToListAsync().ConfigureAwait(false);
-            List<ExceptionInfo> recentExceptions = exceptions.Where(x => (DateTime.UtcNow - x.Timestamp).TotalDays <= 7).ToList();
-                string mostPopularException = recentExceptions.GroupBy(x => x.TypeName).OrderByDescending(x => x.Count()).FirstOrDefault()?.Key;
-
-            AllProgramsSummaryData summary = new AllProgramsSummaryData
+            try
             {
-                TotalProgramsCount = programs.Count()
-                , TotalAppUsersCount = allUsers.Count()
-                , AppUsersRegisteredLast7DaysCount = allUsers.Count(x => (DateTime.UtcNow - x.FirstSeenDate).TotalDays <= 7)
-                , TotalViewsCount = viewData.views.Count()
-                , TotalViewsUsageCount = viewData.summaries.Sum(x=>x.SummaryCount)
-                , TotalEventUsageCount = eventData.summaries.Sum(x=>x.SummaryCount)
-                , TotalEventsCount = eventData.events.Count()
-                , TotalExceptionsInLast7Days = recentExceptions.Count
-                , MostPopularExceptionInLast7Days = mostPopularException
-            };
+                DataSet set = await this.ExecuteStoredProcedure(StoredProcedureNames.p_GetProgramSummaryCounts
+                    , this.GetProgramIdsParam(programs)).ConfigureAwait(false);
 
-            summary.NewestProgram = programs.OrderByDescending(x => x.Id) /*.Include(x=>x.Developer)*/.FirstOrDefault();
+                if (set.Tables[0]?.Rows.Count < 1)
+                {
+                    return new AllProgramsSummaryData();
+                }
+                DataRow dataRow = set.Tables[0].Rows[0];
 
-            return summary;
+                AllProgramsSummaryData summary = new AllProgramsSummaryData
+                {
+                    TotalProgramsCount = programs.Count()
+                    , TotalAppUsersCount = (int) (dataRow["UsersCount"] ?? 0)
+                    , AppUsersRegisteredLast7DaysCount = (int) (dataRow["NewUsersCount"] ?? 0)
+                    , ViewTypesCount = (int) (dataRow["ViewTypes"] ?? 0)
+                    , TotalViewsUsageCount = (int) (dataRow["ViewsTotal"] ?? 0)
+                    , EventTypesCount = (int) (dataRow["EventTypes"] ?? 0)
+                    , TotalEventUsageCount = (int) (dataRow["EventsTotal"] ?? 0)
+                    , TotalExceptionsInLast7Days = (int) (dataRow["RecentExceptionsCount"] ?? 0)
+                    , MostPopularExceptionInLast7Days = dataRow["MostPopularRecentException"] as string
+                    , NewestProgram = programs.OrderByDescending(x => x.Id) /*.Include(x=>x.Developer)*/
+                        .FirstOrDefault()
+                };
+                return summary;
+
+            }
+            catch (Exception ex)
+            {
+                return new AllProgramsSummaryData()
+                {
+                    MostPopularExceptionInLast7Days = "Error while loading summary counts"
+                };
+            }
+
+
         }
 
      

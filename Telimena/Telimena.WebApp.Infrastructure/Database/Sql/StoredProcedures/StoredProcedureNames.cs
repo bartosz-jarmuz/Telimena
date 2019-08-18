@@ -14,5 +14,6 @@ namespace Telimena.WebApp.Infrastructure.Database.Sql.StoredProcedures
         public static string p_GetDailyUsersCounts { get; } = nameof(p_GetDailyUsersCounts);
         public static string p_GetUserActivitySummary { get; } = nameof(p_GetUserActivitySummary);
         public static string p_GetProgramUsagesSummary { get; } = nameof(p_GetProgramUsagesSummary);
+        public static string p_GetProgramSummaryCounts { get; } = nameof(p_GetProgramSummaryCounts);
     }
 }

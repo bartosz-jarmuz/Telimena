@@ -115,8 +115,14 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
             return set;
         }
+        private SqlParameter GetProgramIdsParam(IEnumerable<Program> programs)
+        {
+            return new SqlParameter("programIds", SqlDbType.NVarChar, 500)
+            {
+                Value = string.Join(",", programs.Select(x => x.Id))
+            };
+        }
 
-  
 
         internal static DataTable PrepareDailyActivityScoreTable(DateTime startDate, DateTime endDate
             , List<DataRow> eventDataSummaries, List<DataRow> viewDataSummaries, List<DataRow> errorData)

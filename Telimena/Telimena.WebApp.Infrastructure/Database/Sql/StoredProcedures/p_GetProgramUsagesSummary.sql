@@ -3,7 +3,7 @@
 AS
 SELECT 
 v.ProgramId
-,COUNT(DISTINCT v.Name) 'Types'
+,COUNT(DISTINCT v.Id) 'Types'
 ,MAX(details.Timestamp) 'Last'
 ,COUNT(details.Id) 'Total'
 ,(SELECT COUNT (details.Id) 
@@ -21,7 +21,7 @@ GROUP BY v.ProgramId
 
 SELECT 
 v.ProgramId
-,COUNT(DISTINCT v.Name) 'Types'
+,COUNT(DISTINCT v.Id) 'Types'
 ,MAX(details.Timestamp) 'Last'
 ,COUNT(details.Id) 'Total'
 ,(SELECT COUNT (details.Id) 
