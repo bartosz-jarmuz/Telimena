@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.AccessControl;
+using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -65,7 +66,9 @@ namespace TelimenaClient
                         if (this.TelemetryClient != null)
                         {
                             this.Event(SessionStartedEventKey);
-                            this.SendAllDataNow();
+                            //flushing the telemetry client is a synchronous blocking operation.
+                            //As it is used during initialization, it may slow down the startup of the app
+                            Task.Run( ()=>this.SendAllDataNow() );
                             isSessionStarted = true;
                         }
                     }
