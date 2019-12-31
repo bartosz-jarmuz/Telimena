@@ -29,7 +29,7 @@ namespace Telimena.WebApp.Core.DTO.AppInsightsTelemetryModel
         public string Seq { get; set; }
 
         [JsonProperty("iKey")]
-        public Guid IKey { get; set; }
+        public string IKey { get; set; }
 
         [JsonProperty("tags")]
         public Tags Tags { get; set; }

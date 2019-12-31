@@ -50,14 +50,14 @@ namespace TelimenaClient
                 this.propertiesInternal = new TelimenaProperties(startupInfo);
                 this.Locator = new Locator(this.Properties.StaticProgramInfo);
 
-                this.telemetryModule = new TelemetryModule(this.Properties);
-                this.updates = new UpdatesModule(this);
-
                 this.httpClient = new TelimenaHttpClient(new HttpClient
                 {
                     BaseAddress = this.propertiesInternal.StartupInfo.TelemetryApiBaseUrl
                 });
                 this.Messenger = new Messenger(this.Serializer, this.httpClient);
+
+                this.telemetryModule = new TelemetryModule(this.propertiesInternal);
+                this.updates = new UpdatesModule(this);
 
                 ((TelemetryModule) this.telemetryModule).InitializeTelemetryClient();
                 if (startupInfo.RegisterUnhandledExceptionsTracking)

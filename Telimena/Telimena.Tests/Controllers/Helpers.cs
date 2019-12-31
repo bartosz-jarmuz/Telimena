@@ -44,6 +44,7 @@ namespace Telimena.Tests
     {
         public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey)
         {
+            
             TelemetryModule module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey)));
             StubTelemetryChannel channel = new StubTelemetryChannel { OnSend = t => sentTelemetry.Add(t) };
 

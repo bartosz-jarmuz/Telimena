@@ -28,6 +28,8 @@ namespace Telimena.WebApp.Core.Models.Portal
         [Index(IsUnique = true, IsClustered = false)]
         public Guid TelemetryKey { get; set; } = Guid.NewGuid();
 
+        public string InstrumentationKey { get; set; }
+
         public virtual ProgramAssembly PrimaryAssembly { get; set; }
       
         public DateTimeOffset RegisteredDate { get; set; }

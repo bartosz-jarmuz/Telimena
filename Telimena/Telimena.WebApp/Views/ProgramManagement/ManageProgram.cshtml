@@ -61,6 +61,11 @@
                         <span class="@Strings.Css.ProgramInfoElement pull-right">@Model.TelemetryKey</span>
                     </li>
                     <li class="list-group-item">
+                        <b>Instrumentation Key (optional): </b>
+                        <span class="btn btn-sm btn-default pull-right" style="padding: 0px 10px;" id="SetInstrumentationKey">Set</span>
+                        <span class="@Strings.Css.ProgramInfoElement margin-r-5 pull-right">@Model.InstrumentationKey</span>
+                    </li>
+                    <li class="list-group-item">
                         <b>Internal ID: </b>
                         <span class="@Strings.Css.ProgramInfoElement pull-right">@Model.ProgramId</span>
                     </li>
@@ -386,6 +391,26 @@
                 UploadFile(formData,
                     '@Url.LatestApiUrl(ProgramsController.Routes.Upload, new {telemetryKey = @Model.TelemetryKey})',
                     $(this).find('input'));
+            });
+
+            $('#SetInstrumentationKey').click(function () {
+                var key = prompt("Enter new Instrumentation Key", "");
+                if (key != null) {
+                    var url =
+                        '@Url.LatestApiUrl(ProgramsController.Routes.SetInstrumentationKey, new {telemetryKey = "__telemetryKey__", instrumentationKey = "__instrumentationKey__"})';
+                    url = url.replace("__telemetryKey__", '@Model.TelemetryKey');
+                    url = url.replace("__instrumentationKey__", key);
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        success: function (result) {
+                            showSuccessTopAlertAndRefresh("Updated telemetry key.");
+                        },
+                        error: function (xhr) {
+                            showDangerTopAlert(getXhrErrorMessage(xhr));
+                        }
+                    });
+                }
             });
 
             function PresentDescriptionOfUpdater(internalName) {

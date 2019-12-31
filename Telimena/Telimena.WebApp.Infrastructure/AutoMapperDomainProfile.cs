@@ -42,6 +42,7 @@ namespace Telimena.WebApp.Infrastructure
             this.CreateMap<ProgramInfo, Program>()
                 .ForMember(x => x.DeveloperTeam, o => o.Ignore())
                 .ForMember(x => x.TelemetryKey, o => o.Ignore())
+                .ForMember(x => x.InstrumentationKey, o => o.Ignore())
                 .ForMember(x => x.RegisteredDate, o => o.Ignore())
                 .ForMember(x => x.Id, o => o.Ignore())
                 .ForMember(x => x.PublicId, o => o.Ignore())

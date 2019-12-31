@@ -185,6 +185,50 @@ namespace Telimena.WebApp.Controllers.Api.V1
         }
 
         /// <summary>
+        /// Gets the AppInsights instrumentation key
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet, Route("{telemetryKey}/instrumentation-key", Name = Routes.GetInstrumentationKey)]
+        public async Task<IHttpActionResult> GetInstrumentationKey(Guid telemetryKey)
+        {
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                throw new BadRequestException($"Program with Key [{telemetryKey}] does not exist");
+            }
+
+            if (program.InstrumentationKey != null)
+            {
+                return this.Ok(program.InstrumentationKey);
+            }
+
+            return this.Ok();
+        }
+
+        /// <summary>
+        /// Gets the AppInsights instrumentation key
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        /// <param name="instrumentationKey"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost, Route("{telemetryKey}/instrumentation-key", Name = Routes.SetInstrumentationKey)]
+        public async Task<IHttpActionResult> SetInstrumentationKey(Guid telemetryKey, string instrumentationKey)
+        {
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                throw new BadRequestException($"Program with Key [{telemetryKey}] does not exist");
+            }
+
+            program.InstrumentationKey = instrumentationKey;
+            await this.Work.CompleteAsync().ConfigureAwait(false);
+            return this.Ok();
+        }
+
+        /// <summary>
         /// Gets the name of the updater for the given program
         /// </summary>
         /// <param name="telemetryKey"></param>

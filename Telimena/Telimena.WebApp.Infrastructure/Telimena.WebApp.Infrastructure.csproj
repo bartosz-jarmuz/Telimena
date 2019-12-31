@@ -186,6 +186,14 @@
     <Compile Include="Migrations\201903271258445_AddedDescriptionFieldToUpdater.Designer.cs">
       <DependentUpon>201903271258445_AddedDescriptionFieldToUpdater.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201912302122359_AddedInstrumentationKey.cs" />
+    <Compile Include="Migrations\201912302122359_AddedInstrumentationKey.Designer.cs">
+      <DependentUpon>201912302122359_AddedInstrumentationKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201912302218012_ReaddedInstrumentationKey.cs" />
+    <Compile Include="Migrations\201912302218012_ReaddedInstrumentationKey.Designer.cs">
+      <DependentUpon>201912302218012_ReaddedInstrumentationKey.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Telemetry\201903032034593_InitialCreate.cs" />
     <Compile Include="Migrations\Telemetry\201903032034593_InitialCreate.Designer.cs">
       <DependentUpon>201903032034593_InitialCreate.cs</DependentUpon>
@@ -269,6 +277,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903271258445_AddedDescriptionFieldToUpdater.resx">
       <DependentUpon>201903271258445_AddedDescriptionFieldToUpdater.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912302122359_AddedInstrumentationKey.resx">
+      <DependentUpon>201912302122359_AddedInstrumentationKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201912302218012_ReaddedInstrumentationKey.resx">
+      <DependentUpon>201912302218012_ReaddedInstrumentationKey.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\Telemetry\201903032034593_InitialCreate.resx">
       <DependentUpon>201903032034593_InitialCreate.cs</DependentUpon>

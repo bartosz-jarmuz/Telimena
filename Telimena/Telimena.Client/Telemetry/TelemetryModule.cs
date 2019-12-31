@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
@@ -11,15 +12,16 @@ namespace TelimenaClient
     /// <inheritdoc />
     public partial class TelemetryModule : ITelemetryModule
     {
+
         /// <summary>
         ///     Asynchronous Telimena methods
         /// </summary>
-        public TelemetryModule(ITelimenaProperties telimenaProperties)
+        public TelemetryModule(TelimenaProperties telimenaProperties)
         {
             this.telimenaProperties = telimenaProperties;
         }
 
-        private readonly ITelimenaProperties telimenaProperties;
+        private readonly TelimenaProperties telimenaProperties;
         private static readonly string SessionStartedEventKey = "TelimenaSessionStarted";
 
         /// <summary>
@@ -50,9 +52,32 @@ namespace TelimenaClient
         /// </summary>
         public void InitializeTelemetryClient()
         {
-            TelemetryClientBuilder builder = new TelemetryClientBuilder(this.telimenaProperties);
-            this.TelemetryClient = builder.GetClient();
+            this.TelemetryClient = new TelemetryClientBuilder(this.telimenaProperties).GetClient();
             this.InitializeSession();
+        }
+
+        private Task<string> instrumentationKeyLoadingTask;
+
+
+        private async Task<string> LoadInstrumentationKey()
+        {
+            //if the AI key is specified in the Telimena Portal, it should override the local one
+            //however, checking if it is specified in Telimena will take time, and we are inside a constructor here - we don't want to block
+            try
+            {
+                using (HttpClient client = new HttpClient() {BaseAddress = this.telimenaProperties.TelemetryApiBaseUrl})
+                {
+                    HttpResponseMessage response = await client.GetAsync(ApiRoutes.GetInstrumentationKey(this.telimenaProperties.TelemetryKey));
+                    response.EnsureSuccessStatusCode();
+                    string key = await response.Content.ReadAsStringAsync();
+                    return key?.Trim('"');
+                }
+            }
+            catch (Exception ex)
+            {
+                TelemetryDebugWriter.WriteLine($"Error while loading instrumentation key. Error: {ex}");
+                return null;
+            }
         }
 
         private void InitializeSession()
@@ -63,12 +88,23 @@ namespace TelimenaClient
                 {
                     if (!isSessionStarted)
                     {
+                        this.instrumentationKeyLoadingTask = this.LoadInstrumentationKey();
+
                         if (this.TelemetryClient != null)
                         {
-                            this.Event(SessionStartedEventKey);
                             //flushing the telemetry client is a synchronous blocking operation.
                             //As it is used during initialization, it may slow down the startup of the app
-                            Task.Run( ()=>this.SendAllDataNow() );
+                            Task.Run(async ()=>
+                            {
+                                string cloudKey = await this.instrumentationKeyLoadingTask;
+                                if (!string.IsNullOrEmpty(cloudKey))
+                                {
+                                    this.telimenaProperties.InstrumentationKey = cloudKey;
+                                    this.TelemetryClient = new TelemetryClientBuilder(this.telimenaProperties).GetClient();
+                                }
+                                this.Event(SessionStartedEventKey);
+                                this.SendAllDataNow();
+                            });
                             isSessionStarted = true;
                         }
                     }
@@ -92,8 +128,7 @@ namespace TelimenaClient
         private static readonly object SyncRoot = new object();
 
         private static bool isSessionStarted;
-        
 
-
+       
     }
 }

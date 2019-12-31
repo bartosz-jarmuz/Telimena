@@ -52,6 +52,9 @@ namespace TelimenaClient
             }
         }
 
+
+
+
         private void InitializeContext(TelemetryClient client)
         {
             if (string.IsNullOrEmpty(client.Context.User.AccountId))

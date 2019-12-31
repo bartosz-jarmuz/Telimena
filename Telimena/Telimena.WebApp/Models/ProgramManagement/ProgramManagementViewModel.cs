@@ -13,6 +13,7 @@ namespace Telimena.WebApp.Models.ProgramManagement
         public int ProgramId { get; set; }
         public string PrimaryAssemblyName { get; set; }
         public Guid TelemetryKey { get; set; }
+        public string InstrumentationKey { get; set; }
 
         public ICollection<ProgramUpdatePackageInfoDto> UpdatePackages { get; set; } = new List<ProgramUpdatePackageInfoDto>();  
 

@@ -26,6 +26,8 @@ namespace TelimenaClient
             this.SuppressAllErrors = info.SuppressAllErrors;
 
             this.TelimenaVersion = TelimenaVersionReader.ReadToolkitVersion(Assembly.GetExecutingAssembly());
+
+            this.InstrumentationKey = this.StartupInfo.InstrumentationKey;
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace TelimenaClient
         /// Gets or sets the instrumentation key (If AppInsights is used)
         /// </summary>
         /// <value>The instrumentation key.</value>
-        public string InstrumentationKey => this.StartupInfo.InstrumentationKey;
+        public string InstrumentationKey { get; internal set; }
 
         /// <summary>
         ///     Gets the program version.

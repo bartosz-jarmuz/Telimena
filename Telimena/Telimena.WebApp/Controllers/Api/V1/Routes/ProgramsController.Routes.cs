@@ -18,6 +18,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
             public const string SetUpdater = nameof(ProgramsController) + "." + nameof(ProgramsController.SetUpdater);
             public const string GetProgramUpdaterName = nameof(ProgramsController) + "." + nameof(ProgramsController.GetProgramUpdaterName);
             public const string GetVersionsCount = nameof(ProgramsController) + "." + nameof(ProgramsController.GetVersionsCount);
+            public const string GetInstrumentationKey = nameof(ProgramsController) + "." + nameof(ProgramsController.GetInstrumentationKey);
+            public const string SetInstrumentationKey = nameof(ProgramsController) + "." + nameof(ProgramsController.SetInstrumentationKey);
             public const string Delete = nameof(ProgramsController) + "." + nameof(ProgramsController.Delete);
             public const string Upload = nameof(ProgramsController) + "." + nameof(ProgramsController.Upload);
             public const string DownloadLatestProgramPackage = nameof(ProgramsController) + "." + nameof(ProgramsController.DownloadLatestProgramPackage);

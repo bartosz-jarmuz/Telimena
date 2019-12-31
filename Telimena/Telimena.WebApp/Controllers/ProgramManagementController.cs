@@ -66,6 +66,7 @@ namespace Telimena.WebApp.Controllers
             ProgramManagementViewModel model = new ProgramManagementViewModel
             {
                 TelemetryKey = program.TelemetryKey,
+                InstrumentationKey = program.InstrumentationKey,
                 ProgramName = program.Name,
                 ProgramId = program.Id,
                 PrimaryAssemblyName = program.PrimaryAssembly.Name + program.PrimaryAssembly.Extension,
