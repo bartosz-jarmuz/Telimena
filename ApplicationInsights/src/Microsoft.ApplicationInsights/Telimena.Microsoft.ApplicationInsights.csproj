@@ -18,6 +18,8 @@
 </PackageReleaseNotes>
     <AssemblyName>Telimena.Microsoft.ApplicationInsights</AssemblyName>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(Configuration)' == 'Release' And $(OS) == 'Windows_NT'">
