@@ -95,22 +95,33 @@ namespace Telimena.WebApp.UITests._01._Ui
             this.ClickOnManageProgramMenu(appName);
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UpdaterSelectList)));
 
-            this.ClickOnProgramMenuButton(appName, "_statsLink");
-            var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
-
-            this.ValidateSequencePage(table, wait);
-
-            this.ClickOnProgramMenuButton(appName, "_exceptionsLink");
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ExceptionsTable)));
-
-            this.ClickOnProgramMenuButton(appName, "_logsLink");
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.LogsTable)));
-
-            this.ClickOnProgramMenuButton(appName, "_pivotTableLink");
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.EventTelemetryPivotTable)));
-
             this.ClickOnProgramMenuButton(appName, "_dashboardLink");
             wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ProgramDashboard)));
+
+            try
+            {
+
+
+                this.ClickOnProgramMenuButton(appName, "_statsLink");
+                var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
+
+                this.ValidateSequencePage(table, wait);
+
+                this.ClickOnProgramMenuButton(appName, "_exceptionsLink");
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ExceptionsTable)));
+
+                this.ClickOnProgramMenuButton(appName, "_logsLink");
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.LogsTable)));
+
+                this.ClickOnProgramMenuButton(appName, "_pivotTableLink");
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.EventTelemetryPivotTable)));
+
+            }
+
+            catch (Exception ex)
+            {
+                Log($"Error during loading pages: {ex}");
+            }
 
         }
 
