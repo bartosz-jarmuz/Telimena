@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FlaUI.Core.AutomationElements;
 using NUnit.Framework;
 using SharedLogic;
 using Telimena.TestUtilities.Base;
@@ -13,9 +14,7 @@ using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.AppIntegrationTests.Utilities;
 using TelimenaClient;
 using TelimenaClient.Model.Internal;
-using TestStack.White.UIItems;
-using TestStack.White.UIItems.Finders;
-using TestStack.White.UIItems.WindowItems;
+
 
 namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTests
 {
@@ -48,18 +47,15 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
                 Window updateNowMsgBox =
                     await WindowHelpers.WaitForWindowAsync(x => x.Equals("PackageTriggerUpdaterTestApp update download"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
-                updateNowMsgBox.Get<Button>(SearchCriteria.ByText("Yes")).Click();
+                WindowHelpers.ClickButtonByText(updateNowMsgBox, "Yes");
+
                 Log("Clicked yes");
 
                 var appDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
-                var executedFile = await GetExecutionSummaryFile(appDir, "Executed").ConfigureAwait(false);
-                var executedLines = File.ReadAllLines(executedFile.FullName);
-                Assert.IsTrue(stamp < DateTime.ParseExact(executedLines[0], "O", CultureInfo.InvariantCulture), $"Expected {executedLines[0]} to be newer than {stamp}");
-
-
-                var finishedFile = await GetExecutionSummaryFile(appDir, "Finished").ConfigureAwait(false);
+                var _ = await GetExecutionSummaryFile(appDir, "Executed", stamp).ConfigureAwait(false);
+               
+                var finishedFile = await GetExecutionSummaryFile(appDir, "Finished", stamp).ConfigureAwait(false);
                 var finishedLines = File.ReadAllLines(finishedFile.FullName);
-                Assert.AreEqual(executedLines[0],finishedLines[0]);
 
                 Assert.AreEqual("Killed other processes: True", finishedLines[1]);
 
@@ -74,7 +70,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
         }
 
-        private static async Task<FileInfo> GetExecutionSummaryFile(DirectoryInfo appDir, string fileName, int timeoutMilliseconds = 20000)
+        private static async Task<FileInfo> GetExecutionSummaryFile(DirectoryInfo appDir, string fileName, DateTime stamp, int timeoutMilliseconds = 20000)
         {
             var executedFile = appDir.GetFiles(fileName).FirstOrDefault();
             Log($"Looking for file [{executedFile}] in {appDir.FullName}");
@@ -83,10 +79,25 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             while (executedFile == null)
             {
                 executedFile = appDir.GetFiles(fileName).FirstOrDefault();
-                await Task.Delay(50);
+                await Task.Delay(100);
                 if (sw.ElapsedMilliseconds > timeoutMilliseconds)
                 {
                     Assert.Fail($"[{fileName}] File was not created ");
+                }
+            }
+
+            var executedLines = File.ReadAllLines(executedFile.FullName);
+            var stampInFile = DateTime.ParseExact(executedLines[0], "O", CultureInfo.InvariantCulture);
+            while (!(stamp < stampInFile ))
+            {
+                await Task.Delay(100);
+
+                executedLines = File.ReadAllLines(executedFile.FullName);
+                stampInFile = DateTime.ParseExact(executedLines[0], "O", CultureInfo.InvariantCulture);
+                if (sw.ElapsedMilliseconds > timeoutMilliseconds)
+                {
+                    Assert.Fail($"Expected [{stampInFile}] to be newer than {stamp}." +
+                                $" '[{executedFile.FullName}]' content: {string.Join("\n", executedLines)}");
                 }
             }
 
@@ -143,12 +154,12 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
                 Window updater = await WindowHelpers.WaitForWindowAsync(x => x.Contains("AutomaticTestsClient Updater"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
              
                 this.CheckProperUpdateVersionDownloadedInUpdater(updater, "2.");
+                WindowHelpers.ClickButtonByText(updater, "Install now!");
 
-                updater.Get<Button>(SearchCriteria.ByText("Install now!")).Click();
                 Log("Clicked Install now!");
 
                 Window doneMsg = await WindowHelpers.WaitForMessageBoxAsync(updater, "Update complete", TimeSpan.FromMinutes(1)).ConfigureAwait(false);
-                doneMsg.Get<Button>(SearchCriteria.ByText("Yes")).Click();
+                WindowHelpers.ClickButtonByText(doneMsg, "Yes");
                 Log("Clicked yes");
 
                 VersionTuple newVersions = this.GetVersionsFromApp(appFile);
@@ -183,8 +194,10 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
                 UpdateCheckResult result =  this.LaunchTestsAppAndGetResult<UpdateCheckResult>(Apps.Paths.InstallersTestAppMsi3, Actions.CheckAndInstallUpdates, Apps.Keys.InstallersTestAppMsi3);
                 Assert.IsNull(result.Exception);
-                Window updater = await WindowHelpers.WaitForWindowAsync(x => x.Contains("InstallersTestApp.Msi3Installer"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
-                updater.Get<Button>(SearchCriteria.ByText("OK")).Click();
+                Window updater = await WindowHelpers.WaitForWindowAsync(x => x.Equals("InstallersTestApp.Msi3Installer"), TimeSpan.FromMinutes(1), "msiexec").ConfigureAwait(false);
+                var dialog = updater.ModalWindows.First();
+                WindowHelpers.ClickButtonByText(dialog, "OK");
+
                 Log("Clicked OK");
 
 

@@ -6,16 +6,15 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
+using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Conditions;
+using FlaUI.Core.Definitions;
 using NUnit.Framework;
 using Telimena.TestUtilities.Base;
 using Telimena.TestUtilities.Base.TestAppInteraction;
 using Telimena.WebApp.AppIntegrationTests.Utilities;
 using TelimenaClient;
 using TelimenaClient.Model.Internal;
-using TestStack.White;
-using TestStack.White.UIItems;
-using TestStack.White.UIItems.Finders;
-using TestStack.White.UIItems.WindowItems;
 
 
 namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTests
@@ -70,19 +69,22 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             Window updateNowMsgBox = await WindowHelpers
                 .WaitForWindowAsync(x => x.Equals($"{appName} update installation"), TimeSpan.FromMinutes(1))
                 .ConfigureAwait(false);
-            this.CheckProperUpdateVersionDownloadedInMessageBo(updateNowMsgBox, expectedVersion);
+            this.CheckProperUpdateVersionDownloadedInMessageBox(updateNowMsgBox, expectedVersion);
 
-            updateNowMsgBox.Get<Button>(SearchCriteria.ByText("Yes")).Click();
+            WindowHelpers.ClickButtonByText(updateNowMsgBox, "Yes");
+
             Log("Clicked yes");
             Window updater = await WindowHelpers
                 .WaitForWindowAsync(x => x.Contains($"{appName} Updater"), TimeSpan.FromMinutes(1))
                 .ConfigureAwait(false);
-            updater.Get<Button>(SearchCriteria.ByText("Install now!")).Click();
+            WindowHelpers.ClickButtonByText(updater, "Install now!");
+
             Log("Clicked Install now!");
 
             Window doneMsg = await WindowHelpers.WaitForMessageBoxAsync(updater, "Update complete", TimeSpan.FromMinutes(1))
                 .ConfigureAwait(false);
-            doneMsg.Get<Button>(SearchCriteria.ByText("Yes")).Click();
+            WindowHelpers.ClickButtonByText(doneMsg, "Yes");
+
             Log("Clicked yes");
         }
 
@@ -132,10 +134,11 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
         }
 
-        private void CheckProperUpdateVersionDownloadedInMessageBo(Window updateNowMsgBox, string expectedVersion)
+        private void CheckProperUpdateVersionDownloadedInMessageBox(Window updateNowMsgBox, string expectedVersion)
         {
-            var label = updateNowMsgBox.Get<Label>(SearchCriteria.Indexed(0));
-            var text = label.Text;
+            var label = updateNowMsgBox.FindAllChildren(x => x.ByControlType(ControlType.Text))[0];
+            var lbl = updateNowMsgBox.FindAllChildren();
+            var text = label.Name;
             var version = text.Replace("An update to version ", "").Replace(" was downloaded", "").Replace("Would you like to install now?", "").Trim();
 
             StringAssert.StartsWith(expectedVersion, version, $"Update version {version} does not start with {expectedVersion}. Probably incorrect version of update was downloaded");
@@ -143,64 +146,14 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
         private void CheckProperUpdateVersionDownloadedInUpdater(Window updaterWindow, string expectedVersion)
         {
-            var versionText = updaterWindow.Get<Label>(SearchCriteria.Indexed(1));
-            var text = versionText.Text;
+            var lbl = updaterWindow.FindAllChildren(x => x.ByControlType(ControlType.Text))[1];
+            var text = lbl.Name;
 
             StringAssert.StartsWith(expectedVersion, text, $"Update version {text} does not start with {expectedVersion}. Probably incorrect version of update was downloaded");
         }
-        public string GetTextFromMsgBox(Window msgBox)
-        {
-            string text = msgBox.Get<Label>(SearchCriteria.Indexed(0)).Text;
-            try
-            {
-                msgBox.Get<Button>(SearchCriteria.ByText("OK")).Click();
-            }
-            catch (Exception ex)
-            {
-                if (!string.IsNullOrEmpty(text))
-                {
-                    if (ex.Message.Contains("Window didn't respond") && ex.InnerException != null &&
-                        ex.InnerException.Message.Contains("Process with an Id of"))
-                    {
-                        //that's weird but the message box got closed by something else
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+      
 
-            return text;
-        }
-
-        public async Task<VersionTuple> GetVersionFromMsgBox(Window msgBox)
-        {
-            string text = msgBox.Get<Label>(SearchCriteria.Indexed(0)).Text;
-            string[] versions = text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            try
-            {
-                msgBox.Get<Button>(SearchCriteria.ByText("OK")).Click();
-                await Task.Delay(500).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                if (!string.IsNullOrEmpty(text))
-                {
-                    if (ex.Message.Contains("Window didn't respond") && ex.InnerException != null &&
-                        ex.InnerException.Message.Contains("Process with an Id of"))
-                    {
-                        //that's weird but the message box got closed by something else
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-            
-            return new VersionTuple() { AssemblyVersion = versions[0].Trim().Replace("AssemblyVersion: ",""), FileVersion = versions[1].Trim().Replace("FileVersion: ", "") };
-        }
+      
 
       
         private void AssertVersionAreCorrect(VersionTuple newVersions, VersionTuple initialVersions, FileInfo appFile, string newVersionStartingPart)
