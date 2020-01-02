@@ -54,7 +54,8 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
                 var appDir = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
                 var executedFile = await GetExecutionSummaryFile(appDir, "Executed").ConfigureAwait(false);
                 var executedLines = File.ReadAllLines(executedFile.FullName);
-                Assert.IsTrue(stamp < DateTime.ParseExact(executedLines[0], "O", CultureInfo.InvariantCulture));
+                Assert.IsTrue(stamp < DateTime.ParseExact(executedLines[0], "O", CultureInfo.InvariantCulture), $"Expected {executedLines[0]} to be newer than {stamp}");
+
 
                 var finishedFile = await GetExecutionSummaryFile(appDir, "Finished").ConfigureAwait(false);
                 var finishedLines = File.ReadAllLines(finishedFile.FullName);
@@ -67,7 +68,8 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             }
             catch (Exception ex)
             {
-                throw this.CleanupAndRethrow(ex);
+                 this.CleanupAndLog(ex);
+                 throw;
             }
 
         }
@@ -75,6 +77,8 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
         private static async Task<FileInfo> GetExecutionSummaryFile(DirectoryInfo appDir, string fileName, int timeoutMilliseconds = 20000)
         {
             var executedFile = appDir.GetFiles(fileName).FirstOrDefault();
+            Log($"Looking for file [{executedFile}] in {appDir.FullName}");
+
             var sw = Stopwatch.StartNew();
             while (executedFile == null)
             {
@@ -103,6 +107,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
                 await this.PerformManualUpdate("AutomaticTestsClient", "2.");
 
                 VersionTuple newVersions = this.GetVersionsFromApp(appFile);
+                Log($"New versions: {newVersions.ToLog()}");
 
                 this.AssertVersionAreCorrect(newVersions, initialVersions, appFile, "2.");
 
@@ -115,7 +120,8 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             }
             catch (Exception ex)
             {
-                throw this.CleanupAndRethrow(ex);
+                this.CleanupAndLog(ex);
+                throw;
             }
         }
 
@@ -146,6 +152,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
                 Log("Clicked yes");
 
                 VersionTuple newVersions = this.GetVersionsFromApp(appFile);
+                Log($"New versions: {newVersions.ToLog()}");
 
                 this.AssertVersionAreCorrect(newVersions, initialVersions, appFile, "2.");
 
@@ -157,7 +164,8 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             }
             catch (Exception ex)
             {
-                throw this.CleanupAndRethrow(ex);
+                this.CleanupAndLog(ex);
+                throw;
             }
         }
 
@@ -194,7 +202,8 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             }
             catch (Exception ex)
             {
-                throw this.CleanupAndRethrow(ex);
+                this.CleanupAndLog(ex);
+                throw;
             }
         }
 
@@ -212,6 +221,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
                 await this.PerformManualUpdate("AutomaticTestsClient", "3.");
 
                 VersionTuple newVersions = this.GetVersionsFromFile(appFile);
+                Log($"New versions: {newVersions.ToLog()}");
 
                 this.AssertVersionAreCorrect(newVersions, initialVersions, appFile, "3.");
 
@@ -224,7 +234,8 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             }
             catch (Exception ex)
             {
-                throw this.CleanupAndRethrow(ex);
+                this.CleanupAndLog(ex);
+                throw;
             }
         }
 

@@ -37,15 +37,16 @@ namespace Telimena.TestUtilities.Base
         public static string LogsOutputFolderPath = Path.Combine(TestOutputFolderPathBase, "Logs");
 
 
-        protected Exception CleanupAndRethrow(Exception ex, [CallerMemberName] string caller = "")
+        protected void CleanupAndLog(Exception ex, [CallerMemberName] string caller = "")
         {
             string msg =
                 $"Error when executing test: {caller}" + 
                 $"\r\n***Outputs:***\r\n{String.Join("\r\n", this.outputs)}\r\n\r\n***End of Outputs***" + 
                 $"\r\n\r\n***Errors:***\r\n{string.Join("\r\n", this.errors)}\r\n\r\n***End of Errors:***." + 
-                $"\r\n\r\nSee inner exception.";
+                $"\r\n\r\n{ex}";
             TestAppProvider.KillTestApps();
-            return new TelimenaTestException(msg, ex);
+            Log(msg);
+            
         }
 
         public static void Log(string info, [CallerMemberName] string caller = "")

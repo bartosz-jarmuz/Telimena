@@ -24,6 +24,11 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
     {
         public string AssemblyVersion { get; set; }
         public string FileVersion { get; set; }
+
+        public string ToLog()
+        {
+            return $"AssemblyVersion: [{this.AssemblyVersion}]. FileVersion: [{this.FileVersion}]";
+        }
     }
 
 
