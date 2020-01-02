@@ -8,7 +8,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.Extensions;
-using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Telimena.TestUtilities;
 using Telimena.TestUtilities.Base;
@@ -102,18 +101,7 @@ namespace Telimena.WebApp.UITests
             return null;
         }
 
-        public static IWebElement GetElementByNameOrId(this IWebDriver driver, string nameOrId)
-        {
-            try
-            {
-                return driver.FindElement(new ByIdOrName(nameOrId));
-            }
-            catch (Exception ex)
-            {
-                throw new TelimenaTestException($"Failed to find element by name or id [{nameOrId}]", ex);
-            }
-        }
-
+       
         public static IAlert WaitForAlert(this IWebDriver driver, int timeout, bool obligatory = false)
         {
 

@@ -2,7 +2,6 @@
 using System.Reflection;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.PageObjects;
 using Telimena.TestUtilities.Base;
 using Telimena.WebApp.UiStrings;
 
@@ -43,16 +42,16 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl("Account/Register"));
 
 
-                IWebElement name = this.Driver.FindElement(new ByIdOrName(Strings.Id.Name));
-                IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
-                IWebElement pass = this.Driver.FindElement(new ByIdOrName(Strings.Id.Password));
-                IWebElement pass2 = this.Driver.FindElement(new ByIdOrName(Strings.Id.ConfirmPassword));
+                IWebElement name = this.Driver.FindElement(By.Id(Strings.Id.Name));
+                IWebElement login = this.Driver.FindElement(By.Id(Strings.Id.Email));
+                IWebElement pass = this.Driver.FindElement(By.Id(Strings.Id.Password));
+                IWebElement pass2 = this.Driver.FindElement(By.Id(Strings.Id.ConfirmPassword));
                 name.SendKeys(displayName);
                 login.SendKeys(email);
                 pass.SendKeys(password);
                 pass2.SendKeys(password);
 
-                IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.Register));
+                IWebElement submit = this.Driver.FindElement(By.Id(Strings.Id.Register));
                 submit.ClickWrapper(this.Driver);
 
                 

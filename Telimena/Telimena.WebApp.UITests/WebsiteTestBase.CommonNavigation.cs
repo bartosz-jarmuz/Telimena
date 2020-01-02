@@ -18,7 +18,6 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
-using OpenQA.Selenium.Support.PageObjects;
 using OpenQA.Selenium.Support.UI;
 using Telimena.TestUtilities;
 using Telimena.TestUtilities.Base;
@@ -184,17 +183,18 @@ namespace Telimena.WebApp.UITests
             }
 
             if (this.Driver.Url.IndexOf("Login", StringComparison.InvariantCultureIgnoreCase) != -1 &&
-                this.Driver.FindElement(new ByIdOrName(Strings.Id.LoginForm)) != null)
+
+                this.Driver.FindElement(By.Id(Strings.Id.LoginForm)) != null)
             {
                 IntegrationTestBase.Log("Trying to log in...");
-                IWebElement login = this.Driver.FindElement(new ByIdOrName(Strings.Id.Email));
+                IWebElement login = this.Driver.FindElement(By.Id(Strings.Id.Email));
 
                 if (login != null)
                 {
-                    IWebElement pass = this.Driver.FindElement(new ByIdOrName(Strings.Id.Password));
+                    IWebElement pass = this.Driver.FindElement(By.Id(Strings.Id.Password));
                     login.SendKeys(userName);
                     pass.SendKeys(password);
-                    IWebElement submit = this.Driver.FindElement(new ByIdOrName(Strings.Id.SubmitLogin));
+                    IWebElement submit = this.Driver.FindElement(By.Id(Strings.Id.SubmitLogin));
                     submit.ClickWrapper(this.Driver);
                     this.GoToAdminHomePage();
                     this.RecognizeAdminDashboardPage();
