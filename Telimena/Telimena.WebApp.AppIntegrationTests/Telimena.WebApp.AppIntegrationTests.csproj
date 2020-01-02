@@ -131,6 +131,10 @@
       <Project>{FFD85253-874C-41CB-9242-9267BFA3647B}</Project>
       <Name>Telimena.WebApp.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Telimena.WebApp.Utils\Telimena.WebApp.Utils.csproj">
+      <Project>{1F08CB36-09F1-4134-A921-E8162F820383}</Project>
+      <Name>Telimena.WebApp.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -47,7 +49,8 @@ namespace PackageTriggerUpdaterTestApp
             //we only really care whether the updater has launched the update package - it's up to the package to perform the update.
             //use case - SDL Trados Studio (and similar software) which has plugins. The plugin is compiled to an .sdlplugin file which after executing
             //will present an installation wizard - it will guide the user through the update process, so the only thing that Telimena needs to do is to download this update package and execute it.
-            MessageBox.Show("Updater executed", "Updater executed");
+            var stamp = DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture);
+            File.WriteAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Executed"), new [] { stamp, "Updater executed" });
             Console.WriteLine("Finding and killing the other instance of this app");
 
             Process currentProcess = Process.GetCurrentProcess();
@@ -63,7 +66,7 @@ namespace PackageTriggerUpdaterTestApp
                 }
             }
 
-            MessageBox.Show($"Killed other processes: {killed}", "Updater finished");
+            File.WriteAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Finished"), new[] { stamp, $"Killed other processes: {killed}" });
         }
 
         public static void Work(Arguments arguments)
@@ -114,6 +117,7 @@ namespace PackageTriggerUpdaterTestApp
 
             Work(arguments);
 
+            Console.WriteLine("keep the old process running, it needs to be manually killed by the updater");
             int key = Console.Read();
             while (key != 1)
             {

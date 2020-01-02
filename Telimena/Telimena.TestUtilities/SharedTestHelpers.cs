@@ -56,6 +56,7 @@ namespace Telimena.TestUtilities.Base
             }
         }
     
+        [DebuggerStepThrough]
         public static string GetMethodName([CallerMemberName] string caller = "")
         {
             StackTrace stackTrace = new System.Diagnostics.StackTrace();

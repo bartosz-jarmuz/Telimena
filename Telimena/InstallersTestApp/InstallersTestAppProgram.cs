@@ -17,7 +17,10 @@ namespace InstallersTestApp
         {
             Console.WriteLine($"Starting {typeof(InstallersTestAppProgram).Assembly.GetName().Name}");
 
-SharedUtils.ShowArgsRequiredMessage(args, typeof(InstallersTestAppProgram),"InstallersTestApp" );
+            if (!SharedUtils.PrintVersionsAndCheckArgs(args, typeof(InstallersTestAppProgram)))
+            {
+                return;
+            }
 
             var arguments = SharedUtils.LoadArguments(args);
 

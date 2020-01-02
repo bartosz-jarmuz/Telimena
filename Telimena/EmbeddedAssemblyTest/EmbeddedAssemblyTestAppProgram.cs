@@ -8,7 +8,12 @@ namespace EmbeddedAssemblyTestApp
     {
         static void Main(string[] args)
         {
-            SharedUtils.ShowArgsRequiredMessage(args, typeof(EmbeddedAssemblyTestAppProgram), "EmbeddedAssemblyTestApp");
+            if (!SharedUtils.PrintVersionsAndCheckArgs(args, typeof(EmbeddedAssemblyTestAppProgram)))
+            {
+                return;
+            }
+
+            
 
             var arguments = SharedUtils.LoadArguments(args);
 

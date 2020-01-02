@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using DotNetLittleHelpers;
@@ -29,10 +30,10 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
     public partial class _2_NonUiTests : IntegrationTestBase
     {
-        public async Task<VersionTuple> GetVersionsFromApp(string appName, string testSubfolderName)
+        public VersionTuple GetVersionsFromApp(string appName, string testSubfolderName)
         {
             FileInfo exe = TestAppProvider.ExtractApp(appName, testSubfolderName, x => IntegrationTestBase.Log(x));
-            return await this.GetVersionsFromApp(exe).ConfigureAwait(false);
+            return this.GetVersionsFromApp(exe);
         }
         private void AssertNoNonBetaUpdatesToInstall(UpdateCheckResult result, bool betaUpdateMightStillBeAvailable)
         {
@@ -59,15 +60,63 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             Thread.Sleep(500);
             return this.GetVersionsFromFile(expectedProgramPath);
         }
-
-        public async Task<VersionTuple> GetVersionsFromApp(FileInfo exe)
+        private async Task PerformManualUpdate(string appName, string expectedVersion)
         {
-            Log($"Starting process [{exe.FullName}]");
-            Process process = Process.Start(exe.FullName);
-            Application app = TestStack.White.Application.Attach(process);
+            Window updateNowMsgBox = await WindowHelpers
+                .WaitForWindowAsync(x => x.Equals($"{appName} update installation"), TimeSpan.FromMinutes(1))
+                .ConfigureAwait(false);
+            this.CheckProperUpdateVersionDownloadedInMessageBo(updateNowMsgBox, expectedVersion);
 
-            Window appWarning = await WindowHelpers.WaitForWindowAsync(x => x.Equals("AutomaticTestsClient - This app requires arguments to run"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
-            return await this.GetVersionFromMsgBox(appWarning).ConfigureAwait(false);
+            updateNowMsgBox.Get<Button>(SearchCriteria.ByText("Yes")).Click();
+            Log("Clicked yes");
+            Window updater = await WindowHelpers
+                .WaitForWindowAsync(x => x.Contains($"{appName} Updater"), TimeSpan.FromMinutes(1))
+                .ConfigureAwait(false);
+            updater.Get<Button>(SearchCriteria.ByText("Install now!")).Click();
+            Log("Clicked Install now!");
+
+            Window doneMsg = await WindowHelpers.WaitForMessageBoxAsync(updater, "Update complete", TimeSpan.FromMinutes(1))
+                .ConfigureAwait(false);
+            doneMsg.Get<Button>(SearchCriteria.ByText("Yes")).Click();
+            Log("Clicked yes");
+        }
+
+        private void VerifyVersionsAreUpdatedAfterInstallation(VersionTuple initialVersions)
+        {
+            int i = 0;
+            while (true)
+            {
+                i++;
+                Thread.Sleep(1000 * i * 2);
+                VersionTuple newVersions = this.GetVersionsFromFile(Apps.Paths.InstallersTestAppMsi3);
+
+                try
+                {
+
+                    Assert.IsTrue(TelimenaClient.Extensions.IsNewerVersionThan(newVersions.AssemblyVersion, initialVersions.AssemblyVersion)
+                        , $"Version don't match. Initial AssVer: {initialVersions.AssemblyVersion}. New {newVersions.AssemblyVersion}");
+                    Assert.IsTrue(Extensions.IsNewerVersionThan(newVersions.FileVersion, initialVersions.FileVersion),
+                        $"Version don't match. Initial FileVer: {initialVersions.AssemblyVersion}. New {newVersions.AssemblyVersion}");
+                    return;
+                }
+                catch (Exception)
+                {
+                    if (i > 4)
+                    {
+                        throw;
+                    }
+                }
+            }
+
+        }
+
+        public VersionTuple GetVersionsFromApp(FileInfo exe)
+        {
+            Log($"Reading versions from [{exe.FullName}]");
+            var versionTuple = new VersionTuple();
+            versionTuple.AssemblyVersion =TelimenaVersionReader.Read(exe, VersionTypes.AssemblyVersion).ToString();
+            versionTuple.FileVersion =TelimenaVersionReader.Read(exe, VersionTypes.FileVersion).ToString();
+            return versionTuple;
         }
 
         public VersionTuple GetVersionsFromFile(FileInfo exe)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using TelimenaClient;
@@ -13,18 +14,27 @@ namespace SharedLogic
             return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
-        public static void ShowArgsRequiredMessage(string[] args, Type type, string appName)
+        public static bool PrintVersionsAndCheckArgs(string[] args, Type type)
         {
-            var msg = $"AssemblyVersion: {TelimenaVersionReader.Read(type, VersionTypes.AssemblyVersion)}\r\n" +
-                      $"FileVersion: {TelimenaVersionReader.Read(type, VersionTypes.FileVersion)}\r\n" +
-                      $"Telimena Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.AssemblyVersion)}\r\n" +
-                      $"Telimena File Version: {TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.FileVersion)}";
-            Console.WriteLine(msg);
+
+            var lines = new string[]
+            {
+                TelimenaVersionReader.Read(type, VersionTypes.AssemblyVersion)
+                , TelimenaVersionReader.Read(type, VersionTypes.FileVersion)
+                , TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.AssemblyVersion)
+                , TelimenaVersionReader.Read(typeof(Telimena), VersionTypes.FileVersion)
+            };
+
+           
+            Console.WriteLine(string.Join("\r\n", lines));
             if (args.Length == 0)
             {
-                MessageBox.Show(msg, $"{appName} - This app requires arguments to run");
-                return;
+                File.WriteAllLines("Versions.txt", lines);
+                Console.WriteLine("App executed with zero args. Quitting.");
+                return false;
             }
+
+            return true;
         }
 
         public static Arguments LoadArguments(string[] args)

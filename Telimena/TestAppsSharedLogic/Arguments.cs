@@ -19,5 +19,7 @@ namespace SharedLogic
 
         public Guid TelemetryKey { get; set; }
 
+        public string TestTimestamp { get; set; }
+
     }
 }
