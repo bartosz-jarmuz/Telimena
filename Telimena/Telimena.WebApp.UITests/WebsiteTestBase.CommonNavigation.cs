@@ -33,8 +33,6 @@ namespace Telimena.WebApp.UITests
     {
         protected Guid RegisterApp(string name, Guid? key, string description, string assemblyName, bool canAlreadyExist, bool hasToExistAlready)
         {
-            this.GoToAdminHomePage();
-
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(25));
 
             this.Driver.FindElement(By.Id(Strings.Id.RegisterApplicationLink)).ClickWrapper(this.Driver);
@@ -102,8 +100,6 @@ namespace Telimena.WebApp.UITests
             this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl(""));
         }
      
-      
-
         protected void ClickOnProgramMenuButton(string appName, string buttonSuffix)
         {
             try
@@ -138,7 +134,6 @@ namespace Telimena.WebApp.UITests
         protected void ClickOnManageProgramMenu(string appName)
         {
             this.ClickOnProgramMenuButton(appName, "_manageLink");
-
         }
 
 
@@ -166,9 +161,6 @@ namespace Telimena.WebApp.UITests
 
             wait.Until(x => x.FindElement(By.Id(Strings.Id.PortalSummary)));
         }
-
-        
-
 
         public void LoginAdminIfNeeded()
         {

@@ -33,7 +33,6 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-
                 this.LoginAdminIfNeeded();
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, ConfigHelper.GetTimeout());
@@ -370,8 +369,6 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         private void DeleteApp(string appName, bool maybeNotExists)
         {
-            this.GoToAdminHomePage();
-
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(45));
 
             IWebElement element = this.Driver.TryFind(By.Id($"{appName}_menu"));

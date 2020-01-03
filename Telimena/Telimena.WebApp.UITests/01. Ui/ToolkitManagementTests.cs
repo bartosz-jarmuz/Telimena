@@ -28,8 +28,6 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.GoToAdminHomePage();
-
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
                 this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver);
@@ -130,7 +128,6 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         private void SetUpdaterPublic(string internalName)
         {
-            this.GoToAdminHomePage();
             this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver);
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
@@ -160,8 +157,6 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         private void UploadUpdater(string fileName, string internalName, string exeName)
         {
-            this.GoToAdminHomePage();
-
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
             this.Driver.FindElement(By.Id(Strings.Id.ToolkitManagementLink)).ClickWrapper(this.Driver);

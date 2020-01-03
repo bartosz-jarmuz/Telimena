@@ -49,7 +49,6 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.GoToAdminHomePage();
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
