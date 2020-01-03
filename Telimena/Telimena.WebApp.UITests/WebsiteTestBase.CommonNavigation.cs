@@ -107,14 +107,8 @@ namespace Telimena.WebApp.UITests
                 Retrier.RetryAsync(() =>
                 {
                     WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
-                    IWebElement element = this.Driver.TryFind(By.Id($"{appName}_menu"));
 
-                    IntegrationTestBase.Log($"Found { appName}_menu button");
-
-                    var prgMenu = wait.Until(ExpectedConditions.ElementToBeClickable(element));
-                    prgMenu.ClickWrapper(this.Driver);
-                    IntegrationTestBase.Log($"Clicked { appName}_menu button");
-
+                    this.ExpandAppMenu(appName);
 
                     IWebElement link = this.Driver.TryFind(By.Id(appName + buttonSuffix));
                     IntegrationTestBase.Log($"Found { appName}{buttonSuffix} button");
@@ -131,11 +125,55 @@ namespace Telimena.WebApp.UITests
             }
         }
 
+
+
+        protected IWebElement TryFindAppMenu(string appName)
+        {
+            WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
+            IWebElement element = this.Driver.TryFind(By.Id($"{appName}_menu"));
+            if (element == null || !element.Displayed)
+            {
+                var devTeamElement = this.Driver.TryFind(By.Id($"{Strings.Id.AppsList}_TelimenaSystemDevTeam"));
+                wait.Until(ExpectedConditions.ElementToBeClickable(devTeamElement));
+                devTeamElement.ClickWrapper(this.Driver);
+                IntegrationTestBase.Log($"{appName}_menu was not visible. Clicked on team node to expand.");
+            }
+
+            element = this.Driver.TryFind(By.Id($"{appName}_menu"));
+            if (element != null)
+            {
+                IntegrationTestBase.Log($"Found {appName}_menu button");
+            }
+            else
+            {
+                IntegrationTestBase.Log($"Did not find {appName}_menu button");
+            }
+
+            return element;
+        }
+        protected IWebElement ExpandAppMenu(string appName)
+        {
+            var element = this.TryFindAppMenu(appName);
+
+            element.ClickWrapper(this.Driver);
+            IntegrationTestBase.Log($"Clicked {appName}_menu button");
+            return element;
+        }
+
         protected void ClickOnManageProgramMenu(string appName)
         {
             this.ClickOnProgramMenuButton(appName, "_manageLink");
         }
 
+        protected void NavigateToManageProgramMenu(Guid key)
+        {
+            this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl($"ProgramManagement?telemetryKey={key}"));
+        }
+
+        protected void NavigateToStatisticsPage(Guid key)
+        {
+            this.Driver.Navigate().GoToUrl(this.GetAbsoluteUrl($"ProgramStatistics?telemetryKey={key}"));
+        }
 
         public void GoToAdminHomePage()
         {

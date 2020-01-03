@@ -38,8 +38,8 @@ namespace Telimena.WebApp.UITests._01._Ui
                 this.Driver.TryFind(By.Id(Strings.Id.DeveloperDashboardLink)).ClickWrapper(this.Driver);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.DeveloperDashboard)));
 
-                this.Driver.TryFind(By.Id(Strings.Id.TeamManagementLink)).ClickWrapper(this.Driver);
-                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.TeamMembersList)));
+                //this.Driver.TryFind(By.Id(Strings.Id.TeamManagementLink)).ClickWrapper(this.Driver);
+                //wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.TeamMembersList)));
 
                 this.Driver.TryFind(By.Id(Strings.Id.RegisterApplicationLink)).ClickWrapper(this.Driver);
                 wait.Until(ExpectedConditions.ElementIsVisible(By.Id(@Strings.Id.RegisterApplicationForm)));
@@ -100,8 +100,6 @@ namespace Telimena.WebApp.UITests._01._Ui
 
             try
             {
-
-
                 this.ClickOnProgramMenuButton(appName, "_statsLink");
                 var table = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));
 

@@ -3,7 +3,7 @@
 <li class="header">APPLICATIONS</li>
 @foreach (var devGropedPrograms in Model.Programs)
 {
-    <li class="treeview" id="@(Strings.Id.MyAppsList)_@devGropedPrograms.Key">
+    <li class="treeview" id="@(Strings.Id.AppsList)_@devGropedPrograms.First().DeveloperTeamName">
         <a href="#" 
            data-toggle="tooltip" data-placement="right" title="Developer Team account: @devGropedPrograms.First().DeveloperTeamName" data-delay='{"show":"500"}'>
             <i class="fa fa-laptop"></i> <span>@devGropedPrograms.First().DeveloperTeamName</span>

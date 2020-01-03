@@ -14,7 +14,7 @@ namespace Telimena.TestUtilities.Base.TestAppInteraction
         public static class Names
         {
             public static string AutomaticTestsClient { get; } = "AutomaticTestsClient";
-            public static string PackageUpdaterTest { get; } = "PackageTriggerUpdaterTestApp";
+            public static string PackageUpdaterClient { get; } = "PackageTriggerUpdaterTestApp";
 
             public static string InstallersTestAppMsi3 { get; } = "InstallersTestAppMsi3";
             public static string User3TestApp { get; } = "User3TestApp";

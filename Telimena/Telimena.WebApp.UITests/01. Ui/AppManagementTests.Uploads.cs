@@ -29,7 +29,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.UploadUpdatePackage(Apps.Names.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV2);
+                this.UploadUpdatePackage(Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV2);
                 this.SetPackageAsNonBeta(Apps.PackageNames.AutomaticTestsClientAppV2);
 
             }
@@ -44,7 +44,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.UploadUpdatePackage(Apps.Names.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV3Beta);
+                this.UploadUpdatePackage(Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV3Beta);
                 this.SetPackageAsBeta(Apps.PackageNames.AutomaticTestsClientAppV3Beta);
             }
             catch (Exception ex)
@@ -58,7 +58,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.UploadProgramPackage(Apps.Names.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1);
+                this.UploadProgramPackage(Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1);
             }
             catch (Exception ex)
             {
@@ -71,7 +71,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.UploadUpdatePackage(Apps.Names.PackageUpdaterTest, Apps.PackageNames.PackageUpdaterTestAppV2);
+                this.UploadUpdatePackage(Apps.Keys.PackageUpdaterClient, Apps.PackageNames.PackageUpdaterTestAppV2);
                 this.SetPackageAsNonBeta(Apps.PackageNames.PackageUpdaterTestAppV2);
 
             }
@@ -88,7 +88,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 Assert.AreEqual(Apps.ProductCodes.InstallersTestAppMsi3V1
                     , this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V1));
-                this.UploadProgramPackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V1);
+                this.UploadProgramPackage(Apps.Keys.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V1);
 
             }
             catch (Exception ex)
@@ -104,7 +104,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             {
                 Assert.AreEqual(Apps.ProductCodes.InstallersTestAppMsi3V2
                     , this.GetCodeFromMsi(Apps.PackageNames.InstallersTestAppMsi3V2));
-                this.UploadUpdatePackage(Apps.Names.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V2);
+                this.UploadUpdatePackage(Apps.Keys.InstallersTestAppMsi3, Apps.PackageNames.InstallersTestAppMsi3V2);
                 this.SetPackageAsNonBeta(Apps.PackageNames.InstallersTestAppMsi3V2);
 
             }

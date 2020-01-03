@@ -29,7 +29,7 @@ namespace Telimena.WebApp.UITests._01._Ui
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class _1_WebsiteTests : WebsiteTestBase
     {
-        private void UploadUpdatePackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
+        private void UploadUpdatePackage(Guid appKey,  string packageFileName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, ConfigHelper.GetTimeout());
 
-                this.ClickOnManageProgramMenu(appName);
+                this.NavigateToManageProgramMenu(appKey);
 
                 IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadProgramUpdateForm)));
                 FileInfo file = TestAppProvider.GetFile(packageFileName);
@@ -371,15 +371,14 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(45));
 
-            IWebElement element = this.Driver.TryFind(By.Id($"{appName}_menu"));
+
+            IWebElement element = this.TryFindAppMenu(appName);
             if (element == null)
             {
                 if (maybeNotExists)
                 {
                     Log("Temp test app did not exist");
-
                     return;
-
                 }
                 else
                 {
@@ -417,7 +416,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             Log("Temp test app deleted");
         }
 
-        private void UploadProgramPackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
+        private void UploadProgramPackage(Guid appKey, string packageFileName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -426,7 +425,8 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.ClickOnManageProgramMenu(appName);
+                this.NavigateToManageProgramMenu(appKey);
+
 
                 IWebElement form = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UploadFullProgramPackageForm)));
                 FileInfo file = TestAppProvider.GetFile(packageFileName);
@@ -457,7 +457,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        private void DownloadAndInstallMsiProgramPackage(string appName, string packageFileName, [CallerMemberName] string caller = null)
+        private void DownloadAndInstallMsiProgramPackage(Guid appKey, string packageFileName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -466,7 +466,8 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.ClickOnManageProgramMenu(appName);
+                this.NavigateToManageProgramMenu(appKey);
+
 
                 IWebElement link = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.DownloadProgramLink)));
 
@@ -507,7 +508,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
 
         }
-        private string GetUpdaterForApp(string appName, [CallerMemberName] string caller = null)
+        private string GetUpdaterForApp(Guid appKey, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -515,7 +516,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.ClickOnManageProgramMenu(appName);
+                this.NavigateToManageProgramMenu(appKey);
 
                 IWebElement input = this.Driver.FindElement(By.Id(Strings.Id.UpdaterSelectList));
                 if (input == null)
@@ -534,7 +535,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             }
         }
 
-        private void SetUpdaterForApp(string appName, string updaterName, [CallerMemberName] string caller = null)
+        private void SetUpdaterForApp(Guid appKey, string updaterName, [CallerMemberName] string caller = null)
         {
             try
             {
@@ -542,7 +543,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
-                this.ClickOnManageProgramMenu(appName);
+                this.NavigateToManageProgramMenu(appKey);
 
                 IWebElement input = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.UpdaterSelectList)));
 

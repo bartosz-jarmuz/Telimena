@@ -46,7 +46,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                this.RegisterApp(Apps.Names.PackageUpdaterTest, Apps.Keys.PackageUpdaterClient, 
+                this.RegisterApp(Apps.Names.PackageUpdaterClient, Apps.Keys.PackageUpdaterClient, 
                     "Telimena package updater test app (for apps where update package is an actual installer)", "PackageTriggerUpdaterTestApp.exe", true, false);
             }
             catch (Exception ex)
@@ -74,6 +74,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
+                this.LoginAdminIfNeeded();
                 string appName = "Unit-Test-App";
 
                 this.DeleteApp(appName, true);
@@ -106,7 +107,7 @@ namespace Telimena.WebApp.UITests._01._Ui
             try
             {
 
-                var app = Apps.Names.PackageUpdaterTest;
+                var app = Apps.Keys.PackageUpdaterClient;
                 var currentUpdater = this.GetUpdaterForApp(app);
 
                 if (currentUpdater == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
@@ -140,7 +141,7 @@ namespace Telimena.WebApp.UITests._01._Ui
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
 
             
-                this.ClickOnManageProgramMenu(Apps.Names.AutomaticTestsClient);
+                this.NavigateToManageProgramMenu(Apps.Keys.AutomaticTestsClient);
 
                 var notes = GetCurrentMethod().Name + DateTimeOffset.UtcNow.ToString("O");
 
@@ -172,7 +173,7 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 IntegrationTestBase.Log("Proceeding to download");
 
-                this.DownloadAndInstallMsiProgramPackage(Apps.Names.InstallersTestAppMsi3
+                this.DownloadAndInstallMsiProgramPackage(Apps.Keys.InstallersTestAppMsi3
                     , Apps.PackageNames.InstallersTestAppMsi3V1);
 
                 IntegrationTestBase.Log("Uninstalling packages after test");
@@ -190,7 +191,7 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
-                var app = Apps.Names.InstallersTestAppMsi3;
+                var app = Apps.Keys.InstallersTestAppMsi3;
                 var currentUpdater = this.GetUpdaterForApp(app);
 
                 if (currentUpdater == DefaultToolkitNames.PackageTriggerUpdaterInternalName)
