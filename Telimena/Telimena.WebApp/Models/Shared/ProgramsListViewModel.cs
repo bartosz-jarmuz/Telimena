@@ -1,12 +1,12 @@
 ﻿#pragma warning disable 1591
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Telimena.WebApp.Models.Shared
 {
     public class ProgramsListViewModel
     {
-        public Dictionary<Guid, string> Programs { get; set; } = new Dictionary<Guid,string>();
+        public IEnumerable<IGrouping<int, ProgramMenuEntry>> Programs { get; set; } = new List<IGrouping<int, ProgramMenuEntry>>();
     }
 }

@@ -330,7 +330,10 @@
     <Compile Include="Models\ProgramStatistics\SequenceHistoryViewModel.cs" />
     <Compile Include="Models\Shared\BoxViewModel.cs" />
     <Compile Include="Models\Shared\ProgramHeaderMenuViewModel.cs" />
+    <Compile Include="Models\Shared\ProgramMenuEntry.cs" />
     <Compile Include="Models\Shared\ProgramsListViewModel.cs" />
+    <Compile Include="Models\Shared\TeamsListViewModel.cs" />
+    <Compile Include="Models\Shared\TeamsMenuEntry.cs" />
     <Compile Include="Models\Team\TeamViewModel.cs" />
     <Compile Include="Models\ToolkitManagement\ToolkitManagementViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -2050,6 +2053,7 @@
     <Content Include="Views\Shared\_HelpTableOfContents.cshtml" />
     <Content Include="Views\Help\GettingStarted.cshtml" />
     <Content Include="Views\Help\LifecycleManagement.cshtml" />
+    <Content Include="Views\Shared\_TeamsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

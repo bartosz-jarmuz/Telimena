@@ -1063,7 +1063,7 @@ $(function () {
   }
 
   Tree.prototype.toggle = function (link, event) {
-    var treeviewMenu = link.next(Selector.treeviewMenu)
+      var treeviewMenu = link.nextAll('ul' + Selector.treeviewMenu).first();
     var parentLi     = link.parent()
     var isOpen       = parentLi.hasClass(ClassName.open)
 

@@ -11,6 +11,8 @@ namespace Telimena.WebApp.Models.Team
     {
         public string Name { get; set; }
 
+        public int TeamId { get; set; }
+
         public List<SelectListItem> TeamMembers { get; set; } = new List<SelectListItem>();
 
     }

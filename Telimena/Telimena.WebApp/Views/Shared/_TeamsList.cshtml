@@ -1,0 +1,28 @@
+﻿@using Telimena.WebApp.UiStrings
+@model Telimena.WebApp.Models.Shared.TeamsListViewModel
+
+<li class="treeview" id="">
+    <a href="#">
+        <i class="fa fa-group"></i> <span>Team management</span>
+        <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+        </span>
+    </a>
+    <ul class="treeview-menu">
+        <li >
+            <a href="@Url.Action("Index", "Team", new {id = 0})">
+                <i class="fa fa-plus"></i> <span>Create team</span>
+            </a>
+
+        </li>
+        @foreach (var team in Model.Teams)
+        {
+            <li >
+                <a href="@Url.Action("Index", "Team", new {id = team.TeamId})">
+                    <i class="fa fa-user-o"></i> <span>@(team.TeamName)</span>
+                </a>
+
+            </li>
+        }
+    </ul>
+</li>

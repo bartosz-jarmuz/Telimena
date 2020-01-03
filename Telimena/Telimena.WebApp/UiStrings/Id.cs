@@ -25,7 +25,7 @@ namespace Telimena.WebApp.UiStrings
             public static string RegisterApplicationLink { get; } = "RegisterApplicationLink";
             public static string ApiDocsLink { get; } = "ApiDocsLink";
             public static string PasswordForm { get; } = "PasswordForm";
-            public static string MyAppsList { get; } = "MyAppsList ";
+            public static string MyAppsList { get; } = "MyAppsList";
             public static string ViewUsageTable { get; } = "ViewUsageTable";
             public static string SubmitToolkitUpload { get; } = "SubmitToolkitUpload";
             public static string MainHeader { get; } = "MainHeader";

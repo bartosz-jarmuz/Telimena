@@ -57,7 +57,14 @@ a.headerMenuLink {
 .label-lg {
     font-size: 125% !important;
 }
+.treeview-menu {
+    padding-left: 12px !important;
+}
 
+.program-name {
+    font-weight: 600 !important;
+    color: #444 !important;
+}
 /* ReSharper disable once DeclarationIsEmpty */
 .utcdate-to-localdate {
     /*handles conversion of date to local in elements text*/

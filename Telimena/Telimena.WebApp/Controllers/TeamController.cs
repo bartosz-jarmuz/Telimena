@@ -1,7 +1,9 @@
-﻿using MvcAuditLogger;
+﻿using System.Linq;
+using MvcAuditLogger;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
 using Telimena.Portal.Utils;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models.Portal;
@@ -35,15 +37,19 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <returns>ActionResult.</returns>
         [Audit]
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int id)
         {
             TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
 
-            DeveloperTeam team = await this.unitOfWork.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == telimenaUser.Id).ConfigureAwait(false);
+            var getTeamResult = await this.GetTeam(id, telimenaUser.Id);
+            if (getTeamResult.ErrorResult!= null)
+            {
+                return getTeamResult.ErrorResult;
+            }
 
-            var model = new TeamViewModel() {Name = team.Name};
+            var model = new TeamViewModel() {Name = getTeamResult.Team.Name, TeamId = getTeamResult.Team.Id};
 
-            foreach (TelimenaUser user in team.AssociatedUsers)
+            foreach (TelimenaUser user in getTeamResult.Team.AssociatedUsers)
             {
                 model.TeamMembers.Add(new SelectListItem(){Value = user.Email, Text = user.DisplayName});
             }
@@ -51,14 +57,58 @@ namespace Telimena.WebApp.Controllers
             return this.View("Index", model);
         }
 
+        private class GetTeamResult
+        {
+            public DeveloperTeam Team { get; set; }
+
+            public ActionResult ErrorResult { get; set; }
+        }
+
+        private async Task<GetTeamResult> GetTeam(int teamId, string userId)
+        {
+            DeveloperTeam team = await this.unitOfWork.Developers.FirstOrDefaultAsync(x => x.Id == teamId).ConfigureAwait(false);
+            var result = new GetTeamResult();
+            if (team == null)
+            {
+                result.ErrorResult = this.HttpNotFound();
+            }
+
+            if (team.AssociatedUsers.All(x => x.Id != userId))
+            {
+                result.ErrorResult = this.RedirectToAction("AccessDenied", "Error", new { roles = "Member of the team"});
+            }
+
+            result.Team = team;
+            return result;
+        }
+
+        private async Task<GetTeamResult> GetTeamManagedByUser(int teamId, string userId)
+        {
+            DeveloperTeam team = await this.unitOfWork.Developers.FirstOrDefaultAsync(x => x.Id == teamId).ConfigureAwait(false);
+            var result = new GetTeamResult();
+            if (team == null)
+            {
+                result.ErrorResult = this.HttpNotFound();
+            }
+
+            if (team.MainUserId  != userId)
+            {
+                result.ErrorResult = this.RedirectToAction("AccessDenied", "Error");
+            }
+
+            result.Team = team;
+            return result;
+        }
+
         /// <summary>
         /// Adds the member.
         /// </summary>
-        /// <param name="email">The email.</param>
+        /// <param name="teamId">The teamId.</param>
+        /// <param name="newName"></param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit(AuditingLevel.BasicData)]
         [HttpPost]
-        public async Task<ActionResult> RenameTeam(string newName)
+        public async Task<ActionResult> RenameTeam(int teamId, string newName)
         {
             if (!newName.IsUrlFriendly())
             {
@@ -72,29 +122,43 @@ namespace Telimena.WebApp.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest, $"Team name should only contain letters and numbers or hyphens. " +
                                                                          $"Also it needs to begin and end with a letter or digit.{properNameHint}");
             }
+            TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
+
+            var getTeamResult = await this.GetTeam(teamId, telimenaUser.Id);
+            if (getTeamResult.ErrorResult != null)
+            {
+                return getTeamResult.ErrorResult;
+            }
 
             var existingTeam = await this.unitOfWork.Developers.FirstOrDefaultAsync(x => x.Name == newName).ConfigureAwait(false);
             if (existingTeam != null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.Conflict, $"A [{existingTeam.Name}] team already exists");
             }
-            TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
 
-            DeveloperTeam team = await this.unitOfWork.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == telimenaUser.Id).ConfigureAwait(false);
-            team.Name = newName;
+            getTeamResult.Team.Name = newName;
             await this.unitOfWork.CompleteAsync().ConfigureAwait(false);
-            return new HttpStatusCodeResult(HttpStatusCode.OK, $"Renamed team to [{team.Name}]");
+            return new HttpStatusCodeResult(HttpStatusCode.OK, $"Renamed team to [{getTeamResult.Team.Name}]");
         }
 
         /// <summary>
         /// Adds the member.
         /// </summary>
+        /// <param name="teamId"></param>
         /// <param name="email">The email.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit(AuditingLevel.BasicData)]
         [HttpPost]
-        public async Task<ActionResult> AddMember(string email)
+        public async Task<ActionResult> AddMember(int teamId, string email)
         {
+            TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
+
+            var getTeamResult = await this.GetTeamManagedByUser(teamId, telimenaUser.Id);
+            if (getTeamResult.ErrorResult != null)
+            {
+                return getTeamResult.ErrorResult;
+            }
+
             TelimenaUser newUser = this.unitOfWork.Users.FirstOrDefault(x => x.Email == email);
 
             if (newUser == null)
@@ -102,38 +166,42 @@ namespace Telimena.WebApp.Controllers
                 return this.HttpNotFound($"User with email [{email}] does not exist");
             }
 
-            TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
 
-            DeveloperTeam team = await this.unitOfWork.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == telimenaUser.Id).ConfigureAwait(false);
 
-            team.AssociateUser(newUser);
+            getTeamResult.Team.AssociateUser(newUser);
             await this.unitOfWork.CompleteAsync().ConfigureAwait(false);
-            return new HttpStatusCodeResult(HttpStatusCode.OK, $"Added user [{newUser.Email}] to [{team.Name}]");
+            return new HttpStatusCodeResult(HttpStatusCode.OK, $"Added user [{newUser.Email}] to [{getTeamResult.Team.Name}]");
         }
 
         /// <summary>
         /// Adds the member.
         /// </summary>
+        /// <param name="teamId"></param>
         /// <param name="email">The email.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [Audit]
         [HttpDelete]
-        public async Task<ActionResult> RemoveMember(string email)
+        public async Task<ActionResult> RemoveMember(int teamId, string email)
         {
+            TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
+
+            var getTeamResult = await this.GetTeamManagedByUser(teamId, telimenaUser.Id);
+            if (getTeamResult.ErrorResult != null)
+            {
+                return getTeamResult.ErrorResult;
+            }
+
             TelimenaUser userToBeRemoved = this.unitOfWork.Users.FirstOrDefault(x => x.Email == email);
 
             if (userToBeRemoved == null)
             {
                 return this.HttpNotFound($"User with email [{email}] does not exist");
             }
-            TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
 
-            DeveloperTeam team = await this.unitOfWork.Developers.FirstOrDefaultAsync(x => x.MainUser.Id == telimenaUser.Id).ConfigureAwait(false);
-
-            team.RemoveAssociatedUser(userToBeRemoved);
+            getTeamResult.Team.RemoveAssociatedUser(userToBeRemoved);
             await this.unitOfWork.CompleteAsync().ConfigureAwait(false);
 
-            return new HttpStatusCodeResult(HttpStatusCode.OK, $"Removed user [{userToBeRemoved.Email}] from [{team.Name}]");
+            return new HttpStatusCodeResult(HttpStatusCode.OK, $"Removed user [{userToBeRemoved.Email}] from [{getTeamResult.Team.Name}]");
         }
     }
 }

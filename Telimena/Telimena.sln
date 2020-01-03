@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telimena.Tests", "Telimena.Tests\Telimena.Tests.csproj", "{13DF9DD2-D891-413B-A8AE-CEE3FA1B06EB}"
 EndProject
@@ -43,6 +43,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApps", "TestApps", "{1C9284FC-2E59-4F5C-8151-407B200B09BB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppInsights", "AppInsights", "{AD5530A5-166F-4E22-B645-6536FA5015C2}"
+	ProjectSection(SolutionItems) = preProject
+		..\ApplicationInsights\Microsoft.ApplicationInsights.sln = ..\ApplicationInsights\Microsoft.ApplicationInsights.sln
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AppInsights", "AppInsights", "{9A7AD745-4569-4853-B277-D50B692C93B0}"
 EndProject
@@ -119,7 +122,6 @@ Global
 		..\ApplicationInsights\Test\Microsoft.ApplicationInsights.Test\Shared\Microsoft.ApplicationInsights.Shared.Tests.projitems*{c4a0db5b-0988-4e04-b9b8-bcf3b0842000}*SharedItemsImports = 13
 		..\ApplicationInsights\Test\ServerTelemetryChannel.Test\net45.Shared.Tests\net45.Shared.Tests.projitems*{c5a3f18d-1426-4941-9d81-d21062a2b8f2}*SharedItemsImports = 13
 		..\ApplicationInsights\Test\ServerTelemetryChannel.Test\Shared.Tests\Shared.Tests.projitems*{c5a3f18f-1426-4941-9d81-d21062a2b8f2}*SharedItemsImports = 13
-		..\ApplicationInsights\Test\TestFramework\Shared\TestFramework.Shared.projitems*{f76c6cbd-29b0-4564-bdcb-c969f8fec136}*SharedItemsImports = 13
 		..\ApplicationInsights\Test\TestFramework\Shared\TestFramework.Shared.projitems*{f76c6cbd-29b0-4564-bdcb-c969f8fec136}*SharedItemsImports = 13
 		TestAppsSharedLogic\TestAppsSharedLogic.projitems*{f862d668-8e59-49e9-9968-39ff9a2348c3}*SharedItemsImports = 4
 	EndGlobalSection
