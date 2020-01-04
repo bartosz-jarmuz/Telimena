@@ -3,12 +3,10 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using DataTables.AspNet.Mvc5;
-using Hangfire;
-using log4net;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using MvcAuditLogger;
+
 using Ninject;
 using Ninject.Extensions.Conventions;
 using Ninject.Modules;
@@ -43,10 +41,7 @@ namespace Telimena.WebApi
             StandardKernel kernel = new StandardKernel();
             kernel.Load(new ServiceModule());
             kernel.Bind(x => x.FromAssembliesMatching("Telimena.*.dll").SelectAllClasses().Excluding(typeof(TelimenaUserManager)).BindDefaultInterface());
-            kernel.BindFilter<AuditFilter>(FilterScope.Action, null).WhenActionMethodHas<AuditAttribute>();
-            kernel.Bind<IAuditLogger>().To<DebugAuditLogger>();
             GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
-            Hangfire.GlobalConfiguration.Configuration.UseNinjectActivator(kernel);
             return kernel;
         }
         /// <summary>
@@ -73,7 +68,6 @@ namespace Telimena.WebApi
             this.Bind<IFileSaver>().To<AzureFileSaver>();
             this.Bind<IFileRemover>().To<AzureFileRemover>();
             this.Bind<IFileRetriever>().To<AzureFileRetriever>();
-            this.Bind<ILog>().ToMethod(context => LogManager.GetLogger(context.Request.Target.Member.ReflectedType));
             this.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();
             this.Bind<ITelimenaUserManager>().ToMethod(c => HttpContext.Current.GetOwinContext().GetUserManager<TelimenaUserManager>()).InRequestScope();
         }

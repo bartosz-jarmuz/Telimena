@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using MvcAuditLogger;
+
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
@@ -30,7 +30,7 @@ namespace Telimena.WebApp.Controllers
         /// Indexes this instance.
         /// </summary>
         /// <returns>ActionResult.</returns>
-        [Audit]
+        
         public ActionResult Index()
         {
             return this.View("Index");
@@ -40,7 +40,7 @@ namespace Telimena.WebApp.Controllers
         /// Gettings the started.
         /// </summary>
         /// <returns>ActionResult.</returns>
-        [Audit]
+        
         public ActionResult GettingStarted()
         {
             return this.View("GettingStarted");
@@ -50,13 +50,13 @@ namespace Telimena.WebApp.Controllers
         /// Telemetries this instance.
         /// </summary>
         /// <returns>ActionResult.</returns>
-        [Audit]
+        
         public ActionResult Telemetry()
         {
             return this.View("Telemetry");
         }
 
-        [Audit]
+        
         public ActionResult LifecycleManagement()
         {
             return this.View("LifecycleManagement");

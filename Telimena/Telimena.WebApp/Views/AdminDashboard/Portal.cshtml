@@ -1,6 +1,5 @@
 ﻿@using DotNetLittleHelpers
 @using Telimena.WebApp.Core.DTO
-@using Telimena.WebApp.Models.AdminDashboard
 @using Telimena.WebApp.UiStrings
 @{
     ViewBag.Title = "Admin Dashboard";
@@ -27,19 +26,6 @@
 
 </section>
 
-<div class="row ">
-    <div class="col-md-12">
-        <div class="box box-primary">
-            <div class="box-header">
-                <h3 class="box-title">Portal usage audit</h3>
-            </div>
-            <div class="box-body dataTables_wrapper form-inline dt-bootstrap">
-                <table id="auditSummaryTable" class="table table-bordered table-hover "></table>
-            </div>
-        </div>
-    </div>
-</div>
-
 
 @section scripts
 {
@@ -50,70 +36,8 @@
         $(document).ready(function () {
             $.fn.dataTable.moment('@Strings.MomentJsDateTimeFormat');
 
-
-
             var url = $(".portal-summary").data("url");
             $(".portal-summary").load(url);
-
-            $('#auditSummaryTable').DataTable({
-                serverSide: true,
-                searching: true,
-                processing: true,
-                lengthMenu: [[15, 30, 70, -1], [15, 30, 70, "All"]],
-                pageLength: 15,
-                order: [[ 0, 'desc' ]],
-                ajax:  "@Url.Action("GetLastAuditData")",
-
-                columns: [
-                    {
-                        name: "@nameof(AuditViewModel.Timestamp)",
-                        data: "@nameof(AuditViewModel.Timestamp).ToLowerFirstChar()",
-                        render: function(data, type, row, meta) {
-                            return toFormattedTimestamp(new Date(data));
-                        },
-                        title:"@nameof(AuditViewModel.Timestamp)",
-                        sortable: true,
-                        searchable: false
-                    },
-                    {
-                        name:  "@nameof(AuditViewModel.UserName)",
-                        data:  "@nameof(AuditViewModel.UserName).ToLowerFirstChar()",
-                        title: "@nameof(AuditViewModel.UserName)",
-                        sortable: true,
-                        searchable: true
-                    },
-                    {
-                        name:  "@nameof(AuditViewModel.IPAddress)",
-                        data:  "ipAddress",
-                        title: "@nameof(AuditViewModel.IPAddress)",
-                        sortable: true,
-                        searchable: true
-                    },
-                    {
-                        name:  "@nameof(AuditViewModel.Application)",
-                        data: "@nameof(AuditViewModel.Application).ToLowerFirstChar()",
-                        title: "@nameof(AuditViewModel.Application)",
-                        sortable: true,
-                        searchable: true
-                    },
-                    {
-                        name:  "@nameof(AuditViewModel.AreaAccessed)",
-                        data: "@nameof(AuditViewModel.AreaAccessed).ToLowerFirstChar()",
-                        render: function(data, type, row, meta){
-                            if(type === 'display'){
-                                data = '<a href="' + data + '">' + data + '</a>';
-                            }
-
-                            return data;
-                        },
-                        title: "@nameof(AuditViewModel.AreaAccessed)",
-                        sortable: true,
-                        searchable: true
-                    },
-
-                ]
-
-            });
 
         });
     </script>

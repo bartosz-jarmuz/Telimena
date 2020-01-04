@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using MvcAuditLogger;
+
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
@@ -57,7 +57,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Audit]
+        
         [AllowAnonymous]
         [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
@@ -82,7 +82,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// Upload a new Telimena toolkit assembly file
         /// </summary>
         /// <returns></returns>
-        [Audit]
+        
         [HttpPost, Route("", Name = Routes.Upload)]
         public async Task<IHttpActionResult> Upload()
         {

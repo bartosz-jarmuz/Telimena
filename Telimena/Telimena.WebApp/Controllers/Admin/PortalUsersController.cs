@@ -5,8 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using AutoMapper;
-using log4net;
-using MvcAuditLogger;
+using Microsoft.ApplicationInsights;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
@@ -29,29 +28,26 @@ namespace Telimena.WebApp.Controllers.Admin
         /// <summary>
         /// Initializes a new instance of the <see cref="PortalUsersController"/> class.
         /// </summary>
-        /// <param name="logger">The logger.</param>
         /// <param name="userManager">The user manager.</param>
-        public PortalUsersController(ILog logger, ITelimenaUserManager userManager)
+        public PortalUsersController(ITelimenaUserManager userManager, TelemetryClient telemetryClient)
         {
-            this.logger = logger;
             this.userManager = userManager;
+            this.telemetryClient = telemetryClient;
         }
 
-        /// <summary>
-        /// The logger
-        /// </summary>
-        private readonly ILog logger;
         /// <summary>
         /// The user manager
         /// </summary>
         private readonly ITelimenaUserManager userManager;
+
+        private readonly TelemetryClient telemetryClient;
 
         /// <summary>
         /// Indexes this instance.
         /// </summary>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpGet]
-        [Audit]
+        
         public async Task<ActionResult> Index()
         {
             PortalUsersViewModel model = await this.InitializeModel().ConfigureAwait(false);
@@ -65,7 +61,7 @@ namespace Telimena.WebApp.Controllers.Admin
         /// <param name="activateRole">if set to <c>true</c> [activate role].</param>
         /// <param name="roleName">Name of the role.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit]
+        
         [HttpPost]
         public async Task<ActionResult> ToggleRoleActivation(string userId, bool activateRole, string roleName)
         {
@@ -82,12 +78,12 @@ namespace Telimena.WebApp.Controllers.Admin
                 }
 
                 bool isInRole = await this.userManager.IsInRoleAsync(user.Id, roleName).ConfigureAwait(false);
-                this.logger.Error($"User [{user.UserName}] role [{roleName}] status changed. Is in role: [{isInRole}].");
+                this.telemetryClient.TrackTrace($"User [{user.UserName}] role [{roleName}] status changed. Is in role: [{isInRole}].");
                 return this.Json(isInRole);
             }
             catch (Exception ex)
             {
-                this.logger.Error($"Error while toggling role activation to [{activateRole}]. Role: [{roleName}]. User [{user.UserName}]", ex);
+                this.telemetryClient.TrackException(new InvalidOperationException($"Error while toggling role activation to [{activateRole}]. Role: [{roleName}]. User [{user.UserName}]", ex));
                 return null;
             }
         }
@@ -98,14 +94,14 @@ namespace Telimena.WebApp.Controllers.Admin
         /// <param name="userId">The user identifier.</param>
         /// <param name="isActive">if set to <c>true</c> [is active].</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit]
+        
         [HttpPost]
         public async Task<ActionResult> ToggleUserActivation(string userId, bool isActive)
         {
             TelimenaUser user = await this.userManager.FindByIdAsync(userId).ConfigureAwait(false);
             user.IsActivated = !isActive;
             await this.userManager.UpdateAsync(user).ConfigureAwait(false);
-            this.logger.Info($"User [{user.UserName}] activation status changed to [{user.IsActivated}]");
+            this.telemetryClient.TrackTrace($"User [{user.UserName}] activation status changed to [{user.IsActivated}]");
             return this.Json(user.IsActivated);
         }
 

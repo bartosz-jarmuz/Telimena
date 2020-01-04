@@ -161,16 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRequestsValidator.cs" />
-    <Compile Include="Audit\Audit.cs" />
-    <Compile Include="Audit\AuditAttribute.cs" />
-    <Compile Include="Audit\ApiAuditFilter.cs" />
-    <Compile Include="Audit\AuditFilter.cs" />
-    <Compile Include="Audit\AuditingContext.cs" />
-    <Compile Include="Audit\AuditingLevel.cs" />
-    <Compile Include="Audit\AuditingModes.cs" />
-    <Compile Include="Audit\DebugAuditLogger.cs" />
-    <Compile Include="Audit\IAudit.cs" />
-    <Compile Include="Audit\IAuditLogger.cs" />
     <Compile Include="AutoMapperDomainProfile.cs" />
     <Compile Include="Database\Sql\StoredProcedures\StoredProcedureNames.cs" />
     <Compile Include="Database\TelimenaTelemetryContext.cs" />

@@ -45,11 +45,8 @@ namespace Telimena.WebApp.AppIntegrationTests.Utilities
                     allProcesses = Process.GetProcesses().Where(x => !string.IsNullOrEmpty(x.MainWindowTitle)).ToArray();
                 }
 
-                var checkedProcesses = new List<string>();
-
                 foreach (Process allProcess in allProcesses)
                 {
-                    checkedProcesses.Add(allProcess.GetPropertyInfoString(nameof(Process.MainWindowTitle), nameof(Process.HasExited), nameof(Process.ProcessName)));
                     if (!compiled.Invoke(allProcess.MainWindowTitle))
                     {
                         continue;
@@ -69,8 +66,7 @@ namespace Telimena.WebApp.AppIntegrationTests.Utilities
                 if (timeoutWatch.Elapsed > timeout)
                 {
                     string expBody = ((LambdaExpression)match).Body.ToString();
-                    throw new InvalidOperationException($"Failed to find window by expression on Title: {expBody}. " +
-                                                        $"Available processes {string.Join("\r\n", checkedProcesses)}.");
+                    throw new InvalidOperationException($"Failed to find window by expression on Title: {expBody}. " );
 
                 }
             }

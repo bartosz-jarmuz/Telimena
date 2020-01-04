@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using MvcAuditLogger;
 using Telimena.Portal.Api.Models;
 using Telimena.Portal.Api.Models.DTO;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
-using Telimena.WebApp.Models.AdminDashboard;
 using Telimena.WebApp.Models.PortalUsers;
 
 namespace Telimena.WebApp
@@ -42,8 +40,6 @@ namespace Telimena.WebApp
             this.CreateMap<ProgramPackageInfo, ProgramPackageInfoDto>()
                 .ForMember(x => x.Id, o => o.MapFrom(y => y.PublicId));
 
-            this.CreateMap<Audit, AuditViewModel>()
-                .ForMember(x => x.Application, o => o.Ignore());
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using DotNetLittleHelpers;
-using Hangfire;
 using Newtonsoft.Json;
 using Telimena.Portal.Api.Models.RequestMessages;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;

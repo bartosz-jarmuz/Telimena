@@ -63,7 +63,7 @@ namespace Telimena.Tests
         {
             TelimenaUserManager manager = new TelimenaUserManager(new UserStore<TelimenaUser>(this.Context));
             AccountUnitOfWork unit = new AccountUnitOfWork(null, manager, this.Context);
-            AccountController sut = new AccountController(unit, new Mock<ILog>().Object);
+            AccountController sut = new AccountController(unit);
 
             RegisterViewModel model = new RegisterViewModel
             {

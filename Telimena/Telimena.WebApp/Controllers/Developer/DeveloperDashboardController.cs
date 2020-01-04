@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using MvcAuditLogger;
+
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.Interfaces;
@@ -85,7 +85,7 @@ namespace Telimena.WebApp.Controllers.Developer
         /// Indexes this instance.
         /// </summary>
         /// <returns>ActionResult.</returns>
-        [Audit]
+        
         public ActionResult Index()
         {
             return this.View();

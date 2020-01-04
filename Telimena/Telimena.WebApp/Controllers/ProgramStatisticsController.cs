@@ -9,7 +9,7 @@ using System.Web.Http.Results;
 using System.Web.Mvc;
 using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
-using MvcAuditLogger;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Telimena.WebApp.Core;
@@ -51,7 +51,7 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <param name="telemetryKey">The telemetry key.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit]
+        
         [HttpGet]
         public async Task<ActionResult> Index(Guid telemetryKey)
         {
@@ -73,7 +73,7 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <param name="telemetryKey">The telemetry key.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit]
+        
         [HttpGet]
         public async Task<ActionResult> Dashboard(Guid telemetryKey)
         {
@@ -96,7 +96,7 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <param name="telemetryKey">The telemetry key.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit]
+        
         [HttpGet]
         public async Task<ActionResult> PivotTable(Guid telemetryKey)
         {
@@ -119,7 +119,7 @@ namespace Telimena.WebApp.Controllers
         /// <param name="telemetryKey">The telemetry key.</param>
         /// <param name="sequenceId">The sequence identifier.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit]
+        
         [HttpGet]
         public async Task<ActionResult> SequenceHistory(Guid telemetryKey, string sequenceId)
         {
@@ -143,7 +143,7 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpGet]
         public async Task<ActionResult> Exceptions(Guid telemetryKey)
         {
@@ -166,7 +166,7 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpGet]
         public async Task<ActionResult> Logs(Guid telemetryKey)
         {

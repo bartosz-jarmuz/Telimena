@@ -46,8 +46,6 @@ namespace Telimena.WebApp.UITests._01._Ui
 
                 this.ValidateAppPages(Apps.Names.AutomaticTestsClient, wait);
 
-                this.ValidateHelpPages(wait);
-
                 //api should be last
                 this.Driver.TryFind(By.Id(Strings.Id.ApiDocsLink)).ClickWrapper(this.Driver);
                 var apiInfo = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("api_info")));
@@ -123,20 +121,6 @@ namespace Telimena.WebApp.UITests._01._Ui
 
         }
 
-        private void ValidateHelpPages(WebDriverWait wait)
-        {
-            this.Driver.TryFind(By.Id(Strings.Id.Help.LinkHelpOverview)).ClickWrapper(this.Driver);
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.HelpOverview)));
-
-            this.Driver.TryFind(By.Id(Strings.Id.Help.LinkGettingStarted)).ClickWrapper(this.Driver);
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.AppRegistrationPanel)));
-
-            this.Driver.TryFind(By.Id(Strings.Id.Help.LinkTelemetry)).ClickWrapper(this.Driver);
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.TelemetryOverviewPanel)));
-
-            this.Driver.TryFind(By.Id(Strings.Id.Help.LinkLifecycleManagement)).ClickWrapper(this.Driver);
-            wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.Help.CheckingForUpdatesPanel)));
-
-        }
+       
     }
 }

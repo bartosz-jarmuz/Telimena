@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using MvcAuditLogger;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -36,7 +35,6 @@ namespace Telimena.WebApp.Controllers
         /// Indexes this instance.
         /// </summary>
         /// <returns>ActionResult.</returns>
-        [Audit]
         public async Task<ActionResult> Index(int id)
         {
             TelimenaUser telimenaUser = this.unitOfWork.Users.FirstOrDefault(x => x.UserName == this.User.Identity.Name);
@@ -106,7 +104,6 @@ namespace Telimena.WebApp.Controllers
         /// <param name="teamId">The teamId.</param>
         /// <param name="newName"></param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit(AuditingLevel.BasicData)]
         [HttpPost]
         public async Task<ActionResult> RenameTeam(int teamId, string newName)
         {
@@ -147,7 +144,6 @@ namespace Telimena.WebApp.Controllers
         /// <param name="teamId"></param>
         /// <param name="email">The email.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit(AuditingLevel.BasicData)]
         [HttpPost]
         public async Task<ActionResult> AddMember(int teamId, string email)
         {
@@ -179,7 +175,6 @@ namespace Telimena.WebApp.Controllers
         /// <param name="teamId"></param>
         /// <param name="email">The email.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit]
         [HttpDelete]
         public async Task<ActionResult> RemoveMember(int teamId, string email)
         {

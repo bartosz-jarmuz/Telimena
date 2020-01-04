@@ -3,10 +3,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using DotNetLittleHelpers;
-using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
@@ -32,10 +30,9 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <param name="unitOfWork">The unit of work.</param>
         /// <param name="logger">The logger.</param>
-        public AccountController(IAccountUnitOfWork unitOfWork, ILog logger)
+        public AccountController(IAccountUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.logger = logger;
         }
 
         /// <summary>
@@ -45,14 +42,13 @@ namespace Telimena.WebApp.Controllers
         /// <summary>
         /// The logger
         /// </summary>
-        private readonly ILog logger;
 
 
         /// <summary>
         /// Changes the password.
         /// </summary>
         /// <returns>ActionResult.</returns>
-        [Audit]
+        
         [HttpGet]
         public ActionResult ChangePassword()
         {
@@ -64,7 +60,7 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <param name="model">The model.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit]
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
@@ -91,7 +87,6 @@ namespace Telimena.WebApp.Controllers
                             user.MustChangePassword = false;
                             await this.unitOfWork.UserManager.UpdateAsync(user).ConfigureAwait(false);
                             model.IsSuccess = true;
-                            this.logger.Info($"[{this.User.Identity.Name}] password changed");
                             return this.View(model);
                         }
 
@@ -114,7 +109,7 @@ namespace Telimena.WebApp.Controllers
         /// Forgots the password.
         /// </summary>
         /// <returns>ActionResult.</returns>
-        [Audit]
+        
         [AllowAnonymous]
         public ActionResult ForgotPassword()
         {
@@ -126,7 +121,7 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <returns>ActionResult.</returns>
         [HttpGet]
-        [Audit]
+        
         [AllowAnonymous]
         public ActionResult Login()
         {
@@ -141,20 +136,18 @@ namespace Telimena.WebApp.Controllers
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
-        [Audit]
+        
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (this.ModelState.IsValid)
             {
-                this.logger.Info($"[{model.Email}] login attempt");
 
                 TelimenaUser user = await this.unitOfWork.UserManager.FindAsync(model.Email, model.Password).ConfigureAwait(false);
                 if (user != null)
                 {
                     if (user.IsActivated)
                     {
-                        this.logger.Info($"[{model.Email}] logged in.");
                         user.LastLoginDate = DateTime.UtcNow;
                         await this.unitOfWork.UserManager.UpdateAsync(user).ConfigureAwait(false);
                         ClaimsIdentity ident = await this.unitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie).ConfigureAwait(false);
@@ -167,7 +160,6 @@ namespace Telimena.WebApp.Controllers
                         return this.Redirect(returnUrl ?? this.Url.Action("Index", "Home"));
                     }
 
-                    this.logger.Info($"[{model.Email}] logged in but not activated");
                     return this.View("WaitForActivationInfo");
                 }
             }
@@ -184,7 +176,6 @@ namespace Telimena.WebApp.Controllers
         {
             string username = this.User.Identity.Name;
             this.unitOfWork.AuthManager.SignOut();
-            this.logger.Info($"[{username}] logged out");
             return this.RedirectToAction("Index", "Home");
         }
 
@@ -192,7 +183,7 @@ namespace Telimena.WebApp.Controllers
         /// Registers this instance.
         /// </summary>
         /// <returns>ActionResult.</returns>
-        [Audit]
+        
         [HttpGet]
         [AllowAnonymous]
         public ActionResult Register()
@@ -207,7 +198,7 @@ namespace Telimena.WebApp.Controllers
         /// <returns>Task&lt;ActionResult&gt;.</returns>
         [HttpPost]
         [AllowAnonymous]
-        [Audit]
+        
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
@@ -227,12 +218,9 @@ namespace Telimena.WebApp.Controllers
                 {
                     if (results.Item2 != null && results.Item2.Succeeded || results.Item2 == null)
                     {
-                        this.logger.Info($"User [{user.GetNameAndIdString()}] user registered and added to proper roles");
                         return this.View("WaitForActivationInfo");
                     }
 
-                    this.logger.Info(
-                        $"User [{user.GetNameAndIdString()}] user registered but errors occurred while adding to roles: [{string.Join(",", results.Item2.Errors)}");
                     foreach (string resultError in results.Item2.Errors)
                     {
                         this.ModelState.AddModelError("", resultError);

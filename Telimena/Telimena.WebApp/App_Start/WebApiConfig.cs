@@ -7,7 +7,6 @@ using System.Web.Http.Description;
 using System.Web.Http.Routing;
 using Microsoft.Web.Http.Routing;
 using Microsoft.Web.Http.Versioning.Conventions;
-using MvcAuditLogger;
 using Newtonsoft.Json;
 using Swashbuckle.Application;
 using Swashbuckle.Swagger;
@@ -89,7 +88,6 @@ namespace Telimena.WebApp
 
             config.Routes.MapHttpRoute(name: "DefaultApi", routeTemplate: "api/v{version:apiVersion}/{controller}/{id}", defaults: new { id = RouteParameter.Optional });
             config.Routes.MapHttpRoute(name: "Api2", routeTemplate: "api/{controller}");
-            config.Filters.Add(new ApiAuditFilter());
           
 
         }

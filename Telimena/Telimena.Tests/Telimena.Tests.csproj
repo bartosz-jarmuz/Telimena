@@ -166,7 +166,6 @@
     <Compile Include="BasicTelemetryMappingTests.cs" />
     <Compile Include="Controllers\AccountControllerTests.cs" />
     <Compile Include="ApiTests.cs" />
-    <Compile Include="Controllers\AdminDashboardControllerTests.cs" />
     <Compile Include="Controllers\GlobalContextTestBase.cs" />
     <Compile Include="Controllers\DbContextService.cs" />
     <Compile Include="Controllers\DropCreateDatabaseAlwaysWithConnectionClose.cs" />

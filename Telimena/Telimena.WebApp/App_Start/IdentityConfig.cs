@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using Hangfire;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
-using MvcAuditLogger;
 using Owin;
 using Telimena.WebApp.Infrastructure.Database;
 using Telimena.WebApp.Infrastructure.Identity;
@@ -24,7 +22,6 @@ namespace Telimena.WebApp
         {
             app.CreatePerOwinContext(() => new TelimenaPortalContext());
             app.CreatePerOwinContext<TelimenaUserManager>(TelimenaUserManager.Create);
-            LoadHangfire(app);
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
@@ -42,22 +39,5 @@ namespace Telimena.WebApp
             });
         }
 
-        /// <summary>
-        /// Loads the hangfire.
-        /// </summary>
-        /// <param name="app">The application.</param>
-        private static void LoadHangfire(IAppBuilder app)
-        {
-            try
-            {
-                GlobalConfiguration.Configuration.UseSqlServerStorage("AuditingDBContext");
-                app.UseHangfireDashboard();
-                app.UseHangfireServer();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-            }
-        }
     }
 }

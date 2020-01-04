@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using AutoMapper;
-using MvcAuditLogger;
+
 using Newtonsoft.Json;
 using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
@@ -53,7 +53,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="id"></param>
         /// <returns></returns> 
         [AllowAnonymous]
-        [Audit]
+        
         [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
@@ -75,7 +75,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// Uploads an updater package
         /// </summary>
         /// <returns></returns>
-        [Audit]
+        
         [HttpPost, Route("", Name = Routes.Upload)]
         public async Task<IHttpActionResult> Upload()
         {
@@ -127,7 +127,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="id"></param>
         /// <param name="isPublic"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpPut, Route("{id}/is-public/{isPublic}", Name=Routes.SetIsPublic)]
         public async Task<IHttpActionResult> SetIsPublic(Guid id, bool isPublic)
         {

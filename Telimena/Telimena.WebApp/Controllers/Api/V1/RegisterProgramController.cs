@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
-using MvcAuditLogger;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Messages;
 using Telimena.WebApp.Core.Models.Portal;
@@ -39,7 +38,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name = "request" ></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpPost, Route("", Name = Routes.Register)]
         public async Task<RegisterProgramResponse> Register(RegisterProgramRequest request)
         {

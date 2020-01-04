@@ -7,7 +7,6 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using System.Web.Mvc;
 using AutoMapper;
-using MvcAuditLogger;
 using Telimena.Portal.Api.Models.DTO;
 using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
@@ -52,7 +51,7 @@ namespace Telimena.WebApp.Controllers
         /// </summary>
         /// <param name="telemetryKey">The telemetry key.</param>
         /// <returns>Task&lt;ActionResult&gt;.</returns>
-        [Audit]
+        
         [System.Web.Mvc.HttpGet]
         public async Task<ActionResult> Index(Guid telemetryKey)
         {
@@ -106,7 +105,7 @@ namespace Telimena.WebApp.Controllers
         }
 
 
-        [Audit]
+        
         [System.Web.Mvc.HttpGet, System.Web.Mvc.Route("~/{developerName}/{programName}/get", Name ="Get")]
         public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
         {

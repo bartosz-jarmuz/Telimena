@@ -11,7 +11,6 @@ using System.Web.Http;
 using AutoMapper;
 using DotNetLittleHelpers;
 using Microsoft.Web.Http;
-using MvcAuditLogger;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
@@ -59,7 +58,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpDelete, Route("{telemetryKey}", Name = Routes.Delete)]
         public async Task<IHttpActionResult> Delete(Guid telemetryKey)
         {
@@ -85,7 +84,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpPost, Route("{telemetryKey}/packages", Name = Routes.Upload)]
         public async Task<IHttpActionResult> Upload(Guid telemetryKey)
         {
@@ -120,7 +119,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [Audit]
+        
         [HttpGet, Route("{telemetryKey}/packages/latest", Name = Routes.DownloadLatestProgramPackage)]
         public async Task<IHttpActionResult> DownloadLatestProgramPackage(Guid telemetryKey)
         {
@@ -256,7 +255,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <param name="updaterId"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpPut, Route("{telemetryKey}/updater/set-updater/{updaterId}", Name = Routes.SetUpdater)]
         public async Task<IHttpActionResult> SetUpdater(Guid telemetryKey, Guid updaterId)
         {
@@ -342,7 +341,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [ApiVersionNeutral]
-        [Audit]
+        
         [HttpGet, Route("~/{developerName}/{programName}/download", Name = ProgramsController.Routes.DownloadApp)]
         public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
         {

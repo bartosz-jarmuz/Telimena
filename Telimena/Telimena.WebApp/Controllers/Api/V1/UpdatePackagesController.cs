@@ -11,7 +11,7 @@ using System.Web;
 using System.Web.Http;
 using AutoMapper;
 using DotNetLittleHelpers;
-using MvcAuditLogger;
+
 using Newtonsoft.Json;
 using Telimena.Portal.Api.Models.RequestMessages;
 using Telimena.Portal.Utils;
@@ -62,7 +62,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="id"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [Audit]
+        
         [HttpGet, Route("{id}", Name = Routes.Get)]
         public async Task<IHttpActionResult> Get(Guid id)
         {
@@ -97,7 +97,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpDelete, Route("{id}", Name = Routes.Delete)]
         public async Task<IHttpActionResult> Delete(Guid id)
         {
@@ -117,7 +117,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// Uploads an update package
         /// </summary>
         /// <returns></returns>
-        [Audit]
+        
         [HttpPost, Route("", Name = Routes.Upload)]
         public async Task<IHttpActionResult> Upload()
         {
@@ -152,7 +152,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="packageId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpPut, Route("{packageId}/release-notes", Name = Routes.SetReleaseNotes)]
         public async Task<IHttpActionResult> SetReleaseNotes(Guid packageId, ReleaseNotesRequest request)
         {
@@ -169,7 +169,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="packageId"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpGet, Route("{packageId}/release-notes/", Name = Routes.GetReleaseNotes)]
         public async Task<string> GetReleaseNotes(Guid packageId)
         {
@@ -183,7 +183,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name = "packageId" ></param>
         /// <param name="isBeta"></param>
         /// <returns></returns>
-        [Audit]
+        
         [HttpPut, Route("{packageId}/is-beta/{isBeta}", Name = Routes.ToggleBetaSetting)]
         public async Task<bool> ToggleBetaSetting(Guid packageId, bool isBeta)
         {
