@@ -386,7 +386,8 @@ namespace Telimena.WebApp.UITests._01._Ui
                 }
             }
 
-            element.ClickWrapper(this.Driver);
+            this.ExpandAppMenu(appName);
+
             IWebElement link = wait.Until(ExpectedConditions.ElementIsVisible(By.Id($"{appName}_manageLink")));
 
             link.ClickWrapper(this.Driver);

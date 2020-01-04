@@ -157,6 +157,21 @@ namespace Telimena.WebApp.UITests
 
             element.ClickWrapper(this.Driver);
             IntegrationTestBase.Log($"Clicked {appName}_menu button");
+
+            var parent = element.FindElement(By.XPath("./.."));
+            Stopwatch sw = Stopwatch.StartNew();
+            while (!parent.GetAttribute("class").Contains("menu-open"))
+            {
+                Log($"{appName}_menu not expanded. Reclicking...");
+                element = this.TryFindAppMenu(appName);
+                element.ClickWrapper(this.Driver);
+                IntegrationTestBase.Log($"Clicked {appName}_menu button");
+                if (sw.ElapsedMilliseconds > 10000)
+                {
+                    IntegrationTestBase.Log($"Failed to expand {appName}_menu");
+                    Assert.Fail($"Failed to expand {appName}_menu");
+                }
+            }
             return element;
         }
 
