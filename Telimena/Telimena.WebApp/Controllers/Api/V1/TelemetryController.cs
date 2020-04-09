@@ -38,10 +38,10 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="work"></param>
         /// <param name="telemetryClient"></param>
-        public TelemetryController(ITelemetryUnitOfWork work, TelemetryClient telemetryClient)
+        public TelemetryController(ITelemetryUnitOfWork work)
         {
             this.work = work;
-            this.telemetryClient = telemetryClient;
+            this.telemetryClient =  new TelemetryClient();
         }
 
         private readonly ITelemetryUnitOfWork work;

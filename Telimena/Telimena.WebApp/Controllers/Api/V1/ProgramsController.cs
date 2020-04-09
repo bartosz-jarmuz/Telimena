@@ -43,11 +43,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="work"></param>
         /// <param name="fileSaver"></param>
         /// <param name="fileRetriever"></param>
-        public ProgramsController(IProgramsUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever, TelemetryClient telemetryClient)
+        public ProgramsController(IProgramsUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
         {
             this.fileSaver = fileSaver;
             this.fileRetriever = fileRetriever;
-            this.telemetryClient = telemetryClient;
+            this.telemetryClient = new TelemetryClient();
             this.Work = work;
         }
 
