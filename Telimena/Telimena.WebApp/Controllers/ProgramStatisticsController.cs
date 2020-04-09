@@ -192,7 +192,7 @@ namespace Telimena.WebApp.Controllers
         [HttpGet]
         public async Task<JsonResult> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
         {
-            var result = await this.Work.GetPivotTableData(type, telemetryKey).ConfigureAwait(false);
+            TelemetryInfoTable result = await this.Work.GetPivotTableData(type, telemetryKey).ConfigureAwait(false);
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 

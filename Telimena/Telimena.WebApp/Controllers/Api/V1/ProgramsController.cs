@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Http;
 using AutoMapper;
 using DotNetLittleHelpers;
+using Microsoft.ApplicationInsights;
 using Microsoft.Web.Http;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.DTO;
@@ -34,6 +35,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
     {
         private readonly IFileSaver fileSaver;
         private readonly IFileRetriever fileRetriever;
+        private readonly TelemetryClient telemetryClient;
 
         /// <summary>
         /// New instance
@@ -41,10 +43,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="work"></param>
         /// <param name="fileSaver"></param>
         /// <param name="fileRetriever"></param>
-        public ProgramsController(IProgramsUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever)
+        public ProgramsController(IProgramsUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever, TelemetryClient telemetryClient)
         {
             this.fileSaver = fileSaver;
             this.fileRetriever = fileRetriever;
+            this.telemetryClient = telemetryClient;
             this.Work = work;
         }
 
@@ -99,7 +102,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     {
                         return this.BadRequest("Failed to find corresponding program");
                     }
-
+                    this.telemetryClient.TrackEvent("UploadedPackage", new Dictionary<string, string>()
+                    {
+                        {$"ProgramName", program.Name },
+                        {$"UploadedFileName", uploadedFile?.FileName},
+                    });
                     ProgramPackageInfo pkg = await this.Work.ProgramPackages.StorePackageAsync(program, uploadedFile.InputStream, uploadedFile.FileName, this.fileSaver).ConfigureAwait(false);
                     await this.Work.CompleteAsync().ConfigureAwait(false);
                     return this.Ok(pkg.PublicId);
@@ -109,6 +116,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             catch (Exception ex)
             {
+                this.telemetryClient.TrackException(ex, new Dictionary<string, string>()
+                {
+                    {$"Method",  Routes.Upload},
+                    {$"{nameof(Program.TelemetryKey)}", telemetryKey.ToString()}
+                });
                 return this.BadRequest(ex.Message);
             }
         }
@@ -293,6 +305,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 {
                     return new UpdateResponse { Exception = new BadRequestException($"Failed to find program by Id: [{requestModel.TelemetryKey}]") };
                 }
+
+                this.telemetryClient.TrackEvent("UpdateCheck", new Dictionary<string, string>()
+                {
+                    {$"ProgramName", program.Name },
+                    {$"UpdateRequest", requestModel.GetPropertyInfoString() },
+                });
+
                 Trace.TraceInformation($"Program {program.GetNameAndIdString()} checking for updates with request: {requestModel.GetPropertyInfoString()}");
                 List<ProgramUpdatePackageInfo> allUpdatePackages =
                     (await this.Work.UpdatePackages.GetAllPackagesNewerThan(requestModel.VersionData, program.Id).ConfigureAwait(false))
@@ -328,6 +347,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             catch (Exception ex)
             {
+                this.telemetryClient.TrackException(ex, new Dictionary<string, string>()
+                {
+                    {$"Method", Routes.UpdateCheck},
+                    {$"{nameof(Program.TelemetryKey)}", requestModel.TelemetryKey.ToString()}
+                });
                 return new UpdateResponse { Exception = new InvalidOperationException("Error while processing registration request", ex) };
             }
         }

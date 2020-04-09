@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using DotNetLittleHelpers;
+using Microsoft.ApplicationInsights;
 using Newtonsoft.Json;
 using Telimena.Portal.Api.Models.RequestMessages;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
@@ -35,12 +37,15 @@ namespace Telimena.WebApp.Controllers.Api.V1
         ///     New instance
         /// </summary>
         /// <param name="work"></param>
-        public TelemetryController(ITelemetryUnitOfWork work)
+        /// <param name="telemetryClient"></param>
+        public TelemetryController(ITelemetryUnitOfWork work, TelemetryClient telemetryClient)
         {
             this.work = work;
+            this.telemetryClient = telemetryClient;
         }
 
         private readonly ITelemetryUnitOfWork work;
+        private readonly TelemetryClient telemetryClient;
 
         /// <summary>
         ///     Executes the query to get telemetry data as specified in the request object parameters
@@ -113,9 +118,19 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="items"></param>
         /// <returns></returns>
         [NonAction]
-        public Task InsertDataInternal(IEnumerable<TelemetryItem> items, TelemetryRootObject program, string ip)
+        public async Task InsertDataInternal(IReadOnlyCollection<TelemetryItem> items, TelemetryRootObject program, string ip)
         {
-            return TelemetryControllerHelpers.InsertData(this.work, items.ToList(), program, ip);
+            Stopwatch sw = Stopwatch.StartNew();
+            List<TelemetrySummary> _ = await TelemetryControllerHelpers.InsertData(this.work, items.ToList(), program, ip);
+            sw.Stop();
+            this.telemetryClient.TrackEvent("InsertTelemetryData", new Dictionary<string, string>()
+            {
+                {$"TelemetryItemsCount",items.Count.ToString()},
+                {$"ExecutionTime", sw.ElapsedMilliseconds.ToString()},
+                {$"ProgramId", program.ProgramId.ToString()},
+                {$"TelemetryKey", program.TelemetryKey.ToString()},
+            });
+
         }
 
         /// <summary>
@@ -127,21 +142,33 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [Route("{telemetryKey}", Name = Routes.Post)]
         public async Task<IHttpActionResult> Post(Guid telemetryKey)
         {
-            TelemetryRootObject program = await this.work.GetMonitoredProgram(telemetryKey).ConfigureAwait(false);
-            if (program == null)
+            try
             {
-                throw new BadRequestException($"Program with telemetry key [{telemetryKey}] does not exist");
+                TelemetryRootObject program = await this.work.GetMonitoredProgram(telemetryKey).ConfigureAwait(false);
+                if (program == null)
+                {
+                    throw new BadRequestException($"Program with telemetry key [{telemetryKey}] does not exist");
+                }
+
+                IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
+
+                List<TelemetryItem> telemetryItems = TelemetryMapper.Map(appInsightsTelemetries).ToList();
+
+                string ip = this.Request.GetClientIp();
+
+                await this.InsertDataInternal(telemetryItems, program, ip).ConfigureAwait(false);
+
+                return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
             }
-
-            IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
-
-            IEnumerable<TelemetryItem> telemetryItems = TelemetryMapper.Map(appInsightsTelemetries);
-
-            string ip = this.Request.GetClientIp();
-
-            await this.InsertDataInternal(telemetryItems, program, ip).ConfigureAwait(false);
-
-            return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);     
+            catch (Exception e)
+            {
+                this.telemetryClient.TrackException(e, new Dictionary<string, string>()
+                {
+                    {$"Method", Routes.Post},
+                    {$"TelemetryKey",telemetryKey.ToString()}
+                });
+                throw;
+            }
         }
 
         /// <summary>
@@ -154,21 +181,32 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [Route("", Name = Routes.PostWithVariousKeys)]
         public async Task<IHttpActionResult> PostWithVariousKeys()
         {
-            IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
-
-            IEnumerable<TelemetryItem> telemetryItems = TelemetryMapper.Map(appInsightsTelemetries);
-            string ip = this.Request.GetClientIp();
-
-            //items might come with various telemetry key in one request (when there are multiple instances of telemetry client)
-            IEnumerable<IGrouping<Guid, TelemetryItem>> groups = telemetryItems.GroupBy(telemetry => telemetry.TelemetryKey);
-            //todo - parallelism?
-            foreach (IGrouping<Guid, TelemetryItem> grouping in groups)
+            try
             {
-                TelemetryRootObject program = await this.work.GetMonitoredProgram(grouping.Key).ConfigureAwait(false);
-                await this.InsertDataInternal(grouping, program, ip).ConfigureAwait(false);
-            }
+                IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
 
-            return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
+                List<TelemetryItem> telemetryItems = TelemetryMapper.Map(appInsightsTelemetries).ToList();
+                string ip = this.Request.GetClientIp();
+
+                //items might come with various telemetry key in one request (when there are multiple instances of telemetry client)
+                IEnumerable<IGrouping<Guid, TelemetryItem>> groups = telemetryItems.GroupBy(telemetry => telemetry.TelemetryKey);
+                //todo - parallelism?
+                foreach (IGrouping<Guid, TelemetryItem> grouping in groups)
+                {
+                    TelemetryRootObject program = await this.work.GetMonitoredProgram(grouping.Key).ConfigureAwait(false);
+                    await this.InsertDataInternal(grouping.ToList(), program, ip).ConfigureAwait(false);
+                }
+
+                return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                this.telemetryClient.TrackException(e, new Dictionary<string, string>()
+                {
+                    {$"Method", Routes.PostWithVariousKeys},
+                });
+                throw;
+            }
         }
 
         /// <summary>
@@ -206,6 +244,11 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             catch (Exception ex)
             {
+                this.telemetryClient.TrackException(ex, new Dictionary<string, string>()
+                {
+                    {$"Method", Routes.PostBasic},
+                    {$"PackageId",telemetryKey.ToString()}
+                });
                 return await Task.FromResult(this.InternalServerError(new InvalidOperationException($"Error while inserting entry: {ex}"))).ConfigureAwait(false);
             }
         }

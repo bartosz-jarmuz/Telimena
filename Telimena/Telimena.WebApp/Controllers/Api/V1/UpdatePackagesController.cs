@@ -11,7 +11,7 @@ using System.Web;
 using System.Web.Http;
 using AutoMapper;
 using DotNetLittleHelpers;
-
+using Microsoft.ApplicationInsights;
 using Newtonsoft.Json;
 using Telimena.Portal.Api.Models.RequestMessages;
 using Telimena.Portal.Utils;
@@ -43,17 +43,19 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="work"></param>
         /// <param name="fileSaver"></param>
         /// <param name="fileRetriever"></param>
-        public UpdatePackagesController(IProgramsUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever, IFileRemover fileRemover)
+        public UpdatePackagesController(IProgramsUnitOfWork work, IFileSaver fileSaver, IFileRetriever fileRetriever, IFileRemover fileRemover, TelemetryClient telemetryClient)
         {
             this.FileRetriever = fileRetriever;
             this.work = work;
             this.fileSaver = fileSaver;
             this.fileRemover = fileRemover;
+            this.telemetryClient = telemetryClient;
         }
 
         private readonly IProgramsUnitOfWork work;
         private readonly IFileSaver fileSaver;
         private readonly IFileRemover fileRemover;
+        private readonly TelemetryClient telemetryClient;
         private IFileRetriever FileRetriever { get; }
 
         /// <summary>
@@ -75,7 +77,12 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
             try
             {
-
+                this.telemetryClient.TrackEvent("DownloadUpdatePackage", new Dictionary<string, string>()
+                {
+                    {$"PackageId",id.ToString()},
+                    {$"ProgramId", packageInfo.ProgramId.ToString()},
+                    {$"FileName", packageInfo.FileName},
+                });
                 byte[] bytes = await this.work.UpdatePackages.GetPackage(id, this.FileRetriever).ConfigureAwait(false);
                 HttpResponseMessage result =
                     new HttpResponseMessage(HttpStatusCode.OK) {Content = new ByteArrayContent(bytes)};
@@ -87,7 +94,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             catch (Exception ex)
             {
+                this.telemetryClient.TrackException(ex, new Dictionary<string, string>()
+                {
+                    {$"Method", Routes.Get},
+                    {$"PackageId",id.ToString()}
+                });
                 Trace.TraceError($"Error while trying to download update package {packageInfo.GetPropertyInfoString()}.\r\n\r\n{ex}");
+                
                 return this.InternalServerError(new InvalidOperationException("Error while trying to download update package"));
             }
         }
