@@ -463,7 +463,9 @@ namespace Telimena.WebApp.Controllers
                 
             };
             this.Response.AppendHeader("Content-Disposition", cd.ToString());
-            return this.Json(result, JsonRequestBehavior.AllowGet);
+            var json = this.Json(result, JsonRequestBehavior.AllowGet);
+            json.MaxJsonLength = Int32.MaxValue;
+            return json;
         }
 
     }
