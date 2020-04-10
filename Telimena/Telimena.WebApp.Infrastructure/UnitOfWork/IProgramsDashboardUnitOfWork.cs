@@ -25,7 +25,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<UsageDataTableResult> GetProgramUsageData(Guid telemetryKey, TelemetryItemTypes itemType, int skip
             , int take, IEnumerable<Tuple<string, bool>> sortBy , ISearch requestSearch 
             , List<string> searchableColumns);
-        Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey);
+        Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey, DateTime startDate, DateTime endDate);
 
         Task<UsageDataTableResult> GetExceptions(Guid telemetryKey, TelemetryItemTypes itemType, int skip, int take
             , IEnumerable<Tuple<string, bool>> sortBy , ISearch requestSearch             , List<string> searchableColumns);
@@ -41,6 +41,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
 
         Task<DataTable> GetVersionDistribution(Program program, DateTime startDate, DateTime endDate);
         Task<DataTable> GetDailyUsersCount(Program program, DateTime startDate, DateTime endDate);
+        Task<IEnumerable<TelemetryPivotTableRow>> GetRawData(Guid telemetryKey, TelemetryItemTypes type, DateTime startDate, DateTime endDate);
     }
 
 

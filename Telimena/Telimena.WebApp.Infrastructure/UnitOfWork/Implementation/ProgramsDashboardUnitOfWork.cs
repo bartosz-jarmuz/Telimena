@@ -522,7 +522,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return new UsageDataTableResult {TotalCount = totalCount, FilteredCount = totalCount, UsageData = result};
         }
 
-        public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
+        public async Task<IEnumerable<TelemetryPivotTableRow>> GetRawData(Guid telemetryKey, TelemetryItemTypes type, DateTime startDate, DateTime endDate)
         {
             Program program = await this.portalContext.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
@@ -531,7 +531,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 throw new ArgumentException($"Program with key {telemetryKey} does not exist");
             }
 
-            List<TelemetryDetail> details = program.GetTelemetryDetails(this.telemetryContext, type).ToList();
+            IEnumerable<TelemetryDetail> details =
+                program.GetTelemetryDetails(this.telemetryContext, type, startDate, endDate);
             List<TelemetryPivotTableRow> rows = new List<TelemetryPivotTableRow>();
 
             foreach (TelemetryDetail detail in details)
@@ -539,7 +540,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 List<TelemetryUnit> units = detail.GetTelemetryUnits().ToList();
                 if (units.Any())
                 {
-                    foreach (TelemetryUnit detailTelemetryUnit in units.Where(x=>x.UnitType == TelemetryUnit.UnitTypes.Property))
+                    foreach (TelemetryUnit detailTelemetryUnit in units.Where(x => x.UnitType == TelemetryUnit.UnitTypes.Property))
                     {
                         TelemetryPivotTableRow row = new TelemetryPivotTableRow(detail)
                         {
@@ -564,8 +565,16 @@ namespace Telimena.WebApp.Infrastructure.Repository
                     rows.Add(row);
                 }
 
-                
+
             }
+
+            return rows;
+
+        }
+
+        public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey, DateTime startDate, DateTime endDate)
+        {
+            var rows = (await this.GetRawData(telemetryKey, type, startDate, endDate)).ToList();
 
             TelemetryInfoTableHeader header = new TelemetryInfoTableHeader();
             return new TelemetryInfoTable {Header = header, Rows = rows};

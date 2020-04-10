@@ -17,6 +17,12 @@
 
 @Html.Partial("_ProgramHeaderMenu", new ProgramHeaderMenuViewModel { ProgramName = Model?.ProgramName, TelemetryKey = Model?.TelemetryKey })
 
+<strong>Reports date range</strong>
+<span id="DashboardDateRange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%;">
+    <i class="fa fa-calendar"></i>&nbsp;
+    <span></span> <i class="fa fa-caret-down"></i>
+</span>
+
 <div class="row">
     <div class="col-md-12">
         <div class="box box-primary">
@@ -50,13 +56,49 @@
 
 @section scripts
 {
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="https://cdn.webdatarocks.com/latest/webdatarocks.toolbar.min.js"></script>
     <script src="https://cdn.webdatarocks.com/latest/webdatarocks.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryItemTypes.Event&telemetryKey=@Model.TelemetryKey", @Strings.Id.EventTelemetryPivotTable);
-            loadPivotTableData("@Url.Action("GetPivotTableData")" + "?type=@TelemetryItemTypes.View&telemetryKey=@Model.TelemetryKey", @Strings.Id.ViewTelemetryPivotTable);
+        $(document).ready(function () {
+
+            var start = moment().subtract(29, 'days').startOf('day');
+            var end = moment().endOf('day');
+
+            function onDateRangeChanged(start, end) {
+
+                $('#DashboardDateRange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                loadPivotTableData(
+                    "@Url.Action("GetPivotTableData")" + "?type=@TelemetryItemTypes.Event&telemetryKey=@Model.TelemetryKey&startDate=" + start.toISOString() + "&endDate=" + end.toISOString(), @Strings.Id.EventTelemetryPivotTable);
+
+                loadPivotTableData(
+                    "@Url.Action("GetPivotTableData")" + "?type=@TelemetryItemTypes.View&telemetryKey=@Model.TelemetryKey&startDate=" + start.toISOString() + "&endDate=" + end.toISOString(), @Strings.Id.ViewTelemetryPivotTable);
+            }
+
+            $('#DashboardDateRange').daterangepicker({
+                    startDate: start,
+                    endDate: end,
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'Last 90 Days': [moment().subtract(89, 'days'), moment()],
+                        'Last 365 Days': [moment().subtract(364, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Previous Month': [
+                            moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')
+                        ],
+                        'This Year': [moment().startOf('year'), moment().endOf('year')]
+                    }
+                },
+                onDateRangeChanged);
+
+            onDateRangeChanged(start, end);
+
+
 
             function loadPivotTableData(url, table) {
                 $.get(url,
@@ -74,7 +116,7 @@
                                         "type": "flat"
                                     },
                                 }
-                               
+
                             }
                         });
                         $(table).closest('.box').find('.overlay').hide();

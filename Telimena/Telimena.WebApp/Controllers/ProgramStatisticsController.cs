@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
+using System.Globalization;
 using System.IdentityModel;
 using System.Linq;
 using System.Text;
@@ -9,7 +11,7 @@ using System.Web.Http.Results;
 using System.Web.Mvc;
 using DataTables.AspNet.Core;
 using DataTables.AspNet.Mvc5;
-
+using Microsoft.ApplicationInsights;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Telimena.WebApp.Core;
@@ -31,6 +33,8 @@ namespace Telimena.WebApp.Controllers
     [TelimenaAuthorize(Roles = TelimenaRoles.Developer)]
     public class ProgramStatisticsController : Controller
     {
+        private TelemetryClient telemetryClient;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProgramStatisticsController" /> class.
         /// </summary>
@@ -38,6 +42,7 @@ namespace Telimena.WebApp.Controllers
         public ProgramStatisticsController(IProgramsDashboardUnitOfWork work)
         {
             this.Work = work;
+            this.telemetryClient = new TelemetryClient();
         }
 
         /// <summary>
@@ -190,9 +195,20 @@ namespace Telimena.WebApp.Controllers
         /// <param name="telemetryKey">The telemetry key.</param>
         /// <returns>Task&lt;JsonResult&gt;.</returns>
         [HttpGet]
-        public async Task<JsonResult> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey)
+        public async Task<JsonResult> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey, DateTime startDate , DateTime endDate)
         {
-            TelemetryInfoTable result = await this.Work.GetPivotTableData(type, telemetryKey).ConfigureAwait(false);
+            var sw = Stopwatch.StartNew();
+            TelemetryInfoTable result = await this.Work.GetPivotTableData(type, telemetryKey, startDate, endDate).ConfigureAwait(false);
+            sw.Stop();
+
+            this.telemetryClient.TrackEvent("GetPivotTableData", new Dictionary<string, string>()
+            {
+                {"TelemetryKey", telemetryKey.ToString() },
+                {"StartDate", startDate.ToString("o") },
+                {"EndDate", endDate.ToString("o") },
+                {"Elapsed", sw.ElapsedMilliseconds.ToString() },
+                {"TimeSpan", (endDate-startDate).TotalDays.ToString(CultureInfo.InvariantCulture) },
+            });
             return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -265,7 +281,18 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
+            var sw = Stopwatch.StartNew();
             List<AppUsersSummaryData> programs = await this.Work.GetAppUsersSummary(new List<Program>(){program}, startDate,endDate).ConfigureAwait(false);
+            sw.Stop();
+            
+            this.telemetryClient.TrackEvent("GetAppUsersSummary", new Dictionary<string, string>()
+            {
+                {"TelemetryKey", telemetryKey.ToString() },
+                {"StartDate", startDate.ToString("o") },
+                {"EndDate", endDate.ToString("o") },
+                {"Elapsed", sw.ElapsedMilliseconds.ToString() },
+                {"TimeSpan", (endDate-startDate).TotalDays.ToString(CultureInfo.InvariantCulture) },
+            });
             return this.Content(JsonConvert.SerializeObject(programs));
         }
 
@@ -314,8 +341,17 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
+            var sw = Stopwatch.StartNew();
             var dt = await this.Work.GetDailyActivityScore(program, startDate, endDate).ConfigureAwait(false);
-
+            sw.Stop();
+            this.telemetryClient.TrackEvent("GetDailyActivityScore", new Dictionary<string, string>()
+            {
+                {"TelemetryKey", telemetryKey.ToString() },
+                {"StartDate", startDate.ToString("o") },
+                {"EndDate", endDate.ToString("o") },
+                {"Elapsed", sw.ElapsedMilliseconds.ToString() },
+                {"TimeSpan", (endDate-startDate).TotalDays.ToString(CultureInfo.InvariantCulture) },
+            });
             List<object> iData = new List<object>();
             foreach (DataColumn dc in dt.Columns)
             {
@@ -336,8 +372,17 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
+            var sw = Stopwatch.StartNew();
             var dt = await this.Work.GetDailyUsersCount(program , startDate, endDate).ConfigureAwait(false);
-
+            sw.Stop();
+            this.telemetryClient.TrackEvent("GetDailyUsersCount", new Dictionary<string, string>()
+            {
+                {"TelemetryKey", telemetryKey.ToString() },
+                {"StartDate", startDate.ToString("o") },
+                {"EndDate", endDate.ToString("o") },
+                {"Elapsed", sw.ElapsedMilliseconds.ToString() },
+                {"TimeSpan", (endDate-startDate).TotalDays.ToString(CultureInfo.InvariantCulture) },
+            });
             List<object> iData = new List<object>();
             foreach (DataColumn dc in dt.Columns)
             {
@@ -365,8 +410,17 @@ namespace Telimena.WebApp.Controllers
                 return this.RedirectToAction("Index", "Home");
             }
 
+            var sw = Stopwatch.StartNew();
             var dt = await this.Work.GetVersionDistribution(program, startDate, endDate).ConfigureAwait(false);
-
+            sw.Stop();
+            this.telemetryClient.TrackEvent("GetVersionDistribution", new Dictionary<string, string>()
+            {
+                {"TelemetryKey", telemetryKey.ToString() },
+                {"StartDate", startDate.ToString("o") },
+                {"EndDate", endDate.ToString("o") },
+                {"Elapsed", sw.ElapsedMilliseconds.ToString() },
+                {"TimeSpan", (endDate-startDate).TotalDays.ToString(CultureInfo.InvariantCulture) },
+            });
             List<object> iData = new List<object>();
             foreach (DataColumn dc in dt.Columns)
             {
@@ -376,6 +430,40 @@ namespace Telimena.WebApp.Controllers
             }
 
             return this.Json(iData, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// Gets the raw data
+        /// </summary>
+        /// <param name="telemetryKey">The telemetry key.</param>
+        /// <param name="type"></param>
+        /// <param name="startDate">The start date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns>Task&lt;ActionResult&gt;.</returns>
+        [HttpGet]
+        public async Task<ActionResult> GetRawData(Guid telemetryKey, TelemetryItemTypes type, DateTime startDate, DateTime endDate)
+        {
+            var sw = Stopwatch.StartNew();
+            var result = await this.Work.GetRawData(telemetryKey, type, startDate, endDate).ConfigureAwait(false);
+            sw.Stop();
+            
+            this.telemetryClient.TrackEvent("RawDataExported", new Dictionary<string, string>()
+            {
+                {"TelemetryKey", telemetryKey.ToString() },
+                {"StartDate", startDate.ToString("o") },
+                {"EndDate", endDate.ToString("o") },
+                {"Elapsed", sw.ElapsedMilliseconds.ToString() },
+                {"TimeSpan", (endDate-startDate).TotalDays.ToString(CultureInfo.InvariantCulture) },
+                {"TelemetryType", type.ToString() },
+            });
+            var cd = new System.Net.Mime.ContentDisposition
+            {
+                FileName = $"{type}_Report_{startDate:yyyy-MM-dd}-{endDate:yyyy-MM-dd}.raw.json",
+                Inline = false,
+                
+            };
+            this.Response.AppendHeader("Content-Disposition", cd.ToString());
+            return this.Json(result, JsonRequestBehavior.AllowGet);
         }
 
     }
