@@ -531,8 +531,8 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 throw new ArgumentException($"Program with key {telemetryKey} does not exist");
             }
 
-            IEnumerable<TelemetryDetail> details =
-                program.GetTelemetryDetails(this.telemetryContext, type, startDate, endDate);
+            List<TelemetryDetail> details =
+                program.GetTelemetryDetails(this.telemetryContext, type, startDate, endDate).ToList();
             List<TelemetryPivotTableRow> rows = new List<TelemetryPivotTableRow>();
 
             foreach (TelemetryDetail detail in details)
