@@ -561,12 +561,12 @@ namespace Telimena.WebApp.Infrastructure.Repository
             {
                 RawTelemetryUnit data = new RawTelemetryUnit()
                 {
-                    ComponentName = (string) row["EntryKey"],
+                    ComponentName = (string) row["EntryKey"]??"",
                     Timestamp = (DateTimeOffset) row["Timestamp"],
-                    User= (string) row["UserIdentifier"],
-                    Sequence= (string)row["Sequence"],
-                    Key= (string) row["Key"],
-                    PropertyValue = (string) row["ValueString"],
+                    User = (string) row["UserIdentifier"] ?? "",
+                    Sequence= (string)row["Sequence"] ?? "",
+                    Key= (string) row["Key"] ?? "",
+                    PropertyValue = (string) row["ValueString"] ?? "",
                     MetricValue= (double) row["ValueDouble"],
                 };
                 list.Add(data);
