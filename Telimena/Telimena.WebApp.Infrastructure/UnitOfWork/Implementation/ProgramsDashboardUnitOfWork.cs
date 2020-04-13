@@ -561,13 +561,13 @@ namespace Telimena.WebApp.Infrastructure.Repository
             {
                 RawTelemetryUnit data = new RawTelemetryUnit()
                 {
-                    ComponentName = (string) row["EntryKey"]??"",
+                    ComponentName =  row["EntryKey"]as string,
                     Timestamp = (DateTimeOffset) row["Timestamp"],
-                    User = (string) row["UserIdentifier"] ?? "",
-                    Sequence= (string)row["Sequence"] ?? "",
-                    Key= (string) row["Key"] ?? "",
-                    PropertyValue = (string) row["ValueString"] ?? "",
-                    MetricValue= (double) row["ValueDouble"],
+                    User =  row["UserIdentifier"] as string,
+                    Sequence= row["Sequence"] as string,
+                    Key= row["Key"] as string,
+                    PropertyValue =  row["ValueString"] as string,
+                    MetricValue= (double)row["ValueDouble"] ,
                 };
                 list.Add(data);
             }
@@ -575,6 +575,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return list;
 
         }
+
 
         public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey, DateTime startDate, DateTime endDate)
         {

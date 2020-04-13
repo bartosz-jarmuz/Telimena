@@ -6,7 +6,7 @@ AS
 
 DECLARE @Summaries table( Id uniqueidentifier)
 
-INSERT INTO @Summaries select Id from ViewTelemetrySummaries s where s.ViewId IN (select Id from Events e where e.ProgramId = @programId) 
+INSERT INTO @Summaries select Id from ViewTelemetrySummaries s where s.ViewId IN (select Id from Views e where e.ProgramId = @programId) 
 
 select d.Timestamp, 
 d.UserIdentifier,
