@@ -522,7 +522,7 @@ namespace Telimena.WebApp.Infrastructure.Repository
             return new UsageDataTableResult {TotalCount = totalCount, FilteredCount = totalCount, UsageData = result};
         }
 
-        public async Task<IEnumerable<TelemetryPivotTableRow>> GetRawData(Guid telemetryKey, TelemetryItemTypes type, DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<RawTelemetryUnit>> GetRawData(Guid telemetryKey, TelemetryItemTypes type, DateTime startDate, DateTime endDate)
         {
             Program program = await this.portalContext.Programs.FirstOrDefaultAsync(x => x.TelemetryKey == telemetryKey).ConfigureAwait(false);
 
@@ -531,53 +531,57 @@ namespace Telimena.WebApp.Infrastructure.Repository
                 throw new ArgumentException($"Program with key {telemetryKey} does not exist");
             }
 
-            List<TelemetryDetail> details =
-                program.GetTelemetryDetails(this.telemetryContext, type, startDate, endDate).ToList();
-            List<TelemetryPivotTableRow> rows = new List<TelemetryPivotTableRow>();
-
-            foreach (TelemetryDetail detail in details)
+            DataSet set;
+            if (type == TelemetryItemTypes.Event)
             {
-                List<TelemetryUnit> units = detail.GetTelemetryUnits().ToList();
-                if (units.Any())
-                {
-                    foreach (TelemetryUnit detailTelemetryUnit in units.Where(x => x.UnitType == TelemetryUnit.UnitTypes.Property))
-                    {
-                        TelemetryPivotTableRow row = new TelemetryPivotTableRow(detail)
-                        {
-                            PropertyValue = detailTelemetryUnit.ValueString,
-                            Key = detailTelemetryUnit.Key,
-                        };
-                        rows.Add(row);
-                    }
-                    foreach (TelemetryUnit detailTelemetryUnit in units.Where(x => x.UnitType == TelemetryUnit.UnitTypes.Metric))
-                    {
-                        TelemetryPivotTableRow row = new TelemetryPivotTableRow(detail)
-                        {
-                            MetricValue = detailTelemetryUnit.ValueDouble,
-                            Key = detailTelemetryUnit.Key,
-                        };
-                        rows.Add(row);
-                    }
-                }
-                else
-                {
-                    TelemetryPivotTableRow row = new TelemetryPivotTableRow(detail);
-                    rows.Add(row);
-                }
-
-
+                set = await this.ExecuteStoredProcedure(program,
+                    StoredProcedureNames.p_GetEventTelemetryUnits
+                    , startDate
+                    , endDate
+                ).ConfigureAwait(false);
             }
+            else if (type == TelemetryItemTypes.View)
+            {
+                set = await this.ExecuteStoredProcedure(program,
+                    StoredProcedureNames.p_GetViewTelemetryUnits
+                    , startDate
+                    , endDate
+                ).ConfigureAwait(false);
+            }
+            else
+            {
+                throw new ArgumentException($"{type} is not allowed as raw data type export." + 
+                                            $"Supported types: {TelemetryItemTypes.Event}, {TelemetryItemTypes.View}");
+            }
+                
 
-            return rows;
+            List<RawTelemetryUnit> list = new List<RawTelemetryUnit>();
+            DataRowCollection rows = set.Tables[0].Rows;
+            foreach (DataRow row in rows)
+            {
+                RawTelemetryUnit data = new RawTelemetryUnit()
+                {
+                    ComponentName = (string) row["EntryKey"],
+                    Timestamp = (DateTimeOffset) row["Timestamp"],
+                    User= (string) row["UserIdentifier"],
+                    Sequence= (string)row["Sequence"],
+                    Key= (string) row["Key"],
+                    PropertyValue = (string) row["ValueString"],
+                    MetricValue= (double) row["ValueDouble"],
+                };
+                list.Add(data);
+            }
+            
+            return list;
 
         }
 
         public async Task<TelemetryInfoTable> GetPivotTableData(TelemetryItemTypes type, Guid telemetryKey, DateTime startDate, DateTime endDate)
         {
-            var rows = (await this.GetRawData(telemetryKey, type, startDate, endDate)).ToList();
+            List<RawTelemetryUnit> rows = (await this.GetRawData(telemetryKey, type, startDate, endDate)).ToList();
 
             TelemetryInfoTableHeader header = new TelemetryInfoTableHeader();
-            return new TelemetryInfoTable {Header = header, Rows = rows};
+            return new TelemetryInfoTable {Header = header, Rows = rows.Select(x=>new TelemetryPivotTableRow(x)).ToList()};
         }
 
     }

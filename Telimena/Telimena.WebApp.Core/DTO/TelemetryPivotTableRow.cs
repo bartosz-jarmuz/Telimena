@@ -1,18 +1,17 @@
-﻿using System;
-using Telimena.WebApp.Core.Models;
+﻿using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Telemetry;
 
 namespace Telimena.WebApp.Core.DTO
 {
     public class TelemetryPivotTableRow
     {
-        public TelemetryPivotTableRow(TelemetryDetail detail)
+        public TelemetryPivotTableRow(RawTelemetryUnit detail)
         {
-            this.ComponentName = detail.EntryKey;
+            this.ComponentName = detail.ComponentName;
             this.Date = detail.Timestamp.ToString("O");
             this.Time = detail.Timestamp.TimeOfDay.TotalSeconds;
             this.Sequence = detail.Sequence;
-            this.UserName = detail.UserIdentifier;
+            this.UserName = detail.User;
         }
 
         public TelemetryPivotTableRow()

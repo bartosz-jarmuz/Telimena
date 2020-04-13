@@ -285,10 +285,16 @@
     <Content Include="Database\Sql\Functions\f_SplitInts.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Database\Sql\StoredProcedures\p_GetViewTelemetryUnits.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Database\Sql\StoredProcedures\p_GetProgramSummaryCounts.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Database\Sql\StoredProcedures\p_GetProgramUsagesSummary.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Sql\StoredProcedures\p_GetEventTelemetryUnits.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Database\Sql\StoredProcedures\p_GetUserActivitySummary.sql">

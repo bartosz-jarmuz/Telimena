@@ -100,6 +100,7 @@
     <Compile Include="DTO\MappableToClient\VersionData.cs" />
     <Compile Include="DTO\PortalSummaryData.cs" />
     <Compile Include="DTO\ProgramUsageSummary.cs" />
+    <Compile Include="DTO\RawTelemetryUnit.cs" />
     <Compile Include="DTO\TelemetryInfoHeaderItem.cs" />
     <Compile Include="DTO\TelemetryInfoTable.cs" />
     <Compile Include="DTO\TelemetryInfoTableHeader.cs" />
