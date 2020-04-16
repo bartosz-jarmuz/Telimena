@@ -84,6 +84,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             try
             {
+                Stopwatch sw = Stopwatch.StartNew();
+
                 if (!ApiRequestsValidator.IsRequestValid(request))
                 {
                     return new TelemetryInitializeResponse() { Exception = new BadRequestException("Request is not valid") };
@@ -102,6 +104,14 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
                 await this.work.CompleteAsync().ConfigureAwait(false);
                 TelemetryInitializeResponse response = new TelemetryInitializeResponse {UserId = clientAppUser.PublicId};
+                sw.Stop();
+                this.telemetryClient.TrackEvent("Initialize", new Dictionary<string, string>()
+                {
+                    {$"ProgramName",request.ProgramInfo?.Name},
+                    {$"ExecutionTime", sw.ElapsedMilliseconds.ToString()},
+                    {$"ProgramId", program.ProgramId.ToString()},
+                    {$"TelemetryKey", program.TelemetryKey.ToString()},
+                });
                 return response;
             }
             catch (Exception ex)

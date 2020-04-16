@@ -299,6 +299,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             try
             {
+                var sw = Stopwatch.StartNew();
                 Program program = await this.Work.Programs.GetByTelemetryKey(requestModel.TelemetryKey).ConfigureAwait(false);
                 
                 if (program == null)
@@ -306,11 +307,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     return new UpdateResponse { Exception = new BadRequestException($"Failed to find program by Id: [{requestModel.TelemetryKey}]") };
                 }
 
-                this.telemetryClient.TrackEvent("UpdateCheck", new Dictionary<string, string>()
-                {
-                    {$"ProgramName", program.Name },
-                    {$"UpdateRequest", requestModel.GetPropertyInfoString() },
-                });
+               
 
                 Trace.TraceInformation($"Program {program.GetNameAndIdString()} checking for updates with request: {requestModel.GetPropertyInfoString()}");
                 List<ProgramUpdatePackageInfo> allUpdatePackages =
@@ -342,7 +339,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
 
                 UpdateResponse response = new UpdateResponse { UpdatePackages = packageDataSets };
-
+                sw.Stop();
+                this.telemetryClient.TrackEvent("UpdateCheck", new Dictionary<string, string>()
+                {
+                    {$"ProgramName", program.Name },
+                    {$"ExecutionTime", sw.ElapsedMilliseconds.ToString()},
+                    {$"UpdateRequest", requestModel.GetPropertyInfoString() },
+                });
                 return response;
             }
             catch (Exception ex)
