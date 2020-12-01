@@ -18,6 +18,8 @@ namespace TelimenaClient.Tests
 {
     internal static class Helpers
     {
+        public static readonly Uri TeliUri = new Uri("http://localhost:7757/");
+        
         public static string TestAppDataPath =>
             Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).FullName, "FakeAppData");
 

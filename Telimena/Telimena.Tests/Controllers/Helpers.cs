@@ -42,10 +42,11 @@ namespace Telimena.Tests
 {
     public static class Helpers
     {
+        public static readonly Uri TeliUri = new Uri("http://localhost:7757/");
         public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey)
         {
             
-            TelemetryModule module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey)));
+            TelemetryModule module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey, Helpers.TeliUri)));
             StubTelemetryChannel channel = new StubTelemetryChannel { OnSend = t => sentTelemetry.Add(t) };
 
 #pragma warning disable 618

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using TelimenaClient.Model;
 
 namespace TelimenaClient
@@ -20,10 +22,16 @@ namespace TelimenaClient
         public TelimenaStartupInfo(Guid telemetryKey, Uri telemetryApiBaseUrl = null)
         {
             this.TelemetryKey = telemetryKey;
-            this.TelemetryApiBaseUrl = telemetryApiBaseUrl;
+            
+            //the configurable value should have precedence over any hardcoded values
+            Uri configuredUri = GetTelemetryUriFromConfig();
+            if (configuredUri != null)
+            {
+                this.TelemetryApiBaseUrl = configuredUri;
+            }
             if (this.TelemetryApiBaseUrl == null)
             {
-                this.TelemetryApiBaseUrl = Telimena.DefaultApiUri;
+                this.TelemetryApiBaseUrl = telemetryApiBaseUrl;
             }
             if (this.MainAssembly == null)
             {
@@ -66,6 +74,47 @@ namespace TelimenaClient
         /// <inheritdoc />
         public bool RegisterUnhandledExceptionsTracking { get; set; } = true;
 
+        private static string TelimenaUrlSettingsKey = "TelimenaUrl";
+
+        private static Uri GetTelemetryUriFromConfig()
+        {
+            var setting = ConfigurationManager.AppSettings.Get(TelimenaUrlSettingsKey);
+            if (!string.IsNullOrEmpty(setting))
+            {
+                try
+                {
+                    var uri = new Uri(setting);
+                    return uri;
+                }
+                catch (Exception ex)
+                {
+                    TelemetryDebugWriter.WriteLine($"ERROR - Cannot convert AppSetting [{setting}] to URI. Telimena will NOT WORK. Error: {ex}");
+                }
+            }
+            var path = Path.Combine(Directory.GetCurrentDirectory(), TelimenaUrlSettingsKey);
+            if (File.Exists(path))
+            {
+                var text = File.ReadAllText(path);
+                try
+                {
+                    var uri = new Uri(text);
+                    return uri;
+                }
+                catch (Exception ex)
+                {
+                    TelemetryDebugWriter.WriteError($"ERROR - Cannot convert content of file {path} - [{text}] to URI. Telimena will NOT WORK. Error: {ex}");
+                    return null;
+                }    
+            }
+
+            string message = $"ERROR - Telimena URL not specified. " +
+                             $"Either add AppSetting [{TelimenaUrlSettingsKey}] or create a [{TelimenaUrlSettingsKey}] file in your app working directory." +
+                             $"The setting value/file content should be JUST THE BASE URL to Telimena instance.";
+            TelemetryDebugWriter.WriteError(message);
+
+            return null;
+
+        }
 
         private static Assembly GetProperCallingAssembly()
         {

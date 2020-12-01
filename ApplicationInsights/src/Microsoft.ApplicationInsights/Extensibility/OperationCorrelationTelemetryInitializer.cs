@@ -104,7 +104,7 @@ namespace Microsoft.ApplicationInsights.Extensibility
             }
             catch (Exception ex)
             {
-                TelemetryDebugWriter.WriteLine(
+                TelemetryDebugWriter.WriteError(
                     "Something went wrong when initializing [" + this.GetType().Name+ "]. This initializer will be ignored." + ex);
             }
         }

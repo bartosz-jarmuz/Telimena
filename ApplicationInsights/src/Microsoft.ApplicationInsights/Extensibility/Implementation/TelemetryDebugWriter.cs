@@ -4,6 +4,8 @@
 
 #define DEBUG
 
+using System.Security;
+
 namespace Microsoft.ApplicationInsights.Extensibility.Implementation
 {
     using System;
@@ -62,6 +64,29 @@ namespace Microsoft.ApplicationInsights.Extensibility.Implementation
                 string prefix = "***TELIMENA*** (AppInsights) Telemetry: ";
                 output.WriteLine(prefix + message);
             }
+        } 
+        
+        /// <summary>
+        /// Write a debug log and try writing to Event log as well.
+        /// </summary>
+        /// <param name="message"></param>
+        public static void WriteError(string message)
+        {
+            WriteLine(message);
+#if NETFRAMEWORK
+            try
+            {
+                using (EventLog eventLog = new EventLog("Application"))
+                {
+                    eventLog.Source = ".NET Runtime";
+                    eventLog.WriteEntry(Process.GetCurrentProcess().ProcessName + " - " + message, EventLogEntryType.Error, 1000);
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLine($"Cannot write to event store: {ex}");
+            }
+#endif
         }
 
 

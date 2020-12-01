@@ -74,7 +74,7 @@ namespace TelimenaClient.Tests
         public void Test_CheckForUpdates_OnlyProgram()
         {
 
-            var si = new TelimenaStartupInfo(Guid.NewGuid()) {SuppressAllErrors = false};
+            var si = new TelimenaStartupInfo(Guid.NewGuid(), Helpers.TeliUri) {SuppressAllErrors = false};
 
             ITelimena sut = TelimenaFactory.Construct(si) ;
 
@@ -103,7 +103,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_CheckForUpdates_Program_AndUpdater()
         {
-            var si = new TelimenaStartupInfo(Guid.NewGuid()) {SuppressAllErrors = false};
+            var si = new TelimenaStartupInfo(Guid.NewGuid(), Helpers.TeliUri) {SuppressAllErrors = false};
 
             ITelimena sut = TelimenaFactory.Construct(si) ;
 
@@ -132,7 +132,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_NoUpdates()
         {
-            ITelimena sut = TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.NewGuid()) { SuppressAllErrors = false });
+            ITelimena sut = TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.NewGuid(), Helpers.TeliUri) { SuppressAllErrors = false });
 
             Helpers.SetupMockHttpClient(sut, this.GetMockClientForCheckForUpdates(sut.Properties.TelemetryKey, new UpdateResponse(), new UpdateResponse()));
 
@@ -146,7 +146,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_OnlyUpdaterUpdates()
         {
-            ITelimena sut = TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.NewGuid()) { SuppressAllErrors = false });
+            ITelimena sut = TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.NewGuid(), Helpers.TeliUri) { SuppressAllErrors = false });
 
 
             UpdateResponse latestVersionResponse = new UpdateResponse

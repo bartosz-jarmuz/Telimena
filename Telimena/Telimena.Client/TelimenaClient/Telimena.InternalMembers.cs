@@ -10,16 +10,11 @@ namespace TelimenaClient
     /// </summary>
     public partial class Telimena : ITelimena
     {
-#if DEBUG
         /// <summary>
         ///     The default API URI
         /// </summary>
         internal static readonly Uri DefaultApiUri = new Uri("http://localhost:7757/");
-#elif Dev
-        internal static readonly Uri DefaultApiUri = new Uri("https://telimena-dev.azurewebsites.net/");
-#else
-        internal static readonly Uri DefaultApiUri = new Uri("https://telimena-alpha.azurewebsites.net/");
-#endif
+
 
         /// <summary>
         ///     Gets or sets the serializer.

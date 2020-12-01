@@ -21,18 +21,21 @@ namespace TelimenaTestSandboxApp
             this.InitializeComponent();
 
             Random rnd = new Random();
-            var randomName = new []{ "Jess", "Anastasia", "Bobby", "Steven", "Bonawentura" }.OrderBy(a => rnd.NextDouble()).First();
+            var randomName = new []{ "Jess", "Anasta sia", "Bobby", "Steven", "Bonawentura" }.OrderBy(a => rnd.NextDouble()).First();
             this.userNameTextBox.Text = randomName;
             this.apiUrlTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.baseUri)
                 ? "http://localhost:7757/"
                 : Properties.Settings.Default.baseUri;
             this.apiKeyTextBox.Text = string.IsNullOrEmpty(Properties.Settings.Default.telemetryKey)
-                ? ""
+                ? "" 
                 : Properties.Settings.Default.telemetryKey;
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
                 this.Telimena =
-                    TelimenaFactory.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text)){UserInfo = new UserInfo(){UserIdentifier = this.userNameTextBox.Text}}) as Telimena;
+                    TelimenaFactory.Construct(new TelimenaStartupInfo(key)
+                    {
+                        UserInfo = new UserInfo(){UserIdentifier = this.userNameTextBox.Text}
+                    }) as Telimena;
             }
 
             this.TelimenaSecondInstance =

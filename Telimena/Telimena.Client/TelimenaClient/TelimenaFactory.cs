@@ -16,8 +16,16 @@ namespace TelimenaClient
         {
             try
             {
-                Telimena instance = new Telimena(startupInfo);
-                return instance;
+                if (startupInfo.TelemetryApiBaseUrl != null)
+                {
+                    Telimena instance = new Telimena(startupInfo);
+                    return instance;    
+                }
+                else
+                {
+                    throw new TelimenaException("Error - Telimena URL is not specified. Telimena will not work. See logs for details.");
+                }
+                
             }
             catch
             {

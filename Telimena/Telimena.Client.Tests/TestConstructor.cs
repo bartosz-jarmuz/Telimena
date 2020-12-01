@@ -30,11 +30,11 @@ namespace TelimenaClient.Tests
             {
                 if (i == 0)
                 {
-                    telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(this.TestTelemetryKey) { MainAssembly = this.GetType().Assembly });
+                    telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(this.TestTelemetryKey, Helpers.TeliUri) { MainAssembly = this.GetType().Assembly });
                 }
                 else
                 {
-                    telimena = Telimena.Construct(new TelimenaStartupInfo(this.TestTelemetryKey) { MainAssembly = this.GetType().Assembly });
+                    telimena = Telimena.Construct(new TelimenaStartupInfo(this.TestTelemetryKey, Helpers.TeliUri) { MainAssembly = this.GetType().Assembly });
                 }
 
                 Assert.AreEqual(this.TestTelemetryKey, telimena.Properties.TelemetryKey);
@@ -58,11 +58,11 @@ namespace TelimenaClient.Tests
             {
                 if (i == 0)
                 {
-                    telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(this.TestTelemetryKey));
+                    telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(this.TestTelemetryKey, Helpers.TeliUri));
                 }
                 else
                 {
-                    telimena = Telimena.Construct(new TelimenaStartupInfo(this.TestTelemetryKey));
+                    telimena = Telimena.Construct(new TelimenaStartupInfo(this.TestTelemetryKey, Helpers.TeliUri));
                 }
 
                 Assert.AreEqual("Telimena.Client.Tests", telimena.Properties.StaticProgramInfo.Name);
@@ -87,11 +87,11 @@ namespace TelimenaClient.Tests
             {
                 if (i == 0)
                 {
-                     telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.Empty) { ProgramInfo = pi });
+                     telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.Empty, Helpers.TeliUri) { ProgramInfo = pi });
                 }
                 else
                 {
-                    telimena = Telimena.Construct(new TelimenaStartupInfo(Guid.Empty) { ProgramInfo = pi });
+                    telimena = Telimena.Construct(new TelimenaStartupInfo(Guid.Empty, Helpers.TeliUri) { ProgramInfo = pi });
                 }
                 Assert.AreEqual("An App!", telimena.Properties.StaticProgramInfo.Name);
                 Assert.AreEqual("Moq", telimena.Properties.StaticProgramInfo.PrimaryAssembly.Name);

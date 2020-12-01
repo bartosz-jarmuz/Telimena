@@ -11,7 +11,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test__NoInstrumentationKey_ClientCanBeBuiltOk()
         {
-            var si = new TelimenaStartupInfo(TestTelemetryKey);
+            var si = new TelimenaStartupInfo(this.TestTelemetryKey, Helpers.TeliUri);
             var props = new TelimenaProperties(si);
             var builder = new TelemetryClientBuilder(props);
             var client = builder.GetClient();
@@ -29,7 +29,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test__InstrumentationKey_DeliverySettingsProvided()
         {
-            var si = new TelimenaStartupInfo(TestTelemetryKey);
+            var si = new TelimenaStartupInfo(this.TestTelemetryKey, Helpers.TeliUri);
             si.DeliveryInterval = TimeSpan.FromHours(667);
             si.InstrumentationKey = "yo, MSFT-o";
             var props = new TelimenaProperties(si);

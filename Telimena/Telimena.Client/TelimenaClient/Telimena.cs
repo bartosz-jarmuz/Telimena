@@ -67,7 +67,7 @@ namespace TelimenaClient
             }
             catch (Exception e)
             {
-                TelemetryDebugWriter.WriteLine($"Error while initializing {nameof(Telimena)}. Error: {e}");
+                TelemetryDebugWriter.WriteError($"Error while initializing {nameof(Telimena)}. Error: {e}");
                 //above all, we don't want to throw errors in client apps.
                 //No telemetry is better than boom.
                 throw;
