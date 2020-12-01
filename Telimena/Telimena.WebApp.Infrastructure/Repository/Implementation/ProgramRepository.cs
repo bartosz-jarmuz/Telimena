@@ -111,6 +111,12 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         private void ClearTelemetryData(Program program)
         {
+            IQueryable<Core.Models.Telemetry.ClientAppUser> eventUsers = this.telemetryContext.EventTelemetrySummaries.Where(x => x.Event.ProgramId == program.Id).Select(x => x.ClientAppUser);
+            IQueryable<Core.Models.Telemetry.ClientAppUser> viewUsers = this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id).Select(x => x.ClientAppUser);
+
+            List<int> userIds = eventUsers.Select(x => x.Id).Concat(viewUsers.Select(x => x.Id)).Distinct().ToList();
+
+
             this.telemetryContext.ViewTelemetryUnits.RemoveRange(this.telemetryContext.ViewTelemetryUnits.Where(x => x.TelemetryDetail.TelemetrySummary.View.ProgramId == program.Id));
             this.telemetryContext.ViewTelemetryDetails.RemoveRange(this.telemetryContext.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id));
             this.telemetryContext.ViewTelemetrySummaries.RemoveRange(this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id));
@@ -125,6 +131,19 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             this.telemetryContext.ExceptionTelemetryUnits.RemoveRange(this.telemetryContext.ExceptionTelemetryUnits.Where(x => x.ExceptionInfo.ProgramId == program.Id));
             this.telemetryContext.Exceptions.RemoveRange(this.telemetryContext.Exceptions.Where(x => x.ProgramId == program.Id));
+
+            foreach (var userId in userIds)
+            {
+                var otherApps = this.telemetryContext.EventTelemetrySummaries.Where(x => x.Event.ProgramId != program.Id).Where(x => x.ClientAppUserId == userId).ToList();
+                var isInUseEvents  = this.telemetryContext.EventTelemetrySummaries.Where(x=>x.Event.ProgramId != program.Id).Any(x => x.ClientAppUserId == userId);
+                var isInUseViews  = this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId != program.Id).Any(x => x.ClientAppUserId == userId);
+
+                if (!isInUseEvents && !isInUseViews)
+                {
+                    this.telemetryContext.AppUsers.RemoveRange(this.telemetryContext.AppUsers.Where(u => u.Id == userId));
+                }
+            }
+
         }
 
         public void ClearTelemetryAllData(Program program)
