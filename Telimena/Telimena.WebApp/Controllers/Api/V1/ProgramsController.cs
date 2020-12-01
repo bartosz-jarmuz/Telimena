@@ -379,5 +379,30 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Clears all telemetry data
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        /// <returns></returns>
+        [HttpPost, Route("{telemetryKey}/clear-all-telemetry", Name = Routes.ClearAllTelemetryData)]
+        public async Task<IHttpActionResult> ClearAllTelemetryData(Guid telemetryKey)
+        {
+            var prg = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
+            if (prg == null)
+            {
+                return this.BadRequest($"Program with key {telemetryKey} does not exist");
+            }
+            try
+            {
+                this.Work.Programs.ClearTelemetryAllData(prg);
+                await this.Work.CompleteAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                return this.InternalServerError(new InvalidOperationException($"Error while clearing telemetry data for {prg.Name} (Key: {telemetryKey})", ex));
+            }
+            return this.Ok($"All telemetry data cleared.");
+        }
     }
 }

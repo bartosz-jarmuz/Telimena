@@ -1,0 +1,13 @@
+﻿[*.{cs,vb}]
+
+# IDE0009: Member access should be qualified.
+dotnet_style_qualification_for_event = true:warning
+
+# IDE0009: Member access should be qualified.
+dotnet_style_qualification_for_field = true:warning
+
+# IDE0009: Member access should be qualified.
+dotnet_style_qualification_for_method = true:warning
+
+# IDE0009: Member access should be qualified.
+dotnet_style_qualification_for_property = true:warning

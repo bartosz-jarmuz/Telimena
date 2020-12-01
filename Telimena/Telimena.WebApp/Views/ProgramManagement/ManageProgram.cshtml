@@ -85,7 +85,6 @@
                         <b>Download link: </b>
                         <a class="pull-right" id="@Strings.Id.DownloadProgramLink" href="@Model.ProgramDownloadUrl">@Model.ProgramDownloadUrl</a>
                     </li>
-
                 </ul>
             </div>
         </div>
@@ -185,6 +184,7 @@
             <div class="nav-tabs-custom" id="@Strings.Id.ManageProgramSettingsBox">
                 <ul class="nav nav-tabs pull-right">
                     <li><a href="#@Strings.Id.DeleteProgramTab" id="@(Strings.Id.DeleteProgramTab)Id" data-toggle="tab">Delete</a></li>
+                    <li><a href="#@Strings.Id.ClearTelemetryDataTab" id="@(Strings.Id.ClearTelemetryDataTab)Id" data-toggle="tab">Clear Telemetry data</a></li>
                     <li class="active"><a href="#tab_1-1" data-toggle="tab">Set updater</a></li>
                     <li class="pull-left header"><i class="fa fa-th"></i> Manage program</li>
                 </ul>
@@ -209,6 +209,13 @@
                         <div class="box-body">
                             <h5>Warning: this cannot be undone</h5>
                             <input type="button" class="btn btn-danger btn-block" id="@Strings.Id.DeleteProgramButton" value="Delete program" />
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="@Strings.Id.ClearTelemetryDataTab" >
+                        <div class="box-body">
+                            <h5>Warning: this cannot be undone</h5>
+                            <input type="button" class="btn btn-danger btn-block" id="@Strings.Id.ClearAllTelemetryDataButton" value="Clear All Telemetry Data" />
                         </div>
                     </div>
                 </div>
@@ -405,6 +412,24 @@
                         url: url,
                         success: function (result) {
                             showSuccessTopAlertAndRefresh("Updated telemetry key.");
+                        },
+                        error: function (xhr) {
+                            showDangerTopAlert(getXhrErrorMessage(xhr));
+                        }
+                    });
+                }
+            });
+
+            $('#@Strings.Id.ClearAllTelemetryDataButton').click(function () {
+                if (confirm('Are you sure you want to clear all telemetry data? (this cannot be undone!)')) {
+                    var url =
+                        '@Url.LatestApiUrl(ProgramsController.Routes.ClearAllTelemetryData, new {telemetryKey = "__telemetryKey__"})';
+                    url = url.replace("__telemetryKey__", '@Model.TelemetryKey');
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        success: function (result) {
+                            showSuccessTopAlertAndRefresh("Cleared all telemetry data.");
                         },
                         error: function (xhr) {
                             showDangerTopAlert(getXhrErrorMessage(xhr));

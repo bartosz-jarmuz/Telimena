@@ -98,6 +98,19 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
         }
         public void Remove(Program program)
         {
+            this.ClearTelemetryData(program);
+            this.telemetryContext.TelemetryRootObjects.RemoveRange(this.telemetryContext.TelemetryRootObjects.Where(x => x.ProgramId == program.Id));
+
+            this.portalContext.Versions.RemoveRange(this.portalContext.Versions.Where(x => x.ProgramAssembly.ProgramId == program.Id));
+            this.portalContext.ProgramAssemblies.RemoveRange(this.portalContext.ProgramAssemblies.Where(x => x.ProgramId == program.Id));
+            this.portalContext.UpdatePackages.RemoveRange(this.portalContext.UpdatePackages.Where(x => x.ProgramId == program.Id));
+
+            this.portalContext.ProgramPackages.RemoveRange(this.portalContext.ProgramPackages.Where(x => x.ProgramId == program.Id));
+            this.portalContext.Programs.Remove(program);
+        }
+
+        private void ClearTelemetryData(Program program)
+        {
             this.telemetryContext.ViewTelemetryUnits.RemoveRange(this.telemetryContext.ViewTelemetryUnits.Where(x => x.TelemetryDetail.TelemetrySummary.View.ProgramId == program.Id));
             this.telemetryContext.ViewTelemetryDetails.RemoveRange(this.telemetryContext.ViewTelemetryDetails.Where(x => x.TelemetrySummary.View.ProgramId == program.Id));
             this.telemetryContext.ViewTelemetrySummaries.RemoveRange(this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id));
@@ -109,15 +122,14 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
             this.telemetryContext.Events.RemoveRange(this.telemetryContext.Events.Where(x => x.ProgramId == program.Id));
 
             this.telemetryContext.LogMessages.RemoveRange(this.telemetryContext.LogMessages.Where(x => x.ProgramId == program.Id));
+
+            this.telemetryContext.ExceptionTelemetryUnits.RemoveRange(this.telemetryContext.ExceptionTelemetryUnits.Where(x => x.ExceptionInfo.ProgramId == program.Id));
             this.telemetryContext.Exceptions.RemoveRange(this.telemetryContext.Exceptions.Where(x => x.ProgramId == program.Id));
-            this.telemetryContext.TelemetryRootObjects.RemoveRange(this.telemetryContext.TelemetryRootObjects.Where(x => x.ProgramId == program.Id));
+        }
 
-            this.portalContext.Versions.RemoveRange(this.portalContext.Versions.Where(x => x.ProgramAssembly.ProgramId == program.Id));
-            this.portalContext.ProgramAssemblies.RemoveRange(this.portalContext.ProgramAssemblies.Where(x => x.ProgramId == program.Id));
-            this.portalContext.UpdatePackages.RemoveRange(this.portalContext.UpdatePackages.Where(x => x.ProgramId == program.Id));
-
-            this.portalContext.ProgramPackages.RemoveRange(this.portalContext.ProgramPackages.Where(x => x.ProgramId == program.Id));
-            this.portalContext.Programs.Remove(program);
+        public void ClearTelemetryAllData(Program program)
+        {
+            this.ClearTelemetryData(program);
         }
 
         public async Task<IEnumerable<Program>> GetAsync(Expression<Func<Program, bool>> filter = null

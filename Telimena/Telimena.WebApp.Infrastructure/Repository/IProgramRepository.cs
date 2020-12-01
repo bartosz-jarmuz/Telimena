@@ -23,5 +23,6 @@ namespace Telimena.WebApp.Infrastructure.Repository
         Task<Program> GetByTelemetryKey(Guid telemetryKey);
         Task<Program> GetByProgramId(int id);
         Task<Program> GetByNames(string developerName, string programName);
+        void ClearTelemetryAllData(Program program);
     }
 }

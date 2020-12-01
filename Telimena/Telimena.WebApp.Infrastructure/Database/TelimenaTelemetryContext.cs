@@ -103,6 +103,7 @@ namespace Telimena.WebApp.Infrastructure.Database
         public DbSet<ClientAppUser> AppUsers { get; set; }
 
         public DbSet<ExceptionInfo> Exceptions { get; set; }
+        public DbSet<ExceptionTelemetryUnit> ExceptionTelemetryUnits { get; set; }
         public DbSet<LogMessage> LogMessages { get; set; }
 
     }
