@@ -35,7 +35,7 @@ namespace TelimenaTestSandboxApp
                     TelimenaFactory.Construct(new TelimenaStartupInfo(key)
                     {
                         UserInfo = new UserInfo(){UserIdentifier = this.userNameTextBox.Text}
-                    }) as Telimena;
+                    });
             }
 
             this.TelimenaSecondInstance =
