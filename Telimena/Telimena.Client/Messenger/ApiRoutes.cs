@@ -10,6 +10,7 @@ namespace TelimenaClient
         public static string UpdaterUpdateCheck => $"api/v1/updaters/update-check";
         public static string GetProgramUpdaterName(Guid telemetryKey) => $"api/v1/programs/{telemetryKey}/updater/name";
         public static string GetInstrumentationKey(Guid telemetryKey) => $"api/v1/programs/{telemetryKey}/instrumentation-key";
+        public static string GetTelemetrySettings(Guid telemetryKey) => $"api/v1/programs/{telemetryKey}/telemetry-settings";
 
        
     }

@@ -73,12 +73,15 @@ namespace PackageTriggerUpdaterTestApp
         {
             Console.WriteLine("Starting update handling...");
             ITelimena teli = TelimenaFactory.Construct(new TelimenaStartupInfo(arguments.TelemetryKey, new Uri(arguments.ApiUrl)));
+            Console.WriteLine($"UserInfo [{teli.Properties.UserInfo?.UserIdentifier}].");
+
             teli.Properties.UpdatePromptingMode = UpdatePromptingModes.PromptBeforeDownload;
             Console.WriteLine("Telimena created... Handling updates");
             UpdateInstallationResult result = teli.Update.HandleUpdates(false);
             Console.WriteLine("Finished update handling");
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver()};
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));
+            Console.WriteLine($"UserInfo [{teli.Properties.UserInfo?.UserIdentifier}].");
 
             Console.WriteLine("All done");
         }
@@ -113,7 +116,7 @@ namespace PackageTriggerUpdaterTestApp
             }
 
             Console.WriteLine($"Args: {decoded}");
-            Console.WriteLine("Arguments loaded OK");
+            Console.WriteLine("Arguments loaded OK!");
 
             Work(arguments);
 

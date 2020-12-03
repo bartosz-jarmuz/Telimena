@@ -34,5 +34,10 @@ namespace TelimenaClient
         {
             // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
         }
+
+        public void InitializeTelemetryClient()
+        {
+            // This is for when initialization of proper telemetry module would fail - we should never throw errors in client code!
+        }
     }
 }

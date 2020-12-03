@@ -45,5 +45,6 @@ namespace TelimenaClient
         private readonly ITelemetryModule telemetryModule;
         private readonly IUpdatesModule updates;
         private readonly TelimenaProperties propertiesInternal;
+        private readonly UserTrackingController userTrackingController;
     }
 }

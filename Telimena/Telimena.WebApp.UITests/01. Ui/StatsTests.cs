@@ -35,11 +35,12 @@ namespace Telimena.WebApp.UITests._01._Ui
             Task.Delay(1500).GetAwaiter().GetResult();
 
             var second = this.LaunchTestsAppAndGetResult<TelemetryItem>(app, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, viewName: viewName);
+            Task.Delay(1500).GetAwaiter().GetResult();
 
             DateTime current = await this.GetLatestUsageFromTable(SharedTestHelpers.GetMethodName()).ConfigureAwait(false);
             if (current == previous)
             {
-                await Task.Delay(2000);
+                await Task.Delay(4000);
             }
             current = await this.GetLatestUsageFromTable(SharedTestHelpers.GetMethodName()).ConfigureAwait(false);
             Assert.IsTrue(current > previous, $"current {current} is not larger than previous {previous}");
@@ -49,9 +50,9 @@ namespace Telimena.WebApp.UITests._01._Ui
         {
             try
             {
+                this.LoginAdminIfNeeded();
 
                 WebDriverWait wait = new WebDriverWait(this.Driver, TimeSpan.FromSeconds(15));
-
                 this.NavigateToStatisticsPage(Apps.Keys.AutomaticTestsClient);
 
                 IWebElement programsTable = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(Strings.Id.ViewUsageTable)));

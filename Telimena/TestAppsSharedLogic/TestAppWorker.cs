@@ -21,6 +21,8 @@ namespace SharedLogic
 
         public void Work()
         {
+            Console.WriteLine("Starting worker");
+
             ITelimena telimena = this.GetTelimena(this.arguments.TelemetryKey);
 
             try
@@ -91,6 +93,7 @@ namespace SharedLogic
                     DeliveryInterval = TimeSpan.FromSeconds(3)
                 });
             }
+            Console.WriteLine($"Initalized [{telimena?.GetType().FullName}].");
 
             return telimena;
         }
@@ -118,7 +121,8 @@ namespace SharedLogic
             {
                  telimena.Track.View("DefaultView", customData);
             }
-            Console.WriteLine("Received View usage response..");
+            Console.WriteLine("View usage request queued");
+
 
             JsonSerializerSettings settings = new JsonSerializerSettings { ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto };
             //todo - some result - Console.WriteLine(JsonConvert.SerializeObject(result, settings));
@@ -130,6 +134,9 @@ namespace SharedLogic
 
             UpdateInstallationResult result = telimena.Update.HandleUpdates(takeBeta);
             Console.WriteLine("Finished update handling...");
+
+            Console.WriteLine($"UserInfo [{telimena.Properties.UserInfo.UserIdentifier}].");
+
             JsonSerializerSettings settings = new JsonSerializerSettings {ContractResolver = new MyJsonContractResolver(), TypeNameHandling = TypeNameHandling.Auto};
             Console.WriteLine(JsonConvert.SerializeObject(result, settings));
 

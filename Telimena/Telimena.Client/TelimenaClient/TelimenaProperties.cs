@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RandomFriendlyNameGenerator;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using TelimenaClient.Model;
@@ -21,14 +22,20 @@ namespace TelimenaClient
             this.StartupInfo = info;
 
             this.StaticProgramInfo = info.ProgramInfo ?? new ProgramInfo { PrimaryAssembly = new Model.AssemblyInfo(this.StartupInfo.MainAssembly), Name = this.StartupInfo.MainAssembly.GetName().Name };
-            this.UserInfo = info.UserInfo ?? new UserInfo { UserIdentifier = Environment.UserName, MachineName = Environment.MachineName };
+            this.Locator = new Locator(this.StaticProgramInfo);
 
             this.SuppressAllErrors = info.SuppressAllErrors;
 
             this.TelimenaVersion = TelimenaVersionReader.ReadToolkitVersion(Assembly.GetExecutingAssembly());
 
             this.InstrumentationKey = this.StartupInfo.InstrumentationKey;
+
         }
+
+     
+
+
+
 
         /// <summary>
         ///     Data object containing information used at Telimena client startup
@@ -48,6 +55,8 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The user information.</value>
         public UserInfo UserInfo { get; internal set; }
+
+        private readonly Locator Locator;
 
         /// <summary>
         ///     Gets the program information from the assemblies.
@@ -91,7 +100,7 @@ namespace TelimenaClient
         /// </summary>
         public bool SuppressAllErrors { get; set; } = true;
 
-        
+
 
     }
 }

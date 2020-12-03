@@ -48,13 +48,17 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             TelemetrySummaryDto summary = null;
             TelemetryAwareComponentDto viewComponent = null;
 
+
+
                 viewComponent = queryResponse.TelemetryAware.First(x => x.ComponentKey == viewName);
                 Assert.IsNotNull(viewComponent);
-                summary = viewComponent.Summaries.FirstOrDefault(x => x.UserName == Environment.UserName);
+                summary = viewComponent.Summaries.OrderByDescending(x=>x.LastReported).FirstOrDefault();
                 Assert.IsNotNull(summary);
 
+            var userName = summary.UserName;
 
             timestamp = DateTimeOffset.UtcNow;
+
             app= this.LaunchTestsAppNewInstance(out _, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1, "", viewName: viewName);
             //Assert.IsNull(response.Exception);
             //Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
@@ -65,16 +69,16 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
 
             if (summary == null) //first time ever the test is run, the summary is empty - let it do work and fail 
             {
-                summary = viewComponent.Summaries.FirstOrDefault(x => x.UserName == Environment.UserName);
+                summary = viewComponent.Summaries.FirstOrDefault(x => x.UserName == userName);
             }
 
-            var summaryAfterUpdate = viewComponent.Summaries.FirstOrDefault(x => x.UserName== Environment.UserName);
+            var summaryAfterUpdate = viewComponent.Summaries.FirstOrDefault(x => x.UserName== userName);
             Assert.IsNotNull(summaryAfterUpdate);
 
             Assert.Greater(summaryAfterUpdate.SummaryCount, summary.SummaryCount);
             Assert.Greater(summaryAfterUpdate.LastReported, summary.LastReported);
             Assert.Greater(summaryAfterUpdate.Details.Count, summary.Details.Count);
-            Assert.That(summaryAfterUpdate.Details.OrderByDescending(x => x.Timestamp).First().Timestamp, Is.EqualTo(timestamp).Within(TimeSpan.FromSeconds(3.0)));
+            Assert.That(summaryAfterUpdate.Details.OrderByDescending(x => x.Timestamp).First().Timestamp, Is.EqualTo(timestamp).Within(TimeSpan.FromSeconds(5.0)));
 
         }
 

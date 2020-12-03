@@ -32,10 +32,15 @@ namespace TelimenaTestSandboxApp
             if (Guid.TryParse(this.apiKeyTextBox.Text, out Guid key))
             {
                 this.Telimena =
-                    TelimenaFactory.Construct(new TelimenaStartupInfo(key)
+                    TelimenaFactory.Construct(new TelimenaStartupInfo(key, new Uri(this.apiUrlTextBox.Text))
                     {
-                        UserInfo = new UserInfo(){UserIdentifier = this.userNameTextBox.Text}
+                        UserInfo = new UserInfo(){UserIdentifier = this.userNameTextBox.Text},
+
                     });
+                this.Telimena.Track.View("BOOO");
+                this.Telimena.Track.Event("FFFO");
+                this.Telimena.Track.Log(LogLevel.Critical, "LogMs");
+                this.Telimena.Track.Exception(new Exception("BBB"), "NOTE");
             }
 
             this.TelimenaSecondInstance =

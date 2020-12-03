@@ -17,7 +17,7 @@ namespace EmbeddedAssemblyTestApp
 
             var arguments = SharedUtils.LoadArguments(args);
 
-            TelimenaStartupInfo si = new TelimenaStartupInfo(arguments.TelemetryKey, new Uri(arguments.ApiUrl))
+            TelimenaStartupInfo si = new TelimenaStartupInfo(arguments.TelemetryKey)
             {
                 ProgramInfo = arguments.ProgramInfo
                 ,

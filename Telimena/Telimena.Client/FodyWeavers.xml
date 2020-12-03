@@ -4,6 +4,7 @@
     <IncludeAssemblies>
       Telimena.Microsoft.ApplicationInsights
       System.Diagnostics.DiagnosticSource
+      RandomFriendlyNameGenerator
     </IncludeAssemblies>
   </Costura>
 </Weavers>

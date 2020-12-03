@@ -44,9 +44,8 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
                 var stamp = DateTime.UtcNow;
               
                 this.LaunchPackageUpdaterTestsAppWithArgs(out FileInfo appFile, Apps.PackageNames.PackageUpdaterTestAppV1, SharedTestHelpers.GetMethodName(), waitForExit: false);
-
                 Window updateNowMsgBox =
-                    await WindowHelpers.WaitForWindowAsync(x => x.Equals("PackageTriggerUpdaterTestApp update download"), TimeSpan.FromMinutes(2)).ConfigureAwait(false);
+                    await WindowHelpers.WaitForWindowAsync(x => x.Equals("PackageTriggerUpdaterTestApp update download"), TimeSpan.FromMinutes(1)).ConfigureAwait(false);
                 WindowHelpers.ClickButtonByText(updateNowMsgBox, "Yes");
 
                 Log("Clicked yes");

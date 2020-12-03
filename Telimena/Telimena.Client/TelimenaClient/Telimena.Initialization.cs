@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using TelimenaClient.Model;
 using TelimenaClient.Model.Internal;
 
@@ -49,6 +51,23 @@ namespace TelimenaClient
             TelemetryInitializeRequest request = null;
             try
             {
+                await this.userTrackingController.LoadUserInfo();
+                
+            }
+            catch (Exception ex)
+            {
+                TelimenaException exception = new TelimenaException("Error occurred while checking telemetry settings", this.Properties, ex,
+                    new KeyValuePair<Type, object>(typeof(TelemetryInitializeRequest), request));
+                if (!this.Properties.SuppressAllErrors)
+                {
+                    throw exception;
+                }
+
+                return new TelemetryInitializeResponse { Exception = exception };
+            }
+            try
+            {
+                
                 request = new TelemetryInitializeRequest(this.Properties.TelemetryKey)
                 {
                     ProgramInfo = this.Properties.StaticProgramInfo
@@ -85,6 +104,11 @@ namespace TelimenaClient
                 return new TelemetryInitializeResponse { Exception = exception };
             }
         }
+        
+        
+      
+
+        
         internal async Task LoadLiveData(TelemetryInitializeResponse response)
         {
             try

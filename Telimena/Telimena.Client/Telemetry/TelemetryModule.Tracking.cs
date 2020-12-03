@@ -11,6 +11,8 @@ namespace TelimenaClient
     /// <inheritdoc />
     public partial class TelemetryModule : ITelemetryModule
     {
+        private Queue<ITelemetry> telemetryToSendLater = new Queue<ITelemetry>();
+
         /// <inheritdoc />
         public void View(string viewName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
         {
@@ -25,7 +27,14 @@ namespace TelimenaClient
                 {
                     Utils.CopyDictionary(metrics, tele.Metrics);
                 }
-                this.TelemetryClient.TrackPageView(tele);
+                if (!isSessionContextInitialized)
+                {
+                    this.telemetryToSendLater.Enqueue(tele);
+                }
+                else
+                {
+                    this.TelemetryClient.TrackPageView(tele);
+                }
             }
             catch
             {
@@ -41,7 +50,26 @@ namespace TelimenaClient
         {
             try
             {
-                this.TelemetryClient.TrackEvent(eventName, properties, metrics);
+                EventTelemetry telemetry = new EventTelemetry(eventName);
+
+                if (properties != null && properties.Count > 0)
+                {
+                    Utils.CopyDictionary(properties, telemetry.Properties);
+                }
+
+                if (metrics != null && metrics.Count > 0)
+                {
+                    Utils.CopyDictionary(metrics, telemetry.Metrics);
+                }
+                if (!isSessionContextInitialized)
+                {
+                    this.telemetryToSendLater.Enqueue(telemetry);
+                }
+                else
+                {
+                    this.TelemetryClient.TrackEvent(telemetry);
+                }
+
             }
             catch
             {
@@ -69,8 +97,32 @@ namespace TelimenaClient
                         properties.Add(DefaultToolkitNames.TelimenaCustomExceptionNoteKey, note);
                     }
                 }
-                
-                this.TelemetryClient.TrackException(exception, properties, metrics);
+
+                if (exception == null)
+                {
+                    exception = new Exception(Utils.PopulateRequiredStringValue(null, "message", typeof(ExceptionTelemetry).FullName));
+                }
+
+                var telemetry = new ExceptionTelemetry(exception);
+
+                if (properties != null && properties.Count > 0)
+                {
+                    Utils.CopyDictionary(properties, telemetry.Properties);
+                }
+
+                if (metrics != null && metrics.Count > 0)
+                {
+                    Utils.CopyDictionary(metrics, telemetry.Metrics);
+                }
+
+                if (!isSessionContextInitialized)
+                {
+                    this.telemetryToSendLater.Enqueue(telemetry);
+                }
+                else
+                {
+                    this.TelemetryClient.TrackException(telemetry);
+                }
             }
             catch
             {
@@ -86,7 +138,16 @@ namespace TelimenaClient
         {
             try
             {
-                this.TelemetryClient.TrackTrace(message, LogSeverityMapper.Map(level));
+                var telemetry = new TraceTelemetry(message, LogSeverityMapper.Map(level));
+
+                if (!isSessionContextInitialized)
+                {
+                    this.telemetryToSendLater.Enqueue(telemetry);
+                }
+                else
+                {
+                    this.TelemetryClient.TrackTrace(telemetry);
+                }
             }
             catch
             {

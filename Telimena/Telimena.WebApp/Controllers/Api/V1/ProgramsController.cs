@@ -201,6 +201,30 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
         [AllowAnonymous]
+        [HttpGet, Route("{telemetryKey}/telemetry-settings", Name = Routes.GetTelemetrySettings)]
+        public async Task<UserTrackingSettings> GetTelemetrySettings(Guid telemetryKey)
+        {
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                throw new BadRequestException($"Program with Key [{telemetryKey}] does not exist");
+            }
+
+
+
+            return new UserTrackingSettings()
+            {
+                UserIdentifierMode = UserIdentifierMode.RandomFriendlyName,
+                ShareIdentifierWithOtherTelimenaApps = false
+            };
+        }
+
+        /// <summary>
+        /// Gets the AppInsights instrumentation key
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet, Route("{telemetryKey}/instrumentation-key", Name = Routes.GetInstrumentationKey)]
         public async Task<IHttpActionResult> GetInstrumentationKey(Guid telemetryKey)
         {
@@ -360,6 +384,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
         }
 
 
+
+
         /// <summary>
         /// User friendly URL for downloading latest program version
         /// </summary>
@@ -395,7 +421,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             try
             {
-                this.Work.Programs.ClearTelemetryAllData(prg);
+                this.Work.Programs.
+                    ClearTelemetryAllData(prg);
                 await this.Work.CompleteAsync().ConfigureAwait(false);
             }
             catch (Exception ex)

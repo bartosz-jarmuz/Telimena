@@ -43,20 +43,47 @@ namespace Telimena.Tests
     public static class Helpers
     {
         public static readonly Uri TeliUri = new Uri("http://localhost:7757/");
+
         public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey)
         {
-            
             TelemetryModule module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey, Helpers.TeliUri)));
             StubTelemetryChannel channel = new StubTelemetryChannel { OnSend = t => sentTelemetry.Add(t) };
 
 #pragma warning disable 618
             module.InvokeMethod(nameof(TelemetryModule.InitializeTelemetryClient), channel);
+            SetStaticFieldValue(module, "isSessionContextInitialized", true);
 #pragma warning restore 618
 
             Assert.IsInstanceOf<StubTelemetryChannel>(module.TelemetryClient.GetPropertyValue<TelemetryConfiguration>("TelemetryConfiguration").TelemetryChannel);
             return module;
         }
-        
+
+        public static void SetStaticFieldValue(object source, string fieldName, object val)
+        {
+            source.ThrowIfNull(nameof(source));
+
+            var sourceType = source.GetType();
+            var fieldInfo = GetFieldInfo(sourceType, fieldName);
+            if (fieldInfo == null)
+                throw new ArgumentOutOfRangeException(nameof(fieldName)
+                    , $"Couldn't find field {fieldName} in type {sourceType.FullName}");
+            fieldInfo.SetValue(source, val);
+        }
+
+
+        private static FieldInfo GetFieldInfo(Type type, string fieldName)
+        {
+            FieldInfo fieldInfo;
+            do
+            {
+                fieldInfo = type.GetField(fieldName
+                    , BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                type = type.BaseType;
+            } while (fieldInfo == null && type != null);
+
+            return fieldInfo;
+        }
+
         public static void SetIp(ApiController controller, string ip)
         {
             Mock<HttpRequestBase> request = new Mock<HttpRequestBase>();

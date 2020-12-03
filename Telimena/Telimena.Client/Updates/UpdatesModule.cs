@@ -60,7 +60,7 @@ namespace TelimenaClient
             }
             catch (Exception ex)
             {
-                TelimenaException exception = new TelimenaException("Error occurred while sending check for updates request", this.telimena.Properties, ex
+                TelimenaException exception = new TelimenaException("Error occurred while sending check for updates request.", this.telimena.Properties, ex
                     , new KeyValuePair<Type, object>(typeof(UpdateRequest), updateRequest)
                     , new KeyValuePair<Type, object>(typeof(UpdateRequest), updateRequest));
                 if (!this.telimena.Properties.SuppressAllErrors)

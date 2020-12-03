@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
-using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
+using TelimenaClient.Model;
+using TelimenaClient.Serializer;
 
 namespace TelimenaClient
 {
@@ -19,9 +21,11 @@ namespace TelimenaClient
         public TelemetryModule(TelimenaProperties telimenaProperties)
         {
             this.telimenaProperties = telimenaProperties;
+            this.userTrackingController = new UserTrackingController(this.telimenaProperties, new Locator(this.telimenaProperties.StaticProgramInfo), new TelimenaSerializer());
         }
 
         private readonly TelimenaProperties telimenaProperties;
+        private readonly UserTrackingController userTrackingController;
         private static readonly string SessionStartedEventKey = "TelimenaSessionStarted";
 
         /// <summary>
@@ -58,7 +62,6 @@ namespace TelimenaClient
 
         private Task<string> instrumentationKeyLoadingTask;
 
-
         private async Task<string> LoadInstrumentationKey()
         {
             //if the AI key is specified in the Telimena Portal, it should override the local one
@@ -75,11 +78,12 @@ namespace TelimenaClient
             }
             catch (Exception ex)
             {
-                TelemetryDebugWriter.WriteLine($"Error while loading instrumentation key. Error: {ex}");
+                TelemetryDebugWriter.WriteError($"Error while loading instrumentation key. Error: {ex}");
                 return null;
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Critical Code Smell", "S2696:Instance members should not write to \"static\" fields", Justification = "<Pending>")]
         private void InitializeSession()
         {
             if (!isSessionStarted)
@@ -94,15 +98,28 @@ namespace TelimenaClient
                         {
                             //flushing the telemetry client is a synchronous blocking operation.
                             //As it is used during initialization, it may slow down the startup of the app
-                            Task.Run(async ()=>
+                            Task.Run(async () =>
                             {
+                                await this.userTrackingController.LoadUserInfo();
                                 string cloudKey = await this.instrumentationKeyLoadingTask;
+                                TelemetryClientBuilder builder = new TelemetryClientBuilder(this.telimenaProperties);
                                 if (!string.IsNullOrEmpty(cloudKey))
                                 {
                                     this.telimenaProperties.InstrumentationKey = cloudKey;
-                                    this.TelemetryClient = new TelemetryClientBuilder(this.telimenaProperties).GetClient();
+                                    this.TelemetryClient = builder.GetClient();
                                 }
+
+                                this.InitializeContext();
+                                isSessionContextInitialized = true;
                                 this.Event(SessionStartedEventKey);
+                                if (this.telemetryToSendLater.Any())
+                                {
+                                    while (this.telemetryToSendLater.Count > 0)
+                                    {
+                                        ITelemetry item = this.telemetryToSendLater.Dequeue();
+                                        this.TelemetryClient.Track(item);
+                                    }
+                                }
                                 this.SendAllDataNow();
                             });
                             isSessionStarted = true;
@@ -110,6 +127,19 @@ namespace TelimenaClient
                     }
                 }
             }
+        }
+        
+        private void InitializeContext()
+        {
+            if (string.IsNullOrEmpty(this.TelemetryClient.Context.User.AccountId))
+            {
+                this.TelemetryClient.Context.User.AuthenticatedUserId = this.telimenaProperties.UserInfo.UserIdentifier;
+                this.TelemetryClient.Context.User.Id = this.telimenaProperties.UserInfo.UserIdentifier;
+            }
+            this.TelemetryClient.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
+            this.TelemetryClient.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.TelimenaVersion, this.telimenaProperties.TelimenaVersion);
+            this.TelemetryClient.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.ProgramAssemblyVersion, this.telimenaProperties.ProgramVersion.AssemblyVersion);
+            this.TelemetryClient.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.ProgramFileVersion, this.telimenaProperties.ProgramVersion.FileVersion);
         }
 
         /// <summary>
@@ -128,6 +158,7 @@ namespace TelimenaClient
         private static readonly object SyncRoot = new object();
 
         private static bool isSessionStarted;
+        private static bool isSessionContextInitialized;
 
        
     }

@@ -18,13 +18,17 @@ namespace TelimenaClient
         /// Creates default instance of the simple data object containing the data needed for Telimena startup, and some initial settings
         /// </summary>
         /// <param name="telemetryKey">The telemetry key for the current app</param>
-        /// <param name="telemetryApiBaseUrl">The base url for the telemetry API</param>
+        /// <param name="telemetryApiBaseUrl">The base url for the telemetry API. You can either:<br/>
+        ///    - hardcode it here <br/>
+        ///    - add an app.config key 'TelimenaUrl' with the URL as value<br/>
+        ///    - or add a file called 'TelimenaUrl' with the URL as content (in the executable location)</param>
+        /// 
         public TelimenaStartupInfo(Guid telemetryKey, Uri telemetryApiBaseUrl = null)
         {
             this.TelemetryKey = telemetryKey;
-            
+
             //the configurable value should have precedence over any hardcoded values
-            Uri configuredUri = GetTelemetryUriFromConfig();
+            Uri configuredUri = GetTelemetryUriFromConfig(telemetryApiBaseUrl);
             if (configuredUri != null)
             {
                 this.TelemetryApiBaseUrl = configuredUri;
@@ -37,7 +41,6 @@ namespace TelimenaClient
             {
                 this.MainAssembly = GetProperCallingAssembly();
             }
-
         }
 
 
@@ -76,7 +79,7 @@ namespace TelimenaClient
 
         private static string TelimenaUrlSettingsKey = "TelimenaUrl";
 
-        private static Uri GetTelemetryUriFromConfig()
+        private static Uri GetTelemetryUriFromConfig(Uri telemetryApiBaseUrl)
         {
             var setting = ConfigurationManager.AppSettings.Get(TelimenaUrlSettingsKey);
             if (!string.IsNullOrEmpty(setting))
@@ -107,10 +110,14 @@ namespace TelimenaClient
                 }    
             }
 
-            string message = $"ERROR - Telimena URL not specified. " +
+            if (telemetryApiBaseUrl == null)
+            {
+                string message = $"ERROR - Telimena URL not specified. " +
                              $"Either add AppSetting [{TelimenaUrlSettingsKey}] or create a [{TelimenaUrlSettingsKey}] file in your app working directory." +
                              $"The setting value/file content should be JUST THE BASE URL to Telimena instance.";
-            TelemetryDebugWriter.WriteError(message);
+                TelemetryDebugWriter.WriteError(message);
+            }
+            
 
             return null;
 

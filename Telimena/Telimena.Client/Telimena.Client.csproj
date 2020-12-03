@@ -74,6 +74,9 @@
       <HintPath>..\packages\Costura.Fody.3.3.3\lib\net40\Costura.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
+    <Reference Include="RandomFriendlyNameGenerator, Version=1.0.7.0, Culture=neutral, PublicKeyToken=ac855b1407a9276a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RandomFriendlyNameGenerator.1.0.7\lib\net45\RandomFriendlyNameGenerator.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll</HintPath>
     </Reference>
@@ -93,7 +96,10 @@
     <Compile Include="NullObjects\NullObjectTelimena.cs" />
     <Compile Include="NullObjects\NullObjectTelimenaProperties.cs" />
     <Compile Include="NullObjects\NullObjectUpdatesModule.cs" />
+    <Compile Include="Telemetry\NoActionTelemetryModule.cs" />
     <Compile Include="TelimenaClient\TelimenaFactory.cs" />
+    <Compile Include="Model\UserIdentifierMode.cs" />
+    <Compile Include="Model\UserTrackingSettings.cs" />
     <Compile Include="UpdateInstallation\InputReceivers\DefaultConsoleInputReceiver.cs" />
     <Compile Include="Updates\UpdatePromptingModes.cs" />
     <Compile Include="Utilities\LogSeverityMapper.cs" />
@@ -147,6 +153,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Updates\IUpdatesModule.cs" />
     <Compile Include="Utilities\Extensions.cs" />
+    <Compile Include="Utilities\UserTrackingController.cs" />
     <Compile Include="Utilities\VersionReading\TelimenaVersionReader.cs" />
     <Compile Include="Utilities\VersionReading\TelimenaVersionStringComparer.cs" />
     <Compile Include="Utilities\VersionReading\VersionTypes.cs" />
@@ -159,6 +166,7 @@
     <None Include="..\TelimenaKey.snk">
       <Link>Properties\TelimenaKey.snk</Link>
     </None>
+    <None Include="packages.config" />
     <None Include="Properties\addToZip.ps1" />
     <None Include="Properties\Telimena.Client.nuspec" />
   </ItemGroup>

@@ -7,6 +7,8 @@ using TelimenaClient.Model.Internal;
 
 namespace TelimenaClient
 {
+
+
     internal class Locator
     {
         public Locator(ProgramInfo programInfo) : this(programInfo, AppDomain.CurrentDomain.BaseDirectory)
@@ -77,6 +79,14 @@ namespace TelimenaClient
         {
             return new FileInfo(Path.Combine(this.GetUpdatesParentFolder().FullName, liveProgramInfo.UpdaterName));
         }
+
+        public DirectoryInfo GetWorkingDirectory()
+        {
+            return this.telimenaWorkingDirectory.Value;
+        }
+
+
+
 
         protected virtual DirectoryInfo GetAppDataFolder()
         {

@@ -34,7 +34,6 @@ namespace TelimenaClient
 
                     var client = new TelemetryClient(config);
 
-                    this.InitializeContext(client);
                     client.TelemetryKey = this.properties.TelemetryKey;
 
                     if (this.properties.InstrumentationKey != null)
@@ -55,18 +54,7 @@ namespace TelimenaClient
 
 
 
-        private void InitializeContext(TelemetryClient client)
-        {
-            if (string.IsNullOrEmpty(client.Context.User.AccountId))
-            {
-                client.Context.User.AuthenticatedUserId = this.properties.UserInfo.UserIdentifier;
-                client.Context.User.Id = this.properties.UserInfo.UserIdentifier;
-            }
-            client.Context.Device.OperatingSystem = Environment.OSVersion.ToString();
-            client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.TelimenaVersion, this.properties.TelimenaVersion);
-            client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.ProgramAssemblyVersion, this.properties.ProgramVersion.AssemblyVersion);
-            client.Context.GlobalProperties.Add(TelimenaContextPropertyKeys.ProgramFileVersion, this.properties.ProgramVersion.FileVersion);
-        }
+        
 
         /// <summary>
         /// Gets the client. Swaps the channel with whatever provided

@@ -74,7 +74,7 @@ namespace TelimenaClient.Tests
         public void Test_CheckForUpdates_OnlyProgram()
         {
 
-            var si = new TelimenaStartupInfo(Guid.NewGuid(), Helpers.TeliUri) {SuppressAllErrors = false};
+            var si = new TelimenaStartupInfo(Guid.NewGuid(), Helpers.TeliUri) { SuppressAllErrors = false};
 
             ITelimena sut = TelimenaFactory.Construct(si) ;
 
@@ -103,7 +103,7 @@ namespace TelimenaClient.Tests
         [Test]
         public void Test_CheckForUpdates_Program_AndUpdater()
         {
-            var si = new TelimenaStartupInfo(Guid.NewGuid(), Helpers.TeliUri) {SuppressAllErrors = false};
+            var si = new TelimenaStartupInfo(Guid.NewGuid(), Helpers.TeliUri) { SuppressAllErrors = false};
 
             ITelimena sut = TelimenaFactory.Construct(si) ;
 

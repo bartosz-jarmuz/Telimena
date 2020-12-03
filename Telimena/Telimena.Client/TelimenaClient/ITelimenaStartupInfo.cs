@@ -17,7 +17,10 @@ namespace TelimenaClient
 
         /// <summary>
         /// OPTIONAL <para/>
-        /// URL to the telemetry API. If not provided, default URI is used
+        /// The base url for the telemetry API. You can either:<br/>
+        ///    - hardcode it here <br/>
+        ///    - add an app.config settings key 'TelimenaUrl' with the URL as value<br/>
+        ///    - or add a file called 'TelimenaUrl' with the URL as content (in the executable location)
         /// </summary>
         Uri TelemetryApiBaseUrl { get;  }
 
@@ -62,5 +65,6 @@ namespace TelimenaClient
         /// </summary>
         /// <value>The delivery interval.</value>
         TimeSpan DeliveryInterval { get; set; }
+
     }
 }

@@ -43,8 +43,6 @@ namespace TelimenaClient.Tests
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.AssemblyVersion);
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.FileVersion);
 
-                Assert.IsNotNull(telimena.Properties.UserInfo.UserIdentifier);
-                Assert.IsNotNull(telimena.Properties.UserInfo.MachineName);
             }
 
 
@@ -71,8 +69,7 @@ namespace TelimenaClient.Tests
                     telimena.Properties.StaticProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Telimena.Client.Tests.dll"));
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.AssemblyVersion);
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.FileVersion);
-                Assert.IsNotNull(telimena.Properties.UserInfo.UserIdentifier);
-                Assert.IsNotNull(telimena.Properties.UserInfo.MachineName);
+        
             }
         }
 
@@ -98,8 +95,7 @@ namespace TelimenaClient.Tests
                 Assert.IsTrue(telimena.Properties.StaticProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Moq.dll"));
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.AssemblyVersion);
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.FileVersion);
-                Assert.IsNotNull(telimena.Properties.UserInfo.UserIdentifier);
-                Assert.IsNotNull(telimena.Properties.UserInfo.MachineName);
+ 
             }
             
         }
@@ -146,6 +142,7 @@ namespace TelimenaClient.Tests
             public string InstrumentationKey { get; }
             public bool RegisterUnhandledExceptionsTracking { get; }
             public TimeSpan DeliveryInterval { get; set; }
+
         }
 
     }

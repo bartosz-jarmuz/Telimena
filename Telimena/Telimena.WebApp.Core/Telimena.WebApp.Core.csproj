@@ -96,7 +96,9 @@
     <Compile Include="DTO\MappableToClient\UpdatePackageData.cs" />
     <Compile Include="DTO\MappableToClient\UpdateRequest.cs" />
     <Compile Include="DTO\MappableToClient\UpdateResponse.cs" />
+    <Compile Include="DTO\MappableToClient\UserIdentifierMode.cs" />
     <Compile Include="DTO\MappableToClient\UserInfo.cs" />
+    <Compile Include="DTO\MappableToClient\UserTrackingSettings.cs" />
     <Compile Include="DTO\MappableToClient\VersionData.cs" />
     <Compile Include="DTO\PortalSummaryData.cs" />
     <Compile Include="DTO\ProgramUsageSummary.cs" />

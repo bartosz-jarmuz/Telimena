@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using TelimenaClient.Model;
@@ -49,6 +50,7 @@ namespace TelimenaClient
 
                 this.propertiesInternal = new TelimenaProperties(startupInfo);
                 this.Locator = new Locator(this.Properties.StaticProgramInfo);
+                this.userTrackingController = new UserTrackingController( this.propertiesInternal,this.Locator , this.Serializer);
 
                 this.httpClient = new TelimenaHttpClient(new HttpClient
                 {
@@ -57,9 +59,10 @@ namespace TelimenaClient
                 this.Messenger = new Messenger(this.Serializer, this.httpClient);
 
                 this.telemetryModule = new TelemetryModule(this.propertiesInternal);
+
                 this.updates = new UpdatesModule(this);
 
-                ((TelemetryModule) this.telemetryModule).InitializeTelemetryClient();
+                this.telemetryModule.InitializeTelemetryClient();
                 if (startupInfo.RegisterUnhandledExceptionsTracking)
                 {
                     AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
