@@ -98,6 +98,32 @@
 
         /// <summary>
         /// Send an <see cref="EventTelemetry"/> for display in Diagnostic Search and in the Analytics Portal.
+        /// </summary>
+        /// <remarks>
+        /// <a href="https://go.microsoft.com/fwlink/?linkid=525722#trackevent">Learn more</a>
+        /// </remarks>
+        /// <param name="eventName">A name for the event.</param>
+        /// <param name="properties">Named string values you can use to search and classify events.</param>
+        /// <param name="metrics">Measurements associated with this event.</param>
+        public void TrackEvent(string eventName, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        {
+            var telemetry = new EventTelemetry(eventName);
+
+            if (properties != null && properties.Count > 0)
+            {
+                Utils.CopyDictionary(properties, telemetry.Properties);
+            }
+
+            if (metrics != null && metrics.Count > 0)
+            {
+                Utils.CopyDictionary(metrics, telemetry.Metrics);
+            }
+
+            this.TrackEvent(telemetry);
+        }
+
+        /// <summary>
+        /// Send an <see cref="EventTelemetry"/> for display in Diagnostic Search and in the Analytics Portal.
         /// Create a separate <see cref="EventTelemetry"/> instance for each call to <see cref="TrackEvent(EventTelemetry)"/>.
         /// </summary>
         /// <remarks>
@@ -126,6 +152,18 @@
             this.TrackTrace(new TraceTelemetry(message));
         }
 
+        /// <summary>
+        /// Send a trace message for display in Diagnostic Search.
+        /// </summary>
+        /// <remarks>
+        /// <a href="https://go.microsoft.com/fwlink/?linkid=525722#tracktrace">Learn more</a>
+        /// </remarks>
+        /// <param name="message">Message to display.</param>
+        /// <param name="severityLevel">Trace severity level.</param>
+        public void TrackTrace(string message, SeverityLevel severityLevel)
+        {
+            this.TrackTrace(new TraceTelemetry(message, severityLevel));
+        }
 
         /// <summary>
         /// Send a trace message for display in Diagnostic Search.
@@ -225,6 +263,36 @@
             this.Track(telemetry);
         }
 
+        /// <summary>
+        /// Send an <see cref="ExceptionTelemetry"/> for display in Diagnostic Search.
+        /// </summary>
+        /// <param name="exception">The exception to log.</param>
+        /// <param name="properties">Named string values you can use to classify and search for this exception.</param>
+        /// <param name="metrics">Additional values associated with this exception.</param>
+        /// <remarks>
+        /// <a href="https://go.microsoft.com/fwlink/?linkid=525722#trackexception">Learn more</a>
+        /// </remarks>
+        public void TrackException(Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        {
+            if (exception == null)
+            {
+                exception = new Exception(Utils.PopulateRequiredStringValue(null, "message", typeof(ExceptionTelemetry).FullName));
+            }
+
+            var telemetry = new ExceptionTelemetry(exception);
+
+            if (properties != null && properties.Count > 0)
+            {
+                Utils.CopyDictionary(properties, telemetry.Properties);
+            }
+
+            if (metrics != null && metrics.Count > 0)
+            {
+                Utils.CopyDictionary(metrics, telemetry.Metrics);
+            }
+
+            this.TrackException(telemetry);
+        }
 
         /// <summary>
         /// Send an <see cref="ExceptionTelemetry"/> for display in Diagnostic Search.

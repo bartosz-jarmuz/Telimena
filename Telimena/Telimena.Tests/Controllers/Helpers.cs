@@ -37,6 +37,7 @@ using TelemetryInitializeRequest = Telimena.WebApp.Core.DTO.MappableToClient.Tel
 using TelemetryInitializeResponse = Telimena.WebApp.Core.DTO.MappableToClient.TelemetryInitializeResponse;
 using UserInfo = Telimena.WebApp.Core.DTO.MappableToClient.UserInfo;
 using VersionData = Telimena.WebApp.Core.DTO.MappableToClient.VersionData;
+using Microsoft.ApplicationInsights.DataContracts;
 
 namespace Telimena.Tests
 {
@@ -47,7 +48,16 @@ namespace Telimena.Tests
         public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey)
         {
             TelemetryModule module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey, Helpers.TeliUri)));
-            StubTelemetryChannel channel = new StubTelemetryChannel { OnSend = t => sentTelemetry.Add(t) };
+            StubTelemetryChannel channel = new StubTelemetryChannel { OnSend = t => {
+                EventTelemetry ev = t as EventTelemetry;
+                if (ev.Name == "TelimenaSessionStarted")
+                {
+                    return;
+                }
+
+                sentTelemetry.Add(t);
+                } 
+            };
 
 #pragma warning disable 618
             module.InvokeMethod(nameof(TelemetryModule.InitializeTelemetryClient), channel);
