@@ -51,24 +51,6 @@ namespace TelimenaClient
             }
         }
 
-
-
-
-        
-
-        /// <summary>
-        /// Gets the client. Swaps the channel with whatever provided
-        /// </summary>
-        /// <param name="channel">The channel.</param>
-        /// <returns>TelemetryClient.</returns>
-        [Obsolete("For tests only.")]
-        internal TelemetryClient GetClient(ITelemetryChannel channel)
-        {
-            var client = this.GetClient();
-            client.TelemetryConfiguration.TelemetryChannel = channel;
-            return client;
-        }
-
         private void LoadInitializers(TelemetryConfiguration cfg)
         {
             if (!cfg.TelemetryInitializers.Any(x => x is SequencePropertyInitializer))

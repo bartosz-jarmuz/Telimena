@@ -3,45 +3,49 @@ using RandomFriendlyNameGenerator;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using TelimenaClient.Model;
 using TelimenaClient.Serializer;
 
 namespace TelimenaClient
 {
+
+
     internal class UserTrackingController
     {
         private const string UserRandomFileName = "user.random";
         private const string UserGuidFileName = "user.guid";
         private const string TrackingSettingsFileName = "Tracking.json";
+        private const string NotYetComputedUser = "NOT YET COMPUTED";
         private readonly TelimenaProperties properties;
         private readonly Locator locator;
         private readonly ITelimenaSerializer serializer;
+        private readonly UserInfo initialUserInfo;
+        private readonly IRemoteSettingsProvider settingsProvider;
 
-        public UserTrackingController(TelimenaProperties properties, Locator locator, ITelimenaSerializer serializer)
+
+        public UserTrackingController(TelimenaProperties properties, Locator locator, ITelimenaSerializer serializer, UserInfo initialUserInfo = null)
         {
             this.properties = properties;
             this.locator = locator;
             this.serializer = serializer;
+            this.initialUserInfo = initialUserInfo;
+            this.settingsProvider = new RemoteSettingsProvider(this.properties.TelemetryApiBaseUrl);
         }
 
         public async Task LoadUserInfo()
         {
-            if (this.properties.UserInfo != null)
+            if (this.properties.UserInfo != null && this.properties.UserInfo.UserIdentifier != NotYetComputedUser)
             {
                 return;
             }
+
+
+
             string settings;
             try
             {
-                using (HttpClient client = new HttpClient() { BaseAddress = this.properties.TelemetryApiBaseUrl })
-                {
-                    HttpResponseMessage response = await client.GetAsync(ApiRoutes.GetTelemetrySettings(this.properties.TelemetryKey));
-                    response.EnsureSuccessStatusCode();
-                    settings = await response.Content.ReadAsStringAsync();
-                  
-                }
+                settings = await this.settingsProvider.GetUserTrackingSettings(this.properties.TelemetryKey);
             }
             catch (Exception ex)
             {
@@ -50,6 +54,24 @@ namespace TelimenaClient
             }
             UserInfo userInfo = this.GetUserInfo(settings);
             this.properties.UserInfo = userInfo;
+        }
+
+        public UserInfo GetStoredUserInfo()
+        {
+            UserTrackingSettings storedSettings = this.GetStoredSettings();
+            if (storedSettings != null)
+            {
+                var storedInfo = this.GetStoredUserInfo(storedSettings);
+                if (storedInfo != null)
+                { 
+                    return storedInfo; 
+                }    
+            }
+            return new UserInfo()
+            {
+                UserIdentifier = NotYetComputedUser
+            }; 
+
         }
 
         private UserInfo GetUserIdentifier(string fileName, bool shared)
@@ -99,19 +121,23 @@ namespace TelimenaClient
         }
 
 
-        private UserTrackingSettings LoadStoredSettings()
+        private UserTrackingSettings GetStoredSettings()
         {
             try
             {
                 string path = Path.Combine(this.locator.GetWorkingDirectory().FullName, TrackingSettingsFileName);
-                var stringified = File.ReadAllText(path);
-                return this.serializer.Deserialize<UserTrackingSettings>(stringified);
+                if (File.Exists(path))
+                {
+                    var stringified = File.ReadAllText(path);
+                    return this.serializer.Deserialize<UserTrackingSettings>(stringified);
+                }
             }
             catch (Exception ex)
             {
                 TelemetryDebugWriter.WriteError("Error while restoring user tracking settings: "+ ex);
-                return null;
             }
+            return null;
+
         }
 
         private void StoreSettings(UserTrackingSettings settings)
@@ -135,14 +161,26 @@ namespace TelimenaClient
             UserTrackingSettings settings = this.Deserialize(serializedSettings);
             if (settings == null)
             {
-                settings = this.LoadStoredSettings();
+                settings = this.GetStoredSettings();
                 if (settings == null)
                 {
-                    settings = new UserTrackingSettings()
+                    if (this.initialUserInfo != null)
                     {
-                        ShareIdentifierWithOtherTelimenaApps = false,
-                        UserIdentifierMode = UserIdentifierMode.AnonymousGUID
-                    };
+                        settings = new UserTrackingSettings()
+                        {
+                            ShareIdentifierWithOtherTelimenaApps = false,
+                            UserIdentifierMode = UserIdentifierMode.Custom
+                        };
+                    }
+                    else
+                    {
+                        settings = new UserTrackingSettings()
+                        {
+                            ShareIdentifierWithOtherTelimenaApps = false,
+                            UserIdentifierMode = UserIdentifierMode.AnonymousGUID
+                        };
+                    }
+                    
                 }
             }
             else
@@ -150,7 +188,12 @@ namespace TelimenaClient
                 this.StoreSettings(settings);
             }
 
-            UserInfo storedInfo = this.ReadStoredUserInfo(settings);
+            if (settings.UserIdentifierMode == UserIdentifierMode.Custom && this.initialUserInfo != null)
+            {
+                return this.initialUserInfo;
+            }
+            
+            UserInfo storedInfo = this.GetStoredUserInfo(settings);
             if (storedInfo != null)
             {
                 return storedInfo;
@@ -199,7 +242,7 @@ namespace TelimenaClient
             }
         }
 
-        private UserInfo ReadStoredUserInfo(UserTrackingSettings settings)
+        private UserInfo GetStoredUserInfo(UserTrackingSettings settings)
         {
             switch (settings.UserIdentifierMode)
             {

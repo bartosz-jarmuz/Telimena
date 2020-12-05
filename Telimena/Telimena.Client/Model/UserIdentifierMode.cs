@@ -29,5 +29,9 @@
         /// and that your storage is secure.
         /// </summary>
         TrackPersonalData,
+        /// <summary>
+        /// The application collects user info and passes an instance of UserInfo class to TelimenaStartupInfo
+        /// </summary>
+        Custom
     }
 }

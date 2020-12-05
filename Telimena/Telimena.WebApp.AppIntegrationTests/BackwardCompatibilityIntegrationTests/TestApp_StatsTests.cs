@@ -60,6 +60,7 @@ namespace Telimena.WebApp.AppIntegrationTests.BackwardCompatibilityIntegrationTe
             timestamp = DateTimeOffset.UtcNow;
 
             app= this.LaunchTestsAppNewInstance(out _, Actions.ReportViewUsage, Apps.Keys.AutomaticTestsClient, Apps.PackageNames.AutomaticTestsClientAppV1, "", viewName: viewName);
+            
             //Assert.IsNull(response.Exception);
             //Assert.AreEqual(HttpStatusCode.Accepted, response.StatusCode);
 

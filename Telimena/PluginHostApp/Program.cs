@@ -30,14 +30,16 @@ namespace PluginHostApp
                 if (input.Key == ConsoleKey.D1)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    worker.Plugins.FirstOrDefault(x=>x.GetType().Name == "PluginOne").SendEvent("Plugin 1 event");
-                    Console.WriteLine("Sent plugin 1 event");
+                    var plugin = worker.Plugins.FirstOrDefault(x => x.GetType().Name == "PluginOne");
+                  var result = plugin.SendEvent("Plugin 1 event" );
+                    Console.WriteLine("Sent plugin 1 event " + result);
                 }
                 else if (input.Key == ConsoleKey.D2)
                {
                    Console.ForegroundColor = ConsoleColor.Blue;
-                    worker.Plugins.FirstOrDefault(x => x.GetType().Name == "PluginTwo").SendEvent("Plugin 2 event");
-                   Console.WriteLine("Sent plugin 2 event");
+                    var plugin = worker.Plugins.FirstOrDefault(x => x.GetType().Name == "PluginTwo");
+                    var result = plugin.SendEvent("Plugin 2 event");
+                   Console.WriteLine("Sent plugin 2 event" + result);
 
                 }
                 else
@@ -61,8 +63,8 @@ namespace PluginHostApp
         {
             var parentFolder = new DirectoryInfo(Directory.GetCurrentDirectory()).Parent.Parent.Parent;
             var dlls = parentFolder.GetFiles("*", SearchOption.AllDirectories).Where(x=>
-              (string.Equals(x.Name, "PluginOne.exe", StringComparison.Ordinal) && x.FullName.Contains("\\bin\\")) 
-              || (string.Equals(x.Name, "PluginTwo.dll" , StringComparison.Ordinal) && x.FullName.Contains("\\bin\\")));
+              (string.Equals(x.Name, "PluginOne.exe", StringComparison.Ordinal) && x.FullName.Contains("\\bin\\Debug")) 
+              || (string.Equals(x.Name, "PluginTwo.dll" , StringComparison.Ordinal) && x.FullName.Contains("\\bin\\Debug")));
             foreach (FileInfo fileInfo in dlls)
             {
                 Assembly ass = null;
@@ -92,6 +94,6 @@ namespace PluginHostApp
 
     public interface IPlugin
     {
-        void SendEvent(string eventName);
+        string SendEvent(string eventName);
     }
 }

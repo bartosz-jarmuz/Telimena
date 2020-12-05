@@ -24,6 +24,7 @@ namespace TelimenaClient
         ///    - or add a file called 'TelimenaUrl' with the URL as content (in the executable location)</param>
         /// 
         public TelimenaStartupInfo(Guid telemetryKey, Uri telemetryApiBaseUrl = null)
+        
         {
             this.TelemetryKey = telemetryKey;
 

@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using DotNetLittleHelpers;
 using FluentAssertions;
 using Microsoft.ApplicationInsights.Channel;
@@ -24,6 +25,77 @@ using TelimenaContextPropertyKeys = TelimenaClient.Model.TelimenaContextProperty
 
 namespace Telimena.Tests
 {
+
+    [TestFixture]
+    public class TelemetryUserPropertiesTests
+    {
+        private readonly Guid testTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
+
+
+        class FakeSettingsProvider : IRemoteSettingsProvider
+        {
+            public async Task<string> GetUserTrackingSettings(Guid telemetryKey)
+            {
+                await Task.Delay(0);
+                return @"{""UserIdentifierMode"":0,""ShareIdentifierWithOtherTelimenaApps"":false}";
+            }
+        }
+
+        [Test]
+        public async Task TestNoTelemetryLost()
+        {
+            string userName = "Homer";
+            List<ITelemetry> sentTelemetry = new List<ITelemetry>();
+            var teli = Helpers.GetCrackedTelimena(sentTelemetry, this.testTelemetryKey, userName);
+
+            teli.Track.View("TestView");
+            teli.Track.Event("TestEvent");
+
+            Assert.AreEqual(0, sentTelemetry.Count);
+            await Task.Delay(20000);
+
+            Assert.AreEqual(1, sentTelemetry.Count(x => (x as PageViewTelemetry)?.Name == "TestView"));
+            Assert.AreEqual(1, sentTelemetry.Count(x => (x as EventTelemetry)?.Name == "TestEvent"));
+            Assert.AreEqual(1, sentTelemetry.Count(x => (x as EventTelemetry)?.Name == "TelimenaSessionStarted"));
+
+            foreach (var item in sentTelemetry)
+            {
+                Assert.AreEqual(userName, item.Context.User.Id);
+            }
+
+            Assert.AreEqual(3, sentTelemetry.Count, string.Join(", ", sentTelemetry.Select(x=>x.GetType().Name)));
+
+
+         
+        }
+
+        [Test]
+        public async Task TestWithImmediateFlushNoTelemetryLost()
+        {
+            string userName = "Homer";
+            List<ITelemetry> sentTelemetry = new List<ITelemetry>();
+            var teli = Helpers.GetCrackedTelimena(sentTelemetry, this.testTelemetryKey, userName);
+
+            teli.Track.View("TestView");
+            teli.Track.Event("TestEvent");
+            teli.Track.SendAllDataNow();
+
+            Assert.AreEqual(1, sentTelemetry.Count(x => (x as PageViewTelemetry)?.Name == "TestView"));
+            Assert.AreEqual(1, sentTelemetry.Count(x => (x as EventTelemetry)?.Name == "TestEvent"));
+            Assert.AreEqual(1, sentTelemetry.Count(x => (x as EventTelemetry)?.Name == "TelimenaSessionStarted"));
+
+            foreach (var item in sentTelemetry)
+            {
+                Assert.AreEqual(userName, item.Context.User.Id);
+            }
+
+            Assert.AreEqual(3, sentTelemetry.Count, string.Join(", ", sentTelemetry.Select(x => x.GetType().Name)));
+
+
+
+        }
+    }
+
     [TestFixture]
     public class AppInsightsDeserializerTests
     {
@@ -35,14 +107,14 @@ namespace Telimena.Tests
         {
 
             List<ITelemetry> sentTelemetry = new List<ITelemetry>();
-            TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
+            var teli = Helpers.GetCrackedTelimena(sentTelemetry, this.testTelemetryKey, "ASD", true);
 
-            telemetryModule.Event("TestEvent", new Dictionary<string, string>()
+            teli.Track.Event("TestEvent", new Dictionary<string, string>()
             {
                 {"AKey", $"AValue"},
                 {"AKey2", $"AValue2"}
             });
-
+            teli.Track.SendAllDataNow();
             List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
 
 
@@ -58,10 +130,10 @@ namespace Telimena.Tests
         {
 
             List<ITelemetry> sentTelemetry = new List<ITelemetry>();
-            TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
+            var teli = Helpers.GetCrackedTelimena(sentTelemetry, this.testTelemetryKey, "ASD", true);
 
-            telemetryModule.Exception(new InvalidCastException("A Message", new InvalidOperationException("Inner")));
-
+            teli.Track.Exception(new InvalidCastException("A Message", new InvalidOperationException("Inner")));
+            teli.Track.SendAllDataNow();
             List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
             var exTelemetry = sentTelemetry.First() as ExceptionTelemetry;
             Assert.AreEqual(TelemetryItemTypes.Exception, mapped.Single().TelemetryItemType);
@@ -77,10 +149,10 @@ namespace Telimena.Tests
         {
 
             List<ITelemetry> sentTelemetry = new List<ITelemetry>();
-            TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
+            var teli = Helpers.GetCrackedTelimena(sentTelemetry, this.testTelemetryKey, "ASD", true);
 
-            telemetryModule.Log(LogLevel.Warn, "A Message");
-
+            teli.Track.Log(LogLevel.Warn, "A Message");
+            teli.Track.SendAllDataNow();
             List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
 
             Assert.AreEqual(TelemetryItemTypes.LogMessage, mapped.Single().TelemetryItemType);
@@ -95,10 +167,10 @@ namespace Telimena.Tests
         {
 
             List<ITelemetry> sentTelemetry = new List<ITelemetry>();
-            TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
+            var teli = Helpers.GetCrackedTelimena(sentTelemetry, this.testTelemetryKey, "ASD", true);
 
-            telemetryModule.View("A View", new Dictionary<string, string>() { { "AKey", $"AValue" } });
-
+            teli.Track.View("A View", new Dictionary<string, string>() { { "AKey", $"AValue" } });
+            teli.Track.SendAllDataNow();
             List<TelemetryItem> mapped = DoTheMapping(sentTelemetry);
 
             Assert.AreEqual(TelemetryItemTypes.View, mapped.Single().TelemetryItemType);
@@ -125,14 +197,15 @@ namespace Telimena.Tests
         {
 
             List<ITelemetry> sentTelemetry = new List<ITelemetry>();
-            TelemetryModule telemetryModule = Helpers.GetTelemetryModule(sentTelemetry, this.testTelemetryKey);
+            var teli = Helpers.GetCrackedTelimena(sentTelemetry, this.testTelemetryKey, "ASD", true);
 
-            telemetryModule.Event("TestEvent", new Dictionary<string, string>() { { "AKey", $"AValue" } });
-            telemetryModule.View("TestView");
-            telemetryModule.Log(LogLevel.Warn, "A log message");
-            telemetryModule.Exception(new Exception("An error that happened"));
-            telemetryModule.Exception(new Exception("An error that happened with note"), "A note for error");
+            teli.Track.Event("TestEvent", new Dictionary<string, string>() { { "AKey", $"AValue" } });
+            teli.Track.View("TestView");
+            teli.Track.Log(LogLevel.Warn, "A log message");
+            teli.Track.Exception(new Exception("An error that happened"));
+            teli.Track.Exception(new Exception("An error that happened with note"), "A note for error");
 
+            teli.Track.SendAllDataNow();
             byte[] serialized = JsonSerializer.Serialize(sentTelemetry, true);
 
 

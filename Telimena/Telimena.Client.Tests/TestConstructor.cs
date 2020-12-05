@@ -6,6 +6,7 @@
 
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -18,12 +19,43 @@ namespace TelimenaClient.Tests
 
     #endregion
 
+
     [TestFixture]
+    public class TestConstructor_UserInfo
+    {
+        private readonly Guid TestTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
+        [Test]
+        public async Task TestInitialize_UserInfo()
+        {
+            UserInfo user = new UserInfo { UserIdentifier = "John Doe" };
+
+            ITelimena telimena;
+            for (int i = 0; i < 2; i++)
+            {
+                if (i == 0)
+                {
+                    telimena = TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.Empty, Helpers.TeliUri) { UserInfo = user });
+                }
+                else
+                {
+                    telimena = Telimena.Construct(new TelimenaStartupInfo(Guid.Empty, Helpers.TeliUri) { UserInfo = user });
+                }
+                await Task.Delay(4000);
+                if (telimena.Properties.UserInfo.UserIdentifier == "NOT YET COMPUTED")
+                {
+                    await Task.Delay(4000);
+                }
+                Assert.AreEqual("John Doe", telimena.Properties.UserInfo?.UserIdentifier, $"Approach {i + 1}");
+            }
+        }
+    }
+
+            [TestFixture]
     public class TestConstructor
     {
         private readonly Guid TestTelemetryKey = Guid.Parse("dc13cced-30ea-4628-a81d-21d86f37df95");
         [Test]
-        public void TestInitialize_AssemblyParameter()
+        public async Task TestInitialize_AssemblyParameter()
         {
             ITelimena telimena;
             for (int i = 0; i < 2; i++)
@@ -42,14 +74,14 @@ namespace TelimenaClient.Tests
                 Assert.AreEqual("Telimena.Client.Tests", telimena.Properties.StaticProgramInfo.PrimaryAssembly.Name);
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.AssemblyVersion);
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.FileVersion);
-
+                await this.CheckIfUserIdIsGuid(telimena);
             }
 
 
         }
 
         [Test]
-        public void TestInitialize_NoParameters()
+        public async Task TestInitialize_NoParameters()
         {
             ITelimena telimena;
             for (int i = 0; i < 2; i++)
@@ -69,13 +101,13 @@ namespace TelimenaClient.Tests
                     telimena.Properties.StaticProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Telimena.Client.Tests.dll"));
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.AssemblyVersion);
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.FileVersion);
-        
+                await this.CheckIfUserIdIsGuid(telimena);
             }
         }
 
 
         [Test]
-        public void TestInitialize_ProgramInfo()
+        public async Task TestInitialize_ProgramInfo()
         {
             ProgramInfo pi = new ProgramInfo { Name = "An App!", PrimaryAssembly = new Model.AssemblyInfo(typeof(Mock).Assembly) };
 
@@ -95,10 +127,25 @@ namespace TelimenaClient.Tests
                 Assert.IsTrue(telimena.Properties.StaticProgramInfo.PrimaryAssemblyPath.EndsWith(@"\Moq.dll"));
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.AssemblyVersion);
                 Assert.IsNotNull(telimena.Properties.StaticProgramInfo.PrimaryAssembly.VersionData.FileVersion);
+                Assert.IsNotNull(telimena.Properties.UserInfo);
+                await this.CheckIfUserIdIsGuid(telimena);
  
             }
-            
         }
+
+        private async Task CheckIfUserIdIsGuid(ITelimena telimena)
+        {
+            await Task.Delay(3000);
+            if (telimena.Properties.UserInfo.UserIdentifier == "NOT YET COMPUTED")
+            {
+                await Task.Delay(3000);
+            }
+            Assert.DoesNotThrow(() => Guid.Parse(telimena.Properties.UserInfo.UserIdentifier), "But was " + telimena.Properties.UserInfo.UserIdentifier);
+
+        }
+
+      
+
 
         [Test]
         public void TestNullObject_AssertItDoesNotExplode()

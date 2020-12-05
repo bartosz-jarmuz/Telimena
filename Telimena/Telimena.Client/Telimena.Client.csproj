@@ -102,6 +102,7 @@
     <Compile Include="Model\UserTrackingSettings.cs" />
     <Compile Include="UpdateInstallation\InputReceivers\DefaultConsoleInputReceiver.cs" />
     <Compile Include="Updates\UpdatePromptingModes.cs" />
+    <Compile Include="Utilities\IRemoteSettingsProvider.cs" />
     <Compile Include="Utilities\LogSeverityMapper.cs" />
     <Compile Include="Telemetry\TelemetryModule.Tracking.cs" />
     <Compile Include="TelimenaClient\IFluentInterface.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="Model\Internal\UpdateCheckResult.cs" />
     <Compile Include="Model\UpdatePackageData.cs" />
     <Compile Include="Model\UserInfo.cs" />
+    <Compile Include="Utilities\RemoteSettingsProvider.cs" />
     <Compile Include="Utilities\Retry\Retrier.cs" />
     <Compile Include="Serializer\ITelimenaSerializer.cs" />
     <Compile Include="Serializer\PropertiesConverter.cs" />

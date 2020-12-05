@@ -38,6 +38,7 @@ using TelemetryInitializeResponse = Telimena.WebApp.Core.DTO.MappableToClient.Te
 using UserInfo = Telimena.WebApp.Core.DTO.MappableToClient.UserInfo;
 using VersionData = Telimena.WebApp.Core.DTO.MappableToClient.VersionData;
 using Microsoft.ApplicationInsights.DataContracts;
+using Microsoft.ApplicationInsights;
 
 namespace Telimena.Tests
 {
@@ -45,24 +46,60 @@ namespace Telimena.Tests
     {
         public static readonly Uri TeliUri = new Uri("http://localhost:7757/");
 
-        public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey)
+        public static ITelimena GetCrackedTelimena(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey, string userName, bool excludeStartingEvent = false)
+        {
+            var startupInfo = new TelimenaStartupInfo(telemetryKey, Helpers.TeliUri)
+            {
+                UserInfo = new TelimenaClient.Model.UserInfo()
+                {
+                    UserIdentifier = userName
+                }
+            };
+            var telimena = TelimenaFactory.Construct(startupInfo);
+            StubTelemetryChannel channel = new StubTelemetryChannel
+            {
+                OnSend = t =>
+                {
+                    EventTelemetry ev = t as EventTelemetry;
+                    if (excludeStartingEvent && ev?.Name == "TelimenaSessionStarted")
+                    {
+                        return;
+                    }
+                    sentTelemetry.Add(t);
+                }
+            };
+            TelemetryModule module = telimena.GetFieldValue<TelemetryModule>("telemetryModule");
+            TelemetryClient client = module.GetPropertyValue<TelemetryClient>("TelemetryClient");
+            var config = client.GetPropertyValue<TelemetryConfiguration>("TelemetryConfiguration");
+            config.SetPropertyValue("TelemetryChannel", channel);
+
+
+            return telimena;
+
+        }
+
+
+        public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey, bool excludeStartingEvent = true)
         {
             TelemetryModule module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey, Helpers.TeliUri)));
-            StubTelemetryChannel channel = new StubTelemetryChannel { OnSend = t => {
-                EventTelemetry ev = t as EventTelemetry;
-                if (ev.Name == "TelimenaSessionStarted")
+            StubTelemetryChannel channel = new StubTelemetryChannel
+            {
+                OnSend = t =>
                 {
-                    return;
-                }
+                    EventTelemetry ev = t as EventTelemetry;
+                    if (excludeStartingEvent && ev?.Name == "TelimenaSessionStarted")
+                    {
+                        return;
+                    }
 
-                sentTelemetry.Add(t);
-                } 
+                    sentTelemetry.Add(t);
+                }
             };
 
-#pragma warning disable 618
-            module.InvokeMethod(nameof(TelemetryModule.InitializeTelemetryClient), channel);
-            SetStaticFieldValue(module, "isSessionContextInitialized", true);
-#pragma warning restore 618
+            TelemetryClient client = module.GetPropertyValue<TelemetryClient>("TelemetryClient");
+            var config = client.GetPropertyValue<TelemetryConfiguration>("TelemetryConfiguration");
+            config.SetPropertyValue("TelemetryChannel", channel);
+            SetStaticFieldValue(module, "isSettingsInitialized", true);
 
             Assert.IsInstanceOf<StubTelemetryChannel>(module.TelemetryClient.GetPropertyValue<TelemetryConfiguration>("TelemetryConfiguration").TelemetryChannel);
             return module;
@@ -112,7 +149,7 @@ namespace Telimena.Tests
             TestingUtilities.SetReuqest(controller, HttpMethod.Post, new Dictionary<string, object>() { { "MS_HttpContext", mockContext.Object } });
 
         }
-       
+
         public static void AssertUpdateResponse(List<TelemetrySummary> response, TelemetryRootObject prg, ClientAppUser usr,
             int expectedSummariesCount, string funcName = null, Guid funcId = default(Guid))
         {
@@ -123,8 +160,8 @@ namespace Telimena.Tests
                 Assert.AreEqual(1, response.Count(x => x.GetComponent().Id == funcId));
             }
 
-            Assert.IsTrue(response.All(x=>x.GetComponent().Program.TelemetryKey == prg.TelemetryKey));
-            Assert.IsTrue(response.All(x=>x.ClientAppUser.Id == usr.Id));
+            Assert.IsTrue(response.All(x => x.GetComponent().Program.TelemetryKey == prg.TelemetryKey));
+            Assert.IsTrue(response.All(x => x.ClientAppUser.Id == usr.Id));
         }
 
         public static async Task<TelimenaUser> CreateTelimenaUser(TelimenaPortalContext context, string email, string displayName = null, [CallerMemberName] string caller = "")
@@ -135,15 +172,15 @@ namespace Telimena.Tests
 
 
             TelimenaUser user = new TelimenaUser(caller + "" + email, caller + "" + (displayName ?? email.ToUpper()));
-      var result =     await  unit.RegisterUserAsync(user, "P@ssword", TelimenaRoles.Developer).ConfigureAwait(false);
-      if (!result.Item1.Succeeded)
-      {
-          var msg = result.Item1.Errors?.FirstOrDefault();
-          if (msg != null && !msg.Contains("is already taken."))
-          {
-              Assert.Fail($"Failed to register user {user.UserName}. Error: {result.Item1.Errors?.FirstOrDefault()}");
+            var result = await unit.RegisterUserAsync(user, "P@ssword", TelimenaRoles.Developer).ConfigureAwait(false);
+            if (!result.Item1.Succeeded)
+            {
+                var msg = result.Item1.Errors?.FirstOrDefault();
+                if (msg != null && !msg.Contains("is already taken."))
+                {
+                    Assert.Fail($"Failed to register user {user.UserName}. Error: {result.Item1.Errors?.FirstOrDefault()}");
+                }
             }
-        }
             unit.Complete();
             return user;
         }
@@ -162,7 +199,7 @@ namespace Telimena.Tests
             usr = GetUser(unit, userName, methodIdentifier);
         }
 
-        
+
 
         public static ClientAppUser GetUser(TelemetryUnitOfWork context, string name, [CallerMemberName] string methodIdentifier = "")
         {
@@ -170,7 +207,7 @@ namespace Telimena.Tests
             return context.ClientAppUsers.FirstOrDefault(x => x.UserIdentifier == usrName);
         }
 
-        public static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(TelimenaPortalContext portalContext, TelimenaTelemetryContext telemetryContext, 
+        public static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(TelimenaPortalContext portalContext, TelimenaTelemetryContext telemetryContext,
             int prgCount, string getName, string[] userNames, string devName = "SomeDeveloper", string devEmail = "some@dev.dev", [CallerMemberName] string caller = "")
         {
             Mock<HttpRequestContext> requestContext =
@@ -186,11 +223,11 @@ namespace Telimena.Tests
                 , GetName(getName, caller), userNames.Select(x => GetName(x, caller)).ToList()).ConfigureAwait(false);
 
             foreach (string userName in userNames)
-           {
-               telemetryContext.AppUsers.Add(new ClientAppUser() {UserIdentifier = GetName(userName, caller)});
-           }
+            {
+                telemetryContext.AppUsers.Add(new ClientAppUser() { UserIdentifier = GetName(userName, caller) });
+            }
 
-           telemetryContext.SaveChanges();
+            telemetryContext.SaveChanges();
             return list;
         }
 
@@ -205,7 +242,7 @@ namespace Telimena.Tests
             }
 
             GenericIdentity identity = new GenericIdentity(teliUsr.UserName);
-            GenericPrincipal principal = new GenericPrincipal(identity, new[] {TelimenaRoles.Developer});
+            GenericPrincipal principal = new GenericPrincipal(identity, new[] { TelimenaRoles.Developer });
             ClaimsPrincipal usr = new ClaimsPrincipal(principal);
 
             Mock<HttpRequestContext> requestContext = new Mock<HttpRequestContext>();
@@ -213,7 +250,7 @@ namespace Telimena.Tests
             return requestContext;
         }
 
-        private static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(RegisterProgramController programsController, int prgCount, 
+        private static async Task<List<KeyValuePair<string, Guid>>> SeedInitialPrograms(RegisterProgramController programsController, int prgCount,
             string prgName, IEnumerable<string> userNames)
         {
             List<KeyValuePair<string, Guid>> list = new List<KeyValuePair<string, Guid>>();
@@ -222,7 +259,7 @@ namespace Telimena.Tests
             {
                 string counter = i > 0 ? i.ToString() : "";
                 KeyValuePair<string, Guid> pair = await SeedProgramAsync(programsController, prgName + counter).ConfigureAwait(false);
-                
+
                 list.Add(pair);
             }
 

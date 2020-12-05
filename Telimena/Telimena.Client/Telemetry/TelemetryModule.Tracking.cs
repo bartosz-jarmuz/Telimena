@@ -27,7 +27,7 @@ namespace TelimenaClient
                 {
                     Utils.CopyDictionary(metrics, tele.Metrics);
                 }
-                if (!isSessionContextInitialized)
+                if (!isSettingsInitialized)
                 {
                     this.telemetryToSendLater.Enqueue(tele);
                 }
@@ -61,7 +61,7 @@ namespace TelimenaClient
                 {
                     Utils.CopyDictionary(metrics, telemetry.Metrics);
                 }
-                if (!isSessionContextInitialized)
+                if (!this.isSettingsInitialized)
                 {
                     this.telemetryToSendLater.Enqueue(telemetry);
                 }
@@ -115,7 +115,7 @@ namespace TelimenaClient
                     Utils.CopyDictionary(metrics, telemetry.Metrics);
                 }
 
-                if (!isSessionContextInitialized)
+                if (!isSettingsInitialized)
                 {
                     this.telemetryToSendLater.Enqueue(telemetry);
                 }
@@ -140,7 +140,7 @@ namespace TelimenaClient
             {
                 var telemetry = new TraceTelemetry(message, LogSeverityMapper.Map(level));
 
-                if (!isSessionContextInitialized)
+                if (!isSettingsInitialized)
                 {
                     this.telemetryToSendLater.Enqueue(telemetry);
                 }
