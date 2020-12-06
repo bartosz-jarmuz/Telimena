@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Telimena.Portal.Api.Models.DTO;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 
 namespace Telimena.WebApp.Models.ProgramManagement
 {
@@ -21,8 +22,11 @@ namespace Telimena.WebApp.Models.ProgramManagement
         public ProgramPackageInfoDto ProgramPackageInfo { get; set; }
 
         public List<SelectListItem> UpdatersSelectList { get; set; }
+        public List<SelectListItem> UserTrackingModesSelectList { get; set; }
         public string ProgramDescription { get; set; }
 
         public Dictionary<string, string> UpdaterInfo { get; set; }= new Dictionary<string, string>();
+
+        public UserTrackingSettings UserTrackingSettings { get; set; }
     }
 }

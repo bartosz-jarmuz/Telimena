@@ -12,6 +12,7 @@ using AutoMapper;
 using DotNetLittleHelpers;
 using Microsoft.ApplicationInsights;
 using Microsoft.Web.Http;
+using Newtonsoft.Json;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
 using Telimena.WebApp.Core.DTO;
 using Telimena.WebApp.Core.DTO.MappableToClient;
@@ -27,9 +28,9 @@ using Telimena.WebApp.Utils.VersionComparison;
 namespace Telimena.WebApp.Controllers.Api.V1
 {
     /// <summary>
-        /// Controls program management related endpoints
-        /// </summary>
-        [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
+    /// Controls program management related endpoints
+    /// </summary>
+    [TelimenaApiAuthorize(Roles = TelimenaRoles.Developer)]
     [RoutePrefix("api/v{version:apiVersion}/programs")]
     public partial class ProgramsController : ApiController
     {
@@ -53,15 +54,12 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
         private IProgramsUnitOfWork Work { get; }
 
-     
-
-
         /// <summary>
         /// Deletes the program with the specified key
         /// </summary>
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
-        
+
         [HttpDelete, Route("{telemetryKey}", Name = Routes.Delete)]
         public async Task<IHttpActionResult> Delete(Guid telemetryKey)
         {
@@ -87,7 +85,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// </summary>
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
-        
+
         [HttpPost, Route("{telemetryKey}/packages", Name = Routes.Upload)]
         public async Task<IHttpActionResult> Upload(Guid telemetryKey)
         {
@@ -131,7 +129,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        
+
         [HttpGet, Route("{telemetryKey}/packages/latest", Name = Routes.DownloadLatestProgramPackage)]
         public async Task<IHttpActionResult> DownloadLatestProgramPackage(Guid telemetryKey)
         {
@@ -143,8 +141,6 @@ namespace Telimena.WebApp.Controllers.Api.V1
             return await ProgramsControllerHelpers.GetDownloadLatestProgramPackageResponse(this.Work, prg.Id, this.fileRetriever).ConfigureAwait(false);
         }
 
-        
-
         /// <summary>
         /// Gets the latest version info for the specified program
         /// </summary>
@@ -155,7 +151,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         {
             try
             {
-                Program program = await this.Work.Programs.GetByTelemetryKey( telemetryKey).ConfigureAwait(false);
+                Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
                 if (program == null)
                 {
                     return $"Failed to find program by Key: [{telemetryKey}]";
@@ -196,7 +192,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         }
 
         /// <summary>
-        /// Gets the AppInsights instrumentation key
+        /// Gets the User tracking settings
         /// </summary>
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
@@ -209,14 +205,53 @@ namespace Telimena.WebApp.Controllers.Api.V1
             {
                 throw new BadRequestException($"Program with Key [{telemetryKey}] does not exist");
             }
-
-
-
+            var storedSettings = program.UserTrackingSettings;
+            if (storedSettings != null)
+            {
+                try
+                {
+                    UserTrackingSettings deserialized = JsonConvert.DeserializeObject<UserTrackingSettings>(storedSettings);
+                    return deserialized;
+                }
+                catch (Exception ex)
+                {
+                    this.telemetryClient.TrackException(new InvalidOperationException($"ERROR while deserializing {nameof(UserTrackingSettings)}", ex), new Dictionary<string, string>()
+                    {
+                        {$"Method", Routes.GetTelemetrySettings},
+                        {$"{nameof(Program.TelemetryKey)}", telemetryKey.ToString()}
+                    });
+                }
+            }
             return new UserTrackingSettings()
             {
                 UserIdentifierMode = UserIdentifierMode.RandomFriendlyName,
                 ShareIdentifierWithOtherTelimenaApps = false
             };
+        }
+
+
+        /// <summary>
+        /// Gets the User tracking settings
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        [HttpPost, Route("{telemetryKey}/telemetry-settings", Name = Routes.SetTelemetrySettings)]
+        public async Task<IHttpActionResult> SetTelemetrySettings(Guid telemetryKey, UserTrackingSettings settings)
+        {
+            Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
+            if (program == null)
+            {
+                throw new BadRequestException($"Program with Key [{telemetryKey}] does not exist");
+            }
+
+            var serialized = JsonConvert.SerializeObject(settings);
+
+            program.UserTrackingSettings = serialized;
+
+            await this.Work.CompleteAsync().ConfigureAwait(false);
+            return this.Ok("Updated user tracking settings");
+
         }
 
         /// <summary>
@@ -248,7 +283,6 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <param name="instrumentationKey"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpPost, Route("{telemetryKey}/instrumentation-key", Name = Routes.SetInstrumentationKey)]
         public async Task<IHttpActionResult> SetInstrumentationKey(Guid telemetryKey, string instrumentationKey)
         {
@@ -269,7 +303,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet, Route("{telemetryKey}/updater/name", Name= Routes.GetProgramUpdaterName)]
+        [HttpGet, Route("{telemetryKey}/updater/name", Name = Routes.GetProgramUpdaterName)]
         public async Task<HttpResponseMessage> GetProgramUpdaterName(Guid telemetryKey)
         {
             Program program = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
@@ -291,7 +325,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <param name="telemetryKey"></param>
         /// <param name="updaterId"></param>
         /// <returns></returns>
-        
+
         [HttpPut, Route("{telemetryKey}/updater/set-updater/{updaterId}", Name = Routes.SetUpdater)]
         public async Task<IHttpActionResult> SetUpdater(Guid telemetryKey, Guid updaterId)
         {
@@ -301,7 +335,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 return this.BadRequest($"Program with Key {telemetryKey} does not exist");
             }
 
-            var updater = await this.Work.UpdaterRepository.GetUpdater( updaterId).ConfigureAwait(false);
+            var updater = await this.Work.UpdaterRepository.GetUpdater(updaterId).ConfigureAwait(false);
             if (updater == null)
             {
                 return this.BadRequest($"Updater with Unique Id {updaterId} does not exist");
@@ -325,13 +359,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
             {
                 var sw = Stopwatch.StartNew();
                 Program program = await this.Work.Programs.GetByTelemetryKey(requestModel.TelemetryKey).ConfigureAwait(false);
-                
+
                 if (program == null)
                 {
                     return new UpdateResponse { Exception = new BadRequestException($"Failed to find program by Id: [{requestModel.TelemetryKey}]") };
                 }
 
-               
+
 
                 Trace.TraceInformation($"Program {program.GetNameAndIdString()} checking for updates with request: {requestModel.GetPropertyInfoString()}");
                 List<ProgramUpdatePackageInfo> allUpdatePackages =
@@ -394,7 +428,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
         /// <returns></returns>
         [AllowAnonymous]
         [ApiVersionNeutral]
-        
+
         [HttpGet, Route("~/{developerName}/{programName}/download", Name = ProgramsController.Routes.DownloadApp)]
         public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
         {

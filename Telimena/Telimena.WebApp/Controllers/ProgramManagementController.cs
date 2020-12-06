@@ -7,9 +7,11 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using System.Web.Mvc;
 using AutoMapper;
+using Newtonsoft.Json;
 using Telimena.Portal.Api.Models.DTO;
 using Telimena.WebApp.Controllers.Api.V1;
 using Telimena.WebApp.Controllers.Api.V1.Helpers;
+using Telimena.WebApp.Core.DTO.MappableToClient;
 using Telimena.WebApp.Core.Interfaces;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
@@ -71,6 +73,7 @@ namespace Telimena.WebApp.Controllers
                 PrimaryAssemblyName = program.PrimaryAssembly.Name + program.PrimaryAssembly.Extension,
                 ProgramDescription = program.Description,
             };
+            model.UserTrackingSettings = this.GetUserTrackingSettings(program);
 
             model.ProgramDownloadUrl = this.Request.Url.GetLeftPart(UriPartial.Authority) +
                                        this.Url.NeutralApiUrl(ProgramsController.Routes.DownloadApp, new {developerName = program.DeveloperTeam.Name, programName = model.ProgramName});
@@ -100,12 +103,44 @@ namespace Telimena.WebApp.Controllers
                     model.UpdaterInfo.Add(publicUpdater.InternalName, publicUpdater.Description);
                 }
             }
+            model.UserTrackingModesSelectList = new List<SelectListItem>();
+            foreach (object mode in Enum.GetValues(typeof(UserIdentifierMode)))
+            {
+                SelectListItem item = new SelectListItem()
+                {
+                    Text = Enum.GetName(typeof(UserIdentifierMode), mode),
+                    Value = ((int)Enum.Parse(typeof(UserIdentifierMode), mode.ToString())).ToString()
+                };
+
+                if (item.Text == model.UserTrackingSettings.UserIdentifierMode.ToString())
+                {
+                    item.Selected = true;
+                }
+                model.UserTrackingModesSelectList.Add(item);
+            }
 
             return this.View("ManageProgram", model);
         }
 
+        private UserTrackingSettings GetUserTrackingSettings(Program program)
+        {
+            try
+            {
+                UserTrackingSettings deserialized = JsonConvert.DeserializeObject<UserTrackingSettings>(program.UserTrackingSettings);
+                return deserialized;
+            }
+            catch (Exception)
+            {
+                return new UserTrackingSettings()
+                {
+                    UserIdentifierMode = UserIdentifierMode.RandomFriendlyName,
+                    ShareIdentifierWithOtherTelimenaApps = false
+                };
+            }
+        }
+            
 
-        
+
         [System.Web.Mvc.HttpGet, System.Web.Mvc.Route("~/{developerName}/{programName}/get", Name ="Get")]
         public async Task<IHttpActionResult> DownloadApp(string developerName, string programName)
         {

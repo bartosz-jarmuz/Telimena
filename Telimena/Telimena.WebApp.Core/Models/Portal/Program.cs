@@ -39,6 +39,8 @@ namespace Telimena.WebApp.Core.Models.Portal
         public string Name { get; set; }
 
         public string Description { get; set; }
+        
+        public string UserTrackingSettings { get; set; }
 
         public virtual DeveloperTeam DeveloperTeam { get; set; }
 

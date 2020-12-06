@@ -44,6 +44,10 @@ namespace Telimena.WebApp.UiStrings
             public static string ClearAllTelemetryDataButton { get; } = "ClearAllTelemetryDataButton";
             public static string DeleteProgramTab { get; } = "DeleteProgramTab";
             public static string ClearTelemetryDataTab { get; } = "ClearTelemetryDataTab";
+            public static string UserTrackingSettings { get; } = "UserTrackingSettings";
+            public static string ShareUserIdentifierCheckbox { get; } = "ShareUserIdentifierCheckbox";
+            public static string UserTrackingModesSelectList { get; } = "UserTrackingModesSelectList";
+            public static string SubmitUserTrackingSettingsChange { get; } = "SubmitUserTrackingSettingsChange";
             public static string EventTelemetryPivotTable { get; } = "EventTelemetryPivotTable";
             public static string ViewTelemetryPivotTable { get; } = "ViewTelemetryPivotTable";
             public static string UpdaterPackagesTable { get; } = "UpdaterPackagesTable";

@@ -184,6 +184,10 @@
     <Compile Include="Migrations\201912302218012_ReaddedInstrumentationKey.Designer.cs">
       <DependentUpon>201912302218012_ReaddedInstrumentationKey.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202012052207019_AddedUserTrackingSettings.cs" />
+    <Compile Include="Migrations\202012052207019_AddedUserTrackingSettings.Designer.cs">
+      <DependentUpon>202012052207019_AddedUserTrackingSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Telemetry\201903032034593_InitialCreate.cs" />
     <Compile Include="Migrations\Telemetry\201903032034593_InitialCreate.Designer.cs">
       <DependentUpon>201903032034593_InitialCreate.cs</DependentUpon>
@@ -273,6 +277,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201912302218012_ReaddedInstrumentationKey.resx">
       <DependentUpon>201912302218012_ReaddedInstrumentationKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202012052207019_AddedUserTrackingSettings.resx">
+      <DependentUpon>202012052207019_AddedUserTrackingSettings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\Telemetry\201903032034593_InitialCreate.resx">
       <DependentUpon>201903032034593_InitialCreate.cs</DependentUpon>
