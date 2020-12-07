@@ -458,10 +458,15 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 this.Work.Programs.
                     ClearTelemetryAllData(prg);
                 await this.Work.CompleteAsync().ConfigureAwait(false);
+                this.telemetryClient.TrackEvent("ClearedTelemetryData", new Dictionary<string, string>()
+                    {
+                        {$"ProgramName", prg.Name },
+                    });
             }
             catch (Exception ex)
             {
                 var wrapper = new InvalidOperationException($"Error while clearing telemetry data for {prg.Name} (Key: {telemetryKey})", ex);
+                this.telemetryClient.TrackEvent($"Error while clearing telemetry data for {prg.Name} (Key: {telemetryKey}) + {ex}");
                 this.telemetryClient.TrackException(wrapper);
                 return this.InternalServerError(wrapper);
             }
