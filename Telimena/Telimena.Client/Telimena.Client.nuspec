@@ -6,9 +6,13 @@
     <title>$packageName$</title>
     <authors>Bartosz Jarmuż</authors>
     <owners>Bartosz Jarmuż</owners>
+    <icon>icon.png</icon>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$packageDescription$</description>
     <copyright>Copyright © Bartosz Jarmuż 2020</copyright>
     <tags>telemetry lifecycle application automatic updates</tags>
   </metadata>
+<files>
+    <file src="icon.png" target="" />
+  </files>
 </package>
