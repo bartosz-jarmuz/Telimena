@@ -74,9 +74,7 @@
       <HintPath>..\packages\Costura.Fody.3.3.3\lib\net40\Costura.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
-    <Reference Include="RandomFriendlyNameGenerator, Version=1.0.7.0, Culture=neutral, PublicKeyToken=ac855b1407a9276a, processorArchitecture=MSIL">
-      <HintPath>..\packages\RandomFriendlyNameGenerator.1.0.7\lib\net45\RandomFriendlyNameGenerator.dll</HintPath>
-    </Reference>
+    <PackageReference Include="RandomFriendlyNameGenerator" Version="1.0.7.0" PrivateAssets="All" />
     <Reference Include="System">
       <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll</HintPath>
     </Reference>
@@ -168,9 +166,8 @@
     <None Include="..\TelimenaKey.snk">
       <Link>Properties\TelimenaKey.snk</Link>
     </None>
-    <None Include="packages.config" />
     <None Include="Properties\addToZip.ps1" />
-    <None Include="Properties\Telimena.Client.nuspec" />
+    <None Include="Telimena.Client.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FodyWeavers.xml" />
