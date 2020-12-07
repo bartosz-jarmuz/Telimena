@@ -37,10 +37,6 @@ namespace TelimenaTestSandboxApp
                         UserInfo = new UserInfo(){UserIdentifier = this.userNameTextBox.Text},
 
                     });
-                this.Telimena.Track.View("BOOO");
-                this.Telimena.Track.Event("FFFO");
-                this.Telimena.Track.Log(LogLevel.Critical, "LogMs");
-                this.Telimena.Track.Exception(new Exception("BBB"), "NOTE");
             }
 
             this.TelimenaSecondInstance =
