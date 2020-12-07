@@ -461,7 +461,9 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             catch (Exception ex)
             {
-                return this.InternalServerError(new InvalidOperationException($"Error while clearing telemetry data for {prg.Name} (Key: {telemetryKey})", ex));
+                var wrapper = new InvalidOperationException($"Error while clearing telemetry data for {prg.Name} (Key: {telemetryKey})", ex);
+                this.telemetryClient.TrackException(wrapper);
+                return this.InternalServerError(wrapper);
             }
             return this.Ok($"All telemetry data cleared.");
         }
