@@ -59,23 +59,23 @@ namespace TelimenaClient
             {
                 Transmission transmission = new Transmission(this.endpointAddress, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
                 HttpWebResponseWrapper response = await transmission.SendAsync().ConfigureAwait(false);
-                this.LogResult(response);
+                this.LogResult(response, this.endpointAddress.ToString());
 
             }
             if (this.DeliverySettings != null && this.DeliverySettings.TelimenaTelemetryKey != Guid.Empty)
             {
                 Transmission teliTransmission = new Transmission(this.DeliverySettings.TelimenaTelemetryEndpoint, data, JsonSerializer.ContentType, JsonSerializer.CompressionType, timeout);
                 HttpWebResponseWrapper response = await teliTransmission.SendAsync().ConfigureAwait(false);
-                this.LogResult(response);
+                this.LogResult(response, this.DeliverySettings.TelimenaTelemetryEndpoint.ToString());
             }
 
         }
 
-        private void LogResult(HttpWebResponseWrapper response)
+        private void LogResult(HttpWebResponseWrapper response, string endpoint)
         {
             if (response.StatusCode < 200 || response.StatusCode >= 300)
             {
-                TelemetryDebugWriter.WriteLine($"Status code: {response.StatusCode}. Description: [{response.StatusDescription}]. {response.Content}" );
+                TelemetryDebugWriter.WriteLine($"Error while transmitting telemetry to {endpoint}. Status code: {response.StatusCode}. Description: [{response.StatusDescription}]. {response.Content}" );
             }
         }
     }
