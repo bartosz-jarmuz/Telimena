@@ -16,6 +16,10 @@ namespace TelimenaClient
         /// <inheritdoc />
         public void View(string viewName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
         {
+            if (this.telemetryDisabled)
+            {
+                return;
+            }
             try
             {
                 PageViewTelemetry tele = new PageViewTelemetry(viewName);
@@ -48,6 +52,10 @@ namespace TelimenaClient
         /// <inheritdoc />
         public void Event(string eventName, Dictionary<string, string> properties = null, Dictionary<string, double> metrics = null)
         {
+            if (this.telemetryDisabled)
+            {
+                return;
+            }
             try
             {
                 EventTelemetry telemetry = new EventTelemetry(eventName);
@@ -83,6 +91,10 @@ namespace TelimenaClient
         /// <inheritdoc />
         public void Exception(Exception exception, string note = null, Dictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
+            if (this.telemetryDisabled)
+            {
+                return;
+            }
             try
             {
                 if (!string.IsNullOrEmpty(note))
@@ -136,6 +148,10 @@ namespace TelimenaClient
         /// <inheritdoc />
         public void Log(LogLevel level,  string message)
         {
+            if (this.telemetryDisabled)
+            {
+                return;
+            }
             try
             {
                 var telemetry = new TraceTelemetry(message, LogSeverityMapper.Map(level));

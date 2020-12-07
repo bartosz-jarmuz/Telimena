@@ -205,6 +205,10 @@ namespace TelimenaClient
 
         private void InitializeContext()
         {
+            if (this.userTrackingController.Settings.UserIdentifierMode == UserIdentifierMode.NoTelemetry)
+            {
+                this.telemetryDisabled = true;
+            }
             if (string.IsNullOrEmpty(this.TelemetryClient.Context.User.AccountId))
             {
                 this.TelemetryClient.Context.User.AuthenticatedUserId = this.telimenaProperties.UserInfo.UserIdentifier;
@@ -228,5 +232,6 @@ namespace TelimenaClient
         private UserInfo loadedUserInfo;
         private bool isSettingsInitialized;
         private Task userInfoLoadingTask;
+        private bool telemetryDisabled;
     }
 }

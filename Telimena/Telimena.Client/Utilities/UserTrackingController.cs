@@ -23,6 +23,7 @@ namespace TelimenaClient
         private readonly UserInfo initialUserInfo;
         private readonly IRemoteSettingsProvider settingsProvider;
 
+        public UserTrackingSettings Settings { get; private set; }
 
         public UserTrackingController(TelimenaProperties properties, Locator locator, ITelimenaSerializer serializer, UserInfo initialUserInfo = null)
         {
@@ -40,11 +41,11 @@ namespace TelimenaClient
                 return;
             }
 
-            string settings;
-           
-                settings = await this.settingsProvider.GetUserTrackingSettings(this.properties.TelemetryKey);
-           
-            UserInfo userInfo = this.GetUserInfo(settings);
+            string settingsString = await this.settingsProvider.GetUserTrackingSettings(this.properties.TelemetryKey);
+
+            this.Settings = this.DeserializeAndStoreSettings(settingsString);
+
+            UserInfo userInfo = this.GetUserInfo();
             this.properties.UserInfo = userInfo;
         }
 
@@ -148,7 +149,50 @@ namespace TelimenaClient
         }
 
 
-        private UserInfo GetUserInfo(string serializedSettings)
+        private UserInfo GetUserInfo()
+        {
+            if (this.Settings.UserIdentifierMode == UserIdentifierMode.Custom && this.initialUserInfo != null)
+            {
+                return this.initialUserInfo;
+            }
+
+            UserInfo storedInfo = this.GetStoredUserInfo(this.Settings);
+            if (storedInfo != null)
+            {
+                return storedInfo;
+            }
+            else
+            {
+                switch (this.Settings.UserIdentifierMode)
+                {
+                    case UserIdentifierMode.RandomFriendlyName:
+                        UserInfo randomized = new UserInfo()
+                        {
+                            UserIdentifier = NameGenerator.Identifiers.Get(IdentifierComponents.Adjective | IdentifierComponents.Animal),
+                            MachineName = NameGenerator.Identifiers.Get(IdentifierComponents.Adjective | IdentifierComponents.Noun, separator: "_")
+                        };
+                        this.SetUserIdentifier(randomized, UserRandomFileName, this.Settings.ShareIdentifierWithOtherTelimenaApps);
+                        return randomized;
+                    case UserIdentifierMode.AnonymousGUID:
+                        UserInfo guidized = new UserInfo()
+                        {
+                            UserIdentifier = Guid.NewGuid().ToString(),
+                            MachineName = Guid.NewGuid().ToString()
+                        };
+                        this.SetUserIdentifier(guidized, UserGuidFileName, this.Settings.ShareIdentifierWithOtherTelimenaApps);
+                        return guidized;
+                    case UserIdentifierMode.NoTelemetry:
+                        return new UserInfo();
+                    case UserIdentifierMode.TrackPersonalData:
+                        return new UserInfo { UserIdentifier = Environment.UserName, MachineName = Environment.MachineName };
+                    default:
+                        return new UserInfo();
+                }
+            }
+
+        }
+
+        private UserTrackingSettings DeserializeAndStoreSettings(string serializedSettings)
         {
             UserTrackingSettings settings = this.Deserialize(serializedSettings);
             if (settings == null)
@@ -172,7 +216,7 @@ namespace TelimenaClient
                             UserIdentifierMode = UserIdentifierMode.AnonymousGUID
                         };
                     }
-                    
+
                 }
             }
             else
@@ -180,45 +224,7 @@ namespace TelimenaClient
                 this.StoreSettings(settings);
             }
 
-            if (settings.UserIdentifierMode == UserIdentifierMode.Custom && this.initialUserInfo != null)
-            {
-                return this.initialUserInfo;
-            }
-            
-            UserInfo storedInfo = this.GetStoredUserInfo(settings);
-            if (storedInfo != null)
-            {
-                return storedInfo;
-            }
-            else
-            {
-                switch (settings.UserIdentifierMode)
-                {
-                    case UserIdentifierMode.RandomFriendlyName:
-                        UserInfo randomized = new UserInfo()
-                        {
-                            UserIdentifier = NameGenerator.Identifiers.Get(IdentifierComponents.Adjective | IdentifierComponents.Animal),
-                            MachineName = NameGenerator.Identifiers.Get(IdentifierComponents.Adjective | IdentifierComponents.Noun, separator: "_")
-                        };
-                        this.SetUserIdentifier(randomized, UserRandomFileName, settings.ShareIdentifierWithOtherTelimenaApps);
-                        return randomized;
-                    case UserIdentifierMode.AnonymousGUID:
-                        UserInfo guidized = new UserInfo()
-                        {
-                            UserIdentifier = Guid.NewGuid().ToString(),
-                            MachineName = Guid.NewGuid().ToString()
-                        };
-                        this.SetUserIdentifier(guidized, UserGuidFileName, settings.ShareIdentifierWithOtherTelimenaApps);
-                        return guidized;
-                    case UserIdentifierMode.NoTelemetry:
-                        return new UserInfo();
-                    case UserIdentifierMode.TrackPersonalData:
-                        return new UserInfo { UserIdentifier = Environment.UserName, MachineName = Environment.MachineName };
-                    default:
-                        return new UserInfo();
-                }
-            }
-
+            return settings;
         }
 
         private UserTrackingSettings Deserialize(string serializedSettings)
