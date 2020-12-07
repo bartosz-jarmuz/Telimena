@@ -6,13 +6,15 @@
     <title>$packageName$</title>
     <authors>Bartosz Jarmuż</authors>
     <owners>Bartosz Jarmuż</owners>
-    <icon>icon.png</icon>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <icon>TelimenaIcon.png</icon>
+    <projectUrl>https://github.com/bartosz-jarmuz/Telimena</projectUrl>
+    <license type="expression">AGPL-3.0-only</license>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>$packageDescription$</description>
     <copyright>Copyright © Bartosz Jarmuż 2020</copyright>
     <tags>telemetry lifecycle application automatic updates</tags>
   </metadata>
 <files>
-    <file src="icon.png" target="" />
+    <file src="TelimenaIcon.png" target="" />
   </files>
 </package>
