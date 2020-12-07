@@ -43,7 +43,7 @@ namespace TelimenaClient
         /// </summary>
         /// <param name="startupInfo">Data object which contains startup parameters for Telimena client</param>
         [MethodImpl(MethodImplOptions.NoInlining)]
-        internal Telimena(ITelimenaStartupInfo startupInfo, ITelemetryChannel channel = null)
+        internal Telimena(ITelimenaStartupInfo startupInfo)
         {
             try
             {

@@ -292,6 +292,9 @@
     <Content Include="Database\Sql\Functions\f_SplitInts.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Database\Sql\StoredProcedures\p_ClearTelemetryData.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Database\Sql\StoredProcedures\p_GetViewTelemetryUnits.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
