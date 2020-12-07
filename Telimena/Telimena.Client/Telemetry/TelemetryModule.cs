@@ -82,19 +82,20 @@ namespace TelimenaClient
         {
             //if the AI key is specified in the Telimena Portal, it should override the local one
             //however, checking if it is specified in Telimena will take time, and we are inside a constructor here - we don't want to block
+            string key = null;
             try
             {
                 using (HttpClient client = new HttpClient() { BaseAddress = this.telimenaProperties.TelemetryApiBaseUrl })
                 {
                     HttpResponseMessage response = await client.GetAsync(ApiRoutes.GetInstrumentationKey(this.telimenaProperties.TelemetryKey));
+                    key = await response.Content.ReadAsStringAsync();
                     response.EnsureSuccessStatusCode();
-                    string key = await response.Content.ReadAsStringAsync();
                     return key?.Trim('"');
                 }
             }
             catch (Exception ex)
             {
-                TelemetryDebugWriter.WriteError($"Error while loading instrumentation key. Error: {ex}");
+                TelemetryDebugWriter.WriteError($"Error while loading instrumentation key. Error: {ex}. Response: {key}");
                 return null;
             }
         }

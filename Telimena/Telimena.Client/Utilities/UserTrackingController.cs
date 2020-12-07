@@ -40,18 +40,10 @@ namespace TelimenaClient
                 return;
             }
 
-
-
             string settings;
-            try
-            {
+           
                 settings = await this.settingsProvider.GetUserTrackingSettings(this.properties.TelemetryKey);
-            }
-            catch (Exception ex)
-            {
-                TelemetryDebugWriter.WriteError($"Error while loading UserTrackingSettings. Error: {ex}");
-                settings = null;
-            }
+           
             UserInfo userInfo = this.GetUserInfo(settings);
             this.properties.UserInfo = userInfo;
         }
@@ -231,8 +223,12 @@ namespace TelimenaClient
 
         private UserTrackingSettings Deserialize(string serializedSettings)
         {
+            if (string.IsNullOrEmpty(serializedSettings)) {
+                return null; 
+            }
             try
             {
+                
                 return this.serializer.Deserialize<UserTrackingSettings>(serializedSettings);
             }
             catch (Exception ex)

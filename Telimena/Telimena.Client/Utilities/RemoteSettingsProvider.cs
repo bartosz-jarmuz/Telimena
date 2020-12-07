@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.ApplicationInsights.Extensibility.Implementation;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -15,11 +16,21 @@ namespace TelimenaClient
 
         public async Task<string> GetUserTrackingSettings(Guid telemetryKey)
         {
-            using (HttpClient client = new HttpClient() { BaseAddress = this.baseUrl })
+            string stringified = null;
+            try
             {
-                HttpResponseMessage response = await client.GetAsync(ApiRoutes.GetTelemetrySettings(telemetryKey));
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
+                using (HttpClient client = new HttpClient() { BaseAddress = this.baseUrl })
+                {
+                    HttpResponseMessage response = await client.GetAsync(ApiRoutes.GetTelemetrySettings(telemetryKey));
+                    stringified = await response.Content.ReadAsStringAsync();
+                    response.EnsureSuccessStatusCode();
+                    return stringified;
+                }
+            }
+            catch (Exception ex)
+            {
+                TelemetryDebugWriter.WriteError($"Error while loading instrumentation key. Error: {ex}. Response: {stringified}");
+                return null;
             }
         }
     }
