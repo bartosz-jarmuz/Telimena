@@ -47,7 +47,8 @@ namespace Telimena.WebApp.Infrastructure
                 .ForMember(x => x.Id, o => o.Ignore())
                 .ForMember(x => x.PublicId, o => o.Ignore())
                 .ForMember(x => x.Updater, o => o.Ignore())
-                .ForMember(x => x.Description, o => o.Ignore());
+                .ForMember(x => x.Description, o => o.Ignore())
+                .ForMember(x => x.UserTrackingSettings, o => o.Ignore());
         }
     }
 }
