@@ -204,7 +204,18 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 foreach (IGrouping<Guid, TelemetryItem> grouping in groups)
                 {
                     TelemetryRootObject program = await this.work.GetMonitoredProgram(grouping.Key).ConfigureAwait(false);
-                    await this.InsertDataInternal(grouping.ToList(), program, ip).ConfigureAwait(false);
+                    if (program != null)
+                    {
+                        await this.InsertDataInternal(grouping.ToList(), program, ip).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        this.telemetryClient.TrackException(new InvalidOperationException($"Program with telemetry key [{grouping.Key}] does not exist"), new Dictionary<string, string>()
+                        {
+                            {$"Method", Routes.PostWithVariousKeys},
+                            {$"TelemetryKey", grouping.Key.ToString()},
+                        });
+                    }
                 }
 
                 return await Task.FromResult(this.StatusCode(HttpStatusCode.Accepted)).ConfigureAwait(false);
