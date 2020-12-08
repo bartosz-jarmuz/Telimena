@@ -63,7 +63,7 @@ namespace TelimenaTestSandboxApp
         public async Task Hit()
         {
             this.progressReport("HAMMER STARTING...\r\n\r\n");
-            await this.Initialize().ConfigureAwait(false);
+            this.Initialize();
             this.progressReport("HAMMER Apps Initialized. Start hitting...\r\n\r\n");
 
             this.timeoutStopwatch = new Stopwatch();
@@ -89,7 +89,7 @@ namespace TelimenaTestSandboxApp
             return objectType + "_" + str + "_" + number;
         }
 
-        private async Task Initialize()
+        private void Initialize()
         {
             Random rnd = new Random();
             this.users = new List<UserInfo>();
@@ -97,7 +97,9 @@ namespace TelimenaTestSandboxApp
             {
                 UserInfo user = new UserInfo
                 {
-                    Email = this.GetRandomName("Email@", i), UserIdentifier = this.GetRandomName("User", i), MachineName = this.GetRandomName("Machine", i)
+                    Email = this.GetRandomName("Email@", i),
+                    UserIdentifier = this.GetRandomName("User", i),
+                    MachineName = this.GetRandomName("Machine", i)
                 };
                 this.users.Add(user);
             }
@@ -108,17 +110,18 @@ namespace TelimenaTestSandboxApp
                 ProgramInfo programInfo = new ProgramInfo
                 {
                     Name = "Program_" + i
-                    , PrimaryAssembly = new AssemblyInfo
+                    ,
+                    PrimaryAssembly = new AssemblyInfo
                     {
                         Name = "PrimaryAssembly_Program_" + i
-                        , VersionData = new VersionData($"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}"
+                        ,
+                        VersionData = new VersionData($"{1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}"
                             , $"{1 + 1}.{DateTime.UtcNow.Month}.{DateTime.UtcNow.Day}.{rnd.Next(10)}")
                     }
                 };
                 this.apps.Add(programInfo);
-                ITelimena teli = TelimenaFactory.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = programInfo});
+                _ = TelimenaFactory.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) { ProgramInfo = programInfo });
 
-                await (teli as Telimena).Initialize().ConfigureAwait(false);
             }
 
             this.funcs = new List<string>();
@@ -146,11 +149,15 @@ namespace TelimenaTestSandboxApp
             while (this.timeoutStopwatch.IsRunning && this.timeoutStopwatch.ElapsedMilliseconds < this.duration.TotalMilliseconds)
             {
                 ProgramInfo prg = this.apps[random.Next(0, this.apps.Count)];
-                ITelimena teli = (Telimena) TelimenaFactory.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url)) {ProgramInfo = prg});
-                int operation = random.Next(4);
+                ITelimena teli = (Telimena)TelimenaFactory.Construct(new TelimenaStartupInfo(this.telemetryKey, new Uri(this.url))
+                {
+                    ProgramInfo = prg,
+                    UserInfo = userInfo
+                });
+                int operation = random.Next(6);
                 if (operation == 1)
                 {
-                     teli.Track.Event("SomeEvent");
+                    teli.Track.Event("SomeEvent");
                     this.progressReport("Done");
 
                 }
@@ -159,16 +166,24 @@ namespace TelimenaTestSandboxApp
                     var result = await (teli as Telimena).Initialize().ConfigureAwait(false);
                     this.progressReport(this.PresentResponse(result));
                 }
+                else if (operation == 3)
+                {
+                    teli.Track.Log(LogLevel.Critical, "Log messagess");
+                }
+                else if (operation == 4)
+                {
+                   teli.Track.Exception(new InvalidCastException("BOO"));
+                }
                 else
                 {
                     if (random.Next(2) == 1)
                     {
-                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)]) ;
+                        teli.Track.View(this.funcs[random.Next(0, this.funcs.Count)]);
                         this.progressReport("Done");
                     }
                     else
                     {
-                          teli.Track. View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
+                        teli.Track.View(this.funcs[random.Next(0, this.funcs.Count)], this.GetRandomData());
                         this.progressReport("Done");
                     }
                 }

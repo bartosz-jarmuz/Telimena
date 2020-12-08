@@ -23,6 +23,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
             public const string SetTelemetrySettings = nameof(ProgramsController) + "." + nameof(ProgramsController.SetTelemetrySettings);
             public const string SetInstrumentationKey = nameof(ProgramsController) + "." + nameof(ProgramsController.SetInstrumentationKey);
             public const string ClearAllTelemetryData = nameof(ProgramsController) + "." + nameof(ProgramsController.ClearAllTelemetryData);
+            public const string ClearTelemetryData = nameof(ProgramsController) + "." + nameof(ProgramsController.ClearTelemetryData);
             public const string Delete = nameof(ProgramsController) + "." + nameof(ProgramsController.Delete);
             public const string Upload = nameof(ProgramsController) + "." + nameof(ProgramsController.Upload);
             public const string DownloadLatestProgramPackage = nameof(ProgramsController) + "." + nameof(ProgramsController.DownloadLatestProgramPackage);

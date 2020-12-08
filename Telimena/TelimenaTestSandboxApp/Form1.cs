@@ -39,8 +39,8 @@ namespace TelimenaTestSandboxApp
                     });
             }
 
-            this.TelimenaSecondInstance =
-                TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.Parse("5f53712e-6d07-46f0-ba2f-6caa4c1346d4"), new Uri(this.apiUrlTextBox.Text)) { UserInfo = new UserInfo() { UserIdentifier = this.userNameTextBox.Text + "2ndInstance" } }) as Telimena;
+            //this.TelimenaSecondInstance =
+            //    TelimenaFactory.Construct(new TelimenaStartupInfo(Guid.Parse("5f53712e-6d07-46f0-ba2f-6caa4c1346d4"), new Uri(this.apiUrlTextBox.Text)) { UserInfo = new UserInfo() { UserIdentifier = this.userNameTextBox.Text + "2ndInstance" } }) as Telimena;
         
             
 
@@ -116,7 +116,14 @@ namespace TelimenaTestSandboxApp
 
         private void UpdateText(string text)
         {
-            this.resultTextBox.Text = text + "\r\n" + this.resultTextBox.Text;
+            try
+            {
+                this.resultTextBox.Text = text + "\r\n" + this.resultTextBox.Text;
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         private async void checkForUpdateButton_Click(object sender, EventArgs e)

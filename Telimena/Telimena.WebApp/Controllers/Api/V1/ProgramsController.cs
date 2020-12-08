@@ -448,6 +448,18 @@ namespace Telimena.WebApp.Controllers.Api.V1
         [HttpPost, Route("{telemetryKey}/clear-all-telemetry", Name = Routes.ClearAllTelemetryData)]
         public async Task<IHttpActionResult> ClearAllTelemetryData(Guid telemetryKey)
         {
+            return await ClearTelemetryData(telemetryKey, null);
+        }
+
+        /// <summary>
+        /// Clears all events telemetry data
+        /// </summary>
+        /// <param name="telemetryKey"></param>
+        /// <param name="dataType"></param>
+        /// <returns></returns>
+        [HttpGet, Route("{telemetryKey}/clear-telemetry", Name = Routes.ClearTelemetryData)]
+        public async Task<IHttpActionResult> ClearTelemetryData(Guid telemetryKey, TelemetryItemTypes? dataType)
+        {
             var prg = await this.Work.Programs.GetByTelemetryKey(telemetryKey).ConfigureAwait(false);
             if (prg == null)
             {
@@ -458,31 +470,37 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 this.telemetryClient.TrackEvent("AttemptedToClearTelemetryData", new Dictionary<string, string>()
                     {
                         {$"ProgramName", prg.Name },
+                        {$"DataType", dataType?.ToString()??"ALL" },
                     });
+                this.Work.Programs.ClearTelemetryData(prg, dataType);
 
-                this.Work.Programs.ClearTelemetryAllData(prg);
-                await this.Work.CompleteAsync(TimeSpan.FromMinutes(10)).ConfigureAwait(false);
+                await this.Work.CompleteAsync(TimeSpan.FromMinutes(5)).ConfigureAwait(false);
                 this.telemetryClient.TrackEvent("ClearedTelemetryData", new Dictionary<string, string>()
                     {
                         {$"ProgramName", prg.Name },
+                          {$"DataType", dataType?.ToString()??"ALL" },
                     });
             }
             catch (Exception ex)
             {
-                this.telemetryClient.TrackEvent($"ClearedTelemetryDataError", new Dictionary<string, string>()
+                var props = new Dictionary<string, string>()
                     {
                         {$"ProgramName", prg.Name },
                         {$"Exception", ex.ToString()},
+                          {$"DataType", dataType?.ToString()??"ALL" },
 
-                    });
-
+                    };
                 var wrapper = new InvalidOperationException($"Error while clearing telemetry data for {prg.Name} (Key: {telemetryKey})", ex);
 
-
-                this.telemetryClient.TrackException(wrapper);
+                this.telemetryClient.TrackEvent($"TelemetryDataClearingError", props);
+                this.telemetryClient.TrackException(wrapper, props);
+                this.telemetryClient.Flush();
                 return this.InternalServerError(wrapper);
             }
-            return this.Ok($"All telemetry data cleared.");
+            return this.Ok($"{dataType?.ToString() ?? "ALL" } Telemetry data cleared.");
         }
+
+
+
     }
 }
