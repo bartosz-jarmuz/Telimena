@@ -99,7 +99,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     }
                 }
 
-                string ip = this.Request.GetClientIp();
+                string ip = "0.0.0.0";
                 ClientAppUser clientAppUser = await TelemetryControllerHelpers.GetUserOrAddIfMissing(this.work, request.UserInfo, ip).ConfigureAwait(false);
 
                 await this.work.CompleteAsync().ConfigureAwait(false);
@@ -164,7 +164,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
                 List<TelemetryItem> telemetryItems = TelemetryMapper.Map(appInsightsTelemetries).ToList();
 
-                string ip = this.Request.GetClientIp();
+                string ip = "0.0.0.0";
 
                 await this.InsertDataInternal(telemetryItems, program, ip).ConfigureAwait(false);
 
@@ -196,7 +196,8 @@ namespace Telimena.WebApp.Controllers.Api.V1
                 IEnumerable<AppInsightsTelemetry> appInsightsTelemetries = AppInsightsDeserializer.Deserialize(await this.Request.Content.ReadAsByteArrayAsync().ConfigureAwait(false), true);
 
                 List<TelemetryItem> telemetryItems = TelemetryMapper.Map(appInsightsTelemetries).ToList();
-                string ip = this.Request.GetClientIp();
+                //  string ip = this.Request.GetClientIp();
+                string ip = "0.0.0.0";
 
                 //items might come with various telemetry key in one request (when there are multiple instances of telemetry client)
                 IEnumerable<IGrouping<Guid, TelemetryItem>> groups = telemetryItems.GroupBy(telemetry => telemetry.TelemetryKey);
@@ -257,7 +258,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
 
                 TelemetryItem item = TelemetryMapper.Map(telemetryKey, request);
 
-                string ip = this.Request.GetClientIp();
+                string ip = "0.0.0.0";
 
                 await this.InsertDataInternal(new[] {item}, program, ip).ConfigureAwait(false);
 
