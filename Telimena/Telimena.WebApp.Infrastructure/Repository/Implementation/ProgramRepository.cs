@@ -113,10 +113,10 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
         public void ClearTelemetryData(Program program, TelemetryItemTypes? type)
         {
-            IQueryable<Core.Models.Telemetry.ClientAppUser> eventUsers = this.telemetryContext.EventTelemetrySummaries.Where(x => x.Event.ProgramId == program.Id).Select(x => x.ClientAppUser);
-            IQueryable<Core.Models.Telemetry.ClientAppUser> viewUsers = this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id).Select(x => x.ClientAppUser);
+            //IQueryable<Core.Models.Telemetry.ClientAppUser> eventUsers = this.telemetryContext.EventTelemetrySummaries.Where(x => x.Event.ProgramId == program.Id).Select(x => x.ClientAppUser);
+            //IQueryable<Core.Models.Telemetry.ClientAppUser> viewUsers = this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId == program.Id).Select(x => x.ClientAppUser);
 
-            List<int> userIds = eventUsers.Select(x => x.Id).Concat(viewUsers.Select(x => x.Id)).Distinct().ToList();
+            //List<int> userIds = eventUsers.Select(x => x.Id).Concat(viewUsers.Select(x => x.Id)).Distinct().ToList();
 
             if (type == null || type == TelemetryItemTypes.View)
             {
@@ -146,16 +146,16 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
                 this.telemetryContext.Exceptions.RemoveRange(this.telemetryContext.Exceptions.Where(x => x.ProgramId == program.Id));
             }
 
-            foreach (var userId in userIds)
-            {
-                var isInUseEvents = this.telemetryContext.EventTelemetrySummaries.Where(x => x.Event.ProgramId != program.Id).Any(x => x.ClientAppUserId == userId);
-                var isInUseViews = this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId != program.Id).Any(x => x.ClientAppUserId == userId);
+            //foreach (var userId in userIds)
+            //{
+            //    var isInUseEvents = this.telemetryContext.EventTelemetrySummaries.Where(x => x.Event.ProgramId != program.Id).Any(x => x.ClientAppUserId == userId);
+            //    var isInUseViews = this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId != program.Id).Any(x => x.ClientAppUserId == userId);
 
-                if (!isInUseEvents && !isInUseViews)
-                {
-                    this.telemetryContext.AppUsers.RemoveRange(this.telemetryContext.AppUsers.Where(u => u.Id == userId));
-                }
-            }
+            //    if (!isInUseEvents && !isInUseViews)
+            //    {
+            //        this.telemetryContext.AppUsers.RemoveRange(this.telemetryContext.AppUsers.Where(u => u.Id == userId));
+            //    }
+            //}
         }
 
         public async Task<IEnumerable<Program>> GetAsync(Expression<Func<Program, bool>> filter = null
