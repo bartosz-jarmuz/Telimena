@@ -134,7 +134,6 @@ namespace Telimena.WebApp.Infrastructure.Repository.Implementation
 
             foreach (var userId in userIds)
             {
-                var otherApps = this.telemetryContext.EventTelemetrySummaries.Where(x => x.Event.ProgramId != program.Id).Where(x => x.ClientAppUserId == userId).ToList();
                 var isInUseEvents  = this.telemetryContext.EventTelemetrySummaries.Where(x=>x.Event.ProgramId != program.Id).Any(x => x.ClientAppUserId == userId);
                 var isInUseViews  = this.telemetryContext.ViewTelemetrySummaries.Where(x => x.View.ProgramId != program.Id).Any(x => x.ClientAppUserId == userId);
 

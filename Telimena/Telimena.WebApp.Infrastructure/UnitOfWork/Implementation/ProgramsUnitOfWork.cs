@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Infrastructure.Database;
@@ -38,6 +39,22 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork.Implementation
         {
             await this.portalContext.SaveChangesAsync().ConfigureAwait(false);
             await this.telemetryContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task CompleteAsync(TimeSpan timeout)
+        {
+            var currentPortalTimeout = this.portalContext.Database.CommandTimeout;
+            var currentTelemetryTimeout = this.telemetryContext.Database.CommandTimeout;
+            this.portalContext.Database.CommandTimeout = (int?)timeout.TotalSeconds;
+            this.telemetryContext.Database.CommandTimeout = (int?)timeout.TotalSeconds;
+
+
+            await this.portalContext.SaveChangesAsync().ConfigureAwait(false);
+            await this.telemetryContext.SaveChangesAsync().ConfigureAwait(false);
+
+            this.portalContext.Database.CommandTimeout = currentPortalTimeout;
+            this.telemetryContext.Database.CommandTimeout = currentTelemetryTimeout;
+
         }
     }
 }

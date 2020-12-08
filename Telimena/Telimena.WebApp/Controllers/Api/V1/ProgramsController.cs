@@ -455,9 +455,13 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             try
             {
-                this.Work.Programs.
-                    ClearTelemetryAllData(prg);
-                await this.Work.CompleteAsync().ConfigureAwait(false);
+                this.telemetryClient.TrackEvent("AttemptedToClearTelemetryData", new Dictionary<string, string>()
+                    {
+                        {$"ProgramName", prg.Name },
+                    });
+
+                this.Work.Programs.ClearTelemetryAllData(prg);
+                await this.Work.CompleteAsync(TimeSpan.FromMinutes(5)).ConfigureAwait(false);
                 this.telemetryClient.TrackEvent("ClearedTelemetryData", new Dictionary<string, string>()
                     {
                         {$"ProgramName", prg.Name },
@@ -465,13 +469,16 @@ namespace Telimena.WebApp.Controllers.Api.V1
             }
             catch (Exception ex)
             {
-                var wrapper = new InvalidOperationException($"Error while clearing telemetry data for {prg.Name} (Key: {telemetryKey})", ex);
                 this.telemetryClient.TrackEvent($"ClearedTelemetryDataError", new Dictionary<string, string>()
                     {
                         {$"ProgramName", prg.Name },
                         {$"Exception", ex.ToString()},
 
                     });
+
+                var wrapper = new InvalidOperationException($"Error while clearing telemetry data for {prg.Name} (Key: {telemetryKey})", ex);
+
+
                 this.telemetryClient.TrackException(wrapper);
                 return this.InternalServerError(wrapper);
             }

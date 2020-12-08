@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Telimena.WebApp.Core.Models;
 using Telimena.WebApp.Core.Models.Portal;
 using Telimena.WebApp.Core.Models.Telemetry;
@@ -32,5 +33,6 @@ namespace Telimena.WebApp.Infrastructure.UnitOfWork
         IUpdaterRepository UpdaterRepository { get; set; }
         IProgramPackageRepository ProgramPackages { get; set; }
         Task CompleteAsync();
+        Task CompleteAsync(TimeSpan timeout);
     }
 }
