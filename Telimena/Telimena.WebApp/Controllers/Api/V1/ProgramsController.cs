@@ -461,7 +461,7 @@ namespace Telimena.WebApp.Controllers.Api.V1
                     });
 
                 this.Work.Programs.ClearTelemetryAllData(prg);
-                await this.Work.CompleteAsync(TimeSpan.FromMinutes(5)).ConfigureAwait(false);
+                await this.Work.CompleteAsync(TimeSpan.FromMinutes(10)).ConfigureAwait(false);
                 this.telemetryClient.TrackEvent("ClearedTelemetryData", new Dictionary<string, string>()
                     {
                         {$"ProgramName", prg.Name },
