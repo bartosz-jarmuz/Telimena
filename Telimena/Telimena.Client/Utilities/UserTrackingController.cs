@@ -168,8 +168,8 @@ namespace TelimenaClient
                     case UserIdentifierMode.RandomFriendlyName:
                         UserInfo randomized = new UserInfo()
                         {
-                            UserIdentifier = NameGenerator.Identifiers.Get(IdentifierComponents.Adjective | IdentifierComponents.Animal),
-                            MachineName = NameGenerator.Identifiers.Get(IdentifierComponents.Adjective | IdentifierComponents.Noun, separator: "_")
+                            UserIdentifier = NameGenerator.Identifiers.Get(IdentifierComponents.Adjective | IdentifierComponents.Animal, separator: "_"),
+                            MachineName = NameGenerator.Identifiers.Get(IdentifierComponents.Adjective | IdentifierComponents.Noun, separator: "-")
                         };
                         this.SetUserIdentifier(randomized, UserRandomFileName, this.Settings.ShareIdentifierWithOtherTelimenaApps);
                         return randomized;
