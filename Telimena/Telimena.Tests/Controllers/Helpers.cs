@@ -69,6 +69,8 @@ namespace Telimena.Tests
                 }
             };
             TelemetryModule module = telimena.GetFieldValue<TelemetryModule>("telemetryModule");
+            SetStaticFieldValue(module, "isSessionStartedEventSent", false);
+
             TelemetryClient client = module.GetPropertyValue<TelemetryClient>("TelemetryClient");
             var config = client.GetPropertyValue<TelemetryConfiguration>("TelemetryConfiguration");
             config.SetPropertyValue("TelemetryChannel", channel);
@@ -78,32 +80,6 @@ namespace Telimena.Tests
 
         }
 
-
-        public static TelemetryModule GetTelemetryModule(ICollection<ITelemetry> sentTelemetry, Guid telemetryKey, bool excludeStartingEvent = true)
-        {
-            TelemetryModule module = new TelemetryModule(new TelimenaProperties(new TelimenaStartupInfo(telemetryKey, Helpers.TeliUri)));
-            StubTelemetryChannel channel = new StubTelemetryChannel
-            {
-                OnSend = t =>
-                {
-                    EventTelemetry ev = t as EventTelemetry;
-                    if (excludeStartingEvent && ev?.Name == "TelimenaSessionStarted")
-                    {
-                        return;
-                    }
-
-                    sentTelemetry.Add(t);
-                }
-            };
-
-            TelemetryClient client = module.GetPropertyValue<TelemetryClient>("TelemetryClient");
-            var config = client.GetPropertyValue<TelemetryConfiguration>("TelemetryConfiguration");
-            config.SetPropertyValue("TelemetryChannel", channel);
-            SetStaticFieldValue(module, "isSettingsInitialized", true);
-
-            Assert.IsInstanceOf<StubTelemetryChannel>(module.TelemetryClient.GetPropertyValue<TelemetryConfiguration>("TelemetryConfiguration").TelemetryChannel);
-            return module;
-        }
 
         public static void SetStaticFieldValue(object source, string fieldName, object val)
         {

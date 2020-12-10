@@ -130,10 +130,11 @@ namespace TelimenaClient
                                     this.loadedUserInfo = this.telimenaProperties.UserInfo;
                                     this.InitializeContext();
                                     this.isSettingsInitialized = true;
-                                    if (!isSessionStarted)
+                                    if (!isSessionStartedEventSent)
                                     {
-                                        //only send a session start even once, even if Teli instance is build in a program many times
+                                        //    only send a session start even once, even if Teli instance is build in a program many times
                                         this.Event(BuiltInEventKeys.SessionStarted);
+                                        isSessionStartedEventSent = true;
                                     }
                                     if (this.telemetryToSendLater.Any())
                                     {
@@ -233,6 +234,7 @@ namespace TelimenaClient
         private static readonly object SettingsSyncRoot = new object();
 
         private static bool isSessionStarted;
+        private static bool isSessionStartedEventSent;
         private UserInfo loadedUserInfo;
         private bool isSettingsInitialized;
         private Task userInfoLoadingTask;
