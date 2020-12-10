@@ -130,7 +130,11 @@ namespace TelimenaClient
                                     this.loadedUserInfo = this.telimenaProperties.UserInfo;
                                     this.InitializeContext();
                                     this.isSettingsInitialized = true;
-                                    this.Event(BuiltInEventKeys.SessionStarted);
+                                    if (!isSessionStarted)
+                                    {
+                                        //only send a session start even once, even if Teli instance is build in a program many times
+                                        this.Event(BuiltInEventKeys.SessionStarted);
+                                    }
                                     if (this.telemetryToSendLater.Any())
                                     {
                                         while (this.telemetryToSendLater.Count > 0)
