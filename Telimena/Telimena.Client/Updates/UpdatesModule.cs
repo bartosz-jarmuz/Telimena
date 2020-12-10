@@ -79,7 +79,7 @@ namespace TelimenaClient
                 if (checkResult.Exception == null)
                 {
                     UpdateHandler handler = new UpdateHandler(this.telimena.Messenger, this.telimena.Properties.LiveProgramInfo, new DefaultWpfInputReceiver()
-                        , new UpdateInstaller(), this.telimena.Locator);
+                        , new UpdateInstaller(), this.telimena.Locator, this.telimena.telemetryModule);
                     await handler.HandleUpdates(this.telimena.Properties.UpdatePromptingMode, checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate).ConfigureAwait(false);
                 }
                 else
@@ -159,7 +159,7 @@ namespace TelimenaClient
                     checkResult.ProgramUpdatesToInstall = checkResult.ProgramUpdatesToInstall.Where(x => x.IsBeta == false).ToList();
                 }
                 UpdateHandler handler = new UpdateHandler(this.telimena.Messenger, this.telimena.Properties.LiveProgramInfo, new DefaultWpfInputReceiver()
-                    , new UpdateInstaller(), this.telimena.Locator);
+                    , new UpdateInstaller(), this.telimena.Locator, this.telimena.telemetryModule);
                 await handler.HandleUpdates(UpdatePromptingModes.DontPrompt, checkResult.ProgramUpdatesToInstall, checkResult.UpdaterUpdate).ConfigureAwait(false);
 
                 return new UpdateInstallationResult()

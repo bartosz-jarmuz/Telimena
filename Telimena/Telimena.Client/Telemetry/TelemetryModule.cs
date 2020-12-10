@@ -37,7 +37,7 @@ namespace TelimenaClient
 
         private readonly TelimenaProperties telimenaProperties;
         private readonly UserTrackingController userTrackingController;
-        private static readonly string SessionStartedEventKey = "TelimenaSessionStarted";
+        
 
         /// <summary>
         /// Gets the telemetry client.
@@ -130,7 +130,7 @@ namespace TelimenaClient
                                     this.loadedUserInfo = this.telimenaProperties.UserInfo;
                                     this.InitializeContext();
                                     this.isSettingsInitialized = true;
-                                    this.Event(SessionStartedEventKey);
+                                    this.Event(BuiltInEventKeys.SessionStarted);
                                     if (this.telemetryToSendLater.Any())
                                     {
                                         while (this.telemetryToSendLater.Count > 0)

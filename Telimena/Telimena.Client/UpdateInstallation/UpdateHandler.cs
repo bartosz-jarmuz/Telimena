@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.ApplicationInsights.Extensibility.Implementation.Tracing;
 using TelimenaClient.Model;
 using TelimenaClient.Model.Internal;
 
@@ -13,13 +12,14 @@ namespace TelimenaClient
     internal partial class UpdateHandler
     {
         public UpdateHandler(IMessenger messenger, LiveProgramInfo programInfo, IReceiveUserInput inputReceiver
-            , IInstallUpdates updateInstaller, Locator locator)
+            , IInstallUpdates updateInstaller, Locator locator, ITelemetryModule telemetryModule)
         {
             this.messenger = messenger;
             this.programInfo = programInfo;
             this.inputReceiver = inputReceiver;
             this.updateInstaller = updateInstaller;
             this.locator = locator;
+            this.telemetryModule = telemetryModule;
         }
 
         private readonly IMessenger messenger;
@@ -27,6 +27,7 @@ namespace TelimenaClient
         private readonly IReceiveUserInput inputReceiver;
         private readonly IInstallUpdates updateInstaller;
         private readonly Locator locator;
+        private readonly ITelemetryModule telemetryModule;
 
         public async Task HandleUpdates(UpdatePromptingModes confirmationMode, IReadOnlyList<UpdatePackageData> packagesToInstall, UpdatePackageData updaterUpdate)
         {
@@ -42,8 +43,20 @@ namespace TelimenaClient
                     }
 
                     FileInfo instructionsFile = UpdateInstructionCreator.CreateInstructionsFile(packagesToInstall, this.programInfo.Program, this.programInfo.Program.Name);
+                    foreach (UpdatePackageData item in packagesToInstall)
+                    {
+                        this.telemetryModule.Event(BuiltInEventKeys.UpdateInstallation, properties: new Dictionary<string, string>()
+                        {
+                            { "PackageVersion" , item.Version },
+                            { "FromVersionAssembly" ,  this.programInfo.Program.PrimaryAssembly.VersionData.AssemblyVersion },
+                            { "FromVersionFile" ,  this.programInfo.Program.PrimaryAssembly.VersionData.FileVersion },
 
+                        });
+                    }
+                    this.telemetryModule.SendAllDataNow();
                     this.updateInstaller.InstallUpdates(instructionsFile, shouldInstallNow.Item2);
+
+                  
                 }
             }
                 catch (Exception ex)

@@ -42,7 +42,7 @@ namespace TelimenaClient
 
         private readonly ITelimenaHttpClient httpClient;
         private TelemetryInitializeResponse initializationResponse;
-        private readonly ITelemetryModule telemetryModule;
+        internal readonly ITelemetryModule telemetryModule;
         private readonly IUpdatesModule updates;
         private readonly TelimenaProperties propertiesInternal;
         private readonly UserTrackingController userTrackingController;
