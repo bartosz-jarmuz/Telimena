@@ -94,6 +94,7 @@
     <Compile Include="NullObjects\NullObjectTelimena.cs" />
     <Compile Include="NullObjects\NullObjectTelimenaProperties.cs" />
     <Compile Include="NullObjects\NullObjectUpdatesModule.cs" />
+    <Compile Include="Telemetry\BuiltInEventKeys.cs" />
     <Compile Include="Telemetry\NoActionTelemetryModule.cs" />
     <Compile Include="TelimenaClient\TelimenaFactory.cs" />
     <Compile Include="Model\UserIdentifierMode.cs" />
